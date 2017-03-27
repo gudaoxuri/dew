@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: logger
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config
+      username: client
+      password: ecfront
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone:  http://client:ecfront@localhost:10000/eureka

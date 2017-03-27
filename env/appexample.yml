@@ -1,0 +1,15 @@
+server:
+  port: 10020
+
+spring:
+  mail:
+    host: smtp.exmail.qq.com
+    username: test@ecfront.com
+    password: Ez1234
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true

@@ -1,0 +1,23 @@
+dew:
+  basic:
+    name: Dew服务框架
+    version: 1.0
+    desc:
+    webSite: www.ecfront.com
+  doc:
+    basePackage: com.ecfront.dew
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    tomcat:
+      max-wait: 24000
+eureka:
+  instance:
+    metadata-map:
+      cluster: dew
