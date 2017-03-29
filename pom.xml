@@ -86,6 +86,7 @@
         <module>components/wsgateway</module>
         <module>components/logger</module>
         <module>components/monitor</module>
+        <module>components/auth</module>
         <module>components/appexample</module>
     </modules>
 

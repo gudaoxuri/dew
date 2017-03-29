@@ -2,32 +2,32 @@ package com.ecfront.dew.core.entity;
 
 
 import javax.persistence.MappedSuperclass;
-import java.sql.Timestamp;
+import java.util.Date;
 
 @MappedSuperclass
 public abstract class SafeEntity extends IdEntity {
 
-    protected Timestamp createTime;
+    protected Date createTime;
 
-    protected Timestamp updateTime;
+    protected Date updateTime;
 
     protected String createUser;
 
     protected String updateUser;
 
-    public Timestamp getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Timestamp createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
-    public Timestamp getUpdateTime() {
+    public Date getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Timestamp updateTime) {
+    public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -46,4 +46,5 @@ public abstract class SafeEntity extends IdEntity {
     public void setUpdateUser(String updateUser) {
         this.updateUser = updateUser;
     }
+
 }
