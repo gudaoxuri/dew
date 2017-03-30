@@ -34,6 +34,20 @@ public interface SimpleService<T extends DewRepository<E>, E extends IdEntity> {
         return entities;
     }
 
+    default Resp<Boolean> preEnable(long id) throws RuntimeException {
+        return Resp.success(true);
+    }
+
+    default void postEnable(long id) throws RuntimeException {
+    }
+
+    default Resp<Boolean> preDisable(long id) throws RuntimeException {
+        return Resp.success(true);
+    }
+
+    default void postDisable(long id) throws RuntimeException {
+    }
+
     default Resp<Boolean> preSave(E entity) throws RuntimeException {
         return Resp.success(true);
     }
@@ -60,16 +74,31 @@ public interface SimpleService<T extends DewRepository<E>, E extends IdEntity> {
 
     Resp<E> get(long id) throws RuntimeException;
 
+    Resp<List<E>> find() throws RuntimeException;
+
+    Resp<List<E>> findEnable() throws RuntimeException;
+
+    Resp<List<E>> findDisable() throws RuntimeException;
+
+    Resp<PageDTO<E>> paging(int pageNumber, int pageSize) throws RuntimeException;
+
+    Resp<PageDTO<E>> pagingEnable(int pageNumber, int pageSize) throws RuntimeException;
+
+    Resp<PageDTO<E>> pagingDisable(int pageNumber, int pageSize) throws RuntimeException;
+
+    Resp<PageDTO<E>> paging(int pageNumber, int pageSize, Sort sort) throws RuntimeException;
+
+    Resp<PageDTO<E>> pagingEnable(int pageNumber, int pageSize, Sort sort) throws RuntimeException;
+
+    Resp<PageDTO<E>> pagingDisable(int pageNumber, int pageSize, Sort sort) throws RuntimeException;
+
+    Resp<Void> enable(long id) throws RuntimeException;
+
+    Resp<Void> disable(long id) throws RuntimeException;
+
     Resp<E> save(E entity) throws RuntimeException;
 
     Resp<E> update(long id, E entity) throws RuntimeException;
 
     Resp<Long> delete(long id) throws RuntimeException;
-
-    Resp<List<E>> find() throws RuntimeException;
-
-    Resp<PageDTO<E>> paging(int pageNumber, int pageSize) throws RuntimeException;
-
-    Resp<PageDTO<E>> paging(int pageNumber, int pageSize, Sort sort) throws RuntimeException;
-
 }

@@ -33,24 +33,54 @@ public class AuthTest {
 
     @Test
     public void testTenant() throws Exception {
+        // save
         Tenant tenant = new Tenant();
         tenant.setCode("001");
         tenant.setName("默认租户");
-        Resp tenantR = testRestTemplate.postForObject("/auth/manage", tenant, Resp.class);
+        tenant.setImage("");
+        tenant.setCategory("");
+        Resp tenantR = testRestTemplate.postForObject("/auth/manage/tenant/", tenant, Resp.class);
         Assert.assertTrue(tenantR.ok());
+        // update
         tenant = JsonHelper.toObject(tenantR.getBody(), Tenant.class);
         tenant.setCode("000");
-        testRestTemplate.put("/auth/manage/" + tenant.getId(), tenant);
-        tenantR = testRestTemplate.getForObject("/auth/manage/" + tenant.getId(), Resp.class);
+        testRestTemplate.put("/auth/manage/tenant/" + tenant.getId(), tenant);
+        // get
+        tenantR = testRestTemplate.getForObject("/auth/manage/tenant/" + tenant.getId(), Resp.class);
         tenant = JsonHelper.toObject(tenantR.getBody(), Tenant.class);
         Assert.assertTrue(tenantR.ok() && tenant.getCode().equals("000"));
-        Resp tenantsR = testRestTemplate.getForObject("/auth/manage/", Resp.class);
+        // disable
+        testRestTemplate.getForObject("/auth/manage/tenant/" + tenant.getId() + "/disable", Resp.class);
+        tenant = JsonHelper.toObject(testRestTemplate.getForObject("/auth/manage/tenant/" + tenant.getId(), Resp.class).getBody(), Tenant.class);
+        Assert.assertTrue(!tenant.getEnable());
+        // enable
+        testRestTemplate.getForObject("/auth/manage/tenant/" + tenant.getId() + "/enable", Resp.class);
+        tenant = JsonHelper.toObject(testRestTemplate.getForObject("/auth/manage/tenant/" + tenant.getId(), Resp.class).getBody(), Tenant.class);
+        Assert.assertTrue(tenant.getEnable());
+        // find
+        Resp tenantsR = testRestTemplate.getForObject("/auth/manage/tenant/", Resp.class);
         Assert.assertEquals(((List) tenantsR.getBody()).size(), 1);
-        Resp tenantPageR = testRestTemplate.getForObject("/auth/manage/0/10", Resp.class);
+        // find enable
+        tenantsR = testRestTemplate.getForObject("/auth/manage/tenant/?enable=true", Resp.class);
+        Assert.assertEquals(((List) tenantsR.getBody()).size(), 1);
+        // find disable
+        tenantsR = testRestTemplate.getForObject("/auth/manage/tenant/?enable=false", Resp.class);
+        Assert.assertEquals(((List) tenantsR.getBody()).size(), 0);
+        // paging
+        Resp tenantPageR = testRestTemplate.getForObject("/auth/manage/tenant/0/10", Resp.class);
         PageDTO<Tenant> tenantPage = JsonHelper.toObject(tenantPageR.getBody(), PageDTO.class);
         Assert.assertEquals(tenantPage.getObjects().size(), 1);
-        testRestTemplate.delete("/auth/manage/" + tenant.getId());
-        tenantsR = testRestTemplate.getForObject("/auth/manage/", Resp.class);
+        // paging enable
+        tenantPageR = testRestTemplate.getForObject("/auth/manage/tenant/0/10?enable=true", Resp.class);
+        tenantPage = JsonHelper.toObject(tenantPageR.getBody(), PageDTO.class);
+        Assert.assertEquals(tenantPage.getObjects().size(), 1);
+        // paging disable
+        tenantPageR = testRestTemplate.getForObject("/auth/manage/tenant/0/10?enable=false", Resp.class);
+        tenantPage = JsonHelper.toObject(tenantPageR.getBody(), PageDTO.class);
+        Assert.assertEquals(tenantPage.getObjects().size(), 0);
+        // delete
+        testRestTemplate.delete("/auth/manage/tenant/" + tenant.getId());
+        tenantsR = testRestTemplate.getForObject("/auth/manage/tenant/", Resp.class);
         Assert.assertEquals(((List) tenantsR.getBody()).size(), 0);
     }
 

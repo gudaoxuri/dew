@@ -15,7 +15,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RestController
 public abstract class SimpleVOController<T extends SimpleServiceImpl, V extends Object, E extends IdEntity> implements VOAssembler<V, E> {
 
     protected static final Logger logger = LoggerFactory.getLogger(SimpleVOController.class);
@@ -40,8 +39,15 @@ public abstract class SimpleVOController<T extends SimpleServiceImpl, V extends 
     }
 
     @GetMapping("")
-    public Resp<List<V>> find() {
-        Resp<List<E>> result = simpleService.find();
+    public Resp<List<V>> find(@RequestParam(required = false) Boolean enable) {
+        Resp<List<E>> result;
+        if (enable == null) {
+            result = simpleService.find();
+        } else if (enable) {
+            result = simpleService.findEnable();
+        } else {
+            result = simpleService.findDisable();
+        }
         if (result.ok()) {
             List<V> body = result.getBody().stream().map(i -> entityToVO(i)).collect(Collectors.toList());
             return Resp.success(body);
@@ -51,8 +57,15 @@ public abstract class SimpleVOController<T extends SimpleServiceImpl, V extends 
     }
 
     @GetMapping("{pageNumber}/{pageSize}")
-    public Resp<PageDTO<V>> paging(@PathVariable int pageNumber, @PathVariable int pageSize) {
-        Resp<PageDTO<E>> result = simpleService.paging(pageNumber, pageSize);
+    public Resp<PageDTO<V>> paging(@PathVariable int pageNumber, @PathVariable int pageSize, @RequestParam(required = false) Boolean enable) {
+        Resp<PageDTO<E>> result;
+        if (enable == null) {
+            result = simpleService.paging(pageNumber, pageSize);
+        } else if (enable) {
+            result = simpleService.pagingEnable(pageNumber, pageSize);
+        } else {
+            result = simpleService.pagingDisable(pageNumber, pageSize);
+        }
         if (result.ok()) {
             List<V> body = result.getBody().getObjects().stream().map(i -> entityToVO(i)).collect(Collectors.toList());
             PageDTO<V> page = PageDTO.build(pageNumber, pageSize, result.getBody().getRecordTotal(), body);
@@ -71,6 +84,16 @@ public abstract class SimpleVOController<T extends SimpleServiceImpl, V extends 
         } else {
             return Resp.customFail(result.getCode(), result.getMessage());
         }
+    }
+
+    @GetMapping("{id}/enable")
+    public Resp<Void> enable(@PathVariable long id) {
+        return simpleService.enable(id);
+    }
+
+    @GetMapping("{id}/disable")
+    public Resp<Void> disable(@PathVariable long id) {
+        return simpleService.disable(id);
     }
 
     @PostMapping(value = "")

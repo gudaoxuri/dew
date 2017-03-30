@@ -14,7 +14,9 @@ public class Tenant extends SafeStatusEntity {
     private String code;
     @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private String image;
+    @Column(nullable = false)
     private String category;
 
     public String getCode() {
