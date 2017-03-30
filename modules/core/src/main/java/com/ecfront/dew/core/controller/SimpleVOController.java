@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 @RestController
 public abstract class SimpleVOController<T extends SimpleServiceImpl, V extends Object, E extends IdEntity> implements VOAssembler<V, E> {
 
+    protected static final Logger logger = LoggerFactory.getLogger(SimpleVOController.class);
+
     @Autowired
     protected T simpleService;
 
@@ -37,9 +39,6 @@ public abstract class SimpleVOController<T extends SimpleServiceImpl, V extends 
         }
     }
 
-    protected static final Logger logger = LoggerFactory.getLogger(SimpleVOController.class);
-
-
     @GetMapping("")
     public Resp<List<V>> find() {
         Resp<List<E>> result = simpleService.find();
@@ -51,7 +50,7 @@ public abstract class SimpleVOController<T extends SimpleServiceImpl, V extends 
         }
     }
 
-    @GetMapping("{pageNumber}/{pageSize}/")
+    @GetMapping("{pageNumber}/{pageSize}")
     public Resp<PageDTO<V>> paging(@PathVariable int pageNumber, @PathVariable int pageSize) {
         Resp<PageDTO<E>> result = simpleService.paging(pageNumber, pageSize);
         if (result.ok()) {
@@ -63,8 +62,8 @@ public abstract class SimpleVOController<T extends SimpleServiceImpl, V extends 
         }
     }
 
-    @GetMapping("{id}/")
-    public Resp<V> get(@PathVariable String id) {
+    @GetMapping("{id}")
+    public Resp<V> get(@PathVariable long id) {
         Resp<E> result = simpleService.get(id);
         if (result.ok()) {
             V body = entityToVO(result.getBody());
@@ -85,8 +84,8 @@ public abstract class SimpleVOController<T extends SimpleServiceImpl, V extends 
         }
     }
 
-    @PutMapping(value = "{pk}/")
-    public Resp<V> update(@PathVariable String id, @RequestBody V vo) {
+    @PutMapping(value = "{id}")
+    public Resp<V> update(@PathVariable long id, @RequestBody V vo) {
         Resp<E> result = simpleService.update(id, voToEntity(vo));
         if (result.ok()) {
             V body = entityToVO(result.getBody());
@@ -96,8 +95,8 @@ public abstract class SimpleVOController<T extends SimpleServiceImpl, V extends 
         }
     }
 
-    @DeleteMapping(value = "{pk}/")
-    public Resp<Object> delete(@PathVariable String id) {
+    @DeleteMapping(value = "{id}")
+    public Resp<Object> delete(@PathVariable long id) {
         return simpleService.delete(id);
     }
 

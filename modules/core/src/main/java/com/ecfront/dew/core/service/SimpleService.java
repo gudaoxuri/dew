@@ -6,12 +6,11 @@ import com.ecfront.dew.core.entity.IdEntity;
 import com.ecfront.dew.core.repository.DewRepository;
 import org.springframework.data.domain.Sort;
 
-import java.io.Serializable;
 import java.util.List;
 
-public interface SimpleService<T extends DewRepository<E, ID>, E extends IdEntity, ID extends Serializable> {
+public interface SimpleService<T extends DewRepository<E>, E extends IdEntity> {
 
-    default Resp<Boolean> preGet(ID id) throws RuntimeException {
+    default Resp<Boolean> preGet(long id) throws RuntimeException {
         return Resp.success(true);
     }
 
@@ -43,29 +42,29 @@ public interface SimpleService<T extends DewRepository<E, ID>, E extends IdEntit
         return entity;
     }
 
-    default Resp<Boolean> preUpdate(ID id, E entity) throws RuntimeException {
+    default Resp<Boolean> preUpdate(long id, E entity) throws RuntimeException {
         return Resp.success(true);
     }
 
-    default E postUpdate(ID id, E entity) throws RuntimeException {
+    default E postUpdate(long id, E entity) throws RuntimeException {
         return entity;
     }
 
-    default Resp<Boolean> preDelete(ID id) throws RuntimeException {
+    default Resp<Boolean> preDelete(long id) throws RuntimeException {
         return Resp.success(true);
     }
 
-    default ID postDelete(ID id) throws RuntimeException {
+    default long postDelete(long id) throws RuntimeException {
         return id;
     }
 
-    Resp<E> get(ID id) throws RuntimeException;
+    Resp<E> get(long id) throws RuntimeException;
 
     Resp<E> save(E entity) throws RuntimeException;
 
-    Resp<E> update(ID id, E entity) throws RuntimeException;
+    Resp<E> update(long id, E entity) throws RuntimeException;
 
-    Resp<ID> delete(ID id) throws RuntimeException;
+    Resp<Long> delete(long id) throws RuntimeException;
 
     Resp<List<E>> find() throws RuntimeException;
 

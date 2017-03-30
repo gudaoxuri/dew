@@ -11,24 +11,23 @@ import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 
 import javax.persistence.EntityManager;
-import java.io.Serializable;
 
-public class DewRepositoryFactoryBean<J extends JpaRepository<T, ID>, T, ID extends IdEntity> extends JpaRepositoryFactoryBean<J, T, ID> {
+public class DewRepositoryFactoryBean<T extends JpaRepository<E, Long>, E extends IdEntity> extends JpaRepositoryFactoryBean<T, E, Long> {
 
     @Override
     protected RepositoryFactorySupport createRepositoryFactory(EntityManager entityManager) {
-        return new WantsRepositoryFactory(entityManager);
+        return new DewRepositoryFactory<E>(entityManager);
     }
 
-    private static class WantsRepositoryFactory extends JpaRepositoryFactory {
+    private static class DewRepositoryFactory<E extends IdEntity> extends JpaRepositoryFactory {
 
-        public WantsRepositoryFactory(EntityManager entityManager) {
+        public DewRepositoryFactory(EntityManager entityManager) {
             super(entityManager);
         }
 
         @Override
-        protected <T, ID extends Serializable> SimpleJpaRepository<?, ?> getTargetRepository(RepositoryInformation information, EntityManager entityManager) {
-            return new DewRepositoryImpl<T, ID>((Class<T>) information.getDomainType(), entityManager);
+        protected SimpleJpaRepository<?, ?> getTargetRepository(RepositoryInformation information, EntityManager entityManager) {
+            return new DewRepositoryImpl<>((Class<E>) information.getDomainType(), entityManager);
         }
 
         @Override

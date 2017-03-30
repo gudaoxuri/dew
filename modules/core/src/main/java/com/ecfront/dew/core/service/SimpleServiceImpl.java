@@ -8,22 +8,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
-public class SimpleServiceImpl<T extends DewRepository<E, ID>, E extends IdEntity, ID extends Serializable> implements SimpleService<T, E, ID> {
+public class SimpleServiceImpl<T extends DewRepository<E>, E extends IdEntity> implements SimpleService<T, E> {
 
     protected static final Logger logger = LoggerFactory.getLogger(SimpleServiceImpl.class);
 
-    protected Class<E> modelClazz = (Class<E>) ((ParameterizedType) this.getClass().getGenericInterfaces()[0]).getActualTypeArguments()[1];
+    protected Class<E> modelClazz = null;
+
+    {
+        modelClazz = (Class<E>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[1];
+    }
 
     @Autowired
     public T dewRepository;
 
     @Override
-    public Resp<E> get(ID id) throws RuntimeException {
+    public Resp<E> get(long id) throws RuntimeException {
         logger.debug("[{}] Get:{}.", modelClazz.getSimpleName(), id);
         Resp<Boolean> preResult = preGet(id);
         if (preResult.ok()) {
@@ -33,7 +37,8 @@ public class SimpleServiceImpl<T extends DewRepository<E, ID>, E extends IdEntit
     }
 
     @Override
-    public Resp<ID> delete(ID id) throws RuntimeException {
+    @Transactional
+    public Resp<Long> delete(long id) throws RuntimeException {
         logger.debug("[{}] Delete:{}.", modelClazz.getSimpleName(), id);
         Resp<Boolean> preResult = preDelete(id);
         if (preResult.ok()) {
@@ -74,7 +79,8 @@ public class SimpleServiceImpl<T extends DewRepository<E, ID>, E extends IdEntit
     }
 
     @Override
-    public Resp<E> update(ID id, E entity) throws RuntimeException {
+    @Transactional
+    public Resp<E> update(long id, E entity) throws RuntimeException {
         logger.debug("[{}] Update {}.", modelClazz.getSimpleName(), id);
         Resp<Boolean> preResult = preUpdate(id, entity);
         if (preResult.ok()) {
@@ -84,6 +90,7 @@ public class SimpleServiceImpl<T extends DewRepository<E, ID>, E extends IdEntit
     }
 
     @Override
+    @Transactional
     public Resp<E> save(E entity) throws RuntimeException {
         logger.debug("[{}] Save.", modelClazz.getSimpleName());
         Resp<Boolean> preResult = preSave(entity);

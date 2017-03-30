@@ -2,6 +2,7 @@ package com.ecfront.dew.auth.entity;
 
 import com.ecfront.dew.core.entity.SafeStatusEntity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -9,7 +10,9 @@ import javax.persistence.Table;
 @Table(name = "dew_tenant")
 public class Tenant extends SafeStatusEntity {
 
+    @Column(nullable = false)
     private String code;
+    @Column(nullable = false)
     private String name;
     private String image;
     private String category;

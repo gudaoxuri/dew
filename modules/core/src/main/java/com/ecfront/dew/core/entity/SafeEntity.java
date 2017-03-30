@@ -1,18 +1,23 @@
 package com.ecfront.dew.core.entity;
 
 
+import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import java.util.Date;
 
 @MappedSuperclass
 public abstract class SafeEntity extends IdEntity {
 
+    @Column(nullable = false)
     protected Date createTime;
 
+    @Column(nullable = false)
     protected Date updateTime;
 
+    @Column(nullable = false)
     protected String createUser;
 
+    @Column(nullable = false)
     protected String updateUser;
 
     public Date getCreateTime() {

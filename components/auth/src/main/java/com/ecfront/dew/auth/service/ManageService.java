@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ManageService extends SimpleServiceImpl<TenantRepository, Tenant, String> {
+public class ManageService extends SimpleServiceImpl<TenantRepository, Tenant> {
 
     private static final Logger logger = LoggerFactory.getLogger(ManageService.class);
 

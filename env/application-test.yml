@@ -10,7 +10,7 @@ spring:
     password: 123
     virtual-host: dew
   datasource:
-    url: jdbc:mysql://localhost:3306/ez?characterEncoding=UTF-8&autoReconnect=true
+    url: jdbc:mysql://localhost:3306/dew?characterEncoding=UTF-8&autoReconnect=true
     username: root
     password: '{cipher}6a702b78a2f11ef7999c651a123c6824d0b62d5b9664b2024312723e2d2edc1a'
     tomcat:

@@ -6,6 +6,6 @@ import com.ecfront.dew.core.repository.DewRepository;
 import javax.annotation.Resource;
 
 @Resource
-public interface TenantRepository extends DewRepository<Tenant, String> {
+public interface TenantRepository extends DewRepository<Tenant> {
 
 }

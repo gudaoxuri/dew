@@ -1,3 +1,12 @@
+dew:
+  basic:
+    name: Dew服务框架
+    version: 1.0
+    desc:
+    webSite: www.ecfront.com
+  doc:
+    basePackage: com.ecfront.dew
+
 spring:
   redis:
     host: localhost
@@ -9,9 +18,9 @@ spring:
         hbm2ddl:
           auto: update
   datasource:
-    url: jdbc:mysql://localhost:3306/ez?characterEncoding=UTF-8&autoReconnect=true
+    url: jdbc:mysql://localhost:3306/dew?characterEncoding=UTF-8&autoReconnect=true
     username: root
-    password: '123456'
+    password: 123456
     driver-class-name: com.mysql.jdbc.Driver
     tomcat:
       max-wait: 24000
