@@ -2,6 +2,7 @@ package com.ecfront.dew.core.repository;
 
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.dto.PageDTO;
+import com.ecfront.dew.core.entity.EntityContainer;
 import com.ecfront.dew.core.entity.IdEntity;
 import com.ecfront.dew.core.entity.SafeEntity;
 import org.springframework.data.domain.Page;
@@ -34,7 +35,25 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
     }
 
     @Override
-    public E update(long id, E entity) {
+    public <S extends E> S save(S entity) {
+        if (entity instanceof SafeEntity) {
+            SafeEntity e = (SafeEntity) entity;
+            e.setCreateTime(new Date());
+            e.setUpdateTime(e.getCreateTime());
+            if (Dew.context().optInfo().isPresent()) {
+                e.setCreateUser(Dew.context().optInfo().get().getLoginId());
+                e.setUpdateUser(e.getCreateUser());
+            } else {
+                e.setCreateUser("");
+                e.setUpdateUser("");
+            }
+        }
+        entityManager.persist(entity);
+        return entity;
+    }
+
+    @Override
+    public E updateById(long id, E entity) {
         entity.setId(id);
         if (entity instanceof SafeEntity) {
             SafeEntity e = (SafeEntity) entity;
@@ -46,6 +65,54 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
             }
         }
         return entityManager.merge(entity);
+    }
+
+    @Override
+    public E updateByCode(String code, E entity) {
+        long id = getByCode(code).getId();
+        entity.setId(id);
+        if (entity instanceof SafeEntity) {
+            SafeEntity e = (SafeEntity) entity;
+            e.setUpdateTime(new Date());
+            if (Dew.context().optInfo().isPresent()) {
+                e.setUpdateUser(Dew.context().optInfo().get().getLoginId());
+            } else {
+                e.setUpdateUser("");
+            }
+        }
+        return entityManager.merge(entity);
+    }
+
+    @Override
+    public E getById(long id) {
+        return super.findOne(id);
+    }
+
+    @Override
+    public E getByCode(String code) {
+        return EntityContainer
+                .getCodeFieldNameByClazz(modelClazz)
+                .map(s ->
+                        super.findOne((root, query, cb) -> cb.equal(root.get(s), code)))
+                .orElse(null);
+    }
+
+    @Override
+    public void deleteById(long id) {
+        super.delete(id);
+    }
+
+    @Override
+    public void deleteByCode(String code) {
+        EntityContainer
+                .getCodeFieldNameByClazz(modelClazz)
+                .map(s ->
+                        entityManager
+                                .createQuery(String.format("DELETE FROM %s WHERE %s = ?1", modelClazz.getSimpleName(), s))
+                                .setParameter(1, code)
+                                .executeUpdate()
+                )
+                .orElse(null);
     }
 
     @Override
@@ -92,38 +159,45 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
     }
 
     @Override
-    public void enable(long id) {
-        changeStatus(id, true);
+    public void enableById(long id) {
+        changeStatus(id, null, true);
     }
 
     @Override
-    public void disable(long id) {
-        changeStatus(id, false);
+    public void enableByCode(String code) {
+        changeStatus(-1, code, true);
     }
 
-    private void changeStatus(long id, boolean status) {
-        Query q = entityManager.createQuery(String.format("UPDATE %s SET enable = ?1 WHERE id= ?2", modelClazz.getSimpleName()));
+    @Override
+    public void disableById(long id) {
+        changeStatus(id, null, false);
+    }
+
+    @Override
+    public void disableByCode(String code) {
+        changeStatus(-1, code, false);
+    }
+
+    @Override
+    public boolean existById(long id) {
+        return super.exists(id);
+    }
+
+    @Override
+    public boolean existByCode(String code) {
+        return (long) entityManager
+                .createQuery(String.format("SELECT count(1) FROM %s WHERE %s = ?1", modelClazz.getSimpleName(), EntityContainer.getCodeFieldNameByClazz(modelClazz).get()))
+                .setParameter(1, code)
+                .getResultList().get(0) > 0;
+    }
+
+    private void changeStatus(long id, String code, boolean status) {
+        String whereField = id == -1 ? EntityContainer.getCodeFieldNameByClazz(modelClazz).get() : "id";
+        Object whereValue = id == -1 ? code : id;
+        Query q = entityManager.createQuery(String.format("UPDATE %s SET enable = ?1 WHERE %s = ?2", modelClazz.getSimpleName(), whereField));
         q.setParameter(1, status);
-        q.setParameter(2, id);
+        q.setParameter(2, whereValue);
         q.executeUpdate();
-    }
-
-    @Override
-    public <S extends E> S save(S entity) {
-        if (entity instanceof SafeEntity) {
-            SafeEntity e = (SafeEntity) entity;
-            e.setCreateTime(new Date());
-            e.setUpdateTime(e.getCreateTime());
-            if (Dew.context().optInfo().isPresent()) {
-                e.setCreateUser(Dew.context().optInfo().get().getLoginId());
-                e.setUpdateUser(e.getCreateUser());
-            } else {
-                e.setCreateUser("");
-                e.setUpdateUser("");
-            }
-        }
-        entityManager.persist(entity);
-        return entity;
     }
 
 

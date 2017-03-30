@@ -19,8 +19,8 @@ public class SimpleServiceImpl<T extends DewRepository<E>, E extends IdEntity> i
 
     protected static final Logger logger = LoggerFactory.getLogger(SimpleServiceImpl.class);
 
-    protected Class<E> modelClazz = null;
-    protected boolean isStatusEntity = false;
+    private Class<E> modelClazz = null;
+    private boolean isStatusEntity = false;
 
     {
         modelClazz = (Class<E>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[1];
@@ -28,14 +28,24 @@ public class SimpleServiceImpl<T extends DewRepository<E>, E extends IdEntity> i
     }
 
     @Autowired
-    public T dewRepository;
+    private T dewRepository;
 
     @Override
-    public Resp<E> get(long id) throws RuntimeException {
-        logger.debug("[{}] Get:{}.", modelClazz.getSimpleName(), id);
-        Resp<Boolean> preResult = preGet(id);
+    public Resp<E> getById(long id) throws RuntimeException {
+        logger.debug("[{}] GetById:{}.", modelClazz.getSimpleName(), id);
+        Resp<Boolean> preResult = preGetById(id);
         if (preResult.ok()) {
-            return Resp.success(postGet(dewRepository.findOne(id)));
+            return Resp.success(postGet(dewRepository.getById(id)));
+        }
+        return Resp.customFail(preResult.getCode(), preResult.getMessage());
+    }
+
+    @Override
+    public Resp<E> getByCode(String code) throws RuntimeException {
+        logger.debug("[{}] GetByCode:{}.", modelClazz.getSimpleName(), code);
+        Resp<Boolean> preResult = preGetByCode(code);
+        if (preResult.ok()) {
+            return Resp.success(postGet(dewRepository.getByCode(code)));
         }
         return Resp.customFail(preResult.getCode(), preResult.getMessage());
     }
@@ -133,13 +143,13 @@ public class SimpleServiceImpl<T extends DewRepository<E>, E extends IdEntity> i
 
     @Override
     @Transactional
-    public Resp<Void> enable(long id) throws RuntimeException {
+    public Resp<Void> enableById(long id) throws RuntimeException {
         if (isStatusEntity) {
-            logger.debug("[{}] Enable:{}.", modelClazz.getSimpleName(), id);
-            Resp<Boolean> preResult = preEnable(id);
+            logger.debug("[{}] EnableById:{}.", modelClazz.getSimpleName(), id);
+            Resp<Boolean> preResult = preEnableById(id);
             if (preResult.ok()) {
-                dewRepository.enable(id);
-                postEnable(id);
+                dewRepository.enableById(id);
+                postEnableById(id);
                 return Resp.success(null);
             }
             return Resp.customFail(preResult.getCode(), preResult.getMessage());
@@ -150,13 +160,47 @@ public class SimpleServiceImpl<T extends DewRepository<E>, E extends IdEntity> i
 
     @Override
     @Transactional
-    public Resp<Void> disable(long id) throws RuntimeException {
+    public Resp<Void> enableByCode(String code) throws RuntimeException {
         if (isStatusEntity) {
-            logger.debug("[{}] Disable:{}.", modelClazz.getSimpleName(), id);
-            Resp<Boolean> preResult = preDisable(id);
+            logger.debug("[{}] EnableByCode:{}.", modelClazz.getSimpleName(), code);
+            Resp<Boolean> preResult = preEnableByCode(code);
             if (preResult.ok()) {
-                dewRepository.disable(id);
-                postDisable(id);
+                dewRepository.enableByCode(code);
+                postEnableByCode(code);
+                return Resp.success(null);
+            }
+            return Resp.customFail(preResult.getCode(), preResult.getMessage());
+        } else {
+            return Resp.notFound(modelClazz.getSimpleName() + "is not Status Entity");
+        }
+    }
+
+    @Override
+    @Transactional
+    public Resp<Void> disableById(long id) throws RuntimeException {
+        if (isStatusEntity) {
+            logger.debug("[{}] DisableById:{}.", modelClazz.getSimpleName(), id);
+            Resp<Boolean> preResult = preDisableById(id);
+            if (preResult.ok()) {
+                dewRepository.disableById(id);
+                postDisableById(id);
+                return Resp.success(null);
+            }
+            return Resp.customFail(preResult.getCode(), preResult.getMessage());
+        } else {
+            return Resp.notFound(modelClazz.getSimpleName() + "is not Status Entity");
+        }
+    }
+
+    @Override
+    @Transactional
+    public Resp<Void> disableByCode(String code) throws RuntimeException {
+        if (isStatusEntity) {
+            logger.debug("[{}] DisableByCode:{}.", modelClazz.getSimpleName(), code);
+            Resp<Boolean> preResult = preDisableByCode(code);
+            if (preResult.ok()) {
+                dewRepository.disableByCode(code);
+                postDisableByCode(code);
                 return Resp.success(null);
             }
             return Resp.customFail(preResult.getCode(), preResult.getMessage());
@@ -171,32 +215,82 @@ public class SimpleServiceImpl<T extends DewRepository<E>, E extends IdEntity> i
         logger.debug("[{}] Save.", modelClazz.getSimpleName());
         Resp<Boolean> preResult = preSave(entity);
         if (preResult.ok()) {
-            return Resp.success(dewRepository.save(entity));
+            return Resp.success(postSave(dewRepository.save(entity)));
         }
         return Resp.customFail(preResult.getCode(), preResult.getMessage());
     }
 
     @Override
     @Transactional
-    public Resp<E> update(long id, E entity) throws RuntimeException {
-        logger.debug("[{}] Update {}.", modelClazz.getSimpleName(), id);
-        Resp<Boolean> preResult = preUpdate(id, entity);
+    public Resp<E> updateById(long id, E entity) throws RuntimeException {
+        logger.debug("[{}] UpdateById:{}.", modelClazz.getSimpleName(), id);
+        Resp<Boolean> preResult = preUpdateById(id, entity);
         if (preResult.ok()) {
-            return Resp.success(dewRepository.update(id, entity));
+            return Resp.success(postUpdate(dewRepository.updateById(id, entity)));
         }
         return Resp.customFail(preResult.getCode(), preResult.getMessage());
     }
 
     @Override
     @Transactional
-    public Resp<Long> delete(long id) throws RuntimeException {
-        logger.debug("[{}] Delete:{}.", modelClazz.getSimpleName(), id);
-        Resp<Boolean> preResult = preDelete(id);
+    public Resp<E> updateByCode(String code, E entity) throws RuntimeException {
+        logger.debug("[{}] UpdateByCode:{}.", modelClazz.getSimpleName(), code);
+        Resp<Boolean> preResult = preUpdateByCode(code, entity);
         if (preResult.ok()) {
-            dewRepository.delete(id);
-            return Resp.success(postDelete(id));
+            return Resp.success(postUpdate(dewRepository.updateByCode(code, entity)));
         }
         return Resp.customFail(preResult.getCode(), preResult.getMessage());
     }
+
+    @Override
+    @Transactional
+    public Resp<Void> deleteById(long id) throws RuntimeException {
+        logger.debug("[{}] DeleteById:{}.", modelClazz.getSimpleName(), id);
+        Resp<Boolean> preResult = preDeleteById(id);
+        if (preResult.ok()) {
+            dewRepository.deleteById(id);
+            postDeleteById(id);
+            return Resp.success(null);
+        }
+        return Resp.customFail(preResult.getCode(), preResult.getMessage());
+    }
+
+    @Override
+    @Transactional
+    public Resp<Void> deleteByCode(String code) throws RuntimeException {
+        logger.debug("[{}] DeleteByCode:{}.", modelClazz.getSimpleName(), code);
+        Resp<Boolean> preResult = preDeleteByCode(code);
+        if (preResult.ok()) {
+            dewRepository.deleteByCode(code);
+            postDeleteByCode(code);
+            return Resp.success(null);
+        }
+        return Resp.customFail(preResult.getCode(), preResult.getMessage());
+    }
+
+    @Override
+    public Resp<Boolean> existById(long id) throws RuntimeException {
+        logger.debug("[{}] ExistById:{}.", modelClazz.getSimpleName(), id);
+        Resp<Boolean> preResult = preExistById(id);
+        if (preResult.ok()) {
+            boolean result = dewRepository.existById(id);
+            postExistById(id);
+            return Resp.success(result);
+        }
+        return Resp.customFail(preResult.getCode(), preResult.getMessage());
+    }
+
+    @Override
+    public Resp<Boolean> existByCode(String code) throws RuntimeException {
+        logger.debug("[{}] ExistByCode:{}.", modelClazz.getSimpleName(), code);
+        Resp<Boolean> preResult = preExistByCode(code);
+        if (preResult.ok()) {
+            boolean result = dewRepository.existByCode(code);
+            postExistByCode(code);
+            return Resp.success(result);
+        }
+        return Resp.customFail(preResult.getCode(), preResult.getMessage());
+    }
+
 }
 

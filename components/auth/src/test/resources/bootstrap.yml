@@ -5,7 +5,9 @@ dew:
     desc:
     webSite: www.ecfront.com
   doc:
-    basePackage: com.ecfront.dew
+    basePackage: ""
+  entity:
+    basePackages: ["com.a"]
 
 spring:
   redis:

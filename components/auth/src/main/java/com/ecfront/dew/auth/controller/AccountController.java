@@ -11,4 +11,5 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountController extends SimpleController<AccountService, Account> {
 
 
+
 }

@@ -1,5 +1,6 @@
 package com.ecfront.dew.auth.entity;
 
+import com.ecfront.dew.core.entity.Code;
 import com.ecfront.dew.core.entity.IdEntity;
 
 import javax.persistence.Column;
@@ -10,7 +11,8 @@ import javax.persistence.Table;
 @Table(name = "dew_resource")
 public class Resource extends IdEntity {
 
-    @Column(nullable = false)
+    @Code
+    @Column(nullable = false,unique = true)
     private String code;
     @Column(nullable = false)
     private String uri;

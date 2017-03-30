@@ -10,7 +10,11 @@ import java.util.List;
 
 public interface SimpleService<T extends DewRepository<E>, E extends IdEntity> {
 
-    default Resp<Boolean> preGet(long id) throws RuntimeException {
+    default Resp<Boolean> preGetById(long id) throws RuntimeException {
+        return Resp.success(true);
+    }
+
+    default Resp<Boolean> preGetByCode(String code) throws RuntimeException {
         return Resp.success(true);
     }
 
@@ -34,18 +38,46 @@ public interface SimpleService<T extends DewRepository<E>, E extends IdEntity> {
         return entities;
     }
 
-    default Resp<Boolean> preEnable(long id) throws RuntimeException {
+    default Resp<Boolean> preEnableById(long id) throws RuntimeException {
         return Resp.success(true);
     }
 
-    default void postEnable(long id) throws RuntimeException {
-    }
-
-    default Resp<Boolean> preDisable(long id) throws RuntimeException {
+    default Resp<Boolean> preEnableByCode(String code) throws RuntimeException {
         return Resp.success(true);
     }
 
-    default void postDisable(long id) throws RuntimeException {
+    default void postEnableById(long id) throws RuntimeException {
+    }
+
+    default void postEnableByCode(String code) throws RuntimeException {
+    }
+
+    default Resp<Boolean> preDisableById(long id) throws RuntimeException {
+        return Resp.success(true);
+    }
+
+    default void postDisableById(long id) throws RuntimeException {
+    }
+
+    default Resp<Boolean> preDisableByCode(String code) throws RuntimeException {
+        return Resp.success(true);
+    }
+
+    default void postDisableByCode(String code) throws RuntimeException {
+    }
+
+    default Resp<Boolean> preExistById(long id) throws RuntimeException {
+        return Resp.success(true);
+    }
+
+    default void postExistById(long id) throws RuntimeException {
+    }
+
+    default Resp<Boolean> preExistByCode(String code) throws RuntimeException {
+        return Resp.success(true);
+    }
+
+    default void postExistByCode(String code) throws RuntimeException {
     }
 
     default Resp<Boolean> preSave(E entity) throws RuntimeException {
@@ -56,23 +88,35 @@ public interface SimpleService<T extends DewRepository<E>, E extends IdEntity> {
         return entity;
     }
 
-    default Resp<Boolean> preUpdate(long id, E entity) throws RuntimeException {
+    default Resp<Boolean> preUpdateById(long id, E entity) throws RuntimeException {
         return Resp.success(true);
     }
 
-    default E postUpdate(long id, E entity) throws RuntimeException {
+    default Resp<Boolean> preUpdateByCode(String code, E entity) throws RuntimeException {
+        return Resp.success(true);
+    }
+
+    default E postUpdate(E entity) throws RuntimeException {
         return entity;
     }
 
-    default Resp<Boolean> preDelete(long id) throws RuntimeException {
+    default Resp<Boolean> preDeleteById(long id) throws RuntimeException {
         return Resp.success(true);
     }
 
-    default long postDelete(long id) throws RuntimeException {
-        return id;
+    default void postDeleteById(long id) throws RuntimeException {
     }
 
-    Resp<E> get(long id) throws RuntimeException;
+    default Resp<Boolean> preDeleteByCode(String code) throws RuntimeException {
+        return Resp.success(true);
+    }
+
+    default void postDeleteByCode(String code) throws RuntimeException {
+    }
+
+    Resp<E> getById(long id) throws RuntimeException;
+
+    Resp<E> getByCode(String code) throws RuntimeException;
 
     Resp<List<E>> find() throws RuntimeException;
 
@@ -92,13 +136,25 @@ public interface SimpleService<T extends DewRepository<E>, E extends IdEntity> {
 
     Resp<PageDTO<E>> pagingDisable(int pageNumber, int pageSize, Sort sort) throws RuntimeException;
 
-    Resp<Void> enable(long id) throws RuntimeException;
+    Resp<Void> enableById(long id) throws RuntimeException;
 
-    Resp<Void> disable(long id) throws RuntimeException;
+    Resp<Void> enableByCode(String code) throws RuntimeException;
+
+    Resp<Void> disableById(long id) throws RuntimeException;
+
+    Resp<Void> disableByCode(String code) throws RuntimeException;
 
     Resp<E> save(E entity) throws RuntimeException;
 
-    Resp<E> update(long id, E entity) throws RuntimeException;
+    Resp<E> updateById(long id, E entity) throws RuntimeException;
 
-    Resp<Long> delete(long id) throws RuntimeException;
+    Resp<E> updateByCode(String code, E entity) throws RuntimeException;
+
+    Resp<Void> deleteById(long id) throws RuntimeException;
+
+    Resp<Void> deleteByCode(String code) throws RuntimeException;
+
+    Resp<Boolean> existById(long id) throws RuntimeException;
+
+    Resp<Boolean> existByCode(String code) throws RuntimeException;
 }

@@ -1,5 +1,6 @@
 package com.ecfront.dew.auth.entity;
 
+import com.ecfront.dew.core.entity.Code;
 import com.ecfront.dew.core.entity.SafeStatusEntity;
 
 import javax.persistence.*;
@@ -9,7 +10,8 @@ import java.util.Set;
 @Table(name = "dew_account")
 public class Account extends SafeStatusEntity {
 
-    @Column(nullable = false)
+    @Code
+    @Column(nullable = false,unique = true)
     private String code;
     @Column(nullable = false)
     private String mobile;

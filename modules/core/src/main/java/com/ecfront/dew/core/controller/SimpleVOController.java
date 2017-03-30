@@ -76,8 +76,19 @@ public abstract class SimpleVOController<T extends SimpleServiceImpl, V extends 
     }
 
     @GetMapping("{id}")
-    public Resp<V> get(@PathVariable long id) {
-        Resp<E> result = simpleService.get(id);
+    public Resp<V> getById(@PathVariable long id) {
+        Resp<E> result = simpleService.getById(id);
+        if (result.ok()) {
+            V body = entityToVO(result.getBody());
+            return Resp.success(body);
+        } else {
+            return Resp.customFail(result.getCode(), result.getMessage());
+        }
+    }
+
+    @GetMapping("code/{code}")
+    public Resp<V> getByCode(@PathVariable String code) {
+        Resp<E> result = simpleService.getByCode(code);
         if (result.ok()) {
             V body = entityToVO(result.getBody());
             return Resp.success(body);
@@ -87,14 +98,25 @@ public abstract class SimpleVOController<T extends SimpleServiceImpl, V extends 
     }
 
     @GetMapping("{id}/enable")
-    public Resp<Void> enable(@PathVariable long id) {
-        return simpleService.enable(id);
+    public Resp<Void> enableById(@PathVariable long id) {
+        return simpleService.enableById(id);
     }
 
     @GetMapping("{id}/disable")
-    public Resp<Void> disable(@PathVariable long id) {
-        return simpleService.disable(id);
+    public Resp<Void> disableById(@PathVariable long id) {
+        return simpleService.disableById(id);
     }
+
+    @GetMapping("code/{code}/enable")
+    public Resp<Void> enableByCode(@PathVariable String code) {
+        return simpleService.enableByCode(code);
+    }
+
+    @GetMapping("code/{code}/disable")
+    public Resp<Void> disableByCode(@PathVariable String code) {
+        return simpleService.disableByCode(code);
+    }
+
 
     @PostMapping(value = "")
     public Resp<V> save(@RequestBody V vo) {
@@ -108,8 +130,19 @@ public abstract class SimpleVOController<T extends SimpleServiceImpl, V extends 
     }
 
     @PutMapping(value = "{id}")
-    public Resp<V> update(@PathVariable long id, @RequestBody V vo) {
-        Resp<E> result = simpleService.update(id, voToEntity(vo));
+    public Resp<V> updateById(@PathVariable long id, @RequestBody V vo) {
+        Resp<E> result = simpleService.updateById(id, voToEntity(vo));
+        if (result.ok()) {
+            V body = entityToVO(result.getBody());
+            return Resp.success(body);
+        } else {
+            return Resp.customFail(result.getCode(), result.getMessage());
+        }
+    }
+
+    @PutMapping(value = "code/{code}")
+    public Resp<V> updateByCode(@PathVariable String code, @RequestBody V vo) {
+        Resp<E> result = simpleService.updateByCode(code, voToEntity(vo));
         if (result.ok()) {
             V body = entityToVO(result.getBody());
             return Resp.success(body);
@@ -119,10 +152,14 @@ public abstract class SimpleVOController<T extends SimpleServiceImpl, V extends 
     }
 
     @DeleteMapping(value = "{id}")
-    public Resp<Object> delete(@PathVariable long id) {
-        return simpleService.delete(id);
+    public Resp<Void> deleteById(@PathVariable long id) {
+        return simpleService.deleteById(id);
     }
 
+    @DeleteMapping(value = "code/{code}")
+    public Resp<Void> deleteById(@PathVariable String code) {
+        return simpleService.deleteByCode(code);
+    }
 
 }
 

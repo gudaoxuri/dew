@@ -11,7 +11,17 @@ import java.util.List;
 @NoRepositoryBean
 public interface DewRepository<E extends IdEntity> extends JpaRepository<E, Long> {
 
-    E update(long id, E entity);
+    E updateById(long id, E entity);
+
+    E updateByCode(String code, E entity);
+
+    E getById(long id);
+
+    E getByCode(String code);
+
+    void deleteById(long id);
+
+    void deleteByCode(String code);
 
     List<E> findEnable();
 
@@ -23,9 +33,17 @@ public interface DewRepository<E extends IdEntity> extends JpaRepository<E, Long
 
     PageDTO<E> pagingDisable(int pageNumber, int pageSize, Sort sort);
 
-    void enable(long id);
+    void enableById(long id);
 
-    void disable(long id);
+    void enableByCode(String code);
+
+    void disableById(long id);
+
+    void disableByCode(String code);
+
+    boolean existById(long id);
+
+    boolean existByCode(String code);
 
 }
 

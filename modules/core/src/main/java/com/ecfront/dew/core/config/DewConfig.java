@@ -4,12 +4,16 @@ package com.ecfront.dew.core.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 @ConfigurationProperties(prefix = "dew")
 public class DewConfig {
 
     private DewBasic basic;
     private DewDoc doc;
+    private DewEntity entity;
 
     public static class DewBasic {
 
@@ -64,6 +68,25 @@ public class DewConfig {
         }
     }
 
+    public static class DewEntity {
+
+        private List<String> basePackages;
+
+        public List<String> getBasePackages() {
+            if(basePackages==null){
+                basePackages=new ArrayList<>();
+            }
+            if (!basePackages.contains("com.ecfront.dew")) {
+                basePackages.add("com.ecfront.dew");
+            }
+            return basePackages;
+        }
+
+        public void setBasePackages(List<String> basePackages) {
+            this.basePackages = basePackages;
+        }
+    }
+
     public DewBasic getBasic() {
         return basic;
     }
@@ -78,5 +101,13 @@ public class DewConfig {
 
     public void setDoc(DewDoc doc) {
         this.doc = doc;
+    }
+
+    public DewEntity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(DewEntity entity) {
+        this.entity = entity;
     }
 }

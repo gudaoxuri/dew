@@ -6,4 +6,5 @@ import java.io.Serializable;
 @MappedSuperclass
 public abstract class EmptyEntity implements Serializable {
 
+
 }
