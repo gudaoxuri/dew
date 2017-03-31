@@ -11,12 +11,12 @@ import java.util.List;
 
 public interface CRUSService<T extends DewRepository<E>, E extends IdEntity> extends CRUService<T, E> {
 
-    default Resp<Boolean> preEnableById(long id) throws RuntimeException {
-        return Resp.success(true);
+    default Resp<Void> preEnableById(long id) throws RuntimeException {
+        return Resp.success(null);
     }
 
-    default Resp<Boolean> preEnableByCode(String code) throws RuntimeException {
-        return Resp.success(true);
+    default Resp<Void> preEnableByCode(String code) throws RuntimeException {
+        return Resp.success(null);
     }
 
     default void postEnableById(long id) throws RuntimeException {
@@ -25,15 +25,15 @@ public interface CRUSService<T extends DewRepository<E>, E extends IdEntity> ext
     default void postEnableByCode(String code) throws RuntimeException {
     }
 
-    default Resp<Boolean> preDisableById(long id) throws RuntimeException {
-        return Resp.success(true);
+    default Resp<Void> preDisableById(long id) throws RuntimeException {
+        return Resp.success(null);
     }
 
     default void postDisableById(long id) throws RuntimeException {
     }
 
-    default Resp<Boolean> preDisableByCode(String code) throws RuntimeException {
-        return Resp.success(true);
+    default Resp<Void> preDisableByCode(String code) throws RuntimeException {
+        return Resp.success(null);
     }
 
     default void postDisableByCode(String code) throws RuntimeException {
@@ -41,7 +41,7 @@ public interface CRUSService<T extends DewRepository<E>, E extends IdEntity> ext
 
     default Resp<List<E>> findEnable() throws RuntimeException {
         logger.debug("[{}] FindEnable.", getModelClazz().getSimpleName());
-        Resp<Boolean> preResult = preFind();
+        Resp<Void> preResult = preFind();
         if (preResult.ok()) {
             return Resp.success(postFind(getDewRepository().findEnable()));
         }
@@ -50,7 +50,7 @@ public interface CRUSService<T extends DewRepository<E>, E extends IdEntity> ext
 
     default Resp<List<E>> findDisable() throws RuntimeException {
         logger.debug("[{}] FindDisable.", getModelClazz().getSimpleName());
-        Resp<Boolean> preResult = preFind();
+        Resp<Void> preResult = preFind();
         if (preResult.ok()) {
             return Resp.success(postFind(getDewRepository().findDisable()));
         }
@@ -63,7 +63,7 @@ public interface CRUSService<T extends DewRepository<E>, E extends IdEntity> ext
 
     default Resp<PageDTO<E>> pagingEnable(int pageNumber, int pageSize, Sort sort) throws RuntimeException {
         logger.debug("[{}] PagingEnable {} {} {}.", getModelClazz().getSimpleName(), pageNumber, pageSize, sort != null ? sort.toString() : "");
-        Resp<Boolean> preResult = prePaging();
+        Resp<Void> preResult = prePaging();
         if (preResult.ok()) {
             return Resp.success(postPaging(getDewRepository().pagingEnable(pageNumber, pageSize, sort)));
         }
@@ -76,7 +76,7 @@ public interface CRUSService<T extends DewRepository<E>, E extends IdEntity> ext
 
     default Resp<PageDTO<E>> pagingDisable(int pageNumber, int pageSize, Sort sort) throws RuntimeException {
         logger.debug("[{}] PagingDisable {} {} {}.", getModelClazz().getSimpleName(), pageNumber, pageSize, sort != null ? sort.toString() : "");
-        Resp<Boolean> preResult = prePaging();
+        Resp<Void> preResult = prePaging();
         if (preResult.ok()) {
             return Resp.success(postPaging(getDewRepository().pagingDisable(pageNumber, pageSize, sort)));
         }
@@ -86,49 +86,49 @@ public interface CRUSService<T extends DewRepository<E>, E extends IdEntity> ext
     @Transactional
     default Resp<Void> enableById(long id) throws RuntimeException {
         logger.debug("[{}] EnableById:{}.", getModelClazz().getSimpleName(), id);
-        Resp<Boolean> preResult = preEnableById(id);
+        Resp<Void> preResult = preEnableById(id);
         if (preResult.ok()) {
             getDewRepository().enableById(id);
             postEnableById(id);
             return Resp.success(null);
         }
-        return Resp.customFail(preResult.getCode(), preResult.getMessage());
+        return preResult;
     }
 
     @Transactional
     default Resp<Void> enableByCode(String code) throws RuntimeException {
         logger.debug("[{}] EnableByCode:{}.", getModelClazz().getSimpleName(), code);
-        Resp<Boolean> preResult = preEnableByCode(code);
+        Resp<Void> preResult = preEnableByCode(code);
         if (preResult.ok()) {
             getDewRepository().enableByCode(code);
             postEnableByCode(code);
             return Resp.success(null);
         }
-        return Resp.customFail(preResult.getCode(), preResult.getMessage());
+        return preResult;
     }
 
     @Transactional
     default Resp<Void> disableById(long id) throws RuntimeException {
         logger.debug("[{}] DisableById:{}.", getModelClazz().getSimpleName(), id);
-        Resp<Boolean> preResult = preDisableById(id);
+        Resp<Void> preResult = preDisableById(id);
         if (preResult.ok()) {
             getDewRepository().disableById(id);
             postDisableById(id);
             return Resp.success(null);
         }
-        return Resp.customFail(preResult.getCode(), preResult.getMessage());
+        return preResult;
     }
 
     @Transactional
     default Resp<Void> disableByCode(String code) throws RuntimeException {
         logger.debug("[{}] DisableByCode:{}.", getModelClazz().getSimpleName(), code);
-        Resp<Boolean> preResult = preDisableByCode(code);
+        Resp<Void> preResult = preDisableByCode(code);
         if (preResult.ok()) {
             getDewRepository().disableByCode(code);
             postDisableByCode(code);
             return Resp.success(null);
         }
-        return Resp.customFail(preResult.getCode(), preResult.getMessage());
+        return preResult;
     }
 
 }

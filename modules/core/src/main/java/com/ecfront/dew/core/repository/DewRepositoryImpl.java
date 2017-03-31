@@ -1,5 +1,6 @@
 package com.ecfront.dew.core.repository;
 
+import com.ecfront.dew.common.BeanHelper;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.dto.PageDTO;
 import com.ecfront.dew.core.entity.EntityContainer;
@@ -14,8 +15,10 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E, Long> implements DewRepository<E> {
 
@@ -36,6 +39,18 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
 
     @Override
     public <S extends E> S save(S entity) {
+        Optional<EntityContainer.EntityClassInfo> entityClassInfo = EntityContainer
+                .getCodeFieldNameByClazz(modelClazz);
+        if (entityClassInfo.isPresent() && entityClassInfo.get().codeFieldUUID) {
+            try {
+                Object code = BeanHelper.getValue(entity, entityClassInfo.get().codeFieldName);
+                if (code == null || ((String) code).isEmpty()) {
+                    BeanHelper.setValue(entity, entityClassInfo.get().codeFieldName, Dew.Util.createUUID());
+                }
+            } catch (NoSuchFieldException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
         if (entity instanceof SafeEntity) {
             SafeEntity e = (SafeEntity) entity;
             e.setCreateTime(new Date());
@@ -93,7 +108,7 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
         return EntityContainer
                 .getCodeFieldNameByClazz(modelClazz)
                 .map(s ->
-                        super.findOne((root, query, cb) -> cb.equal(root.get(s), code)))
+                        super.findOne((root, query, cb) -> cb.equal(root.get(s.codeFieldName), code)))
                 .orElse(null);
     }
 
@@ -192,7 +207,7 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
     }
 
     private void changeStatus(long id, String code, boolean status) {
-        String whereField = id == -1 ? EntityContainer.getCodeFieldNameByClazz(modelClazz).get() : "id";
+        String whereField = id == -1 ? EntityContainer.getCodeFieldNameByClazz(modelClazz).get().codeFieldName : "id";
         Object whereValue = id == -1 ? code : id;
         Query q = entityManager.createQuery(String.format("UPDATE %s SET enable = ?1 WHERE %s = ?2", modelClazz.getSimpleName(), whereField));
         q.setParameter(1, status);

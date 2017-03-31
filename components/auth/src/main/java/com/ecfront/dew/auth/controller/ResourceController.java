@@ -19,4 +19,5 @@ public class ResourceController implements CRUDController<ResourceService, Resou
         return resourceService;
     }
 
+
 }

@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class EntityContainer {
 
-    private static final Map<String, String> CODE_FIELD_NAMES = new ConcurrentHashMap<>();
+    private static final Map<String, EntityClassInfo> CODE_FIELD_NAMES = new ConcurrentHashMap<>();
 
     @Autowired
     private DewConfig dewConfig;
@@ -36,7 +36,11 @@ public class EntityContainer {
                                 add(Code.class);
                             }});
                     if (!codeFieldInfo.isEmpty()) {
-                        CODE_FIELD_NAMES.put(clazz.getName(), codeFieldInfo.keySet().toArray(new String[0])[0]);
+                        FieldInfo info = codeFieldInfo.values().toArray(new FieldInfo[0])[0];
+                        EntityClassInfo entityClassInfo = new EntityClassInfo();
+                        entityClassInfo.codeFieldName = info.getName();
+                        entityClassInfo.codeFieldUUID = ((Code) info.getAnnotations().stream().filter(i -> i.annotationType() == Code.class).findAny().get()).uuid();
+                        CODE_FIELD_NAMES.put(clazz.getName(), entityClassInfo);
                     } else {
                         CODE_FIELD_NAMES.put(clazz.getName(), null);
                     }
@@ -47,9 +51,13 @@ public class EntityContainer {
         });
     }
 
-    public static Optional<String> getCodeFieldNameByClazz(Class<?> clazz) {
+    public static Optional<EntityClassInfo> getCodeFieldNameByClazz(Class<?> clazz) {
         return Optional.ofNullable(CODE_FIELD_NAMES.get(clazz.getName()));
     }
 
+    public static class EntityClassInfo {
+        public String codeFieldName;
+        public boolean codeFieldUUID;
+    }
 
 }

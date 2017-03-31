@@ -10,8 +10,8 @@ import java.util.Set;
 @Table(name = "dew_role")
 public class Role extends IdEntity {
 
-    @Code
-    @Column(nullable = false,unique = true)
+    @Code(uuid = false)
+    @Column(nullable = false, unique = true)
     private String code;
     @Column(nullable = false)
     private String name;
@@ -22,6 +22,15 @@ public class Role extends IdEntity {
             joinColumns = {@JoinColumn(name = "role_code", referencedColumnName = "code")},
             inverseJoinColumns = {@JoinColumn(name = "resource_code", referencedColumnName = "code")})
     private Set<Resource> resources;
+
+    public static Role build(String code, String name, String tenantCode, Set<Resource> resources) {
+        Role role = new Role();
+        role.code = code;
+        role.name = name;
+        role.tenantCode = tenantCode;
+        role.resources = resources;
+        return role;
+    }
 
     public String getCode() {
         return code;

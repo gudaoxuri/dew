@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @Table(name = "dew_tenant")
 public class Tenant extends SafeStatusEntity {
 
-    @Code
+    @Code(uuid = false)
     @Column(nullable = false,unique = true)
     private String code;
     @Column(nullable = false)
@@ -20,6 +20,15 @@ public class Tenant extends SafeStatusEntity {
     private String image;
     @Column(nullable = false)
     private String category;
+
+    public static Tenant build(String code, String name) {
+        Tenant tenant=new Tenant();
+        tenant.setCode(code);
+        tenant.setName(name);
+        tenant.setImage("");
+        tenant.setCategory("");
+        return tenant;
+    }
 
     public String getCode() {
         return code;

@@ -11,11 +11,11 @@ import java.util.Set;
 public class Account extends SafeStatusEntity {
 
     @Code
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     private String code;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String mobile;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String email;
     @Column(nullable = false)
     private String password;
@@ -29,6 +29,17 @@ public class Account extends SafeStatusEntity {
             joinColumns = {@JoinColumn(name = "account_code", referencedColumnName = "code")},
             inverseJoinColumns = {@JoinColumn(name = "role_code", referencedColumnName = "code")})
     private Set<Role> roles;
+
+    public static Account build(String mobile, String email, String password, String tenantCode, Set<Role> roles) {
+        Account account = new Account();
+        account.mobile = mobile;
+        account.email = email;
+        account.password = password;
+        account.ext = "";
+        account.tenantCode = tenantCode;
+        account.roles = roles;
+        return account;
+    }
 
     public String getCode() {
         return code;

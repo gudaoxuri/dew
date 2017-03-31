@@ -2,7 +2,6 @@ package com.ecfront.dew.auth.service;
 
 import com.ecfront.dew.auth.entity.Resource;
 import com.ecfront.dew.auth.repository.ResourceRepository;
-import com.ecfront.dew.core.service.CRUService;
 import com.ecfront.dew.core.service.CRUDService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,5 +21,6 @@ public class ResourceService implements CRUDService<ResourceRepository, Resource
     public ResourceRepository getDewRepository() {
         return resourceRepository;
     }
+
 
 }

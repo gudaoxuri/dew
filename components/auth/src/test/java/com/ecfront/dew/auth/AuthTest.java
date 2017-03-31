@@ -1,6 +1,9 @@
 package com.ecfront.dew.auth;
 
 import com.ecfront.dew.auth.entity.Tenant;
+import com.ecfront.dew.auth.service.AccountService;
+import com.ecfront.dew.auth.service.ResourceService;
+import com.ecfront.dew.auth.service.RoleService;
 import com.ecfront.dew.auth.service.TenantService;
 import com.ecfront.dew.common.JsonHelper;
 import com.ecfront.dew.common.Resp;
@@ -34,6 +37,21 @@ public class AuthTest {
 
     @Autowired
     private TenantService tenantService;
+    @Autowired
+    private ResourceService resourceService;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private AccountService accountService;
+
+    @Test
+    public void testMange(){
+        // add 2 tenants
+
+        // add 3 resources
+        // add 2 roles
+        // add 3 accounts
+    }
 
     @Test
     public void testTenantById() throws Exception {
@@ -84,12 +102,6 @@ public class AuthTest {
         Assert.assertEquals(tenantPage.getObjects().size(), 0);
         // exist
         Assert.assertTrue(tenantService.existById(tenant.getId()).getBody());
-        // delete
-        testRestTemplate.delete("/auth/manage/tenant/" + tenant.getId());
-        tenantsR = testRestTemplate.getForObject("/auth/manage/tenant/", Resp.class);
-        Assert.assertEquals(((List) tenantsR.getBody()).size(), 0);
-        // exist
-        Assert.assertFalse(tenantService.existById(tenant.getId()).getBody());
     }
 
     @Test
@@ -120,11 +132,5 @@ public class AuthTest {
         Assert.assertTrue(tenant.getEnable());
         // exist
         Assert.assertTrue(tenantService.existByCode(tenant.getCode()).getBody());
-        // delete
-        testRestTemplate.delete("/auth/manage/tenant/code/" + tenant.getCode());
-        Resp tenantsR = testRestTemplate.getForObject("/auth/manage/tenant/", Resp.class);
-        Assert.assertEquals(((List) tenantsR.getBody()).size(), 0);
-        // exist
-        Assert.assertFalse(tenantService.existByCode(tenant.getCode()).getBody());
     }
 }

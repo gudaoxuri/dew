@@ -7,15 +7,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface CRUDService<T extends DewRepository<E>, E extends IdEntity> extends CRUService<T, E> {
 
-    default Resp<Boolean> preDeleteById(long id) throws RuntimeException {
-        return Resp.success(true);
+    default Resp<Void> preDeleteById(long id) throws RuntimeException {
+        return Resp.success(null);
     }
 
     default void postDeleteById(long id) throws RuntimeException {
     }
 
-    default Resp<Boolean> preDeleteByCode(String code) throws RuntimeException {
-        return Resp.success(true);
+    default Resp<Void> preDeleteByCode(String code) throws RuntimeException {
+        return Resp.success(null);
     }
 
     default void postDeleteByCode(String code) throws RuntimeException {
@@ -24,25 +24,25 @@ public interface CRUDService<T extends DewRepository<E>, E extends IdEntity> ext
     @Transactional
     default Resp<Void> deleteById(long id) throws RuntimeException {
         logger.debug("[{}] DeleteById:{}.", getModelClazz().getSimpleName(), id);
-        Resp<Boolean> preResult = preDeleteById(id);
+        Resp<Void> preResult = preDeleteById(id);
         if (preResult.ok()) {
             getDewRepository().deleteById(id);
             postDeleteById(id);
             return Resp.success(null);
         }
-        return Resp.customFail(preResult.getCode(), preResult.getMessage());
+        return preResult;
     }
 
     @Transactional
     default Resp<Void> deleteByCode(String code) throws RuntimeException {
         logger.debug("[{}] DeleteByCode:{}.", getModelClazz().getSimpleName(), code);
-        Resp<Boolean> preResult = preDeleteByCode(code);
+        Resp<Void> preResult = preDeleteByCode(code);
         if (preResult.ok()) {
             getDewRepository().deleteByCode(code);
             postDeleteByCode(code);
             return Resp.success(null);
         }
-        return Resp.customFail(preResult.getCode(), preResult.getMessage());
+        return preResult;
     }
 
 }
