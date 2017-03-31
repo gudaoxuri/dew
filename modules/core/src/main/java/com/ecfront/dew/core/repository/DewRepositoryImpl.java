@@ -201,7 +201,7 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
     @Override
     public boolean existByCode(String code) {
         return (long) entityManager
-                .createQuery(String.format("SELECT count(1) FROM %s WHERE %s = ?1", modelClazz.getSimpleName(), EntityContainer.getCodeFieldNameByClazz(modelClazz).get()))
+                .createQuery(String.format("SELECT count(1) FROM %s WHERE %s = ?1", modelClazz.getSimpleName(), EntityContainer.getCodeFieldNameByClazz(modelClazz).get().codeFieldName))
                 .setParameter(1, code)
                 .getResultList().get(0) > 0;
     }

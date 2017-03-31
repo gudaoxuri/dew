@@ -2,6 +2,7 @@ package com.ecfront.dew.core.repository;
 
 import com.ecfront.dew.core.dto.PageDTO;
 import com.ecfront.dew.core.entity.IdEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -44,6 +45,10 @@ public interface DewRepository<E extends IdEntity> extends JpaRepository<E, Long
     boolean existById(long id);
 
     boolean existByCode(String code);
+
+    default <E> PageDTO<E> pageConvert(Page<E> page) {
+        return PageDTO.build(page.getNumber(), page.getNumberOfElements(), page.getTotalElements(), page.getContent());
+    }
 
 }
 

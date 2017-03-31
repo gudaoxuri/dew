@@ -11,11 +11,11 @@ import javax.persistence.Table;
 @Table(name = "dew_resource")
 public class Resource extends IdEntity {
 
-    public static final String CATEGORY_DEFAULT="";
-    public static final String CATEGORY_MENU="menu";
+    public static final String CATEGORY_DEFAULT = "";
+    public static final String CATEGORY_MENU = "menu";
 
     @Code
-    @Column(nullable = false,unique = true)
+    @Column(nullable = false, unique = true)
     private String code;
     @Column(nullable = false)
     private String uri;
@@ -35,13 +35,13 @@ public class Resource extends IdEntity {
     private String tenantCode;
 
     public static Resource build(String uri, String method, String name, String tenantCode) {
-        Resource resource=new Resource();
+        Resource resource = new Resource();
         resource.uri = uri;
         resource.method = method;
         resource.name = name;
         resource.category = CATEGORY_DEFAULT;
-        resource.icon="";
-        resource.parentCode="";
+        resource.icon = "";
+        resource.parentCode = "";
         resource.tenantCode = tenantCode;
         return resource;
     }

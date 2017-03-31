@@ -9,6 +9,7 @@ import com.ecfront.dew.core.service.CRUSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -40,7 +41,7 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
     private static final String VIRTUAL_INFO_EMAIL = "@virtual.is";
 
     @Override
-    public Resp<Account> preSave(Account entity) throws RuntimeException {
+    public Resp<Optional<Object>> preSave(Account entity) throws RuntimeException {
         if ((entity.getLoginName() == null || entity.getLoginName().trim().isEmpty()) &&
                 (entity.getMobile() == null || entity.getMobile().trim().isEmpty()) &&
                 (entity.getEmail() == null || entity.getEmail().trim().isEmpty())) {
@@ -78,11 +79,11 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
         } else {
             entity.setEmail(VIRTUAL_INFO_PREFIX + entity.getCode() + VIRTUAL_INFO_EMAIL);
         }
-        return Resp.success(entity);
+        return Resp.success(Optional.empty());
     }
 
     @Override
-    public Resp<Account> preUpdateById(long id, Account entity) throws RuntimeException {
+    public Resp<Optional<Object>> preUpdateById(long id, Account entity) throws RuntimeException {
         if ((entity.getLoginName() == null || entity.getLoginName().trim().isEmpty()) &&
                 (entity.getMobile() == null || entity.getMobile().trim().isEmpty()) &&
                 (entity.getEmail() == null || entity.getEmail().trim().isEmpty())) {
@@ -119,11 +120,11 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
         } else {
             return Resp.badRequest("Email not empty.");
         }
-        return Resp.success(entity);
+        return Resp.success(Optional.empty());
     }
 
     @Override
-    public Resp<Account> preUpdateByCode(String code, Account entity) throws RuntimeException {
+    public Resp<Optional<Object>> preUpdateByCode(String code, Account entity) throws RuntimeException {
         if ((entity.getLoginName() == null || entity.getLoginName().trim().isEmpty()) &&
                 (entity.getMobile() == null || entity.getMobile().trim().isEmpty()) &&
                 (entity.getEmail() == null || entity.getEmail().trim().isEmpty())) {
@@ -160,7 +161,7 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
         } else {
             return Resp.badRequest("Email not empty.");
         }
-        return Resp.success(entity);
+        return Resp.success(Optional.empty());
     }
 
     public void addRoleCode(Account account, String roleCode) {

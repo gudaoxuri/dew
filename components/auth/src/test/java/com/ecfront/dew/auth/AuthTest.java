@@ -31,6 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootApplication
@@ -117,7 +118,20 @@ public class AuthTest {
         Assert.assertEquals(accounts.size(), 2);
         Assert.assertEquals(accounts.get(0).getRoles().size(), 2);
 
-        //
+        // delete role
+        roleService.deleteById(role1.getId());
+        account = accountService.getByCode(account0.getCode()).getBody();
+        Assert.assertEquals(account.getRoles().size(), 1);
+
+        // add menu resource
+        Resource resourceMenu = Resource.build("tab://xx", "*", "菜单示例", "");
+        resourceMenu.setCategory(Resource.CATEGORY_MENU);
+        resourceService.save(resourceMenu).getBody();
+        Map<String, List<Resource>> resources = resourceService.findByTenantCodeGroupByCategory(tenant2.getCode()).getBody();
+        Assert.assertEquals(resources.keySet().size(), 2);
+        Assert.assertEquals(resources.get(Resource.CATEGORY_DEFAULT).size(), 2);
+        Assert.assertEquals(resources.get(Resource.CATEGORY_MENU).size(), 1);
+
     }
 
     @Test
@@ -168,11 +182,11 @@ public class AuthTest {
         tenant = JsonHelper.toObject(tenantR.getBody(), Tenant.class);
         Assert.assertTrue(tenantR.ok() && tenant.getName().equals("默认租户1"));
         // disable
-        testRestTemplate.getForObject("/auth/manage/tenant/" + tenant.getId() + "/disable", Resp.class);
+        testRestTemplate.delete("/auth/manage/tenant/" + tenant.getId() + "/disable", Resp.class);
         tenant = JsonHelper.toObject(testRestTemplate.getForObject("/auth/manage/tenant/" + tenant.getId(), Resp.class).getBody(), Tenant.class);
         Assert.assertTrue(!tenant.getEnable());
         // enable
-        testRestTemplate.getForObject("/auth/manage/tenant/" + tenant.getId() + "/enable", Resp.class);
+        testRestTemplate.put("/auth/manage/tenant/" + tenant.getId() + "/enable", "", Resp.class);
         tenant = JsonHelper.toObject(testRestTemplate.getForObject("/auth/manage/tenant/" + tenant.getId(), Resp.class).getBody(), Tenant.class);
         Assert.assertTrue(tenant.getEnable());
         // find
@@ -219,11 +233,11 @@ public class AuthTest {
         tenant = JsonHelper.toObject(tenantR.getBody(), Tenant.class);
         Assert.assertTrue(tenantR.ok() && tenant.getName().equals("默认租户1"));
         // disable
-        testRestTemplate.getForObject("/auth/manage/tenant/code/" + tenant.getCode() + "/disable", Resp.class);
+        testRestTemplate.delete("/auth/manage/tenant/code/" + tenant.getCode() + "/disable", Resp.class);
         tenant = JsonHelper.toObject(testRestTemplate.getForObject("/auth/manage/tenant/code/" + tenant.getCode(), Resp.class).getBody(), Tenant.class);
         Assert.assertTrue(!tenant.getEnable());
         // enable
-        testRestTemplate.getForObject("/auth/manage/tenant/code/" + tenant.getCode() + "/enable", Resp.class);
+        testRestTemplate.put("/auth/manage/tenant/code/" + tenant.getCode() + "/enable", "", Resp.class);
         tenant = JsonHelper.toObject(testRestTemplate.getForObject("/auth/manage/tenant/code/" + tenant.getCode(), Resp.class).getBody(), Tenant.class);
         Assert.assertTrue(tenant.getEnable());
         // exist
