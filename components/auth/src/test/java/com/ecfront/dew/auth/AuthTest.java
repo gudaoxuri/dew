@@ -1,12 +1,20 @@
 package com.ecfront.dew.auth;
 
+import com.ecfront.dew.auth.entity.Account;
+import com.ecfront.dew.auth.entity.Resource;
+import com.ecfront.dew.auth.entity.Role;
 import com.ecfront.dew.auth.entity.Tenant;
+import com.ecfront.dew.auth.repository.AccountRepository;
+import com.ecfront.dew.auth.repository.ResourceRepository;
+import com.ecfront.dew.auth.repository.RoleRepository;
+import com.ecfront.dew.auth.repository.TenantRepository;
 import com.ecfront.dew.auth.service.AccountService;
 import com.ecfront.dew.auth.service.ResourceService;
 import com.ecfront.dew.auth.service.RoleService;
 import com.ecfront.dew.auth.service.TenantService;
 import com.ecfront.dew.common.JsonHelper;
 import com.ecfront.dew.common.Resp;
+import com.ecfront.dew.common.StandardCode;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.dto.PageDTO;
 import com.ecfront.dew.core.repository.DewRepositoryFactoryBean;
@@ -21,6 +29,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.HashSet;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -43,14 +52,101 @@ public class AuthTest {
     private RoleService roleService;
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private TenantRepository tenantRepository;
+    @Autowired
+    private ResourceRepository resourceRepository;
+    @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Test
-    public void testMange(){
+    public void testMange() {
+        tenantRepository.deleteAll();
+        resourceRepository.deleteAll();
+        roleRepository.deleteAll();
+        accountRepository.deleteAll();
         // add 2 tenants
-
+        Tenant tenant1 = tenantService.save(Tenant.build("测试租户1")).getBody();
+        Tenant tenant2 = tenantService.save(Tenant.build("测试租户2")).getBody();
         // add 3 resources
-        // add 2 roles
+        Resource resource0 = resourceService.save(Resource.build("/auth/manage/**", "*", "认证管理", "")).getBody();
+        Resource resource1 = resourceService.save(Resource.build("/app1/**", "*", "APP1", tenant1.getCode())).getBody();
+        Resource resource2 = resourceService.save(Resource.build("/app2/**", "*", "APP2", tenant2.getCode())).getBody();
+        // add 3 roles
+        Role role0 = roleService.save(Role.build("系统管理员", "", new HashSet<String>() {{
+            add(resource0.getCode());
+            add(resource1.getCode());
+            add(resource2.getCode());
+        }})).getBody();
+        Role role1 = roleService.save(Role.build("普通用户", tenant1.getCode(), new HashSet<String>() {{
+            add(resource1.getCode());
+        }})).getBody();
+        Role role2 = roleService.save(Role.build("普通用户", tenant2.getCode(), new HashSet<String>() {{
+            add(resource2.getCode());
+        }})).getBody();
         // add 3 accounts
+        Account account0 = accountService.save(Account.build("root", "", "", "123", "管理员", new HashSet<String>() {{
+            add(role0.getCode());
+        }})).getBody();
+        Account account1 = accountService.save(Account.build("abc", "", "", "123", "用户1", new HashSet<String>() {{
+            add(role1.getCode());
+        }})).getBody();
+        Account account2 = accountService.save(Account.build("root", "", "", "123", "用户2", new HashSet<String>() {{
+            add(role2.getCode());
+        }})).getBody();
+
+        // get role
+        Role role = roleService.getByCode(role0.getCode()).getBody();
+        Assert.assertEquals(role.getName(), "系统管理员");
+        Assert.assertEquals(role.getResources().size(), 3);
+
+        // update account
+        accountService.addRoleCode(account0, role1.getCode());
+        accountService.addRoleCode(account0, role2.getCode());
+        accountService.removeRoleCode(account0, role0.getCode());
+        accountService.updateByCode(account0.getCode(), account0);
+
+        // get account
+        Account account = accountService.getByCode(account0.getCode()).getBody();
+        Assert.assertEquals(account.getName(), "管理员");
+        Assert.assertEquals(account.getRoles().size(), 2);
+        // find account
+        List<Account> accounts = accountService.findEnable().getBody();
+        Assert.assertEquals(accounts.size(), 2);
+        Assert.assertEquals(accounts.get(0).getRoles().size(), 2);
+
+        //
+    }
+
+    @Test
+    public void testAccount() throws Exception {
+        accountRepository.deleteAll();
+        Resp<Account> account1R = accountService.save(Account.build("root", "", "", "123", "管理员", new HashSet<>()));
+        Assert.assertTrue(account1R.ok());
+        Resp<Account> account2R = accountService.save(Account.build("", "123", "", "123", "管理员", new HashSet<>()));
+        Assert.assertTrue(account2R.ok());
+        Resp<Account> account3R = accountService.save(Account.build("", "", "123@123.com", "123", "管理员", new HashSet<>()));
+        Assert.assertTrue(account3R.ok());
+        Resp<Account> account4R = accountService.save(Account.build("root1", "1234", "1234@123.com", "123", "管理员", new HashSet<>()));
+        Assert.assertTrue(account4R.ok());
+        Assert.assertEquals(accountService.save(Account.build("root", "", "", "123", "管理员", new HashSet<>())).getCode(), StandardCode.CONFLICT.toString());
+        Assert.assertEquals(accountService.save(Account.build("", "123", "", "123", "管理员", new HashSet<>())).getCode(), StandardCode.CONFLICT.toString());
+        Assert.assertEquals(accountService.save(Account.build("", "", "123@123.com", "123", "管理员", new HashSet<>())).getCode(), StandardCode.CONFLICT.toString());
+        Assert.assertEquals(accountService.save(Account.build("", "", "123@123", "123", "管理员", new HashSet<>())).getCode(), StandardCode.BAD_REQUEST.toString());
+
+        Assert.assertTrue(accountService.updateByCode(account1R.getBody().getCode(), account1R.getBody()).ok());
+        account1R.getBody().setLoginName("new_root");
+        Assert.assertTrue(accountService.updateByCode(account1R.getBody().getCode(), account1R.getBody()).ok());
+
+        Assert.assertTrue(accountService.updateByCode(account2R.getBody().getCode(), account2R.getBody()).ok());
+        account2R.getBody().setMobile("0123");
+        Assert.assertTrue(accountService.updateByCode(account2R.getBody().getCode(), account2R.getBody()).ok());
+
+        Assert.assertTrue(accountService.updateByCode(account3R.getBody().getCode(), account3R.getBody()).ok());
+        account3R.getBody().setEmail("0123@123.com");
+        Assert.assertTrue(accountService.updateByCode(account3R.getBody().getCode(), account3R.getBody()).ok());
     }
 
     @Test

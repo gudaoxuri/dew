@@ -2,6 +2,7 @@ package com.ecfront.dew.core.interceptor;
 
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.DewContext;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,4 +19,5 @@ public class DewHandlerInterceptor extends HandlerInterceptorAdapter {
         DewContext.setContext(context);
         return super.preHandle(request, response, handler);
     }
+
 }

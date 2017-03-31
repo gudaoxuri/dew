@@ -60,6 +60,7 @@ public class Dew {
 
     /**
      * 常用服务——分布式锁
+     *
      * @param key
      * @return
      */
@@ -81,6 +82,7 @@ public class Dew {
 
     /**
      * 获取请求上下文信息
+     *
      * @return 请求上下文信息
      */
     public static DewContext context() {
@@ -192,6 +194,12 @@ public class Dew {
                 return requestHeader.get("x-forwarded-host");
             }
             return remoteAddr;
+        }
+
+        private static final String REGEX_EMAIL = "\\w+(\\.\\w)*@\\w+(\\.\\w{2,3}){1,3}";
+
+        public static boolean checkEmail(String email) {
+            return email.matches(REGEX_EMAIL);
         }
     }
 

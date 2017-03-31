@@ -5,14 +5,17 @@ import com.ecfront.dew.core.entity.SafeStatusEntity;
 
 import javax.persistence.*;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "dew_account")
 public class Account extends SafeStatusEntity {
 
     @Code
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String code;
+    @Column(nullable = false, unique = true)
+    private String loginName;
     @Column(nullable = false, unique = true)
     private String mobile;
     @Column(nullable = false, unique = true)
@@ -20,24 +23,29 @@ public class Account extends SafeStatusEntity {
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)
+    private String name;
+    @Column(nullable = false)
     @Lob
     private String ext;
-    @Column(nullable = false)
-    private String tenantCode;
-    @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "dew_rel_account_role",
             joinColumns = {@JoinColumn(name = "account_code", referencedColumnName = "code")},
             inverseJoinColumns = {@JoinColumn(name = "role_code", referencedColumnName = "code")})
     private Set<Role> roles;
 
-    public static Account build(String mobile, String email, String password, String tenantCode, Set<Role> roles) {
+    public static Account build(String loginName, String mobile, String email, String password, String name, Set<String> roleCodes) {
         Account account = new Account();
+        account.loginName = loginName;
         account.mobile = mobile;
         account.email = email;
         account.password = password;
+        account.name = name;
         account.ext = "";
-        account.tenantCode = tenantCode;
-        account.roles = roles;
+        account.roles = roleCodes.stream().map(c -> {
+            Role role = new Role();
+            role.setCode(c);
+            return role;
+        }).collect(Collectors.toSet());
         return account;
     }
 
@@ -81,12 +89,20 @@ public class Account extends SafeStatusEntity {
         this.ext = ext;
     }
 
-    public String getTenantCode() {
-        return tenantCode;
+    public String getLoginName() {
+        return loginName;
     }
 
-    public void setTenantCode(String tenantCode) {
-        this.tenantCode = tenantCode;
+    public void setLoginName(String loginName) {
+        this.loginName = loginName;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Set<Role> getRoles() {
