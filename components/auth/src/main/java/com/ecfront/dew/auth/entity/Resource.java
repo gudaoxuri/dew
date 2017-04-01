@@ -2,6 +2,7 @@ package com.ecfront.dew.auth.entity;
 
 import com.ecfront.dew.core.entity.Code;
 import com.ecfront.dew.core.entity.IdEntity;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,22 +16,31 @@ public class Resource extends IdEntity {
     public static final String CATEGORY_MENU = "menu";
 
     @Code
+    @ApiModelProperty("编码")
     @Column(nullable = false, unique = true)
     private String code;
+    @ApiModelProperty("URL")
     @Column(nullable = false)
     private String uri;
+    @ApiModelProperty(value = "方法名", notes = "*表示所有方法")
     @Column(nullable = false)
     private String method;
+    @ApiModelProperty("显示名称")
     @Column(nullable = false)
     private String name;
+    @ApiModelProperty(value = "类别", notes = "为空表示表示默认类型，menu表示菜单类型")
     @Column(nullable = false)
     private String category;
+    @ApiModelProperty("显示图标")
     @Column(nullable = false)
     private String icon;
+    @ApiModelProperty("父编码")
     @Column(nullable = false)
     private String parentCode;
+    @ApiModelProperty("显示排序")
     @Column(nullable = false)
     private int sort;
+    @ApiModelProperty("租户编码")
     @Column(nullable = false)
     private String tenantCode;
 

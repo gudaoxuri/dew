@@ -2,6 +2,7 @@ package com.ecfront.dew.auth.entity;
 
 import com.ecfront.dew.core.entity.Code;
 import com.ecfront.dew.core.entity.SafeStatusEntity;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,12 +13,16 @@ import javax.persistence.Table;
 public class Tenant extends SafeStatusEntity {
 
     @Code
+    @ApiModelProperty("编码")
     @Column(nullable = false,unique = true)
     private String code;
+    @ApiModelProperty("显示名称")
     @Column(nullable = false)
     private String name;
+    @ApiModelProperty("图片")
     @Column(nullable = false)
     private String image;
+    @ApiModelProperty("分类")
     @Column(nullable = false)
     private String category;
 

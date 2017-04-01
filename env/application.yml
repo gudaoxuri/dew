@@ -7,7 +7,7 @@ dew:
   doc:
     basePackage: "com.ecfront"
   entity:
-    basePackages: []
+    basePackages: [""]
 
 spring:
   jpa:

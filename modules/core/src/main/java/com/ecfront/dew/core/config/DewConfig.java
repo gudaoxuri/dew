@@ -76,6 +76,9 @@ public class DewConfig {
             if(basePackages==null){
                 basePackages=new ArrayList<>();
             }
+            if(basePackages.contains("")){
+                basePackages.remove("");
+            }
             if (!basePackages.contains("com.ecfront.dew")) {
                 basePackages.add("com.ecfront.dew");
             }

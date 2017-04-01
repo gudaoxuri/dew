@@ -2,6 +2,7 @@ package com.ecfront.dew.auth.entity;
 
 import com.ecfront.dew.core.entity.Code;
 import com.ecfront.dew.core.entity.SafeStatusEntity;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -13,21 +14,29 @@ public class Account extends SafeStatusEntity {
 
     @Code
     @Column(nullable = false)
+    @ApiModelProperty("编码")
     private String code;
+    @ApiModelProperty("登录名")
     @Column(nullable = false, unique = true)
     private String loginName;
+    @ApiModelProperty("手机号")
     @Column(nullable = false, unique = true)
     private String mobile;
+    @ApiModelProperty("邮箱")
     @Column(nullable = false, unique = true)
     private String email;
+    @ApiModelProperty("密码")
     @Column(nullable = false)
     private String password;
+    @ApiModelProperty("姓名")
     @Column(nullable = false)
     private String name;
+    @ApiModelProperty(value = "扩展信息",notes = "Json格式")
     @Column(nullable = false)
     @Lob
     private String ext;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ApiModelProperty("对应的角色列表")
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "dew_rel_account_role",
             joinColumns = {@JoinColumn(name = "account_code", referencedColumnName = "code")},
             inverseJoinColumns = {@JoinColumn(name = "role_code", referencedColumnName = "code")})

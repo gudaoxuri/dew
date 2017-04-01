@@ -5,7 +5,7 @@ dew:
     desc:
     webSite: www.ecfront.com
   doc:
-    basePackage: ""
+    basePackage: "com.ecfront.dew.auth.controller"
   entity:
     basePackages: ["com.a"]
 
@@ -26,3 +26,9 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     tomcat:
       max-wait: 24000
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: dew
+    password: 123
+    virtual-host: dew

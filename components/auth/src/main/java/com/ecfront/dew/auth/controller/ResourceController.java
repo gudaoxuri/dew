@@ -4,6 +4,7 @@ import com.ecfront.dew.auth.entity.Resource;
 import com.ecfront.dew.auth.service.ResourceService;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.core.controller.CRUDController;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@Api("资源管理")
 @RequestMapping(value = "/auth/manage/resource/")
 public class ResourceController implements CRUDController<ResourceService, Resource> {
 

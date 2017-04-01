@@ -2,6 +2,7 @@ package com.ecfront.dew.auth.entity;
 
 import com.ecfront.dew.core.entity.Code;
 import com.ecfront.dew.core.entity.IdEntity;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -12,13 +13,17 @@ import java.util.stream.Collectors;
 public class Role extends IdEntity {
 
     @Code
+    @ApiModelProperty("编码")
     @Column(nullable = false)
     private String code;
+    @ApiModelProperty("显示名称")
     @Column(nullable = false)
     private String name;
+    @ApiModelProperty("租户编码")
     @Column(nullable = false)
     private String tenantCode;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ApiModelProperty("对应的资源列表")
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "dew_rel_role_resource",
             joinColumns = {@JoinColumn(name = "role_code", referencedColumnName = "code")},
             inverseJoinColumns = {@JoinColumn(name = "resource_code", referencedColumnName = "code")})

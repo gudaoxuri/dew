@@ -15,7 +15,7 @@ public interface CRUDVOController<T extends CRUDService, V extends Object, E ext
     @DeleteMapping(value = "{id}")
     @ApiOperation(value = "根据ID删除记录")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "记录ID", required = true),
+            @ApiImplicitParam(name = "id", value = "记录ID", paramType = "path", dataType = "int", required = true),
     })
     default Resp<Void> deleteById(@PathVariable long id) {
         return getDewService().deleteById(id);
@@ -24,7 +24,7 @@ public interface CRUDVOController<T extends CRUDService, V extends Object, E ext
     @DeleteMapping(value = "code/{code}")
     @ApiOperation(value = "根据Code删除记录", notes = "记录实体必须存在@Code注解")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "code", value = "记录Code", required = true),
+            @ApiImplicitParam(name = "code", value = "记录Code", paramType = "path", dataType = "string", required = true),
     })
     default Resp<Void> deleteById(@PathVariable String code) {
         return getDewService().deleteByCode(code);

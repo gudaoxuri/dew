@@ -6,6 +6,7 @@ import com.ecfront.dew.core.dist.RedisLockService;
 import com.ecfront.dew.core.fun.VoidExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -57,6 +58,10 @@ public class Dew {
      * 常用服务——Redis
      */
     public static RedisTemplate<String, String> redis;
+    /**
+     * 常用服务——MQ
+     */
+    public static AmqpTemplate amqpTemplate;
 
     /**
      * 常用服务——分布式锁
@@ -71,6 +76,11 @@ public class Dew {
     @Autowired
     private void setRedis(RedisTemplate<String, String> redis) {
         Dew.redis = redis;
+    }
+
+    @Autowired
+    private void setAmqpTemplate(AmqpTemplate amqpTemplate) {
+        Dew.amqpTemplate = amqpTemplate;
     }
 
     public static ApplicationContext applicationContext;

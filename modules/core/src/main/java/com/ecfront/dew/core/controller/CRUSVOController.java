@@ -18,7 +18,7 @@ public interface CRUSVOController<T extends CRUSService, V extends Object, E ext
     @GetMapping(value = "", params = {"enable"})
     @ApiOperation(value = "根据状态获取记录列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "enable", value = "状态", paramType = "boolean", required = false),
+            @ApiImplicitParam(name = "enable", value = "状态", paramType = "path", dataType = "boolean"),
     })
     default Resp<List<V>> findByStatus(@RequestParam(required = false) Boolean enable) {
         Resp<List<E>> result;
@@ -40,9 +40,9 @@ public interface CRUSVOController<T extends CRUSService, V extends Object, E ext
     @GetMapping(value = "{pageNumber}/{pageSize}", params = {"enable"})
     @ApiOperation(value = "根据状态获取记录分页列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "pageNumber", value = "当前页（从0开始）", required = true),
-            @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", required = true),
-            @ApiImplicitParam(name = "enable", value = "状态", paramType = "boolean", required = false),
+            @ApiImplicitParam(name = "pageNumber", value = "当前页（从0开始）", paramType = "path", dataType = "int", required = true),
+            @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", paramType = "path", dataType = "int", required = true),
+            @ApiImplicitParam(name = "enable", value = "状态", paramType = "query", dataType = "boolean"),
     })
     default Resp<PageDTO<V>> pagingByStatus(@PathVariable int pageNumber, @PathVariable int pageSize, @RequestParam(required = false) Boolean enable) {
         Resp<PageDTO<E>> result;
@@ -66,7 +66,7 @@ public interface CRUSVOController<T extends CRUSService, V extends Object, E ext
     @PutMapping("{id}/enable")
     @ApiOperation(value = "根据ID启用记录")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "记录ID", required = true),
+            @ApiImplicitParam(name = "id", value = "记录ID", paramType = "path", dataType = "int", required = true),
     })
     default Resp<Void> enableById(@PathVariable long id) {
         return getDewService().enableById(id);
@@ -75,7 +75,7 @@ public interface CRUSVOController<T extends CRUSService, V extends Object, E ext
     @DeleteMapping("{id}/disable")
     @ApiOperation(value = "根据ID禁用记录")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "记录ID", required = true),
+            @ApiImplicitParam(name = "id", value = "记录ID", paramType = "path", dataType = "int", required = true),
     })
     default Resp<Void> disableById(@PathVariable long id) {
         return getDewService().disableById(id);
@@ -84,7 +84,7 @@ public interface CRUSVOController<T extends CRUSService, V extends Object, E ext
     @PutMapping("code/{code}/enable")
     @ApiOperation(value = "根据Code启用记录", notes = "记录实体必须存在@Code注解")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "code", value = "记录Code", required = true),
+            @ApiImplicitParam(name = "code", value = "记录Code", paramType = "path", dataType = "string", required = true),
     })
     default Resp<Void> enableByCode(@PathVariable String code) {
         return getDewService().enableByCode(code);
@@ -93,7 +93,7 @@ public interface CRUSVOController<T extends CRUSService, V extends Object, E ext
     @DeleteMapping("code/{code}/disable")
     @ApiOperation(value = "根据Code禁用记录", notes = "记录实体必须存在@Code注解")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "code", value = "记录Code", required = true),
+            @ApiImplicitParam(name = "code", value = "记录Code", paramType = "path", dataType = "string", required = true),
     })
     default Resp<Void> disableByCode(@PathVariable String code) {
         return getDewService().disableByCode(code);
