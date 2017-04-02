@@ -56,12 +56,12 @@ public class AuthFilter extends ZuulFilter {
             return null;
         }
         try {
-            String token = request.getParameter(Dew.VIEW_TOKEN_FLAG);
+            String token = request.getParameter(Dew.TOKEN_VIEW_FLAG);
             if (token == null) {
-                return filterHit(ctx, Resp.unAuthorized("【token】not exist，Request parameter must include【" + Dew.VIEW_TOKEN_FLAG + "】"));
+                return filterHit(ctx, Resp.unAuthorized("【token】not exist，Request parameter must include【" + Dew.TOKEN_VIEW_FLAG + "】"));
             }
             // 根据token获取EZ_Token_Info
-            String optInfoStr = Dew.redis.opsForValue().get(Dew.TOKEN_INFO_FLAG + token);
+            String optInfoStr = Dew.cache.opsForValue().get(Dew.TOKEN_INFO_FLAG + token);
             if (optInfoStr == null) {
                 return filterHit(ctx, Resp.unAuthorized("Token NOT exist"));
             }

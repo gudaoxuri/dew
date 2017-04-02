@@ -17,7 +17,7 @@ public class DewContext {
             return innerOptInfo;
         }
         if (token != null && !token.isEmpty()) {
-            String result = Dew.redis.opsForValue().get(Dew.TOKEN_INFO_FLAG + token);
+            String result = Dew.Service.cache.opsForValue().get(Dew.Constant.TOKEN_INFO_FLAG + token);
             if (result != null && !result.isEmpty()) {
                 innerOptInfo = Optional.of(JsonHelper.toObject(result, OptInfo.class));
             } else {

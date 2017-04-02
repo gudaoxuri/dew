@@ -2,6 +2,7 @@ package com.ecfront.dew.auth.entity;
 
 import com.ecfront.dew.core.entity.Code;
 import com.ecfront.dew.core.entity.SafeStatusEntity;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
@@ -10,15 +11,16 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "dew_account")
+@ApiModel("账号实体")
 public class Account extends SafeStatusEntity {
 
     @Code
     @Column(nullable = false)
     @ApiModelProperty("编码")
     private String code;
-    @ApiModelProperty("登录名")
+    @ApiModelProperty("登录ID")
     @Column(nullable = false, unique = true)
-    private String loginName;
+    private String loginId;
     @ApiModelProperty("手机号")
     @Column(nullable = false, unique = true)
     private String mobile;
@@ -42,9 +44,9 @@ public class Account extends SafeStatusEntity {
             inverseJoinColumns = {@JoinColumn(name = "role_code", referencedColumnName = "code")})
     private Set<Role> roles;
 
-    public static Account build(String loginName, String mobile, String email, String password, String name, Set<String> roleCodes) {
+    public static Account build(String loginId, String mobile, String email, String password, String name, Set<String> roleCodes) {
         Account account = new Account();
-        account.loginName = loginName;
+        account.loginId = loginId;
         account.mobile = mobile;
         account.email = email;
         account.password = password;
@@ -98,12 +100,12 @@ public class Account extends SafeStatusEntity {
         this.ext = ext;
     }
 
-    public String getLoginName() {
-        return loginName;
+    public String getLoginId() {
+        return loginId;
     }
 
-    public void setLoginName(String loginName) {
-        this.loginName = loginName;
+    public void setLoginId(String loginId) {
+        this.loginId = loginId;
     }
 
     public String getName() {

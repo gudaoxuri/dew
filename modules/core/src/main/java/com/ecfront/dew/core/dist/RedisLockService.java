@@ -67,9 +67,9 @@ public class RedisLockService implements LockService {
         if (isLock()) {
             throw new Exception("[Dist] Lock key: " + key + " exist!");
         }
-        Dew.redis.opsForValue().set(key, currThreadId);
+        Dew.Service.cache.opsForValue().set(key, currThreadId);
         if (leaseMilliSec != -1) {
-            Dew.redis.expire(key, leaseMilliSec, TimeUnit.MILLISECONDS);
+            Dew.Service.cache.expire(key, leaseMilliSec, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -110,8 +110,8 @@ public class RedisLockService implements LockService {
 
     @Override
     public boolean unLock() {
-        if (currThreadId.equals(Dew.redis.opsForValue().get(key))) {
-            Dew.redis.delete(key);
+        if (currThreadId.equals(Dew.Service.cache.opsForValue().get(key))) {
+            Dew.Service.cache.delete(key);
             return true;
         } else {
             return false;
@@ -120,6 +120,6 @@ public class RedisLockService implements LockService {
 
     @Override
     public boolean isLock() {
-        return Dew.redis.hasKey(key);
+        return Dew.Service.cache.hasKey(key);
     }
 }

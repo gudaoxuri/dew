@@ -14,7 +14,7 @@ public class LockTest {
 
     @Test
     public void testLock() throws Exception {
-        LockService lock = Dew.lock("abc");
+        LockService lock = Dew.Service.lock("abc");
         Assert.assertTrue(!lock.isLock());
         lock.lock();
         Assert.assertTrue(lock.isLock());

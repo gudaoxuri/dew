@@ -12,15 +12,15 @@ import java.util.List;
 public class DewConfig {
 
     private DewBasic basic;
-    private DewDoc doc;
-    private DewEntity entity;
 
     public static class DewBasic {
 
         private String name;
-        private String version;
+        private String version = "1.0";
         private String desc;
         private String webSite;
+        private DewDoc doc = new DewDoc();
+        private DewEntity entity = new DewEntity();
 
         public String getName() {
             return name;
@@ -53,40 +53,49 @@ public class DewConfig {
         public void setWebSite(String webSite) {
             this.webSite = webSite;
         }
-    }
 
-    public static class DewDoc {
+        public static class DewDoc {
 
-        private String basePackage;
+            private String basePackage;
 
-        public String getBasePackage() {
-            return basePackage;
+            public String getBasePackage() {
+                return basePackage;
+            }
+
+            public void setBasePackage(String basePackage) {
+                this.basePackage = basePackage;
+            }
         }
 
-        public void setBasePackage(String basePackage) {
-            this.basePackage = basePackage;
-        }
-    }
+        public static class DewEntity {
 
-    public static class DewEntity {
+            private List<String> basePackages = new ArrayList<String>() {{
+                add("com.ecfront.dew");
+            }};
 
-        private List<String> basePackages;
+            public List<String> getBasePackages() {
+                return basePackages;
+            }
 
-        public List<String> getBasePackages() {
-            if(basePackages==null){
-                basePackages=new ArrayList<>();
+            public void setBasePackages(List<String> basePackages) {
+                this.basePackages = basePackages;
             }
-            if(basePackages.contains("")){
-                basePackages.remove("");
-            }
-            if (!basePackages.contains("com.ecfront.dew")) {
-                basePackages.add("com.ecfront.dew");
-            }
-            return basePackages;
         }
 
-        public void setBasePackages(List<String> basePackages) {
-            this.basePackages = basePackages;
+        public DewDoc getDoc() {
+            return doc;
+        }
+
+        public void setDoc(DewDoc doc) {
+            this.doc = doc;
+        }
+
+        public DewEntity getEntity() {
+            return entity;
+        }
+
+        public void setEntity(DewEntity entity) {
+            this.entity = entity;
         }
     }
 
@@ -98,19 +107,4 @@ public class DewConfig {
         this.basic = basic;
     }
 
-    public DewDoc getDoc() {
-        return doc;
-    }
-
-    public void setDoc(DewDoc doc) {
-        this.doc = doc;
-    }
-
-    public DewEntity getEntity() {
-        return entity;
-    }
-
-    public void setEntity(DewEntity entity) {
-        this.entity = entity;
-    }
 }

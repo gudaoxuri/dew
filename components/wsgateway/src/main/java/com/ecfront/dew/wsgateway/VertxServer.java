@@ -3,7 +3,6 @@ package com.ecfront.dew.wsgateway;
 import com.ecfront.dew.core.Dew;
 import io.vertx.core.*;
 import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.HttpServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +80,7 @@ public class VertxServer extends AbstractVerticle {
                             params.put(i[0], i[1]);
                         }
                 );
-                String token = params.get(Dew.VIEW_TOKEN_FLAG);
+                String token = params.get(Dew.Constant.TOKEN_VIEW_FLAG);
                 if (token != null && !token.isEmpty()) {
                     WSPushManager.add(token, ws);
                     ws.frameHandler(wf ->
@@ -115,7 +114,7 @@ public class VertxServer extends AbstractVerticle {
                             params.put(i[0], i[1]);
                         }
                 );
-                String token = params.containsKey(Dew.VIEW_TOKEN_FLAG) ? params.get(Dew.VIEW_TOKEN_FLAG) : null;
+                String token = params.containsKey(Dew.Constant.TOKEN_VIEW_FLAG) ? params.get(Dew.Constant.TOKEN_VIEW_FLAG) : null;
                 http.bodyHandler(data -> {
                     String result = data.getString(0, data.length());
                     if (token != null && !token.isEmpty()) {

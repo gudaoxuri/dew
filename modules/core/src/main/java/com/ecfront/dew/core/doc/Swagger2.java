@@ -35,7 +35,7 @@ public class Swagger2 {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage(dewConfig.getDoc().getBasePackage()))
+                .apis(RequestHandlerSelectors.basePackage(dewConfig.getBasic().getDoc().getBasePackage()))
                 .paths(PathSelectors.any())
                 .build()
                 .useDefaultResponseMessages(true)
@@ -55,7 +55,7 @@ public class Swagger2 {
                 }})
                 .globalOperationParameters(new ArrayList<Parameter>() {{
                     new ParameterBuilder()
-                            .name(Dew.VIEW_TOKEN_FLAG)
+                            .name(Dew.Constant.TOKEN_VIEW_FLAG)
                             .description("token")
                             .modelRef(new ModelRef("string"))
                             .parameterType("query")

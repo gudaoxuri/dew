@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@Api("资源管理")
+@Api(value = "资源管理",description = "资源信息管理")
 @RequestMapping(value = "/auth/manage/resource/")
 public class ResourceController implements CRUDController<ResourceService, Resource> {
 

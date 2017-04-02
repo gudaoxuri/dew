@@ -4,10 +4,11 @@ dew:
     version: 1.0
     desc:
     webSite: www.ecfront.com
-  doc:
-    basePackage: "com.ecfront.dew.auth.controller"
-  entity:
-    basePackages: ["com.a"]
+    doc:
+      basePackage: "com.ecfront.dew.auth.controller"
+  auth:
+    encryptSalt: sfa@#R#DDFFS
+
 
 spring:
   redis:
@@ -17,6 +18,7 @@ spring:
   jpa:
     properties:
       hibernate:
+        enable_lazy_load_no_trans: true
         hbm2ddl:
           auto: update
   datasource:

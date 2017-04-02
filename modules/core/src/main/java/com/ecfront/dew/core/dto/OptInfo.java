@@ -1,23 +1,67 @@
 package com.ecfront.dew.core.dto;
 
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.Date;
 import java.util.List;
 
+@ApiModel(value = "登录信息")
 public class OptInfo {
 
+    @ApiModelProperty(value = "Token", required = true)
     private String token;
+    @ApiModelProperty(value = "账号编码", required = true)
     private String accountCode;
+    @ApiModelProperty(value = "登录ID", required = true)
     private String loginId;
-    private String name;
+    @ApiModelProperty(value = "手机号", required = true)
+    private String mobile;
+    @ApiModelProperty(value = "邮箱", required = true)
     private String email;
-    private String image;
-    private String organizationCode;
-    private String organizationName;
-    private String organizationCategory;
-    private List<String> roleCodes;
+    @ApiModelProperty(value = "姓名", required = true)
+    private String name;
+    @ApiModelProperty(value = "角色列表", required = true)
+    private List<RoleInfo> roles;
+    @ApiModelProperty(value = "最后一次登录时间", required = true)
     private Date lastLoginTime;
-    private String extInfo;
+    @ApiModelProperty(value = "扩展信息(Json格式)", required = true)
+    private String ext;
+
+    @ApiModel(value = "角色信息")
+    public static class RoleInfo {
+        @ApiModelProperty(value = "角色编码", required = true)
+        private String code;
+        @ApiModelProperty(value = "角色显示名称", required = true)
+        private String name;
+        @ApiModelProperty(value = "租户编码", required = true)
+        private String tenantCode;
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getTenantCode() {
+            return tenantCode;
+        }
+
+        public void setTenantCode(String tenantCode) {
+            this.tenantCode = tenantCode;
+        }
+    }
 
     public String getToken() {
         return token;
@@ -43,12 +87,12 @@ public class OptInfo {
         this.loginId = loginId;
     }
 
-    public String getName() {
-        return name;
+    public String getMobile() {
+        return mobile;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
     public String getEmail() {
@@ -59,44 +103,20 @@ public class OptInfo {
         this.email = email;
     }
 
-    public String getImage() {
-        return image;
+    public String getName() {
+        return name;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getOrganizationCode() {
-        return organizationCode;
+    public List<RoleInfo> getRoles() {
+        return roles;
     }
 
-    public void setOrganizationCode(String organizationCode) {
-        this.organizationCode = organizationCode;
-    }
-
-    public String getOrganizationName() {
-        return organizationName;
-    }
-
-    public void setOrganizationName(String organizationName) {
-        this.organizationName = organizationName;
-    }
-
-    public String getOrganizationCategory() {
-        return organizationCategory;
-    }
-
-    public void setOrganizationCategory(String organizationCategory) {
-        this.organizationCategory = organizationCategory;
-    }
-
-    public List<String> getRoleCodes() {
-        return roleCodes;
-    }
-
-    public void setRoleCodes(List<String> roleCodes) {
-        this.roleCodes = roleCodes;
+    public void setRoles(List<RoleInfo> roles) {
+        this.roles = roles;
     }
 
     public Date getLastLoginTime() {
@@ -107,12 +127,11 @@ public class OptInfo {
         this.lastLoginTime = lastLoginTime;
     }
 
-    public String getExtInfo() {
-        return extInfo;
+    public String getExt() {
+        return ext;
     }
 
-    public void setExtInfo(String extInfo) {
-        this.extInfo = extInfo;
+    public void setExt(String ext) {
+        this.ext = ext;
     }
-
 }

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Api("租户管理")
+@Api(value = "租户管理",description = "租户信息管理")
 @RequestMapping(value = "/auth/manage/tenant/")
 public class TenantController implements CRUSController<TenantService, Tenant> {
 

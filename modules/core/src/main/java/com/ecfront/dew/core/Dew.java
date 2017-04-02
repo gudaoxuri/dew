@@ -23,16 +23,27 @@ import java.util.UUID;
 @Component
 public class Dew {
 
-    // token存储key
-    public static final String TOKEN_INFO_FLAG = "dew:auth:token:info:";
-    // 前端传入的token标识
-    public static final String VIEW_TOKEN_FLAG = "__dew_token__";
+    public static class Constant {
+        // token存储key
+        public static final String TOKEN_INFO_FLAG = "dew:auth:token:info:";
+        // 前端传入的token标识
+        public static final String TOKEN_VIEW_FLAG = "__dew_token__";
+
+        public static final String MQ_AUTH_TENANT_ADD = "dew.auth.tenant.add";
+        public static final String MQ_AUTH_TENANT_REMOVE = "dew.auth.tenant.remove";
+        public static final String MQ_AUTH_RESOURCE_ADD = "dew.auth.resource.add";
+        public static final String MQ_AUTH_RESOURCE_REMOVE = "dew.auth.resource.remove";
+        public static final String MQ_AUTH_ROLE_ADD = "dew.auth.role.add";
+        public static final String MQ_AUTH_ROLE_REMOVE = "dew.auth.role.remove";
+        public static final String MQ_AUTH_ACCOUNT_ADD = "dew.auth.account.add";
+        public static final String MQ_AUTH_ACCOUNT_REMOVE = "dew.auth.account.remove";
+
+    }
 
     /**
      * 组件基础信息
      */
     public static class Info {
-
         // 应用名称
         public static String name;
         // 应用主机IP
@@ -54,41 +65,28 @@ public class Dew {
 
     }
 
-    /**
-     * 常用服务——Redis
-     */
-    public static RedisTemplate<String, String> redis;
-    /**
-     * 常用服务——MQ
-     */
-    public static AmqpTemplate amqpTemplate;
+    public static class Service {
+        /**
+         * 常用服务——Redis
+         */
+        public static RedisTemplate<String, String> cache;
+        /**
+         * 常用服务——MQ
+         */
+        public static AmqpTemplate mq;
 
-    /**
-     * 常用服务——分布式锁
-     *
-     * @param key
-     * @return
-     */
-    public static LockService lock(String key) {
-        return new RedisLockService(key);
-    }
-
-    @Autowired
-    private void setRedis(RedisTemplate<String, String> redis) {
-        Dew.redis = redis;
-    }
-
-    @Autowired
-    private void setAmqpTemplate(AmqpTemplate amqpTemplate) {
-        Dew.amqpTemplate = amqpTemplate;
+        /**
+         * 常用服务——分布式锁
+         *
+         * @param key
+         * @return
+         */
+        public static LockService lock(String key) {
+            return new RedisLockService(key);
+        }
     }
 
     public static ApplicationContext applicationContext;
-
-    @Autowired
-    private void setSpringContext(ApplicationContext applicationContext) {
-        Dew.applicationContext = applicationContext;
-    }
 
     /**
      * 获取请求上下文信息
@@ -111,9 +109,9 @@ public class Dew {
         public static String buildUrl(String serviceName, String path, String token) {
             String url = "http://" + serviceName + "/" + path;
             if (url.contains("&")) {
-                return url + "&" + Dew.VIEW_TOKEN_FLAG + "=" + token;
+                return url + "&" + Constant.TOKEN_VIEW_FLAG + "=" + token;
             } else {
-                return url + "?" + Dew.VIEW_TOKEN_FLAG + "=" + token;
+                return url + "?" + Constant.TOKEN_VIEW_FLAG + "=" + token;
             }
         }
 
@@ -211,6 +209,21 @@ public class Dew {
         public static boolean checkEmail(String email) {
             return email.matches(REGEX_EMAIL);
         }
+    }
+
+    @Autowired
+    private void setRedis(RedisTemplate<String, String> redis) {
+        Service.cache = redis;
+    }
+
+    @Autowired
+    private void setAmqpTemplate(AmqpTemplate amqpTemplate) {
+        Service.mq = amqpTemplate;
+    }
+
+    @Autowired
+    private void setSpringContext(ApplicationContext applicationContext) {
+        Dew.applicationContext = applicationContext;
     }
 
 }

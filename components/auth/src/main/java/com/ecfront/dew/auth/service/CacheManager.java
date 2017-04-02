@@ -1,0 +1,147 @@
+package com.ecfront.dew.auth.service;
+
+import com.ecfront.dew.auth.entity.Account;
+import com.ecfront.dew.common.JsonHelper;
+import com.ecfront.dew.core.Dew;
+import com.ecfront.dew.core.dto.OptInfo;
+
+import java.io.File;
+import java.util.Date;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
+
+public class CacheManager {
+
+    public static class Token {
+
+        // Token Id 关联 key : dew:auth:token:id:rel:<code> value : <token Id>
+        private static String TOKEN_ID_REL_FLAG = "dew:auth:token:id:rel:";
+
+        private static ReentrantLock tokenLock = new ReentrantLock();
+
+        public static OptInfo addToken(Account account) {
+            // 加锁，避免在多线程下`TOKEN_ID_REL_FLAG + account.code`竞争问题
+            tokenLock.lock();
+            removeTokenByAccountCode(account.getCode());
+            OptInfo optInfo = new OptInfo();
+            optInfo.setToken(Dew.Util.createUUID());
+            optInfo.setAccountCode(account.getCode());
+            optInfo.setLoginId(account.getLoginId());
+            optInfo.setMobile(account.getMobile());
+            optInfo.setEmail(account.getEmail());
+            optInfo.setName(account.getName());
+            optInfo.setRoles(account.getRoles().stream().map(role -> {
+                OptInfo.RoleInfo roleInfo = new OptInfo.RoleInfo();
+                roleInfo.setCode(role.getCode());
+                roleInfo.setName(role.getName());
+                roleInfo.setTenantCode(role.getTenantCode());
+                return roleInfo;
+            }).collect(Collectors.toList()));
+            optInfo.setExt(account.getExt());
+            optInfo.setLastLoginTime(new Date());
+            Dew.Service.cache.opsForValue().set(TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), optInfo.getToken());
+            // TODO token过期时间
+            Dew.Service.cache.opsForValue().set(Dew.Constant.TOKEN_INFO_FLAG + optInfo.getToken(), JsonHelper.toJsonString(optInfo));
+            tokenLock.unlock();
+            return optInfo;
+        }
+
+        public static void removeTokenByAccountCode(String accountCode) {
+            String token = getToken(accountCode);
+            if (token != null) {
+                removeToken(token);
+            }
+        }
+
+        public static void removeToken(String token) {
+            OptInfo tokenInfo = getTokenInfo(token);
+            if (tokenInfo != null) {
+                Dew.Service.cache.delete(TOKEN_ID_REL_FLAG + tokenInfo.getAccountCode());
+                Dew.Service.cache.delete(Dew.Constant.TOKEN_INFO_FLAG + token);
+            }
+        }
+
+        public static String getToken(String accountCode) {
+            return Dew.Service.cache.opsForValue().get(TOKEN_ID_REL_FLAG + accountCode);
+        }
+
+        public static OptInfo getTokenInfo(String token) {
+            return JsonHelper.toObject(Dew.Service.cache.opsForValue().get(Dew.Constant.TOKEN_INFO_FLAG + token), OptInfo.class);
+        }
+
+        public static void updateTokenInfo(Account account) {
+            String token = getToken(account.getCode());
+            if (token != null) {
+                OptInfo oldTokenInfo = getTokenInfo(token);
+                if (oldTokenInfo == null) {
+                    // 在某些情况下（如缓存被清空）可能存在原token信息不存在，此时要求重新登录
+                    removeToken(token);
+                } else {
+                    OptInfo newTokenInfo = new OptInfo();
+                    newTokenInfo.setToken(oldTokenInfo.getToken());
+                    newTokenInfo.setAccountCode(account.getCode());
+                    newTokenInfo.setLoginId(account.getLoginId());
+                    newTokenInfo.setMobile(account.getMobile());
+                    newTokenInfo.setEmail(account.getEmail());
+                    newTokenInfo.setName(account.getName());
+                    newTokenInfo.setRoles(account.getRoles().stream().map(role -> {
+                        OptInfo.RoleInfo roleInfo = new OptInfo.RoleInfo();
+                        roleInfo.setCode(role.getCode());
+                        roleInfo.setName(role.getName());
+                        roleInfo.setTenantCode(role.getTenantCode());
+                        return roleInfo;
+                    }).collect(Collectors.toList()));
+                    newTokenInfo.setExt(account.getExt());
+                    newTokenInfo.setLastLoginTime(oldTokenInfo.getLastLoginTime());
+                    Dew.Service.cache.opsForValue().set(Dew.Constant.TOKEN_INFO_FLAG + newTokenInfo.getToken(), JsonHelper.toJsonString(newTokenInfo));
+                }
+            }
+        }
+
+    }
+
+    public static class Login {
+        // 连续登录错误次数
+        private static final String LOGIN_ERROR_TIMES_FLAG = "dew:auth:login:error:times:";
+        // 登录验证码的字符
+        private static final String LOGIN_CAPTCHA_TEXT_FLAG = "dew:auth:login:captcha:text";
+        // 登录验证码的文件路径
+        private static final String LOGIN_CAPTCHA_FILE_FLAG = "dew:auth:login:captcha:file";
+
+        public static long addLoginErrorTimes(String tryLoginInfo) {
+            return Dew.Service.cache.opsForValue().increment(LOGIN_ERROR_TIMES_FLAG + tryLoginInfo, 1L);
+        }
+
+        public static long getLoginErrorTimes(String tryLoginInfo) {
+            return Dew.Service.cache.opsForValue().increment(LOGIN_ERROR_TIMES_FLAG + tryLoginInfo, 0L);
+        }
+
+        public static void removeLoginErrorTimes(String tryLoginInfo) {
+            Dew.Service.cache.delete(LOGIN_ERROR_TIMES_FLAG + tryLoginInfo);
+        }
+
+        public static String getCaptchaText(String tryLoginInfo) {
+            return (String) Dew.Service.cache.opsForHash().get(LOGIN_CAPTCHA_TEXT_FLAG, tryLoginInfo);
+        }
+
+        public static String getCaptchaFile(String tryLoginInfo) {
+            return (String) Dew.Service.cache.opsForHash().get(LOGIN_CAPTCHA_FILE_FLAG, tryLoginInfo);
+        }
+
+        public static void addCaptcha(String tryLoginInfo, String text, String filePath) {
+            Dew.Service.cache.opsForHash().put(LOGIN_CAPTCHA_TEXT_FLAG, tryLoginInfo, text);
+            Dew.Service.cache.opsForHash().put(LOGIN_CAPTCHA_FILE_FLAG, tryLoginInfo, filePath);
+        }
+
+        public static void removeCaptcha(String tryLoginInfo) {
+            Dew.Service.cache.opsForHash().delete(LOGIN_CAPTCHA_TEXT_FLAG, tryLoginInfo);
+            String filePath = getCaptchaFile(tryLoginInfo);
+            if (filePath != null && new File(filePath).exists()) {
+                new File(filePath).delete();
+            }
+            Dew.Service.cache.opsForHash().delete(LOGIN_CAPTCHA_FILE_FLAG, tryLoginInfo);
+        }
+
+    }
+
+}

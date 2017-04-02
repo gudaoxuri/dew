@@ -26,7 +26,7 @@ public class EntityContainer {
 
     @PostConstruct
     private void init() {
-        dewConfig.getEntity().getBasePackages().stream().parallel().forEach(s -> {
+        dewConfig.getBasic().getEntity().getBasePackages().stream().parallel().forEach(s -> {
             try {
                 ClassScanHelper.scan(s, new HashSet<Class<? extends Annotation>>() {{
                     add(Entity.class);

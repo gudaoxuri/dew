@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@Api("角色管理")
+@Api(value = "角色管理",description = "角色信息管理")
 @RequestMapping(value = "/auth/manage/role/")
 public class RoleController implements CRUDController<RoleService, Role> {
 

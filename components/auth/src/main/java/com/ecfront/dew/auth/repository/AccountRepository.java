@@ -8,19 +8,21 @@ import javax.annotation.Resource;
 @Resource
 public interface AccountRepository extends DewRepository<Account> {
 
-    long countByLoginName(String loginName);
+    Account getByLoginIdOrMobileOrEmail(String loginId, String mobile, String email);
+
+    long countByLoginId(String loginId);
 
     long countByMobile(String mobile);
 
     long countByEmail(String email);
 
-    long countByLoginNameAndIdNot(String loginName, long withOutId);
+    long countByLoginIdAndIdNot(String loginId, long withOutId);
 
     long countByMobileAndIdNot(String mobile, long withOutId);
 
     long countByEmailAndIdNot(String email, long withOutId);
 
-    long countByLoginNameAndCodeNot(String loginName, String withOutCode);
+    long countByLoginIdAndCodeNot(String loginId, String withOutCode);
 
     long countByMobileAndCodeNot(String mobile, String withOutCode);
 

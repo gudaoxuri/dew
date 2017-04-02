@@ -1,14 +1,17 @@
 package com.ecfront.dew.auth.service;
 
+import com.ecfront.dew.auth.AuthConfig;
 import com.ecfront.dew.auth.entity.Account;
 import com.ecfront.dew.auth.repository.AccountRepository;
 import com.ecfront.dew.auth.repository.RoleRepository;
+import com.ecfront.dew.common.EncryptHelper;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.service.CRUSService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -26,6 +29,8 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
     private AccountRepository accountRepository;
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private AuthConfig authConfig;
 
     @Override
     public Class<Account> getModelClazz() {
@@ -42,21 +47,21 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
 
     @Override
     public Resp<Optional<Object>> preSave(Account entity) throws RuntimeException {
-        if ((entity.getLoginName() == null || entity.getLoginName().trim().isEmpty()) &&
+        if ((entity.getLoginId() == null || entity.getLoginId().trim().isEmpty()) &&
                 (entity.getMobile() == null || entity.getMobile().trim().isEmpty()) &&
                 (entity.getEmail() == null || entity.getEmail().trim().isEmpty())) {
-            return Resp.badRequest("Login Name / Mobile / Email not empty.");
+            return Resp.badRequest("Login Id / Mobile / Email not empty.");
         }
         entity.setCode(Dew.Util.createUUID());
         boolean exist;
-        if (entity.getLoginName() != null && !entity.getLoginName().trim().isEmpty()) {
-            exist = accountRepository.countByLoginName(entity.getLoginName().trim()) != 0;
+        if (entity.getLoginId() != null && !entity.getLoginId().trim().isEmpty()) {
+            exist = accountRepository.countByLoginId(entity.getLoginId().trim()) != 0;
             if (exist) {
-                return Resp.conflict("Login Name exist.");
+                return Resp.conflict("Login Id exist.");
             }
-            entity.setLoginName(entity.getLoginName().trim());
+            entity.setLoginId(entity.getLoginId().trim());
         } else {
-            entity.setLoginName(VIRTUAL_INFO_PREFIX + entity.getCode());
+            entity.setLoginId(VIRTUAL_INFO_PREFIX + entity.getCode());
         }
         if (entity.getMobile() != null && !entity.getMobile().trim().isEmpty()) {
             exist = accountRepository.countByMobile(entity.getMobile().trim()) != 0;
@@ -79,25 +84,29 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
         } else {
             entity.setEmail(VIRTUAL_INFO_PREFIX + entity.getCode() + VIRTUAL_INFO_EMAIL);
         }
+        if (entity.getExt() == null || entity.getExt().isEmpty()) {
+            entity.setExt("{}");
+        }
+        entity.setPassword(packageEncryptPwd(entity.getCode(), entity.getPassword()));
         return Resp.success(Optional.empty());
     }
 
     @Override
     public Resp<Optional<Object>> preUpdateById(long id, Account entity) throws RuntimeException {
-        if ((entity.getLoginName() == null || entity.getLoginName().trim().isEmpty()) &&
+        if ((entity.getLoginId() == null || entity.getLoginId().trim().isEmpty()) &&
                 (entity.getMobile() == null || entity.getMobile().trim().isEmpty()) &&
                 (entity.getEmail() == null || entity.getEmail().trim().isEmpty())) {
-            return Resp.badRequest("Login Name / Mobile / Email not empty.");
+            return Resp.badRequest("Login Id / Mobile / Email not empty.");
         }
         boolean exist;
-        if (entity.getLoginName() != null && !entity.getLoginName().trim().isEmpty()) {
-            exist = accountRepository.countByLoginNameAndIdNot(entity.getLoginName().trim(), id) != 0;
+        if (entity.getLoginId() != null && !entity.getLoginId().trim().isEmpty()) {
+            exist = accountRepository.countByLoginIdAndIdNot(entity.getLoginId().trim(), id) != 0;
             if (exist) {
-                return Resp.conflict("Login Name exist.");
+                return Resp.conflict("Login Id exist.");
             }
-            entity.setLoginName(entity.getLoginName().trim());
+            entity.setLoginId(entity.getLoginId().trim());
         } else {
-            return Resp.badRequest("Login Name not empty.");
+            return Resp.badRequest("Login Id not empty.");
         }
         if (entity.getMobile() != null && !entity.getMobile().trim().isEmpty()) {
             exist = accountRepository.countByMobileAndIdNot(entity.getMobile().trim(), id) != 0;
@@ -120,25 +129,26 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
         } else {
             return Resp.badRequest("Email not empty.");
         }
+        entity.setPassword(packageEncryptPwd(entity.getCode(), entity.getPassword()));
         return Resp.success(Optional.empty());
     }
 
     @Override
     public Resp<Optional<Object>> preUpdateByCode(String code, Account entity) throws RuntimeException {
-        if ((entity.getLoginName() == null || entity.getLoginName().trim().isEmpty()) &&
+        if ((entity.getLoginId() == null || entity.getLoginId().trim().isEmpty()) &&
                 (entity.getMobile() == null || entity.getMobile().trim().isEmpty()) &&
                 (entity.getEmail() == null || entity.getEmail().trim().isEmpty())) {
-            return Resp.badRequest("Login Name / Mobile / Email not empty.");
+            return Resp.badRequest("Login Id / Mobile / Email not empty.");
         }
         boolean exist;
-        if (entity.getLoginName() != null && !entity.getLoginName().trim().isEmpty()) {
-            exist = accountRepository.countByLoginNameAndCodeNot(entity.getLoginName().trim(), code) != 0;
+        if (entity.getLoginId() != null && !entity.getLoginId().trim().isEmpty()) {
+            exist = accountRepository.countByLoginIdAndCodeNot(entity.getLoginId().trim(), code) != 0;
             if (exist) {
-                return Resp.conflict("Login Name exist.");
+                return Resp.conflict("Login Id exist.");
             }
-            entity.setLoginName(entity.getLoginName().trim());
+            entity.setLoginId(entity.getLoginId().trim());
         } else {
-            return Resp.badRequest("Login Name not empty.");
+            return Resp.badRequest("Login Id not empty.");
         }
         if (entity.getMobile() != null && !entity.getMobile().trim().isEmpty()) {
             exist = accountRepository.countByMobileAndCodeNot(entity.getMobile().trim(), code) != 0;
@@ -161,7 +171,50 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
         } else {
             return Resp.badRequest("Email not empty.");
         }
+        entity.setPassword(packageEncryptPwd(entity.getCode(), entity.getPassword()));
         return Resp.success(Optional.empty());
+    }
+
+    @Override
+    public Resp<Optional<Object>> preEnableById(long id) throws RuntimeException {
+        return Resp.success(Optional.of(getById(id).getBody()));
+    }
+
+    @Override
+    public Resp<Optional<Object>> preDisableById(long id) throws RuntimeException {
+        return Resp.success(Optional.of(getById(id).getBody().getCode()));
+    }
+
+    @Override
+    public void postEnableById(long id, Optional<Object> preBody) throws RuntimeException {
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, preBody.get());
+    }
+
+    @Override
+    public void postEnableByCode(String code, Optional<Object> preBody) throws RuntimeException {
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, getByCode(code).getBody());
+    }
+
+    @Override
+    public void postDisableById(long id, Optional<Object> preBody) throws RuntimeException {
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_REMOVE, preBody.get());
+    }
+
+    @Override
+    public void postDisableByCode(String code, Optional<Object> preBody) throws RuntimeException {
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_REMOVE, code);
+    }
+
+    @Override
+    public Account postSave(Account entity, Optional<Object> preBody) throws RuntimeException {
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, entity);
+        return entity;
+    }
+
+    @Override
+    public Account postUpdate(Account entity, Optional<Object> preBody) throws RuntimeException {
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, entity);
+        return entity;
     }
 
     public void addRoleCode(Account account, String roleCode) {
@@ -172,4 +225,12 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
         account.setRoles(account.getRoles().stream().filter(c -> !c.getCode().equals(roleCode)).collect(Collectors.toSet()));
     }
 
+    private String packageEncryptPwd(String code, String password) {
+        try {
+            return EncryptHelper.Symmetric.encrypt(authConfig.getAuth().getEncryptSalt() + code + password, authConfig.getAuth().getEncryptAlgorithm());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+            return System.nanoTime() + "";
+        }
+    }
 }

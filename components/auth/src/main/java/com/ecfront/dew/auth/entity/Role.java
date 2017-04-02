@@ -2,6 +2,7 @@ package com.ecfront.dew.auth.entity;
 
 import com.ecfront.dew.core.entity.Code;
 import com.ecfront.dew.core.entity.IdEntity;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "dew_role")
+@ApiModel("角色实体")
 public class Role extends IdEntity {
 
     @Code
