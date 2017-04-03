@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
@@ -89,19 +88,19 @@ public class AuthService {
         return loginReq.getLoginId().trim() + "-" + loginReq.getMobile().trim() + "-" + loginReq.getEmail().trim();
     }
 
-    private File createCaptcha(String tryLoginInfo) throws IOException {
+    private String createCaptcha(String tryLoginInfo) throws IOException {
         if (CacheManager.Login.getLoginErrorTimes(tryLoginInfo) >= authConfig.getAuth().getLoginCaptchaTimes()) {
             String text = random.nextDouble() + "";
             text = text.substring(text.length() - 4);
-            File file = CaptchaHelper.generate(text);
-            CacheManager.Login.addCaptcha(tryLoginInfo, text, file.getPath());
-            return file;
+            String imageInfo = CaptchaHelper.generateToBase64(text);
+            CacheManager.Login.addCaptcha(tryLoginInfo, text, imageInfo);
+            return imageInfo;
         } else {
             return null;
         }
     }
 
-    public Resp<File> getCaptcha(LoginReq loginReq) throws IOException {
+    public Resp<String> getCaptcha(LoginReq loginReq) throws IOException {
         String tryLoginInfo = packageTryLoginInfo(loginReq);
         return Resp.success(createCaptcha(tryLoginInfo));
     }

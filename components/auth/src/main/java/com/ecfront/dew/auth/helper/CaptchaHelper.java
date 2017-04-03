@@ -1,5 +1,6 @@
 package com.ecfront.dew.auth.helper;
 
+import com.ecfront.dew.common.EncryptHelper;
 import com.github.cage.GCage;
 
 import java.io.File;
@@ -15,6 +16,11 @@ public class CaptchaHelper {
             new GCage().draw(text, os);
             return temp;
         }
+    }
+
+    public static String generateToBase64(String text) throws IOException {
+        byte[] bytes = new GCage().draw(text);
+        return EncryptHelper.encodeBytesToBase64(bytes, "UTF-8");
     }
 
 

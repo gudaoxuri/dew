@@ -13,7 +13,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 
@@ -35,11 +34,11 @@ public class AuthController {
     }
 
     @PostMapping(value = "/public/auth/captcha")
-    @ApiOperation(value = "获取图片验证码")
+    @ApiOperation(value = "获取图片验证码", notes = "返回验证码的Base64编码")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "vo", value = "登录请求VO", paramType = "body", dataType = "LoginReq", required = true),
     })
-    public File getCaptcha(@RequestBody LoginReq vo) throws IOException {
+    public String getCaptcha(@RequestBody LoginReq vo) throws IOException {
         return authService.getCaptcha(vo).getBody();
     }
 

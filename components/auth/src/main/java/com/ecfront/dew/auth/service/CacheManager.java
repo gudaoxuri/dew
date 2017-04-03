@@ -5,7 +5,6 @@ import com.ecfront.dew.common.JsonHelper;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.dto.OptInfo;
 
-import java.io.File;
 import java.util.Date;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
@@ -105,8 +104,8 @@ public class CacheManager {
         private static final String LOGIN_ERROR_TIMES_FLAG = "dew:auth:login:error:times:";
         // 登录验证码的字符
         private static final String LOGIN_CAPTCHA_TEXT_FLAG = "dew:auth:login:captcha:text";
-        // 登录验证码的文件路径
-        private static final String LOGIN_CAPTCHA_FILE_FLAG = "dew:auth:login:captcha:file";
+        // 登录验证码的图片
+        private static final String LOGIN_CAPTCHA_IMAGE_FLAG = "dew:auth:login:captcha:image";
 
         public static long addLoginErrorTimes(String tryLoginInfo) {
             return Dew.Service.cache.opsForValue().increment(LOGIN_ERROR_TIMES_FLAG + tryLoginInfo, 1L);
@@ -124,22 +123,18 @@ public class CacheManager {
             return (String) Dew.Service.cache.opsForHash().get(LOGIN_CAPTCHA_TEXT_FLAG, tryLoginInfo);
         }
 
-        public static String getCaptchaFile(String tryLoginInfo) {
-            return (String) Dew.Service.cache.opsForHash().get(LOGIN_CAPTCHA_FILE_FLAG, tryLoginInfo);
+        public static String getCaptchaImage(String tryLoginInfo) {
+            return (String) Dew.Service.cache.opsForHash().get(LOGIN_CAPTCHA_IMAGE_FLAG, tryLoginInfo);
         }
 
-        public static void addCaptcha(String tryLoginInfo, String text, String filePath) {
+        public static void addCaptcha(String tryLoginInfo, String text, String imageInfo) {
             Dew.Service.cache.opsForHash().put(LOGIN_CAPTCHA_TEXT_FLAG, tryLoginInfo, text);
-            Dew.Service.cache.opsForHash().put(LOGIN_CAPTCHA_FILE_FLAG, tryLoginInfo, filePath);
+            Dew.Service.cache.opsForHash().put(LOGIN_CAPTCHA_IMAGE_FLAG, tryLoginInfo, imageInfo);
         }
 
         public static void removeCaptcha(String tryLoginInfo) {
             Dew.Service.cache.opsForHash().delete(LOGIN_CAPTCHA_TEXT_FLAG, tryLoginInfo);
-            String filePath = getCaptchaFile(tryLoginInfo);
-            if (filePath != null && new File(filePath).exists()) {
-                new File(filePath).delete();
-            }
-            Dew.Service.cache.opsForHash().delete(LOGIN_CAPTCHA_FILE_FLAG, tryLoginInfo);
+            Dew.Service.cache.opsForHash().delete(LOGIN_CAPTCHA_IMAGE_FLAG, tryLoginInfo);
         }
 
     }
