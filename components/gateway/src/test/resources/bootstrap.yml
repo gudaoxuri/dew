@@ -1,0 +1,16 @@
+dew:
+  basic:
+    entity:
+      basePackages: ""
+
+spring:
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: dew
+    password: 123
+    virtual-host: dew

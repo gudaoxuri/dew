@@ -24,7 +24,7 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @PostMapping(value = "/public/auth/login")
+    @PostMapping(value = "/public/login")
     @ApiOperation(value = "登录")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "vo", value = "登录请求VO", paramType = "body", dataType = "LoginReq", required = true),
@@ -33,7 +33,7 @@ public class AuthController {
         return authService.login(vo);
     }
 
-    @PostMapping(value = "/public/auth/captcha")
+    @PostMapping(value = "/public/captcha")
     @ApiOperation(value = "获取图片验证码", notes = "返回验证码的Base64编码")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "vo", value = "登录请求VO", paramType = "body", dataType = "LoginReq", required = true),
@@ -42,19 +42,19 @@ public class AuthController {
         return authService.getCaptcha(vo).getBody();
     }
 
-    @DeleteMapping(value = "/auth/logout")
+    @DeleteMapping(value = "/logout")
     @ApiOperation(value = "注销")
     public Resp<Void> logout() {
         return authService.logout();
     }
 
-    @GetMapping(value = "/auth/logininfo")
+    @GetMapping(value = "/logininfo")
     @ApiOperation(value = "获取当前登录信息")
     public Resp<OptInfo> getLoginInfo() {
         return authService.getLoginInfo();
     }
 
-    @PutMapping(value = "/auth/account/bylogin")
+    @PutMapping(value = "/account/bylogin")
     @ApiOperation(value = "更新登录账号的信息")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "vo", value = "登录请求VO", paramType = "body", dataType = "ModifyLoginInfoReq", required = true),

@@ -15,7 +15,7 @@ import java.util.List;
 
 @RestController
 @Api(value = "角色管理",description = "角色信息管理")
-@RequestMapping(value = "/auth/manage/role/")
+@RequestMapping(value = "/manage/role/")
 public class RoleController implements CRUDController<RoleService, Role> {
 
     @Autowired

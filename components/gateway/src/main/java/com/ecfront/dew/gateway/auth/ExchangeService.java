@@ -1,4 +1,4 @@
-package com.ecfront.dew.wsgateway.auth;
+package com.ecfront.dew.gateway.auth;
 
 import com.ecfront.dew.common.JsonHelper;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,8 +13,8 @@ public class ExchangeService {
     @RabbitListener(queues = "#{mqResourceAdd.name}")
     public void receiveResourceAdd(String message) throws InterruptedException {
         JsonNode data = JsonHelper.toJson(message);
-        if (data.get("categroy").asText().isEmpty()) {
-            LocalCacheContainer.addResource(data.get("code").asText(), data.get("method").asText(), data.get("url").asText());
+        if (data.get("category").asText().isEmpty()) {
+            LocalCacheContainer.addResource(data.get("code").asText(), data.get("method").asText(), data.get("uri").asText());
         }
     }
 

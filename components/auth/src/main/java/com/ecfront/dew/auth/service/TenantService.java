@@ -2,6 +2,7 @@ package com.ecfront.dew.auth.service;
 
 import com.ecfront.dew.auth.entity.Tenant;
 import com.ecfront.dew.auth.repository.TenantRepository;
+import com.ecfront.dew.common.JsonHelper;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.service.CRUSService;
@@ -38,12 +39,12 @@ public class TenantService implements CRUSService<TenantRepository, Tenant> {
 
     @Override
     public void postEnableById(long id, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_TENANT_ADD, "", preBody.get());
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_TENANT_ADD, "", JsonHelper.toJsonString(preBody.get()));
     }
 
     @Override
     public void postEnableByCode(String code, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_TENANT_ADD, "", getByCode(code).getBody());
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_TENANT_ADD, "", JsonHelper.toJsonString(getByCode(code).getBody()));
     }
 
     @Override
@@ -58,13 +59,13 @@ public class TenantService implements CRUSService<TenantRepository, Tenant> {
 
     @Override
     public Tenant postSave(Tenant entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_TENANT_ADD, "", entity);
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_TENANT_ADD, "", JsonHelper.toJsonString(entity));
         return entity;
     }
 
     @Override
     public Tenant postUpdate(Tenant entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_TENANT_ADD, "", entity);
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_TENANT_ADD, "", JsonHelper.toJsonString(entity));
         return entity;
     }
 }

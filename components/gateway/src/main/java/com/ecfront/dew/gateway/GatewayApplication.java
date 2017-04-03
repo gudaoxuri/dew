@@ -1,7 +1,7 @@
-package com.ecfront.dew.wsgateway;
+package com.ecfront.dew.gateway;
 
 import com.ecfront.dew.core.DewApplication;
-import com.ecfront.dew.wsgateway.auth.AuthFilter;
+import com.ecfront.dew.gateway.auth.AuthFilter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;

@@ -32,6 +32,9 @@ public class Swagger2 {
 
     @Bean
     public Docket createRestApi() {
+        if(dewConfig.getBasic().getDoc().getBasePackage().isEmpty()){
+            return null;
+        }
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()

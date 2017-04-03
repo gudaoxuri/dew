@@ -1,4 +1,4 @@
-package com.ecfront.dew.wsgateway.auth;
+package com.ecfront.dew.gateway.auth;
 
 import com.ecfront.dew.common.JsonHelper;
 import com.ecfront.dew.common.Resp;
@@ -45,8 +45,9 @@ public class AuthFilter extends ZuulFilter {
         HttpServletRequest request = ctx.getRequest();
         ctx.getResponse().setCharacterEncoding("UTF-8");
         String ip = Dew.Util.getRealIP(request);
-        String requestPath = request.getRequestURL().toString();
+        String requestPath = request.getRequestURI();
         logger.info("[{}] {} from {}", request.getMethod(), requestPath, ip);
+        requestPath=requestPath.substring(requestPath.substring(1).indexOf("/")+1);
         if (requestPath.startsWith("/public")) {
             return null;
         }

@@ -1,6 +1,7 @@
 package com.ecfront.dew.core.controller;
 
 import com.ecfront.dew.common.Resp;
+import com.ecfront.dew.core.Dew;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +37,8 @@ public class ErrorController extends AbstractErrorController {
     public Resp<Void> error(HttpServletRequest request) {
         HttpStatus status = getStatus(request);
         Throwable error = getError(request);
-        logger.error("Request error {}:{}", status.toString(), error.getMessage(), error);
+        logger.error("Request [{}] from {} , error {}:{}",
+                Dew.context().getRequestUri(), Dew.context().getSourceIP(), status.toString(), error.getMessage(), error);
         return Resp.customFail(status.toString(), error.getMessage());
     }
 

@@ -16,10 +16,10 @@ public class DewConfig {
 
     public static class DewBasic {
 
-        private String name;
+        private String name = "";
         private String version = "1.0";
-        private String desc;
-        private String webSite;
+        private String desc = "";
+        private String webSite = "";
         private DewDoc doc = new DewDoc();
         private DewEntity entity = new DewEntity();
 
@@ -57,7 +57,7 @@ public class DewConfig {
 
         public static class DewDoc {
 
-            private String basePackage;
+            private String basePackage = "";
 
             public String getBasePackage() {
                 return basePackage;

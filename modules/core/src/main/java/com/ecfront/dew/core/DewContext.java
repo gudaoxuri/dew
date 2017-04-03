@@ -9,6 +9,7 @@ public class DewContext {
 
     private String id;
     private String sourceIP;
+    private String requestUri;
     private String token;
     private Optional<OptInfo> innerOptInfo = Optional.empty();
 
@@ -37,6 +38,7 @@ public class DewContext {
             cxt = new DewContext();
             cxt.id = Dew.Util.createUUID();
             cxt.sourceIP = Dew.Info.ip;
+            cxt.requestUri = "";
             cxt.token = "";
             setContext(cxt);
         }
@@ -72,6 +74,14 @@ public class DewContext {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getRequestUri() {
+        return requestUri;
+    }
+
+    public void setRequestUri(String requestUri) {
+        this.requestUri = requestUri;
     }
 
     public static void setContext(ThreadLocal<DewContext> context) {

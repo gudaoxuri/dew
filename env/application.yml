@@ -6,8 +6,6 @@ dew:
     webSite: www.ecfront.com
     doc:
       basePackage: "com.ecfront"
-    entity:
-      basePackages: [""]
 
 spring:
   jpa:

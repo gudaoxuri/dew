@@ -1,8 +1,7 @@
-package com.ecfront.dew.wsgateway.auth;
+package com.ecfront.dew.gateway.auth;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 
@@ -10,8 +9,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-@Component
-class LocalCacheContainer {
+public class LocalCacheContainer {
 
     private static final Logger logger = LoggerFactory.getLogger(LocalCacheContainer.class);
 
@@ -23,36 +21,36 @@ class LocalCacheContainer {
     private static final PathMatcher pathMatcher = new AntPathMatcher();
     private static final String SPLIT = "@";
 
-    static void addResource(String code, String method, String path) {
+    public static void addResource(String code, String method, String path) {
         RESOURCES.put(code, method + SPLIT + path);
         RESOURCE_MAPPING.put(method + SPLIT + path, code);
     }
 
-    static void removeResource(String code) {
+    public static void removeResource(String code) {
         RESOURCE_MAPPING.remove(RESOURCES.get(code));
         RESOURCES.remove(code);
     }
 
-    static void addRole(String code, Set<String> resourceCodes) {
+    public static void addRole(String code, Set<String> resourceCodes) {
         ROLES.put(code, resourceCodes);
     }
 
-    static void removeRole(String code) {
+    public static void removeRole(String code) {
         ROLES.remove(code);
     }
 
-    static void flushAuth() {
+    public static void flushAuth() {
         RESOURCES.clear();
         ROLES.clear();
     }
 
-    static boolean auth(Set<String> roleCodes, String bestMathResourceCode) {
+    public static boolean auth(Set<String> roleCodes, String bestMathResourceCode) {
         return ROLES.entrySet().stream()
                 .filter(role -> roleCodes.contains(role.getKey()))
                 .anyMatch(role -> role.getValue().stream().anyMatch(resCode -> resCode.equals(bestMathResourceCode)));
     }
 
-    static Optional<String> getBestMathResourceCode(String method, String requestPath) {
+    public static Optional<String> getBestMathResourceCode(String method, String requestPath) {
         boolean isMatch;
         // Direct match?
         isMatch = RESOURCE_MAPPING.containsKey(method + SPLIT + requestPath);

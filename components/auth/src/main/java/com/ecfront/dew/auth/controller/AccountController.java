@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @Api(value = "账号管理", description = "账号信息管理")
-@RequestMapping(value = "/auth/manage/account/")
+@RequestMapping(value = "/manage/account/")
 public class AccountController implements CRUSController<AccountService, Account> {
 
     @Autowired

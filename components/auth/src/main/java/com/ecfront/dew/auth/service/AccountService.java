@@ -5,6 +5,7 @@ import com.ecfront.dew.auth.entity.Account;
 import com.ecfront.dew.auth.repository.AccountRepository;
 import com.ecfront.dew.auth.repository.RoleRepository;
 import com.ecfront.dew.common.EncryptHelper;
+import com.ecfront.dew.common.JsonHelper;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.service.CRUSService;
@@ -187,33 +188,33 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
 
     @Override
     public void postEnableById(long id, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD,"", preBody.get());
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, "", JsonHelper.toJsonString(preBody.get()));
     }
 
     @Override
     public void postEnableByCode(String code, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD,"", getByCode(code).getBody());
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, "", JsonHelper.toJsonString(getByCode(code).getBody()));
     }
 
     @Override
     public void postDisableById(long id, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_REMOVE,"", preBody.get());
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_REMOVE, "", preBody.get());
     }
 
     @Override
     public void postDisableByCode(String code, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_REMOVE,"", code);
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_REMOVE, "", code);
     }
 
     @Override
     public Account postSave(Account entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD,"", entity);
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, "", JsonHelper.toJsonString(entity));
         return entity;
     }
 
     @Override
     public Account postUpdate(Account entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD,"", entity);
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, "", JsonHelper.toJsonString(entity));
         return entity;
     }
 

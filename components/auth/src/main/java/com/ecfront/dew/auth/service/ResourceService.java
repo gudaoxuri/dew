@@ -2,6 +2,7 @@ package com.ecfront.dew.auth.service;
 
 import com.ecfront.dew.auth.entity.Resource;
 import com.ecfront.dew.auth.repository.ResourceRepository;
+import com.ecfront.dew.common.JsonHelper;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.service.CRUDService;
@@ -30,6 +31,24 @@ public class ResourceService implements CRUDService<ResourceRepository, Resource
     }
 
     @Override
+    public Resp<Optional<Object>> preSave(Resource entity) throws RuntimeException {
+        entity.setMethod(entity.getMethod().toUpperCase());
+        return CRUDService.super.preSave(entity);
+    }
+
+    @Override
+    public Resp<Optional<Object>> preUpdateById(long id, Resource entity) throws RuntimeException {
+        entity.setMethod(entity.getMethod().toUpperCase());
+        return CRUDService.super.preUpdateById(id, entity);
+    }
+
+    @Override
+    public Resp<Optional<Object>> preUpdateByCode(String code, Resource entity) throws RuntimeException {
+        entity.setMethod(entity.getMethod().toUpperCase());
+        return CRUDService.super.preUpdateByCode(code, entity);
+    }
+
+    @Override
     public Resp<Optional<Object>> preDeleteById(long id) throws RuntimeException {
         return Resp.success(Optional.of(resourceRepository.getById(id).getCode()));
     }
@@ -37,24 +56,24 @@ public class ResourceService implements CRUDService<ResourceRepository, Resource
     @Override
     public void postDeleteById(long id, Optional<Object> preBody) throws RuntimeException {
         resourceRepository.deleteRel((String) preBody.get());
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_RESOURCE_REMOVE, "",preBody.get());
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_RESOURCE_REMOVE, "", preBody.get());
     }
 
     @Override
     public void postDeleteByCode(String code, Optional<Object> preBody) throws RuntimeException {
         resourceRepository.deleteRel(code);
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_RESOURCE_REMOVE,"", code);
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_RESOURCE_REMOVE, "", code);
     }
 
     @Override
     public Resource postSave(Resource entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_RESOURCE_ADD,"", entity);
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_RESOURCE_ADD, "", JsonHelper.toJsonString(entity));
         return entity;
     }
 
     @Override
     public Resource postUpdate(Resource entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_RESOURCE_ADD,"", entity);
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_RESOURCE_ADD, "", JsonHelper.toJsonString(entity));
         return entity;
     }
 

@@ -3,6 +3,7 @@ package com.ecfront.dew.auth.service;
 import com.ecfront.dew.auth.entity.Role;
 import com.ecfront.dew.auth.repository.ResourceRepository;
 import com.ecfront.dew.auth.repository.RoleRepository;
+import com.ecfront.dew.common.JsonHelper;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.service.CRUDService;
@@ -50,13 +51,13 @@ public class RoleService implements CRUDService<RoleRepository, Role> {
 
     @Override
     public Role postSave(Role entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ROLE_ADD,"", entity);
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ROLE_ADD,"", JsonHelper.toJsonString(entity));
         return entity;
     }
 
     @Override
     public Role postUpdate(Role entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ROLE_ADD,"", entity);
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ROLE_ADD,"", JsonHelper.toJsonString(entity));
         return entity;
     }
 

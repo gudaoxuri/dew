@@ -9,6 +9,7 @@ import com.ecfront.dew.auth.repository.AccountRepository;
 import com.ecfront.dew.auth.repository.ResourceRepository;
 import com.ecfront.dew.auth.repository.RoleRepository;
 import com.ecfront.dew.common.EncryptHelper;
+import com.ecfront.dew.common.JsonHelper;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.dto.OptInfo;
@@ -166,8 +167,8 @@ public class AuthService {
 
     @RabbitListener(queues = "dew.auth.refresh")
     public void refresh() throws InterruptedException {
-        resourceRepository.findEnable().forEach(resource -> Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_RESOURCE_ADD, "", resource));
-        roleRepository.findEnable().forEach(resource -> Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ROLE_ADD, "", resource));
+        resourceRepository.findAll().forEach(resource -> Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_RESOURCE_ADD, "", JsonHelper.toJsonString(resource)));
+        roleRepository.findAll().forEach(role -> Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ROLE_ADD, "", JsonHelper.toJsonString(role)));
     }
 
 }
