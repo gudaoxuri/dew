@@ -83,10 +83,10 @@
         <module>components/registry</module>
         <module>components/config</module>
         <module>components/gateway</module>
+        <module>components/auth</module>
         <module>components/wsgateway</module>
         <module>components/logger</module>
         <module>components/monitor</module>
-        <module>components/auth</module>
         <module>components/appexample</module>
     </modules>
 

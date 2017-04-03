@@ -8,7 +8,6 @@
         <groupId>com.ecfront.dew</groupId>
         <artifactId>parent</artifactId>
         <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>logger</artifactId>
