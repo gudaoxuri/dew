@@ -28,6 +28,8 @@ public class AuthService {
     @Autowired
     private AuthConfig authConfig;
     @Autowired
+    private CacheManager cacheManager;
+    @Autowired
     private AccountService accountService;
     @Autowired
     private AccountRepository accountRepository;
@@ -48,10 +50,10 @@ public class AuthService {
         }
         String tryLoginInfo = packageTryLoginInfo(loginReq);
         if (authConfig.getAuth().getLoginCaptchaTimes() != -1) {
-            long errorTimes = CacheManager.Login.getLoginErrorTimes(tryLoginInfo);
+            long errorTimes = cacheManager.getLogin().getLoginErrorTimes(tryLoginInfo);
             if (errorTimes > authConfig.getAuth().getLoginCaptchaTimes() &&
                     (loginReq.getCaptcha() == null || loginReq.getCaptcha().isEmpty() ||
-                            !loginReq.getCaptcha().equals(CacheManager.Login.getCaptchaText(tryLoginInfo)))) {
+                            !loginReq.getCaptcha().equals(cacheManager.getLogin().getCaptchaText(tryLoginInfo)))) {
                 createCaptcha(tryLoginInfo);
                 logger.warn("[login] Captcha not match by " + tryLoginInfo + " from " + Dew.context().getSourceIP());
                 return Resp.forbidden("[login] Captcha not match");
@@ -59,27 +61,27 @@ public class AuthService {
         }
         Optional<Account> accountOpt = Optional.ofNullable(accountRepository.getByLoginIdOrMobileOrEmail(loginReq.getLoginId().trim(), loginReq.getMobile().trim(), loginReq.getEmail().trim()));
         if (!accountOpt.isPresent()) {
-            CacheManager.Login.addLoginErrorTimes(tryLoginInfo);
+            cacheManager.getLogin().addLoginErrorTimes(tryLoginInfo);
             createCaptcha(tryLoginInfo);
             logger.warn("[login] Account not exist by " + tryLoginInfo + " from " + Dew.context().getSourceIP());
             return Resp.notFound("[login] Account not exist");
         }
         if (!accountOpt.get().getEnable()) {
-            CacheManager.Login.addLoginErrorTimes(tryLoginInfo);
+            cacheManager.getLogin().addLoginErrorTimes(tryLoginInfo);
             createCaptcha(tryLoginInfo);
             logger.warn("[login] Account disabled by " + tryLoginInfo + " from " + Dew.context().getSourceIP());
             return Resp.locked("[login] Account disabled");
         }
         if (!EncryptHelper.Symmetric.validate(
                 authConfig.getAuth().getEncryptSalt() + accountOpt.get().getCode() + loginReq.getPassword().trim(), accountOpt.get().getPassword(), authConfig.getAuth().getEncryptAlgorithm())) {
-            CacheManager.Login.addLoginErrorTimes(tryLoginInfo);
+            cacheManager.getLogin().addLoginErrorTimes(tryLoginInfo);
             createCaptcha(tryLoginInfo);
             logger.warn("[login] Password not match by " + tryLoginInfo + " from " + Dew.context().getSourceIP());
             return Resp.conflict("[login] Password not match");
         }
-        OptInfo tokenInfo = CacheManager.Token.addToken(accountOpt.get());
-        CacheManager.Login.removeLoginErrorTimes(tryLoginInfo);
-        CacheManager.Login.removeCaptcha(tryLoginInfo);
+        OptInfo tokenInfo = cacheManager.getToken().addToken(accountOpt.get());
+        cacheManager.getLogin().removeLoginErrorTimes(tryLoginInfo);
+        cacheManager.getLogin().removeCaptcha(tryLoginInfo);
         logger.info("[login] Success ,token:" + tokenInfo.getToken() + " by " + tryLoginInfo + " from " + Dew.context().getSourceIP());
         return Resp.success(tokenInfo);
     }
@@ -89,11 +91,11 @@ public class AuthService {
     }
 
     private String createCaptcha(String tryLoginInfo) throws IOException {
-        if (CacheManager.Login.getLoginErrorTimes(tryLoginInfo) >= authConfig.getAuth().getLoginCaptchaTimes()) {
+        if (cacheManager.getLogin().getLoginErrorTimes(tryLoginInfo) >= authConfig.getAuth().getLoginCaptchaTimes()) {
             String text = random.nextDouble() + "";
             text = text.substring(text.length() - 4);
             String imageInfo = CaptchaHelper.generateToBase64(text);
-            CacheManager.Login.addCaptcha(tryLoginInfo, text, imageInfo);
+            cacheManager.getLogin().addCaptcha(tryLoginInfo, text, imageInfo);
             return imageInfo;
         } else {
             return null;
@@ -106,7 +108,7 @@ public class AuthService {
     }
 
     public Resp<Void> logout() {
-        CacheManager.Token.removeToken(Dew.context().optInfo().get().getToken());
+        cacheManager.getToken().removeToken(Dew.context().optInfo().get().getToken());
         return Resp.success(null);
     }
 
@@ -147,9 +149,9 @@ public class AuthService {
         accountR = accountService.updateByCode(account.getCode(), account);
         if (accountR.ok()) {
             if (modifyLoginInfoReq.getNewPassword() != null && !modifyLoginInfoReq.getNewPassword().isEmpty()) {
-                CacheManager.Token.removeToken(Dew.context().optInfo().get().getToken());
+                cacheManager.getToken().removeToken(Dew.context().optInfo().get().getToken());
             } else {
-                CacheManager.Token.updateTokenInfo(accountR.getBody());
+                cacheManager.getToken().updateTokenInfo(accountR.getBody());
             }
         }
         return accountR;

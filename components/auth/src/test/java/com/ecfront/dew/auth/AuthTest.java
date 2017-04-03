@@ -63,6 +63,8 @@ public class AuthTest {
     private RoleRepository roleRepository;
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private CacheManager cacheManager;
 
     @Test
     public void testAll() throws Exception {
@@ -311,7 +313,7 @@ public class AuthTest {
         loginReq.setPassword("1234");
         optInfoR = testRestTemplate.postForObject("/public/auth/login", loginReq, Resp.class);
         Assert.assertFalse(optInfoR.ok());
-        loginReq.setCaptcha(CacheManager.Login.getCaptchaText(authService.packageTryLoginInfo(loginReq)));
+        loginReq.setCaptcha(cacheManager.getLogin().getCaptchaText(authService.packageTryLoginInfo(loginReq)));
         optInfoR = testRestTemplate.postForObject("/public/auth/login", loginReq, Resp.class);
         optInfo = JsonHelper.toObject(optInfoR.getBody(), OptInfo.class);
         Assert.assertTrue(optInfoR.ok());

@@ -1,24 +1,38 @@
 package com.ecfront.dew.auth.service;
 
+import com.ecfront.dew.auth.AuthConfig;
 import com.ecfront.dew.auth.entity.Account;
 import com.ecfront.dew.common.JsonHelper;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.dto.OptInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
+@Component
 public class CacheManager {
 
+    @Autowired
+    private Token token;
+    @Autowired
+    private Login login;
+
+    @Component
     public static class Token {
+
+        @Autowired
+        private AuthConfig authConfig;
 
         // Token Id 关联 key : dew:auth:token:id:rel:<code> value : <token Id>
         private static String TOKEN_ID_REL_FLAG = "dew:auth:token:id:rel:";
 
         private static ReentrantLock tokenLock = new ReentrantLock();
 
-        public static OptInfo addToken(Account account) {
+        public OptInfo addToken(Account account) {
             // 加锁，避免在多线程下`TOKEN_ID_REL_FLAG + account.code`竞争问题
             tokenLock.lock();
             removeTokenByAccountCode(account.getCode());
@@ -39,20 +53,23 @@ public class CacheManager {
             optInfo.setExt(account.getExt());
             optInfo.setLastLoginTime(new Date());
             Dew.Service.cache.opsForValue().set(TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), optInfo.getToken());
-            // TODO token过期时间
             Dew.Service.cache.opsForValue().set(Dew.Constant.TOKEN_INFO_FLAG + optInfo.getToken(), JsonHelper.toJsonString(optInfo));
+            if (authConfig.getAuth().getTokenExpireSeconds() != -1) {
+                Dew.Service.cache.expire(TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), authConfig.getAuth().getTokenExpireSeconds(), TimeUnit.SECONDS);
+                Dew.Service.cache.expire(Dew.Constant.TOKEN_INFO_FLAG + optInfo.getToken(), authConfig.getAuth().getTokenExpireSeconds(), TimeUnit.SECONDS);
+            }
             tokenLock.unlock();
             return optInfo;
         }
 
-        public static void removeTokenByAccountCode(String accountCode) {
+        public void removeTokenByAccountCode(String accountCode) {
             String token = getToken(accountCode);
             if (token != null) {
                 removeToken(token);
             }
         }
 
-        public static void removeToken(String token) {
+        public void removeToken(String token) {
             OptInfo tokenInfo = getTokenInfo(token);
             if (tokenInfo != null) {
                 Dew.Service.cache.delete(TOKEN_ID_REL_FLAG + tokenInfo.getAccountCode());
@@ -60,15 +77,15 @@ public class CacheManager {
             }
         }
 
-        public static String getToken(String accountCode) {
+        public String getToken(String accountCode) {
             return Dew.Service.cache.opsForValue().get(TOKEN_ID_REL_FLAG + accountCode);
         }
 
-        public static OptInfo getTokenInfo(String token) {
+        public OptInfo getTokenInfo(String token) {
             return JsonHelper.toObject(Dew.Service.cache.opsForValue().get(Dew.Constant.TOKEN_INFO_FLAG + token), OptInfo.class);
         }
 
-        public static void updateTokenInfo(Account account) {
+        public void updateTokenInfo(Account account) {
             String token = getToken(account.getCode());
             if (token != null) {
                 OptInfo oldTokenInfo = getTokenInfo(token);
@@ -99,6 +116,7 @@ public class CacheManager {
 
     }
 
+    @Component
     public static class Login {
         // 连续登录错误次数
         private static final String LOGIN_ERROR_TIMES_FLAG = "dew:auth:login:error:times:";
@@ -107,36 +125,51 @@ public class CacheManager {
         // 登录验证码的图片
         private static final String LOGIN_CAPTCHA_IMAGE_FLAG = "dew:auth:login:captcha:image";
 
-        public static long addLoginErrorTimes(String tryLoginInfo) {
+        public long addLoginErrorTimes(String tryLoginInfo) {
             return Dew.Service.cache.opsForValue().increment(LOGIN_ERROR_TIMES_FLAG + tryLoginInfo, 1L);
         }
 
-        public static long getLoginErrorTimes(String tryLoginInfo) {
+        public long getLoginErrorTimes(String tryLoginInfo) {
             return Dew.Service.cache.opsForValue().increment(LOGIN_ERROR_TIMES_FLAG + tryLoginInfo, 0L);
         }
 
-        public static void removeLoginErrorTimes(String tryLoginInfo) {
+        public void removeLoginErrorTimes(String tryLoginInfo) {
             Dew.Service.cache.delete(LOGIN_ERROR_TIMES_FLAG + tryLoginInfo);
         }
 
-        public static String getCaptchaText(String tryLoginInfo) {
+        public String getCaptchaText(String tryLoginInfo) {
             return (String) Dew.Service.cache.opsForHash().get(LOGIN_CAPTCHA_TEXT_FLAG, tryLoginInfo);
         }
 
-        public static String getCaptchaImage(String tryLoginInfo) {
+        public String getCaptchaImage(String tryLoginInfo) {
             return (String) Dew.Service.cache.opsForHash().get(LOGIN_CAPTCHA_IMAGE_FLAG, tryLoginInfo);
         }
 
-        public static void addCaptcha(String tryLoginInfo, String text, String imageInfo) {
+        public void addCaptcha(String tryLoginInfo, String text, String imageInfo) {
             Dew.Service.cache.opsForHash().put(LOGIN_CAPTCHA_TEXT_FLAG, tryLoginInfo, text);
             Dew.Service.cache.opsForHash().put(LOGIN_CAPTCHA_IMAGE_FLAG, tryLoginInfo, imageInfo);
         }
 
-        public static void removeCaptcha(String tryLoginInfo) {
+        public void removeCaptcha(String tryLoginInfo) {
             Dew.Service.cache.opsForHash().delete(LOGIN_CAPTCHA_TEXT_FLAG, tryLoginInfo);
             Dew.Service.cache.opsForHash().delete(LOGIN_CAPTCHA_IMAGE_FLAG, tryLoginInfo);
         }
 
     }
 
+    public Token getToken() {
+        return token;
+    }
+
+    public void setToken(Token token) {
+        this.token = token;
+    }
+
+    public Login getLogin() {
+        return login;
+    }
+
+    public void setLogin(Login login) {
+        this.login = login;
+    }
 }
