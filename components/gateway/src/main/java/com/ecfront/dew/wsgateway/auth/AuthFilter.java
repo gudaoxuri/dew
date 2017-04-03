@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class AuthFilter extends ZuulFilter {
 
@@ -33,7 +35,7 @@ public class AuthFilter extends ZuulFilter {
     private Void filterHit(RequestContext ctx, Resp<?> resp) {
         ctx.setSendZuulResponse(false);
         ctx.setResponseBody(JsonHelper.toJsonString(resp));
-        logger.warn("Auth Filter Hit [" + resp.getCode() + "] " + resp.getMessage());
+        logger.warn("Auth Filter Hit [{}] {}", resp.getCode(), resp.getMessage());
         return null;
     }
 
@@ -43,42 +45,31 @@ public class AuthFilter extends ZuulFilter {
         HttpServletRequest request = ctx.getRequest();
         ctx.getResponse().setCharacterEncoding("UTF-8");
         String ip = Dew.Util.getRealIP(request);
-        logger.info("[" + request.getMethod() + "] " + request.getRequestURL().toString() + " from " + ip);
-
-        return null;
-        /*Resp<LocalCacheContainer.MatchInfo> routerR = LocalCacheContainer.getRouter(request.getMethod(), request.getRequestURI(), ip);
-        if (!routerR.ok()) {
-            return filterHit(ctx, routerR);
-        }
-
-        if (routerR.getBody() == null) {
-            // 可匿名访问
+        String requestPath = request.getRequestURL().toString();
+        logger.info("[{}] {} from {}", request.getMethod(), requestPath, ip);
+        if (requestPath.startsWith("/public")) {
             return null;
         }
-        try {
-            String token = request.getParameter(Dew.TOKEN_VIEW_FLAG);
-            if (token == null) {
-                return filterHit(ctx, Resp.unAuthorized("【token】not exist，Request parameter must include【" + Dew.TOKEN_VIEW_FLAG + "】"));
-            }
-            // 根据token获取EZ_Token_Info
-            String optInfoStr = Dew.cache.opsForValue().get(Dew.TOKEN_INFO_FLAG + token);
-            if (optInfoStr == null) {
-                return filterHit(ctx, Resp.unAuthorized("Token NOT exist"));
-            }
-            OptInfo optInfo = JsonHelper.toObject(optInfoStr, OptInfo.class);
-            // 此资源需要认证
-            if (!LocalCacheContainer.existOrganization(optInfo.getOrganizationCode())) {
-                return filterHit(ctx, Resp.unAuthorized("Organization【" + optInfo.getOrganizationCode() + "】 not found"));
-            }
-            // 用户所属组织状态正常
-            if (!routerR.getBody().getRoleCode().isEmpty() && routerR.getBody().getRoleCode().stream().noneMatch(i -> optInfo.getRoleCodes().contains(i))) {
-                // 登录用户所属角色列表中不存在此资源
-                return filterHit(ctx, Resp.unAuthorized("Account【" + optInfo.getName() + "】in【" + optInfo.getOrganizationCode() + "】no access to " + request.getMethod() + ":" + request.getRequestURI()));
-            }
+        String token = request.getParameter(Dew.Constant.TOKEN_VIEW_FLAG);
+        if (token == null) {
+            return filterHit(ctx, Resp.unAuthorized("Token not exist，Request parameter must include " + Dew.Constant.TOKEN_VIEW_FLAG));
+        }
+        Optional<String> bestMathResourceCode = LocalCacheContainer.getBestMathResourceCode(request.getMethod(), requestPath);
+        if (!bestMathResourceCode.isPresent()) {
+            // Not found -> The request path Don't require authentication
             return null;
-        } catch (Exception e) {
-            return filterHit(ctx, Resp.unAuthorized("Service error:" + e.getMessage()));
-        }*/
+        }
+        String optInfoStr = Dew.Service.cache.opsForValue().get(Dew.Constant.TOKEN_INFO_FLAG + token);
+        if (optInfoStr == null) {
+            return filterHit(ctx, Resp.unAuthorized("Token not exist"));
+        }
+        OptInfo optInfo = JsonHelper.toObject(optInfoStr, OptInfo.class);
+        boolean authentication = LocalCacheContainer.auth(optInfo.getRoles().stream().map(OptInfo.RoleInfo::getCode).collect(Collectors.toSet()), bestMathResourceCode.get());
+        if (authentication) {
+            return null;
+        } else {
+            return filterHit(ctx, Resp.unAuthorized("Account [" + optInfo.getAccountCode() + "] no access to " + request.getMethod() + ":" + request.getRequestURI()));
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package com.ecfront.dew.wsgateway;
 
+import com.ecfront.dew.core.DewApplication;
 import com.ecfront.dew.wsgateway.auth.AuthFilter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -11,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 @EnableZuulProxy
 @EnableDiscoveryClient
 @SpringBootApplication
-public class GatewayApplication {
+public class GatewayApplication extends DewApplication {
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(GatewayApplication.class).web(true).run(args);

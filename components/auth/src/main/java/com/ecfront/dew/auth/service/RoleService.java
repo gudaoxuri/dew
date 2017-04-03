@@ -39,24 +39,24 @@ public class RoleService implements CRUDService<RoleRepository, Role> {
     @Override
     public void postDeleteById(long id, Optional<Object> preBody) throws RuntimeException {
         roleRepository.deleteRel((String) preBody.get());
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ROLE_REMOVE, preBody.get());
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ROLE_REMOVE, "",preBody.get());
     }
 
     @Override
     public void postDeleteByCode(String code, Optional<Object> preBody) throws RuntimeException {
         roleRepository.deleteRel(code);
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ROLE_REMOVE, code);
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ROLE_REMOVE,"", code);
     }
 
     @Override
     public Role postSave(Role entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ROLE_ADD, entity);
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ROLE_ADD,"", entity);
         return entity;
     }
 
     @Override
     public Role postUpdate(Role entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ROLE_ADD, entity);
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ROLE_ADD,"", entity);
         return entity;
     }
 

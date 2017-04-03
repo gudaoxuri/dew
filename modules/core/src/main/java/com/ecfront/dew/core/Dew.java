@@ -38,6 +38,8 @@ public class Dew {
         public static final String MQ_AUTH_ACCOUNT_ADD = "dew.auth.account.add";
         public static final String MQ_AUTH_ACCOUNT_REMOVE = "dew.auth.account.remove";
 
+        public static final String MQ_AUTH_REFRESH = "dew.auth.refresh";
+
     }
 
     /**

@@ -11,7 +11,8 @@ import java.util.List;
 @ConfigurationProperties(prefix = "dew")
 public class DewConfig {
 
-    private DewBasic basic;
+    private DewBasic basic = new DewBasic();
+    private DewCluster cluster = new DewCluster();
 
     public static class DewBasic {
 
@@ -97,14 +98,27 @@ public class DewConfig {
         public void setEntity(DewEntity entity) {
             this.entity = entity;
         }
+
     }
 
     public DewBasic getBasic() {
         return basic;
     }
 
+    public static class DewCluster {
+
+    }
+
     public void setBasic(DewBasic basic) {
         this.basic = basic;
+    }
+
+    public DewCluster getCluster() {
+        return cluster;
+    }
+
+    public void setCluster(DewCluster cluster) {
+        this.cluster = cluster;
     }
 
 }

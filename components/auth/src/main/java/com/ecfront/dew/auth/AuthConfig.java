@@ -61,6 +61,7 @@ public class AuthConfig extends DewConfig {
         public void setEncryptSalt(String encryptSalt) {
             this.encryptSalt = encryptSalt;
         }
+
     }
 
     public DewAuth getAuth() {
