@@ -1,0 +1,10 @@
+language: java
+
+script: mvn clean package
+
+jdk:
+  - oraclejdk8
+  
+notifications:
+  email:
+    - i@sunisle.org
