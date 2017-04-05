@@ -1,1 +1,1 @@
-mvn clean deploy -P release
+mvn -Dmaven.test.skip=true clean deploy -P release
