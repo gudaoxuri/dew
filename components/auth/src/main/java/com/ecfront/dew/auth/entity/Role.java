@@ -16,7 +16,7 @@ public class Role extends IdEntity {
 
     @Code
     @ApiModelProperty("编码")
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String code;
     @ApiModelProperty("显示名称")
     @Column(nullable = false)

@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class Account extends SafeStatusEntity {
 
     @Code
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @ApiModelProperty("编码")
     private String code;
     @ApiModelProperty("登录ID")
