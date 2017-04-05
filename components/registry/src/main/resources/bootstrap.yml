@@ -18,3 +18,6 @@ eureka:
     fetch-registry: false
     serviceUrl:
       defaultZone: http://client:ecfront@localhost:${server.port}/eureka
+logging:
+  path: ./logs
+

@@ -1,9 +1,2 @@
 server:
   port: 80
-
-dew:
-  basic:
-    doc:
-      basePackage: ""
-    entity:
-      basePackages:

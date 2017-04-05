@@ -1,3 +1,7 @@
+dew:
+  doc:
+    basePackage: "com.ecfront.dew.auth.controller"
+
 spring:
   application:
     name: auth

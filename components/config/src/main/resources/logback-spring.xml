@@ -4,14 +4,12 @@
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
 
     <springProperty scope="context" name="springAppName" source="spring.application.name"/>
-    <property name="LOG_FILE" value="log/${springAppName}/log.log"/>​
+    <springProperty scope="context" name="logPath" source="logging.path" defaultValue="/tmp"/>
+    <property name="LOG_FILE" value="${logPath}/${springAppName}/%d{yyyy-MM-dd}.log"/>​
 
     <appender name="dailyRollingFileAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_FILE}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- daily rollover -->
-            <FileNamePattern>%d{yyyy-MM-dd}.log</FileNamePattern>
-            <!-- keep 30 days' worth of history -->
+            <FileNamePattern>${LOG_FILE}</FileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
