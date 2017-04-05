@@ -1,14 +1,62 @@
 #!/bin/bash
 
 log_path=./logs
+profile=test
+
+start_dew(){
+    stop_dew
+    files=`ls ./dew_apps/`
+    for file in $files
+        do
+            app=`echo $file|cut -d "." -f1`
+            mkdir -p  $log_path/$app/
+            cd ./dew_apps/$app
+            nohup java -Dspring.profiles.active=$profile -Ddew.flag=dew_apps_sh -jar ./$app.jar > ../../$log_path/$app/out.log &
+            echo "Started $app"
+            cd ../../
+    done
+}
+
+stop_dew(){
+    stop_app="\-Ddew.flag=dew_apps_sh"
+
+    pid=`(ps -ef |grep "$stop_app" ) | grep -v grep | awk '{print $2}'`
+    if [ -n "$pid" ] ; then
+    	 echo "Stop... $app_code"
+    	 kill $pid
+    fi
+    count=0
+    while(true)
+    do
+    	 if [ `(ps -ef |grep "$stop_app" ) | grep -v grep | wc -l ` -eq 0 ] ; then
+    		  echo "Stopped $app_code"
+    		  break
+    	 fi
+    	 if [ $count -eq 50 ] ; then # = 50 sec
+    		  echo "Stop $app_code fail,use kill -9"
+    		  kill -9 `(ps -ef |grep "$stop_app" ) | grep -v grep | awk '{print $2}'`
+    	 fi
+    		 sleep 1
+    		 let count++
+    		 if [ $count -gt 100 ] ; then # > 100 sec
+    		  echo "Stop $app_code fail,exit."
+    	 	 break
+     fi
+    done
+}
+
+restart_dew(){
+    stop_dew
+    start_dew
+}
 
 start(){
     app_code=$1
     start_app=''
     if [ $app_code = 'all' ] ; then
-        start_app="\-Dwants.flag=wants_sh"
+        start_app="\-Ddew.flag=apps_sh"
     else
-        start_app="\-Dwants.flag=wants_sh -jar ./apps/$app_code/$app_code-1.0.0-SNAPSHOT.jar"
+        start_app="\-Ddew.flag=apps_sh -jar ./apps/$app_code/$app_code.jar"
     fi
 
     if [ `(ps -ef |grep "$start_app" ) | grep -v grep | wc -l ` -eq 0 ] ; then
@@ -18,7 +66,7 @@ start(){
             app=`echo $file|cut -d "." -f1`
             if [ $1 = 'all' ] || [ "$1" = $app ]; then
                 mkdir -p  $log_path/$app/
-                nohup java -Dspring.profiles.active=test -Dwants.flag=wants_sh -jar ./apps/$app/$app-1.0.0-SNAPSHOT.jar  > $log_path/$app/out.log &
+                nohup java -Dspring.profiles.active=$profile -Ddew.flag=apps_sh -jar ./apps/$app/$app.jar  > $log_path/$app/out.log &
                 echo "Started $app"
             fi
         done
@@ -31,9 +79,9 @@ stop(){
     app_code=$1
     stop_app=''
     if [ $app_code = 'all' ] ; then
-        stop_app="\-Dwants.flag=wants_sh"
+        stop_app="\-Ddew.flag=apps_sh"
     else
-        stop_app="\-Dwants.flag=wants_sh -jar ./apps/$app_code/$app_code-1.0.0-SNAPSHOT.jar"
+        stop_app="\-Ddew.flag=apps_sh -jar ./apps/$app_code/$app_code.jar"
     fi
 
     pid=`(ps -ef |grep "$stop_app" ) | grep -v grep | awk '{print $2}'`
@@ -99,11 +147,14 @@ deploy(){
 }
 
 show(){
-    ps -ef | grep "\-Dwants.flag=wants_sh" | grep -v grep
+    ps -ef | grep "\-Ddew.flag" | grep -v grep
 }
 
 tip(){
     echo "============== [ EZ-Framework ] Deploy Script =============="
+    echo ">>  start_dew"
+    echo ">>  stop_dew"
+    echo ">>  restart_dew"
     echo ">>  start <app code | all >"
     echo ">>  stop <app code | all >"
     echo ">>  restart <app code | all >"
@@ -127,6 +178,21 @@ fi
 command=$1
 args=$2
 case $command in
+    "start_dew")
+	if [ "$args" = "" ] ; then
+     tip
+    fi
+	start_dew ;;
+	"stop_dew")
+	if [ "$args" = "" ] ; then
+     tip
+    fi
+	stop_dew ;;
+	"restart_dew")
+	if [ "$args" = "" ] ; then
+     tip
+    fi
+	restart_dew ;;
 	"start")
 	if [ "$args" = "" ] ; then 
      tip
