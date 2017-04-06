@@ -1,3 +1,4 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
@@ -22,4 +23,9 @@
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="dailyRollingFileAppender"/>
     </root>
+
+    <logger name="com.ecfront" level="TRACE"/>
+    <logger name="org.hibernate.SQL" level="DEBUG"/>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+
 </configuration>

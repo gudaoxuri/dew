@@ -4,6 +4,9 @@ dew:
       basePackages: ""
 
 spring:
+  cloud:
+    config:
+      enabled: false
   redis:
     host: localhost
     port: 6379
@@ -14,3 +17,7 @@ spring:
     username: dew
     password: 123
     virtual-host: dew
+
+eureka:
+  client:
+    enabled: false
