@@ -3,7 +3,8 @@
 *基于Spring Cloud的服务封装*
 
 image::https://img.shields.io/travis/gudaoxuri/dew.svg[link="https://travis-ci.org/gudaoxuri/dew"]
-image::https://maven-badges.herokuapp.com/maven-central/io.ebean/ebean/badge.svg[link="https://maven-badges.herokuapp.com/maven-central/org.avaje.ebean/ebean"]
+image:https://api.codacy.com/project/badge/Grade/b27405dea94b4b4085324ae6107945ba["Codacy code quality", link="https://www.codacy.com/app/gudaoxuri/dew?utm_source=github.com&utm_medium=referral&utm_content=gudaoxuri/dew&utm_campaign=Badge_Grade"]
+image:https://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2",link="https://www.apache.org/licenses/LICENSE-2.0.txt"]
 
 === 设计理念
 从企业内部框架到开源的EZ-Framework（https://github.com/gudaoxuri/ez-framework），亲历过架构从单体到SOA再到微服务的演进，
@@ -20,9 +21,21 @@ EZ-F与Dew的共同点都是力求提供一个完备的生产级微服务架构�
 . 基于Spring Data JPA的常用方式扩展
 . 整合了hystrix、config、eureka、turbine、amqp、redis、swagger2等Spring Cloud生态项目
 
+=== 状态
+
+|===
+|子项目 |状态
+
+|父pom | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/parent/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/parent/"]
+|Core | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/core/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/core/"]
+|Registry | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/registry/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/registry/"]
+|Config | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/config/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/config/"]
+|Gateway | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/gateway/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/gateway/"]
+|WSGateway | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/wsgateway/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/wsgateway/"]
+|Auth | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/auth/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/auth/"]
+|Monitor | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/monitor/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/monitor/"]
+|Logger | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/logger/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/logger/"]
+|===
+
 === 运行环境
 Java8以上、Redis、RabbitMQ、关系型数据库（默认MySQL）
-
-=== License
-
-Under version 2.0 of the http://www.apache.org/licenses/LICENSE-2.0[Apache License].

@@ -29,14 +29,13 @@ public class Swagger2 {
 
     @Autowired
     private DewConfig dewConfig;
-    private ArrayList<ResponseMessage> responseMessages;
 
     @Bean
     public Docket createRestApi() {
-        if(dewConfig.getBasic().getDoc().getBasePackage().isEmpty()){
+        if (dewConfig.getBasic().getDoc().getBasePackage().isEmpty()) {
             return null;
         }
-        responseMessages = new ArrayList<ResponseMessage>() {{
+        ArrayList<ResponseMessage> responseMessages = new ArrayList<ResponseMessage>() {{
             new ResponseMessageBuilder().code(200).message("成功").build();
             new ResponseMessageBuilder().code(400).message("请求参数错误").responseModel(new ModelRef("Error")).build();
             new ResponseMessageBuilder().code(401).message("权限认证失败").responseModel(new ModelRef("Error")).build();
