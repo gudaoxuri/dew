@@ -67,6 +67,7 @@ public class Dew {
 
     }
 
+    @Component
     public static class Service {
         /**
          * 常用服务——Redis
@@ -86,6 +87,17 @@ public class Dew {
         public static LockService lock(String key) {
             return new RedisLockService(key);
         }
+
+        @Autowired
+        private void setRedis(RedisTemplate<String, String> redis) {
+            Service.cache = redis;
+        }
+
+        @Autowired
+        private void setAmqpTemplate(AmqpTemplate amqpTemplate) {
+            Service.mq = amqpTemplate;
+        }
+
     }
 
     public static ApplicationContext applicationContext;
@@ -211,16 +223,6 @@ public class Dew {
         public static boolean checkEmail(String email) {
             return email.matches(REGEX_EMAIL);
         }
-    }
-
-    @Autowired
-    private void setRedis(RedisTemplate<String, String> redis) {
-        Service.cache = redis;
-    }
-
-    @Autowired
-    private void setAmqpTemplate(AmqpTemplate amqpTemplate) {
-        Service.mq = amqpTemplate;
     }
 
     @Autowired
