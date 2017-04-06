@@ -23,9 +23,9 @@ public class VertxServer extends AbstractVerticle {
     @Autowired
     private WSConfig wsConfig;
     @Autowired
-    WSClient wsClient;
+    private WSClient wsClient;
     @Autowired
-    DiscoveryClient discoveryClient;
+    private DiscoveryClient discoveryClient;
 
     public VertxOptions getOpt() {
         VertxOptions opt = new VertxOptions();

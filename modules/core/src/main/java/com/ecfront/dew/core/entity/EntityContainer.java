@@ -25,7 +25,7 @@ public class EntityContainer {
     private DewConfig dewConfig;
 
     @PostConstruct
-    private void init() {
+    public void init() {
         if (dewConfig.getBasic().getEntity().getBasePackages().isEmpty()) {
             return;
         }

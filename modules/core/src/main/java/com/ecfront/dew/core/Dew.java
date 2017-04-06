@@ -226,7 +226,7 @@ public class Dew {
     }
 
     @Autowired
-    private void setSpringContext(ApplicationContext applicationContext) {
+    public void setSpringContext(ApplicationContext applicationContext) {
         Dew.applicationContext = applicationContext;
     }
 

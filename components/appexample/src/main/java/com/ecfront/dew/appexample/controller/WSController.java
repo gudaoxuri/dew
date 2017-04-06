@@ -17,10 +17,10 @@ public class WSController {
     private static final Logger logger = LoggerFactory.getLogger(WSController.class);
 
     @Autowired
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     @Autowired
-    TestRepository testRepository;
+    private TestRepository testRepository;
 
     @PostMapping(value = "")
     @ResponseBody

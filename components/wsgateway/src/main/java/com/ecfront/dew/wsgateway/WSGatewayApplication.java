@@ -29,7 +29,7 @@ public class WSGatewayApplication {
 
     @Bean
     @LoadBalanced
-    RestTemplate restTemplate() {
+    private RestTemplate restTemplate() {
         return new RestTemplate();
     }
 

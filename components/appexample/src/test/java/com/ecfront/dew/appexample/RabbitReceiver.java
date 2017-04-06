@@ -16,7 +16,7 @@ public class RabbitReceiver {
     private static final Logger logger = LoggerFactory.getLogger(RabbitReceiver.class);
 
     @Bean
-    FanoutExchange fanoutExchange() {
+    public FanoutExchange fanoutExchange() {
         return new FanoutExchange("pub");
     }
 
@@ -31,12 +31,12 @@ public class RabbitReceiver {
     }
 
     @Bean
-    Binding bindingExchangeA(Queue AMessage, FanoutExchange fanoutExchange) {
+    public Binding bindingExchangeA(Queue AMessage, FanoutExchange fanoutExchange) {
         return BindingBuilder.bind(AMessage).to(fanoutExchange);
     }
 
     @Bean
-    Binding bindingExchangeB(Queue BMessage, FanoutExchange fanoutExchange) {
+    public Binding bindingExchangeB(Queue BMessage, FanoutExchange fanoutExchange) {
         return BindingBuilder.bind(BMessage).to(fanoutExchange);
     }
 

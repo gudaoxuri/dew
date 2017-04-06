@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 public class WSClient {
 
     @Autowired
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
     @Autowired
     private WSConfig wsConfig;
 

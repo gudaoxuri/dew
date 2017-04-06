@@ -20,12 +20,12 @@ public class ErrorController extends AbstractErrorController {
 
     protected static final Logger logger = LoggerFactory.getLogger(ErrorController.class);
 
+    @Value("${error.path:/error}")
+    private String errorPath;
+
     public ErrorController(ErrorAttributes errorAttributes) {
         super(errorAttributes);
     }
-
-    @Value("${error.path:/error}")
-    private String errorPath;
 
     @Override
     public String getErrorPath() {
