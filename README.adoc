@@ -7,7 +7,7 @@ image:https://api.codacy.com/project/badge/Grade/b27405dea94b4b4085324ae6107945b
 image:https://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2",link="https://www.apache.org/licenses/LICENSE-2.0.txt"]
 
 === 设计理念
-从企业内部框架到开源的EZ-Framework（https://github.com/gudaoxuri/ez-framework），亲历过架构从单体到SOA再到微服务的演进，
+从企业内部框架到开源的 https://github.com/gudaoxuri/ez-framework[EZ-Framework]，亲历过架构从单体到SOA再到微服务的演进，
 这也体现在EZ-F的各个主线版本中，
 EZ-F与Dew的共同点都是力求提供一个完备的生产级微服务架构，最小化的学习成本，快速上手，
 区别在于，EZ-F是基于Scala从零构建的，Dew主要是对Spring Cloud做一层薄的封装，在不改变Spring Cloud的开发模式下做简洁明了的扩展。
