@@ -38,6 +38,11 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
     }
 
     @Override
+    public EntityManager em() {
+        return this.entityManager;
+    }
+
+    @Override
     public <S extends E> S save(S entity) {
         Optional<EntityContainer.EntityClassInfo> entityClassInfo = EntityContainer
                 .getCodeFieldNameByClazz(modelClazz);

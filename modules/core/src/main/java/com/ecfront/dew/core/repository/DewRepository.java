@@ -7,10 +7,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 @NoRepositoryBean
 public interface DewRepository<E extends IdEntity> extends JpaRepository<E, Long> {
+
+    EntityManager em();
 
     E updateById(long id, E entity);
 

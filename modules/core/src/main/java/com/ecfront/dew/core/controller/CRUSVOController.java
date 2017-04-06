@@ -18,7 +18,7 @@ public interface CRUSVOController<T extends CRUSService, V extends Object, E ext
     @GetMapping(value = "", params = {"enable"})
     @ApiOperation(value = "根据状态获取记录列表")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "enable", value = "状态", paramType = "path", dataType = "boolean"),
+            @ApiImplicitParam(name = "enable", value = "状态", paramType = "query", dataType = "boolean"),
     })
     default Resp<List<V>> findByStatus(@RequestParam(required = false) Boolean enable) {
         Resp<List<E>> result;

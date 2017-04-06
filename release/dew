@@ -138,9 +138,7 @@ deploy(){
      rm -rf apps/$app_code/
     fi
 
-    mkdir -p apps/$app_code/config/
     cp -r prepare/$app_code/* apps/$app_code/
-    cp -r config/$app_code/* apps/$app_code/config/
     rm -rf prepare/$app_code/*
 
     start $app_code

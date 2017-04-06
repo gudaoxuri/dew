@@ -46,8 +46,8 @@ public class AuthFilter extends ZuulFilter {
         ctx.getResponse().setCharacterEncoding("UTF-8");
         String ip = Dew.Util.getRealIP(request);
         String requestPath = request.getRequestURI();
-        logger.info("[{}] {} from {}", request.getMethod(), requestPath, ip);
-        requestPath=requestPath.substring(requestPath.substring(1).indexOf("/")+1);
+        logger.trace("[{}] {}{} from {}", request.getMethod(), requestPath, request.getQueryString() == null ? "" : "?" + request.getQueryString(), ip);
+        requestPath = requestPath.substring(requestPath.substring(1).indexOf("/") + 1);
         if (requestPath.startsWith("/public")) {
             return null;
         }
@@ -55,7 +55,7 @@ public class AuthFilter extends ZuulFilter {
         if (token == null) {
             return filterHit(ctx, Resp.unAuthorized("Token not exist，Request parameter must include " + Dew.Constant.TOKEN_VIEW_FLAG));
         }
-        Optional<String> bestMathResourceCode = LocalCacheContainer.getBestMathResourceCode(request.getMethod(), requestPath);
+        Optional<String> bestMathResourceCode = LocalCacheContainer.getBestMathResourceCode(request.getMethod(), request.getRequestURI());
         if (!bestMathResourceCode.isPresent()) {
             // Not found -> The request path Don't require authentication
             return null;

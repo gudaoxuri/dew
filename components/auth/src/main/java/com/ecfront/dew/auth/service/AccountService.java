@@ -177,18 +177,8 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
     }
 
     @Override
-    public Resp<Optional<Object>> preEnableById(long id) throws RuntimeException {
-        return Resp.success(Optional.of(getById(id).getBody()));
-    }
-
-    @Override
-    public Resp<Optional<Object>> preDisableById(long id) throws RuntimeException {
-        return Resp.success(Optional.of(getById(id).getBody().getCode()));
-    }
-
-    @Override
     public void postEnableById(long id, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, "", JsonHelper.toJsonString(preBody.get()));
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, "", JsonHelper.toJsonString(getById(id).getBody()));
     }
 
     @Override
@@ -198,7 +188,7 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
 
     @Override
     public void postDisableById(long id, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_REMOVE, "", preBody.get());
+        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_REMOVE, "", getById(id).getBody().getCode());
     }
 
     @Override

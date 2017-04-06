@@ -13,7 +13,7 @@ public class AuthConfig extends DewConfig {
 
     public static class DewAuth {
 
-        public static final String ENCRYPT_ALGORITHM_SHA265 = "SHA-265";
+        public static final String ENCRYPT_ALGORITHM_SHA256 = "SHA-256";
         public static final String ENCRYPT_ALGORITHM_BCRYPT = "bcrypt";
 
         private boolean customLogin = false;

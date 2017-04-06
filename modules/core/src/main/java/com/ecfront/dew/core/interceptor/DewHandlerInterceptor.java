@@ -22,7 +22,7 @@ public class DewHandlerInterceptor extends HandlerInterceptorAdapter {
         context.setRequestUri(request.getRequestURI());
         context.setToken(token);
         DewContext.setContext(context);
-        logger.info("[{}] {} from {}", request.getMethod(), context.getRequestUri(), context.getSourceIP());
+        logger.trace("[{}] {}{} from {}", request.getMethod(), request.getRequestURI(), request.getQueryString() == null ? "" : "?" + request.getQueryString(), context.getSourceIP());
         return super.preHandle(request, response, handler);
     }
 
