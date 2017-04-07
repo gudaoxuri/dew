@@ -23,7 +23,7 @@ public abstract class DewApplication {
 
     @Bean
     @LoadBalanced
-    private RestTemplate restTemplate() {
+    protected RestTemplate restTemplate() {
         return new RestTemplate();
     }
 
