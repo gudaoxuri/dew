@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -43,6 +44,7 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
     }
 
     @Override
+    @Transactional
     public <S extends E> S save(S entity) {
         Optional<EntityContainer.EntityClassInfo> entityClassInfo = EntityContainer
                 .getCodeFieldNameByClazz(modelClazz);
@@ -74,6 +76,7 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
     }
 
     @Override
+    @Transactional
     public E updateById(long id, E entity) {
         entity.setId(id);
         if (entity instanceof SafeEntity) {
@@ -91,6 +94,7 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
     }
 
     @Override
+    @Transactional
     public E updateByCode(String code, E entity) {
         long id = getByCode(code).getId();
         entity.setId(id);
@@ -123,21 +127,17 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
     }
 
     @Override
+    @Transactional
     public void deleteById(long id) {
-        super.delete(id);
+        super.delete(getById(id));
+        entityManager.flush();
     }
 
     @Override
+    @Transactional
     public void deleteByCode(String code) {
-        EntityContainer
-                .getCodeFieldNameByClazz(modelClazz)
-                .map(s ->
-                        entityManager
-                                .createQuery(String.format("DELETE FROM %s WHERE %s = ?1", modelClazz.getSimpleName(), s.codeFieldName))
-                                .setParameter(1, code)
-                                .executeUpdate()
-                )
-                .orElse(null);
+        super.delete(getByCode(code));
+        entityManager.flush();
     }
 
     @Override
@@ -184,21 +184,25 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
     }
 
     @Override
+    @Transactional
     public void enableById(long id) {
         changeStatus(id, null, true);
     }
 
     @Override
+    @Transactional
     public void enableByCode(String code) {
         changeStatus(-1, code, true);
     }
 
     @Override
+    @Transactional
     public void disableById(long id) {
         changeStatus(id, null, false);
     }
 
     @Override
+    @Transactional
     public void disableByCode(String code) {
         changeStatus(-1, code, false);
     }
