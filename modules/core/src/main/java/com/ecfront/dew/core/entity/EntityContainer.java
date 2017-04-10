@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 public class EntityContainer {
 
-    private static final Map<String, EntityClassInfo> CODE_FIELD_NAMES = new ConcurrentHashMap<>();
+    private static final Map<String, Optional<EntityClassInfo>> CODE_FIELD_NAMES = new ConcurrentHashMap<>();
 
     @Autowired
     private DewConfig dewConfig;
@@ -43,9 +43,9 @@ public class EntityContainer {
                         EntityClassInfo entityClassInfo = new EntityClassInfo();
                         entityClassInfo.codeFieldName = info.getName();
                         entityClassInfo.codeFieldUUID = ((Code) info.getAnnotations().stream().filter(i -> i.annotationType() == Code.class).findAny().get()).uuid();
-                        CODE_FIELD_NAMES.put(clazz.getName(), entityClassInfo);
+                        CODE_FIELD_NAMES.put(clazz.getName(), Optional.of(entityClassInfo));
                     } else {
-                        CODE_FIELD_NAMES.put(clazz.getName(), null);
+                        CODE_FIELD_NAMES.put(clazz.getName(), Optional.empty());
                     }
                 });
             } catch (IOException | ClassNotFoundException e) {
@@ -55,7 +55,7 @@ public class EntityContainer {
     }
 
     public static Optional<EntityClassInfo> getCodeFieldNameByClazz(Class<?> clazz) {
-        return Optional.ofNullable(CODE_FIELD_NAMES.get(clazz.getName()));
+        return CODE_FIELD_NAMES.get(clazz.getName());
     }
 
     public static class EntityClassInfo {
