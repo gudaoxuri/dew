@@ -15,7 +15,7 @@ public interface RoleRepository extends DewRepository<Role> {
     @Query(value = "DELETE FROM dew_rel_account_role  WHERE role_code = ?1", nativeQuery = true)
     void deleteRel(String roleCode);
 
-    @Query(value = "SELECT t FROM #{#entityName} t WHERE t.tenantCode = ?1 OR t.tenantCode = ''")
+    @Query(value = "SELECT t FROM #{#entityName} t WHERE t.tenantCode = ?1 OR t.tenantCode IS NULL OR t.tenantCode = ''")
     List<Role> findByTenantCode(String tenantCode);
 
 }

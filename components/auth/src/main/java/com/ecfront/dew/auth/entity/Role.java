@@ -25,7 +25,7 @@ public class Role extends IdEntity {
     @Column(nullable = false)
     private String name;
     @ApiModelProperty("租户编码")
-    @Column(nullable = false)
+    @Column()
     private String tenantCode;
     @ApiModelProperty("对应的资源列表")
     @ManyToMany(fetch = FetchType.LAZY)

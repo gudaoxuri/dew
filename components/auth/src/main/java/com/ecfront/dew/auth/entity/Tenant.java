@@ -29,7 +29,7 @@ public class Tenant extends SafeStatusEntity {
     @Column(nullable = false)
     private String image;
     @ApiModelProperty("分类")
-    @Column(nullable = false)
+    @Column()
     private String category;
 
     public static Tenant build(String name) {

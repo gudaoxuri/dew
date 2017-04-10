@@ -14,6 +14,6 @@ public interface ResourceRepository extends DewRepository<Resource> {
     @Query(value = "DELETE FROM dew_rel_role_resource  WHERE resource_code = ?1", nativeQuery = true)
     void deleteRel(String resourceCode);
 
-    @Query(value = "SELECT t FROM #{#entityName} t WHERE t.tenantCode = ?1 OR t.tenantCode = ''")
+    @Query(value = "SELECT t FROM #{#entityName} t WHERE t.tenantCode = ?1 OR t.tenantCode IS NULL OR t.tenantCode = ''")
     List<Resource> findByTenantCode(String tenantCode);
 }

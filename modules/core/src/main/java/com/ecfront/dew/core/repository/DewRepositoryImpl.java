@@ -69,6 +69,7 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
             }
         }
         entityManager.persist(entity);
+        entityManager.flush();
         return entity;
     }
 
@@ -84,7 +85,9 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
                 e.setUpdateUser("");
             }
         }
-        return entityManager.merge(entity);
+        entity= entityManager.merge(entity);
+        entityManager.flush();
+        return entity;
     }
 
     @Override
@@ -100,7 +103,9 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
                 e.setUpdateUser("");
             }
         }
-        return entityManager.merge(entity);
+        entity= entityManager.merge(entity);
+        entityManager.flush();
+        return entity;
     }
 
     @Override

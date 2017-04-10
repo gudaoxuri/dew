@@ -37,19 +37,19 @@ public class Resource extends IdEntity {
     @Column(nullable = false)
     private String name;
     @ApiModelProperty(value = "类别", notes = "为空表示表示默认类型，menu表示菜单类型")
-    @Column(nullable = false)
+    @Column()
     private String category;
     @ApiModelProperty("显示图标")
-    @Column(nullable = false)
+    @Column()
     private String icon;
     @ApiModelProperty("父编码")
-    @Column(nullable = false)
+    @Column()
     private String parentCode;
     @ApiModelProperty("显示排序")
-    @Column(nullable = false)
+    @Column()
     private int sort;
     @ApiModelProperty("租户编码")
-    @Column(nullable = false)
+    @Column()
     private String tenantCode;
 
     public static Resource build(String uri, String method, String name, String tenantCode) {

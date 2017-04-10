@@ -18,11 +18,11 @@ public abstract class SafeEntity extends IdEntity {
     @ApiModelProperty("更新时间")
     protected Date updateTime;
 
-    @Column(nullable = false)
+    @Column()
     @ApiModelProperty("创建人编码")
     protected String createUser;
 
-    @Column(nullable = false)
+    @Column()
     @ApiModelProperty("更新人编码")
     protected String updateUser;
 
