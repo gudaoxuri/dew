@@ -133,7 +133,7 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
                 .getCodeFieldNameByClazz(modelClazz)
                 .map(s ->
                         entityManager
-                                .createQuery(String.format("DELETE FROM %s WHERE %s = ?1", modelClazz.getSimpleName(), s))
+                                .createQuery(String.format("DELETE FROM %s WHERE %s = ?1", modelClazz.getSimpleName(), s.codeFieldName))
                                 .setParameter(1, code)
                                 .executeUpdate()
                 )
