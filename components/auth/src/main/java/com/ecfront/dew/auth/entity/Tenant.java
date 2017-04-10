@@ -7,10 +7,14 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "dew_tenant")
+@Table(name = "dew_tenant", indexes = {
+        @Index(name = "idx_dew_tenant_code", columnList = "code", unique = true),
+        @Index(name = "idx_dew_tenant_enable", columnList = "enable")
+})
 @ApiModel("租户实体")
 public class Tenant extends SafeStatusEntity {
 

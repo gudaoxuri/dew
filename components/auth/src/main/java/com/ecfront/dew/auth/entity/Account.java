@@ -10,7 +10,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "dew_account")
+@Table(name = "dew_account",indexes = {
+        @Index(name = "idx_dew_acc_code",columnList = "code",unique = true),
+        @Index(name = "idx_dew_acc_loginid",columnList = "loginId",unique = true),
+        @Index(name = "idx_dew_acc_mobile",columnList = "mobile",unique = true),
+        @Index(name = "idx_dew_acc_email",columnList = "email",unique = true),
+        @Index(name = "idx_dew_acc_enable",columnList = "enable")
+        })
 @ApiModel("账号实体")
 public class Account extends SafeStatusEntity {
 
@@ -68,6 +74,14 @@ public class Account extends SafeStatusEntity {
         this.code = code;
     }
 
+    public String getLoginId() {
+        return loginId;
+    }
+
+    public void setLoginId(String loginId) {
+        this.loginId = loginId;
+    }
+
     public String getMobile() {
         return mobile;
     }
@@ -92,28 +106,20 @@ public class Account extends SafeStatusEntity {
         this.password = password;
     }
 
-    public String getExt() {
-        return ext;
-    }
-
-    public void setExt(String ext) {
-        this.ext = ext;
-    }
-
-    public String getLoginId() {
-        return loginId;
-    }
-
-    public void setLoginId(String loginId) {
-        this.loginId = loginId;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getExt() {
+        return ext;
+    }
+
+    public void setExt(String ext) {
+        this.ext = ext;
     }
 
     public Set<Role> getRoles() {

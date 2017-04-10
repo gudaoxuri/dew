@@ -10,7 +10,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "dew_role")
+@Table(name = "dew_role",indexes = {
+        @Index(name = "idx_dew_role_code",columnList = "code",unique = true),
+        @Index(name = "idx_dew_role_tcode",columnList = "tenantCode"),
+})
 @ApiModel("角色实体")
 public class Role extends IdEntity {
 

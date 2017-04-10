@@ -7,10 +7,16 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "dew_resource")
+@Table(name = "dew_resource", indexes = {
+        @Index(name = "idx_dew_res_code", columnList = "code", unique = true),
+        @Index(name = "idx_dew_res_cate", columnList = "category"),
+        @Index(name = "idx_dew_res_pcode", columnList = "parentCode"),
+        @Index(name = "idx_dew_res_tcode", columnList = "tenantCode"),
+})
 @ApiModel("资源实体")
 public class Resource extends IdEntity {
 

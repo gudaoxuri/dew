@@ -6,6 +6,7 @@ import com.ecfront.dew.core.config.DewConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.RequestMethod;
 import springfox.documentation.builders.*;
 import springfox.documentation.schema.ModelRef;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
  */
 @Configuration
 @EnableSwagger2
+@Profile({"test", "dev"})
 public class Swagger2 {
 
     @Autowired
