@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class DewHandlerInterceptor extends HandlerInterceptorAdapter {
 
-    protected static final Logger logger = LoggerFactory.getLogger(DewHandlerInterceptor.class);
+    private static final Logger logger = LoggerFactory.getLogger(DewHandlerInterceptor.class);
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

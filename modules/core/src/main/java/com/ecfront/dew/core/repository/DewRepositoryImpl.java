@@ -159,7 +159,7 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
             pageRequest = new PageRequest(pageNumber, pageSize, sort);
         }
         Page result = super.findAll(pageRequest);
-        return PageDTO.build(pageNumber, pageSize, result.getTotalPages(), result.getContent());
+        return PageDTO.build(pageNumber, pageSize, result.getTotalElements(), result.getContent());
     }
 
     @Override
