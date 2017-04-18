@@ -1,7 +1,6 @@
 package com.ecfront.dew.appexample;
 
 import com.ecfront.dew.core.Dew;
-import com.ecfront.dew.core.dist.LockService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

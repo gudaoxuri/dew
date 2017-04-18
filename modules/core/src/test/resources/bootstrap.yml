@@ -1,0 +1,28 @@
+dew:
+  cluster:
+    cache: redis
+    dist: redis
+    mq: hazelcast
+
+spring:
+  application:
+    name: core-test
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+  hazelcast:
+    addresses: ["127.0.0.1"]
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/dew?characterEncoding=UTF-8&autoReconnect=true
+    username: root
+    password: 123456
+  cloud:
+    config:
+      discovery:
+        enabled: false
+
+eureka:
+  client:
+    enabled: false

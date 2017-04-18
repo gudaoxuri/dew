@@ -2,7 +2,6 @@ package com.ecfront.dew.auth;
 
 
 import com.ecfront.dew.core.Dew;
-import com.ecfront.dew.core.MQInitiator;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.stereotype.Component;

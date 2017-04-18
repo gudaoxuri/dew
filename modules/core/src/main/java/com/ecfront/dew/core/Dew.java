@@ -1,15 +1,12 @@
 package com.ecfront.dew.core;
 
 import com.ecfront.dew.common.TimerHelper;
-import com.ecfront.dew.core.dist.LockService;
-import com.ecfront.dew.core.dist.RedisLockService;
+import com.ecfront.dew.core.cluster.Cluster;
 import com.ecfront.dew.core.fun.VoidExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +16,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Component
 public class Dew {
@@ -67,38 +66,7 @@ public class Dew {
 
     }
 
-    @Component
-    public static class Service {
-        /**
-         * 常用服务——Redis
-         */
-        public static RedisTemplate<String, String> cache;
-        /**
-         * 常用服务——MQ
-         */
-        public static AmqpTemplate mq;
-
-        /**
-         * 常用服务——分布式锁
-         *
-         * @param key
-         * @return
-         */
-        public static LockService lock(String key) {
-            return new RedisLockService(key);
-        }
-
-        @Autowired
-        private void setRedis(RedisTemplate<String, String> redis) {
-            Service.cache = redis;
-        }
-
-        @Autowired
-        private void setAmqpTemplate(AmqpTemplate amqpTemplate) {
-            Service.mq = amqpTemplate;
-        }
-
-    }
+    public static Cluster cluster=new Cluster();
 
     public static ApplicationContext applicationContext;
 
@@ -138,9 +106,9 @@ public class Dew {
 
         private static final Logger logger = LoggerFactory.getLogger(Timer.class);
 
-        public static void periodic(long initialDelay, long period, VoidExecutor fun) {
+        public static void periodic(long initialDelaySec, long periodSec, VoidExecutor fun) {
             DewContext context = Dew.context();
-            TimerHelper.periodic(initialDelay, period, () -> {
+            TimerHelper.periodic(initialDelaySec, periodSec, () -> {
                 DewContext.setContext(context);
                 try {
                     fun.exec();
@@ -150,13 +118,13 @@ public class Dew {
             });
         }
 
-        public static void periodic(long period, VoidExecutor fun) {
-            periodic(0, period, fun);
+        public static void periodic(long periodSec, VoidExecutor fun) {
+            periodic(0, periodSec, fun);
         }
 
-        public static void timer(long delay, VoidExecutor fun) {
+        public static void timer(long delaySec, VoidExecutor fun) {
             DewContext context = Dew.context();
-            TimerHelper.timer(delay, () -> {
+            TimerHelper.timer(delaySec, () -> {
                 DewContext.setContext(context);
                 try {
                     fun.exec();
@@ -223,6 +191,30 @@ public class Dew {
         public static boolean checkEmail(String email) {
             return email.matches(REGEX_EMAIL);
         }
+
+        private static ExecutorService executorService = Executors.newCachedThreadPool();
+
+        public static void newThread(Runnable fun) {
+            executorService.execute(fun);
+        }
+
+        public static class RunnableWithContext implements Runnable {
+
+            private VoidExecutor fun;
+            private DewContext context;
+
+            public RunnableWithContext(VoidExecutor fun) {
+                this.fun = fun;
+                this.context = DewContext.getContext();
+            }
+
+            @Override
+            public void run() {
+                DewContext.setContext(context);
+                fun.exec();
+            }
+        }
+
     }
 
     @Autowired

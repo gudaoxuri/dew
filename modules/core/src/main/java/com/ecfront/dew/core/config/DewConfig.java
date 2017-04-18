@@ -107,6 +107,33 @@ public class DewConfig {
 
     public static class DewCluster {
 
+        private String mq;
+        private String cache;
+        private String dist;
+
+        public String getMq() {
+            return mq;
+        }
+
+        public void setMq(String mq) {
+            this.mq = mq;
+        }
+
+        public String getCache() {
+            return cache;
+        }
+
+        public void setCache(String cache) {
+            this.cache = cache;
+        }
+
+        public String getDist() {
+            return dist;
+        }
+
+        public void setDist(String dist) {
+            this.dist = dist;
+        }
     }
 
     public void setBasic(DewBasic basic) {
