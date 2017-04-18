@@ -23,15 +23,15 @@ public interface ClusterDistMap<M> {
 
     void clear();
 
-    default ClusterDistMap<M> regEntryAddedEvent(Consumer<EntryEvent<String, M>> fun) {
+    default ClusterDistMap<M> regEntryAddedEvent(Consumer<EntryEvent<M>> fun) {
         return this;
     }
 
-    default ClusterDistMap<M> regEntryRemovedEvent(Consumer<EntryEvent<String, M>> fun) {
+    default ClusterDistMap<M> regEntryRemovedEvent(Consumer<EntryEvent<M>> fun) {
         return this;
     }
 
-    default ClusterDistMap<M> regEntryUpdatedEvent(Consumer<EntryEvent<String, M>> fun) {
+    default ClusterDistMap<M> regEntryUpdatedEvent(Consumer<EntryEvent<M>> fun) {
         return this;
     }
 
@@ -39,7 +39,7 @@ public interface ClusterDistMap<M> {
         return this;
     }
 
-    class EntryEvent<String, V> {
+    class EntryEvent<V> {
         private String key;
         private V oldValue;
         private V value;

@@ -66,39 +66,35 @@ public class HazelcastClusterDistMap<M> implements ClusterDistMap<M> {
     }
 
     @Override
-    public HazelcastClusterDistMap<M> regEntryAddedEvent(Consumer<EntryEvent<String, M>> fun) {
+    public HazelcastClusterDistMap<M> regEntryAddedEvent(Consumer<EntryEvent<M>> fun) {
         map.addEntryListener((EntryAddedListener<String, M>) entryEvent -> {
-            EntryEvent<String, M> ee = new EntryEvent<>();
-            ee.setKey(entryEvent.getKey());
-            ee.setOldValue(entryEvent.getOldValue());
-            ee.setValue(entryEvent.getValue());
-            fun.accept(ee);
+            packageEntryEvent(fun, entryEvent);
         }, true);
         return this;
     }
 
     @Override
-    public HazelcastClusterDistMap<M> regEntryRemovedEvent(Consumer<EntryEvent<String, M>> fun) {
+    public HazelcastClusterDistMap<M> regEntryRemovedEvent(Consumer<EntryEvent<M>> fun) {
         map.addEntryListener((EntryRemovedListener<String, M>) entryEvent -> {
-            EntryEvent<String, M> ee = new EntryEvent<>();
-            ee.setKey(entryEvent.getKey());
-            ee.setOldValue(entryEvent.getOldValue());
-            ee.setValue(entryEvent.getValue());
-            fun.accept(ee);
+            packageEntryEvent(fun, entryEvent);
         }, true);
         return this;
     }
 
     @Override
-    public HazelcastClusterDistMap<M> regEntryUpdatedEvent(Consumer<EntryEvent<String, M>> fun) {
+    public HazelcastClusterDistMap<M> regEntryUpdatedEvent(Consumer<EntryEvent<M>> fun) {
         map.addEntryListener((EntryUpdatedListener<String, M>) entryEvent -> {
-            EntryEvent<String, M> ee = new EntryEvent<>();
-            ee.setKey(entryEvent.getKey());
-            ee.setOldValue(entryEvent.getOldValue());
-            ee.setValue(entryEvent.getValue());
-            fun.accept(ee);
+            packageEntryEvent(fun, entryEvent);
         }, true);
         return this;
+    }
+
+    private void packageEntryEvent(Consumer<EntryEvent<M>> fun, com.hazelcast.core.EntryEvent<String, M> entryEvent) {
+        EntryEvent<M> ee = new EntryEvent<>();
+        ee.setKey(entryEvent.getKey());
+        ee.setOldValue(entryEvent.getOldValue());
+        ee.setValue(entryEvent.getValue());
+        fun.accept(ee);
     }
 
     @Override
