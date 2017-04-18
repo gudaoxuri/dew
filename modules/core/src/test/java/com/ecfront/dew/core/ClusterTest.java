@@ -85,85 +85,196 @@ public class ClusterTest {
     }
 
     @Test
-    public void testMap() throws InterruptedException {
-        ClusterDistMap<TestMapObj> mapObj = Dew.cluster.dist.map("test_obj_map");
+    public void testDist() throws InterruptedException {
+        // map
+        ClusterDistMap<TestMapObj> mapObj = Dew.cluster.dist.map("test_obj_map", TestMapObj.class);
+        mapObj.regEntryAddedEvent(entryEvent ->
+                System.out.println("Event : Add key:" + entryEvent.getKey() + ",value:" + entryEvent.getValue().a));
+        mapObj.regEntryRemovedEvent(entryEvent ->
+                System.out.println("Event : Remove key:" + entryEvent.getKey() + ",value:null,old value:" + entryEvent.getOldValue().a));
+        mapObj.regEntryUpdatedEvent(entryEvent ->
+                System.out.println("Event : Update key:" + entryEvent.getKey() + ",value:" + entryEvent.getValue().a + ",old value:" + entryEvent.getOldValue().a));
+        mapObj.regMapClearedEvent(() -> System.out.println("Event : Clear"));
+
         mapObj.clear();
         TestMapObj obj = new TestMapObj();
         obj.a = "测试";
         mapObj.put("a", obj);
+        mapObj.put("b", obj);
+        obj.a = "测试2";
+        mapObj.put("b", obj);
+        mapObj.remove("b");
         Assert.assertEquals(mapObj.get("a").a, "测试");
+        mapObj.clear();
 
-        ClusterDistMap<Long> map = Dew.cluster.dist.map("test_map");
+        ClusterDistMap<Long> map = Dew.cluster.dist.map("test_map", Long.class);
         map.clear();
-        Dew.Timer.periodic(1000, () -> map.put("a" + System.currentTimeMillis(), System.currentTimeMillis()));
-        Dew.Timer.periodic(10000, () -> map.getAll().forEach((key, value) -> System.out.println(">>a:" + value)));
-        new CountDownLatch(1).await();
-    }
+        Dew.Timer.periodic(1, () -> map.put("a" + System.currentTimeMillis(), System.currentTimeMillis()));
+        Dew.Timer.periodic(10, () -> map.getAll().forEach((key, value) -> System.out.println(">>a:" + value)));
+        Thread.sleep(15);
 
-    @Test
-    public void testLock() throws InterruptedException {
+        // lock
         ClusterDistLock lock = Dew.cluster.dist.lock("test_lock");
         lock.delete();
         Thread t1 = new Thread(() -> {
             lock.lock();
-            System.out.println("Lock > " + Thread.currentThread().getId());
+            System.out.println("Lock1 > " + Thread.currentThread().getId());
             try {
                 Thread.sleep(500);
             } catch (Exception e) {
             } finally {
-                System.out.println("UnLock > " + Thread.currentThread().getId());
+                System.out.println("UnLock1 > " + Thread.currentThread().getId());
                 lock.unLock();
             }
         });
         t1.start();
         t1.join();
-        Thread t3 = new Thread(() -> {
+        Thread t2 = new Thread(() -> {
             ClusterDistLock lockLocal = Dew.cluster.dist.lock("test_lock");
             try {
                 Assert.assertTrue(lockLocal.tryLock());
-                System.out.println("locked");
+                System.out.println("Lock2 > " + Thread.currentThread().getId());
                 Thread.sleep(10000);
-                lockLocal.unLock();
-                System.out.println("unLock");
             } catch (Exception e) {
             } finally {
-                System.out.println("UnLock > " + Thread.currentThread().getId());
                 lockLocal.unLock();
+                System.out.println("UnLock2 > " + Thread.currentThread().getId());
             }
         });
-        t3.start();
+        t2.start();
         Thread.sleep(1000);
-        Thread t4 = new Thread(() -> {
+        Thread t3 = new Thread(() -> {
             ClusterDistLock lockLocal = Dew.cluster.dist.lock("test_lock");
             try {
                 while (!lockLocal.tryLock()) {
                     System.out.println("waiting 1 unlock");
                     Thread.sleep(100);
                 }
+                System.out.println("Lock3 > " + Thread.currentThread().getId());
             } catch (Exception e) {
             } finally {
-                System.out.println("UnLock > " + Thread.currentThread().getId());
+                System.out.println("UnLock3 > " + Thread.currentThread().getId());
                 lockLocal.unLock();
             }
         });
-        t4.start();
-        Thread t5 = new Thread(() -> {
+        t3.start();
+        Thread t4 = new Thread(() -> {
             ClusterDistLock lockLocal = Dew.cluster.dist.lock("test_lock");
             try {
                 while (!lockLocal.tryLock(5000)) {
                     System.out.println("waiting 2 unlock");
                     Thread.sleep(100);
                 }
+                System.out.println("Lock4 > " + Thread.currentThread().getId());
             } catch (Exception e) {
             } finally {
-                System.out.println("UnLock > " + Thread.currentThread().getId());
+                System.out.println("UnLock4 > " + Thread.currentThread().getId());
                 lockLocal.unLock();
             }
         });
-        t5.start();
+        t4.start();
+        t2.join();
         t3.join();
         t4.join();
-        t5.join();
+    }
+
+    @Test
+    public void testMQ() throws InterruptedException {
+        // pub-sub
+        CountDownLatch pubSubCdl = new CountDownLatch(4);
+        new Thread(() -> {
+            Dew.cluster.mq.subscribe("test_pub_sub", message -> {
+                Assert.assertTrue(message.contains("msg"));
+                System.out.println("1 pub_sub>>" + message);
+                pubSubCdl.countDown();
+            });
+            try {
+                pubSubCdl.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        new Thread(() -> {
+            Dew.cluster.mq.subscribe("test_pub_sub", message -> {
+                Assert.assertTrue(message.contains("msg"));
+                System.out.println("2 pub_sub>>" + message);
+                pubSubCdl.countDown();
+            });
+            try {
+                pubSubCdl.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        new Thread(() -> {
+            Dew.cluster.mq.subscribe("test_pub_sub/a", message -> {
+                Assert.assertTrue(1 == 2);
+            });
+            try {
+                new CountDownLatch(1).await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        Thread.sleep(1000);
+        Dew.cluster.mq.publish("test_pub_sub", "msgA");
+        Thread.sleep(100);
+        Dew.cluster.mq.publish("test_pub_sub", "msgB");
+        pubSubCdl.await();
+
+        // req-resp
+        List<String> conflictFlag = new ArrayList<>();
+        new Thread(() -> {
+            Dew.cluster.mq.response("test_rep_resp", message -> {
+                if (conflictFlag.contains(message)) {
+                    Assert.assertTrue(1 == 2);
+                } else {
+                    conflictFlag.add(message);
+                    System.out.println("1 req_resp>>" + message);
+                }
+            });
+            try {
+                new CountDownLatch(1).await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        new Thread(() -> {
+            Dew.cluster.mq.response("test_rep_resp", message -> {
+                if (conflictFlag.contains(message)) {
+                    Assert.assertTrue(1 == 2);
+                } else {
+                    conflictFlag.add(message);
+                    System.out.println("2 req_resp>>" + message);
+                }
+            });
+            try {
+                new CountDownLatch(1).await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        new Thread(() -> {
+            Dew.cluster.mq.response("test_rep_resp/a", message -> {
+                Assert.assertTrue(1 == 2);
+            });
+            try {
+                new CountDownLatch(1).await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        Thread.sleep(1000);
+        Dew.cluster.mq.request("test_rep_resp", "msg1");
+        Dew.cluster.mq.request("test_rep_resp", "msg2");
+
+        Thread.sleep(1000);
     }
 
     static class TestMapObj implements Serializable {

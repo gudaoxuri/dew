@@ -25,6 +25,16 @@
             <version>${dew.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>cluster-spi-hazelcast</artifactId>
+            <version>${dew.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>cluster-spi-redis</artifactId>
+            <version>${dew.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>

@@ -56,24 +56,24 @@ public class ResourceService implements CRUDService<ResourceRepository, Resource
     @Override
     public void postDeleteById(long id, Optional<Object> preBody) throws RuntimeException {
         resourceRepository.deleteRel((String) preBody.get());
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_RESOURCE_REMOVE, "", preBody.get());
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_RESOURCE_REMOVE, (String) preBody.get());
     }
 
     @Override
     public void postDeleteByCode(String code, Optional<Object> preBody) throws RuntimeException {
         resourceRepository.deleteRel(code);
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_RESOURCE_REMOVE, "", code);
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_RESOURCE_REMOVE, code);
     }
 
     @Override
     public Resource postSave(Resource entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_RESOURCE_ADD, "", JsonHelper.toJsonString(entity));
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_RESOURCE_ADD, JsonHelper.toJsonString(entity));
         return entity;
     }
 
     @Override
     public Resource postUpdate(Resource entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_RESOURCE_ADD, "", JsonHelper.toJsonString(entity));
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_RESOURCE_ADD, JsonHelper.toJsonString(entity));
         return entity;
     }
 

@@ -38,8 +38,8 @@ import java.util.Map;
 @EnableJpaRepositories(
         repositoryFactoryBeanClass = DewRepositoryFactoryBean.class
 )
-@SpringBootTest(classes = AuthTest.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ComponentScan(basePackageClasses = {AuthTest.class, Dew.class})
+@SpringBootTest(classes = AuthApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ComponentScan(basePackageClasses = {Dew.class,AuthTest.class})
 public class AuthTest {
 
     @Autowired

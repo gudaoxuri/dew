@@ -10,8 +10,8 @@ public class HazelcastClusterDistLock implements ClusterDistLock {
 
     private ILock lock;
 
-    public HazelcastClusterDistLock(String key, HazelcastAdapter hazelcastAdapter) {
-        hazelcastAdapter.getHazelcastInstance().getLock("dew:dist:lock:" + key);
+    HazelcastClusterDistLock(String key, HazelcastAdapter hazelcastAdapter) {
+        lock = hazelcastAdapter.getHazelcastInstance().getLock("dew:dist:lock:" + key);
     }
 
     @Override
@@ -24,8 +24,6 @@ public class HazelcastClusterDistLock implements ClusterDistLock {
         try {
             lock(leaseSec);
             fun.exec();
-        } catch (Exception e) {
-            throw e;
         } finally {
             unLock();
         }
@@ -46,8 +44,6 @@ public class HazelcastClusterDistLock implements ClusterDistLock {
         if (tryLock(waitSec, leaseSec)) {
             try {
                 fun.exec();
-            } catch (Exception e) {
-                throw e;
             } finally {
                 unLock();
             }
@@ -102,6 +98,6 @@ public class HazelcastClusterDistLock implements ClusterDistLock {
 
     @Override
     public void delete() {
-        lock.destroy();
+        lock.forceUnlock();
     }
 }

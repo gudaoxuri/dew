@@ -16,7 +16,7 @@ public class HazelcastClusterDistMap<M> implements ClusterDistMap<M> {
 
     private IMap<String, M> map;
 
-    public HazelcastClusterDistMap(String mapKey, HazelcastAdapter hazelcastAdapter) {
+    public HazelcastClusterDistMap(String mapKey, Class<M> clazz, HazelcastAdapter hazelcastAdapter) {
         map = hazelcastAdapter.getHazelcastInstance().getMap("dew:dist:map:" + mapKey);
     }
 
@@ -72,7 +72,6 @@ public class HazelcastClusterDistMap<M> implements ClusterDistMap<M> {
             ee.setKey(entryEvent.getKey());
             ee.setOldValue(entryEvent.getOldValue());
             ee.setValue(entryEvent.getValue());
-            ee.setMergingValue(entryEvent.getMergingValue());
             fun.accept(ee);
         }, true);
         return this;
@@ -85,7 +84,6 @@ public class HazelcastClusterDistMap<M> implements ClusterDistMap<M> {
             ee.setKey(entryEvent.getKey());
             ee.setOldValue(entryEvent.getOldValue());
             ee.setValue(entryEvent.getValue());
-            ee.setMergingValue(entryEvent.getMergingValue());
             fun.accept(ee);
         }, true);
         return this;
@@ -98,7 +96,6 @@ public class HazelcastClusterDistMap<M> implements ClusterDistMap<M> {
             ee.setKey(entryEvent.getKey());
             ee.setOldValue(entryEvent.getOldValue());
             ee.setValue(entryEvent.getValue());
-            ee.setMergingValue(entryEvent.getMergingValue());
             fun.accept(ee);
         }, true);
         return this;

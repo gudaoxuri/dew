@@ -1,11 +1,10 @@
 package com.ecfront.dew.core.cluster.spi.hazelcast;
 
 import com.ecfront.dew.core.cluster.ClusterMQ;
-import com.ecfront.dew.core.cluster.MessageProcessFun;
-import com.hazelcast.core.Message;
-import com.hazelcast.core.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.function.Consumer;
 
 @Component
 public class HazelcastClusterMQ implements ClusterMQ {
@@ -19,15 +18,12 @@ public class HazelcastClusterMQ implements ClusterMQ {
     }
 
     @Override
-    public void subscribe(String topic, MessageProcessFun<String> messageProcessFun) {
-        hazelcastAdapter.getHazelcastInstance().getTopic(topic).addMessageListener(new MessageListener<Object>() {
-            @Override
-            public void onMessage(Message<Object> message) {
-                try {
-                    messageProcessFun.received((String) message.getMessageObject());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+    public void subscribe(String topic, Consumer<String> consumer) {
+        hazelcastAdapter.getHazelcastInstance().getTopic(topic).addMessageListener(message -> {
+            try {
+                consumer.accept((String) message.getMessageObject());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
@@ -39,15 +35,17 @@ public class HazelcastClusterMQ implements ClusterMQ {
     }
 
     @Override
-    public void response(String address, MessageProcessFun<String> messageProcessFun) {
+    public void response(String address, Consumer<String> consumer) {
         new Thread(() -> {
             try {
-                String message = (String) hazelcastAdapter.getHazelcastInstance().getQueue(address).take();
-                messageProcessFun.received(message);
+                while (true) {
+                    String message = (String) hazelcastAdapter.getHazelcastInstance().getQueue(address).take();
+                    consumer.accept(message);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        });
+        }).start();
     }
 
 }

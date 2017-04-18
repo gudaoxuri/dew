@@ -19,8 +19,8 @@ public class RedisClusterDist implements ClusterDist {
     }
 
     @Override
-    public <M> ClusterDistMap<M> map(String key) {
-        return new RedisClusterDistMap<>(key, redisTemplate);
+    public <M> ClusterDistMap<M> map(String key,Class<M> clazz) {
+        return new RedisClusterDistMap<>(key,clazz, redisTemplate);
     }
 
 

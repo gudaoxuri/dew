@@ -43,7 +43,6 @@ public interface ClusterDistMap<M> {
         private String key;
         private V oldValue;
         private V value;
-        private V mergingValue;
 
         public String getKey() {
             return key;
@@ -69,12 +68,5 @@ public interface ClusterDistMap<M> {
             this.value = value;
         }
 
-        public V getMergingValue() {
-            return mergingValue;
-        }
-
-        public void setMergingValue(V mergingValue) {
-            this.mergingValue = mergingValue;
-        }
     }
 }

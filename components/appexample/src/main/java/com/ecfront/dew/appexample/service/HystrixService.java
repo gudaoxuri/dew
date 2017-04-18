@@ -14,8 +14,8 @@ public class HystrixService {
 
     @HystrixCommand(fallbackMethod = "errorGet")
     public Resp<String> doGet() throws Exception {
-        Dew.Service.cache.opsForValue().set("a", "b");
-        logger.info("cache:" + Dew.Service.cache.opsForValue().get("a"));
+        Dew.cluster.cache.set("a", "b");
+        logger.info("cache:" + Dew.cluster.cache.get("a"));
         throw new Exception("。。。");
         //return Resp.success("ok");
     }

@@ -60,7 +60,7 @@ public class AuthFilter extends ZuulFilter {
             // Not found -> The request path Don't require authentication
             return null;
         }
-        String optInfoStr = Dew.Service.cache.opsForValue().get(Dew.Constant.TOKEN_INFO_FLAG + token);
+        String optInfoStr = Dew.cluster.cache.get(Dew.Constant.TOKEN_INFO_FLAG + token);
         if (optInfoStr == null) {
             return filterHit(ctx, Resp.unAuthorized("Token not exist"));
         }

@@ -178,33 +178,33 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
 
     @Override
     public void postEnableById(long id, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, "", JsonHelper.toJsonString(getById(id).getBody()));
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, JsonHelper.toJsonString(getById(id).getBody()));
     }
 
     @Override
     public void postEnableByCode(String code, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, "", JsonHelper.toJsonString(getByCode(code).getBody()));
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, JsonHelper.toJsonString(getByCode(code).getBody()));
     }
 
     @Override
     public void postDisableById(long id, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_REMOVE, "", getById(id).getBody().getCode());
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_ACCOUNT_REMOVE, getById(id).getBody().getCode());
     }
 
     @Override
     public void postDisableByCode(String code, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_REMOVE, "", code);
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_ACCOUNT_REMOVE, code);
     }
 
     @Override
     public Account postSave(Account entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, "", JsonHelper.toJsonString(entity));
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, JsonHelper.toJsonString(entity));
         return entity;
     }
 
     @Override
     public Account postUpdate(Account entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, "", JsonHelper.toJsonString(entity));
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, JsonHelper.toJsonString(entity));
         return entity;
     }
 

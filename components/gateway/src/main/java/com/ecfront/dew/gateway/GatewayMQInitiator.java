@@ -1,63 +1,37 @@
 package com.ecfront.dew.gateway;
 
 
+import com.ecfront.dew.common.JsonHelper;
 import com.ecfront.dew.core.Dew;
-import org.springframework.amqp.core.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import com.ecfront.dew.gateway.auth.LocalCacheContainer;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.HashSet;
 
 @Component
-public class GatewayMQInitiator extends MQInitiator {
-
-    @Autowired
-    private AmqpTemplate amqpTemplate;
+public class GatewayMQInitiator {
 
     @PostConstruct
     public void init() {
-        amqpTemplate.convertAndSend(Dew.Constant.MQ_AUTH_REFRESH, "");
-    }
-
-    @Bean
-    public Queue mqResourceAdd() {
-        Queue queue = new Queue("mqResourceAdd_" + Dew.Util.createShortUUID(), false,true,true);
-        FanoutExchange ex = new FanoutExchange(Dew.Constant.MQ_AUTH_RESOURCE_ADD);
-        amqpAdmin.declareExchange(ex);
-        amqpAdmin.declareQueue(queue);
-        amqpAdmin.declareBinding(BindingBuilder.bind(queue).to(ex));
-        return queue;
-    }
-
-    @Bean
-    public Queue mqResourceRemove() {
-        Queue queue = new Queue("mqResourceRemove_" + Dew.Util.createShortUUID(), false,true,true);
-        FanoutExchange ex = new FanoutExchange(Dew.Constant.MQ_AUTH_RESOURCE_REMOVE);
-        amqpAdmin.declareExchange(ex);
-        amqpAdmin.declareQueue(queue);
-        amqpAdmin.declareBinding(BindingBuilder.bind(queue).to(ex));
-        return queue;
-    }
-
-    @Bean
-    public Queue mqRoleAdd() {
-        Queue queue = new Queue("mqRoleAdd_" + Dew.Util.createShortUUID(), false,true,true);
-        FanoutExchange ex = new FanoutExchange(Dew.Constant.MQ_AUTH_ROLE_ADD);
-        amqpAdmin.declareExchange(ex);
-        amqpAdmin.declareQueue(queue);
-        amqpAdmin.declareBinding(BindingBuilder.bind(queue).to(ex));
-        return queue;
-    }
-
-    @Bean
-    public Queue mqRoleRemove() {
-        Queue queue = new Queue("mqRoleRemove_" + Dew.Util.createShortUUID(), false,true,true);
-        FanoutExchange ex = new FanoutExchange(Dew.Constant.MQ_AUTH_ROLE_REMOVE);
-        amqpAdmin.declareExchange(ex);
-        amqpAdmin.declareQueue(queue);
-        amqpAdmin.declareBinding(BindingBuilder.bind(queue).to(ex));
-        return queue;
+        Dew.cluster.mq.subscribe(Dew.Constant.MQ_AUTH_RESOURCE_ADD, message -> {
+            JsonNode data = JsonHelper.toJson(message);
+            if (data.get("category").asText().isEmpty()) {
+                LocalCacheContainer.addResource(data.get("code").asText(), data.get("method").asText(), data.get("uri").asText());
+            }
+        });
+        Dew.cluster.mq.subscribe(Dew.Constant.MQ_AUTH_RESOURCE_REMOVE, message -> {
+            LocalCacheContainer.removeResource(message);
+        });
+        Dew.cluster.mq.subscribe(Dew.Constant.MQ_AUTH_ROLE_ADD, message -> {
+            JsonNode data = JsonHelper.toJson(message);
+            LocalCacheContainer.addRole(data.get("code").asText(), new HashSet<>(data.get("resources").findValuesAsText("code")));
+        });
+        Dew.cluster.mq.subscribe(Dew.Constant.MQ_AUTH_ROLE_REMOVE, message -> {
+            LocalCacheContainer.removeRole(message);
+        });
+        Dew.cluster.mq.request(Dew.Constant.MQ_AUTH_REFRESH, "");
     }
 
 }

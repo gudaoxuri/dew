@@ -18,8 +18,8 @@ public class HazelcastClusterDist implements ClusterDist {
     }
 
     @Override
-    public ClusterDistMap map(String key) {
-        return new HazelcastClusterDistMap(key, hazelcastAdapter);
+    public <M> ClusterDistMap<M> map(String key, Class<M> clazz) {
+        return new HazelcastClusterDistMap<>(key, clazz, hazelcastAdapter);
     }
 
 }

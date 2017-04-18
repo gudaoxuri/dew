@@ -28,33 +28,33 @@ public class TenantService implements CRUSService<TenantRepository, Tenant> {
 
     @Override
     public void postEnableById(long id, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_TENANT_ADD, "", JsonHelper.toJsonString(getById(id).getBody()));
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_TENANT_ADD, JsonHelper.toJsonString(getById(id).getBody()));
     }
 
     @Override
     public void postEnableByCode(String code, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_TENANT_ADD, "", JsonHelper.toJsonString(getByCode(code).getBody()));
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_TENANT_ADD, JsonHelper.toJsonString(getByCode(code).getBody()));
     }
 
     @Override
     public void postDisableById(long id, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_TENANT_REMOVE, "", getById(id).getBody().getCode());
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_TENANT_REMOVE, getById(id).getBody().getCode());
     }
 
     @Override
     public void postDisableByCode(String code, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_TENANT_REMOVE, "", code);
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_TENANT_REMOVE, code);
     }
 
     @Override
     public Tenant postSave(Tenant entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_TENANT_ADD, "", JsonHelper.toJsonString(entity));
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_TENANT_ADD, JsonHelper.toJsonString(entity));
         return entity;
     }
 
     @Override
     public Tenant postUpdate(Tenant entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_TENANT_ADD, "", JsonHelper.toJsonString(entity));
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_TENANT_ADD, JsonHelper.toJsonString(entity));
         return entity;
     }
 }

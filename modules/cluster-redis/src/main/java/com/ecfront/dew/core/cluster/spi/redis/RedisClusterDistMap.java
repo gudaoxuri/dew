@@ -1,21 +1,21 @@
 package com.ecfront.dew.core.cluster.spi.redis;
 
-import com.ecfront.dew.core.cluster.ClusterDistMap;
 import com.ecfront.dew.common.JsonHelper;
+import com.ecfront.dew.core.cluster.ClusterDistMap;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class RedisClusterDistMap<M> implements ClusterDistMap<M> {
 
     private String mapKey;
-    private Class<M> clazz = (Class<M>) ((ParameterizedType) getClass().getGenericInterfaces()[0]).getActualTypeArguments()[0];
+    private Class<M> clazz;
     private RedisTemplate<String, String> redisTemplate;
 
-    public RedisClusterDistMap(String mapKey, RedisTemplate<String, String> redisTemplate) {
+    RedisClusterDistMap(String mapKey, Class<M> clazz, RedisTemplate<String, String> redisTemplate) {
         this.mapKey = "dew:dist:map:" + mapKey;
+        this.clazz = clazz;
         this.redisTemplate = redisTemplate;
     }
 

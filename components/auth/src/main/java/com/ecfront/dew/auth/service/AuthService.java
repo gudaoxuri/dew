@@ -9,13 +9,11 @@ import com.ecfront.dew.auth.repository.AccountRepository;
 import com.ecfront.dew.auth.repository.ResourceRepository;
 import com.ecfront.dew.auth.repository.RoleRepository;
 import com.ecfront.dew.common.EncryptHelper;
-import com.ecfront.dew.common.JsonHelper;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.dto.OptInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,10 +35,6 @@ public class AuthService {
     private AccountService accountService;
     @Autowired
     private AccountRepository accountRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private ResourceRepository resourceRepository;
 
     private static Random random = new Random(System.nanoTime());
 
@@ -163,12 +157,6 @@ public class AuthService {
             }
         }
         return accountR;
-    }
-
-    @RabbitListener(queues = "dew.auth.refresh")
-    public void refresh() throws InterruptedException {
-        resourceRepository.findAll().forEach(resource -> Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_RESOURCE_ADD, "", JsonHelper.toJsonString(resource)));
-        roleRepository.findAll().forEach(role -> Dew.Service.mq.convertAndSend(Dew.Constant.MQ_AUTH_ROLE_ADD, "", JsonHelper.toJsonString(role)));
     }
 
 }

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
@@ -52,11 +51,11 @@ public class CacheManager {
             }).collect(Collectors.toList()));
             optInfo.setExt(account.getExt());
             optInfo.setLastLoginTime(new Date());
-            Dew.Service.cache.opsForValue().set(TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), optInfo.getToken());
-            Dew.Service.cache.opsForValue().set(Dew.Constant.TOKEN_INFO_FLAG + optInfo.getToken(), JsonHelper.toJsonString(optInfo));
+            Dew.cluster.cache.set(TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), optInfo.getToken());
+            Dew.cluster.cache.set(Dew.Constant.TOKEN_INFO_FLAG + optInfo.getToken(), JsonHelper.toJsonString(optInfo));
             if (authConfig.getAuth().getTokenExpireSeconds() != -1) {
-                Dew.Service.cache.expire(TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), authConfig.getAuth().getTokenExpireSeconds(), TimeUnit.SECONDS);
-                Dew.Service.cache.expire(Dew.Constant.TOKEN_INFO_FLAG + optInfo.getToken(), authConfig.getAuth().getTokenExpireSeconds(), TimeUnit.SECONDS);
+                Dew.cluster.cache.expire(TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), (int) authConfig.getAuth().getTokenExpireSeconds());
+                Dew.cluster.cache.expire(Dew.Constant.TOKEN_INFO_FLAG + optInfo.getToken(), (int) authConfig.getAuth().getTokenExpireSeconds());
             }
             tokenLock.unlock();
             return optInfo;
@@ -72,17 +71,17 @@ public class CacheManager {
         public void removeToken(String token) {
             OptInfo tokenInfo = getTokenInfo(token);
             if (tokenInfo != null) {
-                Dew.Service.cache.delete(TOKEN_ID_REL_FLAG + tokenInfo.getAccountCode());
-                Dew.Service.cache.delete(Dew.Constant.TOKEN_INFO_FLAG + token);
+                Dew.cluster.cache.del(TOKEN_ID_REL_FLAG + tokenInfo.getAccountCode());
+                Dew.cluster.cache.del(Dew.Constant.TOKEN_INFO_FLAG + token);
             }
         }
 
         public String getToken(String accountCode) {
-            return Dew.Service.cache.opsForValue().get(TOKEN_ID_REL_FLAG + accountCode);
+            return Dew.cluster.cache.get(TOKEN_ID_REL_FLAG + accountCode);
         }
 
         public OptInfo getTokenInfo(String token) {
-            return JsonHelper.toObject(Dew.Service.cache.opsForValue().get(Dew.Constant.TOKEN_INFO_FLAG + token), OptInfo.class);
+            return JsonHelper.toObject(Dew.cluster.cache.get(Dew.Constant.TOKEN_INFO_FLAG + token), OptInfo.class);
         }
 
         public void updateTokenInfo(Account account) {
@@ -109,7 +108,7 @@ public class CacheManager {
                     }).collect(Collectors.toList()));
                     newTokenInfo.setExt(account.getExt());
                     newTokenInfo.setLastLoginTime(oldTokenInfo.getLastLoginTime());
-                    Dew.Service.cache.opsForValue().set(Dew.Constant.TOKEN_INFO_FLAG + newTokenInfo.getToken(), JsonHelper.toJsonString(newTokenInfo));
+                    Dew.cluster.cache.set(Dew.Constant.TOKEN_INFO_FLAG + newTokenInfo.getToken(), JsonHelper.toJsonString(newTokenInfo));
                 }
             }
         }
@@ -126,33 +125,33 @@ public class CacheManager {
         private static final String LOGIN_CAPTCHA_IMAGE_FLAG = "dew:auth:login:captcha:image";
 
         public long addLoginErrorTimes(String tryLoginInfo) {
-            return Dew.Service.cache.opsForValue().increment(LOGIN_ERROR_TIMES_FLAG + tryLoginInfo, 1L);
+            return Dew.cluster.cache.incrBy(LOGIN_ERROR_TIMES_FLAG + tryLoginInfo, 1L);
         }
 
         public long getLoginErrorTimes(String tryLoginInfo) {
-            return Dew.Service.cache.opsForValue().increment(LOGIN_ERROR_TIMES_FLAG + tryLoginInfo, 0L);
+            return Dew.cluster.cache.incrBy(LOGIN_ERROR_TIMES_FLAG + tryLoginInfo, 0L);
         }
 
         public void removeLoginErrorTimes(String tryLoginInfo) {
-            Dew.Service.cache.delete(LOGIN_ERROR_TIMES_FLAG + tryLoginInfo);
+            Dew.cluster.cache.del(LOGIN_ERROR_TIMES_FLAG + tryLoginInfo);
         }
 
         public String getCaptchaText(String tryLoginInfo) {
-            return (String) Dew.Service.cache.opsForHash().get(LOGIN_CAPTCHA_TEXT_FLAG, tryLoginInfo);
+            return Dew.cluster.cache.hget(LOGIN_CAPTCHA_TEXT_FLAG, tryLoginInfo);
         }
 
         public String getCaptchaImage(String tryLoginInfo) {
-            return (String) Dew.Service.cache.opsForHash().get(LOGIN_CAPTCHA_IMAGE_FLAG, tryLoginInfo);
+            return Dew.cluster.cache.hget(LOGIN_CAPTCHA_IMAGE_FLAG, tryLoginInfo);
         }
 
         public void addCaptcha(String tryLoginInfo, String text, String imageInfo) {
-            Dew.Service.cache.opsForHash().put(LOGIN_CAPTCHA_TEXT_FLAG, tryLoginInfo, text);
-            Dew.Service.cache.opsForHash().put(LOGIN_CAPTCHA_IMAGE_FLAG, tryLoginInfo, imageInfo);
+            Dew.cluster.cache.hset(LOGIN_CAPTCHA_TEXT_FLAG, tryLoginInfo, text);
+            Dew.cluster.cache.hset(LOGIN_CAPTCHA_IMAGE_FLAG, tryLoginInfo, imageInfo);
         }
 
         public void removeCaptcha(String tryLoginInfo) {
-            Dew.Service.cache.opsForHash().delete(LOGIN_CAPTCHA_TEXT_FLAG, tryLoginInfo);
-            Dew.Service.cache.opsForHash().delete(LOGIN_CAPTCHA_IMAGE_FLAG, tryLoginInfo);
+            Dew.cluster.cache.hdel(LOGIN_CAPTCHA_TEXT_FLAG, tryLoginInfo);
+            Dew.cluster.cache.hdel(LOGIN_CAPTCHA_IMAGE_FLAG, tryLoginInfo);
         }
 
     }

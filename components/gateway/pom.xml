@@ -31,6 +31,16 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>cluster-spi-hazelcast</artifactId>
+            <version>${dew.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>cluster-spi-redis</artifactId>
+            <version>${dew.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-zuul</artifactId>
         </dependency>
