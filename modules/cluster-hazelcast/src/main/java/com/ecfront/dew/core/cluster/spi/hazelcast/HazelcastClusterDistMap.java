@@ -3,7 +3,6 @@ package com.ecfront.dew.core.cluster.spi.hazelcast;
 import com.ecfront.dew.core.cluster.ClusterDistMap;
 import com.ecfront.dew.core.cluster.VoidProcessFun;
 import com.hazelcast.core.IMap;
-import com.hazelcast.core.MapEvent;
 import com.hazelcast.map.listener.EntryAddedListener;
 import com.hazelcast.map.listener.EntryRemovedListener;
 import com.hazelcast.map.listener.EntryUpdatedListener;
@@ -16,7 +15,7 @@ public class HazelcastClusterDistMap<M> implements ClusterDistMap<M> {
 
     private IMap<String, M> map;
 
-    public HazelcastClusterDistMap(String mapKey, Class<M> clazz, HazelcastAdapter hazelcastAdapter) {
+    HazelcastClusterDistMap(String mapKey, HazelcastAdapter hazelcastAdapter) {
         map = hazelcastAdapter.getHazelcastInstance().getMap("dew:dist:map:" + mapKey);
     }
 
@@ -67,25 +66,19 @@ public class HazelcastClusterDistMap<M> implements ClusterDistMap<M> {
 
     @Override
     public HazelcastClusterDistMap<M> regEntryAddedEvent(Consumer<EntryEvent<M>> fun) {
-        map.addEntryListener((EntryAddedListener<String, M>) entryEvent -> {
-            packageEntryEvent(fun, entryEvent);
-        }, true);
+        map.addEntryListener((EntryAddedListener<String, M>) entryEvent -> packageEntryEvent(fun, entryEvent), true);
         return this;
     }
 
     @Override
     public HazelcastClusterDistMap<M> regEntryRemovedEvent(Consumer<EntryEvent<M>> fun) {
-        map.addEntryListener((EntryRemovedListener<String, M>) entryEvent -> {
-            packageEntryEvent(fun, entryEvent);
-        }, true);
+        map.addEntryListener((EntryRemovedListener<String, M>) entryEvent -> packageEntryEvent(fun, entryEvent), true);
         return this;
     }
 
     @Override
     public HazelcastClusterDistMap<M> regEntryUpdatedEvent(Consumer<EntryEvent<M>> fun) {
-        map.addEntryListener((EntryUpdatedListener<String, M>) entryEvent -> {
-            packageEntryEvent(fun, entryEvent);
-        }, true);
+        map.addEntryListener((EntryUpdatedListener<String, M>) entryEvent -> packageEntryEvent(fun, entryEvent), true);
         return this;
     }
 
@@ -99,12 +92,7 @@ public class HazelcastClusterDistMap<M> implements ClusterDistMap<M> {
 
     @Override
     public HazelcastClusterDistMap<M> regMapClearedEvent(VoidProcessFun fun) {
-        map.addEntryListener(new MapClearedListener() {
-            @Override
-            public void mapCleared(MapEvent event) {
-                fun.exec();
-            }
-        }, false);
+        map.addEntryListener((MapClearedListener) event -> fun.exec(), false);
         return this;
     }
 
