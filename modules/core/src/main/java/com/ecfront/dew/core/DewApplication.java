@@ -4,6 +4,7 @@ import com.ecfront.dew.core.cluster.ClusterCache;
 import com.ecfront.dew.core.cluster.ClusterDist;
 import com.ecfront.dew.core.cluster.ClusterMQ;
 import com.ecfront.dew.core.config.DewConfig;
+import com.ecfront.dew.core.entity.EntityContainer;
 import com.ecfront.dew.core.repository.DewRepositoryFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,6 +44,8 @@ public abstract class DewApplication {
 
     @PostConstruct
     public void init() {
+        applicationContext.getBean(EntityContainer.class);
+        Dew.applicationContext = applicationContext;
         Dew.cluster.cache = (ClusterCache) applicationContext.getBean(dewConfig.getCluster().getCache() + "ClusterCache");
         Dew.cluster.dist = (ClusterDist) applicationContext.getBean(dewConfig.getCluster().getDist() + "ClusterDist");
         Dew.cluster.mq = (ClusterMQ) applicationContext.getBean(dewConfig.getCluster().getMq() + "ClusterMQ");

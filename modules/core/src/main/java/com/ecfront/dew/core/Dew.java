@@ -5,9 +5,7 @@ import com.ecfront.dew.core.cluster.Cluster;
 import com.ecfront.dew.core.fun.VoidExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
@@ -19,7 +17,6 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Component
 public class Dew {
 
     public static class Constant {
@@ -66,7 +63,7 @@ public class Dew {
 
     }
 
-    public static Cluster cluster=new Cluster();
+    public static Cluster cluster = new Cluster();
 
     public static ApplicationContext applicationContext;
 
@@ -215,11 +212,6 @@ public class Dew {
             }
         }
 
-    }
-
-    @Autowired
-    public void setSpringContext(ApplicationContext applicationContext) {
-        Dew.applicationContext = applicationContext;
     }
 
 }
