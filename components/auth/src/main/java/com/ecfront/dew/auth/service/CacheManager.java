@@ -26,9 +26,6 @@ public class CacheManager {
         @Autowired
         private AuthConfig authConfig;
 
-        // Token Id 关联 key : dew:auth:token:id:rel:<code> value : <token Id>
-        private static String TOKEN_ID_REL_FLAG = "dew:auth:token:id:rel:";
-
         private static ReentrantLock tokenLock = new ReentrantLock();
 
         public OptInfo addToken(Account account) {
@@ -51,10 +48,10 @@ public class CacheManager {
             }).collect(Collectors.toList()));
             optInfo.setExt(account.getExt());
             optInfo.setLastLoginTime(new Date());
-            Dew.cluster.cache.set(TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), optInfo.getToken());
+            Dew.cluster.cache.set(Dew.Constant.TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), optInfo.getToken());
             Dew.cluster.cache.set(Dew.Constant.TOKEN_INFO_FLAG + optInfo.getToken(), JsonHelper.toJsonString(optInfo));
             if (authConfig.getAuth().getTokenExpireSeconds() != -1) {
-                Dew.cluster.cache.expire(TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), (int) authConfig.getAuth().getTokenExpireSeconds());
+                Dew.cluster.cache.expire(Dew.Constant.TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), (int) authConfig.getAuth().getTokenExpireSeconds());
                 Dew.cluster.cache.expire(Dew.Constant.TOKEN_INFO_FLAG + optInfo.getToken(), (int) authConfig.getAuth().getTokenExpireSeconds());
             }
             tokenLock.unlock();
@@ -71,13 +68,13 @@ public class CacheManager {
         public void removeToken(String token) {
             OptInfo tokenInfo = getTokenInfo(token);
             if (tokenInfo != null) {
-                Dew.cluster.cache.del(TOKEN_ID_REL_FLAG + tokenInfo.getAccountCode());
+                Dew.cluster.cache.del(Dew.Constant.TOKEN_ID_REL_FLAG + tokenInfo.getAccountCode());
                 Dew.cluster.cache.del(Dew.Constant.TOKEN_INFO_FLAG + token);
             }
         }
 
         public String getToken(String accountCode) {
-            return Dew.cluster.cache.get(TOKEN_ID_REL_FLAG + accountCode);
+            return Dew.cluster.cache.get(Dew.Constant.TOKEN_ID_REL_FLAG + accountCode);
         }
 
         public OptInfo getTokenInfo(String token) {

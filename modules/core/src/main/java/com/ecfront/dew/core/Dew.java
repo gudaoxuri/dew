@@ -1,7 +1,9 @@
 package com.ecfront.dew.core;
 
+import com.ecfront.dew.common.JsonHelper;
 import com.ecfront.dew.common.TimerHelper;
 import com.ecfront.dew.core.cluster.Cluster;
+import com.ecfront.dew.core.dto.OptInfo;
 import com.ecfront.dew.core.fun.VoidExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +12,7 @@ import org.springframework.context.ApplicationContext;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -22,6 +21,8 @@ public class Dew {
     public static class Constant {
         // token存储key
         public static final String TOKEN_INFO_FLAG = "dew:auth:token:info:";
+        // Token Id 关联 key : dew:auth:token:id:rel:<code> value : <token Id>
+        public static final String TOKEN_ID_REL_FLAG = "dew:auth:token:id:rel:";
         // 前端传入的token标识
         public static final String TOKEN_VIEW_FLAG = "__dew_token__";
 
@@ -209,6 +210,15 @@ public class Dew {
             public void run() {
                 DewContext.setContext(context);
                 fun.exec();
+            }
+        }
+
+        public static Optional<OptInfo> getOptInfoByAccCode(String accountCode) {
+            String token = Dew.cluster.cache.get(Dew.Constant.TOKEN_ID_REL_FLAG + accountCode);
+            if (token != null && !token.isEmpty()) {
+                return Optional.of(JsonHelper.toObject(Dew.cluster.cache.get(Dew.Constant.TOKEN_INFO_FLAG + token), OptInfo.class));
+            } else {
+                return Optional.empty();
             }
         }
 
