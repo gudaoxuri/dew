@@ -2,6 +2,7 @@ package com.ecfront.dew.core.cluster.spi.hazelcast;
 
 import com.ecfront.dew.core.cluster.ClusterDistMap;
 import com.ecfront.dew.core.cluster.VoidProcessFun;
+import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.map.listener.EntryAddedListener;
 import com.hazelcast.map.listener.EntryRemovedListener;
@@ -15,8 +16,8 @@ public class HazelcastClusterDistMap<M> implements ClusterDistMap<M> {
 
     private IMap<String, M> map;
 
-    HazelcastClusterDistMap(String mapKey, HazelcastAdapter hazelcastAdapter) {
-        map = hazelcastAdapter.getHazelcastInstance().getMap("dew:dist:map:" + mapKey);
+    HazelcastClusterDistMap(String mapKey, HazelcastInstance hazelcastInstance) {
+        map = hazelcastInstance.getMap("dew:dist:map:" + mapKey);
     }
 
     @Override

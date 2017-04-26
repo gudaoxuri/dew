@@ -22,7 +22,7 @@
     <dependencies>
         <dependency>
             <groupId>com.ecfront.dew</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>cluster-common</artifactId>
             <version>${dew.version}</version>
         </dependency>
         <dependency>

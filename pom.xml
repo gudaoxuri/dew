@@ -83,12 +83,7 @@
         <module>modules/cluster-common</module>
         <module>modules/cluster-redis</module>
         <module>modules/cluster-hazelcast</module>
-<!--
-        <module>modules/cluster-rabbit</module>
--->
-<!--
         <module>modules/cluster-ignite</module>
--->
         <module>components/registry</module>
         <module>components/config</module>
         <module>components/gateway</module>

@@ -1,18 +1,22 @@
-package com.ecfront.dew.core.cluster.spi.hazelcast;
+package com.ecfront.dew.cluster.spi.ignite;
 
 import com.ecfront.dew.core.cluster.ClusterDistLock;
 import com.ecfront.dew.core.cluster.VoidProcessFun;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ILock;
+import org.apache.ignite.Ignite;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
-public class HazelcastClusterDistLock implements ClusterDistLock {
+public class IgniteClusterDistLock implements ClusterDistLock {
 
-    private ILock lock;
+    private Lock lock;
+    private Ignite ignite;
+    private String key;
 
-    HazelcastClusterDistLock(String key, HazelcastInstance hazelcastInstance) {
-        lock = hazelcastInstance.getLock("dew:dist:lock:" + key);
+    IgniteClusterDistLock(String key, Ignite ignite) {
+        this.ignite = ignite;
+        this.key = "dew:dist:lock:" + key;
+        lock = ignite.cache("dew:dist:lock:" + key).lock(key);
     }
 
     @Override
@@ -29,6 +33,7 @@ public class HazelcastClusterDistLock implements ClusterDistLock {
     public void tryLockWithFun(VoidProcessFun fun) throws Exception {
         tryLockWithFun(0, fun);
     }
+
 
     @Override
     public void tryLockWithFun(int waitSec, VoidProcessFun fun) throws Exception {
@@ -68,6 +73,6 @@ public class HazelcastClusterDistLock implements ClusterDistLock {
 
     @Override
     public void delete() {
-        lock.forceUnlock();
+        ignite.destroyCache(key);
     }
 }
