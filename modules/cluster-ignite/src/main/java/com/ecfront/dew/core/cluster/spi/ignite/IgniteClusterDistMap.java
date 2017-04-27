@@ -1,4 +1,4 @@
-package com.ecfront.dew.cluster.spi.ignite;
+package com.ecfront.dew.core.cluster.spi.ignite;
 
 import com.ecfront.dew.core.cluster.ClusterDistMap;
 import org.apache.ignite.Ignite;
@@ -16,7 +16,7 @@ public class IgniteClusterDistMap<M> implements ClusterDistMap<M> {
     private IgniteCache<String, M> map;
 
     IgniteClusterDistMap(String mapKey, Ignite ignite) {
-        map = ignite.cache("dew:dist:map:" + mapKey);
+        map = ignite.getOrCreateCache("dew:dist:map:" + mapKey);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.ecfront.dew.cluster.spi.ignite;
+package com.ecfront.dew.core.cluster.spi.ignite;
 
 import com.ecfront.dew.core.cluster.ClusterMQ;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,7 @@ public class IgniteClusterMQ implements ClusterMQ {
 
     @Override
     public void publish(String topic, String message) {
+        logger.trace("[MQ] publish {}:{}", topic, message);
         igniteAdapter.getIgnite().message(igniteAdapter.getIgnite().cluster().forRemotes()).send(topic, message);
     }
 
@@ -22,7 +23,9 @@ public class IgniteClusterMQ implements ClusterMQ {
         igniteAdapter.getIgnite().message(igniteAdapter.getIgnite().cluster().forRemotes())
                 .remoteListen(topic, (nodeId, message) -> {
                     try {
-                        consumer.accept((String) message);
+                        String msg = (String) message;
+                        logger.trace("[MQ] subscribe {}:{}", topic, msg);
+                        consumer.accept(msg);
                         return true;
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -33,6 +36,7 @@ public class IgniteClusterMQ implements ClusterMQ {
 
     @Override
     public void request(String address, String message) {
+        logger.trace("[MQ] request {}:{}", address, message);
         igniteAdapter.getIgnite().queue(address, 0, null).add(message);
     }
 
@@ -42,6 +46,7 @@ public class IgniteClusterMQ implements ClusterMQ {
             try {
                 while (true) {
                     String message = (String) igniteAdapter.getIgnite().queue(address, 0, null).take();
+                    logger.trace("[MQ] response {}:{}", address, message);
                     consumer.accept(message);
                 }
             } catch (Exception e) {

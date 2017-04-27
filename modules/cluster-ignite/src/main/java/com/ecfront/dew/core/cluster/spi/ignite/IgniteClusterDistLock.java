@@ -1,4 +1,4 @@
-package com.ecfront.dew.cluster.spi.ignite;
+package com.ecfront.dew.core.cluster.spi.ignite;
 
 import com.ecfront.dew.core.cluster.ClusterDistLock;
 import com.ecfront.dew.core.cluster.VoidProcessFun;
@@ -16,7 +16,7 @@ public class IgniteClusterDistLock implements ClusterDistLock {
     IgniteClusterDistLock(String key, Ignite ignite) {
         this.ignite = ignite;
         this.key = "dew:dist:lock:" + key;
-        lock = ignite.cache("dew:dist:lock:" + key).lock(key);
+        lock = ignite.getOrCreateCache("dew:dist:lock:" + key).lock(key);
     }
 
     @Override
@@ -67,8 +67,13 @@ public class IgniteClusterDistLock implements ClusterDistLock {
 
     @Override
     public boolean unLock() {
-        lock.unlock();
-        return true;
+        try{
+            lock.unlock();
+            return true;
+        }catch (IllegalStateException e){
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override

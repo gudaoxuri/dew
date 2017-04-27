@@ -14,6 +14,7 @@ public class HazelcastClusterMQ implements ClusterMQ {
 
     @Override
     public void publish(String topic, String message) {
+        logger.trace("[MQ] publish {}:{}",topic,message);
         hazelcastAdapter.getHazelcastInstance().getTopic(topic).publish(message);
     }
 
@@ -21,7 +22,9 @@ public class HazelcastClusterMQ implements ClusterMQ {
     public void subscribe(String topic, Consumer<String> consumer) {
         hazelcastAdapter.getHazelcastInstance().getTopic(topic).addMessageListener(message -> {
             try {
-                consumer.accept((String) message.getMessageObject());
+                String msg=(String) message.getMessageObject();
+                logger.trace("[MQ] subscribe {}:{}",topic,msg);
+                consumer.accept(msg);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -31,6 +34,7 @@ public class HazelcastClusterMQ implements ClusterMQ {
 
     @Override
     public void request(String address, String message) {
+        logger.trace("[MQ] request {}:{}",address,message);
         hazelcastAdapter.getHazelcastInstance().getQueue(address).add(message);
     }
 
@@ -40,6 +44,7 @@ public class HazelcastClusterMQ implements ClusterMQ {
             try {
                 while (true) {
                     String message = (String) hazelcastAdapter.getHazelcastInstance().getQueue(address).take();
+                    logger.trace("[MQ] response {}:{}",address,message);
                     consumer.accept(message);
                 }
             } catch (Exception e) {

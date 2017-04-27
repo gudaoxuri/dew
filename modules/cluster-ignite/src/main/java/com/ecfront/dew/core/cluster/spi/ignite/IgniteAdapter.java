@@ -1,4 +1,4 @@
-package com.ecfront.dew.cluster.spi.ignite;
+package com.ecfront.dew.core.cluster.spi.ignite;
 
 import org.apache.ignite.Ignite;
 import org.apache.ignite.Ignition;

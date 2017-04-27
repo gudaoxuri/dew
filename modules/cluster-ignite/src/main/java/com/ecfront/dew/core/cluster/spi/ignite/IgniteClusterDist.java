@@ -1,4 +1,4 @@
-package com.ecfront.dew.cluster.spi.ignite;
+package com.ecfront.dew.core.cluster.spi.ignite;
 
 import com.ecfront.dew.core.cluster.ClusterDist;
 import com.ecfront.dew.core.cluster.ClusterDistLock;

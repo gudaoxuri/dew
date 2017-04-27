@@ -1,8 +1,8 @@
 dew:
   cluster:
     cache: redis
-    dist: hazelcast
-    mq: hazelcast
+    dist: ignite
+    mq: ignite
 
 spring:
   application:
@@ -12,6 +12,8 @@ spring:
     port: 6379
     database: 0
   hazelcast:
+    addresses: ["127.0.0.1"]
+  ignite:
     addresses: ["127.0.0.1"]
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
