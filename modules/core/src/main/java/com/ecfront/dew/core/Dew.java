@@ -3,12 +3,21 @@ package com.ecfront.dew.core;
 import com.ecfront.dew.common.JsonHelper;
 import com.ecfront.dew.common.TimerHelper;
 import com.ecfront.dew.core.cluster.Cluster;
+import com.ecfront.dew.core.cluster.ClusterCache;
+import com.ecfront.dew.core.cluster.ClusterDist;
+import com.ecfront.dew.core.cluster.ClusterMQ;
+import com.ecfront.dew.core.config.DewConfig;
 import com.ecfront.dew.core.dto.OptInfo;
+import com.ecfront.dew.core.entity.EntityContainer;
 import com.ecfront.dew.core.fun.VoidExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -16,7 +25,23 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@Component
 public class Dew {
+
+    @Autowired
+    @Qualifier("dewConfig")
+    private DewConfig dewConfig;
+    @Autowired
+    private ApplicationContext _applicationContext;
+
+    @PostConstruct
+    public void init() {
+        Dew.applicationContext = _applicationContext;
+        Dew.applicationContext.getBean(EntityContainer.class);
+        Dew.cluster.cache = (ClusterCache) Dew.applicationContext.getBean(dewConfig.getCluster().getCache() + "ClusterCache");
+        Dew.cluster.dist = (ClusterDist) Dew.applicationContext.getBean(dewConfig.getCluster().getDist() + "ClusterDist");
+        Dew.cluster.mq = (ClusterMQ) Dew.applicationContext.getBean(dewConfig.getCluster().getMq() + "ClusterMQ");
+    }
 
     public static class Constant {
         // token存储key

@@ -63,12 +63,12 @@
             <version>${dew.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>com.ecfront.dew</groupId>
             <artifactId>cluster-spi-ignite</artifactId>
             <version>${dew.version}</version>
             <scope>test</scope>
-        </dependency>
+        </dependency>-->
     </dependencies>
 
 </project>

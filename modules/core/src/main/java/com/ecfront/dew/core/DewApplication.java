@@ -30,25 +30,10 @@ import javax.persistence.MappedSuperclass;
 @EnableAutoConfiguration(exclude = {FreeMarkerAutoConfiguration.class, GsonAutoConfiguration.class, WebSocketAutoConfiguration.class})
 public abstract class DewApplication {
 
-    @Autowired
-    @Qualifier("dewConfig")
-    private DewConfig dewConfig;
-    @Autowired
-    private ApplicationContext applicationContext;
-
     @Bean
     @LoadBalanced
     protected RestTemplate restTemplate() {
         return new RestTemplate();
-    }
-
-    @PostConstruct
-    public void init() {
-        applicationContext.getBean(EntityContainer.class);
-        Dew.applicationContext = applicationContext;
-        Dew.cluster.cache = (ClusterCache) applicationContext.getBean(dewConfig.getCluster().getCache() + "ClusterCache");
-        Dew.cluster.dist = (ClusterDist) applicationContext.getBean(dewConfig.getCluster().getDist() + "ClusterDist");
-        Dew.cluster.mq = (ClusterMQ) applicationContext.getBean(dewConfig.getCluster().getMq() + "ClusterMQ");
     }
 
 }
