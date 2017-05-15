@@ -5,6 +5,7 @@ import com.ecfront.dew.auth.entity.Account;
 import com.ecfront.dew.auth.repository.AccountRepository;
 import com.ecfront.dew.auth.repository.RoleRepository;
 import com.ecfront.dew.common.EncryptHelper;
+import com.ecfront.dew.common.FormatHelper;
 import com.ecfront.dew.common.JsonHelper;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.core.Dew;
@@ -78,7 +79,7 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
             if (exist) {
                 return Resp.conflict("Email exist.");
             }
-            if (!Dew.Util.checkEmail(entity.getEmail().trim())) {
+            if (!FormatHelper.validEmail(entity.getEmail().trim())) {
                 return Resp.badRequest("Email format error.");
             }
             entity.setEmail(entity.getEmail().trim());
@@ -123,7 +124,7 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
             if (exist) {
                 return Resp.conflict("Email exist.");
             }
-            if (!Dew.Util.checkEmail(entity.getEmail().trim())) {
+            if (!FormatHelper.validEmail(entity.getEmail().trim())) {
                 return Resp.badRequest("Email format error.");
             }
             entity.setEmail(entity.getEmail().trim());
@@ -165,7 +166,7 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
             if (exist) {
                 return Resp.conflict("Email exist.");
             }
-            if (!Dew.Util.checkEmail(entity.getEmail().trim())) {
+            if (!FormatHelper.validEmail(entity.getEmail().trim())) {
                 return Resp.badRequest("Email format error.");
             }
             entity.setEmail(entity.getEmail().trim());

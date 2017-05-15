@@ -176,7 +176,7 @@ public class Dew {
         }
 
         public static String createShortUUID() {
-            StringBuffer shortBuffer = new StringBuffer();
+            StringBuilder shortBuffer = new StringBuilder();
             String uuid = createUUID();
             for (int i = 0; i < 8; i++) {
                 String str = uuid.substring(i * 4, i * 4 + 4);
@@ -207,12 +207,6 @@ public class Dew {
                 return requestHeader.get("x-forwarded-host");
             }
             return remoteAddr;
-        }
-
-        private static final String REGEX_EMAIL = "\\w+(\\.\\w)*@\\w+(\\.\\w{2,3}){1,3}";
-
-        public static boolean checkEmail(String email) {
-            return email.matches(REGEX_EMAIL);
         }
 
         private static ExecutorService executorService = Executors.newCachedThreadPool();

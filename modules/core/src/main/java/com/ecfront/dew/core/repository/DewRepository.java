@@ -1,6 +1,6 @@
 package com.ecfront.dew.core.repository;
 
-import com.ecfront.dew.core.dto.PageDTO;
+import com.ecfront.dew.common.PageDTO;
 import com.ecfront.dew.core.entity.IdEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;

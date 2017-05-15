@@ -7,13 +7,13 @@
     <parent>
         <groupId>com.ecfront.dew</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>cluster-spi-ignite</artifactId>
     <name>Dew Cluster Ignite</name>
     <packaging>jar</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <properties>
         <ignite.verion>1.9.0</ignite.verion>

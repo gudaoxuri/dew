@@ -16,7 +16,7 @@ import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.common.StandardCode;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.dto.OptInfo;
-import com.ecfront.dew.core.dto.PageDTO;
+import com.ecfront.dew.common.PageDTO;
 import com.ecfront.dew.core.repository.DewRepositoryFactoryBean;
 import org.junit.Assert;
 import org.junit.Test;

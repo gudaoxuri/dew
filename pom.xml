@@ -7,21 +7,21 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.5.RELEASE</version>
+        <version>1.5.2.RELEASE</version>
     </parent>
 
     <groupId>com.ecfront.dew</groupId>
     <artifactId>parent</artifactId>
     <name>Dew Parent</name>
     <packaging>pom</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <properties>
         <java.version>1.8</java.version>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
         <maven-assembly>2.6</maven-assembly>
-        <dew.version>1.0.0-SNAPSHOT</dew.version>
+        <dew.version>1.0.0</dew.version>
     </properties>
 
     <licenses>
@@ -51,7 +51,7 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Camden.SR6</version>
+                <version>Dalston.RELEASE</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -91,7 +91,6 @@
         <module>components/wsgateway</module>
         <module>components/logger</module>
         <module>components/monitor</module>
-        <module>components/appexample</module>
     </modules>
 
     <profiles>

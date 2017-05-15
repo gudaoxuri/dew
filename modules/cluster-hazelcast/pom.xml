@@ -7,13 +7,13 @@
     <parent>
         <groupId>com.ecfront.dew</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>cluster-spi-hazelcast</artifactId>
     <name>Dew Cluster Hazelcast</name>
     <packaging>jar</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <properties>
         <hazelcast.verion>3.8.1</hazelcast.verion>

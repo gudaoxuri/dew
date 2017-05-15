@@ -2,7 +2,7 @@ package com.ecfront.dew.core.controller;
 
 
 import com.ecfront.dew.common.Resp;
-import com.ecfront.dew.core.dto.PageDTO;
+import com.ecfront.dew.common.PageDTO;
 import com.ecfront.dew.core.entity.IdEntity;
 import com.ecfront.dew.core.service.CRUSService;
 import io.swagger.annotations.ApiImplicitParam;

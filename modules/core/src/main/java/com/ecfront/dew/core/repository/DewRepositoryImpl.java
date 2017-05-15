@@ -2,7 +2,7 @@ package com.ecfront.dew.core.repository;
 
 import com.ecfront.dew.common.BeanHelper;
 import com.ecfront.dew.core.Dew;
-import com.ecfront.dew.core.dto.PageDTO;
+import com.ecfront.dew.common.PageDTO;
 import com.ecfront.dew.core.entity.EntityContainer;
 import com.ecfront.dew.core.entity.IdEntity;
 import com.ecfront.dew.core.entity.SafeEntity;

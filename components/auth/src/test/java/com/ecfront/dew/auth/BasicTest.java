@@ -2,8 +2,8 @@ package com.ecfront.dew.auth;
 
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.core.Dew;
-import com.ecfront.dew.core.dto.PageDTO;
-import com.ecfront.dew.core.helper.RespHelper;
+import com.ecfront.dew.common.PageDTO;
+import com.ecfront.dew.common.RespHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 
