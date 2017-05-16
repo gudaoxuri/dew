@@ -8,6 +8,7 @@
         <groupId>com.ecfront.dew</groupId>
         <artifactId>parent</artifactId>
         <version>1.0.0</version>
+        <relativePath>../../modules/parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>core</artifactId>
@@ -22,7 +23,7 @@
         <dependency>
             <groupId>com.ecfront.dew</groupId>
             <artifactId>common</artifactId>
-            <version>${dew.version}</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.ecfront.dew</groupId>

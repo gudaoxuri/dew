@@ -2,7 +2,6 @@ package com.ecfront.dew.core.entity;
 
 import com.ecfront.dew.common.BeanHelper;
 import com.ecfront.dew.common.ClassScanHelper;
-import com.ecfront.dew.common.FieldInfo;
 import com.ecfront.dew.core.config.DewConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,12 +33,12 @@ public class EntityContainer {
                 ClassScanHelper.scan(s, new HashSet<Class<? extends Annotation>>() {{
                     add(Entity.class);
                 }}, null).stream().forEach(clazz -> {
-                    Map<String, FieldInfo> codeFieldInfo = BeanHelper.findFieldsInfo(
+                    Map<String, BeanHelper.FieldInfo> codeFieldInfo = BeanHelper.findFieldsInfo(
                             clazz, null, null, null, new HashSet<Class<? extends Annotation>>() {{
                                 add(Code.class);
                             }});
                     if (!codeFieldInfo.isEmpty()) {
-                        FieldInfo info = codeFieldInfo.values().toArray(new FieldInfo[0])[0];
+                        BeanHelper.FieldInfo info = codeFieldInfo.values().toArray(new BeanHelper.FieldInfo[0])[0];
                         EntityClassInfo entityClassInfo = new EntityClassInfo();
                         entityClassInfo.codeFieldName = info.getName();
                         entityClassInfo.codeFieldUUID = ((Code) info.getAnnotations().stream().filter(i -> i.annotationType() == Code.class).findAny().get()).uuid();

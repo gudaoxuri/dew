@@ -14,6 +14,10 @@ import javax.persistence.EntityManager;
 
 public class DewRepositoryFactoryBean<T extends JpaRepository<E, Long>, E extends IdEntity> extends JpaRepositoryFactoryBean<T, E, Long> {
 
+    public DewRepositoryFactoryBean(Class<? extends T> repositoryInterface) {
+        super(repositoryInterface);
+    }
+
     @Override
     protected RepositoryFactorySupport createRepositoryFactory(EntityManager entityManager) {
         return new DewRepositoryFactory<E>(entityManager);

@@ -8,6 +8,7 @@
         <groupId>com.ecfront.dew</groupId>
         <artifactId>parent</artifactId>
         <version>1.0.0</version>
+        <relativePath>../../modules/parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>monitor</artifactId>
