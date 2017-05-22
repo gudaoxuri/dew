@@ -7,14 +7,14 @@
     <parent>
         <groupId>com.ecfront.dew</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.0</version>
+        <version>1.1.0</version>
         <relativePath>../../modules/parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>gateway</artifactId>
     <name>Dew Gateway</name>
     <packaging>jar</packaging>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 
     <properties>
     </properties>
@@ -22,14 +22,8 @@
     <dependencies>
         <dependency>
             <groupId>com.ecfront.dew</groupId>
-            <artifactId>core</artifactId>
+            <artifactId>cloud-core</artifactId>
             <version>${dew.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-data-jpa</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.ecfront.dew</groupId>
@@ -44,6 +38,10 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-zuul</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
     </dependencies>
 

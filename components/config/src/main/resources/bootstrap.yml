@@ -7,7 +7,7 @@ spring:
     config:
       server:
         native:
-          searchLocations: file:/C:/Users/i/OneDrive/projects/dew/dew-framework/env
+          searchLocations: file:/C:/Users/i/OneDrive/projects/github/dew/dew-framework/env
 #        git:
 #          uri: https://code.aliyun.com/wangzi/ws.sp.config_file.git
 #          username: root

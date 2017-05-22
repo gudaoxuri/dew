@@ -1,18 +1,17 @@
 package com.ecfront.dew.gateway;
 
-import com.ecfront.dew.core.DewApplication;
+import com.ecfront.dew.core.Dew;
+import com.ecfront.dew.core.DewCloudApplication;
 import com.ecfront.dew.gateway.auth.AuthFilter;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.cloud.netflix.zuul.filters.discovery.PatternServiceRouteMapper;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 
 @EnableZuulProxy
-@EnableDiscoveryClient
-@SpringBootApplication
-public class GatewayApplication extends DewApplication {
+@ComponentScan(basePackageClasses = {Dew.class, GatewayApplication.class})
+public class GatewayApplication extends DewCloudApplication {
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(GatewayApplication.class).web(true).run(args);

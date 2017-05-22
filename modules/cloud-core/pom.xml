@@ -11,8 +11,8 @@
         <relativePath>../../modules/parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>config</artifactId>
-    <name>Dew Config</name>
+    <artifactId>cloud-core</artifactId>
+    <name>Dew Cloud Core</name>
     <packaging>jar</packaging>
     <version>1.1.0</version>
 
@@ -21,12 +21,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-config-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>boot-core</artifactId>
+            <version>${dew.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -34,7 +31,16 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-hystrix</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 

@@ -8,15 +8,16 @@
     <artifactId>build</artifactId>
     <name>Dew Build</name>
     <packaging>pom</packaging>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 
     <modules>
         <module>modules/parent</module>
-        <module>modules/core</module>
         <module>modules/cluster-common</module>
         <module>modules/cluster-redis</module>
         <module>modules/cluster-hazelcast</module>
         <module>modules/cluster-ignite</module>
+        <module>modules/boot-core</module>
+        <module>modules/cloud-core</module>
         <module>components/registry</module>
         <module>components/config</module>
         <module>components/gateway</module>
@@ -66,20 +67,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>package</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                        <configuration>
-                            <finalName>${project.artifactId}</finalName>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>

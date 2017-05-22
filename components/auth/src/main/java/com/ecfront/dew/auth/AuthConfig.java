@@ -1,7 +1,6 @@
 package com.ecfront.dew.auth;
 
-
-import com.ecfront.dew.core.config.DewConfig;
+import com.ecfront.dew.core.DewConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
