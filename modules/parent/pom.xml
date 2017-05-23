@@ -28,6 +28,7 @@
         <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
         <maven-assembly>2.6</maven-assembly>
         <dew.version>1.1.0</dew.version>
+        <dew-common.version>1.0.1</dew-common.version>
     </properties>
 
     <licenses>
@@ -67,7 +68,7 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
     </dependencies>
 

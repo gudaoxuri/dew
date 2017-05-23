@@ -23,7 +23,7 @@
         <dependency>
             <groupId>com.ecfront.dew</groupId>
             <artifactId>common</artifactId>
-            <version>1.0.0</version>
+            <version>${dew-common.version}</version>
         </dependency>
     </dependencies>
 
