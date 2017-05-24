@@ -14,13 +14,13 @@ EZ-F与Dew的共同点都是力求提供一个完备的生产级微服务架构�
 
 === 模块与功能
 
-.*com.ecfront.dew:parent* Dew 父工程
+==== *com.ecfront.dew:parent* Dew 父工程 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/parent/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/parent/"]
 
 . 提供了Spring Boot & Spring Cloud 的基础pom结构
 . 通过 `maven clean package -P package`来生成fatjar
 
 
-.*com.ecfront.dew:boot-core* Dew Spring Boot 封装
+==== *com.ecfront.dew:boot-core* Dew Spring Boot 封装 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/boot-core/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/boot-core/"]
 
 . 常用分布式服务（Cache、Lock、Map、MQ）
 . 常用实体模型
@@ -78,53 +78,36 @@ EZ-F与Dew的共同点都是力求提供一个完备的生产级微服务架构�
 </dependency>
 ----
 
-.*com.ecfront.dew:cloud-core* Dew Spring Cloud 封装
+==== *com.ecfront.dew:cloud-core* Dew Spring Cloud 封装 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/cloud-core/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/cloud-core/"]
 
 . 引入Spring Cloud常用依赖
 
-.*com.ecfront.dew:auth* 多租户的RBAC权限服务
+==== *com.ecfront.dew:auth* 多租户的RBAC权限服务 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/auth/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/auth/"]
 
-.*com.ecfront.dew:config* 配置中心服务
+==== *com.ecfront.dew:config* 配置中心服务 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/config/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/config/"]
 
 . 集成Spring Config和Spring Security
 
-.*com.ecfront.dew:gateway* 网关服务
+==== *com.ecfront.dew:gateway* 网关服务 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/gateway/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/gateway/"]
 
 . 集成Zuul网关
 . 与Auth配合，支持权限认证
 
-.*com.ecfront.dew:gateway* Websocket网关服务
+==== *com.ecfront.dew:gateway* Websocket网关服务 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/wsgateway/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/wsgateway/"]
 
 . 支持Websocket的网关
 
-.*com.ecfront.dew:logger* 日志服务
+==== *com.ecfront.dew:logger* 日志服务 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/logger/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/logger/"]
 
 . 集成Zipkin
 
-.*com.ecfront.dew:monitor* 集群监控服务
+==== *com.ecfront.dew:monitor* 集群监控服务 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/monitor/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/monitor/"]
 
 . 集成Turbine和Hystrix Dashboard
 
-.*com.ecfront.dew:registry* 注册中心服务
+==== *com.ecfront.dew:registry* 注册中心服务 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/registry/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/registry/"]
 
 . 集成Eureka Server和Spring Security
-
-=== 状态
-
-|===
-|子项目 |状态
-
-|父pom | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/parent/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/parent/"]
-|Boot Core | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/boot-core/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/boot-core/"]
-|Cloud Core | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/cloud-core/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/cloud-core/"]
-|Registry | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/registry/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/registry/"]
-|Config | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/config/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/config/"]
-|Gateway | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/gateway/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/gateway/"]
-|WSGateway | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/wsgateway/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/wsgateway/"]
-|Auth | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/auth/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/auth/"]
-|Monitor | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/monitor/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/monitor/"]
-|Logger | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/logger/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/logger/"]
-|===
 
 === 运行环境
 Java8以上、可选：Redis、Hazcelcast、Ignite、RabbitMQ、关系型数据库（默认MySQL）
