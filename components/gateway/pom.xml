@@ -7,14 +7,14 @@
     <parent>
         <groupId>com.ecfront.dew</groupId>
         <artifactId>parent</artifactId>
-        <version>1.1.0</version>
+        <version>1.1.1</version>
         <relativePath>../../modules/parent/pom.xml</relativePath>
     </parent>
 
     <artifactId>gateway</artifactId>
     <name>Dew Gateway</name>
     <packaging>jar</packaging>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
 
     <properties>
     </properties>

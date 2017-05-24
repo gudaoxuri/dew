@@ -7,15 +7,18 @@ import com.ecfront.dew.core.cluster.ClusterCache;
 import com.ecfront.dew.core.cluster.ClusterDist;
 import com.ecfront.dew.core.cluster.ClusterMQ;
 import com.ecfront.dew.core.dto.OptInfo;
+import com.ecfront.dew.core.entity.EntityContainer;
 import com.ecfront.dew.core.fun.VoidExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.Entity;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -44,6 +47,12 @@ public class Dew {
         if (Dew.applicationContext.containsBean(dewConfig.getCluster().getMq() + "ClusterMQ")) {
             Dew.cluster.mq = (ClusterMQ) Dew.applicationContext.getBean(dewConfig.getCluster().getMq() + "ClusterMQ");
         }
+    }
+
+    @PostConstruct
+    @ConditionalOnClass({Entity.class})
+    public void initEntity() {
+        Dew.applicationContext.getBean(EntityContainer.class);
     }
 
     public static class Constant {
