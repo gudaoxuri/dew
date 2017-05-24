@@ -13,6 +13,7 @@
 
     <artifactId>logger</artifactId>
     <name>Dew Logger</name>
+    <description>Dew 日志服务</description>
     <packaging>jar</packaging>
     <version>1.1.1</version>
 

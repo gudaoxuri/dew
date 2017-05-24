@@ -12,14 +12,102 @@ image:https://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2",link
 EZ-F与Dew的共同点都是力求提供一个完备的生产级微服务架构，最小化的学习成本，快速上手，
 区别在于，EZ-F是基于Scala从零构建的，Dew主要是对Spring Cloud做一层薄的封装，在不改变Spring Cloud的开发模式下做简洁明了的扩展。
 
-=== 功能
-. 多租户的RBAC权限服务支持
-. WebSocket网关支持
-. 集成常用服务（Redis、分布式锁等）
+=== 模块与功能
+
+.*com.ecfront.dew:parent* Dew 父工程
+
+. 提供了Spring Boot & Spring Cloud 的基础pom结构
+. 通过 `maven clean package -P package`来生成fatjar
+
+
+.*com.ecfront.dew:boot-core* Dew Spring Boot 封装
+
+. 常用分布式服务（Cache、Lock、Map、MQ）
+. 常用实体模型
+. 服务脚手架（CRUDS，针对实体的创建、查询、更新、删除、启用禁用）
+. 基于Spring Data JPA的常用方式扩展
 . 统一返回信息格式（Resp<E>）
 . 可跟踪日志支持（请求级ID）
-. 基于Spring Data JPA的常用方式扩展
-. 整合了hystrix、config、eureka、turbine、amqp、redis、swagger2等Spring Cloud生态项目
+. 通用拦截器栈
+. Swagger文档
+
+[source,xml]
+.可选功能
+----
+<!-- 启用对应的分布式服务支持 -->
+ <dependency>
+    <groupId>com.ecfront.dew</groupId>
+    <artifactId>cluster-spi-redis</artifactId>
+    <version>${dew.version}</version>
+</dependency>
+<dependency>
+    <groupId>com.ecfront.dew</groupId>
+    <artifactId>cluster-spi-hazelcast</artifactId>
+    <version>${dew.version}</version>
+</dependency>
+<dependency>
+    <groupId>com.ecfront.dew</groupId>
+    <artifactId>cluster-spi-ignite</artifactId>
+    <version>${dew.version}</version>
+</dependency>
+<!-- 启用web支持 -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+<!-- 启用关系型数据支持（如MySQL） -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>5.1.41</version>
+</dependency>
+<!-- 启用Swagger日志 -->
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-swagger2</artifactId>
+    <version>2.6.1</version>
+</dependency>
+<dependency>
+    <groupId>io.springfox</groupId>
+    <artifactId>springfox-swagger-ui</artifactId>
+    <version>2.6.1</version>
+</dependency>
+----
+
+.*com.ecfront.dew:cloud-core* Dew Spring Cloud 封装
+
+. 引入Spring Cloud常用依赖
+
+.*com.ecfront.dew:auth* 多租户的RBAC权限服务
+
+.*com.ecfront.dew:config* 配置中心服务
+
+. 集成Spring Config和Spring Security
+
+.*com.ecfront.dew:gateway* 网关服务
+
+. 集成Zuul网关
+. 与Auth配合，支持权限认证
+
+.*com.ecfront.dew:gateway* Websocket网关服务
+
+. 支持Websocket的网关
+
+.*com.ecfront.dew:logger* 日志服务
+
+. 集成Zipkin
+
+.*com.ecfront.dew:monitor* 集群监控服务
+
+. 集成Turbine和Hystrix Dashboard
+
+.*com.ecfront.dew:registry* 注册中心服务
+
+. 集成Eureka Server和Spring Security
 
 === 状态
 
@@ -27,7 +115,8 @@ EZ-F与Dew的共同点都是力求提供一个完备的生产级微服务架构�
 |子项目 |状态
 
 |父pom | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/parent/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/parent/"]
-|Core | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/core/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/core/"]
+|Boot Core | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/boot-core/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/boot-core/"]
+|Cloud Core | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/cloud-core/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/cloud-core/"]
 |Registry | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/registry/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/registry/"]
 |Config | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/config/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/config/"]
 |Gateway | image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/gateway/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/gateway/"]
@@ -38,4 +127,4 @@ EZ-F与Dew的共同点都是力求提供一个完备的生产级微服务架构�
 |===
 
 === 运行环境
-Java8以上、Redis、RabbitMQ、关系型数据库（默认MySQL）
+Java8以上、可选：Redis、Hazcelcast、Ignite、RabbitMQ、关系型数据库（默认MySQL）

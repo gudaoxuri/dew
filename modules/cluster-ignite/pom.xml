@@ -13,6 +13,7 @@
 
     <artifactId>cluster-spi-ignite</artifactId>
     <name>Dew Cluster Ignite</name>
+    <description>Dew 集群 Ignite 实现</description>
     <packaging>jar</packaging>
     <version>1.1.1</version>
 

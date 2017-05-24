@@ -13,6 +13,7 @@
 
     <artifactId>gateway</artifactId>
     <name>Dew Gateway</name>
+    <description>Dew 网关服务</description>
     <packaging>jar</packaging>
     <version>1.1.1</version>
 

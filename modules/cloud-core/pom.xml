@@ -13,6 +13,7 @@
 
     <artifactId>cloud-core</artifactId>
     <name>Dew Cloud Core</name>
+    <description>Dew Spring Cloud 封装</description>
     <packaging>jar</packaging>
     <version>1.1.1</version>
 

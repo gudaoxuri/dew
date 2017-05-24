@@ -13,6 +13,7 @@
 
     <artifactId>registry</artifactId>
     <name>Dew Registry</name>
+    <description>Dew 注册中心服务</description>
     <packaging>jar</packaging>
     <version>1.1.1</version>
 

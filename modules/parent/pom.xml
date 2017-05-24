@@ -13,7 +13,7 @@
     <groupId>com.ecfront.dew</groupId>
     <artifactId>parent</artifactId>
     <name>Dew Parent</name>
-    <description>Dew公共模块</description>
+    <description>Dew 父工程</description>
     <url>https://github.com/gudaoxuri/dew</url>
     <packaging>pom</packaging>
     <version>1.1.1</version>
