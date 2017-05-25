@@ -52,7 +52,7 @@ public class Dew {
     @PostConstruct
     @ConditionalOnClass({Entity.class})
     public void initEntity() {
-        Dew.applicationContext.getBean(EntityContainer.class);
+        _applicationContext.getBean(EntityContainer.class);
     }
 
     public static class Constant {
