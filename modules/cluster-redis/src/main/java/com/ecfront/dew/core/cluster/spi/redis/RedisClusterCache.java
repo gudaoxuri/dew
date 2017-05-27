@@ -87,7 +87,7 @@ public class RedisClusterCache implements ClusterCache {
 
     @Override
     public void hmset(String key, Map<String, String> values, int expireSec) {
-        values.entrySet().forEach(item -> hset(key, item.getKey(), item.getValue()));
+        redisTemplate.opsForHash().putAll(key, values);
         if (expireSec != 0) {
             expire(key, expireSec);
         }
