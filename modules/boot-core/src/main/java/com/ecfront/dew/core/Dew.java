@@ -30,7 +30,7 @@ import java.util.concurrent.Executors;
 public class Dew {
 
     @Autowired
-    @Qualifier("_dewConfig")
+    @Qualifier("dewConfig")
     private DewConfig _dewConfig;
     @Autowired
     private ApplicationContext _applicationContext;

@@ -25,6 +25,10 @@ public class DewHandlerInterceptor extends HandlerInterceptorAdapter {
         response.setHeader("Pragma", "no-cache");
         response.setDateHeader("Expires", 0);
 
+        if (request.getMethod().equalsIgnoreCase("OPTIONS") || request.getMethod().equalsIgnoreCase("HEAD")) {
+            return super.preHandle(request, response, handler);
+        }
+
         String token = request.getParameter(Dew.Constant.TOKEN_VIEW_FLAG);
         DewContext context = new DewContext();
         context.setId(Dew.Util.createUUID());

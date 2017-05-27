@@ -150,7 +150,7 @@ public class DewConfig {
 
         private String allowOrigin = "*";
         private String allowMethods = "POST,GET,OPTIONS,PUT,DELETE,HEAD";
-        private String allowHeaders = "*";
+        private String allowHeaders = "x-requested-with,content-type";
 
         public String getAllowOrigin() {
             return allowOrigin;
