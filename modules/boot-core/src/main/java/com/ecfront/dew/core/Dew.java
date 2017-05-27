@@ -30,23 +30,24 @@ import java.util.concurrent.Executors;
 public class Dew {
 
     @Autowired
-    @Qualifier("dewConfig")
-    private DewConfig dewConfig;
+    @Qualifier("_dewConfig")
+    private DewConfig _dewConfig;
     @Autowired
     private ApplicationContext _applicationContext;
 
     @PostConstruct
     public void init() {
         Dew.applicationContext = _applicationContext;
-        if (Dew.applicationContext.containsBean(dewConfig.getCluster().getCache() + "ClusterCache")) {
-            Dew.cluster.cache = (ClusterCache) Dew.applicationContext.getBean(dewConfig.getCluster().getCache() + "ClusterCache");
+        if (Dew.applicationContext.containsBean(_dewConfig.getCluster().getCache() + "ClusterCache")) {
+            Dew.cluster.cache = (ClusterCache) Dew.applicationContext.getBean(_dewConfig.getCluster().getCache() + "ClusterCache");
         }
-        if (Dew.applicationContext.containsBean(dewConfig.getCluster().getDist() + "ClusterDist")) {
-            Dew.cluster.dist = (ClusterDist) Dew.applicationContext.getBean(dewConfig.getCluster().getDist() + "ClusterDist");
+        if (Dew.applicationContext.containsBean(_dewConfig.getCluster().getDist() + "ClusterDist")) {
+            Dew.cluster.dist = (ClusterDist) Dew.applicationContext.getBean(_dewConfig.getCluster().getDist() + "ClusterDist");
         }
-        if (Dew.applicationContext.containsBean(dewConfig.getCluster().getMq() + "ClusterMQ")) {
-            Dew.cluster.mq = (ClusterMQ) Dew.applicationContext.getBean(dewConfig.getCluster().getMq() + "ClusterMQ");
+        if (Dew.applicationContext.containsBean(_dewConfig.getCluster().getMq() + "ClusterMQ")) {
+            Dew.cluster.mq = (ClusterMQ) Dew.applicationContext.getBean(_dewConfig.getCluster().getMq() + "ClusterMQ");
         }
+        Dew.dewConfig = _dewConfig;
     }
 
     @PostConstruct
@@ -104,6 +105,8 @@ public class Dew {
     public static Cluster cluster = new Cluster();
 
     public static ApplicationContext applicationContext;
+
+    public static DewConfig dewConfig;
 
     /**
      * 获取请求上下文信息

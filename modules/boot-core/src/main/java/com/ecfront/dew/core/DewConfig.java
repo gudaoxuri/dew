@@ -13,6 +13,7 @@ public class DewConfig {
 
     private DewBasic basic = new DewBasic();
     private DewCluster cluster = new DewCluster();
+    private DewSecurity security = new DewSecurity();
 
     public static class DewBasic {
 
@@ -101,10 +102,6 @@ public class DewConfig {
 
     }
 
-    public DewBasic getBasic() {
-        return basic;
-    }
-
     public static class DewCluster {
 
         private String mq;
@@ -136,6 +133,55 @@ public class DewConfig {
         }
     }
 
+    public static class DewSecurity {
+
+        private DewSecurityCORS cors = new DewSecurityCORS();
+
+        public DewSecurityCORS getCors() {
+            return cors;
+        }
+
+        public void setCors(DewSecurityCORS cors) {
+            this.cors = cors;
+        }
+    }
+
+    public static class DewSecurityCORS {
+
+        private String allowOrigin = "*";
+        private String allowMethods = "POST,GET,OPTIONS,PUT,DELETE,HEAD";
+        private String allowHeaders = "*";
+
+        public String getAllowOrigin() {
+            return allowOrigin;
+        }
+
+        public void setAllowOrigin(String allowOrigin) {
+            this.allowOrigin = allowOrigin;
+        }
+
+        public String getAllowMethods() {
+            return allowMethods;
+        }
+
+        public void setAllowMethods(String allowMethods) {
+            this.allowMethods = allowMethods;
+        }
+
+        public String getAllowHeaders() {
+            return allowHeaders;
+        }
+
+        public void setAllowHeaders(String allowHeaders) {
+            this.allowHeaders = allowHeaders;
+        }
+    }
+
+    public DewBasic getBasic() {
+        return basic;
+    }
+
+
     public void setBasic(DewBasic basic) {
         this.basic = basic;
     }
@@ -148,4 +194,11 @@ public class DewConfig {
         this.cluster = cluster;
     }
 
+    public DewSecurity getSecurity() {
+        return security;
+    }
+
+    public void setSecurity(DewSecurity security) {
+        this.security = security;
+    }
 }
