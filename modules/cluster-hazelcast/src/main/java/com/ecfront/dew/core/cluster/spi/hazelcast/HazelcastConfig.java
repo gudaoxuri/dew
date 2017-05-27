@@ -13,6 +13,10 @@ public class HazelcastConfig {
     private String userName;
     private String password;
     private List<String> addresses = new ArrayList<>();
+    // Timeout value in milliseconds for nodes to accept client connection requests.
+    private int connectionTimeout = 5000;
+    private int connectionAttemptLimit = 2;
+    private int connectionAttemptPeriod = 3000;
 
     public String getUserName() {
         return userName;
@@ -38,4 +42,27 @@ public class HazelcastConfig {
         this.addresses = addresses;
     }
 
+    public int getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public void setConnectionTimeout(int connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public int getConnectionAttemptLimit() {
+        return connectionAttemptLimit;
+    }
+
+    public void setConnectionAttemptLimit(int connectionAttemptLimit) {
+        this.connectionAttemptLimit = connectionAttemptLimit;
+    }
+
+    public int getConnectionAttemptPeriod() {
+        return connectionAttemptPeriod;
+    }
+
+    public void setConnectionAttemptPeriod(int connectionAttemptPeriod) {
+        this.connectionAttemptPeriod = connectionAttemptPeriod;
+    }
 }
