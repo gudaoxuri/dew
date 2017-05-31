@@ -1,8 +1,8 @@
 package com.ecfront.dew.core.repository;
 
-import com.ecfront.dew.common.BeanHelper;
-import com.ecfront.dew.core.Dew;
+import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.PageDTO;
+import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.entity.EntityContainer;
 import com.ecfront.dew.core.entity.IdEntity;
 import com.ecfront.dew.core.entity.SafeEntity;
@@ -50,9 +50,9 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
                 .getCodeFieldNameByClazz(modelClazz);
         if (entityClassInfo.isPresent() && entityClassInfo.get().codeFieldUUID) {
             try {
-                Object code = BeanHelper.getValue(entity, entityClassInfo.get().codeFieldName);
+                Object code = $.bean.getValue(entity, entityClassInfo.get().codeFieldName);
                 if (code == null || ((String) code).isEmpty()) {
-                    BeanHelper.setValue(entity, entityClassInfo.get().codeFieldName, Dew.Util.createUUID());
+                    $.bean.setValue(entity, entityClassInfo.get().codeFieldName, Dew.Util.createUUID());
                 }
             } catch (NoSuchFieldException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
                 e.printStackTrace();
@@ -88,7 +88,7 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
                 e.setUpdateUser("");
             }
         }
-        entity= entityManager.merge(entity);
+        entity = entityManager.merge(entity);
         entityManager.flush();
         return entity;
     }
@@ -107,7 +107,7 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
                 e.setUpdateUser("");
             }
         }
-        entity= entityManager.merge(entity);
+        entity = entityManager.merge(entity);
         entityManager.flush();
         return entity;
     }

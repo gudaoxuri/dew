@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.ecfront.dew</groupId>
         <artifactId>parent</artifactId>
-        <version>1.1.1</version>
+        <version>1.1.2</version>
         <relativePath>../../modules/parent/pom.xml</relativePath>
     </parent>
 
@@ -15,7 +15,7 @@
     <name>Dew WSGateway</name>
     <description>Dew Websocket网关服务</description>
     <packaging>jar</packaging>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
 
     <properties>
         <vertx.version>3.4.0</vertx.version>

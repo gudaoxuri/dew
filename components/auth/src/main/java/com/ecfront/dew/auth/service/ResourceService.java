@@ -2,7 +2,7 @@ package com.ecfront.dew.auth.service;
 
 import com.ecfront.dew.auth.entity.Resource;
 import com.ecfront.dew.auth.repository.ResourceRepository;
-import com.ecfront.dew.common.JsonHelper;
+import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.service.CRUDService;
@@ -67,13 +67,13 @@ public class ResourceService implements CRUDService<ResourceRepository, Resource
 
     @Override
     public Resource postSave(Resource entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_RESOURCE_ADD, JsonHelper.toJsonString(entity));
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_RESOURCE_ADD, $.json.toJsonString(entity));
         return entity;
     }
 
     @Override
     public Resource postUpdate(Resource entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_RESOURCE_ADD, JsonHelper.toJsonString(entity));
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_RESOURCE_ADD, $.json.toJsonString(entity));
         return entity;
     }
 

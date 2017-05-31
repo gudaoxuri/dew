@@ -4,9 +4,8 @@ import com.ecfront.dew.auth.AuthConfig;
 import com.ecfront.dew.auth.entity.Account;
 import com.ecfront.dew.auth.repository.AccountRepository;
 import com.ecfront.dew.auth.repository.RoleRepository;
+import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.EncryptHelper;
-import com.ecfront.dew.common.FormatHelper;
-import com.ecfront.dew.common.JsonHelper;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.service.CRUSService;
@@ -79,7 +78,7 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
             if (exist) {
                 return Resp.conflict("Email exist.");
             }
-            if (!FormatHelper.validEmail(entity.getEmail().trim())) {
+            if (!$.field.validateEmail(entity.getEmail().trim())) {
                 return Resp.badRequest("Email format error.");
             }
             entity.setEmail(entity.getEmail().trim());
@@ -124,7 +123,7 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
             if (exist) {
                 return Resp.conflict("Email exist.");
             }
-            if (!FormatHelper.validEmail(entity.getEmail().trim())) {
+            if (!$.field.validateEmail(entity.getEmail().trim())) {
                 return Resp.badRequest("Email format error.");
             }
             entity.setEmail(entity.getEmail().trim());
@@ -166,7 +165,7 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
             if (exist) {
                 return Resp.conflict("Email exist.");
             }
-            if (!FormatHelper.validEmail(entity.getEmail().trim())) {
+            if (!$.field.validateEmail(entity.getEmail().trim())) {
                 return Resp.badRequest("Email format error.");
             }
             entity.setEmail(entity.getEmail().trim());
@@ -179,12 +178,12 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
 
     @Override
     public void postEnableById(long id, Optional<Object> preBody) throws RuntimeException {
-        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, JsonHelper.toJsonString(getById(id).getBody()));
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, $.json.toJsonString(getById(id).getBody()));
     }
 
     @Override
     public void postEnableByCode(String code, Optional<Object> preBody) throws RuntimeException {
-        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, JsonHelper.toJsonString(getByCode(code).getBody()));
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, $.json.toJsonString(getByCode(code).getBody()));
     }
 
     @Override
@@ -199,13 +198,13 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
 
     @Override
     public Account postSave(Account entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, JsonHelper.toJsonString(entity));
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, $.json.toJsonString(entity));
         return entity;
     }
 
     @Override
     public Account postUpdate(Account entity, Optional<Object> preBody) throws RuntimeException {
-        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, JsonHelper.toJsonString(entity));
+        Dew.cluster.mq.publish(Dew.Constant.MQ_AUTH_ACCOUNT_ADD, $.json.toJsonString(entity));
         return entity;
     }
 
@@ -219,7 +218,7 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
 
     private String packageEncryptPwd(String code, String password) {
         try {
-            return EncryptHelper.Symmetric.encrypt(authConfig.getAuth().getEncryptSalt() + code + password, authConfig.getAuth().getEncryptAlgorithm());
+            return $.encrypt.symmetric.encrypt(authConfig.getAuth().getEncryptSalt() + code + password, authConfig.getAuth().getEncryptAlgorithm());
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return System.nanoTime() + "";

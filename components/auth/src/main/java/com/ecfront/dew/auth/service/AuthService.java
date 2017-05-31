@@ -6,9 +6,7 @@ import com.ecfront.dew.auth.dto.ModifyLoginInfoReq;
 import com.ecfront.dew.auth.entity.Account;
 import com.ecfront.dew.auth.helper.CaptchaHelper;
 import com.ecfront.dew.auth.repository.AccountRepository;
-import com.ecfront.dew.auth.repository.ResourceRepository;
-import com.ecfront.dew.auth.repository.RoleRepository;
-import com.ecfront.dew.common.EncryptHelper;
+import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.dto.OptInfo;
@@ -74,7 +72,7 @@ public class AuthService {
             logger.warn("[login] Account disabled by " + tryLoginInfo + " from " + Dew.context().getSourceIP());
             return Resp.locked("[login] Account disabled");
         }
-        if (!EncryptHelper.Symmetric.validate(
+        if (!$.encrypt.symmetric.validate(
                 authConfig.getAuth().getEncryptSalt() + accountOpt.get().getCode() + loginReq.getPassword().trim(), accountOpt.get().getPassword(), authConfig.getAuth().getEncryptAlgorithm())) {
             cacheManager.getLogin().addLoginErrorTimes(tryLoginInfo);
             createCaptcha(tryLoginInfo);
@@ -126,7 +124,7 @@ public class AuthService {
             return Resp.unAuthorized("Login Info not found");
         }
         Account account = accountR.getBody();
-        if (!EncryptHelper.Symmetric.validate(
+        if (!$.encrypt.symmetric.validate(
                 authConfig.getAuth().getEncryptSalt() + account.getCode() + modifyLoginInfoReq.getOldPassword().trim(), account.getPassword(), authConfig.getAuth().getEncryptAlgorithm())) {
             logger.warn("Password not match from " + Dew.context().getSourceIP());
             return Resp.conflict("Password not match");

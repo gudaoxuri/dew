@@ -11,12 +11,12 @@ import com.ecfront.dew.auth.repository.ResourceRepository;
 import com.ecfront.dew.auth.repository.RoleRepository;
 import com.ecfront.dew.auth.repository.TenantRepository;
 import com.ecfront.dew.auth.service.*;
-import com.ecfront.dew.common.JsonHelper;
+import com.ecfront.dew.common.$;
+import com.ecfront.dew.common.PageDTO;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.common.StandardCode;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.dto.OptInfo;
-import com.ecfront.dew.common.PageDTO;
 import com.ecfront.dew.core.repository.DewRepositoryFactoryBean;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,7 +39,7 @@ import java.util.Map;
         repositoryFactoryBeanClass = DewRepositoryFactoryBean.class
 )
 @SpringBootTest(classes = AuthApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ComponentScan(basePackageClasses = {Dew.class,AuthTest.class})
+@ComponentScan(basePackageClasses = {Dew.class, AuthTest.class})
 public class AuthTest {
 
     @Autowired
@@ -86,20 +86,20 @@ public class AuthTest {
         Resp tenantR = testRestTemplate.postForObject("/manage/tenant/", tenant, Resp.class);
         Assert.assertTrue(tenantR.ok());
         // update
-        tenant = JsonHelper.toObject(tenantR.getBody(), Tenant.class);
+        tenant = $.json.toObject(tenantR.getBody(), Tenant.class);
         tenant.setName("默认租户1");
         testRestTemplate.put("/manage/tenant/" + tenant.getId(), tenant);
         // get
         tenantR = testRestTemplate.getForObject("/manage/tenant/" + tenant.getId(), Resp.class);
-        tenant = JsonHelper.toObject(tenantR.getBody(), Tenant.class);
+        tenant = $.json.toObject(tenantR.getBody(), Tenant.class);
         Assert.assertTrue(tenantR.ok() && tenant.getName().equals("默认租户1"));
         // disable
         testRestTemplate.delete("/manage/tenant/" + tenant.getId() + "/disable", Resp.class);
-        tenant = JsonHelper.toObject(testRestTemplate.getForObject("/manage/tenant/" + tenant.getId(), Resp.class).getBody(), Tenant.class);
+        tenant = $.json.toObject(testRestTemplate.getForObject("/manage/tenant/" + tenant.getId(), Resp.class).getBody(), Tenant.class);
         Assert.assertTrue(!tenant.getEnable());
         // enable
         testRestTemplate.put("/manage/tenant/" + tenant.getId() + "/enable", "", Resp.class);
-        tenant = JsonHelper.toObject(testRestTemplate.getForObject("/manage/tenant/" + tenant.getId(), Resp.class).getBody(), Tenant.class);
+        tenant = $.json.toObject(testRestTemplate.getForObject("/manage/tenant/" + tenant.getId(), Resp.class).getBody(), Tenant.class);
         Assert.assertTrue(tenant.getEnable());
         // find
         Resp tenantsR = testRestTemplate.getForObject("/manage/tenant/", Resp.class);
@@ -112,15 +112,15 @@ public class AuthTest {
         Assert.assertEquals(((List) tenantsR.getBody()).size(), 0);
         // paging
         Resp tenantPageR = testRestTemplate.getForObject("/manage/tenant/0/10", Resp.class);
-        PageDTO<Tenant> tenantPage = JsonHelper.toObject(tenantPageR.getBody(), PageDTO.class);
+        PageDTO<Tenant> tenantPage = $.json.toObject(tenantPageR.getBody(), PageDTO.class);
         Assert.assertEquals(tenantPage.getObjects().size(), 1);
         // paging enable
         tenantPageR = testRestTemplate.getForObject("/manage/tenant/0/10?enable=true", Resp.class);
-        tenantPage = JsonHelper.toObject(tenantPageR.getBody(), PageDTO.class);
+        tenantPage = $.json.toObject(tenantPageR.getBody(), PageDTO.class);
         Assert.assertEquals(tenantPage.getObjects().size(), 1);
         // paging disable
         tenantPageR = testRestTemplate.getForObject("/manage/tenant/0/10?enable=false", Resp.class);
-        tenantPage = JsonHelper.toObject(tenantPageR.getBody(), PageDTO.class);
+        tenantPage = $.json.toObject(tenantPageR.getBody(), PageDTO.class);
         Assert.assertEquals(tenantPage.getObjects().size(), 0);
         // exist
         Assert.assertTrue(tenantService.existById(tenant.getId()).getBody());
@@ -138,20 +138,20 @@ public class AuthTest {
         Resp tenantR = testRestTemplate.postForObject("/manage/tenant/", tenant, Resp.class);
         Assert.assertTrue(tenantR.ok());
         // update
-        tenant = JsonHelper.toObject(tenantR.getBody(), Tenant.class);
+        tenant = $.json.toObject(tenantR.getBody(), Tenant.class);
         tenant.setName("默认租户1");
         testRestTemplate.put("/manage/tenant/code/" + tenant.getCode(), tenant);
         // get
         tenantR = testRestTemplate.getForObject("/manage/tenant/code/" + tenant.getCode(), Resp.class);
-        tenant = JsonHelper.toObject(tenantR.getBody(), Tenant.class);
+        tenant = $.json.toObject(tenantR.getBody(), Tenant.class);
         Assert.assertTrue(tenantR.ok() && tenant.getName().equals("默认租户1"));
         // disable
         testRestTemplate.delete("/manage/tenant/code/" + tenant.getCode() + "/disable", Resp.class);
-        tenant = JsonHelper.toObject(testRestTemplate.getForObject("/manage/tenant/code/" + tenant.getCode(), Resp.class).getBody(), Tenant.class);
+        tenant = $.json.toObject(testRestTemplate.getForObject("/manage/tenant/code/" + tenant.getCode(), Resp.class).getBody(), Tenant.class);
         Assert.assertTrue(!tenant.getEnable());
         // enable
         testRestTemplate.put("/manage/tenant/code/" + tenant.getCode() + "/enable", "", Resp.class);
-        tenant = JsonHelper.toObject(testRestTemplate.getForObject("/manage/tenant/code/" + tenant.getCode(), Resp.class).getBody(), Tenant.class);
+        tenant = $.json.toObject(testRestTemplate.getForObject("/manage/tenant/code/" + tenant.getCode(), Resp.class).getBody(), Tenant.class);
         Assert.assertTrue(tenant.getEnable());
         // exist
         Assert.assertTrue(tenantService.existByCode(tenant.getCode()).getBody());
@@ -280,12 +280,12 @@ public class AuthTest {
         loginReq.setPassword("123");
         Resp optInfoR = testRestTemplate.postForObject("/public/login", loginReq, Resp.class);
         Assert.assertTrue(optInfoR.ok());
-        OptInfo optInfo = JsonHelper.toObject(optInfoR.getBody(), OptInfo.class);
+        OptInfo optInfo = $.json.toObject(optInfoR.getBody(), OptInfo.class);
         Assert.assertEquals(optInfo.getLoginId(), "root");
         // get login info
         optInfoR = testRestTemplate.getForObject("/logininfo?__dew_token__=" + optInfo.getToken(), Resp.class);
         Assert.assertTrue(optInfoR.ok());
-        optInfo = JsonHelper.toObject(optInfoR.getBody(), OptInfo.class);
+        optInfo = $.json.toObject(optInfoR.getBody(), OptInfo.class);
         Assert.assertEquals(optInfo.getLoginId(), "root");
         // update login info
         ModifyLoginInfoReq modifyLoginInfoReq = new ModifyLoginInfoReq();
@@ -293,7 +293,7 @@ public class AuthTest {
         modifyLoginInfoReq.setOldPassword("123");
         testRestTemplate.put("/account/bylogin?__dew_token__=" + optInfo.getToken(), modifyLoginInfoReq);
         optInfoR = testRestTemplate.getForObject("/logininfo?__dew_token__=" + optInfo.getToken(), Resp.class);
-        optInfo = JsonHelper.toObject(optInfoR.getBody(), OptInfo.class);
+        optInfo = $.json.toObject(optInfoR.getBody(), OptInfo.class);
         Assert.assertEquals(optInfo.getEmail(), "123456@123.com");
         modifyLoginInfoReq.setNewPassword("1234");
         testRestTemplate.put("/account/bylogin?__dew_token__=" + optInfo.getToken(), modifyLoginInfoReq);
@@ -315,7 +315,7 @@ public class AuthTest {
         Assert.assertFalse(optInfoR.ok());
         loginReq.setCaptcha(cacheManager.getLogin().getCaptchaText(authService.packageTryLoginInfo(loginReq)));
         optInfoR = testRestTemplate.postForObject("/public/login", loginReq, Resp.class);
-        optInfo = JsonHelper.toObject(optInfoR.getBody(), OptInfo.class);
+        optInfo = $.json.toObject(optInfoR.getBody(), OptInfo.class);
         Assert.assertTrue(optInfoR.ok());
         // logout
         testRestTemplate.delete("/logout?__dew_token__=" + optInfo.getToken());

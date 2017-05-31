@@ -1,6 +1,6 @@
 package com.ecfront.dew.core.cluster.spi.redis;
 
-import com.ecfront.dew.common.JsonHelper;
+import com.ecfront.dew.common.$;
 import com.ecfront.dew.core.cluster.ClusterDistMap;
 import org.springframework.data.redis.core.RedisTemplate;
 
@@ -21,7 +21,7 @@ public class RedisClusterDistMap<M> implements ClusterDistMap<M> {
 
     @Override
     public void put(String key, M value) {
-        redisTemplate.opsForHash().put(mapKey, key, JsonHelper.toJsonString(value));
+        redisTemplate.opsForHash().put(mapKey, key, $.json.toJsonString(value));
     }
 
     @Override
@@ -43,7 +43,7 @@ public class RedisClusterDistMap<M> implements ClusterDistMap<M> {
     public Map<String, M> getAll() {
         Map<Object, Object> map = redisTemplate.opsForHash().entries(mapKey);
         if (map != null) {
-            return map.entrySet().stream().collect(Collectors.toMap(i -> (String) (i.getKey()), i -> JsonHelper.toObject(i.getValue(), clazz)));
+            return map.entrySet().stream().collect(Collectors.toMap(i -> (String) (i.getKey()), i -> $.json.toObject(i.getValue(), clazz)));
         } else {
             return null;
         }
@@ -53,7 +53,7 @@ public class RedisClusterDistMap<M> implements ClusterDistMap<M> {
     public M get(String key) {
         Object result = redisTemplate.opsForHash().get(mapKey, key);
         if (result != null) {
-            return JsonHelper.toObject(result, clazz);
+            return $.json.toObject(result, clazz);
         } else {
             return null;
         }

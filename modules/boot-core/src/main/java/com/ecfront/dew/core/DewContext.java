@@ -1,6 +1,6 @@
 package com.ecfront.dew.core;
 
-import com.ecfront.dew.common.JsonHelper;
+import com.ecfront.dew.common.$;
 import com.ecfront.dew.core.dto.OptInfo;
 
 import java.util.Optional;
@@ -20,7 +20,7 @@ public class DewContext {
         if (token != null && !token.isEmpty()) {
             String result = Dew.cluster.cache.get(Dew.Constant.TOKEN_INFO_FLAG + token);
             if (result != null && !result.isEmpty()) {
-                innerOptInfo = Optional.of(JsonHelper.toObject(result, OptInfo.class));
+                innerOptInfo = Optional.of($.json.toObject(result, OptInfo.class));
             } else {
                 innerOptInfo = Optional.empty();
             }

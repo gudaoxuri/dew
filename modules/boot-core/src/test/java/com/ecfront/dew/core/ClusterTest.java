@@ -31,7 +31,7 @@ public class ClusterTest {
         Assert.assertTrue(!Dew.cluster.cache.exists("n_test"));
         Dew.cluster.cache.set("n_test", "{\"name\":\"jzy\"}", 1);
         Assert.assertTrue(Dew.cluster.cache.exists("n_test"));
-        Assert.assertEquals("jzy", JsonHelper.toJson(Dew.cluster.cache.get("n_test")).get("name").asText());
+        Assert.assertEquals("jzy", $.json.toJson(Dew.cluster.cache.get("n_test")).get("name").asText());
         Thread.sleep(1000);
         Assert.assertTrue(!Dew.cluster.cache.exists("n_test"));
         Assert.assertEquals(null, Dew.cluster.cache.get("n_test"));

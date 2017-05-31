@@ -2,7 +2,7 @@ package com.ecfront.dew.auth.service;
 
 import com.ecfront.dew.auth.AuthConfig;
 import com.ecfront.dew.auth.entity.Account;
-import com.ecfront.dew.common.JsonHelper;
+import com.ecfront.dew.common.$;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.dto.OptInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +49,7 @@ public class CacheManager {
             optInfo.setExt(account.getExt());
             optInfo.setLastLoginTime(new Date());
             Dew.cluster.cache.set(Dew.Constant.TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), optInfo.getToken());
-            Dew.cluster.cache.set(Dew.Constant.TOKEN_INFO_FLAG + optInfo.getToken(), JsonHelper.toJsonString(optInfo));
+            Dew.cluster.cache.set(Dew.Constant.TOKEN_INFO_FLAG + optInfo.getToken(), $.json.toJsonString(optInfo));
             if (authConfig.getAuth().getTokenExpireSeconds() != -1) {
                 Dew.cluster.cache.expire(Dew.Constant.TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), (int) authConfig.getAuth().getTokenExpireSeconds());
                 Dew.cluster.cache.expire(Dew.Constant.TOKEN_INFO_FLAG + optInfo.getToken(), (int) authConfig.getAuth().getTokenExpireSeconds());
@@ -78,7 +78,7 @@ public class CacheManager {
         }
 
         public OptInfo getTokenInfo(String token) {
-            return JsonHelper.toObject(Dew.cluster.cache.get(Dew.Constant.TOKEN_INFO_FLAG + token), OptInfo.class);
+            return $.json.toObject(Dew.cluster.cache.get(Dew.Constant.TOKEN_INFO_FLAG + token), OptInfo.class);
         }
 
         public void updateTokenInfo(Account account) {
@@ -105,7 +105,7 @@ public class CacheManager {
                     }).collect(Collectors.toList()));
                     newTokenInfo.setExt(account.getExt());
                     newTokenInfo.setLastLoginTime(oldTokenInfo.getLastLoginTime());
-                    Dew.cluster.cache.set(Dew.Constant.TOKEN_INFO_FLAG + newTokenInfo.getToken(), JsonHelper.toJsonString(newTokenInfo));
+                    Dew.cluster.cache.set(Dew.Constant.TOKEN_INFO_FLAG + newTokenInfo.getToken(), $.json.toJsonString(newTokenInfo));
                 }
             }
         }

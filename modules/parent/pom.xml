@@ -16,7 +16,7 @@
     <description>Dew 父工程</description>
     <url>https://github.com/gudaoxuri/dew</url>
     <packaging>pom</packaging>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
 
     <properties>
         <java.version>1.8</java.version>
@@ -27,8 +27,8 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
         <maven-assembly>2.6</maven-assembly>
-        <dew.version>1.1.1</dew.version>
-        <dew-common.version>1.0.1</dew-common.version>
+        <dew.version>1.1.2</dew.version>
+        <dew-common.version>1.2.0</dew-common.version>
     </properties>
 
     <licenses>

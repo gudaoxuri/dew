@@ -1,6 +1,6 @@
 package com.ecfront.dew.gateway.auth;
 
-import com.ecfront.dew.common.JsonHelper;
+import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.dto.OptInfo;
@@ -34,7 +34,7 @@ public class AuthFilter extends ZuulFilter {
 
     private Void filterHit(RequestContext ctx, Resp<?> resp) {
         ctx.setSendZuulResponse(false);
-        ctx.setResponseBody(JsonHelper.toJsonString(resp));
+        ctx.setResponseBody($.json.toJsonString(resp));
         logger.warn("Auth Filter Hit [{}] {}", resp.getCode(), resp.getMessage());
         return null;
     }
@@ -64,7 +64,7 @@ public class AuthFilter extends ZuulFilter {
         if (optInfoStr == null) {
             return filterHit(ctx, Resp.unAuthorized("Token not exist"));
         }
-        OptInfo optInfo = JsonHelper.toObject(optInfoStr, OptInfo.class);
+        OptInfo optInfo = $.json.toObject(optInfoStr, OptInfo.class);
         boolean authentication = LocalCacheContainer.auth(optInfo.getRoles().stream().map(OptInfo.RoleInfo::getCode).collect(Collectors.toSet()), bestMathResourceCode.get());
         if (authentication) {
             return null;

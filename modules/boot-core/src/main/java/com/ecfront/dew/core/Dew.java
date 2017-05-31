@@ -1,7 +1,6 @@
 package com.ecfront.dew.core;
 
-import com.ecfront.dew.common.JsonHelper;
-import com.ecfront.dew.common.TimerHelper;
+import com.ecfront.dew.common.$;
 import com.ecfront.dew.core.cluster.Cluster;
 import com.ecfront.dew.core.cluster.ClusterCache;
 import com.ecfront.dew.core.cluster.ClusterDist;
@@ -146,7 +145,7 @@ public class Dew {
 
         public static void periodic(long initialDelaySec, long periodSec, VoidExecutor fun) {
             DewContext context = Dew.context();
-            TimerHelper.periodic(initialDelaySec, periodSec, () -> {
+            $.timer.periodic(initialDelaySec, periodSec, true, () -> {
                 DewContext.setContext(context);
                 try {
                     fun.exec();
@@ -162,7 +161,7 @@ public class Dew {
 
         public static void timer(long delaySec, VoidExecutor fun) {
             DewContext context = Dew.context();
-            TimerHelper.timer(delaySec, () -> {
+            $.timer.timer(delaySec, () -> {
                 DewContext.setContext(context);
                 try {
                     fun.exec();
@@ -250,7 +249,7 @@ public class Dew {
         public static Optional<OptInfo> getOptInfoByAccCode(String accountCode) {
             String token = Dew.cluster.cache.get(Dew.Constant.TOKEN_ID_REL_FLAG + accountCode);
             if (token != null && !token.isEmpty()) {
-                return Optional.of(JsonHelper.toObject(Dew.cluster.cache.get(Dew.Constant.TOKEN_INFO_FLAG + token), OptInfo.class));
+                return Optional.of($.json.toObject(Dew.cluster.cache.get(Dew.Constant.TOKEN_INFO_FLAG + token), OptInfo.class));
             } else {
                 return Optional.empty();
             }

@@ -1,6 +1,6 @@
 package com.ecfront.dew.wsgateway;
 
-import com.ecfront.dew.common.JsonHelper;
+import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.core.Dew;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
@@ -18,11 +18,11 @@ public class WSClient {
 
     @HystrixCommand(fallbackMethod = "serviceFallback")
     public String ws(String token, String message) {
-        return restTemplate.postForEntity(Dew.EB.buildUrl(wsConfig.getWsServiceName(),"ws",token), message, String.class).getBody();
+        return restTemplate.postForEntity(Dew.EB.buildUrl(wsConfig.getWsServiceName(), "ws", token), message, String.class).getBody();
     }
 
     public String serviceFallback(String token, String message) {
-        return JsonHelper.toJsonString(Resp.serverUnavailable(""));
+        return $.json.toJsonString(Resp.serverUnavailable(""));
     }
 
 
