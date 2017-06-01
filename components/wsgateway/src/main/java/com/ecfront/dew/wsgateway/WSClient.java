@@ -25,5 +25,4 @@ public class WSClient {
         return $.json.toJsonString(Resp.serverUnavailable(""));
     }
 
-
 }
