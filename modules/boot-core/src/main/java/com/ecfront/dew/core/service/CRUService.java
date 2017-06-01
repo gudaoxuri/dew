@@ -1,7 +1,7 @@
 package com.ecfront.dew.core.service;
 
+import com.ecfront.dew.common.Page;
 import com.ecfront.dew.common.Resp;
-import com.ecfront.dew.common.PageDTO;
 import com.ecfront.dew.core.entity.IdEntity;
 import com.ecfront.dew.core.repository.DewRepository;
 import org.springframework.data.domain.Sort;
@@ -36,7 +36,7 @@ public interface CRUService<T extends DewRepository<E>, E extends IdEntity> exte
         return Resp.success(Optional.empty());
     }
 
-    default PageDTO<E> postPaging(PageDTO<E> entities, Optional<Object> preBody) throws RuntimeException {
+    default Page<E> postPaging(Page<E> entities, Optional<Object> preBody) throws RuntimeException {
         return entities;
     }
 
@@ -101,11 +101,11 @@ public interface CRUService<T extends DewRepository<E>, E extends IdEntity> exte
         return Resp.customFail(preResult.getCode(), preResult.getMessage());
     }
 
-    default Resp<PageDTO<E>> paging(int pageNumber, int pageSize) throws RuntimeException {
+    default Resp<Page<E>> paging(int pageNumber, int pageSize) throws RuntimeException {
         return paging(pageNumber, pageSize, null);
     }
 
-    default Resp<PageDTO<E>> paging(int pageNumber, int pageSize, Sort sort) throws RuntimeException {
+    default Resp<Page<E>> paging(int pageNumber, int pageSize, Sort sort) throws RuntimeException {
         logger.debug("[{}] Paging {} {} {}.", getModelClazz().getSimpleName(), pageNumber, pageSize, sort != null ? sort.toString() : "");
         Resp<Optional<Object>> preResult = prePaging();
         if (preResult.ok()) {

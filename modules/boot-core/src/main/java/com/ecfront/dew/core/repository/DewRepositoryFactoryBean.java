@@ -1,6 +1,7 @@
 package com.ecfront.dew.core.repository;
 
 
+import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.entity.IdEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.JpaRepositoryFactory;
@@ -20,6 +21,7 @@ public class DewRepositoryFactoryBean<T extends JpaRepository<E, Long>, E extend
 
     @Override
     protected RepositoryFactorySupport createRepositoryFactory(EntityManager entityManager) {
+        Dew.em = entityManager;
         return new DewRepositoryFactory<E>(entityManager);
     }
 

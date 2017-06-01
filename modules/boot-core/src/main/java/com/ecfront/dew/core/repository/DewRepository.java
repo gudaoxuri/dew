@@ -1,8 +1,7 @@
 package com.ecfront.dew.core.repository;
 
-import com.ecfront.dew.common.PageDTO;
+import com.ecfront.dew.common.Page;
 import com.ecfront.dew.core.entity.IdEntity;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -40,11 +39,11 @@ public interface DewRepository<E extends IdEntity> extends JpaRepository<E, Long
 
     List<E> findDisable();
 
-    PageDTO<E> paging(int pageNumber, int pageSize, Sort sort);
+    Page<E> paging(int pageNumber, int pageSize, Sort sort);
 
-    PageDTO<E> pagingEnable(int pageNumber, int pageSize, Sort sort);
+    Page<E> pagingEnable(int pageNumber, int pageSize, Sort sort);
 
-    PageDTO<E> pagingDisable(int pageNumber, int pageSize, Sort sort);
+    Page<E> pagingDisable(int pageNumber, int pageSize, Sort sort);
 
     @Transactional
     void enableById(long id);
@@ -62,8 +61,8 @@ public interface DewRepository<E extends IdEntity> extends JpaRepository<E, Long
 
     boolean existByCode(String code);
 
-    default <E> PageDTO<E> pageConvert(Page<E> page) {
-        return PageDTO.build(page.getNumber(), page.getNumberOfElements(), page.getTotalElements(), page.getContent());
+    default <E> Page<E> pageConvert(org.springframework.data.domain.Page<E> page) {
+        return Page.build(page.getNumber(), page.getNumberOfElements(), page.getTotalElements(), page.getContent());
     }
 
 }

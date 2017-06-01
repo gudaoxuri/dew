@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -104,6 +105,8 @@ public class Dew {
     public static Cluster cluster = new Cluster();
 
     public static ApplicationContext applicationContext;
+
+    public static EntityManager em;
 
     public static DewConfig dewConfig;
 

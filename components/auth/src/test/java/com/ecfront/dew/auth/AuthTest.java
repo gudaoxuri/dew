@@ -12,7 +12,7 @@ import com.ecfront.dew.auth.repository.RoleRepository;
 import com.ecfront.dew.auth.repository.TenantRepository;
 import com.ecfront.dew.auth.service.*;
 import com.ecfront.dew.common.$;
-import com.ecfront.dew.common.PageDTO;
+import com.ecfront.dew.common.Page;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.common.StandardCode;
 import com.ecfront.dew.core.Dew;
@@ -112,15 +112,15 @@ public class AuthTest {
         Assert.assertEquals(((List) tenantsR.getBody()).size(), 0);
         // paging
         Resp tenantPageR = testRestTemplate.getForObject("/manage/tenant/0/10", Resp.class);
-        PageDTO<Tenant> tenantPage = $.json.toObject(tenantPageR.getBody(), PageDTO.class);
+        Page<Tenant> tenantPage = $.json.toObject(tenantPageR.getBody(), Page.class);
         Assert.assertEquals(tenantPage.getObjects().size(), 1);
         // paging enable
         tenantPageR = testRestTemplate.getForObject("/manage/tenant/0/10?enable=true", Resp.class);
-        tenantPage = $.json.toObject(tenantPageR.getBody(), PageDTO.class);
+        tenantPage = $.json.toObject(tenantPageR.getBody(), Page.class);
         Assert.assertEquals(tenantPage.getObjects().size(), 1);
         // paging disable
         tenantPageR = testRestTemplate.getForObject("/manage/tenant/0/10?enable=false", Resp.class);
-        tenantPage = $.json.toObject(tenantPageR.getBody(), PageDTO.class);
+        tenantPage = $.json.toObject(tenantPageR.getBody(), Page.class);
         Assert.assertEquals(tenantPage.getObjects().size(), 0);
         // exist
         Assert.assertTrue(tenantService.existById(tenant.getId()).getBody());

@@ -1,6 +1,6 @@
 package com.ecfront.dew.auth;
 
-import com.ecfront.dew.common.PageDTO;
+import com.ecfront.dew.common.Page;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.core.Dew;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ public abstract class BasicTest {
         return Resp.genericList(testRestTemplate.postForObject(u(uri), body, Resp.class), clazz);
     }
 
-    protected <E> Resp<PageDTO<E>> postAndReturnPage(String uri, Object body, Class<E> clazz) {
+    protected <E> Resp<Page<E>> postAndReturnPage(String uri, Object body, Class<E> clazz) {
         return Resp.genericPage(testRestTemplate.postForObject(u(uri), body, Resp.class), clazz);
     }
 
@@ -48,7 +48,7 @@ public abstract class BasicTest {
         return Resp.genericList(testRestTemplate.getForObject(u(uri), Resp.class), clazz);
     }
 
-    protected <E> Resp<PageDTO<E>> getAndReturnPage(String uri, Class<E> clazz) {
+    protected <E> Resp<Page<E>> getAndReturnPage(String uri, Class<E> clazz) {
         return Resp.genericPage(testRestTemplate.getForObject(u(uri), Resp.class), clazz);
     }
 

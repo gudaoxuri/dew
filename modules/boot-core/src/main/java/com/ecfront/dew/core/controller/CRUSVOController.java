@@ -1,8 +1,8 @@
 package com.ecfront.dew.core.controller;
 
 
+import com.ecfront.dew.common.Page;
 import com.ecfront.dew.common.Resp;
-import com.ecfront.dew.common.PageDTO;
 import com.ecfront.dew.core.entity.IdEntity;
 import com.ecfront.dew.core.service.CRUSService;
 import io.swagger.annotations.ApiImplicitParam;
@@ -44,8 +44,8 @@ public interface CRUSVOController<T extends CRUSService, V extends Object, E ext
             @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", paramType = "path", dataType = "int", required = true),
             @ApiImplicitParam(name = "enable", value = "状态", paramType = "query", dataType = "boolean"),
     })
-    default Resp<PageDTO<V>> pagingByStatus(@PathVariable int pageNumber, @PathVariable int pageSize, @RequestParam(required = false) Boolean enable) {
-        Resp<PageDTO<E>> result;
+    default Resp<Page<V>> pagingByStatus(@PathVariable int pageNumber, @PathVariable int pageSize, @RequestParam(required = false) Boolean enable) {
+        Resp<Page<E>> result;
         if (enable == null) {
             result = getDewService().paging(pageNumber, pageSize);
         } else if (enable) {
@@ -55,7 +55,7 @@ public interface CRUSVOController<T extends CRUSService, V extends Object, E ext
         }
         if (result.ok()) {
             List<V> body = result.getBody().getObjects().stream().map(i -> entityToVO(i)).collect(Collectors.toList());
-            PageDTO<V> page = PageDTO.build(pageNumber, pageSize, result.getBody().getRecordTotal(), body);
+            Page<V> page = Page.build(pageNumber, pageSize, result.getBody().getRecordTotal(), body);
             return Resp.success(page);
         } else {
             return Resp.customFail(result.getCode(), result.getMessage());

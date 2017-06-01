@@ -1,7 +1,7 @@
 package com.ecfront.dew.core.service;
 
+import com.ecfront.dew.common.Page;
 import com.ecfront.dew.common.Resp;
-import com.ecfront.dew.common.PageDTO;
 import com.ecfront.dew.core.entity.IdEntity;
 import com.ecfront.dew.core.repository.DewRepository;
 import org.springframework.data.domain.Sort;
@@ -58,11 +58,11 @@ public interface CRUSService<T extends DewRepository<E>, E extends IdEntity> ext
         return Resp.customFail(preResult.getCode(), preResult.getMessage());
     }
 
-    default Resp<PageDTO<E>> pagingEnable(int pageNumber, int pageSize) throws RuntimeException {
+    default Resp<Page<E>> pagingEnable(int pageNumber, int pageSize) throws RuntimeException {
         return pagingEnable(pageNumber, pageSize, null);
     }
 
-    default Resp<PageDTO<E>> pagingEnable(int pageNumber, int pageSize, Sort sort) throws RuntimeException {
+    default Resp<Page<E>> pagingEnable(int pageNumber, int pageSize, Sort sort) throws RuntimeException {
         logger.debug("[{}] PagingEnable {} {} {}.", getModelClazz().getSimpleName(), pageNumber, pageSize, sort != null ? sort.toString() : "");
         Resp<Optional<Object>> preResult = prePaging();
         if (preResult.ok()) {
@@ -71,11 +71,11 @@ public interface CRUSService<T extends DewRepository<E>, E extends IdEntity> ext
         return Resp.customFail(preResult.getCode(), preResult.getMessage());
     }
 
-    default Resp<PageDTO<E>> pagingDisable(int pageNumber, int pageSize) throws RuntimeException {
+    default Resp<Page<E>> pagingDisable(int pageNumber, int pageSize) throws RuntimeException {
         return pagingDisable(pageNumber, pageSize, null);
     }
 
-    default Resp<PageDTO<E>> pagingDisable(int pageNumber, int pageSize, Sort sort) throws RuntimeException {
+    default Resp<Page<E>> pagingDisable(int pageNumber, int pageSize, Sort sort) throws RuntimeException {
         logger.debug("[{}] PagingDisable {} {} {}.", getModelClazz().getSimpleName(), pageNumber, pageSize, sort != null ? sort.toString() : "");
         Resp<Optional<Object>> preResult = prePaging();
         if (preResult.ok()) {

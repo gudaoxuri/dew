@@ -1,12 +1,11 @@
 package com.ecfront.dew.core.repository;
 
 import com.ecfront.dew.common.$;
-import com.ecfront.dew.common.PageDTO;
+import com.ecfront.dew.common.Page;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.entity.EntityContainer;
 import com.ecfront.dew.core.entity.IdEntity;
 import com.ecfront.dew.core.entity.SafeEntity;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -151,36 +150,36 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
     }
 
     @Override
-    public PageDTO<E> paging(int pageNumber, int pageSize, Sort sort) {
+    public com.ecfront.dew.common.Page<E> paging(int pageNumber, int pageSize, Sort sort) {
         Pageable pageRequest;
         if (sort == null) {
             pageRequest = new PageRequest(pageNumber, pageSize);
         } else {
             pageRequest = new PageRequest(pageNumber, pageSize, sort);
         }
-        Page result = super.findAll(pageRequest);
-        return PageDTO.build(pageNumber, pageSize, result.getTotalElements(), result.getContent());
+        org.springframework.data.domain.Page result = super.findAll(pageRequest);
+        return com.ecfront.dew.common.Page.build(pageNumber, pageSize, result.getTotalElements(), result.getContent());
     }
 
     @Override
-    public PageDTO<E> pagingEnable(int pageNumber, int pageSize, Sort sort) {
+    public Page<E> pagingEnable(int pageNumber, int pageSize, Sort sort) {
         return pagingStatus(pageNumber, pageSize, sort, true);
     }
 
     @Override
-    public PageDTO<E> pagingDisable(int pageNumber, int pageSize, Sort sort) {
+    public Page<E> pagingDisable(int pageNumber, int pageSize, Sort sort) {
         return pagingStatus(pageNumber, pageSize, sort, false);
     }
 
-    private PageDTO<E> pagingStatus(int pageNumber, int pageSize, Sort sort, boolean enable) {
+    private Page<E> pagingStatus(int pageNumber, int pageSize, Sort sort, boolean enable) {
         Pageable pageRequest;
         if (sort == null) {
             pageRequest = new PageRequest(pageNumber, pageSize);
         } else {
             pageRequest = new PageRequest(pageNumber, pageSize, sort);
         }
-        Page result = super.findAll((root, query, cb) -> cb.equal(root.get("enable"), enable), pageRequest);
-        return PageDTO.build(pageNumber, pageSize, result.getTotalPages(), result.getContent());
+        org.springframework.data.domain.Page result = super.findAll((root, query, cb) -> cb.equal(root.get("enable"), enable), pageRequest);
+        return Page.build(pageNumber, pageSize, result.getTotalPages(), result.getContent());
     }
 
     @Override
@@ -228,7 +227,6 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
         q.setParameter(2, whereValue);
         q.executeUpdate();
     }
-
 
 }
 
