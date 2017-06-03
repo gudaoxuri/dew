@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.ecfront.dew</groupId>
         <artifactId>parent</artifactId>
-        <version>1.1.2</version>
+        <version>1.1.3</version>
         <relativePath>../../modules/parent/pom.xml</relativePath>
     </parent>
 
@@ -15,7 +15,7 @@
     <name>Dew Auth</name>
     <description>Dew 多租户的RBAC权限服务</description>
     <packaging>jar</packaging>
-    <version>1.1.2</version>
+    <version>1.1.3</version>
 
     <properties>
     </properties>

@@ -31,7 +31,7 @@ public class DewHandlerInterceptor extends HandlerInterceptorAdapter {
         }
 
         String token;
-        if (Dew.dewConfig.getSecurity().isTokenInHead()) {
+        if (Dew.dewConfig.getSecurity().isTokenInHeader()) {
             token = request.getHeader(Dew.dewConfig.getSecurity().getTokenFlag());
         } else {
             token = request.getParameter(Dew.dewConfig.getSecurity().getTokenFlag());

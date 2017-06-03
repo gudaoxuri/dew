@@ -1,6 +1,6 @@
 package com.ecfront.dew.core;
 
-import com.ecfront.dew.common.JsonHelper;
+import com.ecfront.dew.common.$;
 import com.ecfront.dew.core.cluster.ClusterDistLock;
 import com.ecfront.dew.core.cluster.ClusterDistMap;
 import org.junit.Assert;

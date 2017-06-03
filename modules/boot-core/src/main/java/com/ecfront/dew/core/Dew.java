@@ -228,6 +228,39 @@ public class Dew {
             }
         }
 
+    }
+
+    public static class Auth {
+
+        public static Optional<OptInfo> getOptInfo() {
+            return Dew.context().optInfo();
+        }
+
+        public static Optional<OptInfo> getOptInfo(String token) {
+            String optInfoStr = Dew.cluster.cache.get(Dew.Constant.TOKEN_INFO_FLAG + token);
+            if (optInfoStr != null && !optInfoStr.isEmpty()) {
+                return Optional.of($.json.toObject(optInfoStr, OptInfo.class));
+            } else {
+                return Optional.empty();
+            }
+        }
+
+        public static void removeOptInfo() {
+            Optional<OptInfo> tokenInfoOpt = getOptInfo();
+            if (tokenInfoOpt.isPresent()) {
+                Dew.cluster.cache.del(Dew.Constant.TOKEN_ID_REL_FLAG + tokenInfoOpt.get().getAccountCode());
+                Dew.cluster.cache.del(Dew.Constant.TOKEN_INFO_FLAG + tokenInfoOpt.get().getToken());
+            }
+        }
+
+        public static void removeOptInfo(String token) {
+            Optional<OptInfo> tokenInfoOpt = getOptInfo(token);
+            if (tokenInfoOpt.isPresent()) {
+                Dew.cluster.cache.del(Dew.Constant.TOKEN_ID_REL_FLAG + tokenInfoOpt.get().getAccountCode());
+                Dew.cluster.cache.del(Dew.Constant.TOKEN_INFO_FLAG + token);
+            }
+        }
+
         public static Optional<OptInfo> getOptInfoByAccCode(String accountCode) {
             String token = Dew.cluster.cache.get(Dew.Constant.TOKEN_ID_REL_FLAG + accountCode);
             if (token != null && !token.isEmpty()) {

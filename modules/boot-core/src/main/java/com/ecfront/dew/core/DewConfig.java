@@ -139,7 +139,7 @@ public class DewConfig {
 
         private String tokenFlag = "__dew_token__";
 
-        private boolean tokenInHead = false;
+        private boolean tokenInHeader = false;
 
         public DewSecurityCORS getCors() {
             return cors;
@@ -157,12 +157,12 @@ public class DewConfig {
             this.tokenFlag = tokenFlag;
         }
 
-        public boolean isTokenInHead() {
-            return tokenInHead;
+        public boolean isTokenInHeader() {
+            return tokenInHeader;
         }
 
-        public void setTokenInHead(boolean tokenInHead) {
-            this.tokenInHead = tokenInHead;
+        public void setTokenInHeader(boolean tokenInHeader) {
+            this.tokenInHeader = tokenInHeader;
         }
     }
 
