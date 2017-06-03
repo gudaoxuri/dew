@@ -33,7 +33,6 @@ public class CacheManager {
             tokenLock.lock();
             removeTokenByAccountCode(account.getCode());
             OptInfo optInfo = new OptInfo();
-            optInfo.setToken(Dew.Util.createUUID());
             optInfo.setAccountCode(account.getCode());
             optInfo.setLoginId(account.getLoginId());
             optInfo.setMobile(account.getMobile());

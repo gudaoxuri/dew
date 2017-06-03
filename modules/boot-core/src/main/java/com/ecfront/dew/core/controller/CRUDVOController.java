@@ -25,7 +25,7 @@ public interface CRUDVOController<T extends CRUDService, V extends Object, E ext
     @ApiImplicitParams({
             @ApiImplicitParam(name = "code", value = "记录Code", paramType = "path", dataType = "string", required = true),
     })
-    default Resp<Void> deleteById(@PathVariable String code) {
+    default Resp<Void> deleteByCode(@PathVariable String code) {
         return getDewService().deleteByCode(code);
     }
 

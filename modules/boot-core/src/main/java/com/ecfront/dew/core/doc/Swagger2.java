@@ -67,7 +67,7 @@ public class Swagger2 {
                 .globalResponseMessage(RequestMethod.DELETE, responseMessages)
                 .globalOperationParameters(new ArrayList<Parameter>() {{
                     new ParameterBuilder()
-                            .name(Dew.Constant.TOKEN_VIEW_FLAG)
+                            .name(Dew.dewConfig.getSecurity().getTokenFlag())
                             .description("token")
                             .modelRef(new ModelRef("String"))
                             .parameterType("query")

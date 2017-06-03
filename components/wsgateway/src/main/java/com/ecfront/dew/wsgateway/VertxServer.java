@@ -1,7 +1,10 @@
 package com.ecfront.dew.wsgateway;
 
 import com.ecfront.dew.core.Dew;
-import io.vertx.core.*;
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
+import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +83,7 @@ public class VertxServer extends AbstractVerticle {
                             params.put(i[0], i[1]);
                         }
                 );
-                String token = params.get(Dew.Constant.TOKEN_VIEW_FLAG);
+                String token = params.get(Dew.dewConfig.getSecurity().getTokenFlag());
                 if (token != null && !token.isEmpty()) {
                     WSPushManager.add(token, ws);
                     ws.frameHandler(wf ->
@@ -114,7 +117,7 @@ public class VertxServer extends AbstractVerticle {
                             params.put(i[0], i[1]);
                         }
                 );
-                String token = params.containsKey(Dew.Constant.TOKEN_VIEW_FLAG) ? params.get(Dew.Constant.TOKEN_VIEW_FLAG) : null;
+                String token = params.getOrDefault(Dew.dewConfig.getSecurity().getTokenFlag(), null);
                 http.bodyHandler(data -> {
                     String result = data.getString(0, data.length());
                     if (token != null && !token.isEmpty()) {
@@ -126,8 +129,8 @@ public class VertxServer extends AbstractVerticle {
             }
             http.response().end("");
         }).listen(discoveryClient.getLocalServiceInstance().getPort(), "0.0.0.0", event -> {
-            if(event.failed()){
-                logger.error("[Vertx] Start error.",event.cause());
+            if (event.failed()) {
+                logger.error("[Vertx] Start error.", event.cause());
             }
         });
     }

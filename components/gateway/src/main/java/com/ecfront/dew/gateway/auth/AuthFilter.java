@@ -51,9 +51,9 @@ public class AuthFilter extends ZuulFilter {
         if (requestPath.startsWith("/public")) {
             return null;
         }
-        String token = request.getParameter(Dew.Constant.TOKEN_VIEW_FLAG);
+        String token = request.getParameter(Dew.dewConfig.getSecurity().getTokenFlag());
         if (token == null) {
-            return filterHit(ctx, Resp.unAuthorized("Token not exist，Request parameter must include " + Dew.Constant.TOKEN_VIEW_FLAG));
+            return filterHit(ctx, Resp.unAuthorized("Token not exist，Request parameter must include " + Dew.dewConfig.getSecurity().getTokenFlag()));
         }
         Optional<String> bestMathResourceCode = LocalCacheContainer.getBestMathResourceCode(request.getMethod(), request.getRequestURI());
         if (!bestMathResourceCode.isPresent()) {

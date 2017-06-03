@@ -1,5 +1,6 @@
 package com.ecfront.dew.core.interceptor;
 
+import com.ecfront.dew.common.$;
 import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.DewContext;
 import org.slf4j.Logger;
@@ -29,9 +30,14 @@ public class DewHandlerInterceptor extends HandlerInterceptorAdapter {
             return super.preHandle(request, response, handler);
         }
 
-        String token = request.getParameter(Dew.Constant.TOKEN_VIEW_FLAG);
+        String token;
+        if (Dew.dewConfig.getSecurity().isTokenInHead()) {
+            token = request.getHeader(Dew.dewConfig.getSecurity().getTokenFlag());
+        } else {
+            token = request.getParameter(Dew.dewConfig.getSecurity().getTokenFlag());
+        }
         DewContext context = new DewContext();
-        context.setId(Dew.Util.createUUID());
+        context.setId($.field.createUUID());
         context.setSourceIP(Dew.Util.getRealIP(request));
         context.setRequestUri(request.getRequestURI());
         context.setToken(token);

@@ -51,7 +51,7 @@ public class DewRepositoryImpl<E extends IdEntity> extends SimpleJpaRepository<E
             try {
                 Object code = $.bean.getValue(entity, entityClassInfo.get().codeFieldName);
                 if (code == null || ((String) code).isEmpty()) {
-                    $.bean.setValue(entity, entityClassInfo.get().codeFieldName, Dew.Util.createUUID());
+                    $.bean.setValue(entity, entityClassInfo.get().codeFieldName, $.field.createUUID());
                 }
             } catch (NoSuchFieldException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
                 e.printStackTrace();

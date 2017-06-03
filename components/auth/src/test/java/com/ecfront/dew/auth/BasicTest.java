@@ -18,9 +18,9 @@ public abstract class BasicTest {
 
     protected String u(String uri) {
         if (uri.contains("?")) {
-            return uri + "&" + Dew.Constant.TOKEN_VIEW_FLAG + "=" + token;
+            return uri + "&" + Dew.dewConfig.getSecurity().getTokenFlag() + "=" + token;
         } else {
-            return uri + "?" + Dew.Constant.TOKEN_VIEW_FLAG + "=" + token;
+            return uri + "?" + Dew.dewConfig.getSecurity().getTokenFlag() + "=" + token;
         }
     }
 

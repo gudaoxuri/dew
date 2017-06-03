@@ -53,7 +53,7 @@ public class AccountService implements CRUSService<AccountRepository, Account> {
                 (entity.getEmail() == null || entity.getEmail().trim().isEmpty())) {
             return Resp.badRequest("Login Id / Mobile / Email not empty.");
         }
-        entity.setCode(Dew.Util.createUUID());
+        entity.setCode($.field.createUUID());
         boolean exist;
         if (entity.getLoginId() != null && !entity.getLoginId().trim().isEmpty()) {
             exist = accountRepository.countByLoginId(entity.getLoginId().trim()) != 0;

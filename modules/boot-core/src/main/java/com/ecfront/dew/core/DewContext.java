@@ -36,7 +36,7 @@ public class DewContext {
         DewContext cxt = context.get();
         if (cxt == null) {
             cxt = new DewContext();
-            cxt.id = Dew.Util.createUUID();
+            cxt.id = $.field.createUUID();
             cxt.sourceIP = Dew.Info.ip;
             cxt.requestUri = "";
             cxt.token = "";

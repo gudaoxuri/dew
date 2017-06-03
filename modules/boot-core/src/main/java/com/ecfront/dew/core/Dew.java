@@ -22,7 +22,10 @@ import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -61,8 +64,6 @@ public class Dew {
         public static final String TOKEN_INFO_FLAG = "dew:auth:token:info:";
         // Token Id 关联 key : dew:auth:token:id:rel:<code> value : <token Id>
         public static final String TOKEN_ID_REL_FLAG = "dew:auth:token:id:rel:";
-        // 前端传入的token标识
-        public static final String TOKEN_VIEW_FLAG = "__dew_token__";
 
         public static final String MQ_AUTH_TENANT_ADD = "dew.auth.tenant.add";
         public static final String MQ_AUTH_TENANT_REMOVE = "dew.auth.tenant.remove";
@@ -88,7 +89,7 @@ public class Dew {
         // 应用主机名
         public static String host;
         // 应用实例，各组件唯一
-        public static String instance = Dew.Util.createUUID();
+        public static String instance = $.field.createUUID();
 
         static {
             try {
@@ -131,9 +132,9 @@ public class Dew {
         public static String buildUrl(String serviceName, String path, String token) {
             String url = "http://" + serviceName + "/" + path;
             if (url.contains("&")) {
-                return url + "&" + Constant.TOKEN_VIEW_FLAG + "=" + token;
+                return url + "&" + Dew.dewConfig.getSecurity().getTokenFlag() + "=" + token;
             } else {
-                return url + "?" + Constant.TOKEN_VIEW_FLAG + "=" + token;
+                return url + "?" + Dew.dewConfig.getSecurity().getTokenFlag() + "=" + token;
             }
         }
 
@@ -180,28 +181,6 @@ public class Dew {
      * 常用工具
      */
     public static class Util {
-
-        private static String[] chars = new String[]{"a", "b", "c", "d", "e", "f",
-                "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
-                "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5",
-                "6", "7", "8", "9", "A", "B", "C", "D", "E", "F", "G", "H", "I",
-                "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V",
-                "W", "X", "Y", "Z"};
-
-        public static String createUUID() {
-            return UUID.randomUUID().toString().replace("-", "");
-        }
-
-        public static String createShortUUID() {
-            StringBuilder shortBuffer = new StringBuilder();
-            String uuid = createUUID();
-            for (int i = 0; i < 8; i++) {
-                String str = uuid.substring(i * 4, i * 4 + 4);
-                int x = Integer.parseInt(str, 16);
-                shortBuffer.append(chars[x % 0x3E]);
-            }
-            return shortBuffer.toString();
-        }
 
         public static String getRealIP(HttpServletRequest request) {
             Map<String, String> requestHeader = new HashMap<>();
@@ -256,6 +235,11 @@ public class Dew {
             } else {
                 return Optional.empty();
             }
+        }
+
+        public static void setOptInfo(OptInfo optInfo) {
+            Dew.cluster.cache.set(Dew.Constant.TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), optInfo.getToken());
+            Dew.cluster.cache.set(Dew.Constant.TOKEN_INFO_FLAG + optInfo.getToken(), $.json.toJsonString(optInfo));
         }
 
     }
