@@ -104,9 +104,9 @@ public class DewConfig {
 
     public static class DewCluster {
 
-        private String mq;
-        private String cache;
-        private String dist;
+        private String mq = "redis";
+        private String cache = "redis";
+        private String dist = "redis";
 
         public String getMq() {
             return mq;
