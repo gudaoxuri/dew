@@ -14,7 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.Entity;
@@ -125,16 +130,91 @@ public class Dew {
      */
     public static class EB {
 
-        public static String buildUrl(String serviceName, String path) {
-            return buildUrl(serviceName, path, Dew.context().getToken());
+        private static RestTemplate restTemplate;
+
+        public static void setRestTemplate(RestTemplate _restTemplate) {
+            restTemplate = _restTemplate;
         }
 
-        public static String buildUrl(String serviceName, String path, String token) {
-            String url = "http://" + serviceName + "/" + path;
-            if (url.contains("&")) {
-                return url + "&" + Dew.dewConfig.getSecurity().getTokenFlag() + "=" + token;
+        public static <T> ResponseEntity<T> get(String url, Class<T> respClazz) {
+            return get(url, null, respClazz);
+        }
+
+        public static <T> ResponseEntity<T> get(String url, Map<String, String> header, Class<T> respClazz) {
+            return exchange(HttpMethod.GET, url, null, header, respClazz);
+        }
+
+        public static <T> ResponseEntity<T> delete(String url, Class<T> respClazz) {
+            return delete(url, null, respClazz);
+        }
+
+        public static <T> ResponseEntity<T> delete(String url, Map<String, String> header, Class<T> respClazz) {
+            return exchange(HttpMethod.DELETE, url, null, header, respClazz);
+        }
+
+        public static <T> ResponseEntity<T> head(String url, Class<T> respClazz) {
+            return head(url, null, respClazz);
+        }
+
+        public static <T> ResponseEntity<T> head(String url, Map<String, String> header, Class<T> respClazz) {
+            return exchange(HttpMethod.HEAD, url, null, header, respClazz);
+        }
+
+        public static <T> ResponseEntity<T> options(String url, Class<T> respClazz) {
+            return options(url, null, respClazz);
+        }
+
+        public static <T> ResponseEntity<T> options(String url, Map<String, String> header, Class<T> respClazz) {
+            return exchange(HttpMethod.OPTIONS, url, null, header, respClazz);
+        }
+
+        public static <T> ResponseEntity<T> post(String url, Object body, Class<T> respClazz) {
+            return post(url, body, null, respClazz);
+        }
+
+        public static <T> ResponseEntity<T> post(String url, Object body, Map<String, String> header, Class<T> respClazz) {
+            return exchange(HttpMethod.POST, url, body, header, respClazz);
+        }
+
+        public static <T> ResponseEntity<T> put(String url, Object body, Class<T> respClazz) {
+            return put(url, body, null, respClazz);
+        }
+
+        public static <T> ResponseEntity<T> put(String url, Object body, Map<String, String> header, Class<T> respClazz) {
+            return exchange(HttpMethod.PUT, url, body, header, respClazz);
+        }
+
+        public static <T> ResponseEntity<T> exchange(HttpMethod httpMethod, String url, Object body, Map<String, String> header, Class<T> respClazz) {
+            HttpHeaders headers = new HttpHeaders();
+            if (header != null) {
+                header.forEach(headers::add);
+            }
+            tryAttachTokenToHeader(headers);
+            HttpEntity entity;
+            if (body != null) {
+                entity = new HttpEntity(body, headers);
             } else {
-                return url + "?" + Dew.dewConfig.getSecurity().getTokenFlag() + "=" + token;
+                entity = new HttpEntity(headers);
+            }
+            return restTemplate.exchange(tryAttachTokenToUrl(url), httpMethod, entity, respClazz);
+        }
+
+        private static String tryAttachTokenToUrl(String url) {
+            if (!Dew.dewConfig.getSecurity().isTokenInHeader()) {
+                String token = Dew.context().getToken();
+                if (url.contains("&")) {
+                    return url + "&" + Dew.dewConfig.getSecurity().getTokenFlag() + "=" + token;
+                } else {
+                    return url + "?" + Dew.dewConfig.getSecurity().getTokenFlag() + "=" + token;
+                }
+            }
+            return url;
+        }
+
+        private static void tryAttachTokenToHeader(HttpHeaders headers) {
+            if (Dew.dewConfig.getSecurity().isTokenInHeader()) {
+                String token = Dew.context().getToken();
+                headers.add(Dew.dewConfig.getSecurity().getTokenFlag(), token);
             }
         }
 
@@ -271,6 +351,7 @@ public class Dew {
         }
 
         public static void setOptInfo(OptInfo optInfo) {
+            Dew.cluster.cache.del(Dew.Constant.TOKEN_INFO_FLAG + Dew.cluster.cache.get(Dew.Constant.TOKEN_ID_REL_FLAG + optInfo.getAccountCode()));
             Dew.cluster.cache.set(Dew.Constant.TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), optInfo.getToken());
             Dew.cluster.cache.set(Dew.Constant.TOKEN_INFO_FLAG + optInfo.getToken(), $.json.toJsonString(optInfo));
         }

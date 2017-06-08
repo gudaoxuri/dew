@@ -6,19 +6,24 @@ import com.ecfront.dew.core.Dew;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+
+import java.util.HashMap;
 
 @Component
 public class WSClient {
 
     @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
     private WSConfig wsConfig;
 
     @HystrixCommand(fallbackMethod = "serviceFallback")
     public String ws(String token, String message) {
-        return restTemplate.postForEntity(Dew.EB.buildUrl(wsConfig.getWsServiceName(), "ws", token), message, String.class).getBody();
+        if (Dew.dewConfig.getSecurity().isTokenInHeader()) {
+            return Dew.EB.post("http://" + wsConfig.getWsServiceName() + "/ws", message, new HashMap<String, String>() {{
+                put(Dew.dewConfig.getSecurity().getTokenFlag(), token);
+            }}, String.class).getBody();
+        } else {
+            return Dew.EB.post("http://" + wsConfig.getWsServiceName() + "/ws?" + Dew.dewConfig.getSecurity().getTokenFlag() + "=" + token, message, String.class).getBody();
+        }
     }
 
     public String serviceFallback(String token, String message) {

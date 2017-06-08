@@ -9,6 +9,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLDecoder;
 
 public class DewHandlerInterceptor extends HandlerInterceptorAdapter {
 
@@ -35,6 +36,12 @@ public class DewHandlerInterceptor extends HandlerInterceptorAdapter {
             token = request.getHeader(Dew.dewConfig.getSecurity().getTokenFlag());
         } else {
             token = request.getParameter(Dew.dewConfig.getSecurity().getTokenFlag());
+        }
+        if (token != null) {
+            token = URLDecoder.decode(token, "UTF-8");
+            if (Dew.dewConfig.getSecurity().isTokenHash()) {
+                token = $.encrypt.symmetric.encrypt(token, "MD5");
+            }
         }
         DewContext context = new DewContext();
         context.setId($.field.createUUID());

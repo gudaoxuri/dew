@@ -141,6 +141,8 @@ public class DewConfig {
 
         private boolean tokenInHeader = false;
 
+        private boolean tokenHash = false;
+
         public DewSecurityCORS getCors() {
             return cors;
         }
@@ -163,6 +165,14 @@ public class DewConfig {
 
         public void setTokenInHeader(boolean tokenInHeader) {
             this.tokenInHeader = tokenInHeader;
+        }
+
+        public boolean isTokenHash() {
+            return tokenHash;
+        }
+
+        public void setTokenHash(boolean tokenHash) {
+            this.tokenHash = tokenHash;
         }
     }
 
