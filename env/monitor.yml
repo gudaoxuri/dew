@@ -1,8 +1,0 @@
-server:
-  port: 10030
-
-turbine:
-  aggregator:
-    clusterConfig: dew
-  appConfig: gateway,appexample
-  clusterNameExpression: metadata['cluster']

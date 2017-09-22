@@ -4,16 +4,17 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @ConditionalOnWebApplication
-public class DewConfigurer extends WebMvcConfigurerAdapter {
+public class DewConfigurer implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new DewHandlerInterceptor()).addPathPatterns("/**");
-        super.addInterceptors(registry);
+        DewHandlerInterceptor dewHandlerInterceptor = new DewHandlerInterceptor();
+        registry.addInterceptor(dewHandlerInterceptor).excludePathPatterns("/error/**");
+        WebMvcConfigurer.super.addInterceptors(registry);
     }
 
     @Override

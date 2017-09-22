@@ -7,29 +7,28 @@
     <parent>
         <groupId>com.ecfront.dew</groupId>
         <artifactId>parent</artifactId>
-        <version>1.1.4</version>
-        <relativePath>../../modules/parent/pom.xml</relativePath>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../../modules/parent/</relativePath>
     </parent>
 
     <artifactId>boot-core</artifactId>
     <name>Dew Boot Core</name>
     <description>Dew Spring Boot 封装</description>
     <packaging>jar</packaging>
-    <version>1.1.4</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <properties>
+        <sonar.host.url></sonar.host.url>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.ecfront.dew</groupId>
             <artifactId>common</artifactId>
-            <version>${dew-common.version}</version>
         </dependency>
         <dependency>
             <groupId>com.ecfront.dew</groupId>
             <artifactId>cluster-common</artifactId>
-            <version>${dew.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.ecfront.dew</groupId>
@@ -38,55 +37,80 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.ecfront.dew</groupId>
             <artifactId>cluster-spi-redis</artifactId>
-            <version>${dew.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.ecfront.dew</groupId>
             <artifactId>cluster-spi-hazelcast</artifactId>
-            <version>${dew.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>cluster-spi-rabbit</artifactId>
             <optional>true</optional>
         </dependency>
         <!--<dependency>
             <groupId>com.ecfront.dew</groupId>
             <artifactId>cluster-spi-ignite</artifactId>
-            <version>${dew.version}</version>
             <scope>test</scope>
         </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.tomcat</groupId>
+                    <artifactId>tomcat-jdbc</artifactId>
+                </exclusion>
+            </exclusions>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
-            <version>${swagger.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
-            <version>${swagger.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.195</version>
-            <scope>test</scope>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>test-starter</artifactId>
         </dependency>
     </dependencies>
 

@@ -3,6 +3,9 @@ package com.ecfront.dew.core.cluster;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 缓存服务
+ */
 public interface ClusterCache {
 
     /**
@@ -182,6 +185,9 @@ public interface ClusterCache {
      */
     void expire(String key, int expireSec);
 
+    /**
+     * 删除当前数据库中的所有Key
+     */
     void flushdb();
 
 }

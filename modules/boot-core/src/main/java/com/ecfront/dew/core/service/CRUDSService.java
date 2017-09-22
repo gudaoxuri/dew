@@ -1,8 +1,7 @@
 package com.ecfront.dew.core.service;
 
-import com.ecfront.dew.core.entity.IdEntity;
-import com.ecfront.dew.core.repository.DewRepository;
+import com.ecfront.dew.core.jdbc.DewDao;
 
-public interface CRUDSService<T extends DewRepository<E>, E extends IdEntity> extends CRUSService<T, E>, CRUDService<T, E> {
+public interface CRUDSService<T extends DewDao<P, E>, P, E> extends CRUSService<T, P, E>, CRUDService<T, P, E> {
 
 }

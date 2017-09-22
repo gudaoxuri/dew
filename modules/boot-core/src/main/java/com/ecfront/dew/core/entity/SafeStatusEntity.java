@@ -2,22 +2,18 @@ package com.ecfront.dew.core.entity;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
+public abstract class SafeStatusEntity<P> extends SafeEntity<P> {
 
-@MappedSuperclass
-public abstract class SafeStatusEntity extends SafeEntity {
-
-    @Column(nullable = false)
     @ApiModelProperty("是否启用")
-    protected Boolean enable=true;
+    @EnabledColumn
+    protected Boolean enabled = true;
 
-    public Boolean getEnable() {
-        return enable;
+    public Boolean getEnabled() {
+        return enabled;
     }
 
-    public void setEnable(Boolean enable) {
-        this.enable = enable;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
 }

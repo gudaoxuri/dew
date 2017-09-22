@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: bone-example
+
+bone-example:
+  some-prop: prop1
+
+logging:
+  path: ./logs

@@ -1,7 +1,7 @@
 /*
 package com.ecfront.dew.core.cluster.spi.hazelcast;
 
-import com.ecfront.dew.core.cluster.ClusterCache;
+import ClusterCache;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.stereotype.Component;
 

@@ -7,15 +7,15 @@
     <parent>
         <groupId>com.ecfront.dew</groupId>
         <artifactId>parent</artifactId>
-        <version>1.1.4</version>
-        <relativePath>../../modules/parent/pom.xml</relativePath>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../../modules/parent/</relativePath>
     </parent>
 
     <artifactId>cluster-common</artifactId>
     <name>Dew Cluster Common</name>
     <description>Dew 集群服务接口</description>
     <packaging>jar</packaging>
-    <version>1.1.4</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <properties>
     </properties>
@@ -24,7 +24,6 @@
         <dependency>
             <groupId>com.ecfront.dew</groupId>
             <artifactId>common</artifactId>
-            <version>${dew-common.version}</version>
         </dependency>
     </dependencies>
 

@@ -7,30 +7,33 @@
     <parent>
         <groupId>com.ecfront.dew</groupId>
         <artifactId>parent</artifactId>
-        <version>1.1.4</version>
-        <relativePath>../../modules/parent/pom.xml</relativePath>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../../modules/parent/</relativePath>
     </parent>
 
     <artifactId>cluster-spi-hazelcast</artifactId>
     <name>Dew Cluster Hazelcast</name>
     <description>Dew 集群 Hazelcast 实现</description>
     <packaging>jar</packaging>
-    <version>1.1.4</version>
+    <version>1.0.0-SNAPSHOT</version>
 
     <properties>
-        <hazelcast.verion>3.8.1</hazelcast.verion>
+        <hazelcast.version>3.8.2</hazelcast.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.ecfront.dew</groupId>
             <artifactId>cluster-common</artifactId>
-            <version>${dew.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast-client</artifactId>
-            <version>${hazelcast.verion}</version>
+            <version>${hazelcast.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.cache</groupId>

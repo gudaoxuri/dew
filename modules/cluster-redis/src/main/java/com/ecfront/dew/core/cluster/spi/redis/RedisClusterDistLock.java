@@ -1,22 +1,21 @@
 package com.ecfront.dew.core.cluster.spi.redis;
 
+import com.ecfront.dew.core.cluster.Cluster;
 import com.ecfront.dew.core.cluster.ClusterDistLock;
 import com.ecfront.dew.core.cluster.VoidProcessFun;
+import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisTemplate;
+import redis.clients.jedis.JedisCommands;
 
 import java.util.Date;
-import java.util.UUID;
 
 public class RedisClusterDistLock implements ClusterDistLock {
 
-    private static String instance = UUID.randomUUID().toString();
     private String key;
-    private String currThreadId;
     private RedisTemplate<String, String> redisTemplate;
 
-    public RedisClusterDistLock(String key, RedisTemplate<String, String> redisTemplate) {
+    RedisClusterDistLock(String key, RedisTemplate<String, String> redisTemplate) {
         this.key = "dew:dist:lock:" + key;
-        currThreadId = instance + "-" + Thread.currentThread().getId();
         this.redisTemplate = redisTemplate;
     }
 
@@ -25,8 +24,6 @@ public class RedisClusterDistLock implements ClusterDistLock {
         try {
             lock();
             fun.exec();
-        } catch (Exception e) {
-            throw e;
         } finally {
             unLock();
         }
@@ -38,12 +35,21 @@ public class RedisClusterDistLock implements ClusterDistLock {
     }
 
     @Override
-    public void tryLockWithFun(int waitSec, VoidProcessFun fun) throws Exception {
-        if (tryLock(waitSec)) {
+    public void tryLockWithFun(long waitMillSec, VoidProcessFun fun) throws Exception {
+        if (tryLock(waitMillSec)) {
             try {
                 fun.exec();
-            } catch (Exception e) {
-                throw e;
+            } finally {
+                unLock();
+            }
+        }
+    }
+
+    @Override
+    public void tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun) throws Exception {
+        if (tryLock(waitMillSec, leaseMillSec)) {
+            try {
+                fun.exec();
             } finally {
                 unLock();
             }
@@ -52,49 +58,54 @@ public class RedisClusterDistLock implements ClusterDistLock {
 
     @Override
     public void lock() {
-        if (!isLock()) {
-            redisTemplate.opsForValue().set(key, currThreadId);
-        }
+        redisTemplate.opsForValue().setIfAbsent(key, getCurrThreadId());
     }
 
     @Override
     public boolean tryLock() {
-        if (!isLock()) {
-            lock();
-            return true;
-        } else {
-            return false;
-        }
+        return redisTemplate.opsForValue().setIfAbsent(key, getCurrThreadId()) || redisTemplate.opsForValue().get(key).equals(getCurrThreadId());
     }
 
     @Override
-    public boolean tryLock(int waitSec) throws InterruptedException {
-        synchronized (this) {
-            if (waitSec == 0) {
-                if (!isLock()) {
-                    lock();
-                    return true;
-                } else {
-                    return false;
-                }
+    public boolean tryLock(long waitMillSec) throws InterruptedException {
+        long now = new Date().getTime();
+        while (new Date().getTime() - now < waitMillSec) {
+            if (isLocked()) {
+                Thread.sleep(100);
             } else {
-                long now = new Date().getTime();
-                while (isLock() && new Date().getTime() - now < waitSec) {
-                    Thread.sleep(500);
-                }
-                if (!isLock()) {
-                    lock();
-                    return true;
-                } else {
-                    return false;
+                if (tryLock()) {
+                    return Boolean.TRUE;
                 }
             }
+
+        }
+        return tryLock();
+    }
+
+    @Override
+    public boolean tryLock(long waitMillSec, long leaseMillSec) throws InterruptedException {
+        if (waitMillSec == 0 && leaseMillSec == 0) {
+            return tryLock();
+        } else if (leaseMillSec == 0) {
+            return tryLock(waitMillSec);
+        } else if (waitMillSec == 0) {
+            return putLockKey(leaseMillSec);
+        } else {
+            long now = new Date().getTime();
+            while (new Date().getTime() - now < waitMillSec) {
+                if (isLocked()) {
+                    Thread.sleep(100);
+                } else if (putLockKey(leaseMillSec)) {
+                    return Boolean.TRUE;
+                }
+            }
+            return putLockKey(leaseMillSec);
         }
     }
 
     @Override
     public boolean unLock() {
-        if (currThreadId.equals(redisTemplate.opsForValue().get(key))) {
+        if (getCurrThreadId().equals(redisTemplate.opsForValue().get(key))) {
             redisTemplate.delete(key);
             return true;
         } else {
@@ -102,12 +113,24 @@ public class RedisClusterDistLock implements ClusterDistLock {
         }
     }
 
-    private boolean isLock() {
+    @Override
+    public boolean isLocked() {
         return redisTemplate.hasKey(key);
     }
 
     @Override
     public void delete() {
         redisTemplate.delete(key);
+    }
+
+    private boolean putLockKey(long leaseMillSec) {
+        RedisConnection redisConnection = redisTemplate.getConnectionFactory().getConnection();
+        String res = ((JedisCommands) redisConnection.getNativeConnection()).set(key, getCurrThreadId(), "NX", "PX", leaseMillSec);
+        redisConnection.close();
+        return (res != null && "OK".equalsIgnoreCase(res)) || redisTemplate.opsForValue().get(key).equals(getCurrThreadId());
+    }
+
+    private String getCurrThreadId(){
+        return Cluster.CLASS_LOAD_UNIQUE_FLAG + "-" + Thread.currentThread().getId();
     }
 }

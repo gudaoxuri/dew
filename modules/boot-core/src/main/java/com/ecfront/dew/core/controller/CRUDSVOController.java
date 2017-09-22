@@ -1,10 +1,14 @@
 package com.ecfront.dew.core.controller;
 
 
-import com.ecfront.dew.core.entity.IdEntity;
 import com.ecfront.dew.core.service.CRUDSService;
 
-public interface CRUDSVOController<T extends CRUDSService, V extends Object, E extends IdEntity> extends CRUDVOController<T, V, E>, CRUSVOController<T, V, E> {
+public interface CRUDSVOController<T extends CRUDSService, P, V, E> extends CRUDVOController<T, P, V, E>, CRUSVOController<T, P, V, E> {
+
+    @Override
+    default boolean convertAble() {
+        return true;
+    }
 
 }
 

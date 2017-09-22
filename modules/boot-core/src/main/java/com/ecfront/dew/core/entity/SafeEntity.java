@@ -3,27 +3,24 @@ package com.ecfront.dew.core.entity;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
 import java.util.Date;
 
-@MappedSuperclass
-public abstract class SafeEntity extends IdEntity {
+public abstract class SafeEntity<P> extends PkEntity<P> {
 
-    @Column(nullable = false)
     @ApiModelProperty("创建时间")
+    @CreateTimeColumn
     protected Date createTime;
 
-    @Column(nullable = false)
     @ApiModelProperty("更新时间")
+    @UpdateTimeColumn
     protected Date updateTime;
 
-    @Column()
     @ApiModelProperty("创建人编码")
+    @CreateUserColumn
     protected String createUser;
 
-    @Column()
     @ApiModelProperty("更新人编码")
+    @UpdateUserColumn
     protected String updateUser;
 
     public Date getCreateTime() {

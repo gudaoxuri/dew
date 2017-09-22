@@ -3,28 +3,28 @@ package com.ecfront.dew.core.controller;
 
 import com.ecfront.dew.common.Page;
 import com.ecfront.dew.common.Resp;
-import com.ecfront.dew.core.entity.IdEntity;
 import com.ecfront.dew.core.service.CRUService;
+import com.ecfront.dew.core.validation.CreateGroup;
+import com.ecfront.dew.core.validation.UpdateGroup;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-public interface CRUVOController<T extends CRUService, V extends Object, E extends IdEntity> extends DewVOController<T, V, E> {
+public interface CRUVOController<T extends CRUService, P, V, E> extends DewVOController<T, P, V, E> {
+
+    @Override
+    default boolean convertAble() {
+        return true;
+    }
 
     @GetMapping("")
     @ApiOperation(value = "获取记录列表")
     default Resp<List<V>> find() {
-        Resp<List<E>> result = getDewService().find();
-        if (result.ok()) {
-            List<V> body = result.getBody().stream().map(i -> entityToVO(i)).collect(Collectors.toList());
-            return Resp.success(body);
-        } else {
-            return Resp.customFail(result.getCode(), result.getMessage());
-        }
+        return convertList(getService().find());
     }
 
     @GetMapping("{pageNumber}/{pageSize}")
@@ -33,15 +33,8 @@ public interface CRUVOController<T extends CRUService, V extends Object, E exten
             @ApiImplicitParam(name = "pageNumber", value = "当前页（从0开始）", paramType = "path", dataType = "int", required = true),
             @ApiImplicitParam(name = "pageSize", value = "每页显示记录数", paramType = "path", dataType = "int", required = true),
     })
-    default Resp<Page<V>> paging(@PathVariable int pageNumber, @PathVariable int pageSize) {
-        Resp<Page<E>> result = getDewService().paging(pageNumber, pageSize);
-        if (result.ok()) {
-            List<V> body = result.getBody().getObjects().stream().map(i -> entityToVO(i)).collect(Collectors.toList());
-            Page<V> page = Page.build(pageNumber, pageSize, result.getBody().getRecordTotal(), body);
-            return Resp.success(page);
-        } else {
-            return Resp.customFail(result.getCode(), result.getMessage());
-        }
+    default Resp<Page<V>> paging(@PathVariable long pageNumber, @PathVariable int pageSize) {
+        return convertPage(getService().paging(pageNumber, pageSize));
     }
 
     @GetMapping("{id}")
@@ -49,14 +42,8 @@ public interface CRUVOController<T extends CRUService, V extends Object, E exten
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "记录ID", paramType = "path", dataType = "int", required = true),
     })
-    default Resp<V> getById(@PathVariable long id) {
-        Resp<E> result = getDewService().getById(id);
-        if (result.ok()) {
-            V body = entityToVO(result.getBody());
-            return Resp.success(body);
-        } else {
-            return Resp.customFail(result.getCode(), result.getMessage());
-        }
+    default Resp<V> getById(@PathVariable P id) {
+        return convertObject(getService().getById(id));
     }
 
     @GetMapping("code/{code}")
@@ -65,13 +52,7 @@ public interface CRUVOController<T extends CRUService, V extends Object, E exten
             @ApiImplicitParam(name = "code", value = "记录Code", paramType = "path", dataType = "string", required = true),
     })
     default Resp<V> getByCode(@PathVariable String code) {
-        Resp<E> result = getDewService().getByCode(code);
-        if (result.ok()) {
-            V body = entityToVO(result.getBody());
-            return Resp.success(body);
-        } else {
-            return Resp.customFail(result.getCode(), result.getMessage());
-        }
+        return convertObject(getService().getByCode(code));
     }
 
     @PostMapping(value = "")
@@ -79,14 +60,8 @@ public interface CRUVOController<T extends CRUService, V extends Object, E exten
     @ApiImplicitParams({
             @ApiImplicitParam(name = "vo", value = "记录实例", paramType = "body", dataType = "V", required = true),
     })
-    default Resp<V> save(@RequestBody V vo) {
-        Resp<E> result = getDewService().save(voToEntity(vo));
-        if (result.ok()) {
-            V body = entityToVO(result.getBody());
-            return Resp.success(body);
-        } else {
-            return Resp.customFail(result.getCode(), result.getMessage());
-        }
+    default Resp<V> save(@RequestBody @Validated(CreateGroup.class) V vo) {
+        return convertObject(getService().save(voToEntity(vo)));
     }
 
     @PutMapping(value = "{id}")
@@ -95,14 +70,8 @@ public interface CRUVOController<T extends CRUService, V extends Object, E exten
             @ApiImplicitParam(name = "id", value = "记录ID", paramType = "path", dataType = "int", required = true),
             @ApiImplicitParam(name = "vo", value = "记录实例", paramType = "body", dataType = "V", required = true),
     })
-    default Resp<V> updateById(@PathVariable long id, @RequestBody V vo) {
-        Resp<E> result = getDewService().updateById(id, voToEntity(vo));
-        if (result.ok()) {
-            V body = entityToVO(result.getBody());
-            return Resp.success(body);
-        } else {
-            return Resp.customFail(result.getCode(), result.getMessage());
-        }
+    default Resp<V> updateById(@PathVariable P id, @RequestBody @Validated(UpdateGroup.class) V vo) {
+        return convertObject(getService().updateById(id, voToEntity(vo)));
     }
 
     @PutMapping(value = "code/{code}")
@@ -111,15 +80,8 @@ public interface CRUVOController<T extends CRUService, V extends Object, E exten
             @ApiImplicitParam(name = "code", value = "记录Code", paramType = "path", dataType = "String", required = true),
             @ApiImplicitParam(name = "vo", value = "记录实例", paramType = "body", dataType = "V", required = true),
     })
-    default Resp<V> updateByCode(@PathVariable String code, @RequestBody V vo) {
-        Resp<E> result = getDewService().updateByCode(code, voToEntity(vo));
-        if (result.ok()) {
-            V body = entityToVO(result.getBody());
-            return Resp.success(body);
-        } else {
-            return Resp.customFail(result.getCode(), result.getMessage());
-        }
+    default Resp<V> updateByCode(@PathVariable String code, @RequestBody @Validated(UpdateGroup.class) V vo) {
+        return convertObject(getService().updateByCode(code, voToEntity(vo)));
     }
 
 }
-

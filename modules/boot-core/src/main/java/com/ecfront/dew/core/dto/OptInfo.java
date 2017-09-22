@@ -11,23 +11,19 @@ import java.util.List;
 public class OptInfo {
 
     @ApiModelProperty(value = "Token", required = true)
-    private String token;
+    protected String token;
     @ApiModelProperty(value = "账号编码", required = true)
-    private String accountCode;
-    @ApiModelProperty(value = "登录ID", required = true)
-    private String loginId;
+    protected String accountCode;
     @ApiModelProperty(value = "手机号", required = true)
-    private String mobile;
+    protected String mobile;
     @ApiModelProperty(value = "邮箱", required = true)
-    private String email;
+    protected String email;
     @ApiModelProperty(value = "姓名", required = true)
-    private String name;
+    protected String name;
     @ApiModelProperty(value = "角色列表", required = true)
-    private List<RoleInfo> roles;
+    protected List<RoleInfo> roles;
     @ApiModelProperty(value = "最后一次登录时间", required = true)
-    private Date lastLoginTime;
-    @ApiModelProperty(value = "扩展信息(Json格式)", required = true)
-    private String ext;
+    protected Date lastLoginTime;
 
     @ApiModel(value = "角色信息")
     public static class RoleInfo {
@@ -42,24 +38,27 @@ public class OptInfo {
             return code;
         }
 
-        public void setCode(String code) {
+        public RoleInfo setCode(String code) {
             this.code = code;
+            return this;
         }
 
         public String getName() {
             return name;
         }
 
-        public void setName(String name) {
+        public RoleInfo setName(String name) {
             this.name = name;
+            return this;
         }
 
         public String getTenantCode() {
             return tenantCode;
         }
 
-        public void setTenantCode(String tenantCode) {
+        public RoleInfo setTenantCode(String tenantCode) {
             this.tenantCode = tenantCode;
+            return this;
         }
     }
 
@@ -67,71 +66,63 @@ public class OptInfo {
         return token;
     }
 
-    public void setToken(String token) {
+    public OptInfo setToken(String token) {
         this.token = token;
+        return this;
     }
 
     public String getAccountCode() {
         return accountCode;
     }
 
-    public void setAccountCode(String accountCode) {
+    public OptInfo setAccountCode(String accountCode) {
         this.accountCode = accountCode;
-    }
-
-    public String getLoginId() {
-        return loginId;
-    }
-
-    public void setLoginId(String loginId) {
-        this.loginId = loginId;
+        return this;
     }
 
     public String getMobile() {
         return mobile;
     }
 
-    public void setMobile(String mobile) {
+    public OptInfo setMobile(String mobile) {
         this.mobile = mobile;
+        return this;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public OptInfo setEmail(String email) {
         this.email = email;
+        return this;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public OptInfo setName(String name) {
         this.name = name;
+        return this;
     }
 
     public List<RoleInfo> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<RoleInfo> roles) {
+    public OptInfo setRoles(List<RoleInfo> roles) {
         this.roles = roles;
+        return this;
     }
 
     public Date getLastLoginTime() {
         return lastLoginTime;
     }
 
-    public void setLastLoginTime(Date lastLoginTime) {
+    public OptInfo setLastLoginTime(Date lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
+        return this;
     }
 
-    public String getExt() {
-        return ext;
-    }
-
-    public void setExt(String ext) {
-        this.ext = ext;
-    }
 }

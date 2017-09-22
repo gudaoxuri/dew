@@ -5,32 +5,58 @@ import com.ecfront.dew.core.dto.OptInfo;
 
 import java.util.Optional;
 
+/**
+ * Dew 上下文处理
+ */
 public class DewContext {
 
-    private String id;
-    private String sourceIP;
-    private String requestUri;
-    private String token;
-    private Optional<OptInfo> innerOptInfo = Optional.empty();
+    private static ThreadLocal<DewContext> context = new ThreadLocal<>();
 
-    public Optional<OptInfo> optInfo() {
+    private static Class optInfoClazz = OptInfo.class;
+
+    /**
+     * 当次请求的ID
+     */
+    private String id;
+    /**
+     * 请求来源IP
+     */
+    private String sourceIP;
+    /**
+     * 请求最初的URL
+     */
+    private String requestUri;
+    /**
+     * 请求对应的token
+     */
+    private String token;
+
+    private Optional innerOptInfo = Optional.empty();
+
+    public static <E extends OptInfo> Class<E> getOptInfoClazz() {
+        return optInfoClazz;
+    }
+
+    /**
+     * 设置自定义的OptInfo
+     *
+     * @param optInfoClazz
+     */
+    public static <E extends OptInfo> void setOptInfoClazz(Class<E> optInfoClazz) {
+        DewContext.optInfoClazz = optInfoClazz;
+    }
+
+    public <E extends OptInfo> Optional<E> optInfo() {
         if (innerOptInfo.isPresent()) {
             return innerOptInfo;
         }
         if (token != null && !token.isEmpty()) {
-            String result = Dew.cluster.cache.get(Dew.Constant.TOKEN_INFO_FLAG + token);
-            if (result != null && !result.isEmpty()) {
-                innerOptInfo = Optional.of($.json.toObject(result, OptInfo.class));
-            } else {
-                innerOptInfo = Optional.empty();
-            }
+            innerOptInfo = Dew.Auth.getOptInfo(token);
         } else {
             innerOptInfo = Optional.empty();
         }
         return innerOptInfo;
     }
-
-    private static ThreadLocal<DewContext> context = new ThreadLocal<>();
 
     public static DewContext getContext() {
         DewContext cxt = context.get();

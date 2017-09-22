@@ -8,83 +8,28 @@
     <artifactId>build</artifactId>
     <name>Dew Build</name>
     <packaging>pom</packaging>
-    <version>1.1.4</version>
+    <version>1.0.0-SNAPSHOT</version>
+
+    <properties>
+        <sonar.host.url></sonar.host.url>
+    </properties>
 
     <modules>
         <module>modules/parent</module>
         <module>modules/cluster-common</module>
         <module>modules/cluster-redis</module>
         <module>modules/cluster-hazelcast</module>
-        <module>modules/cluster-ignite</module>
+        <module>modules/cluster-rabbit</module>
         <module>modules/boot-core</module>
-        <module>modules/cloud-core</module>
-        <module>components/registry</module>
-        <module>components/config</module>
-        <module>components/gateway</module>
-        <module>components/auth</module>
-        <module>components/wsgateway</module>
-        <module>components/logger</module>
-        <module>components/monitor</module>
+        <module>modules/test-starter</module>
+        <module>examples/guide-petstore</module>
+        <module>examples/bone-example</module>
+        <module>examples/web-example</module>
+        <module>examples/jdbc-example</module>
+        <module>examples/cache-example</module>
+        <module>examples/cluster-example</module>
+        <module>examples/auth-example</module>
+        <module>examples/dubbo-example</module>
     </modules>
-
-    <profiles>
-        <profile>
-            <id>release</id>
-            <distributionManagement>
-                <snapshotRepository>
-                    <id>oss</id>
-                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-                </snapshotRepository>
-                <repository>
-                    <id>oss</id>
-                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
-            </distributionManagement>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
-    <repositories>
-        <repository>
-            <id>maven-repo</id>
-            <url>http://repo1.maven.org/maven2</url>
-        </repository>
-        <repository>
-            <id>Sonatype OSS Snapshot Repository</id>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
 </project>

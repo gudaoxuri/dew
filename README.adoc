@@ -1,113 +1,35 @@
-= Dew
-
-*基于Spring Cloud的服务封装*
+== Dew-Framework
 
 image::https://img.shields.io/travis/gudaoxuri/dew.svg[link="https://travis-ci.org/gudaoxuri/dew"]
 image:https://api.codacy.com/project/badge/Grade/b27405dea94b4b4085324ae6107945ba["Codacy code quality", link="https://www.codacy.com/app/gudaoxuri/dew?utm_source=github.com&utm_medium=referral&utm_content=gudaoxuri/dew&utm_campaign=Badge_Grade"]
 image:https://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2",link="https://www.apache.org/licenses/LICENSE-2.0.txt"]
 
+对Spring Boot的封装扩展、整合公司现有能力、提供最佳实践，做为基础服务框架，支撑公司新项目地研发。
+
+[quote,]
+____
+Dew [du:] 意为`露水`，希望此框架可以像晨间的露水一样透明、静谧、丰盈。让使用者尽量不要感知框架的存在，专注业务实现。
+____
+
 === 设计理念
-从企业内部框架到开源的 https://github.com/gudaoxuri/ez-framework[EZ-Framework]，亲历过架构从单体到SOA再到微服务的演进，
-这也体现在EZ-F的各个主线版本中，
-EZ-F与Dew的共同点都是力求提供一个完备的生产级微服务架构，最小化的学习成本，快速上手，
-区别在于，EZ-F是基于Scala从零构建的，Dew主要是对Spring Cloud做一层薄的封装，在不改变Spring Cloud的开发模式下做简洁明了的扩展。
 
-=== 模块与功能
+==== 服务框架的尴尬
 
-==== *com.ecfront.dew:parent* Dew 父工程 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/parent/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/parent/"]
+几乎每个软件公司都会研发企业内部的服务框架以满足自身业务发展的需要，但几乎所有框架都会存在这样的尴尬：
 
-. 提供了Spring Boot & Spring Cloud 的基础pom结构
-. 通过 `maven clean package -P package`来生成fatjar
+. 无法传承，框架的研发人员离职后没有可以接手
+. 上手难度大，很多框架喜欢重复造轮子，做出来的与业界主流思想/标准格格不入，导致学习培训成本很高
+. 功能片面，不通用，服务框架讲求通用性，尽量让整个公司使用同一套规范以方便维护，但很多框架只实现了某些特定场景的功能，无法通用化
+. 维护成本高，尤其是对于完全自研的框架，往往需要专职人员维护
 
+==== Dew框架思想
 
-==== *com.ecfront.dew:boot-core* Dew Spring Boot 封装 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/boot-core/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/boot-core/"]
+上述问题是Dew框架必须面对的，应对的设计核心理念是：**基于成熟框架扩展** ，具体要做到：
 
-. 常用分布式服务（Cache、Lock、Map、MQ）
-. 常用实体模型
-. 服务脚手架（CRUDS，针对实体的创建、查询、更新、删除、启用禁用）
-. 基于Spring Data JPA的常用方式扩展
-. 统一返回信息格式（Resp<E>）
-. 可跟踪日志支持（请求级ID）
-. 通用拦截器栈
-. Swagger文档
+. 简单容易，用最通用的、标准的、开发人员都熟悉的开发模型
+. 功能全面，尽量重用市场已有能力实现，减少框架自身的维护成本
+. 轻量，原则上不引入高侵入性的三方框架/类库
+. 可替换，只做扩展，尽量不修改基础框架代码，开发人员完全可以直接基于基础框架开发
 
-[source,xml]
-.可选功能
-----
-<!-- 启用对应的分布式服务支持 -->
- <dependency>
-    <groupId>com.ecfront.dew</groupId>
-    <artifactId>cluster-spi-redis</artifactId>
-    <version>${dew.version}</version>
-</dependency>
-<dependency>
-    <groupId>com.ecfront.dew</groupId>
-    <artifactId>cluster-spi-hazelcast</artifactId>
-    <version>${dew.version}</version>
-</dependency>
-<dependency>
-    <groupId>com.ecfront.dew</groupId>
-    <artifactId>cluster-spi-ignite</artifactId>
-    <version>${dew.version}</version>
-</dependency>
-<!-- 启用web支持 -->
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-web</artifactId>
-</dependency>
-<!-- 启用关系型数据支持（如MySQL） -->
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-jpa</artifactId>
-</dependency>
-<dependency>
-    <groupId>mysql</groupId>
-    <artifactId>mysql-connector-java</artifactId>
-    <version>5.1.41</version>
-</dependency>
-<!-- 启用Swagger日志 -->
-<dependency>
-    <groupId>io.springfox</groupId>
-    <artifactId>springfox-swagger2</artifactId>
-    <version>2.6.1</version>
-</dependency>
-<dependency>
-    <groupId>io.springfox</groupId>
-    <artifactId>springfox-swagger-ui</artifactId>
-    <version>2.6.1</version>
-</dependency>
-----
+实现上我们选择 `Spring Boot` 这一业界主流框架。
 
-==== *com.ecfront.dew:cloud-core* Dew Spring Cloud 封装 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/cloud-core/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/cloud-core/"]
-
-. 引入Spring Cloud常用依赖
-
-==== *com.ecfront.dew:auth* 多租户的RBAC权限服务 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/auth/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/auth/"]
-
-==== *com.ecfront.dew:config* 配置中心服务 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/config/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/config/"]
-
-. 集成Spring Config和Spring Security
-
-==== *com.ecfront.dew:gateway* 网关服务 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/gateway/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/gateway/"]
-
-. 集成Zuul网关
-. 与Auth配合，支持权限认证
-
-==== *com.ecfront.dew:gateway* Websocket网关服务 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/wsgateway/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/wsgateway/"]
-
-. 支持Websocket的网关
-
-==== *com.ecfront.dew:logger* 日志服务 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/logger/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/logger/"]
-
-. 集成Zipkin
-
-==== *com.ecfront.dew:monitor* 集群监控服务 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/monitor/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/monitor/"]
-
-. 集成Turbine和Hystrix Dashboard
-
-==== *com.ecfront.dew:registry* 注册中心服务 image:https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/registry/badge.svg["Maven Central",link="https://maven-badges.herokuapp.com/maven-central/com.ecfront.dew/registry/"]
-
-. 集成Eureka Server和Spring Security
-
-=== 运行环境
-Java8以上、可选：Redis、Hazcelcast、Ignite、RabbitMQ、关系型数据库（默认MySQL）

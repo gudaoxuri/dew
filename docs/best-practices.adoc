@@ -1,0 +1,95 @@
+== 最佳实践
+
+=== JDBC框架的选择
+
+主流JDBC框架有Hibernate、MyBatis、Spring JDBC Template、Ebean、DBUtils等，Dew基于Spring Boot，所以对于这些框架都提供了很好的兼容。那么如何选择呢？
+
+* 先说Hibernate，如果你的数据表结构与对象模型基本吻合，那么使用JPA会带来很大的便捷，推荐Hibernate
+* 如果你的数据表结构与对象模型严重不吻合或是你希望对SQL有更多主动权（SQL优化、复杂查询等），那JPA就没什么优势了，这时：
+** 如果你追求极简、不需要ORMPPING，那么DBUtils会是最佳选择
+** 如果你喜欢敏捷开发，推崇充血模型，那么尝试一下Ebean吧，与Play!结合最合适不过
+** 如果你既要有一定的ORMPPING能力，又希望自己写SQL，那么MyBatis会是不错的选择
+** 如果你使用了Spring，希望框架简单些，可以接受自己写ORMPPING，未来无切换关系型数据库的计划，那么Spring JDBC Template将是个很好的选择
+
+上述是几个主流JDBC框架的使用场景分析，Dew默认的是哪个呢？Dew默认的是基于Spring JDBC Template的封装，其理由如下：
+
+. Dew做为内部框架，需要能从容地处理公司规划的领域模型结构，但这一数据模型无法与对象模型对应，所以JPA的优势无法体现
+. Dew希望尽可能保持“轻巧”，结构简单、容易上手，Hibernate相对而言过重了
+
+基于两个原因Hibernate并不适合使用，又因为：
+
+. 在数据库设计上一般会存在业务主键、是否启用状态等字段，经常需要针对这些字段查询、修改
+. 在数据库设计上一般会存在创建人/时间、更新人/时间等常规字段，在创建、更新对象时需要自动赋值
+. 希望能有自动化的ORMPPING功能
+. 要求能很好的支持多数据源操作
+
+基于这三个原因MyBatis、Ebean、DBUtils及Spring JDBC Template都无法满足要求。
+
+所以为适应这一场景需求，Dew基于Spring JDBC Template做了扩展以支持上述功能。
+
+
+=== 缓存处理
+`Spring Cache` 提供了很好的注解式缓存，但默认没有超时，需要根据使用的缓存容器特殊配置，e.g.
+
+[source,java]
+.Redis缓存过期时间设置
+----
+@Bean
+RedisCacheManager cacheManager() {
+    final RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate);
+    redisCacheManager.setUsePrefix(true);
+    redisCacheManager.setDefaultExpiration(<过期秒数>);
+    return redisCacheManager;
+}
+----
+
+=== 断路保护
+
+使用断路保护可有效果的防止系统雪崩，`Spring Cloud` 对` Hystrix` 做了封装，详见：http://cloud.spring.io/spring-cloud-netflix/single/spring-cloud-netflix.html#_circuit_breaker_hystrix_clients
+需要说明的是 `Hystrix` 使用新线程执行代码，导致Threadlocal数据能同步，使用时需要将用到的数据做为参数传入，如果需要使用Dew框架的上下文（请求链路/用户等获取）需要先传入再设值，e.g.
+
+[source,java]
+.Context处理
+----
+@HystrixCommand(...)
+public <return> someMethod(..., DewContext context) {
+    DewContext.setContext(context);
+    ....
+}
+----
+
+=== 配置中心
+
+使用spring config 配置中心refresh时,在@RefreshScope注解的类中,@Scheduled注解的自动任务会失效.
+建议使用实现SchedulingConfigurer接口的方式添加自动任务.
+
+[source,java]
+.自动任务添加
+----
+@Configuration
+@EnableScheduling
+public class SchedulingConfiguration implements SchedulingConfigurer {
+
+    private Logger logger = LoggerFactory.getLogger(SchedulingConfiguration.class);
+
+    @Autowired
+    private ConfigExampleConfig config;
+
+    @Override
+    public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+        taskRegistrar.addTriggerTask(() -> logger.info("task1: " + config.getVersion()), triggerContext -> {
+            Instant instant = Instant.now().plus(5, SECONDS);
+            return Date.from(instant);
+        });
+
+        taskRegistrar.addTriggerTask(() -> logger.info("task2: " + config.getVersion()), new CronTrigger("1/3 * * * * ?"));
+    }
+}
+----
+
+
+    
+
+
+
+

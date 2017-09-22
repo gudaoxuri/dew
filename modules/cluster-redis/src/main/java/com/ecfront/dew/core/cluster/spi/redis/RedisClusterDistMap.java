@@ -1,7 +1,7 @@
 package com.ecfront.dew.core.cluster.spi.redis;
 
-import com.ecfront.dew.common.$;
 import com.ecfront.dew.core.cluster.ClusterDistMap;
+import com.ecfront.dew.common.$;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Map;
@@ -26,7 +26,7 @@ public class RedisClusterDistMap<M> implements ClusterDistMap<M> {
 
     @Override
     public void putAsync(String key, M value) {
-        new Thread(() -> put(key, value));
+        new Thread(() -> put(key, value)).start();
     }
 
     @Override
@@ -66,7 +66,7 @@ public class RedisClusterDistMap<M> implements ClusterDistMap<M> {
 
     @Override
     public void removeAsync(String key) {
-        new Thread(() -> remove(key));
+        new Thread(() -> remove(key)).start();
     }
 
     @Override

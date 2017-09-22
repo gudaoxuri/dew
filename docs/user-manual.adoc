@@ -1,0 +1,1735 @@
+== 使用手册
+
+[IMPORTANT]
+.使用申明
+====
+`Dew` 有多个版本通道，使用时请谨慎选择：
+
+. `GA` General Availability，正式版本，通过内部测试没有已知错误并且经过生产验证，生产环境首选！
+. `RC` Release Candidate，发行候选版本，通过内部测试没有已知错误，可用于生产环境。
+. `Beta` 公开测试版本，没有已知的Major类型Bug，但允许存在个别minor类型Bugs，生产环境使用需要谨慎评估！
+. `Alpha` 内容测试版本，很早期的测试版本，未经过内部测试，可能存在较多Bugs，此版本类似技术预览版（Technical Preview），切 *不可* 用于生产环境！
+. `SNAPSHOT` 快照版本，类似Nightly版本，更新频繁此不保证质量，切 *不可* 用于生产环境！
+====
+
+=== Let's Begin
+
+NOTE: `Dew` 框架是对 `Spring Boot` 的扩展，使用之前务必了解相关框架的基础知识。
+
+----
+此章节关联示例:guide-petstore、bone-example
+----
+
+==== 结构说明
+
+`Dew` 所有模块均为Maven结构，使用如下：
+
+[source,xml]
+----
+<!--引入Dew父依赖，也可以使用import方式-->
+<parent>
+    <groupId>com.ecfront.dew</groupId>
+    <artifactId>parent</artifactId>
+    <!--生产环境请选择合适的版本!!!!!!!!-->
+    <version>${dew.version}</version>
+</parent>
+...
+<dependencies>
+    <!--引入需要的模块-->
+    <dependency>
+        <groupId>com.ecfront.dew</groupId>
+        <artifactId><模块名></artifactId>
+    </dependency>
+</dependencies>
+...
+<!--开发者-->
+<developers>
+    <developer>
+        <name></name>
+        <email></email>
+    </developer>
+</developers>
+<!--SCM信息-->
+<scm>
+    <connection></connection>
+    <developerConnection></developerConnection>
+    <url></url>
+</scm>
+----
+
+TIP: `parent` 中已包含各模块的版本，引用模块依赖时可省略版本号。
+
+==== 功能模块
+
+|===
+|模块名 |核心功能
+
+|`boot-core` |基于Spring Boot的扩展，Dew的核心模块
+|`cluster-common` |集群能力接口
+|`cluster-redis` |集群能力-Redis实现
+|`cluster-hazelcast` |集群能力-Hazelcast实现
+|`cluster-rabbit` |集群能力-Rabbit实现
+|`test-starter` |Dew的单元测试封装
+|`<x>-example` |各类示例
+|===
+
+==== 启动类
+
+`DewBootApplication` 用于启动 `Spring boot` 类型的工程，是 `Dew` 的入口。
+
+[TIP]
+.DewBootApplication使用如下注解
+====
+@SpringBootApplication +
+@EnableTransactionManagement +
+@EnableAutoConfiguration(exclude = {FreeMarkerAutoConfiguration.class, GsonAutoConfiguration.class, WebSocketAutoConfiguration.class}) +
+@ComponentScan(basePackageClasses = {Dew.class}) +
+@EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true) +
+@EnableCaching(proxyTargetClass = true)
+====
+
+[NOTE]
+.@ComponentScan说明
+====
+`Spring boot` 严重依赖于包扫描功能，所以工程中需要重写 `@ComponentScan` 加入当前工程的根包，要求为 `Dew` 包在前，工程包在后，如： `(basePackageClasses = {Dew.class,PetStoreApplication.class})`
+====
+
+TIP: 示例见 `example/guide-petstore`
+
+==== 配置说明
+
+`Dew` 的配置使用 `Spring boot` 风格，尽量重用已有的配置， `Dew` 的特殊配置均在 `dew.` key下， 推荐使用 `yml` 格式。
+
+==== 日志框架
+
+推荐使用 `logback` ， 使用 `logback-spring.xml` 文件配置日志核心处理。
+
+==== 业务初始化操作
+
+`Spring boot` 可使用 `@PostConstruct` 在 `bean` 加载时做业务初始化操作，它可位于任何类/包中，高度灵活的同时可能会导致初始化操作不可控， `Dew` 推荐在根包中建立名为 `<project>Initiator` 类，所有业务初始化操作都在此类中完成。
+
+=== 核心
+
+==== 常用工具
+
+`Dew` 框架的常用工具由 `Dew-Common` 包提供（ https://github.com/gudaoxuri/dew-common ），功能如下：
+
+. Json与Java对象互转，支持泛型
+. Java Bean操作，Bean复制、反射获取/设置注解、字段、方法等
+. Java Class扫描操作，根据注解或名称过滤
+. Shell脚本操作，Shell内容获取、成功捕获及进度报告等
+. 加解密操作，Base64、MD5/BCrypt/SHA等对称算法和RSA等非对称算法
+. Http操作，包含Get/Post/Put/Delete/Head/Options操作
+. 金额操作，金额转大写操作
+. 通用拦截器栈，前/后置、错误处理等
+. 定时器操作，定时和周期性任务
+. 常用文件操作，根据不同情况获取文件内容
+. 常用字段操作，各类字段验证、身份证提取、UUID创建等
+. 常用时间处理，常规时间格式化模板
+. 主流文件MIME整理，MIME分类
+. 响应处理及分页模型
+
+[TIP]
+.`Dew Common` 的使用
+====
+`Dew Common` 功能均以 `$` 开始，比如:
+
+* Json转成Java对象: `$.json.toObject(json,JavaModel.class)`
+* Json字符串转成List对象: `$.json.toList(jsonArray, JavaModel.class)`
+* Bean复制：`$.bean.copyProperties(ori, dist)`
+* 获取Class的注解信息: `$.bean.getClassAnnotation(IdxController.class, TestAnnotation.RPC.class)`
+* 非对称加密: `$.encrypt.Asymmetric.encrypt(d.getBytes("UTF-8"), publicKey, 1024, "RSA")`
+* Http Get: `$.http.get("https://httpbin.org/get")`
+* 验证手机号格式是否合法: `$.field.validateMobile("18657120000")`
+* ...
+====
+
+TIP: 完整使用手册见 https://gudaoxuri.github.io/dew-common/
+
+==== Web处理
+
+----
+此章节关联示例:web-example、cache-example
+----
+
+===== 基础Web使用
+
+[source,xml]
+.引入依赖
+----
+<dependencies>
+    <!--dew的核心包-->
+    <dependency>
+        <groupId>com.ecfront.dew</groupId>
+        <artifactId>boot-core</artifactId>
+        <version>${dew.version}</version>
+    </dependency>
+    <!--Spring Boot Web核心依赖-->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <!--添加文档支持-->
+    <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger2</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>io.springfox</groupId>
+        <artifactId>springfox-swagger-ui</artifactId>
+    </dependency>
+</dependencies>
+…
+----
+
+[source,yml]
+.添加配置
+----
+spring:
+  application:
+    name: web-example
+
+server:
+  port: 8080 # http端口号
+
+dew:
+  basic:
+    name: web
+    version: 1.0
+    desc: desc
+    web-site: www.ecfront.com
+    doc:
+      base-package: com.ecfront # API文档路径
+----
+
+[source,java]
+.添加Controller
+----
+@RestController
+public class ExampleController {
+   @GetMapping("/example")
+   public String example() {
+       return "enjoy!";
+   }
+}
+----
+
+TIP: `Controller` 的操作请参见 `Spring boot` 文档
+
+===== CORS支持
+
+`CORS` 默认支持
+
+[source,yml]
+.`CORS`实现定制
+----
+dew:
+  security:
+    cors:
+      allow-origin: # 允许来源，默认 *
+      allow-methods: # 允许方法，默认 POST,GET,OPTIONS,PUT,DELETE,HEAD
+      allow-headers: # 允许头信息 x-requested-with,content-type
+----
+
+===== 数据验证
+
+`Dew` 集成了 `Spring validate` 机制，支持针对 `URL` 及 `Bean` 的验证。
+
+* 在 java bean 中添加各项validation，支持标准`javax.validation.constraints`包下的诸如：`NotNull` ，同时框架扩展了几个检查，如：
+   IdNumber、Phone
+* 在Controller中添加 `@Validated` 注解 ( Spring还支持@Vaild，但这一注解不支持分组 )
+* 支持Spring原生分组校验
+* `URL` 类型的验证必须在类头添加 `@Validated` 注解
+* `Dew` 框架内置了 `CreateGroup` `UpdateGroup` 两个验证组，验证组仅是一个标识，可为任何java对象
+
+[source,java]
+.修改之前的Controller
+----
+@RestController
+@Api(description = "示例应用")
+@Validated // URL 类型的验证需要使用此注解
+public class WebExampleController {
+
+    /**
+     * 最基础的Controller示例
+     */
+    @GetMapping("example")
+    @ApiOperation(value = "示例方式")
+    public String example() {
+        return "enjoy!";
+    }
+
+    /**
+     * 数据验证示例，针对 CreateGroup 这一标识组的 bean认证
+     */
+    @PostMapping(value = "valid-create")
+    public String validCreate(@Validated(CreateGroup.class) @RequestBody User user) {
+        return "";
+    }
+
+    /**
+     * 数据验证示例，针对 UpdateGroup 这一标识组的 bean认证，传入的是表单形式
+     */
+    @PutMapping(value = "valid-update")
+    public String validUpdate(@Validated(UpdateGroup.class) User user) {
+        return "";
+    }
+
+    /**
+     * 数据验证示例，URL认证
+     */
+    @GetMapping(value = "valid-method/{age}")
+    public String validInMethod(@Min(value = 2,message = "age必须大于2") @PathVariable("age") int age) {
+        return "";
+    }
+
+    // User类
+    public static class User {
+
+        // 仅在CreateGroup组下才校验
+        @NotNull(groups = CreateGroup.class)
+        @IdNumber(message = "身份证号错误", groups = CreateGroup.class)
+        private String idCard;
+
+        // CreateGroup、UpdateGroup组下校验
+        @Min(value = 10, groups = {CreateGroup.class, UpdateGroup.class})
+        private int age;
+
+        // CreateGroup、UpdateGroup组下校验
+        @Phone(message = "手机号错误", groups = {CreateGroup.class, UpdateGroup.class})
+        private String phone;
+
+        // Get/Set...
+    }
+
+}
+----
+
+===== 统一响应
+
+`Dew` 支持两种格式：
+
+* 协议无关：`Resp<E>` 响应，对于 `HTTP` 统一返回 `200` HTTP状态码，使用 `code` 表示业务状态码，`Resp` 对象包含:
+
+ code 响应编码，与http状态码类似，200表示成功
+ message 响应附加消息，多有于错误描述
+ body 响应正文
+
+TIP: `Resp`类提供了常用操作：详见 https://gudaoxuri.github.io/dew-common/#true-resp[https://gudaoxuri.github.io/dew-common/#true-resp]
+
+* 重用`HTTP Status Code`: 在无错误时直接返回内容，发生错误时返回 `{"error":{"code":"实际错误码","message":"错误信息"}}`
+
+TIP: 如果启用了字段检查（ `@RequestBody @Validated ...` ），在检查不通过时上述两种格式的 `message` 内容会返回Json格式的错误详细（ `Detail:` 标识之后的内容），格式为：
+     `[{"field":"<字段名>","reason":"<原因，如NotNull,Min>","msg":"<错误描述>"}]`
+
+启用统一响应格式支持：
+
+[source,yml]
+.统一响应格式配置
+----
+dew:
+    basic:
+        format:
+            reuse-http-state: false # true:重用http状态码，false:使用协议无关格式，默认true
+----
+
+[source,java]
+.统一响应使用
+----
+// 使用协议无关格式
+public Resp<String> test(){
+    return Resp.success("enjoy!");
+    // or return Resp.notFound("…")/conflict("…")/badRequest("…")/…
+}
+
+// 重用http状态码
+// 与协议无关格式区别在于：
+// 1. throws 对应的异常
+// 2. 使用Dew.E.e(<code>,<Exception Instance>)来抛出异常
+public String test() throws IOException{
+    return "enjoy!";
+    // or throw Dew.E.e("A000", new IOException("io error"));
+    // or throw Dew.E.e("A000", new IOException("io error"),StandardCode.UNAUTHORIZED); // 自定义http异常401
+}
+----
+
+[NOTE]
+.统一响应格式的选择
+====
+`Dew` 推荐使用 `协议无关格式`，此格式在 `方法间调用` `非HTTP协议RPC` `MQ` 等数据交互场景做到真正的 `统一响应格式`。
+====
+
+===== 异常处理
+
+`Dew` 会把程序没有捕获的异常统一转成 `500` 异常上抛，同时框架提供了常用的异常检查：
+
+[source,java]
+.异常检查，异常类型要求为RuntimeException及其子类
+----
+Dew.E.check(VoidPredicate notExpected, E ex)
+Dew.E.check(boolean notExpected, E ex)
+Dew.E.checkNotEmpty(Map<?, ?> objects, E ex)
+Dew.E.checkNotEmpty(Iterable<?> objects, E ex)
+Dew.E.checkNotNull(Object obj, E ex)
+----
+
+[source,xml]
+.自定义异常配置
+----
+dew:
+  basic:
+    error-mapping:
+      "[<异常类名>]":
+        http-code: # http状态码，不存在时使用实例级http状态码
+        business-code: # 业务编码，不存在时使用实例级业务编码
+        message: # 错误描述，不存在时使用实例级错误描述
+
+<!--示例-->
+dew:
+  basic:
+    error-mapping:
+      "[com.ecfront.dew.core.AuthException]":
+        http-code: 401
+        business-code: x00010
+        message: 认证错误
+----
+
+===== 注解式缓存
+
+[NOTE]
+.配置注册式缓存
+====
+spring:
+  cache:
+    type: # 支持 redis hazelcast 等
+====
+
+`Dew` 支持 `Spring Boot` 的缓存注解，详见示例 `example/cache-example`
+
+===== 访问在线API文档
+
+在 `default` `test` `dev` profile下http访问 `./swagger-ui.html` 即可。
+
+===== 生成离线API文档
+
+实现Html及PDF版本的离线API文档，效果如下：
+
+image:http://swagger2markup.github.io/swagger2markup/1.3.1/images/Swagger2Markup.PNG[]
+
+[source,java]
+.建立如下测试类，WebExampleApplication修改成对应的启动，修改对应的URL
+----
+@RunWith(SpringRunner.class)
+@SpringBootApplication
+@SpringBootTest(classes = WebExampleApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@ComponentScan(basePackageClasses = {Dew.class, WebExampleApplication.class})
+public class DocTest {
+
+    @Test
+    public void empty() throws IOException{
+        DocProcessor.create($.http.get("http://127.0.0.1:8080/v2/api-docs"));
+    }
+
+}
+----
+
+[source,shell]
+.执行如下命令
+----
+mvn -Dtest=DocTest clean test -P doc
+----
+
+* 查看工程目录，多了一个 `api-docs` 的目录，包含了 `index.html` 和 `index.pdf` 两个离线文档
+
+[TIP]
+.定制化文档
+====
+创建或编辑 `api-docs/asciidoc/index.adoc` 加入个性化内容，此为 `asciidoc` 格式，使用见： http://asciidoctor.org/docs/asciidoc-writers-guide/
+====
+
+==== 数据访问
+
+----
+此章节关联示例:jdbc-example、mybatisplus-example
+----
+
+`Dew` 基于 `Spring Boot` ，原生支持 `Hibernate` `MyBatis` `Spring JDBC Template` 等主流的持久化框架。 各类框架的整合参见网络资料，示例中提供了针对 `MybatisPlus` 的整合说明： `mybatisplus` 。
+
+===== `Dew JDBC`
+
+`Dew` 选用 `Spring JDBC Template` 这一轻量的数据处理框架，并做了一定的扩展以支持：
+
+. 支持实体与SQL的映射
+. 支持常用数据处理操作
+. 支持@Select注解
+. 轻松使用多数据源
+
+TIP: `JdbcTemplate` 知识见 https://spring.io/guides/gs/relational-data-access/[https://spring.io/guides/gs/relational-data-access/]
+
+TIP: SQL输出日志需要在 `logback-spring.xml` 中添加 `<logger name="org.springframework.jdbc.core" level="TRACE"/>`
+
+* 启用 `Dew JDBC`
+
+[source,xml]
+.引入依赖
+----
+<dependencies>
+    <dependency>
+        <groupId>com.ecfront.dew</groupId>
+        <artifactId>boot-core</artifactId>
+    </dependency>
+    <!--引入JDBC依赖-->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+    <!--使用druid连接池-->
+    <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>druid-spring-boot-starter</artifactId>
+    </dependency>
+    <!-- 对应的数据库JDBC驱动 -->
+</dependencies>
+----
+
+IMPORTANT: `Dew JDBC` 指定使用 `druid` 做为连接池。
+
+[source,yml]
+.增加配置
+----
+spring:
+    datasource:
+    driver-class-name: # 驱动名
+    url: # 驱动url
+    druid:
+      # 连接池配置
+----
+
+====== 实体与SQL的映射
+
+`Dew JDBC` 支持注解方式实现ORMPing，可用的注解有:
+
+* `Entity` : 表示此类可映射为数据库表
+* `PkColumn` : 主键标识 支持 `int/String` 类型，`int` 多用于ID自增场景， `String` 可选择是否自动生成 `uuid` 数据（ `uuid=true` ），存在此注解的实体可以使用 `xxxById` 操作
+* `CodeColumn` : 业务主键 在工程中很多对象的主键不依赖于数据库主键而会使用code（如uuid表示）作为业务主键， 保存（insert）时如果存在业务主键，且  `value==null && uuid=true` 则会自动附加上uuid，存在此注解的实体可以使用 `xxxByCode` 操作
+* `CreateUserColumn` : 创建人，保存（insert）时自动附加当前操作人 `code` （需要与获取操作人动作同一线程）
+* `CreateTimeColumn` : 创建时间，保存（insert）时自动附加当前时间
+* `UpdateUserColumn` ：更新人，保存（insert）更新（updateById/updateByCode）时自动附加当前操作人 `code` （需要与获取操作人动作同一线程）
+* `UpdateTimeColumn` : 更新时间，保存（insert）更新（updateById/updateByCode）时自动附加当前时间
+* `EnabledColumn` : 状态，启用或禁用，支持字段字面含义反转（ `reverse=true` ） 存在此注解的实体可以使用 `enableByXX` `disableByXX` `xxEnabled` `xxDisabled` 操作
+* `Column`: 普通字段
+
+IMPORTANT: 只有存在`Entity`注解的类才会被解析，只有存在`XXColumn`的字段才会被映射。
+
+TIP: 为方便操作，框架提供了 `PkEntity` `SafeEntity` `StatusEntity` `SafeStatusEntity` 四个预制的父类。
+
+[source,java]
+.实体与SQL的映射示例
+----
+@Entity
+public class Pet implements Serializable {
+
+    @PkColumn
+    private int id;
+    @Column(notNull = true)
+    private String type;
+    @Column(notNull = true)
+    private BigDecimal price;
+    @CreateTimeColumn
+    private Date createTime;
+    @UpdateTimeColumn
+    private Date updateTime;
+    @EnabledColumn
+    private boolean enabled;
+
+    // get/set...
+}
+----
+
+TIP: 实体对象需要实现 `Serializable` 接口。
+
+====== 常用数据处理操作
+
+* *增加* `Dew.ds().insert(Object entity) / Dew.ds().insert(Iterable<?> entities)`
+* *更新* `Dew.ds().updateById(P id, Object entity) / Dew.ds().updateByCode(String code, Object entity)`
+* *获取单条* `Dew.ds().getById(P id, Class<E> entityClazz) / Dew.ds().getByCode(String code, Class<E> entityClazz)`
+* *获取多条* `Dew.ds().findAll(Class<E> entityClazz) / Dew.ds().findAll(LinkedHashMap<String, Boolean> orderDesc, Class<E> entityClazz) / Dew.ds().findEnabled(…) / Dew.ds().findDisabled(…)`
+* *获取分页* `Dew.ds().paging(long pageNumber, int pageSize, LinkedHashMap<String, Boolean> orderDesc, Class<E> entityClazz) / Dew.ds().pagingEnabled(…) / Dew.ds().pagingDisabled(…)`
+* *计数* `Dew.ds().countAll(Class<?> entityClazz) / Dew.ds().countEnabled(Class<?> entityClazz) / Dew.ds().countDisabled(Class<?> entityClazz)`
+* *启用* `Dew.ds().enableById(P id, Class<?> entityClazz) / Dew.ds().enableByCode(String code, Class<?> entityClazz)`
+* *禁用* `Dew.ds().disableById(P id, Class<?> entityClazz) / Dew.ds().disableByCode(String code, Class<?> entityClazz)`
+* *是否存在* `Dew.ds().existById(P id, Class<?> entityClazz) / Dew.ds().existByCode(String code, Class<?> entityClazz)`
+* *物理删除* `Dew.ds().deleteById(P id, Class<?> entityClazz) / Dew.ds().deleteByCode(String code, Class<?> entityClazz)`
+
+TIP: 您可以使用：`Dew.ds().jdbc()` 获取 `JdbcTemplate` 原生API。
+
+[source,java]
+.常用数据处理操作示例
+----
+// =============== DS 示例 ===============
+// 初始宠物表
+Dew.ds().jdbc().execute("CREATE TABLE pet\n" +
+        "(\n" +
+        "id int primary key auto_increment,\n" +
+        "type varchar(50),\n" +
+        "price decimal(11,4) not null,\n" +
+        "create_time datetime,\n" +
+        "update_time datetime,\n" +
+        "enabled bool\n" +
+        ")");
+// 初始化订单表
+Dew.ds().jdbc().execute("CREATE TABLE t_order\n" +
+        "(\n" +
+        "id int primary key auto_increment,\n" +
+        "pet_id int,\n" +
+        "customer_id int,\n" +
+        "price decimal(11,4) not null,\n" +
+        "create_time datetime \n" +
+        ")");
+
+Pet pet = new Pet();
+pet.setType("狗");
+pet.setPrice(new BigDecimal(1000));
+pet.setEnabled(true);
+// insert
+int id = (int) Dew.ds().insert(pet);
+// getById
+pet = Dew.ds().getById(id, Pet.class);
+assert pet.getType().equals("狗");
+----
+
+====== DewDao
+
+`DewDao` 是一个泛型基础 `Dao` 类，实现了常用的操作。
+
+上个章节的示例用 `DewDao` 可写成如下形式：
+
+[source,java]
+.常用数据处理操作示例 `DewDao` 版
+----
+// 在配置文件中添加Dao的路径
+Dew:
+  jdbc:
+    base-packages: ["com.ecfront.dew.example.jdbc.jdbc"]
+
+// 添加CustomerDao
+public interface CustomerDao extends DewDao<In, Customer> {
+}
+
+@Autowired
+private PetDao petDao;
+
+// =============== Dao 示例 ===============
+// insert by jdbc
+pet = new Pet();
+pet.setType("猫");
+pet.setPrice(new BigDecimal(2000));
+pet.setEnabled(true);
+id = petDao.insert(pet);
+// getById by jdbc
+pet = petDao.getById(id);
+assert pet.getType().equals("猫");
+----
+
+====== @Select注解
+
+[source,java]
+.`@Select` 格式
+----
+@Select(value = "<SQL，使用#{参数占位名}>", entityClass = <返回的实体，为空时以Map封装>)
+<返回类型，可为单个对象/List/Page> <方法名，java规范即可>(<行参修饰符，@Param(<参数占位名>)或@ModelParam> <行参>);
+----
+
+TIP: 方法参数Bean类型需使用 `@ModelParam` ，参数作为SQL参数需使用 `@Param()` 并指定与#{}相匹配的名称。
+`@Select` 中entityClass用于指定返回类型。
+
+TIP: 分页查询要求返回 `Page<?>` 对象，参数最后两个固定为 `@Param("pageNumber") long pageNumber, @Param("pageSize") int pageSize` 这两个参数框架会自行解析，`pageNumber` 从 `1` 开始。
+
+TIP: `@Select` 中默认对 * 和 .* 自动解析成表对应字段，但不支持表的嵌套查询。
+
+[source,java]
+.`@Select` 示例
+----
+// 返回全量数据
+@Select(value = "select * from t_test_crud_s_entity where field_a= #{ fieldA }", entityClass = CRUDSTestEntity.class)
+List<CRUDSTestEntity> queryByField(@Param("fieldA") String fieldA);
+
+//返回分页数据
+@Select(value = "select * from t_test_crud_s_entity where field_a= #{ fieldA }", entityClass = CRUDSTestEntity.class)
+Page<CRUDSTestEntity> queryByCustomPaging(@ModelParam CRUDSTestEntity model, @Param("pageNumber") Long pageNumber, @Param("pageSize") Integer pageSize);
+
+//返回Bean类型数据
+@Select(value = "select * from t_test_crud_s_entity where id= #{id}", entityClass = CRUDSTestEntity.class)
+CRUDSTestEntity getById(@Param("id") P id);
+
+//返回Map类型数据
+@Select(value = "select * from t_test_crud_s_entity where id= #{id}")
+Map<String,Object> getMapById(@Param("id") P id);
+----
+
+[IMPORTANT]
+.使用限制
+====
+. `@Select` 只能用于接口、暂不支持DSL SQL，比如（HQL）
+. `@ModelParam` 参数不支持 `null` 查询
+====
+
+====== 多数据源
+
+`Dew` 可以很轻松地实现多数据源使用。
+
+[source,yml]
+.多数据源配置
+----
+spring:
+  datasource: # 主数据源配置
+    driver-class-name:
+    url:
+    druid:
+      # 主数据源连接池配置
+  multi-datasources: # 此key下配置其它数据源
+    other: # 数据源标识
+      driver-class-name:
+      url:
+      # 此数据源的连接池配置
+----
+
+TIP: 其它数据源务必配置在 `spring.multi-datasources` 下，格式是 `spring.multi-datasources.<DS Name>.<属性名>=<属性值>`
+
+IMPORTANT: 主数据源连接池要加上 `druid` 或其它类型，其它数据源与 `url` 、 `username` 同级即可。
+
+[source,yml]
+.多数据源配置 示例
+----
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+  multi-datasources:
+    other:
+      driver-class-name: org.h2.Driver
+      url: jdbc:h2:mem:test_other
+      initial-size: 1
+      max-active: 1
+----
+
+[source,java]
+.多数据源使用
+----
+// =============== 1）Dew.ds上直接使用 ===============
+
+Dew.ds(<数据源标识，为空时表示使用主数据源>).XX
+
+// -------- 例如 --------
+
+// 初始化客户表，来自另一个数据源
+Dew.ds("other").jdbc().execute("CREATE TABLE customer\n" +
+        "(\n" +
+        "id int primary key auto_increment,\n" +
+        "name varchar(50)\n" +
+        ")");
+Customer customer = new Customer();
+customer.setName("张三");
+// insert
+id = (int) Dew.ds("other").insert(customer);
+// getById
+customer = Dew.ds("other").getById(id, Customer.class);
+assert customer.getName().equals("张三");
+
+// =============== 2）Dao层上使用 ===============
+
+// Dao必须重写 `String ds()` 方法，返回对应的数据源标识
+
+// -------- 例如 --------
+
+public interface CustomerDao extends DewDao<Integer, Customer> {
+    @Override
+    default String ds() {
+        return "other";
+    }
+}
+
+// =============== 3）直接使用JdbcTemplate ===============
+
+@Qualifier("<数据源标识+JdbcTemplate>")
+
+// -------- 例如 --------
+
+@Autowired // 主数据源
+private JdbcTemplate jdbcTemplate;
+
+@Autowired
+@Qualifier("otherJdbcTemplate") // 其它数据源
+private JdbcTemplate secondaryJdbcTemplate;
+
+// =============== 事务处理 ===============
+
+@Transactional("<数据源标识+TransactionManager，为空表示主数据源>")
+
+// -------- 例如 --------
+
+@Transactional(otherTransactionManager)
+
+----
+
+IMPORTANT: `JdbcTemplate` Bean名称规则：主数据源= `jdbcTemplate` ，其它数据源= `<DS Name>JdbcTemplate`
+
+IMPORTANT: `TransactionManager` Bean名称规则：主数据源= `transactionManager` ，其它数据源= `<DS Name>TransactionManager`
+
+==== 集群功能
+
+----
+此章节关联示例:cluster-example
+----
+
+`Dew` 的集群支持 `分布式缓存` `分布式Map` `分布式锁` `MQ` `Leader Election`，并且做了接口抽象以适配不同的实现，目前支持 `Redis` `Hazelcast` `Rabbit` 。
+
+[source,xml]
+.引入依赖
+----
+<dependency>
+    <groupId>com.ecfront.dew</groupId>
+    <artifactId>boot-core</artifactId>
+</dependency>
+<!--引入集群依赖，可选redis/hazelcast/rabbit-->
+<dependency>
+    <groupId>com.ecfront.dew</groupId>
+    <artifactId>cluster-spi-redis</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.ecfront.dew</groupId>
+    <artifactId>cluster-spi-hazelcast</artifactId>
+</dependency>
+<dependency>
+    <groupId>com.ecfront.dew</groupId>
+    <artifactId>cluster-spi-rabbit</artifactId>
+</dependency>
+----
+
+[source,yml]
+.增加配置
+----
+dew:
+    cluster: # 集群功能
+        cache: # 缓存实现，默认为 redis
+        dist: # 分布式锁和Map实现，默认为 redis，可选 redis/hazelcast
+        mq: # MQ实现，默认为 redis，可选 redis/hazelcast/rabbit
+
+spring:
+    redis:
+        host: # redis主机
+        port: # redis端口
+        database: # redis数据库
+        password: # redis密码
+        pool: # 连接池配置
+    rabbitmq:
+      host: # rabbit主机
+      port: # rabbit端口
+      username: # rabbit用户名
+      password: # rabbit密码
+      virtual-host: # rabbit VH
+    hazelcast:
+        addresses: [] # hazelcast地址，端口可选
+----
+
+集群服务的使用入口统一为： `Dew.cluster.XX`
+
+===== 分布式缓存
+
+[source,java]
+.MQ服务: `Dew.cluster.cache`
+----
+/**
+ * key是否存在
+ *
+ * @param key key
+ * @return 是否存在
+ */
+boolean exists(String key);
+
+/**
+ * 获取字符串值
+ *
+ * @param key key
+ * @return 值
+ */
+String get(String key);
+
+/**
+ * 设置字符串
+ *
+ * @param key       key
+ * @param value     value
+ * @param expireSec 过期时间(seconds)，0表示永不过期
+ */
+void set(String key, String value, int expireSec);
+
+/**
+ * 设置字符串
+ *
+ * @param key   key
+ * @param value value
+ */
+void set(String key, String value);
+
+/**
+ * 删除key
+ *
+ * @param key key
+ */
+void del(String key);
+
+/**
+ * 添加列表值
+ *
+ * @param key   key
+ * @param value value
+ */
+void lpush(String key, String value);
+
+/**
+ * 设置列表
+ *
+ * @param key       key
+ * @param values    values
+ * @param expireSec 过期时间(seconds)，0表示永不过期
+ */
+void lmset(String key, List<String> values, int expireSec);
+
+/**
+ * 设置列表
+ *
+ * @param key    key
+ * @param values values
+ */
+void lmset(String key, List<String> values);
+
+/**
+ * 弹出栈顶的列表值
+ * 注意，Redis的列表是栈结构，先进后出
+ *
+ * @param key key
+ * @return 栈顶的列表值
+ */
+String lpop(String key);
+
+/**
+ * 获取列表值的长度
+ *
+ * @param key key
+ * @return 长度
+ */
+long llen(String key);
+
+/**
+ * 获取列表中的所有值
+ *
+ * @param key key
+ * @return 值列表
+ */
+List<String> lget(String key);
+
+/**
+ * 设置Hash集合
+ *
+ * @param key       key
+ * @param values    values
+ * @param expireSec 过期时间(seconds)，0表示永不过期
+ */
+void hmset(String key, Map<String, String> values, int expireSec);
+
+/**
+ * 设置Hash集合
+ *
+ * @param key    key
+ * @param values values
+ */
+void hmset(String key, Map<String, String> values);
+
+
+/**
+ * 修改Hash集合field对应的值
+ *
+ * @param key   key
+ * @param field field
+ * @param value value
+ */
+void hset(String key, String field, String value);
+
+/**
+ * 获取Hash集合field对应的值
+ *
+ * @param key   key
+ * @param field field
+ * @return field对应的值
+ */
+String hget(String key, String field);
+
+/**
+ * 判断Hash集合field是否存在
+ *
+ * @param key   key
+ * @param field field
+ * @return 是否存在
+ */
+boolean hexists(String key, String field);
+
+/**
+ * 获取Hash集合的所有值
+ *
+ * @param key key
+ * @return 所有值
+ */
+Map<String, String> hgetAll(String key);
+
+/**
+ * 删除Hash集合是对应的field
+ *
+ * @param key   key
+ * @param field field
+ */
+void hdel(String key, String field);
+
+/**
+ * 原子加操作
+ *
+ * @param key       key，key不存在时会自动创建值为0的对象
+ * @param incrValue 要增加的值，必须是Long Int Float 或 Double
+ * @return 操作后的值
+ */
+long incrBy(String key, long incrValue);
+
+/**
+ * 原子减操作
+ *
+ * @param key       key不存在时会自动创建值为0的对象
+ * @param decrValue 要减少的值，必须是Long  或 Int
+ * @return 操作后的值
+ */
+long decrBy(String key, long decrValue);
+
+/**
+ * 设置过期时间
+ *
+ * @param key       key
+ * @param expireSec 过期时间(seconds)，0表示永不过期
+ */
+void expire(String key, int expireSec);
+
+void flushdb();
+----
+
+[source,java]
+.Cache示例
+----
+Dew.cluster.cache.flushdb();
+Dew.cluster.cache.del("n_test");
+assert !Dew.cluster.cache.exists("n_test");
+Dew.cluster.cache.set("n_test", "{\"name\":\"jzy\"}", 1);
+assert Dew.cluster.cache.exists("n_test");
+assert "jzy".equals($.json.toJson(Dew.cluster.cache.get("n_test")).get("name").asText());
+Thread.sleep(1000);
+assert !Dew.cluster.cache.exists("n_test");
+assert null == Dew.cluster.cache.get("n_test");
+----
+
+===== 分布式锁
+
+[source,java]
+.MQ服务: `Dew.cluster.dist.lock`
+----
+/**
+ * 加锁，加锁成功后执行对应的函数，执行完成自动解锁
+ * <p>
+ * 推荐使用 {@link #tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun)}
+ *
+ * @param fun 加锁成功后执行的函数
+ */
+void lockWithFun(VoidProcessFun fun) throws Exception;
+
+/**
+ * 尝试加锁，加锁成功后执行对应的函数，执行完成自动解锁
+ * <p>
+ * 推荐使用 {@link #tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun)}
+ *
+ * @param fun 加锁成功后执行的函数
+ */
+void tryLockWithFun(VoidProcessFun fun) throws Exception;
+
+/**
+ * 尝试加锁，加锁成功后执行对应的函数，执行完成自动解锁
+ * <p>
+ * 推荐使用 {@link #tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun)}
+ *
+ * @param fun 加锁成功后执行的函数
+ */
+void tryLockWithFun(long waitMillSec, VoidProcessFun fun) throws Exception;
+
+/**
+ * 尝试加锁，加锁成功后执行对应的函数，执行完成自动解锁
+ *
+ * @param waitMillSec  等待毫秒数
+ * @param leaseMillSec 锁释放毫秒数
+ * @param fun          加锁成功后执行的函数
+ */
+void tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun) throws Exception;
+
+/**
+ * 加锁
+ * <p>
+ * 推荐使用 {@link #tryLock(long waitMillSec, long leaseMillSec)}
+ */
+void lock();
+
+/**
+ * 尝试加锁
+ * <p>
+ * 推荐使用 {@link #tryLock(long waitMillSec, long leaseMillSec)}
+ */
+boolean tryLock();
+
+/**
+ * 尝试加锁
+ * <p>
+ * 推荐使用 {@link #tryLock(long waitMillSec, long leaseMillSec)}
+ *
+ * @param waitMillSec 等待毫秒数
+ */
+boolean tryLock(long waitMillSec) throws InterruptedException;
+
+/**
+ * 尝试加锁
+ *
+ * @param waitMillSec  等待毫秒数
+ * @param leaseMillSec 锁释放毫秒数
+ */
+boolean tryLock(long waitMillSec, long leaseMillSec) throws InterruptedException;
+
+/**
+ * 解锁操作，只有加锁的实例及线程才能解锁
+ */
+boolean unLock();
+
+/**
+ * 强制解锁，不用匹配加锁的实例与线程
+ * <p>
+ * 谨慎使用
+ */
+void delete();
+----
+
+[source,java]
+.Lock示例
+----
+// dist lock
+ClusterDistLock lock = Dew.cluster.dist.lock("test_lock");
+// tryLock 示例，等待0ms，忘了手工unLock或出异常时1s后自动解锁
+if (lock.tryLock(0, 1000)) {
+    try {
+        // 已加锁，执行业务方法
+    } finally {
+        // 必须手工解锁
+        lock.unLock();
+    }
+}
+// tryLockWithFun 示例
+lock.tryLockWithFun(0, 1000, () -> {
+    // 已加锁，执行业务方法，tryLockWithFun会将业务方法包裹在try-cache中，无需手工解锁
+});
+----
+
+===== 分布式Map
+
+[source,java]
+.MQ服务: `Dew.cluster.dist.map`
+----
+/**
+ * 添加Item，同步实现
+ *
+ * @param key   key
+ * @param value value
+ */
+void put(String key, M value);
+
+/**
+ * 添加Item，异步实现
+ *
+ * @param key   key
+ * @param value value
+ */
+void putAsync(String key, M value);
+
+/**
+ * 添加不存在的Item，同步实现
+ *
+ * @param key   key
+ * @param value value
+ */
+void putIfAbsent(String key, M value);
+
+/**
+ * 指定Key是否存在
+ *
+ * @param key key
+ * @return 是否存在
+ */
+boolean containsKey(String key);
+
+/**
+ * 获取所有Item
+ *
+ * @return 所有Item
+ */
+Map<String, M> getAll();
+
+/**
+ * 获取指定key的value
+ *
+ * @param key key
+ * @return 对应的value
+ */
+M get(String key);
+
+/**
+ * 删除指定key的Item，同步实现
+ *
+ * @param key key
+ */
+void remove(String key);
+
+/**
+ * 删除指定key的Item，异步实现
+ *
+ * @param key key
+ */
+void removeAsync(String key);
+
+/**
+ * 清空Map
+ */
+void clear();
+
+/**
+ * 注册新增Item时要执行的函数
+ * <p>
+ * 目前只支持Hazelcast实现
+ *
+ * @param fun 执行的函数
+ */
+ClusterDistMap<M> regEntryAddedEvent(Consumer<EntryEvent<M>> fun);
+
+/**
+ * 注册删除Item时要执行的函数
+ * <p>
+ * 目前只支持Hazelcast实现
+ *
+ * @param fun 执行的函数
+ */
+ClusterDistMap<M> regEntryRemovedEvent(Consumer<EntryEvent<M>> fun);
+
+/**
+ * 注册更新Item时要执行的函数
+ * <p>
+ * 目前只支持Hazelcast实现
+ *
+ * @param fun 执行的函数
+ */
+ClusterDistMap<M> regEntryUpdatedEvent(Consumer<EntryEvent<M>> fun);
+
+/**
+ * 注册清空Map时要执行的函数
+ * <p>
+ * 目前只支持Hazelcast实现
+ *
+ * @param fun 执行的函数
+ */
+ClusterDistMap<M> regMapClearedEvent(VoidProcessFun fun);
+----
+
+[source,java]
+.Map示例
+----
+ClusterDistMap<TestMapObj> mapObj = Dew.cluster.dist.map("test_obj_map", TestMapObj.class);
+mapObj.clear();
+TestMapObj obj = new TestMapObj();
+obj.a = "测试";
+mapObj.put("test", obj);
+assert "测试".equals(mapObj.get("test").a);
+----
+
+===== MQ
+
+[source,java]
+.MQ服务: `Dew.cluster.mq`
+----
+/**
+ * MQ 发布订阅模式 之 发布
+ *
+ * 请确保发布之前 topic 已经存在
+ *
+ * @param topic   主题
+ * @param message 消息内容
+ * @return 是否发布成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
+ */
+boolean publish(String topic, String message);
+
+/**
+ * MQ 发布订阅模式 之 订阅
+ *
+ * 非阻塞方式
+ *
+ * @param topic    主题
+ * @param consumer 订阅处理方法
+ */
+void subscribe(String topic, Consumer<String> consumer);
+
+/**
+ * MQ 请求响应模式 之 请求
+ *
+ * @param address 请求地址
+ * @param message 消息内容
+ * @return 是否请求成功
+ */
+boolean request(String address, String message);
+
+/**
+ * MQ 请求响应模式 之 响应
+ *
+ * 非阻塞方式
+ *
+ * @param address  请求对应的地址
+ * @param consumer 响应处理方法
+ */
+void response(String address, Consumer<String> consumer);
+----
+
+
+[source,java]
+.MQ示例
+----
+// pub-sub
+Dew.cluster.mq.subscribe("test_pub_sub", message ->
+        logger.info("pub_sub>>" + message));
+Thread.sleep(1000);
+Dew.cluster.mq.publish("test_pub_sub", "msgA");
+Dew.cluster.mq.publish("test_pub_sub", "msgB");
+// req-resp
+Dew.cluster.mq.response("test_rep_resp", message ->
+        logger.info("req_resp>>" + message));
+Dew.cluster.mq.request("test_rep_resp", "msg1");
+Dew.cluster.mq.request("test_rep_resp", "msg2");
+// rabbit confirm
+if (Dew.cluster.mq instanceof RabbitClusterMQ) {
+    boolean success = ((RabbitClusterMQ) Dew.cluster.mq).publish("test_pub_sub", "confirm message", true);
+    success = ((RabbitClusterMQ) Dew.cluster.mq).request("test_rep_resp", "confirm message", true);
+}
+----
+
+IMPORTANT: 发布订阅模式时，发布前 `topic` 必须已经存在，可先使用 `subscribe` 订阅，此操作会自动创建 `topic` 。
+
+TIP: `rabbit` 实现支持单条 `confirm` 模式。
+
+===== Leader Election
+
+[source,java]
+.MQ服务: `Dew.cluster.election`
+----
+/**
+ * 执行（重新）选举
+ *
+ * 需调用方定时调用此接口
+ *
+ * @throws Exception
+ */
+void election() throws Exception;
+
+/**
+ * 退出选举，暂未实现
+ * @throws Exception
+ */
+void quit() throws Exception;
+
+/**
+ * 当前工程是否是领导者
+ * @return 是否是领导者
+ */
+boolean isLeader();
+----
+
+[IMPORTANT]
+.SPI选型
+====
+. Redis: 多用于Cache，可做为轻量MQ，可用于要求不高的Lock(Redis锁存在不安全隐患)及Map
+. Hazelcast: 对Lock及Map支持得很好，可做为轻量MQ
+. Rabbit: 仅做MQ用，支持持久化，支持仅在收到消息并且处理完成后才Acknowledge
+====
+
+[NOTE]
+.Rabbit Confirm模式支持
+====
+((RabbitClusterMQ)Dew.cluster.mq).publish(String topic, String message, boolean confirm) +
+((RabbitClusterMQ)Dew.cluster.mq).request(String address, String message, boolean confirm)
+====
+
+=== 增强
+
+==== 服务脚手架
+
+----
+此章节关联示例:guide-petstore
+----
+
+一般的，我们对实体对象的操作可以有 `增C删D改U查R` 外加`状态变更S`，`服务脚手架`从`DAO`到`Service`再到`Controller`实现了上述操作。
+
+* CRUController: 支持增改查操作
+* CRUDController: 支持增删改查操作
+* CRUSController: 支持增改查状态变更操作
+* CRUDSController: 支持增删改查状态变更操作
+* CRUVOController: 支持增改查操作（带VO-Entity转换）
+* CRUSVOController: 支持增删改查操作（带VO-Entity转换）
+* CRUDVOController: 支持增改查状态变更操作（带VO-Entity转换）
+* CRUDSVOController: 支持增删改查状态变更操作（带VO-Entity转换）
+* CRUService: 支持增改查操作
+* CRUDService: 支持增删改查操作
+* CRUSService: 支持增改查状态变更操作
+* CRUDSService: 支持增删改查状态变更操作
+* DewDao: 支持增删改查状态变更操作
+
+TIP: 详见API文档。
+
+TIP: 脚本架方法不带缓存，如需要缓存请在子类复写对应的方法。
+
+IMPORTANT: 目前服务脚手架需与 `Dew JDBC` 配合使用，后期会适配其它持久化框架。
+
+==== 权限认证
+
+----
+此章节关联示例:auth-example
+----
+
+[quote,]
+____
+Dew 内核不支持鉴权处理（Auth组件功能），但它支持`认证缓存`，即支持将鉴权系统生成的登录信息缓存到业务系统中方便即时调用。
+____
+
+[source,yml]
+.配置认证缓存
+----
+dew:
+    security:
+        token-flag: # token key的名称
+        token-in-header: # token key是否在http header中，为false是会从url query中获取
+        token-hash: # token 值是否做hash（MD5）处理
+----
+
+IMPORTANT: 认证缓存需要 `集群缓存` 服务支持，请引入相关的依赖并配置对应的连接信息等。
+
+[source,java]
+.认证缓存接口
+----
+// 添加登录信息，optInfo封装自鉴权系统过来的登录信息
+// 一般在登录认证后操作
+Dew.Auth.setOptInfo(OptInfo optInfo);
+// 获取登录信息，要求在http请求加上token信息
+Dew.context().optInfo();
+// 删除登录信息
+// 一般在注销登录后操作
+Dew.Auth.removeOptInfo();
+
+// 登录信息
+public class OptInfo {
+    // Token
+    String token;
+    // 账号编码
+    String accountCode;
+    // 手机号
+    String mobile;
+    // 邮箱
+    String email;
+    // 姓名
+    String name;
+    // 角色列表
+    List<RoleInfo> roles;
+    // 最后一次登录时间
+    Date lastLoginTime;
+    // 角色信息
+    public static class RoleInfo {
+        // 角色编码
+        String code;
+        // 角色显示名称
+        String name;
+        // 租户编码
+        String tenantCode;
+    }
+}
+----
+
+TIP: `OptInfo` 为认证缓存信息的基类，使用时可以继承并扩展自己的属性。
+
+IMPORTANT: 使用 `OptInfo` 扩展类型时需要在工程启动时指定扩展类： `DewContext.setOptInfoClazz(<扩展类型>)` 。
+
+[source,java]
+.认证缓存示例
+----
+/**
+ * 模拟用户注册
+ */
+@PostMapping(value = "user/register")
+public Resp<Void> register(@RequestBody User user) {
+    // 实际注册处理
+    user.setId($.field.createUUID());
+    MOCK_USER_CONTAINER.put(user.getId(), user);
+    return Resp.success(null);
+}
+
+/**
+ * 模拟用户登录
+ */
+@PostMapping(value = "auth/login")
+public Resp<String> login(@RequestBody LoginDTO loginDTO) {
+    // 实际登录处理
+    User user = MOCK_USER_CONTAINER.values().stream().filter(u -> u.getIdCard().equals(loginDTO.getIdCard())).findFirst().get();
+    String token = $.field.createUUID();
+    Dew.Auth.setOptInfo(new OptInfoExt()
+            .setIdCard(user.getIdCard())
+            .setAccountCode($.field.createShortUUID())
+            .setToken(token)
+            .setName(user.getName())
+            .setMobile(user.getPhone()));
+    return Resp.success(token);
+}
+
+/**
+ * 模拟业务操作
+ */
+@GetMapping(value = "business/someopt")
+public Resp<Void> someOpt() {
+    // 获取登录用户信息
+    Optional<OptInfoExt> optInfoExtOpt = Dew.Auth.getOptInfo();
+    if (!optInfoExtOpt.isPresent()) {
+        return Resp.unAuthorized("用户认证错误");
+    }
+    // 登录用户的信息
+    optInfoExtOpt.get();
+    return Resp.success(null);
+}
+
+/**
+ * 模拟用户注销
+ */
+@DeleteMapping(value = "auth/logout")
+public Resp<Void> logout() {
+    // 实际注册处理
+    Dew.Auth.removeOptInfo();
+    return Resp.success(null);
+}
+----
+
+==== 追踪日志
+
+`Dew` 集成了可追踪日志的功能，本质上一个 `slf4j` 的装饰器，会在每条日志内容前面打印 `用户账号 #` 。
+
+[source,java]
+.使用方式
+----
+Logger logger = DewLogger.getLogger(<当前的class>);
+logger.info/debug/trace/error...
+----
+
+NOTE: 此功能要求使用 `Threadlocal` 与请求接收同一线程有效，不同线程需要把 `DewContext` 传入到新线程并执行执行 `DewContext.setContext(context)` 。
+
+==== Dubbo兼容
+
+----
+此章节关联示例:dubbo-example
+----
+
+[source,xml]
+.引入依赖
+----
+<dependency>
+    <groupId>io.dubbo.springboot</groupId>
+    <artifactId>spring-boot-starter-dubbo</artifactId>
+    <version>1.0.0</version>
+    <exclusions>
+        <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </exclusion>
+        <exclusion>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+----
+
+* 配置与使用
+
+Dubbo官方发行版本无法处理存在声明式事务的服务，简单的解决方案是：
+
+[source,java]
+.添加com.alibaba.dubbo.config.annotation.Service到工程
+----
+package com.alibaba.dubbo.config.annotation;
+
+import java.lang.annotation.*;
+
+/**
+ * 添加@Inherited，修正带声明式事务的服务提供问题
+ */
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+@Inherited
+public @interface Service {
+
+    Class<?> interfaceClass() default void.class;
+
+    String interfaceName() default "";
+
+    String version() default "";
+
+    String group() default "";
+
+    String path() default "";
+
+    boolean export() default false;
+
+    String token() default "";
+
+    boolean deprecated() default false;
+
+    boolean dynamic() default false;
+
+    String accesslog() default "";
+
+    int executes() default 0;
+
+    boolean register() default false;
+
+    int weight() default 0;
+
+    String document() default "";
+
+    int delay() default 0;
+
+    String local() default "";
+
+    String stub() default "";
+
+    String cluster() default "";
+
+    String proxy() default "";
+
+    int connections() default 0;
+
+    int callbacks() default 0;
+
+    String onconnect() default "";
+
+    String ondisconnect() default "";
+
+    String owner() default "";
+
+    String layer() default "";
+
+    int retries() default 0;
+
+    String loadbalance() default "";
+
+    boolean async() default false;
+
+    int actives() default 0;
+
+    boolean sent() default false;
+
+    String mock() default "";
+
+    String validation() default "";
+
+    int timeout() default 0;
+
+    String cache() default "";
+
+    String[] filter() default {};
+
+    String[] listener() default {};
+
+    String[] parameters() default {};
+
+    String application() default "";
+
+    String module() default "";
+
+    String provider() default "";
+
+    String[] protocol() default {};
+
+    String monitor() default "";
+
+    String[] registry() default {};
+}
+----
+
+[source,java]
+.在带声明式事务的类显示声明 `interfaceName`
+----
+@Service(version = "",interfaceName = "")
+----
+
+=== 工程化
+
+==== 代码质量检查
+
+Dew 已集成 `Sonar` 插件，只需要在maven中配置 `sonar.host.url` 为目标地址，然后执行 `mvn clean verify sonar:sonar -P qa` 即可。
+
+TIP: 如提供没有权限访问，请设置 `sonar.forceAuthentication=false` 。
+
+TIP: 使用 `<maven.test.skip>true</maven.test.skip>` 可跳过特定模块的测试，`<sonar.skip>true</sonar.skip>` 可跳过特定模块的Sonar检查。
+
+==== 测试支持
+
+良好的单元测试可以保证代码的高质量，单测的重要原则是内聚、无依赖，好的单测应该是"函数化"的——结果的变化只与传入参数有关。
+但实际上我们会的代码往往会与数据库、缓存、MQ等外部工具交互，这会使单测的结果不可控，通常的解决方案是使用Mock，但这无行中引入了单测撰写的成本，
+Dew使用"内嵌式"工具解决，数据库使用 `H2` ，Redis使用 `embedded redis` ，由于 `Dew` 集群的 `Cache` `Map` `Lock` `MQ` 都支持 `Redis` 实现，所以可以做到对主流操作的全覆盖。
+
+[source,xml]
+.配置示例
+----
+# maven
+<dependency>
+    <groupId>com.ecfront.dew</groupId>
+    <artifactId>test-starter</artifactId>
+</dependency>
+
+# config
+dew:
+  cluster: #所有集群操作都使用reids模拟
+    cache: redis
+    dist: redis
+    mq: redis
+
+spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+----
+
+

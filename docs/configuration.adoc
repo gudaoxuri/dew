@@ -1,0 +1,61 @@
+== 配置速查
+
+=== `Dew` 参数
+
+[source,yml]
+----
+dew: # Dew 参数key前缀
+    basic: # 基础信息
+        name: # 服务名称，用于API文档显示等
+        version: # 服务版本号，用于API文档显示等
+        desc: # 服务描述，用于API文档显示等
+        webSite: # 官网，用于API文档显示等
+        doc:
+            base-package: # API文档要扫描的根包，多指定到 Controller 包中
+        format:
+        reuse-http-state: # true:重用http状态码，false:使用协议无关格式，默认true
+        error-mapping: # 自定义错误映射
+            "[<异常类名>]":
+                http-code: # http状态码，不存在时使用实例级http状态码
+                business-code: # 业务编码，不存在时使用实例级业务编码
+                message: # 错误描述，不存在时使用实例级错误描述
+    cluster: # 集群功能
+        cache: # 缓存实现，默认为 redis
+        dist: # 分布式锁和Map实现，默认为 redis，可选 redis/hazelcast
+        mq: # MQ实现，默认为 redis，可选 redis/hazelcast/rabbit
+        election: # 领导者选举实现，默认为 eureka
+    jdbc: # DewJDBC功能
+        base-packages:[""] # 要扫描的根包，多指定到 jdbc 包中
+    security: # 安全功能
+        cors:
+            allow-origin: # 允许的来源，默认为 * ，建议修改
+            allow-methods: # 允许的方法，默认为所有常用方法
+            allow-headers: # 允许的头信息，默认为 x-requested-with,content-type
+        token-flag: # token 标识，默认为  __dew_token__
+        token-in-header: # true：token标识在 header 中，反之在url参数中，默认为false
+        token-hash: # token值是否需要hash，用于解决token值有特殊字符的情况，默认为false
+        include-services: [""] # 服务白名单，要求源服务头部带上 Request-From
+        exclude-services: [""] # 服务黑名单，要求源服务头部带上 Request-From
+
+spring:
+  datasource: # 主数据源配置
+    ... # 数据源配置，详见 Spring boot 核心参数
+    druid: # druid 连接池配置，详见 Spring boot 核心参数
+  multi-datasources: # DewJDBC 多数据源支撑
+    <other ds name>: # 数据源标识
+----
+
+=== `Spring boot` 核心参数
+
+TIP: https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+
+
+=== `Druid` 连接池参数
+
+TIP: https://github.com/alibaba/druid/wiki/DruidDataSource配置属性列表
+
+=== `Spring cloud` 核心参数
+
+TIP: http://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/1.3.4.RELEASE/
+
+

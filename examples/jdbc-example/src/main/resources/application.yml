@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: jdbc-example
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+  multi-datasources:
+    other:
+      driver-class-name: org.h2.Driver
+      url: jdbc:h2:mem:test_other
+      initial-size: 1
+      max-active: 1
+
+
+dew:
+  jdbc:
+    base-packages: ["com.ecfront.dew.example.jdbc.jdbc"]
+
+logging:
+  path: ./logs

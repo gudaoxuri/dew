@@ -5,24 +5,42 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @ConfigurationProperties(prefix = "dew")
 public class DewConfig {
 
-    private DewBasic basic = new DewBasic();
-    private DewCluster cluster = new DewCluster();
-    private DewSecurity security = new DewSecurity();
+    private Basic basic = new Basic();
+    private Cluster cluster = new Cluster();
+    private Security security = new Security();
+    private jdbc jdbc = new jdbc();
 
-    public static class DewBasic {
+    public static class jdbc {
+
+        private List<String> basePackages = new ArrayList<>();
+
+        public List<String> getBasePackages() {
+            return basePackages;
+        }
+
+        public void setBasePackages(List<String> basePackages) {
+            this.basePackages = basePackages;
+        }
+    }
+
+    public static class Basic {
 
         private String name = "";
         private String version = "1.0";
         private String desc = "";
         private String webSite = "";
-        private DewDoc doc = new DewDoc();
-        private DewEntity entity = new DewEntity();
+
+        private Doc doc = new Doc();
+        private Format format = new Format();
+        private Map<String, ErrorMapping> errorMapping = new HashMap<>();
 
         public String getName() {
             return name;
@@ -56,7 +74,7 @@ public class DewConfig {
             this.webSite = webSite;
         }
 
-        public static class DewDoc {
+        public static class Doc {
 
             private String basePackage = "";
 
@@ -69,44 +87,82 @@ public class DewConfig {
             }
         }
 
-        public static class DewEntity {
+        public static class Format {
 
-            private List<String> basePackages = new ArrayList<String>() {{
-                add("com.ecfront.dew");
-            }};
+            private boolean reuseHttpState = false;
 
-            public List<String> getBasePackages() {
-                return basePackages;
+            public boolean isReuseHttpState() {
+                return reuseHttpState;
             }
 
-            public void setBasePackages(List<String> basePackages) {
-                this.basePackages = basePackages;
+            public void setReuseHttpState(boolean reuseHttpState) {
+                this.reuseHttpState = reuseHttpState;
+            }
+
+        }
+
+        public static class ErrorMapping {
+
+            private int httpCode;
+            private String businessCode;
+            private String message;
+
+            public int getHttpCode() {
+                return httpCode;
+            }
+
+            public void setHttpCode(int httpCode) {
+                this.httpCode = httpCode;
+            }
+
+            public String getBusinessCode() {
+                return businessCode;
+            }
+
+            public void setBusinessCode(String businessCode) {
+                this.businessCode = businessCode;
+            }
+
+            public String getMessage() {
+                return message;
+            }
+
+            public void setMessage(String message) {
+                this.message = message;
             }
         }
 
-        public DewDoc getDoc() {
+        public Doc getDoc() {
             return doc;
         }
 
-        public void setDoc(DewDoc doc) {
+        public void setDoc(Doc doc) {
             this.doc = doc;
         }
 
-        public DewEntity getEntity() {
-            return entity;
+        public Format getFormat() {
+            return format;
         }
 
-        public void setEntity(DewEntity entity) {
-            this.entity = entity;
+        public void setFormat(Format format) {
+            this.format = format;
         }
 
+        public Map<String, ErrorMapping> getErrorMapping() {
+            return errorMapping;
+        }
+
+        public void setErrorMapping(Map<String, ErrorMapping> errorMapping) {
+            this.errorMapping = errorMapping;
+        }
     }
 
-    public static class DewCluster {
+    public static class Cluster {
 
         private String mq = "redis";
         private String cache = "redis";
         private String dist = "redis";
+        private String election = "eureka";
 
         public String getMq() {
             return mq;
@@ -131,11 +187,19 @@ public class DewConfig {
         public void setDist(String dist) {
             this.dist = dist;
         }
+
+        public String getElection() {
+            return election;
+        }
+
+        public void setElection(String election) {
+            this.election = election;
+        }
     }
 
-    public static class DewSecurity {
+    public static class Security {
 
-        private DewSecurityCORS cors = new DewSecurityCORS();
+        private SecurityCORS cors = new SecurityCORS();
 
         private String tokenFlag = "__dew_token__";
 
@@ -143,11 +207,30 @@ public class DewConfig {
 
         private boolean tokenHash = false;
 
-        public DewSecurityCORS getCors() {
+        private List<String> includeServices;
+        private List<String> excludeServices;
+
+        public List<String> getIncludeServices() {
+            return includeServices;
+        }
+
+        public void setIncludeServices(List<String> includeServices) {
+            this.includeServices = includeServices;
+        }
+
+        public List<String> getExcludeServices() {
+            return excludeServices;
+        }
+
+        public void setExcludeServices(List<String> excludeServices) {
+            this.excludeServices = excludeServices;
+        }
+
+        public SecurityCORS getCors() {
             return cors;
         }
 
-        public void setCors(DewSecurityCORS cors) {
+        public void setCors(SecurityCORS cors) {
             this.cors = cors;
         }
 
@@ -176,7 +259,7 @@ public class DewConfig {
         }
     }
 
-    public static class DewSecurityCORS {
+    public static class SecurityCORS {
 
         private String allowOrigin = "*";
         private String allowMethods = "POST,GET,OPTIONS,PUT,DELETE,HEAD";
@@ -207,28 +290,36 @@ public class DewConfig {
         }
     }
 
-    public DewBasic getBasic() {
+    public Basic getBasic() {
         return basic;
     }
 
 
-    public void setBasic(DewBasic basic) {
+    public void setBasic(Basic basic) {
         this.basic = basic;
     }
 
-    public DewCluster getCluster() {
+    public Cluster getCluster() {
         return cluster;
     }
 
-    public void setCluster(DewCluster cluster) {
+    public void setCluster(Cluster cluster) {
         this.cluster = cluster;
     }
 
-    public DewSecurity getSecurity() {
+    public Security getSecurity() {
         return security;
     }
 
-    public void setSecurity(DewSecurity security) {
+    public void setSecurity(Security security) {
         this.security = security;
+    }
+
+    public jdbc getJdbc() {
+        return jdbc;
+    }
+
+    public void setJdbc(jdbc jdbc) {
+        this.jdbc = jdbc;
     }
 }

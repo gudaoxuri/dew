@@ -1,95 +1,95 @@
 package com.ecfront.dew.core.service;
 
+import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Page;
 import com.ecfront.dew.common.Resp;
-import com.ecfront.dew.core.entity.IdEntity;
-import com.ecfront.dew.core.repository.DewRepository;
-import org.springframework.data.domain.Sort;
+import com.ecfront.dew.core.jdbc.DewDao;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
-public interface CRUSService<T extends DewRepository<E>, E extends IdEntity> extends CRUService<T, E> {
+public interface CRUSService<T extends DewDao<P, E>, P, E> extends CRUService<T, P, E> {
 
-    default Resp<Optional<Object>> preEnableById(long id) throws RuntimeException {
+    default Resp<Optional<Object>> preEnableById(P id){
         return Resp.success(Optional.empty());
     }
 
-    default Resp<Optional<Object>> preEnableByCode(String code) throws RuntimeException {
+    default Resp<Optional<Object>> preEnableByCode(String code){
         return Resp.success(Optional.empty());
     }
 
-    default void postEnableById(long id, Optional<Object> preBody) throws RuntimeException {
+    default void postEnableById(P id, Optional<Object> preBody){
     }
 
-    default void postEnableByCode(String code, Optional<Object> preBody) throws RuntimeException {
+    default void postEnableByCode(String code, Optional<Object> preBody){
     }
 
-    default Resp<Optional<Object>> preDisableById(long id) throws RuntimeException {
+    default Resp<Optional<Object>> preDisableById(P id){
         return Resp.success(Optional.empty());
     }
 
-    default void postDisableById(long id, Optional<Object> preBody) throws RuntimeException {
+    default void postDisableById(P id, Optional<Object> preBody){
     }
 
-    default Resp<Optional<Object>> preDisableByCode(String code) throws RuntimeException {
+    default Resp<Optional<Object>> preDisableByCode(String code){
         return Resp.success(Optional.empty());
     }
 
-    default void postDisableByCode(String code, Optional<Object> preBody) throws RuntimeException {
+    default void postDisableByCode(String code, Optional<Object> preBody){
     }
 
-    default Resp<List<E>> findEnable() throws RuntimeException {
+    default Resp<List<E>> findEnabled(){
         logger.debug("[{}] FindEnable.", getModelClazz().getSimpleName());
         Resp<Optional<Object>> preResult = preFind();
         if (preResult.ok()) {
-            return Resp.success(postFind(getDewRepository().findEnable(), preResult.getBody()));
+            return Resp.success(postFind(getDao().findEnabled(), preResult.getBody()));
         }
         return Resp.customFail(preResult.getCode(), preResult.getMessage());
     }
 
-    default Resp<List<E>> findDisable() throws RuntimeException {
+    default Resp<List<E>> findDisabled(){
         logger.debug("[{}] FindDisable.", getModelClazz().getSimpleName());
         Resp<Optional<Object>> preResult = preFind();
         if (preResult.ok()) {
-            return Resp.success(postFind(getDewRepository().findDisable(), preResult.getBody()));
+            return Resp.success(postFind(getDao().findDisabled(), preResult.getBody()));
         }
         return Resp.customFail(preResult.getCode(), preResult.getMessage());
     }
 
-    default Resp<Page<E>> pagingEnable(int pageNumber, int pageSize) throws RuntimeException {
-        return pagingEnable(pageNumber, pageSize, null);
+    default Resp<Page<E>> pagingEnabled(long pageNumber, int pageSize){
+        return pagingEnabled(pageNumber, pageSize, null);
     }
 
-    default Resp<Page<E>> pagingEnable(int pageNumber, int pageSize, Sort sort) throws RuntimeException {
-        logger.debug("[{}] PagingEnable {} {} {}.", getModelClazz().getSimpleName(), pageNumber, pageSize, sort != null ? sort.toString() : "");
+    default Resp<Page<E>> pagingEnabled(long pageNumber, int pageSize, LinkedHashMap<String, Boolean> orderDesc){
+        logger.debug("[{}] PagingEnable {} {} {}.", getModelClazz().getSimpleName(), pageNumber, pageSize, orderDesc != null ? $.json.toJsonString(orderDesc) : "");
         Resp<Optional<Object>> preResult = prePaging();
         if (preResult.ok()) {
-            return Resp.success(postPaging(getDewRepository().pagingEnable(pageNumber, pageSize, sort), preResult.getBody()));
+            return Resp.success(postPaging(getDao().pagingEnabled(pageNumber, pageSize, orderDesc), preResult.getBody()));
         }
         return Resp.customFail(preResult.getCode(), preResult.getMessage());
     }
 
-    default Resp<Page<E>> pagingDisable(int pageNumber, int pageSize) throws RuntimeException {
-        return pagingDisable(pageNumber, pageSize, null);
+    default Resp<Page<E>> pagingDisabled(long pageNumber, int pageSize){
+        return pagingDisabled(pageNumber, pageSize, null);
     }
 
-    default Resp<Page<E>> pagingDisable(int pageNumber, int pageSize, Sort sort) throws RuntimeException {
-        logger.debug("[{}] PagingDisable {} {} {}.", getModelClazz().getSimpleName(), pageNumber, pageSize, sort != null ? sort.toString() : "");
+    default Resp<Page<E>> pagingDisabled(long pageNumber, int pageSize, LinkedHashMap<String, Boolean> orderDesc){
+        logger.debug("[{}] PagingDisable {} {} {}.", getModelClazz().getSimpleName(), pageNumber, pageSize, orderDesc != null ? $.json.toJsonString(orderDesc) : "");
         Resp<Optional<Object>> preResult = prePaging();
         if (preResult.ok()) {
-            return Resp.success(postPaging(getDewRepository().pagingDisable(pageNumber, pageSize, sort), preResult.getBody()));
+            return Resp.success(postPaging(getDao().pagingDisabled(pageNumber, pageSize, orderDesc), preResult.getBody()));
         }
         return Resp.customFail(preResult.getCode(), preResult.getMessage());
     }
 
     @Transactional
-    default Resp<Void> enableById(long id) throws RuntimeException {
+    default Resp<Void> enableById(P id){
         logger.debug("[{}] EnableById:{}.", getModelClazz().getSimpleName(), id);
         Resp<Optional<Object>> preResult = preEnableById(id);
         if (preResult.ok()) {
-            getDewRepository().enableById(id);
+            getDao().enableById(id);
             postEnableById(id, preResult.getBody());
             return Resp.success(null);
         }
@@ -97,11 +97,11 @@ public interface CRUSService<T extends DewRepository<E>, E extends IdEntity> ext
     }
 
     @Transactional
-    default Resp<Void> enableByCode(String code) throws RuntimeException {
+    default Resp<Void> enableByCode(String code){
         logger.debug("[{}] EnableByCode:{}.", getModelClazz().getSimpleName(), code);
         Resp<Optional<Object>> preResult = preEnableByCode(code);
         if (preResult.ok()) {
-            getDewRepository().enableByCode(code);
+            getDao().enableByCode(code);
             postEnableByCode(code, preResult.getBody());
             return Resp.success(null);
         }
@@ -109,11 +109,11 @@ public interface CRUSService<T extends DewRepository<E>, E extends IdEntity> ext
     }
 
     @Transactional
-    default Resp<Void> disableById(long id) throws RuntimeException {
+    default Resp<Void> disableById(P id){
         logger.debug("[{}] DisableById:{}.", getModelClazz().getSimpleName(), id);
         Resp<Optional<Object>> preResult = preDisableById(id);
         if (preResult.ok()) {
-            getDewRepository().disableById(id);
+            getDao().disableById(id);
             postDisableById(id, preResult.getBody());
             return Resp.success(null);
         }
@@ -121,11 +121,11 @@ public interface CRUSService<T extends DewRepository<E>, E extends IdEntity> ext
     }
 
     @Transactional
-    default Resp<Void> disableByCode(String code) throws RuntimeException {
+    default Resp<Void> disableByCode(String code){
         logger.debug("[{}] DisableByCode:{}.", getModelClazz().getSimpleName(), code);
         Resp<Optional<Object>> preResult = preDisableByCode(code);
         if (preResult.ok()) {
-            getDewRepository().disableByCode(code);
+            getDao().disableByCode(code);
             postDisableByCode(code, preResult.getBody());
             return Resp.success(null);
         }

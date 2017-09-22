@@ -1,12 +1,14 @@
 package com.ecfront.dew.core.cluster.spi.hazelcast;
 
+import com.ecfront.dew.core.cluster.ClusterDistMap;
 import com.ecfront.dew.core.cluster.ClusterDist;
 import com.ecfront.dew.core.cluster.ClusterDistLock;
-import com.ecfront.dew.core.cluster.ClusterDistMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 @Component
+@ConditionalOnBean(HazelcastAdapter.class)
 public class HazelcastClusterDist implements ClusterDist {
 
     @Autowired
