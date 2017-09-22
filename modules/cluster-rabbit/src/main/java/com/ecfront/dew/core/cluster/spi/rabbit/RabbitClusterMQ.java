@@ -34,7 +34,7 @@ public class RabbitClusterMQ implements ClusterMQ {
             if (confirm) {
                 channel.confirmSelect();
             }
-            channel.exchangeDeclare(topic, "fanout",true);
+            channel.exchangeDeclare(topic, "fanout");
             channel.basicPublish(topic, "", null, message.getBytes());
             if (confirm) {
                 try {
