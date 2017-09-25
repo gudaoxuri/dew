@@ -35,7 +35,8 @@ import java.util.ArrayList;
  * @link https://springfox.github.io/springfox/docs/snapshot/#customizing-the-swagger-endpoints
  */
 @Configuration
-@EnableSwagger2
+// @EnableSwagger2
+// FIXME
 @ConditionalOnClass(EnableSwagger2.class)
 @Profile({"default", "test", "dev"})
 public class DocProcessor {

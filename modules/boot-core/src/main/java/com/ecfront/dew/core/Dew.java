@@ -11,6 +11,7 @@ import com.ecfront.dew.core.fun.VoidPredicate;
 import com.ecfront.dew.core.jdbc.ClassPathScanner;
 import com.ecfront.dew.core.jdbc.DS;
 import com.ecfront.dew.core.jdbc.DSManager;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.boot.autoconfigure.cache.CacheType;
+import org.springframework.boot.autoconfigure.jackson.JacksonProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.http.HttpEntity;
@@ -52,6 +54,9 @@ public class Dew {
     @Autowired
     @Qualifier("dewConfig")
     private DewConfig innerDewConfig;
+
+    @Autowired
+    private JacksonProperties jacksonProperties;
 
     @Autowired
     private ApplicationContext innerApplicationContext;
@@ -97,6 +102,8 @@ public class Dew {
             scanner.registerFilters();
             scanner.scan(Dew.dewConfig.getJdbc().getBasePackages().toArray(new String[]{}));
         }
+        // Support java8 Time
+        jacksonProperties.getSerialization().put(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,false);
     }
 
     public static class Constant {

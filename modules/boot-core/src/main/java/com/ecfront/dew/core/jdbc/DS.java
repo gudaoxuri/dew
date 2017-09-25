@@ -20,13 +20,18 @@ import com.ecfront.dew.core.jdbc.dialect.Dialect;
 import com.ecfront.dew.core.jdbc.dialect.DialectFactory;
 import com.ecfront.dew.core.jdbc.dialect.DialectType;
 import com.ecfront.dew.core.jdbc.proxy.MethodConstruction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -34,6 +39,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class DS {
+
+    private static final Logger logger = LoggerFactory.getLogger(DS.class);
 
     private static final String FIELD_PLACE_HOLDER_REGEX = "\\#\\{\\s*\\w+\\s*\\}"; // 正则匹配 #{key}
     private static final Pattern FIELD_PLACE_HOLDER_PATTERN = Pattern.compile(FIELD_PLACE_HOLDER_REGEX);
@@ -553,20 +560,36 @@ public class DS {
             E entity = entityClazz.newInstance();
             if (entityClassInfo == null) {
                 for (Map.Entry<String, Object> entry : rs.entrySet()) {
-                    $.bean.setValue(entity, underlineToCamel(entry.getKey().toLowerCase()), entry.getValue());
+                    Object r = convertRsToObject(entry);
+                    $.bean.setValue(entity, underlineToCamel(entry.getKey().toLowerCase()), r);
                 }
             } else {
                 for (Map.Entry<String, Object> entry : rs.entrySet()) {
                     if (entityClassInfo.columnRel.containsKey(entry.getKey().toLowerCase())) {
-                        $.bean.setValue(entity, entityClassInfo.columnRel.get(entry.getKey().toLowerCase()), entry.getValue());
+                        Object r = convertRsToObject(entry);
+                        $.bean.setValue(entity, entityClassInfo.columnRel.get(entry.getKey().toLowerCase()), r);
                     }
                 }
             }
             return entity;
-        } catch (InstantiationException | IllegalAccessException | NoSuchFieldException e) {
-            Dew.E.e(StandardCode.INTERNAL_SERVER_ERROR.toString(), e);
+        } catch (InstantiationException | IllegalAccessException | NoSuchFieldException | IllegalArgumentException e) {
+            logger.error("Convert ResultSet to Object error", e);
             return null;
         }
+    }
+
+    private Object convertRsToObject(Map.Entry<String, Object> entry) {
+        Object r;
+        if (entry.getValue() instanceof Timestamp) {
+            r = ((Timestamp) entry.getValue()).toLocalDateTime();
+        } else if (entry.getValue() instanceof Date) {
+            r = ((Date) entry.getValue()).toLocalDate();
+        } else if (entry.getValue() instanceof Time) {
+            r = ((Time) entry.getValue()).toLocalTime();
+        } else {
+            r = entry.getValue();
+        }
+        return r;
     }
 
     public <E> List<E> selectForList(Class<E> entityClazz, Map<String, Object> params, String sql) {

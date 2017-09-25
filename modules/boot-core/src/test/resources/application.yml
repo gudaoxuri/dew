@@ -19,8 +19,10 @@ dew:
       token-hash: false
 #  security:
 #   includeServices: ["a-serv"]
-
 spring:
+  jackson:
+    serialization:
+      write_dates_as_timestamps: false
   cache:
     type: redis
   application:

@@ -3,6 +3,7 @@ package com.ecfront.dew.core.jdbc;
 import com.ecfront.dew.common.Page;
 import com.ecfront.dew.core.Container;
 import com.ecfront.dew.core.Dew;
+import com.ecfront.dew.core.entity.EntityContainer;
 import org.springframework.cglib.proxy.Proxy;
 
 import java.lang.reflect.ParameterizedType;
@@ -30,7 +31,7 @@ public interface DewDao<P,E> {
     }
     
     default DS getDS(){
-       return getDS();
+       return Dew.ds(ds());
     }
 
     default P insert(Object entity) {

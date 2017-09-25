@@ -1,8 +1,7 @@
 package com.ecfront.dew.core.test.dataaccess.select.dto;
 
 
-
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class ModelDTO {
 
@@ -18,9 +17,9 @@ public class ModelDTO {
 
     private String fieldC;
 
-    private Date createTime;
+    private LocalDateTime createTime;
 
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
     private String createUser;
 
@@ -44,19 +43,19 @@ public class ModelDTO {
         this.enabled = enabled;
     }
 
-    public Date getCreateTime() {
+    public LocalDateTime getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
     }
 
-    public Date getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
     }
 
