@@ -40,12 +40,12 @@ public interface DewDao<P, E> {
         getDS().insert(entities);
     }
 
-    default void updateById(P id, Object entity) {
-        getDS().updateById(id, entity);
+    default int updateById(P id, Object entity) {
+        return getDS().updateById(id, entity);
     }
 
-    default void updateByCode(String code, Object entity) {
-        getDS().updateByCode(code, entity);
+    default int updateByCode(String code, Object entity) {
+        return getDS().updateByCode(code, entity);
     }
 
     default E getById(P id) {
@@ -56,28 +56,44 @@ public interface DewDao<P, E> {
         return getDS().getByCode(code, getClazz());
     }
 
-    default void deleteById(P id) {
-        getDS().deleteById(id, getClazz());
+    default E get(DS.SB sqlBuilder) {
+        return getDS().get(sqlBuilder, getClazz());
     }
 
-    default void deleteByCode(String code) {
-        getDS().deleteByCode(code, getClazz());
+    default int deleteById(P id) {
+        return getDS().deleteById(id, getClazz());
     }
 
-    default void enableById(P id) {
-        getDS().enableById(id, getClazz());
+    default int deleteByCode(String code) {
+        return getDS().deleteByCode(code, getClazz());
     }
 
-    default void enableByCode(String code) {
-        getDS().enableByCode(code, getClazz());
+    default int delete(DS.SB sqlBuilder) {
+        return getDS().delete(sqlBuilder, getClazz());
     }
 
-    default void disableById(P id) {
-        getDS().disableById(id, getClazz());
+    default int enableById(P id) {
+        return getDS().enableById(id, getClazz());
     }
 
-    default void disableByCode(String code) {
-        getDS().disableByCode(code, getClazz());
+    default int enableByCode(String code) {
+        return getDS().enableByCode(code, getClazz());
+    }
+
+    default int enable(DS.SB sqlBuilder) {
+        return getDS().enable(sqlBuilder, getClazz());
+    }
+
+    default int disableById(P id) {
+        return getDS().disableById(id, getClazz());
+    }
+
+    default int disableByCode(String code) {
+        return getDS().disableByCode(code, getClazz());
+    }
+
+    default int disable(DS.SB sqlBuilder) {
+        return getDS().disable(sqlBuilder, getClazz());
     }
 
     default boolean existById(P id) {
@@ -86,6 +102,10 @@ public interface DewDao<P, E> {
 
     default boolean existByCode(String code) {
         return getDS().existByCode(code, getClazz());
+    }
+
+    default boolean exist(DS.SB sqlBuilder) {
+        return getDS().exist(sqlBuilder, getClazz());
     }
 
     default List<E> findAll() {
@@ -100,6 +120,14 @@ public interface DewDao<P, E> {
         return getDS().findDisabled(getClazz());
     }
 
+    default List<E> find(DS.SB sqlBuilder) {
+        return getDS().find(sqlBuilder, getClazz());
+    }
+
+    default List<E> find(String sql, Object[] params) {
+        return getDS().find(sql, params, getClazz());
+    }
+
     default long countAll() {
         return getDS().countAll(getClazz());
     }
@@ -112,17 +140,28 @@ public interface DewDao<P, E> {
         return getDS().countDisabled(getClazz());
     }
 
+    default long count(DS.SB sqlBuilder) {
+        return getDS().count(sqlBuilder, getClazz());
+    }
+
     default Page<E> paging(long pageNumber, int pageSize) {
-        return getDS().paging(pageNumber, pageSize,getClazz());
+        return getDS().paging(pageNumber, pageSize, getClazz());
     }
 
     default Page<E> pagingEnabled(long pageNumber, int pageSize) {
-        return getDS().pagingEnabled(pageNumber, pageSize,getClazz());
+        return getDS().pagingEnabled(pageNumber, pageSize, getClazz());
     }
 
     default Page<E> pagingDisabled(long pageNumber, int pageSize) {
-        return getDS().pagingDisabled(pageNumber, pageSize,getClazz());
+        return getDS().pagingDisabled(pageNumber, pageSize, getClazz());
     }
 
+    default Page<E> paging(DS.SB sqlBuilder, long pageNumber, int pageSize) {
+        return getDS().paging(sqlBuilder, pageNumber, pageSize, getClazz());
+    }
+
+    default Page<E> paging(String sql, Object[] params, long pageNumber, int pageSize) {
+        return getDS().paging(sql, params, pageNumber, pageSize, getClazz());
+    }
 }
 

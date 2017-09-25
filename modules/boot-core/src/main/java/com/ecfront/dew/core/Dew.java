@@ -1,14 +1,12 @@
 package com.ecfront.dew.core;
 
 import com.ecfront.dew.common.$;
-import com.ecfront.dew.common.HttpHelper;
 import com.ecfront.dew.common.StandardCode;
 import com.ecfront.dew.core.cluster.*;
 import com.ecfront.dew.core.dto.OptInfo;
 import com.ecfront.dew.core.entity.EntityContainer;
 import com.ecfront.dew.core.fun.VoidExecutor;
 import com.ecfront.dew.core.fun.VoidPredicate;
-import com.ecfront.dew.core.jdbc.ClassPathScanner;
 import com.ecfront.dew.core.jdbc.DS;
 import com.ecfront.dew.core.jdbc.DSManager;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -17,25 +15,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.boot.autoconfigure.cache.CacheType;
 import org.springframework.boot.autoconfigure.jackson.JacksonProperties;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.net.InetAddress;
-import java.net.URL;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -95,15 +88,8 @@ public class Dew {
         }
         Dew.applicationContext.containsBean(EntityContainer.class.getSimpleName());
         Info.name = applicationName;
-        // JDBC Scan
-        if (!Dew.dewConfig.getJdbc().getBasePackages().isEmpty()) {
-            ClassPathScanner scanner = new ClassPathScanner((BeanDefinitionRegistry) ((GenericApplicationContext) Dew.applicationContext).getBeanFactory());
-            scanner.setResourceLoader(Dew.applicationContext);
-            scanner.registerFilters();
-            scanner.scan(Dew.dewConfig.getJdbc().getBasePackages().toArray(new String[]{}));
-        }
         // Support java8 Time
-        jacksonProperties.getSerialization().put(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS,false);
+        jacksonProperties.getSerialization().put(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     }
 
     public static class Constant {

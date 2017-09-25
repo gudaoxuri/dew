@@ -5,7 +5,6 @@ import com.ecfront.dew.core.test.auth.AuthTest;
 import com.ecfront.dew.core.test.cluster.ClusterTest;
 import com.ecfront.dew.core.test.crud.CRUDSTest;
 import com.ecfront.dew.core.test.dataaccess.jdbc.JDBCTest;
-import com.ecfront.dew.core.test.dataaccess.select.SelectTest;
 import com.ecfront.dew.core.test.web.WebTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,9 +32,6 @@ public class TestAll {
     private CRUDSTest crudsTest;
 
     @Resource
-    private SelectTest selectTest;
-
-    @Resource
     private WebTest webTest;
 
     @Resource
@@ -57,17 +53,6 @@ public class TestAll {
     @Test
     public void testJDBC() throws Exception {
         jdbcTest.testAll();
-    }
-
-
-    /**
-     * Select注解测试
-     *
-     * @throws Exception
-     */
-    @Test
-    public void testSelect() throws Exception {
-        selectTest.testAll();
     }
 
     /**

@@ -24,8 +24,6 @@ dew: # Dew 参数key前缀
         dist: # 分布式锁和Map实现，默认为 redis，可选 redis/hazelcast
         mq: # MQ实现，默认为 redis，可选 redis/hazelcast/rabbit
         election: # 领导者选举实现，默认为 eureka
-    jdbc: # DewJDBC功能
-        base-packages:[""] # 要扫描的根包，多指定到 jdbc 包中
     security: # 安全功能
         cors:
             allow-origin: # 允许的来源，默认为 * ，建议修改

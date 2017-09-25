@@ -126,23 +126,25 @@ public class DS {
         jdbcTemplate.batchUpdate((String) packageInsert[0], (List<Object[]>) packageInsert[1]);
     }
 
-    public void updateById(Object id, Object entity) {
+    public int updateById(Object id, Object entity) {
         try {
             $.bean.setValue(entity, EntityContainer.getEntityClassByClazz(entity.getClass()).pkFieldNameOpt.get(), id);
             Object[] packageUpdate = packageUpdate(entity, true);
-            jdbcTemplate.update((String) packageUpdate[0], (Object[]) packageUpdate[1]);
+            return jdbcTemplate.update((String) packageUpdate[0], (Object[]) packageUpdate[1]);
         } catch (NoSuchFieldException e) {
-            Dew.E.e(StandardCode.INTERNAL_SERVER_ERROR.toString(), e);
+            logger.error("UpdateById error", e);
+            return 0;
         }
     }
 
-    public void updateByCode(String code, Object entity) {
+    public int updateByCode(String code, Object entity) {
         try {
             $.bean.setValue(entity, EntityContainer.getEntityClassByClazz(entity.getClass()).codeFieldNameOpt.get(), code);
             Object[] packageUpdate = packageUpdate(entity, true);
-            jdbcTemplate.update((String) packageUpdate[0], (Object[]) packageUpdate[1]);
+            return jdbcTemplate.update((String) packageUpdate[0], (Object[]) packageUpdate[1]);
         } catch (NoSuchFieldException e) {
-            Dew.E.e(StandardCode.INTERNAL_SERVER_ERROR.toString(), e);
+            logger.error("updateByCode error", e);
+            return 0;
         }
     }
 
@@ -161,66 +163,66 @@ public class DS {
         return convertRsToObj(jdbcTemplate.queryForMap((String) packageSelect[0], (Object[]) packageSelect[1]), entityClazz);
     }
 
-    public void deleteById(Object id, Class<?> entityClazz) {
+    public int deleteById(Object id, Class<?> entityClazz) {
         EntityContainer.EntityClassInfo entityClassInfo = EntityContainer.getEntityClassByClazz(entityClazz);
-        delete(SB.inst().eq(entityClassInfo.pkFieldNameOpt.get(), id), entityClazz);
+        return delete(SB.inst().eq(entityClassInfo.pkFieldNameOpt.get(), id), entityClazz);
     }
 
-    public void deleteByCode(String code, Class<?> entityClazz) {
+    public int deleteByCode(String code, Class<?> entityClazz) {
         EntityContainer.EntityClassInfo entityClassInfo = EntityContainer.getEntityClassByClazz(entityClazz);
-        delete(SB.inst().eq(entityClassInfo.codeFieldNameOpt.get(), code), entityClazz);
+        return delete(SB.inst().eq(entityClassInfo.codeFieldNameOpt.get(), code), entityClazz);
     }
 
-    public void deleteAll(Class<?> entityClazz) {
-        delete(SB.inst(), entityClazz);
+    public int deleteAll(Class<?> entityClazz) {
+        return delete(SB.inst(), entityClazz);
     }
 
-    public void delete(SB sqlBuilder, Class<?> entityClazz) {
+    public int delete(SB sqlBuilder, Class<?> entityClazz) {
         EntityContainer.EntityClassInfo entityClassInfo = EntityContainer.getEntityClassByClazz(entityClazz);
         Object[] sb = sqlBuilder.build(entityClassInfo, leftDecorated, rightDecorated);
-        jdbcTemplate.update(String.format("DELETE FROM " + leftDecorated + "%s" + rightDecorated + " %s",
+        return jdbcTemplate.update(String.format("DELETE FROM " + leftDecorated + "%s" + rightDecorated + " %s",
                 entityClassInfo.tableName, sb[0]),
                 ((List) sb[1]).toArray());
     }
 
-    public void enableById(Object id, Class<?> entityClazz) {
+    public int enableById(Object id, Class<?> entityClazz) {
         EntityContainer.EntityClassInfo entityClassInfo = EntityContainer.getEntityClassByClazz(entityClazz);
-        enable(SB.inst().eq(entityClassInfo.pkFieldNameOpt.get(), id), entityClazz);
+        return enable(SB.inst().eq(entityClassInfo.pkFieldNameOpt.get(), id), entityClazz);
     }
 
-    public void enableByCode(String code, Class<?> entityClazz) {
+    public int enableByCode(String code, Class<?> entityClazz) {
         EntityContainer.EntityClassInfo entityClassInfo = EntityContainer.getEntityClassByClazz(entityClazz);
-        enable(SB.inst().eq(entityClassInfo.codeFieldNameOpt.get(), code), entityClazz);
+        return enable(SB.inst().eq(entityClassInfo.codeFieldNameOpt.get(), code), entityClazz);
     }
 
-    public void enable(SB sqlBuilder, Class<?> entityClazz) {
+    public int enable(SB sqlBuilder, Class<?> entityClazz) {
         EntityContainer.EntityClassInfo entityClassInfo = EntityContainer.getEntityClassByClazz(entityClazz);
         Object[] sb = sqlBuilder.build(entityClassInfo, leftDecorated, rightDecorated);
         EntityContainer.EntityClassInfo.Column column = entityClassInfo.columns.get(entityClassInfo.enabledFieldNameOpt.get());
         ((List) sb[1]).add(0, !column.reverse);
-        jdbcTemplate.update(String.format("UPDATE %s SET " + leftDecorated + "%s" + rightDecorated + " = ? %s",
+        return jdbcTemplate.update(String.format("UPDATE %s SET " + leftDecorated + "%s" + rightDecorated + " = ? %s",
                 entityClassInfo.tableName,
                 column.columnName,
                 sb[0]),
                 ((List) sb[1]).toArray());
     }
 
-    public void disableById(Object id, Class<?> entityClazz) {
+    public int disableById(Object id, Class<?> entityClazz) {
         EntityContainer.EntityClassInfo entityClassInfo = EntityContainer.getEntityClassByClazz(entityClazz);
-        disable(SB.inst().eq(entityClassInfo.pkFieldNameOpt.get(), id), entityClazz);
+        return disable(SB.inst().eq(entityClassInfo.pkFieldNameOpt.get(), id), entityClazz);
     }
 
-    public void disableByCode(String code, Class<?> entityClazz) {
+    public int disableByCode(String code, Class<?> entityClazz) {
         EntityContainer.EntityClassInfo entityClassInfo = EntityContainer.getEntityClassByClazz(entityClazz);
-        disable(SB.inst().eq(entityClassInfo.codeFieldNameOpt.get(), code), entityClazz);
+        return disable(SB.inst().eq(entityClassInfo.codeFieldNameOpt.get(), code), entityClazz);
     }
 
-    public void disable(SB sqlBuilder, Class<?> entityClazz) {
+    public int disable(SB sqlBuilder, Class<?> entityClazz) {
         EntityContainer.EntityClassInfo entityClassInfo = EntityContainer.getEntityClassByClazz(entityClazz);
         Object[] sb = sqlBuilder.build(entityClassInfo, leftDecorated, rightDecorated);
         EntityContainer.EntityClassInfo.Column column = entityClassInfo.columns.get(entityClassInfo.enabledFieldNameOpt.get());
         ((List) sb[1]).add(0, column.reverse);
-        jdbcTemplate.update(String.format("UPDATE %s SET " + leftDecorated + "%s" + rightDecorated + " = ? %s",
+        return jdbcTemplate.update(String.format("UPDATE %s SET " + leftDecorated + "%s" + rightDecorated + " = ? %s",
                 entityClassInfo.tableName,
                 column.columnName,
                 sb[0]),
@@ -263,6 +265,12 @@ public class DS {
     public <E> List<E> find(SB sqlBuilder, Class<E> entityClazz) {
         Object[] packageSelect = packageSelect(entityClazz, sqlBuilder);
         return jdbcTemplate.queryForList((String) packageSelect[0], (Object[]) packageSelect[1]).stream()
+                .map(row -> convertRsToObj(row, entityClazz))
+                .collect(Collectors.toList());
+    }
+
+    public <E> List<E> find(String sql, Object[] params, Class<E> entityClazz) {
+        return jdbcTemplate.queryForList(sql, params).stream()
                 .map(row -> convertRsToObj(row, entityClazz))
                 .collect(Collectors.toList());
     }
