@@ -26,7 +26,7 @@ public class MiscTest {
         String sql = "select * from table where" +
                 " id = #{b} and ( name1= #{a} or name2 = #{c} or name3 = #{d} ) " +
                 "and no1 like #{ ee } and no2 like #{f} ";
-        Object[] result = DS.packageSelect(sql, new LinkedHashMap<String, Object>() {{
+        Object[] result = DS.packageSelectFromAnnotation(sql, new LinkedHashMap<String, Object>() {{
             put("a", "1");
             put("c", "3");
             put("ee", "5");

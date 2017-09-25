@@ -102,14 +102,10 @@ public interface CRUService<T extends DewDao<P, E>, P, E> extends DewService<T, 
     }
 
     default Resp<Page<E>> paging(long pageNumber, int pageSize){
-        return paging(pageNumber, pageSize, null);
-    }
-
-    default Resp<Page<E>> paging(long pageNumber, int pageSize, LinkedHashMap<String, Boolean> orderDesc){
-        logger.debug("[{}] Paging {} {} {}.", getModelClazz().getSimpleName(), pageNumber, pageSize, orderDesc != null ? $.json.toJsonString(orderDesc) : "");
+        logger.debug("[{}] Paging {} {} {}.", getModelClazz().getSimpleName(), pageNumber, pageSize);
         Resp<Optional<Object>> preResult = prePaging();
         if (preResult.ok()) {
-            return Resp.success(postPaging(getDao().paging(pageNumber, pageSize, orderDesc), preResult.getBody()));
+            return Resp.success(postPaging(getDao().paging(pageNumber, pageSize), preResult.getBody()));
         }
         return Resp.customFail(preResult.getCode(), preResult.getMessage());
     }

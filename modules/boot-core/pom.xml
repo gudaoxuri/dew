@@ -55,11 +55,6 @@
             <artifactId>cluster-spi-rabbit</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--<dependency>
-            <groupId>com.ecfront.dew</groupId>
-            <artifactId>cluster-spi-ignite</artifactId>
-            <scope>test</scope>
-        </dependency>-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>

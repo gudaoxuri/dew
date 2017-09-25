@@ -3,14 +3,12 @@ package com.ecfront.dew.core.jdbc;
 import com.ecfront.dew.common.Page;
 import com.ecfront.dew.core.Container;
 import com.ecfront.dew.core.Dew;
-import com.ecfront.dew.core.entity.EntityContainer;
 import org.springframework.cglib.proxy.Proxy;
 
 import java.lang.reflect.ParameterizedType;
-import java.util.LinkedHashMap;
 import java.util.List;
 
-public interface DewDao<P,E> {
+public interface DewDao<P, E> {
 
     default Class<E> getClazz() {
         Class<E> clazz = (Class<E>) Container.DAO_CONTAINER.get(this.getClass());
@@ -29,13 +27,13 @@ public interface DewDao<P,E> {
     default String ds() {
         return "";
     }
-    
-    default DS getDS(){
-       return Dew.ds(ds());
+
+    default DS getDS() {
+        return Dew.ds(ds());
     }
 
     default P insert(Object entity) {
-        return (P)getDS().insert(entity);
+        return (P) getDS().insert(entity);
     }
 
     default void insert(Iterable<?> entities) {
@@ -91,27 +89,15 @@ public interface DewDao<P,E> {
     }
 
     default List<E> findAll() {
-        return findAll(null);
-    }
-
-    default List<E> findAll(LinkedHashMap<String, Boolean> orderDesc) {
-        return getDS().findAll(orderDesc, getClazz());
+        return getDS().findAll(getClazz());
     }
 
     default List<E> findEnabled() {
-        return findEnabled(null);
-    }
-
-    default List<E> findEnabled(LinkedHashMap<String, Boolean> orderDesc) {
-        return getDS().findEnabled(orderDesc, getClazz());
+        return getDS().findEnabled(getClazz());
     }
 
     default List<E> findDisabled() {
-        return findDisabled(null);
-    }
-
-    default List<E> findDisabled(LinkedHashMap<String, Boolean> orderDesc) {
-        return getDS().findDisabled(orderDesc, getClazz());
+        return getDS().findDisabled(getClazz());
     }
 
     default long countAll() {
@@ -127,27 +113,15 @@ public interface DewDao<P,E> {
     }
 
     default Page<E> paging(long pageNumber, int pageSize) {
-        return paging(pageNumber, pageSize, null);
-    }
-
-    default Page<E> paging(long pageNumber, int pageSize, LinkedHashMap<String, Boolean> orderDesc) {
-        return getDS().paging(pageNumber, pageSize, orderDesc, getClazz());
+        return getDS().paging(pageNumber, pageSize,getClazz());
     }
 
     default Page<E> pagingEnabled(long pageNumber, int pageSize) {
-        return pagingEnabled(pageNumber, pageSize, null);
-    }
-
-    default Page<E> pagingEnabled(long pageNumber, int pageSize, LinkedHashMap<String, Boolean> orderDesc) {
-        return getDS().pagingEnabled(pageNumber, pageSize, orderDesc, getClazz());
+        return getDS().pagingEnabled(pageNumber, pageSize,getClazz());
     }
 
     default Page<E> pagingDisabled(long pageNumber, int pageSize) {
-        return pagingDisabled(pageNumber, pageSize, null);
-    }
-
-    default Page<E> pagingDisabled(long pageNumber, int pageSize, LinkedHashMap<String, Boolean> orderDesc) {
-        return getDS().pagingDisabled(pageNumber, pageSize, orderDesc, getClazz());
+        return getDS().pagingDisabled(pageNumber, pageSize,getClazz());
     }
 
 }

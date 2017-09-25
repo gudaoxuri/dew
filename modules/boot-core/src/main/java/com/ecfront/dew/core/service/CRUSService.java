@@ -59,27 +59,19 @@ public interface CRUSService<T extends DewDao<P, E>, P, E> extends CRUService<T,
     }
 
     default Resp<Page<E>> pagingEnabled(long pageNumber, int pageSize){
-        return pagingEnabled(pageNumber, pageSize, null);
-    }
-
-    default Resp<Page<E>> pagingEnabled(long pageNumber, int pageSize, LinkedHashMap<String, Boolean> orderDesc){
-        logger.debug("[{}] PagingEnable {} {} {}.", getModelClazz().getSimpleName(), pageNumber, pageSize, orderDesc != null ? $.json.toJsonString(orderDesc) : "");
+        logger.debug("[{}] PagingEnable {} {} {}.", getModelClazz().getSimpleName(), pageNumber, pageSize);
         Resp<Optional<Object>> preResult = prePaging();
         if (preResult.ok()) {
-            return Resp.success(postPaging(getDao().pagingEnabled(pageNumber, pageSize, orderDesc), preResult.getBody()));
+            return Resp.success(postPaging(getDao().pagingEnabled(pageNumber, pageSize), preResult.getBody()));
         }
         return Resp.customFail(preResult.getCode(), preResult.getMessage());
     }
 
     default Resp<Page<E>> pagingDisabled(long pageNumber, int pageSize){
-        return pagingDisabled(pageNumber, pageSize, null);
-    }
-
-    default Resp<Page<E>> pagingDisabled(long pageNumber, int pageSize, LinkedHashMap<String, Boolean> orderDesc){
-        logger.debug("[{}] PagingDisable {} {} {}.", getModelClazz().getSimpleName(), pageNumber, pageSize, orderDesc != null ? $.json.toJsonString(orderDesc) : "");
+        logger.debug("[{}] PagingDisable {} {} {}.", getModelClazz().getSimpleName(), pageNumber, pageSize);
         Resp<Optional<Object>> preResult = prePaging();
         if (preResult.ok()) {
-            return Resp.success(postPaging(getDao().pagingDisabled(pageNumber, pageSize, orderDesc), preResult.getBody()));
+            return Resp.success(postPaging(getDao().pagingDisabled(pageNumber, pageSize), preResult.getBody()));
         }
         return Resp.customFail(preResult.getCode(), preResult.getMessage());
     }

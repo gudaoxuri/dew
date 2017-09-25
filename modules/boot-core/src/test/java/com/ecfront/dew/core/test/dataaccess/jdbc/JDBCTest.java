@@ -2,6 +2,7 @@ package com.ecfront.dew.core.test.dataaccess.jdbc;
 
 import com.ecfront.dew.common.Page;
 import com.ecfront.dew.core.Dew;
+import com.ecfront.dew.core.jdbc.DS;
 import com.ecfront.dew.core.test.dataaccess.jdbc.entity.BasicEntity;
 import com.ecfront.dew.core.test.dataaccess.jdbc.entity.EmptyEntity;
 import com.ecfront.dew.core.test.dataaccess.jdbc.entity.FullEntity;
@@ -192,6 +193,14 @@ public class JDBCTest {
         // pagingDisabled
         fullEntities = Dew.ds().pagingDisabled(1, 2, FullEntity.class);
         Assert.assertEquals(1, fullEntities.getRecordTotal());
+        // Sql Builder
+        fullEntities = Dew.ds().paging(
+                DS.SB.inst()
+                        .eq("fieldA", "测试A2")
+                        .like("fieldB", "%B2")
+                        .notNull("code"),
+                1, 2, FullEntity.class);
+        Assert.assertEquals(1, fullEntities.getRecordTotal());
         // deleteById
         Dew.ds().deleteById(fullEntity.getId(), FullEntity.class);
         // deleteByCode
@@ -293,7 +302,7 @@ public class JDBCTest {
     }
 
     @Transactional
-    private void testPool() {
+    void testPool() {
         Boolean[] hasFinish = {false};
         Dew.ds().jdbc().queryForList("select * from test_select_entity").size();
         new Thread(() -> {
@@ -309,7 +318,7 @@ public class JDBCTest {
     }
 
     @Transactional("test2TransactionManager")
-    private void testPoolA() {
+    void testPoolA() {
         Boolean[] hasFinish = {false};
         Dew.ds("test2").jdbc().queryForList("select * from test_select_entity").size();
         new Thread(() -> {
