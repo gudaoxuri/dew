@@ -5,7 +5,6 @@ import com.ecfront.dew.core.jdbc.proxy.ProxyInvoker;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
- * Created by 迹_Jason on 2017/7/26.
  * 接口动态实现
  */
 public class DaoFactoryBean<T> implements FactoryBean<T> {

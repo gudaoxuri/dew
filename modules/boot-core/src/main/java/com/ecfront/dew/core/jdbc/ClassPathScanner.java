@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.Set;
 
 /**
- * Created by 迹_Jason on 2017/7/26.
  * Dao扫描
  */
 public class ClassPathScanner extends ClassPathBeanDefinitionScanner {

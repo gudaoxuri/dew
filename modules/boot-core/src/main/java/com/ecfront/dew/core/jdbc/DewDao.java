@@ -28,61 +28,65 @@ public interface DewDao<P,E> {
     default String ds() {
         return "";
     }
+    
+    default DS getDS(){
+       return getDS();
+    }
 
     default P insert(Object entity) {
-        return (P)Dew.ds(ds()).insert(entity);
+        return (P)getDS().insert(entity);
     }
 
     default void insert(Iterable<?> entities) {
-        Dew.ds(ds()).insert(entities);
+        getDS().insert(entities);
     }
 
     default void updateById(P id, Object entity) {
-        Dew.ds(ds()).updateById(id, entity);
+        getDS().updateById(id, entity);
     }
 
     default void updateByCode(String code, Object entity) {
-        Dew.ds(ds()).updateByCode(code, entity);
+        getDS().updateByCode(code, entity);
     }
 
     default E getById(P id) {
-        return Dew.ds(ds()).getById(id, getClazz());
+        return getDS().getById(id, getClazz());
     }
 
     default E getByCode(String code) {
-        return Dew.ds(ds()).getByCode(code, getClazz());
+        return getDS().getByCode(code, getClazz());
     }
 
     default void deleteById(P id) {
-        Dew.ds(ds()).deleteById(id, getClazz());
+        getDS().deleteById(id, getClazz());
     }
 
     default void deleteByCode(String code) {
-        Dew.ds(ds()).deleteByCode(code, getClazz());
+        getDS().deleteByCode(code, getClazz());
     }
 
     default void enableById(P id) {
-        Dew.ds(ds()).enableById(id, getClazz());
+        getDS().enableById(id, getClazz());
     }
 
     default void enableByCode(String code) {
-        Dew.ds(ds()).enableByCode(code, getClazz());
+        getDS().enableByCode(code, getClazz());
     }
 
     default void disableById(P id) {
-        Dew.ds(ds()).disableById(id, getClazz());
+        getDS().disableById(id, getClazz());
     }
 
     default void disableByCode(String code) {
-        Dew.ds(ds()).disableByCode(code, getClazz());
+        getDS().disableByCode(code, getClazz());
     }
 
     default boolean existById(P id) {
-        return Dew.ds(ds()).existById(id, getClazz());
+        return getDS().existById(id, getClazz());
     }
 
     default boolean existByCode(String code) {
-        return Dew.ds(ds()).existByCode(code, getClazz());
+        return getDS().existByCode(code, getClazz());
     }
 
     default List<E> findAll() {
@@ -90,7 +94,7 @@ public interface DewDao<P,E> {
     }
 
     default List<E> findAll(LinkedHashMap<String, Boolean> orderDesc) {
-        return Dew.ds(ds()).findAll(orderDesc, getClazz());
+        return getDS().findAll(orderDesc, getClazz());
     }
 
     default List<E> findEnabled() {
@@ -98,7 +102,7 @@ public interface DewDao<P,E> {
     }
 
     default List<E> findEnabled(LinkedHashMap<String, Boolean> orderDesc) {
-        return Dew.ds(ds()).findEnabled(orderDesc, getClazz());
+        return getDS().findEnabled(orderDesc, getClazz());
     }
 
     default List<E> findDisabled() {
@@ -106,19 +110,19 @@ public interface DewDao<P,E> {
     }
 
     default List<E> findDisabled(LinkedHashMap<String, Boolean> orderDesc) {
-        return Dew.ds(ds()).findDisabled(orderDesc, getClazz());
+        return getDS().findDisabled(orderDesc, getClazz());
     }
 
     default long countAll() {
-        return Dew.ds(ds()).countAll(getClazz());
+        return getDS().countAll(getClazz());
     }
 
     default long countEnabled() {
-        return Dew.ds(ds()).countEnabled(getClazz());
+        return getDS().countEnabled(getClazz());
     }
 
     default long countDisabled() {
-        return Dew.ds(ds()).countDisabled(getClazz());
+        return getDS().countDisabled(getClazz());
     }
 
     default Page<E> paging(long pageNumber, int pageSize) {
@@ -126,7 +130,7 @@ public interface DewDao<P,E> {
     }
 
     default Page<E> paging(long pageNumber, int pageSize, LinkedHashMap<String, Boolean> orderDesc) {
-        return Dew.ds(ds()).paging(pageNumber, pageSize, orderDesc, getClazz());
+        return getDS().paging(pageNumber, pageSize, orderDesc, getClazz());
     }
 
     default Page<E> pagingEnabled(long pageNumber, int pageSize) {
@@ -134,7 +138,7 @@ public interface DewDao<P,E> {
     }
 
     default Page<E> pagingEnabled(long pageNumber, int pageSize, LinkedHashMap<String, Boolean> orderDesc) {
-        return Dew.ds(ds()).pagingEnabled(pageNumber, pageSize, orderDesc, getClazz());
+        return getDS().pagingEnabled(pageNumber, pageSize, orderDesc, getClazz());
     }
 
     default Page<E> pagingDisabled(long pageNumber, int pageSize) {
@@ -142,7 +146,7 @@ public interface DewDao<P,E> {
     }
 
     default Page<E> pagingDisabled(long pageNumber, int pageSize, LinkedHashMap<String, Boolean> orderDesc) {
-        return Dew.ds(ds()).pagingDisabled(pageNumber, pageSize, orderDesc, getClazz());
+        return getDS().pagingDisabled(pageNumber, pageSize, orderDesc, getClazz());
     }
 
 }

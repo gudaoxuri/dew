@@ -32,7 +32,7 @@ dew: # Dew 参数key前缀
             allow-methods: # 允许的方法，默认为所有常用方法
             allow-headers: # 允许的头信息，默认为 x-requested-with,content-type
         token-flag: # token 标识，默认为  __dew_token__
-        token-in-header: # true：token标识在 header 中，反之在url参数中，默认为false
+        token-in-header: # true：token标识在 header 中，反之在url参数中，默认为true
         token-hash: # token值是否需要hash，用于解决token值有特殊字符的情况，默认为false
         include-services: [""] # 服务白名单，要求源服务头部带上 Request-From
         exclude-services: [""] # 服务黑名单，要求源服务头部带上 Request-From

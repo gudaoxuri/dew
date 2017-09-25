@@ -27,6 +27,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import java.sql.PreparedStatement;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -381,7 +382,7 @@ public class DS {
                             values.get(entityClassInfo.codeFieldNameOpt.get()).toString().isEmpty())) {
                 values.put(entityClassInfo.codeFieldNameOpt.get(), $.field.createUUID());
             }
-            Date now = new Date();
+            LocalDateTime now = LocalDateTime.now();
             if (entityClassInfo.createUserFieldNameOpt.isPresent()) {
                 if (Dew.context().optInfo().isPresent()) {
                     values.put(entityClassInfo.createUserFieldNameOpt.get(), Dew.context().optInfo().get().getAccountCode());
@@ -482,7 +483,7 @@ public class DS {
             values.remove(entityClassInfo.createUserFieldNameOpt.get());
         }
         if (entityClassInfo.updateTimeFieldNameOpt.isPresent()) {
-            values.put(entityClassInfo.updateTimeFieldNameOpt.get(), new Date());
+            values.put(entityClassInfo.updateTimeFieldNameOpt.get(), LocalDateTime.now());
         }
         if (entityClassInfo.createTimeFieldNameOpt.isPresent()) {
             values.remove(entityClassInfo.createTimeFieldNameOpt.get());

@@ -13,7 +13,7 @@ public class OptInfo {
     @ApiModelProperty(value = "Token", required = true)
     protected String token;
     @ApiModelProperty(value = "账号编码", required = true)
-    protected String accountCode;
+    protected Object accountCode;
     @ApiModelProperty(value = "手机号", required = true)
     protected String mobile;
     @ApiModelProperty(value = "邮箱", required = true)
@@ -71,11 +71,11 @@ public class OptInfo {
         return this;
     }
 
-    public String getAccountCode() {
+    public Object getAccountCode() {
         return accountCode;
     }
 
-    public OptInfo setAccountCode(String accountCode) {
+    public OptInfo setAccountCode(Object accountCode) {
         this.accountCode = accountCode;
         return this;
     }

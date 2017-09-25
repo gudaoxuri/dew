@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by 迹_Jason on 2017/7/24.
  * 方法相关信息解析
  */
 public class MethodConstruction {

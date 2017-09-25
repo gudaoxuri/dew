@@ -43,7 +43,7 @@ public class AuthTest {
         logger.info("businRes1:   " +businRes1);
         Assert.assertEquals("200", $.json.toJson(businRes1).get("code").asText());
         OptInfoExt optInfoExt = (OptInfoExt) Dew.Auth.getOptInfo(token2).get();
-        OptInfoExt optInfoExt2 = (OptInfoExt)Dew.Auth.getOptInfoByAccCode(optInfoExt.getAccountCode()).get();
+        OptInfoExt optInfoExt2 = (OptInfoExt)Dew.Auth.getOptInfoByAccCode((String) optInfoExt.getAccountCode()).get();
         Dew.Auth.removeOptInfo(optInfoExt2.getToken());
         String logoutRes = $.http.delete(TestAll.URL + "auth/logout",new HashMap<String ,String>(){{
             put("_token_", token1);
