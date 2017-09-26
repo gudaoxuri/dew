@@ -18,8 +18,6 @@ import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.entity.EntityContainer;
 import com.ecfront.dew.core.jdbc.dialect.Dialect;
 import com.ecfront.dew.core.jdbc.dialect.DialectFactory;
-import com.ecfront.dew.core.jdbc.dialect.DialectType;
-import com.ecfront.dew.core.jdbc.proxy.MethodConstruction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
@@ -572,127 +570,6 @@ public class DS {
         return r;
     }
 
-    public <E> List<E> selectForList(Class<E> entityClazz, Map<String, Object> params, String sql) {
-        Object[] result = packageSelectFromAnnotation(sql, params, dialect.getDialectType());
-        List<Map<String, Object>> list = jdbcTemplate.queryForList((String) result[0], (Object[]) result[1]);
-        return entityClazz.isAssignableFrom(Map.class) ? (List<E>) list : list.stream().map(row -> convertRsToObj(row, entityClazz))
-                .collect(Collectors.toList());
-    }
-
-    public <E> Page<E> selectForPaging(Class<E> entityClazz, MethodConstruction method, String sql) {
-        Object[] result = packageSelectFromAnnotation(sql, method.getParamsMap(), dialect.getDialectType());
-        String countSql = wrapCountSql((String) result[0]);
-        String pagedSql = wrapPagingSql((String) result[0], method.getPageNumber(), method.getPageSize());
-        long totalRecords = jdbcTemplate.queryForObject(countSql, (Object[]) result[1], Long.class);
-        List<Map<String, Object>> list = jdbcTemplate.queryForList(pagedSql, (Object[]) result[1]);
-        List<E> objects = entityClazz.isAssignableFrom(Map.class) ? (List<E>) list : list.stream().map(row -> convertRsToObj(row, entityClazz))
-                .collect(Collectors.toList());
-        return Page.build(method.getPageNumber(), method.getPageSize(), totalRecords, objects);
-    }
-
-    public static Object[] packageSelectFromAnnotation(String sql, Map<String, Object> params, DialectType dialectType) {
-        Matcher m = FIELD_PLACE_HOLDER_PATTERN.matcher(sql);
-        List<String> matchRegexList = new ArrayList<>();
-        //将#{...}抠出来
-        while (m.find()) {
-            matchRegexList.add(m.group());
-        }
-        List<Object> list = new ArrayList<>();
-        //将值不为空的key用?替换
-        for (String key : matchRegexList) {
-            // #{key},去掉#{}和空格,获取真实的key
-            key = key.substring(2, key.length() - 1).replace(" ", EMPTY);
-            Object v = params.get(key);
-            if (v != null) {
-                sql = sql.replaceFirst("\\#\\{\\s*" + key + "\\s*\\}", "?");
-                list.add(v);
-            }
-        }
-        SQLSelectStatement statement;
-        switch (dialectType) {
-            case H2:
-            case MYSQL:
-                statement = (SQLSelectStatement) new MySqlStatementParser(sql).parseSelect();
-                break;
-            case ORACLE:
-                statement = (SQLSelectStatement) new OracleStatementParser(sql).parseStatement();
-                break;
-            case POSTGRE:
-                statement = (SQLSelectStatement) new PGSQLStatementParser(sql).parseStatement();
-                break;
-            case SQLSERVER:
-                statement = (SQLSelectStatement) new SQLServerStatementParser(sql).parseStatement();
-                break;
-            case DB2:
-                statement = (SQLSelectStatement) new DB2StatementParser(sql).parseStatement();
-                break;
-            case PHOENIX:
-                statement = (SQLSelectStatement) new PhoenixStatementParser(sql).parseStatement();
-                break;
-            default:
-                statement = (SQLSelectStatement) new SQLStatementParser(sql).parseStatementList().get(0);
-        }
-        if (sql.contains("#{")) {
-            SQLExpr sqlExpr = ((SQLSelectQueryBlock) statement.getSelect().getQuery()).getWhere();
-            formatWhere(sqlExpr);
-        }
-        if (sql.contains(STAR)) {
-            SQLTableSource sqlTableSource = ((SQLSelectQueryBlock) statement.getSelect().getQuery()).getFrom();
-            List<SQLSelectItem> selectList = ((SQLSelectQueryBlock) statement.getSelect().getQuery()).getSelectList();
-            List<SQLSelectItem> addList = new ArrayList<>();
-            formatFrom(sqlTableSource, selectList, addList);
-            selectList.addAll(addList);
-        }
-        sql = statement.toString();
-        return new Object[]{sql, list.toArray()};
-    }
-
-    /**
-     * 格式化select中的 * 为对应table 字段
-     */
-    private static void formatFrom(SQLTableSource sqlTableSource, List<SQLSelectItem> selectList, List<SQLSelectItem> addList) {
-        if (sqlTableSource == null) {
-            return;
-        }
-        if (sqlTableSource instanceof SQLExprTableSource) {
-            doFormat((SQLExprTableSource) sqlTableSource, selectList, addList);
-        }
-        if (sqlTableSource instanceof SQLJoinTableSource) {
-            formatFrom(((SQLJoinTableSource) sqlTableSource).getRight(), selectList, addList);
-            formatFrom(((SQLJoinTableSource) sqlTableSource).getLeft(), selectList, addList);
-        }
-    }
-
-    private static void doFormat(SQLExprTableSource sqlTableSource, List<SQLSelectItem> selectList, List<SQLSelectItem> addList) {
-        EntityContainer.EntityClassInfo entityClassInfo = EntityContainer.getEntityClassByClazz(((SQLIdentifierExpr) sqlTableSource.getExpr()).getName());
-        if (entityClassInfo == null) {
-            return;
-        }
-        Iterator<SQLSelectItem> iterator = selectList.iterator();
-        while (iterator.hasNext()) {
-            SQLSelectItem sqlSelectItem = iterator.next();
-            if (sqlSelectItem.getExpr() instanceof SQLPropertyExpr) {
-                SQLPropertyExpr expr = (SQLPropertyExpr) sqlSelectItem.getExpr();
-                SQLIdentifierExpr expr_owner = (SQLIdentifierExpr) expr.getOwner();
-                if ((expr_owner.getName() + POINT + expr.getName()).equals(sqlTableSource.getAlias() + POINT + STAR)) {
-                    iterator.remove();
-                    entityClassInfo.columns.forEach((filedName, column) -> addWhenAlias(addList, expr_owner, column));
-                }
-            } else if (sqlSelectItem.getExpr() instanceof SQLObjectImpl) {
-                iterator.remove();
-                entityClassInfo.columns.forEach((filedName, column) -> addList.add(new SQLSelectItem(new SQLIdentifierExpr(column.columnName))));
-            }
-        }
-    }
-
-    private static void addWhenAlias(List<SQLSelectItem> addList, SQLIdentifierExpr expr_owner, EntityContainer.EntityClassInfo.Column column) {
-        if (column.columnName.equals("id") || column.columnName.equals("created_by") || column.columnName.equals("updated_by") || column.columnName.equals("created_time") ||
-                column.columnName.equals("updated_time"))
-            return;
-        addList.add(new SQLSelectItem(new SQLPropertyExpr(expr_owner.getName(), column.columnName)));
-    }
-
-
     private static String underlineToCamel(String param) {
         if (param == null || EMPTY.equals(param.trim())) {
             return EMPTY;
@@ -710,39 +587,6 @@ public class DS {
             }
         }
         return sb.toString();
-    }
-
-    public static void formatWhere(SQLExpr sqlExpr) {
-        if (sqlExpr == null) {
-            return;
-        }
-        if (sqlExpr instanceof SQLBetweenExpr
-                || sqlExpr instanceof SQLInListExpr
-                || ((SQLBinaryOpExpr) sqlExpr).getLeft() instanceof SQLIdentifierExpr
-                || ((SQLBinaryOpExpr) sqlExpr).getLeft() instanceof SQLPropertyExpr) {
-            doFormatWhere(sqlExpr);
-        } else {
-            formatWhere(((SQLBinaryOpExpr) sqlExpr).getRight());
-            formatWhere(((SQLBinaryOpExpr) sqlExpr).getLeft());
-        }
-    }
-
-    private static void doFormatWhere(SQLExpr sqlExpr) {
-        String itemStr;
-        if (sqlExpr instanceof SQLBetweenExpr) {
-            itemStr = ((SQLBetweenExpr) sqlExpr).getBeginExpr().toString() + ((SQLBetweenExpr) sqlExpr).getEndExpr().toString();
-        } else if (sqlExpr instanceof SQLInListExpr) {
-            itemStr = ((SQLInListExpr) sqlExpr).getTargetList().toString();
-        } else {
-            itemStr = sqlExpr.toString();
-        }
-        if (FIELD_PLACE_HOLDER_PATTERN.matcher(itemStr).find()) {
-            if (sqlExpr.getParent() instanceof SQLBinaryOpExpr) {
-                ((SQLBinaryOpExpr) sqlExpr.getParent()).replace(sqlExpr, null);
-            } else if (sqlExpr.getParent() instanceof SQLSelectQueryBlock) {
-                ((SQLSelectQueryBlock) sqlExpr.getParent()).replace(sqlExpr, null);
-            }
-        }
     }
 
     public JdbcTemplate getJdbcTemplate() {
