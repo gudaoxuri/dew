@@ -4,6 +4,7 @@ import com.ecfront.dew.core.entity.CodeColumn;
 import com.ecfront.dew.core.entity.Column;
 import com.ecfront.dew.core.entity.Entity;
 import com.ecfront.dew.core.entity.SafeStatusEntity;
+import com.ecfront.dew.core.jdbc.DewDao;
 
 @Entity(tableName = "test_select_entity")
 public class TestSelectEntity extends SafeStatusEntity<Integer> {
@@ -39,4 +40,9 @@ public class TestSelectEntity extends SafeStatusEntity<Integer> {
         this.fieldB = fieldB;
     }
 
+    public static ActiveRecord $$ = new ActiveRecord();
+
+    public static class ActiveRecord implements DewDao<Integer, TestSelectEntity> {
+
+    }
 }

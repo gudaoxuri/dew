@@ -10,9 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
 import your.group.PetStoreApplication;
-import your.group.entity.Customer;
-import your.group.entity.Order;
-import your.group.entity.Pet;
+import your.group.domain.Customer;
+import your.group.domain.Order;
+import your.group.domain.Pet;
 
 import java.util.List;
 

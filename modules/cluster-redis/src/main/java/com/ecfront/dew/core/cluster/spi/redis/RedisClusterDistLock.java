@@ -4,7 +4,7 @@ import com.ecfront.dew.core.cluster.Cluster;
 import com.ecfront.dew.core.cluster.ClusterDistLock;
 import com.ecfront.dew.core.cluster.VoidProcessFun;
 import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import redis.clients.jedis.JedisCommands;
 
 import java.util.Date;
@@ -12,9 +12,9 @@ import java.util.Date;
 public class RedisClusterDistLock implements ClusterDistLock {
 
     private String key;
-    private RedisTemplate<String, String> redisTemplate;
+    private StringRedisTemplate redisTemplate;
 
-    RedisClusterDistLock(String key, RedisTemplate<String, String> redisTemplate) {
+    RedisClusterDistLock(String key, StringRedisTemplate redisTemplate) {
         this.key = "dew:dist:lock:" + key;
         this.redisTemplate = redisTemplate;
     }
@@ -130,7 +130,7 @@ public class RedisClusterDistLock implements ClusterDistLock {
         return (res != null && "OK".equalsIgnoreCase(res)) || redisTemplate.opsForValue().get(key).equals(getCurrThreadId());
     }
 
-    private String getCurrThreadId(){
+    private String getCurrThreadId() {
         return Cluster.CLASS_LOAD_UNIQUE_FLAG + "-" + Thread.currentThread().getId();
     }
 }

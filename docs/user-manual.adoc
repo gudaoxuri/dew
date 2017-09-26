@@ -453,7 +453,7 @@ mvn -Dtest=DocTest clean test -P doc
 此章节关联示例:jdbc-example、mybatisplus-example
 ----
 
-`Dew` 基于 `Spring Boot` ，原生支持 `Hibernate` `MyBatis` `Spring JDBC Template` 等主流的持久化框架。 各类框架的整合参见网络资料，示例中提供了针对 `MybatisPlus` 的整合说明： `mybatisplus` 。
+`Dew` 基于 `Spring Boot` ，原生支持 `Hibernate` `MyBatis` `Spring JDBC Template` 等主流的持久化框架。 各类框架的整合参见网络资料 。
 
 ===== `Dew JDBC`
 
@@ -461,7 +461,6 @@ mvn -Dtest=DocTest clean test -P doc
 
 . 支持实体与SQL的映射
 . 支持常用数据处理操作
-. 支持@Select注解
 . 轻松使用多数据源
 
 TIP: `JdbcTemplate` 知识见 https://spring.io/guides/gs/relational-data-access/[https://spring.io/guides/gs/relational-data-access/]
@@ -513,9 +512,9 @@ spring:
 * `PkColumn` : 主键标识 支持 `int/String` 类型，`int` 多用于ID自增场景， `String` 可选择是否自动生成 `uuid` 数据（ `uuid=true` ），存在此注解的实体可以使用 `xxxById` 操作
 * `CodeColumn` : 业务主键 在工程中很多对象的主键不依赖于数据库主键而会使用code（如uuid表示）作为业务主键， 保存（insert）时如果存在业务主键，且  `value==null && uuid=true` 则会自动附加上uuid，存在此注解的实体可以使用 `xxxByCode` 操作
 * `CreateUserColumn` : 创建人，保存（insert）时自动附加当前操作人 `code` （需要与获取操作人动作同一线程）
-* `CreateTimeColumn` : 创建时间，保存（insert）时自动附加当前时间
+* `CreateTimeColumn` : 创建时间，保存（insert）时自动附加当前时间，必须为 `LocalDateTime` 类型
 * `UpdateUserColumn` ：更新人，保存（insert）更新（updateById/updateByCode）时自动附加当前操作人 `code` （需要与获取操作人动作同一线程）
-* `UpdateTimeColumn` : 更新时间，保存（insert）更新（updateById/updateByCode）时自动附加当前时间
+* `UpdateTimeColumn` : 更新时间，保存（insert）更新（updateById/updateByCode）时自动附加当前时间，必须为 `LocalDateTime` 类型
 * `EnabledColumn` : 状态，启用或禁用，支持字段字面含义反转（ `reverse=true` ） 存在此注解的实体可以使用 `enableByXX` `disableByXX` `xxEnabled` `xxDisabled` 操作
 * `Column`: 普通字段
 
@@ -536,9 +535,9 @@ public class Pet implements Serializable {
     @Column(notNull = true)
     private BigDecimal price;
     @CreateTimeColumn
-    private Date createTime;
+    private LocalDateTime createTime;
     @UpdateTimeColumn
-    private Date updateTime;
+    private LocalDateTime updateTime;
     @EnabledColumn
     private boolean enabled;
 
@@ -552,14 +551,14 @@ TIP: 实体对象需要实现 `Serializable` 接口。
 
 * *增加* `Dew.ds().insert(Object entity) / Dew.ds().insert(Iterable<?> entities)`
 * *更新* `Dew.ds().updateById(P id, Object entity) / Dew.ds().updateByCode(String code, Object entity)`
-* *获取单条* `Dew.ds().getById(P id, Class<E> entityClazz) / Dew.ds().getByCode(String code, Class<E> entityClazz)`
-* *获取多条* `Dew.ds().findAll(Class<E> entityClazz) / Dew.ds().findAll(LinkedHashMap<String, Boolean> orderDesc, Class<E> entityClazz) / Dew.ds().findEnabled(…) / Dew.ds().findDisabled(…)`
-* *获取分页* `Dew.ds().paging(long pageNumber, int pageSize, LinkedHashMap<String, Boolean> orderDesc, Class<E> entityClazz) / Dew.ds().pagingEnabled(…) / Dew.ds().pagingDisabled(…)`
-* *计数* `Dew.ds().countAll(Class<?> entityClazz) / Dew.ds().countEnabled(Class<?> entityClazz) / Dew.ds().countDisabled(Class<?> entityClazz)`
-* *启用* `Dew.ds().enableById(P id, Class<?> entityClazz) / Dew.ds().enableByCode(String code, Class<?> entityClazz)`
-* *禁用* `Dew.ds().disableById(P id, Class<?> entityClazz) / Dew.ds().disableByCode(String code, Class<?> entityClazz)`
-* *是否存在* `Dew.ds().existById(P id, Class<?> entityClazz) / Dew.ds().existByCode(String code, Class<?> entityClazz)`
-* *物理删除* `Dew.ds().deleteById(P id, Class<?> entityClazz) / Dew.ds().deleteByCode(String code, Class<?> entityClazz)`
+* *获取单条* `Dew.ds().getById(P id, Class<E> entityClazz) / Dew.ds().getByCode(String code, Class<E> entityClazz) / Dew.ds().get(SB sqlBuilder, Class<E> entityClazz)`
+* *获取多条* `Dew.ds().findAll(Class<E> entityClazz) / Dew.ds().findEnabled(…) / Dew.ds().findDisabled(…) / Dew.ds().find(SB sqlBuilder, Class<E> entityClazz)`
+* *获取分页* `Dew.ds().paging(long pageNumber, int pageSize, Class<E> entityClazz) / Dew.ds().pagingEnabled(…) / Dew.ds().pagingDisabled(…) / Dew.ds().paging(SB sqlBuilder, long pageNumber, int pageSize, Class<E> entityClazz)`
+* *计数* `Dew.ds().countAll(Class<?> entityClazz) / Dew.ds().countEnabled(Class<?> entityClazz) / Dew.ds().countDisabled(Class<?> entityClazz) / Dew.ds().count(SB sqlBuilder, Class<E> entityClazz)`
+* *启用* `Dew.ds().enableById(P id, Class<?> entityClazz) / Dew.ds().enableByCode(String code, Class<?> entityClazz) / Dew.ds().enable(SB sqlBuilder, Class<E> entityClazz)`
+* *禁用* `Dew.ds().disableById(P id, Class<?> entityClazz) / Dew.ds().disableByCode(String code, Class<?> entityClazz) / Dew.ds().disable(SB sqlBuilder, Class<E> entityClazz)`
+* *是否存在* `Dew.ds().existById(P id, Class<?> entityClazz) / Dew.ds().existByCode(String code, Class<?> entityClazz) / Dew.ds().exist(SB sqlBuilder, Class<E> entityClazz)`
+* *物理删除* `Dew.ds().deleteById(P id, Class<?> entityClazz) / Dew.ds().deleteByCode(String code, Class<?> entityClazz) / Dew.ds().delete(SB sqlBuilder, Class<E> entityClazz)`
 
 TIP: 您可以使用：`Dew.ds().jdbc()` 获取 `JdbcTemplate` 原生API。
 
@@ -598,6 +597,39 @@ pet = Dew.ds().getById(id, Pet.class);
 assert pet.getType().equals("狗");
 ----
 
+====== SB，SQL构造器
+
+每个类型的操作都支持使用SQL构造器构造SQL，目前支持针对单表多条件AND连接的Where条件拼装和排序设置。
+
+[source,java]
+.SB方法
+----
+SB eq(String field, Object value)
+SB notEq(String field, Object value)
+SB gt(String field, Object value)
+SB ge(String field, Object value)
+SB lt(String field, Object value)
+SB le(String field, Object value)
+SB like(String field, Object value)
+SB in(String field, List<Object> values)
+SB notIn(String field, List<Object> values)
+SB isNull(String field)
+SB notNull(String field)
+SB between(String field, Object value1, Object value2)
+SB asc(String filed)
+SB desc(String filed)
+----
+
+[source,java]
+.SB示例
+----
+DS.SB.inst()
+   .eq("fieldA", "测试A2")
+   .like("fieldB", "%B2")
+   .notNull("code")
+   .desc("createTime")
+----
+
 ====== DewDao
 
 `DewDao` 是一个泛型基础 `Dao` 类，实现了常用的操作。
@@ -605,21 +637,17 @@ assert pet.getType().equals("狗");
 上个章节的示例用 `DewDao` 可写成如下形式：
 
 [source,java]
-.常用数据处理操作示例 `DewDao` 版
+.传统的 `失血模型` + `Dao` 来实现数据处理
 ----
-// 在配置文件中添加Dao的路径
-Dew:
-  jdbc:
-    base-packages: ["com.ecfront.dew.example.jdbc.jdbc"]
-
-// 添加CustomerDao
-public interface CustomerDao extends DewDao<In, Customer> {
+// 添加PetDao
+@Repository
+public class PetDao implements DewDao<Integer, Pet> {
 }
 
+// 使用PetDao
 @Autowired
 private PetDao petDao;
 
-// =============== Dao 示例 ===============
 // insert by jdbc
 pet = new Pet();
 pet.setType("猫");
@@ -631,48 +659,41 @@ pet = petDao.getById(id);
 assert pet.getType().equals("猫");
 ----
 
-====== @Select注解
+[NOTE]
+.ActiveRecord风格
+====
+最正统的 `ActiveRecord` 是与模型强绑定的，如 `new Order().insert()` ，但这一做法不利于解耦。
+框架本身支持使用传统的 `失血模型` + `Dao` 来实现数据处理，但更推荐使用优化的 `ActiveRecord` 风格编程，如上示例。
+在每个领域对象中添加 `$$` 静态属性，此属性类型为 `DewDao` 接口的实现。
+====
 
 [source,java]
-.`@Select` 格式
+.`ActiveRecord` 来实现数据处理
 ----
-@Select(value = "<SQL，使用#{参数占位名}>", entityClass = <返回的实体，为空时以Map封装>)
-<返回类型，可为单个对象/List/Page> <方法名，java规范即可>(<行参修饰符，@Param(<参数占位名>)或@ModelParam> <行参>);
+// 在领域模型中添加ActiveRecord
+@Entity
+public class Customer implements Serializable{
+
+    ...
+
+    public static ActiveRecord $$ = new ActiveRecord();
+
+    public static class ActiveRecord implements DewDao<Integer, Customer> {
+
+    }
+}
+
+
+// 使用ActiveRecord
+pet = new Pet();
+pet.setType("猫");
+pet.setPrice(new BigDecimal(2000));
+pet.setEnabled(true);
+id = Pet.$$.insert(pet);
+// getById by jdbc
+pet = Pet.$$.getById(id);
+assert pet.getType().equals("猫");
 ----
-
-TIP: 方法参数Bean类型需使用 `@ModelParam` ，参数作为SQL参数需使用 `@Param()` 并指定与#{}相匹配的名称。
-`@Select` 中entityClass用于指定返回类型。
-
-TIP: 分页查询要求返回 `Page<?>` 对象，参数最后两个固定为 `@Param("pageNumber") long pageNumber, @Param("pageSize") int pageSize` 这两个参数框架会自行解析，`pageNumber` 从 `1` 开始。
-
-TIP: `@Select` 中默认对 * 和 .* 自动解析成表对应字段，但不支持表的嵌套查询。
-
-[source,java]
-.`@Select` 示例
-----
-// 返回全量数据
-@Select(value = "select * from t_test_crud_s_entity where field_a= #{ fieldA }", entityClass = CRUDSTestEntity.class)
-List<CRUDSTestEntity> queryByField(@Param("fieldA") String fieldA);
-
-//返回分页数据
-@Select(value = "select * from t_test_crud_s_entity where field_a= #{ fieldA }", entityClass = CRUDSTestEntity.class)
-Page<CRUDSTestEntity> queryByCustomPaging(@ModelParam CRUDSTestEntity model, @Param("pageNumber") Long pageNumber, @Param("pageSize") Integer pageSize);
-
-//返回Bean类型数据
-@Select(value = "select * from t_test_crud_s_entity where id= #{id}", entityClass = CRUDSTestEntity.class)
-CRUDSTestEntity getById(@Param("id") P id);
-
-//返回Map类型数据
-@Select(value = "select * from t_test_crud_s_entity where id= #{id}")
-Map<String,Object> getMapById(@Param("id") P id);
-----
-
-[IMPORTANT]
-.使用限制
-====
-. `@Select` 只能用于接口、暂不支持DSL SQL，比如（HQL）
-. `@ModelParam` 参数不支持 `null` 查询
-====
 
 ====== 多数据源
 
@@ -747,7 +768,7 @@ assert customer.getName().equals("张三");
 
 // -------- 例如 --------
 
-public interface CustomerDao extends DewDao<Integer, Customer> {
+public class CustomerDao implements DewDao<Integer, Customer> {
     @Override
     default String ds() {
         return "other";

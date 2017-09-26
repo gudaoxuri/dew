@@ -6,6 +6,7 @@ import com.ecfront.dew.core.cluster.ClusterDistMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class RedisClusterDist implements ClusterDist {
 
     @Autowired
-    private RedisTemplate<String, String> redisTemplate;
+    private StringRedisTemplate redisTemplate;
 
     @Override
     public ClusterDistLock lock(String key) {

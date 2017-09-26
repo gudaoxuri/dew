@@ -38,7 +38,15 @@ public interface DewService<T extends DewDao<P, E>, P, E> {
         } else {
             dewDaoClass = (Class<DewDao<P, E>>) (((ParameterizedType) this.getClass().getGenericInterfaces()[0]).getActualTypeArguments()[0]);
         }
-        dao = (T) Dew.applicationContext.getBean(dewDaoClass);
+        if (Dew.applicationContext.containsBean(dewDaoClass.getSimpleName())) {
+            dao = (T) Dew.applicationContext.getBean(dewDaoClass);
+        } else {
+            try {
+                dao = (T) getModelClazz().getField("$$").get(getModelClazz());
+            } catch (IllegalAccessException | NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+        }
         Container.SERVICE_DAO_BEAN_CONTAINER.put(this.getClass(), dao);
         return dao;
     }

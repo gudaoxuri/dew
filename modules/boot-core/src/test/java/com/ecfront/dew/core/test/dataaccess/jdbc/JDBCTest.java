@@ -15,8 +15,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class JDBCTest {
@@ -198,7 +196,8 @@ public class JDBCTest {
                 DS.SB.inst()
                         .eq("fieldA", "测试A2")
                         .like("fieldB", "%B2")
-                        .notNull("code"),
+                        .notNull("code")
+                        .desc("createTime"),
                 1, 2, FullEntity.class);
         Assert.assertEquals(1, fullEntities.getRecordTotal());
         // deleteById
@@ -206,11 +205,6 @@ public class JDBCTest {
         // deleteByCode
         Dew.ds().deleteByCode(Dew.ds().findAll(FullEntity.class).get(0).getCode(), FullEntity.class);
         Assert.assertEquals(1, Dew.ds().findAll(FullEntity.class).size());
-        // selectForList
-        Map<String, Object> params = new HashMap<>();
-        params.put("code", "1");
-        Dew.ds().selectForList(fullEntity.getClass(), params,
-                "select f.*, b.* from full_entity f LEFT JOIN basic_entity b ON f.field_a = b.field_a where f.code = #{code}");
     }
 
     private void testTx() {

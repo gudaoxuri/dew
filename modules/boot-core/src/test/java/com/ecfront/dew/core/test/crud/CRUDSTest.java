@@ -7,7 +7,6 @@ import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.core.test.TestAll;
 import com.ecfront.dew.core.test.crud.entity.TestSelectEntity;
 import com.ecfront.dew.core.test.crud.service.CRUDSTestService;
-import com.ecfront.dew.core.test.dataaccess.select.dao.TestInterfaceDao;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,9 +21,6 @@ public class CRUDSTest {
 
     private long pageNumber = 1;
     private long pageSize = 10;
-
-    @Autowired
-    private TestInterfaceDao dao;
 
     @Autowired
     private CRUDSTestService crudsTestService;
@@ -45,17 +41,17 @@ public class CRUDSTest {
             testSelectEntity.setFieldB("ccc");
             list.add(testSelectEntity);
         }
-        dao.insert(list);
+        TestSelectEntity.$$.insert(list);
         Assert.assertTrue(crudsTestService.existById(102).getBody());
         TestSelectEntity testSelectEntity = crudsTestService.getById(102).getBody();
         Assert.assertTrue(crudsTestService.existByCode(testSelectEntity.getCode()).getBody());
-        long num = dao.countAll();
-        long enNum = dao.countEnabled();
-        long disNum = dao.countDisabled();
+        long num = TestSelectEntity.$$.countAll();
+        long enNum = TestSelectEntity.$$.countEnabled();
+        long disNum = TestSelectEntity.$$.countDisabled();
         Assert.assertTrue(num == enNum + disNum);
-        Page<TestSelectEntity> pagingEnabled = dao.pagingEnabled(1, 10);
+        Page<TestSelectEntity> pagingEnabled = TestSelectEntity.$$.pagingEnabled(1, 10);
         Assert.assertTrue(pagingEnabled.getObjects().size() == 10 || (pagingEnabled.getObjects().size() == enNum));
-        Page<TestSelectEntity> pagingDisabled = dao.pagingDisabled(1, 10);
+        Page<TestSelectEntity> pagingDisabled = TestSelectEntity.$$.pagingDisabled(1, 10);
         Assert.assertTrue(pagingEnabled.getObjects().size() == 10 || (pagingDisabled.getObjects().size() == disNum));
     }
 
