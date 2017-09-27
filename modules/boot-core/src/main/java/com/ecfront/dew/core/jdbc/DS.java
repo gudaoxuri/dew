@@ -1,16 +1,5 @@
 package com.ecfront.dew.core.jdbc;
 
-import com.alibaba.druid.sql.ast.SQLExpr;
-import com.alibaba.druid.sql.ast.SQLObjectImpl;
-import com.alibaba.druid.sql.ast.expr.*;
-import com.alibaba.druid.sql.ast.statement.*;
-import com.alibaba.druid.sql.dialect.db2.parser.DB2StatementParser;
-import com.alibaba.druid.sql.dialect.mysql.parser.MySqlStatementParser;
-import com.alibaba.druid.sql.dialect.oracle.parser.OracleStatementParser;
-import com.alibaba.druid.sql.dialect.phoenix.parser.PhoenixStatementParser;
-import com.alibaba.druid.sql.dialect.postgresql.parser.PGSQLStatementParser;
-import com.alibaba.druid.sql.dialect.sqlserver.parser.SQLServerStatementParser;
-import com.alibaba.druid.sql.parser.SQLStatementParser;
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Page;
 import com.ecfront.dew.common.StandardCode;
@@ -32,20 +21,13 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class DS {
 
     private static final Logger logger = LoggerFactory.getLogger(DS.class);
 
-    private static final String FIELD_PLACE_HOLDER_REGEX = "\\#\\{\\s*\\w+\\s*\\}"; // 正则匹配 #{key}
-    private static final Pattern FIELD_PLACE_HOLDER_PATTERN = Pattern.compile(FIELD_PLACE_HOLDER_REGEX);
-
     private static final char UNDERLINE = '_';
-    private static final String STAR = "*";
-    private static final String POINT = ".";
     private static final String EMPTY = "";
     private String leftDecorated;
     private String rightDecorated;
@@ -681,9 +663,9 @@ public class DS {
                 }
             });
             if (!order.isEmpty()) {
-                sb.append(order.entrySet().stream()
-                        .map(entry -> leftDecorated + entry.getKey() + rightDecorated + (entry.getValue() ? "ASC" : "DESC"))
-                        .collect(Collectors.joining(", ", " ORDER BY", "")));
+                sb.append(" ORDER BY " + order.entrySet().stream()
+                        .map(entry -> leftDecorated + classInfo.columns.get(entry.getKey()).columnName + rightDecorated + " " + (entry.getValue() ? "ASC" : "DESC"))
+                        .collect(Collectors.joining(", ", " ", " ")));
             }
             return new Object[]{sb.toString(), parameters};
         }
