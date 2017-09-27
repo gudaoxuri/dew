@@ -196,6 +196,8 @@ public class DewConfig {
         private List<String> includeServices;
         private List<String> excludeServices;
 
+        private String authAdapter="basic";
+
         public List<String> getIncludeServices() {
             return includeServices;
         }
@@ -242,6 +244,14 @@ public class DewConfig {
 
         public void setTokenHash(boolean tokenHash) {
             this.tokenHash = tokenHash;
+        }
+
+        public String getAuthAdapter() {
+            return authAdapter;
+        }
+
+        public void setAuthAdapter(String authAdapter) {
+            this.authAdapter = authAdapter;
         }
     }
 

@@ -1,8 +1,8 @@
 package com.ecfront.dew.example.auth.dto;
 
-import com.ecfront.dew.core.dto.OptInfo;
+import com.ecfront.dew.core.dto.BasicOptInfo;
 
-public class OptInfoExt extends OptInfo {
+public class OptInfoExt extends BasicOptInfo<OptInfoExt> {
 
     private String idCard;
 

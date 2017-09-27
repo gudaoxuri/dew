@@ -2,8 +2,9 @@ package com.ecfront.dew.core;
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.StandardCode;
+import com.ecfront.dew.core.auth.AuthAdapter;
+import com.ecfront.dew.core.auth.BasicAuthAdapter;
 import com.ecfront.dew.core.cluster.*;
-import com.ecfront.dew.core.dto.OptInfo;
 import com.ecfront.dew.core.entity.EntityContainer;
 import com.ecfront.dew.core.fun.VoidExecutor;
 import com.ecfront.dew.core.fun.VoidPredicate;
@@ -28,7 +29,6 @@ import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -40,6 +40,7 @@ public class Dew {
     public static Cluster cluster = new Cluster();
     public static ApplicationContext applicationContext;
     public static DewConfig dewConfig;
+    public static AuthAdapter auth;
 
     @Value("${spring.application.name}")
     private String applicationName;
@@ -89,6 +90,10 @@ public class Dew {
         // Support java8 Time
         if (jacksonProperties != null) {
             jacksonProperties.getSerialization().put(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        }
+        // Select Auth Adapter
+        if (Dew.dewConfig.getSecurity().getAuthAdapter().equalsIgnoreCase("basic")) {
+            auth = Dew.applicationContext.getBean(BasicAuthAdapter.class);
         }
     }
 
@@ -229,54 +234,6 @@ public class Dew {
                 DewContext.setContext(context);
                 fun.exec();
             }
-        }
-
-    }
-
-    public static class Auth {
-
-        public static <E extends OptInfo> Optional<E> getOptInfo() {
-            return Dew.context().optInfo();
-        }
-
-        public static <E extends OptInfo> Optional<E> getOptInfo(String token) {
-            String optInfoStr = Dew.cluster.cache.get(Dew.Constant.TOKEN_INFO_FLAG + token);
-            if (optInfoStr != null && !optInfoStr.isEmpty()) {
-                return Optional.of($.json.toObject(optInfoStr, DewContext.getOptInfoClazz()));
-            } else {
-                return Optional.empty();
-            }
-        }
-
-        public static void removeOptInfo() {
-            Optional<OptInfo> tokenInfoOpt = getOptInfo();
-            if (tokenInfoOpt.isPresent()) {
-                Dew.cluster.cache.del(Dew.Constant.TOKEN_ID_REL_FLAG + tokenInfoOpt.get().getAccountCode());
-                Dew.cluster.cache.del(Dew.Constant.TOKEN_INFO_FLAG + tokenInfoOpt.get().getToken());
-            }
-        }
-
-        public static void removeOptInfo(String token) {
-            Optional<OptInfo> tokenInfoOpt = getOptInfo(token);
-            if (tokenInfoOpt.isPresent()) {
-                Dew.cluster.cache.del(Dew.Constant.TOKEN_ID_REL_FLAG + tokenInfoOpt.get().getAccountCode());
-                Dew.cluster.cache.del(Dew.Constant.TOKEN_INFO_FLAG + token);
-            }
-        }
-
-        public static <E extends OptInfo> Optional<E> getOptInfoByAccCode(String accountCode) {
-            String token = Dew.cluster.cache.get(Dew.Constant.TOKEN_ID_REL_FLAG + accountCode);
-            if (token != null && !token.isEmpty()) {
-                return Optional.of($.json.toObject(Dew.cluster.cache.get(Dew.Constant.TOKEN_INFO_FLAG + token), DewContext.getOptInfoClazz()));
-            } else {
-                return Optional.empty();
-            }
-        }
-
-        public static <E extends OptInfo> void setOptInfo(E optInfo) {
-            Dew.cluster.cache.del(Dew.Constant.TOKEN_INFO_FLAG + Dew.cluster.cache.get(Dew.Constant.TOKEN_ID_REL_FLAG + optInfo.getAccountCode()));
-            Dew.cluster.cache.set(Dew.Constant.TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), optInfo.getToken());
-            Dew.cluster.cache.set(Dew.Constant.TOKEN_INFO_FLAG + optInfo.getToken(), $.json.toJsonString(optInfo));
         }
 
     }

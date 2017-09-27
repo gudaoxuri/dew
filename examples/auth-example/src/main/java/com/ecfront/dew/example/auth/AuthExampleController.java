@@ -42,7 +42,7 @@ public class AuthExampleController {
         // 实际登录处理
         User user = MOCK_USER_CONTAINER.values().stream().filter(u -> u.getIdCard().equals(loginDTO.getIdCard())).findFirst().get();
         String token = $.field.createUUID();
-        Dew.Auth.setOptInfo(new OptInfoExt()
+        Dew.auth.setOptInfo(new OptInfoExt()
                 .setIdCard(user.getIdCard())
                 .setAccountCode($.field.createShortUUID())
                 .setToken(token)
@@ -57,7 +57,7 @@ public class AuthExampleController {
     @GetMapping(value = "business/someopt")
     public Resp<Void> someOpt() {
         // 获取登录用户信息
-        Optional<OptInfoExt> optInfoExtOpt = Dew.Auth.getOptInfo();
+        Optional<OptInfoExt> optInfoExtOpt = Dew.auth.getOptInfo();
         if (!optInfoExtOpt.isPresent()) {
             return Resp.unAuthorized("用户认证错误");
         }
@@ -72,7 +72,7 @@ public class AuthExampleController {
     @DeleteMapping(value = "auth/logout")
     public Resp<Void> logout() {
         // 实际注册处理
-        Dew.Auth.removeOptInfo();
+        Dew.auth.removeOptInfo();
         return Resp.success(null);
     }
 
