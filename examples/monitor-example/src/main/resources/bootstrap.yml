@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: monitor-example
+  cloud:
+    config:
+      enabled: false
+  metrics:
+    servo:
+      enabled: false
+
+server:
+  port: 8081
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://registry:123456@localhost:9999/eureka
+  instance:
+    metadata-map:
+      cluster: default
+
+management.security.enabled: false
+
+logging:
+  path: ./logs

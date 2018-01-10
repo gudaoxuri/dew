@@ -4,6 +4,8 @@ package com.ecfront.dew.example.dubbo.controller;
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.ecfront.dew.example.dubbo.service.DubboAPI;
 import com.ecfront.dew.example.dubbo.service.DubboWithTransactionAPI;
+import com.ecfront.dew.example.dubbo.service.DubboAPI;
+import com.ecfront.dew.example.dubbo.service.DubboWithTransactionAPI;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

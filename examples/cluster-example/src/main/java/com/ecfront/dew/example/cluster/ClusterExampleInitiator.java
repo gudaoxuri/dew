@@ -2,7 +2,7 @@ package com.ecfront.dew.example.cluster;
 
 
 import com.ecfront.dew.common.$;
-import com.ecfront.dew.core.Dew;
+import com.ecfront.dew.Dew;
 import com.ecfront.dew.core.cluster.ClusterDistLock;
 import com.ecfront.dew.core.cluster.ClusterDistMap;
 import com.ecfront.dew.core.cluster.spi.rabbit.RabbitClusterMQ;
@@ -24,7 +24,7 @@ public class ClusterExampleInitiator {
         Dew.cluster.cache.flushdb();
         Dew.cluster.cache.del("n_test");
         assert !Dew.cluster.cache.exists("n_test");
-        Dew.cluster.cache.set("n_test", "{\"name\":\"jzy\"}", 1);
+        Dew.cluster.cache.setex("n_test", "{\"name\":\"jzy\"}", 1);
         assert Dew.cluster.cache.exists("n_test");
         assert "jzy".equals($.json.toJson(Dew.cluster.cache.get("n_test")).get("name").asText());
         Thread.sleep(1000);

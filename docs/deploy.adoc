@@ -1,0 +1,51 @@
+== 编译部署
+
+=== 开发期热部署
+
+IMPORTANT: 使用 `Dubbo` 的工程不能与此插件兼容！
+
+[source,xml]
+.引入依赖
+----
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-devtools</artifactId>
+    <optional>true</optional>
+</dependency>
+----
+
+* 设置IDE(以Intellij IDEA为例)
+
+** `Setting` -> `Build,Executiion,Deployment>Compiler`，勾选 `Build project automatically`
+** `Shift+Ctrl+Alt+/` -> 选择 `Registry`，出现 `Maintenance` 窗口，勾选 `compiler.automake.allow.when.app.running`
+
+=== 打包
+
+`mvn clean package -P fatjar` 即可打出一个包含所有依赖的包，后把 `target` 目录下生成的jar放到 `release/apps` 下。
+
+=== 部署
+
+[NOTE]
+.release目录说明
+====
+release是发布用的目录，对应的目录 `apps` 是应用级目录，所有的应用都放在这个目录下， `apps` 是可用服务的目录， `dew` 这是部署用的shell脚本。
+====
+
+==== 准备
+
+. 在服务器上创建根目录，如 `/opt/dew/`
+. 将服务器上 `dew` 文件赋予可执行权限
+. 修改本地 `release/apps` 中各组件的配置信息，主要关注日志的路径、第三方服务的连接信息、应用的端口等
+. 清空数据库、redis，Redis使用 `flushall命令`
+. 执行 `./dew start_dew` 启动dew的各服务
+
+==== 手工发布
+
+. 手工打包各组件放到 `release/apps` 目录下 
+. 将项目 `release` 上传到服务器 `/opt/dew/services` 目录
+. 执行 `./dew deploy <组件名>`
+
+==== CI
+
+. 在CI中将打包的jar放置在 `prepare` 目录中
+. 在CI中运程执行 `./dew deploy <组件名>`

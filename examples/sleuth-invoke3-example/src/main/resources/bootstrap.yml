@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: sleuth-invoke3-example
+  cloud:
+    config:
+      enabled: false
+
+server:
+  port: 8083
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone:  http://registry:123456@localhost:9999/eureka

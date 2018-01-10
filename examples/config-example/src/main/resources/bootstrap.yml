@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: config-example
+  cloud:
+    config:
+      enabled: true
+      discovery:
+        service-id: config
+      username: config
+      password: 123456
+      profile: dev, prd
+
+server:
+  port: 7000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone:  http://registry:123456@localhost:9999/eureka
+
+management:
+  security:
+    enabled: false

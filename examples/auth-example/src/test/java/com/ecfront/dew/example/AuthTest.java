@@ -2,22 +2,17 @@ package com.ecfront.dew.example;
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
-import com.ecfront.dew.core.Dew;
 import com.ecfront.dew.example.auth.AuthExampleApplication;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
 
 @RunWith(SpringRunner.class)
-@SpringBootApplication
 @SpringBootTest(classes = AuthExampleApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@ComponentScan(basePackageClasses = {Dew.class, AuthTest.class})
 public class AuthTest {
 
     private static final String url = "http://127.0.0.1:8080/";

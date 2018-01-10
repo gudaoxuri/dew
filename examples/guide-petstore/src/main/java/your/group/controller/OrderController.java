@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import your.group.domain.Order;
+import your.group.entity.Order;
 import your.group.service.OrderService;
 import your.group.vo.BuyVO;
 

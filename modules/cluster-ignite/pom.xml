@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.ecfront.dew</groupId>
+        <artifactId>parent-starter</artifactId>
+        <version>1.2.2-RC</version>
+        <relativePath>../../modules/parent-starter/</relativePath>
+    </parent>
+
+    <artifactId>cluster-spi-ignite</artifactId>
+    <name>Dew Cluster Ignite</name>
+    <description>Dew 集群 Ignite 实现</description>
+    <packaging>jar</packaging>
+
+    <properties>
+        <ignite.version>2.2.0</ignite.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>cluster-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ignite</groupId>
+            <artifactId>ignite-core</artifactId>
+            <version>${ignite.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

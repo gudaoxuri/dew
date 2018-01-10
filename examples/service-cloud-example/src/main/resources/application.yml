@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: service-cloud-example
+server:
+  port: 8081
+
+dew:
+  basic:
+    name: service-cloud
+    format:
+      use-unity-error: true
+      reuse-http-state: true
+  security:
+    exclude-services:
+      - rest-cloud-example
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://registry:123456@localhost:9999/eureka
+
+

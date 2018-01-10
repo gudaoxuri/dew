@@ -2,26 +2,23 @@ package your.group.test;
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
-import com.ecfront.dew.core.Dew;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.junit4.SpringRunner;
 import your.group.PetStoreApplication;
-import your.group.domain.Customer;
-import your.group.domain.Order;
-import your.group.domain.Pet;
+import your.group.entity.Customer;
+import your.group.entity.Order;
+import your.group.entity.Pet;
 
 import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = PetStoreApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@ComponentScan(basePackageClasses = {Dew.class, PetStoreTest.class})
 public class PetStoreTest {
 
-    private static final String url = "http://127.0.0.1:8080/";
+    private static final String url = "http://127.0.0.1:8081/";
 
     @Test
     public void testAll() throws Exception {

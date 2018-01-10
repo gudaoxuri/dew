@@ -1,0 +1,45 @@
+dew:
+  cloud:
+    error:
+      notify-interval-sec: 5
+      notify-emails:
+      notify-event-types: FAILURE,SHORT_CIRCUITED
+      #notify-include-keys: ["ExampleClient#deleteExe(int,String)","ExampleClient#postExe(int,String)"]
+spring:
+  mail:
+    host: smtp.163.com
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+  application:
+    name: hystrix-feign-example2
+server:
+  port: 12000
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    serviceUrl:
+      defaultZone:  http://registry:123456@localhost:9999/eureka
+ribbon:
+  ConnectTimeout: 1000
+  ReadTimeout: 2000
+feign:
+  hystrix:
+    enabled: true
+hystrix:
+  command:
+    default:
+      fallback:
+        enabled: true
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 3000

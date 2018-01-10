@@ -29,7 +29,7 @@ public class DewTestAutoConfiguration {
             try {
                 redisServer.start();
                 redisTemplate.getConnectionFactory().getConnection();
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 logger.error("Start embedded redis error.", e);
             }
         }

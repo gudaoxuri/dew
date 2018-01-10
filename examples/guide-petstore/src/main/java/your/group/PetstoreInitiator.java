@@ -1,7 +1,8 @@
 package your.group;
 
 
-import com.ecfront.dew.core.Dew;
+import com.ecfront.dew.Dew;
+import com.ecfront.dew.jdbc.DewDS;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -17,7 +18,7 @@ public class PetstoreInitiator {
     @PostConstruct
     public void init() {
         // 初始宠物表
-        Dew.ds().jdbc().execute("CREATE TABLE pet\n" +
+        ((DewDS) Dew.ds()).jdbc().execute("CREATE TABLE pet\n" +
                 "(\n" +
                 "id int primary key auto_increment,\n" +
                 "type varchar(50),\n" +
@@ -27,13 +28,13 @@ public class PetstoreInitiator {
                 "enabled bool\n" +
                 ")");
         // 初始化客户表
-        Dew.ds().jdbc().execute("CREATE TABLE customer\n" +
+        ((DewDS) Dew.ds()).jdbc().execute("CREATE TABLE customer\n" +
                 "(\n" +
                 "id int primary key auto_increment,\n" +
                 "name varchar(50)\n" +
                 ")");
         // 初始化订单表
-        Dew.ds().jdbc().execute("CREATE TABLE t_order\n" +
+        ((DewDS) Dew.ds()).jdbc().execute("CREATE TABLE t_order\n" +
                 "(\n" +
                 "id int primary key auto_increment,\n" +
                 "pet_id int,\n" +

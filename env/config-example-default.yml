@@ -1,0 +1,6 @@
+config-example:
+  version: v2.2
+
+endpoints:
+  restart:
+    enabled: true

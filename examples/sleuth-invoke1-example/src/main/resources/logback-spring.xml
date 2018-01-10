@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <springProperty scope="context" name="springAppName" source="spring.application.name"/>
+    <springProperty scope="context" name="logPath" source="logging.path" defaultValue="/tmp"/>
+    <springProperty scope="context" name="esUrl" source="logging.es.url"/>
+    <springProperty scope="context" name="esIndex" source="logging.es.index" defaultValue="dew-log"/>
+    <springProperty scope="context" name="esConnectTimeout" source="logging.es.connectTimeout" defaultValue="30000"/>
+    <springProperty scope="context" name="esReadTimeout" source="logging.es.readTimeout" defaultValue="30000"/>
+    <springProperty scope="context" name="esMaxQueueSize" source="logging.es.maxQueueSize" defaultValue="104857600"/>
+    <springProperty scope="context" name="esMaxMessageSize" source="logging.es.maxMessageSize" defaultValue="-1"/>
+
+    <property name="LOG_FILE" value="${logPath}/${springAppName}/%d{yyyy-MM-dd}.log"/>​
+    <property name="ES_INDEX" value="${esIndex}-%d{yyyy-MM-dd}"/>​
+
+    <appender name="dailyRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_FILE}</FileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [${springAppName:-},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-}]
+                [%thread] %logger{35} - %msg %n
+            </Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <appender name="ASYNC_LOG" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="dailyRollingFile"/>
+    </appender>
+
+    <appender name="ELASTIC" class="com.internetitem.logback.elasticsearch.ElasticsearchAppender">
+        <url>http://127.0.0.1:9200/_bulk</url>
+        <index>${ES_INDEX}</index>
+        <type>log</type>
+        <connectTimeout>${esConnectTimeout}</connectTimeout> <!-- optional (in ms, default 30000) -->
+        <readTimeout>${esReadTimeout}</readTimeout> <!-- optional (in ms, default 30000) -->
+        <maxQueueSize>${esMaxQueueSize}</maxQueueSize> <!-- optional (default 104857600) -->
+        <maxMessageSize>${esMaxMessageSize}</maxMessageSize> <!-- optional (default -1 -->
+        <errorsToStderr>true</errorsToStderr> <!-- optional (default false) -->
+        <maxRetries>3</maxRetries> <!-- optional (default 3) -->
+        <sleepTime>250</sleepTime> <!-- optional (in ms, default 250) -->
+        <!--<authentication class="com.internetitem.logback.elasticsearch.config.BasicAuthentication" /> --><!-- optional -->
+        <properties>
+            <property>
+                <name>severity</name>
+                <value>%level</value>
+            </property>
+            <property>
+                <name>service</name>
+                <value>${springAppName:-}</value>
+                <allowEmpty>false</allowEmpty>
+            </property>
+            <property>
+                <name>trace</name>
+                <value>%X{X-B3-TraceId:-}</value>
+                <allowEmpty>false</allowEmpty>
+            </property>
+            <property>
+                <name>span</name>
+                <value>%X{X-B3-SpanId:-}</value>
+                <allowEmpty>false</allowEmpty>
+            </property>
+            <property>
+                <name>host</name>
+                <value>${HOSTNAME}</value>
+                <allowEmpty>false</allowEmpty>
+            </property>
+            <property>
+                <name>thread</name>
+                <value>%thread</value>
+            </property>
+            <property>
+                <name>logger</name>
+                <value>%logger</value>
+            </property>
+            <property>
+                <name>stacktrace</name>
+                <value>%ex</value>
+            </property>
+        </properties>
+        <headers>
+            <header>
+                <name>Content-Type</name>
+                <value>text/plain</value>
+            </header>
+        </headers>
+    </appender>
+    <springProfile name="dev,default">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ELASTIC"/>
+        </root>
+    </springProfile>
+    <springProfile name="test">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC_LOG"/>
+        </root>
+    </springProfile>
+    <springProfile name="uat,prd">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC_LOG"/>
+            <appender-ref ref="ELASTIC"/>
+        </root>
+    </springProfile>
+</configuration>

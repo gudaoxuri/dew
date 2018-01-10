@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: monitor
+  boot:
+    admin:
+      discovery:
+        converter:
+          management-context-path: /dew-example # The endpoints URL prefix
+      routes:
+        endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream
+      turbine:
+        clusters: default
+        location: monitor
+
+turbine:
+  aggregator:
+    clusterConfig: default
+  appConfig: monitor-example
+  clusterNameExpression: metadata['cluster']
+
+security:
+  basic:
+    enabled: true
+  user:
+    name: monitor
+    password: 123456
+
+server:
+  port: 12000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://registry:123456@localhost:9999/eureka
+
+logging:
+  path: ./logs

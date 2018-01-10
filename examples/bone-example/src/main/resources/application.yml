@@ -4,6 +4,3 @@ spring:
 
 bone-example:
   some-prop: prop1
-
-logging:
-  path: ./logs

@@ -16,10 +16,9 @@ spring:
       initial-size: 1
       max-active: 1
 
-
 dew:
   jdbc:
-    base-packages: ["com.ecfront.dew.example.jdbc.jdbc"]
+    base-packages: ["com.ecfront.dew.example.jdbc.dao"]
 
 logging:
   path: ./logs

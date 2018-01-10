@@ -2,6 +2,8 @@ package com.ecfront.dew.core.cluster.spi.hazelcast;
 
 import com.ecfront.dew.core.cluster.ClusterDistMap;
 import com.ecfront.dew.core.cluster.VoidProcessFun;
+import com.ecfront.dew.core.cluster.ClusterDistMap;
+import com.ecfront.dew.core.cluster.VoidProcessFun;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.map.listener.EntryAddedListener;

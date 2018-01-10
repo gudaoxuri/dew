@@ -1,10 +1,11 @@
 package com.ecfront.dew.example.jdbc.entity;
 
-import com.ecfront.dew.core.entity.*;
+import com.ecfront.dew.jdbc.entity.*;
+import com.ecfront.dew.jdbc.entity.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Entity
 public class Pet implements Serializable {
@@ -16,9 +17,9 @@ public class Pet implements Serializable {
     @Column(notNull = true)
     private BigDecimal price;
     @CreateTimeColumn
-    private Date createTime;
+    private LocalDateTime createTime;
     @UpdateTimeColumn
-    private Date updateTime;
+    private LocalDateTime updateTime;
     @EnabledColumn
     private boolean enabled;
 
@@ -46,19 +47,19 @@ public class Pet implements Serializable {
         this.price = price;
     }
 
-    public Date getCreateTime() {
+    public LocalDateTime getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
     }
 
-    public Date getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
     }
 

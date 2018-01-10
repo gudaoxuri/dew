@@ -1,12 +1,11 @@
 package com.ecfront.dew.example.dubbo;
 
-import com.ecfront.dew.core.Dew;
-import com.ecfront.dew.core.DewBootApplication;
+import com.ecfront.dew.Dew;
+import com.ecfront.dew.core.autoconfigure.DewBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.annotation.ComponentScan;
 
-@ComponentScan(basePackageClasses = {Dew.class,DubboExampleApplication.class})
-public class DubboExampleApplication extends DewBootApplication {
+@DewBootApplication(scanBasePackageClasses = {Dew.class,DubboExampleApplication.class})
+public class DubboExampleApplication{
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(DubboExampleApplication.class).run(args);

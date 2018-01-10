@@ -1,5 +1,8 @@
 package com.ecfront.dew.core.cluster.spi.hazelcast;
 
+import com.ecfront.dew.core.cluster.ClusterDist;
+import com.ecfront.dew.core.cluster.ClusterDistLock;
+import com.ecfront.dew.core.cluster.ClusterDistMap;
 import com.ecfront.dew.core.cluster.ClusterDistMap;
 import com.ecfront.dew.core.cluster.ClusterDist;
 import com.ecfront.dew.core.cluster.ClusterDistLock;

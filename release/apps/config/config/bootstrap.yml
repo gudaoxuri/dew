@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: config
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://rep.360taihe.com/env/fake.git
+          repos:
+            crm:
+              pattern: x*
+              uri: https://rep.360taihe.com/env/x.git
+          username: cdman
+          password: cdman123
+
+server:
+  port: 9000
+
+encrypt:
+  key: dsffjsskeSwku^%&*&
+
+security:
+  basic:
+    enabled: true
+  user:
+    name: trc
+    password: conf!_#123
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://trc:reg!_#123@localhost:9999/eureka
+
+logging:
+  path: ../../logs

@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: rest-cloud-example1
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://registry:123456@localhost:9999/eureka
+
+

@@ -7,22 +7,27 @@
     <!--引入Dew父依赖，也可以使用import方式-->
     <parent>
         <groupId>com.ecfront.dew</groupId>
-        <artifactId>parent</artifactId>
+        <artifactId>parent-starter</artifactId>
         <!--生产环境切不可以使用快照版本!!!!!!!!-->
-        <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../../modules/parent/</relativePath>
+        <version>1.2.2-RC</version>
+        <!--自己编写时请删除relativePath-->
+        <relativePath>../../modules/parent-starter/</relativePath>
     </parent>
 
     <groupId>yourgroup</groupId>
     <artifactId>pet-store</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <sonar.skip>true</sonar.skip>
+    </properties>
 
     <dependencies>
         <!--dew的核心包-->
         <dependency>
             <groupId>com.ecfront.dew</groupId>
-            <artifactId>boot-core</artifactId>
+            <artifactId>boot-starter</artifactId>
         </dependency>
         <!--引入集群能力-redis实现-->
         <dependency>
@@ -43,15 +48,10 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
         </dependency>
-        <!--添加spring jdbc template支持-->
+        <!--添加Dew JDBC支持-->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-        <!--使用druid连接池-->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>jdbc-starter</artifactId>
         </dependency>
         <!--测试项目，使用h2数据库-->
         <dependency>
@@ -62,7 +62,6 @@
         <dependency>
             <groupId>com.ecfront.dew</groupId>
             <artifactId>test-starter</artifactId>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

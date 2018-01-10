@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: hystrix-example
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+  mail:
+    host: smtp.alibaba.com
+    username: jiangji@tairanchina.com
+    password: gSQiQxGR5wLUFkNh
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: false
+            required: fasle
+
+server:
+  port: 11000
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone:  http://registry:123456@localhost:9999/eureka
+
+dew:
+  cluster:
+    cache: redis
+  cloud:
+    error:
+      enabled: true
+      notify-interval-sec: 5
+      notify-emails: 71964899@qq.com
+      notify-include-keys: ["ExampleClient#deleteExe(int,String)","ExampleClient#postExe(int,String)","ExampleClient2#deleteExe(int,String)"]

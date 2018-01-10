@@ -7,40 +7,123 @@
 dew: # Dew 参数key前缀
     basic: # 基础信息
         name: # 服务名称，用于API文档显示等
-        version: # 服务版本号，用于API文档显示等
+        version: 1.0 # 服务版本号，用于API文档显示等
         desc: # 服务描述，用于API文档显示等
         webSite: # 官网，用于API文档显示等
         doc:
+            enabled: true # 是否启用默认文档配置，关闭后可自定义文档管理
             base-package: # API文档要扫描的根包，多指定到 Controller 包中
         format:
-        reuse-http-state: # true:重用http状态码，false:使用协议无关格式，默认true
+        use-unity-error: true # 是否启用统一响应
+        reuse-http-state: false # true:重用http状态码，false:使用协议无关格式
         error-mapping: # 自定义错误映射
             "[<异常类名>]":
                 http-code: # http状态码，不存在时使用实例级http状态码
                 business-code: # 业务编码，不存在时使用实例级业务编码
                 message: # 错误描述，不存在时使用实例级错误描述
     cluster: # 集群功能
-        cache: # 缓存实现，默认为 redis
-        dist: # 分布式锁和Map实现，默认为 redis，可选 redis/hazelcast
-        mq: # MQ实现，默认为 redis，可选 redis/hazelcast/rabbit
-        election: # 领导者选举实现，默认为 eureka
+        cache: redis # 缓存实现
+        dist: redis # 分布式锁和Map实现，可选 redis/hazelcast
+        mq: redis # MQ实现，可选 redis/hazelcast/rabbit
+        election: eureka # 领导者选举实现，可选 eureka
+    jdbc: # DewJDBC 功能
+        base-packages:[""] # 要扫描的根包，多指定到 jdbc 包中
     security: # 安全功能
         cors:
-            allow-origin: # 允许的来源，默认为 * ，建议修改
-            allow-methods: # 允许的方法，默认为所有常用方法
-            allow-headers: # 允许的头信息，默认为 x-requested-with,content-type
-        token-flag: # token 标识，默认为  __dew_token__
-        token-in-header: # true：token标识在 header 中，反之在url参数中，默认为true
-        token-hash: # token值是否需要hash，用于解决token值有特殊字符的情况，默认为false
+            allow-origin: * # 允许的来源，建议修改
+            allow-methods: POST,GET,OPTIONS,PUT,DELETE,HEAD # 允许的方法
+            allow-headers: x-requested-with,content-type # 允许的头信息
+        token-flag: __dew_token__ # token 标识
+        token-in-header: true # true：token标识在 header 中，反之在url参数中
+        token-hash: false # token值是否需要hash，用于解决token值有特殊字符的情况
         include-services: [""] # 服务白名单，要求源服务头部带上 Request-From
         exclude-services: [""] # 服务黑名单，要求源服务头部带上 Request-From
-
+        auth: # 特殊的认证功能，基础认证不需要配置
+            csp:  # csp模式，引用csp-starter后默认使用该模式
+                party-id: X-User-Id #partyId在header中的key值
+                app-id: X-App-Id #appId在header中的key值
+                roles: X-Roles #角色在header中的key值，逗号分隔
+    cloud:
+        trace-log:
+            enabled: true # 是否启用服务API调用（追踪）日志
+        error:
+             enabled: true #启用降级邮件通知，默认为false
+             notify-interval-sec: 1800 # 通知的间隔时间
+             notify-emails:  # 通知的邮箱，逗号分隔
+             notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED # 通知的事件类型
+             notify-include-keys: # 需监控的方法key值，与notify-exclude-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
+             notify-exclude-keys: # 不需要监控的方法key值，与notify-include-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
+    idempotent:
+        default-expire-ms: 3600000 # 设置默认过期时间，1小时
+        default-strategy: item # 设置默认策略，支持 bloom(Bloom Filter)和item(逐条记录)
+        opt-type-flag: __IDEMPOTENT_OPT_TYPE__ # 指定幂等操作类型标识，可以位于HTTP Header或请求参数中
+        opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
+    metric:
+        enabled: true # 是否启用Dew的指标统计
+        period-sec: 默认600 # 指定统计周期（多少秒内的指标统计）
 spring:
   datasource: # 主数据源配置
-    ... # 数据源配置，详见 Spring boot 核心参数
-    druid: # druid 连接池配置，详见 Spring boot 核心参数
+        ... # 数据源配置，详见 Spring boot 核心参数
+       druid: # druid 连接池配置，详见 Spring boot 核心参数
   multi-datasources: # DewJDBC 多数据源支撑
-    <other ds name>: # 数据源标识
+       <other ds name>: # 数据源标识
+  mail: #mail配置，需要hystrix降级通知需加以下配置
+       host: smtp.163.com
+       username:
+       password:
+       properties:
+         mail:
+           smtp:
+             auth: true
+             starttls:
+               enable: true
+               required: true
+
+#sharding-jdbc配置（分库分表样例，详细见使用手册及sharding-example）
+sharding:
+  jdbc:
+    datasource:
+      names: ds_0,ds_1
+      ds_0:
+        type: org.apache.commons.dbcp.BasicDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/ds_yaml_0
+        username: root
+        password: 123456
+      ds_1:
+        type: org.apache.commons.dbcp.BasicDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/ds_yaml_1
+        username: root
+        password: 123456
+    config:
+      sharding:
+        tables:
+          t_order:
+            actualDataNodes: ds_${0..1}.t_order_${0..1}
+            #generateKeyColumns:
+              #- columnName: order_id
+            tableStrategy:
+              inline:
+                shardingColumn: order_id
+                algorithmInlineExpression: t_order_${order_id.longValue() % 2}
+          t_order_item:
+            actualDataNodes: ds_${0..1}.t_order_item_${0..1}
+            tableStrategy:
+              inline:
+                shardingColumn: order_id
+                algorithmInlineExpression: t_order_item_${order_id.longValue() % 2}
+        #绑定表中其余的表的策略与第一张表的策略相同
+        bindingTables:
+          - t_order,t_order_item
+        #默认数据库分片策略
+        defaultDatabaseStrategy:
+          inline:
+            shardingColumn: user_id
+            algorithmInlineExpression: ds_${user_id.longValue() % 2}
+        props:
+          sql.show: false
+
 ----
 
 === `Spring boot` 核心参数

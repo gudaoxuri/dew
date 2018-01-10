@@ -1,5 +1,6 @@
 package com.ecfront.dew.core.cluster.spi.hazelcast;
 
+import com.ecfront.dew.core.cluster.ClusterMQ;
 import com.hazelcast.client.HazelcastClientNotActiveException;
 import com.ecfront.dew.core.cluster.ClusterMQ;
 import org.springframework.beans.factory.annotation.Autowired;

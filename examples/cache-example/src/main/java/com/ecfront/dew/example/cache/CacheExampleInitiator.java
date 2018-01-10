@@ -2,6 +2,8 @@ package com.ecfront.dew.example.cache;
 
 import com.ecfront.dew.example.cache.dto.CacheExampleDTO;
 import com.ecfront.dew.example.cache.service.CacheExampleService;
+import com.ecfront.dew.example.cache.dto.CacheExampleDTO;
+import com.ecfront.dew.example.cache.service.CacheExampleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

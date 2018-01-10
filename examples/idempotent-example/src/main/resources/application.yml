@@ -1,0 +1,15 @@
+dew:
+  cluster:
+    cache: redis
+  idempotent:
+    default-expire-ms: 3600000 # 设置默认过期时间，1小时
+    default-strategy: item # 设置默认策略，支持 bloom(Bloom Filter)和item(逐条记录)
+    opt-type-flag: __IDEMPOTENT_OPT_TYPE__ # 指定幂等操作类型标识，可以位于HTTP Header或请求参数中
+    opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
+spring:
+  application:
+    name: Idempotent-example
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    database: 0

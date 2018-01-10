@@ -1,12 +1,216 @@
 == 版本说明
 
-=== 1.0.0-rc
-
-==== Feature
-
-==== Improvement
+=== 1.2.2-RC
 
 ==== Fixed
 
+* #45 邮件通知修正
+* #85 日志配置优化
 
+=== 1.2.1-RC
 
+==== Fixed
+
+* #38 RabbitMQ消息未设置持久化
+* 使用 `统一响应——协议无关` 类型时，降级HTTP状态码改为500
+
+=== 1.2.0-RC
+
+==== Feature
+
+* #75 添加幂等处理功能， #77 可选策略类型Bloom Filter尚在开发中
+* #72 实现针对服务整体及每个接口的TPS、最大/平均/90%响应时间Metrics统计
+
+==== Improvement
+
+* #68 支持自定义离线文档文件名
+* #70 更友好地获取本机Host
+* #76 cluster.cache 支持更多类型的操作
+* #53 统一响应——协议无关 降级由 `1000` 改成 `555` 以提升兼容性
+* #79 增加是否启用默认文档配置
+* #80 增加注解启用Dew功能
+* Swagger文档去除全局token参数
+
+==== Fixed
+
+* #43 swagger2markup-maven-plugin 在使用 spring.content-path 无效
+
+==== 从 `1.1.0-RC` 迁移到 `1.2.1-RC`
+. 使用 `统一响应——协议无关` 类型时，UI端由原来只需要获取200状态下的数据改成需要获取 200 和 555 状态下的数据，两者对UI端没有区别。( @See https://rep.360taihe.com/csp/dew-framework/issues/53 )
+
+=== 1.1.0-RC
+
+==== Feature
+
+* [功能] #45 支持服务调用（ `Hystrix` ）异常邮件通知
+* [功能] #51 适配新版 `用户权限中心` SDK
+* [功能] #59 #49 #15 统一日志规范，适配 `sleuth` 日志到 `ES`
+
+==== Improvement
+
+* [优化] #53 统一响应——协议无关 类型的http返回码由统一的200改成 `200` 或 `1000` ，前者表示操作成功或不需要降级的错误，后者表示需要做降级（Hystrix fallback）的错误
+* [优化] #50 `Dew JDBC` 更好地支持没有 `Entity` 注解的对象
+* [优化] #52 对于java8时间，url参数转换支持String转LocalDateTime,LocalDate、LocalTime,long转LocalDateTime(但json数据不支持)，long转Instant
+* [优化] #55 #58 其它一些优化
+
+==== Fixed
+
+==== 从 `1.1.0-beta1` 迁移到 `1.1.0-RC`
+. 使用 `统一响应——协议无关` 类型时，UI端由原来只需要获取200状态下的数据改成需要获取 200 和 1000 状态下的数据，两者对UI端没有区别。( @See https://rep.360taihe.com/csp/dew-framework/issues/53 )
+
+=== 1.1.0-beta1
+
+==== Feature
+
+* [功能] #19 支持局部 `ShardingJDBC`(由于ShardingJDBC 2.0还未RC，测试发现存在较多问题，此功能需要等待官方RC)
+
+==== Improvement
+
+* [优化] 支持Java8时间处理
+* [优化] #34 模块Spring化，`boot-core` 更名为 `boot-starter` , `cloud-core` 更名为 `cloud-starter`
+* [优化] #40 `Dew JDBC` 独立成 `jdbc-starter` , 确保核心模块 `boot-starter` 更轻量
+* [优化] `Dew JDBC` 性能优化
+* [文档] #47 添加性能调优章节
+
+==== Fixed
+
+* [修正] 统一错误拦截返回指定为 `MediaType=APPLICATION_JSON_UTF8` 以解决 `Feign` 调用解码错误
+
+==== 从 `1.0.0-RC/betaX` 迁移到 `1.1.0`
+
+`1.1.0` 修正了 `1.0.0` 版本的几个设计缺陷，需要做如下的迁移操作：
+
+* Maven: `Dew` 框架的版本修正成 `1.1.0-X`，目前是 `1.1.0-beta1`
+* Maven: `boot-core` 更名为 `boot-starter` , `cloud-core` 更名为 `cloud-starter`
+* 核心代码: `com.ecfront.dew.core.Dew` 包路径改成 `com.ecfront.dew.Dew`
+* `Dew JDBC` 模块（使用MyBatis等其它持久化框架的项目可以忽略）
+**  `SafeEntity` 的创建/更新时间 由 `Date` 换成了 `LocalDateTime`
+**  所有 `entity` 包 迁移到 `com.ecfront.dew.jdbc.entity`
+**  使用 `JdbcTemplate` 原生方法时 原来是： `Dew.ds().jdbc.xx` ，需要修改成 `((DewDS)Dew.ds).jdbc.xx`
+
+=== 1.0.0-RC
+
+==== Feature
+
+* [功能]支持新版用户权限中心认证适配(* 新版用户权限中心Release后，此功能代码会有一定变更)
+* [功能]新增SqlBuilder用于快速构建SQL语句
+* [移除]由于 Spring Cloud Thrift RPC 测试不够充分，此版本中暂时移除
+
+==== Improvement
+
+* [功能]支持rabbit confirm(单条)模式
+
+  ((RabbitClusterMQ)Dew.cluster.mq).publish(String topic, String message, boolean confirm)
+  ((RabbitClusterMQ)Dew.cluster.mq).request(String address, String message, boolean confirm)
+
+* [功能]支持 `EnabledColumn` 结果反转，EnabledColumn用于标识是否启用状态的注解，默认是true是否用，false是禁用，但有些情况下状态字段会使用`del_flag`表示是否删除，这时需要设置结果反转
+* [功能]统一Body及Url Path/Query的异常捕获
+* [功能] `tryLock` 支持重入
+* [测试]引入 `embedded redis` 以支持单元测试
+* [文档]添加 以宠物商店为例的 `新手入门` 章节
+* [修改]原 `dew.dao.base-package` 改成 `dew.jdbc.base-packages` 支持多个路径
+
+==== Fixed
+
+* 修正Redis锁 `Unlock` 处理的线程问题
+* 修正jacoco单元测试覆盖率偏少的问题
+
+=== 1.0.0-beta5
+
+==== Feature
+
+* 添加服务调用限制（可定义A服务不允许B服务调用，防止服务双向依赖） e.g.
+
+ dew.security.exclude-services:
+  - serviceB
+  - serviceC
+
+* 添加对Thrift的支持
+* 支持集群Leader Election（非严格模式）
+* 整合Spring Boot Cache
+
+==== Improvement
+
+* 优化CURD脚手架
+* 支持UUID形式的主键
+* 优化注解自定义查询（ `@Select` ），通过测试
+* 支持自定义异常配置，见 `异常处理` 章节
+* 添加Bean分组校验说明，见 `异常处理` 章节
+* 添加 `Sonar` 代码质量检查，配置 `sonar.host.url` 执行 `mvn clean verify sonar:sonar`
+* 【需要迁移】使用Druid数据库连接池（注意数据库连接配置变更）
+* 【需要迁移】删除 `DaoImpl` 兼容性类
+* 【需要迁移】将 `Dew.e` 移到 `Dew.E.e`，添加 `Dew.E.checkXX`异常检查方法，见 `异常处理` 章节
+
+==== Fixed
+
+* 修正事务失败，重试成功后还是被回滚的问题
+
+=== 1.0.0-beta4
+
+==== Feature
+
+* 整合 `Spring boot admin` 与 `Turbine`，可直观的监控各个性能及访问指标
+
+image::./images/spring-boot-admin.png[]
+
+* 添加实验功能：使用注解自定义查询（ `@Select` ）
+
+==== Improvement
+
+* 添加了几个自定义验证方式
+* 添加性能测试报告
+* 移除 `DaoImpl` ，改用接口 `DewDao` 
+
+WARNING: 为确保兼容， `DaoImpl` 在这一版本中未物理移除，如有条件请迁移至 `DewDao` 
+
+==== Fixed
+
+=== 1.0.0-beta3
+
+==== Feature
+
+. Cluster的MQ添加RabbitMQ SPI
+
+==== Improvement
+
+. 支持自定义http错误码( `Dew.e(String code, E ex, StandardCode customHttpCode)` )
+. 对加了字段校验(@Valid)的对象，如果检验失败会返回错误详细
+. 开放将ResultSet转成对象的方法( `ds.convertRsToObj(Map<String, Object> rs, Class<E> entityClazz)` )
+
+==== Fixed
+
+=== 1.0.0-Beta2
+
+==== Feature
+
+. 支持生成Html及PDF版本的离线文档
+
+==== Improvement
+
+. 添加Dubbo整合示例，提供Dubbo服务提供无法处理`声明式事务`的方案
+. 完善文档并改用asciidoc格式
+. 统一依赖管理
+. `parent` 中添加公司maven库
+. Hazelcast Client升级到3.8.2
+. Dew-Common升级到1.3.7
+
+==== Fixed
+
+=== 1.0.0-beta1
+
+==== Feature
+
+. 多数据源支持，详见说明文档`多数据源支持`章节
+
+IMPORTANT: 原`Dew.ds.xx`接口弃用，改为`Dew.ds().xx`，如需要使用其它数据源请使用`Dew.ds(&lt;DS Name&gt;).xx`
+
+==== Improvement
+
+. 新增`mybatisplus-example`
+. 改善`Swagger`文档支持
+. 新增销毁时间支持：`boolean tryLock(long waitMillSec, long leaseMillSec)`
+. 锁的等待、销毁时间单位由原来的`秒`改成`毫秒`
+
+==== Fixed
+
+. 修正`tryLock`锁（`Redis`实现），锁被其它线程或JVM占用时等待时间的计算错误

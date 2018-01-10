@@ -1,9 +1,11 @@
 package com.ecfront.dew.example.jdbc.dao;
 
 import com.ecfront.dew.common.Page;
-import com.ecfront.dew.core.jdbc.DewDao;
-import com.ecfront.dew.core.jdbc.annotations.Param;
-import com.ecfront.dew.core.jdbc.annotations.Select;
+import com.ecfront.dew.jdbc.annotations.Param;
+import com.ecfront.dew.jdbc.annotations.Select;
+import com.ecfront.dew.jdbc.DewDao;
+import com.ecfront.dew.jdbc.annotations.Param;
+import com.ecfront.dew.jdbc.annotations.Select;
 import com.ecfront.dew.example.jdbc.entity.Order;
 
 public interface OrderDao extends DewDao<Integer, Order> {

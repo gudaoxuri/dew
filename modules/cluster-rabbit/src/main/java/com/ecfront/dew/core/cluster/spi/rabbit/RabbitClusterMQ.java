@@ -1,9 +1,6 @@
 package com.ecfront.dew.core.cluster.spi.rabbit;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.*;
 import com.ecfront.dew.core.cluster.ClusterMQ;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +31,8 @@ public class RabbitClusterMQ implements ClusterMQ {
             if (confirm) {
                 channel.confirmSelect();
             }
-            channel.exchangeDeclare(topic, "fanout");
-            channel.basicPublish(topic, "", null, message.getBytes());
+            channel.exchangeDeclare(topic, "fanout",true);
+            channel.basicPublish(topic, "", MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
             if (confirm) {
                 try {
                     return channel.waitForConfirms();
@@ -64,9 +61,10 @@ public class RabbitClusterMQ implements ClusterMQ {
     public void subscribe(String topic, Consumer<String> consumer) {
         Channel channel = rabbitAdapter.getConnection().createChannel(false);
         try {
-            channel.exchangeDeclare(topic, "fanout");
+            channel.exchangeDeclare(topic, "fanout",true);
             String queueName = channel.queueDeclare().getQueue();
             channel.queueBind(queueName, topic, "");
+            channel.basicQos(1);
             channel.basicConsume(queueName, false, new DefaultConsumer(channel) {
                 @Override
                 public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
@@ -99,7 +97,7 @@ public class RabbitClusterMQ implements ClusterMQ {
                 channel.confirmSelect();
             }
             channel.queueDeclare(address, true, false, false, null);
-            channel.basicPublish("", address, null, message.getBytes());
+            channel.basicPublish("", address, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
             if (confirm) {
                 try {
                     return channel.waitForConfirms();
@@ -129,6 +127,7 @@ public class RabbitClusterMQ implements ClusterMQ {
         Channel channel = rabbitAdapter.getConnection().createChannel(false);
         try {
             channel.queueDeclare(address, true, false, false, null);
+            channel.basicQos(1);
             channel.basicConsume(address, false, new DefaultConsumer(channel) {
                 @Override
                 public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {

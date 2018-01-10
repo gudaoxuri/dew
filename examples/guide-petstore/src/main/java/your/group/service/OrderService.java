@@ -2,17 +2,18 @@ package your.group.service;
 
 import com.ecfront.dew.common.Page;
 import com.ecfront.dew.common.Resp;
-import com.ecfront.dew.core.Dew;
+import com.ecfront.dew.Dew;
 import com.ecfront.dew.core.cluster.ClusterDistLock;
 import com.ecfront.dew.core.service.CRUService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import your.group.domain.Order;
+import your.group.dao.OrderDao;
+import your.group.entity.Order;
 
 import javax.annotation.PostConstruct;
 
 @Service
-public class OrderService implements CRUService<Order.ActiveRecord, Integer, Order> {
+public class OrderService implements CRUService<OrderDao, Integer, Order> {
 
     // 使用分布式锁
     private ClusterDistLock lock;

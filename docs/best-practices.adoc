@@ -1,4 +1,4 @@
-== 最佳实践
+````== 最佳实践
 
 === JDBC框架的选择
 
@@ -27,41 +27,98 @@
 
 所以为适应这一场景需求，Dew基于Spring JDBC Template做了扩展以支持上述功能。
 
+=== 服务调用开发期使用
 
-=== 缓存处理
-`Spring Cache` 提供了很好的注解式缓存，但默认没有超时，需要根据使用的缓存容器特殊配置，e.g.
+在Spring Cloud体系下，服务调用需要启动 `Eureka` 服务（对于Dew中的 `Regstry` 组件），这对开发阶段并不友好：
 
-[source,java]
-.Redis缓存过期时间设置
-----
-@Bean
-RedisCacheManager cacheManager() {
-    final RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate);
-    redisCacheManager.setUsePrefix(true);
-    redisCacheManager.setDefaultExpiration(<过期秒数>);
-    return redisCacheManager;
-}
-----
+. 开发期间会不断启停服务，`Eureka` 保护机制会影响服务注册（当然这是可以关闭的）
+. 多人协作时可能会出现调用到他人服务的情况（同一服务多个实例）
+. 需要启动 `Eureka` 服务，多了一个依赖
+
+为解决上述问题,在使用` Spring Cloud` 的 `RestTemplate` 时,增加 `Ribbon` 的服务配置.
+
+    # <client>为service-id
+    <client>.ribbon.listOfServers: <直接访问的IPs>
+    # 如
+    performance-service.ribbon.listOfServers: 127.0.0.1:8812
 
 === 断路保护
 
+[source,properties]
+.Hystrix配置
+----
+# 执行的隔离策略 THREAD, SEMAPHORE 默认THREAD
+hystrix.command.default.execution.isolation.strategy=THREAD
+# 执行hystrix command的超时时间,超时后会进入fallback方法 默认1000
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=1000
+# 执行hystrix command是否限制超时,默认是true
+hystrix.command.default.execution.timeout.enabled=true
+# hystrix command 执行超时后是否中断 默认true
+hystrix.command.default.execution.isolation.thread.interruptOnTimeout=true
+# 使用信号量隔离时,信号量大小,默认10
+hystrix.command.default.execution.isolation.semaphore.maxConcurrentRequests=10
+# fallback方法最大并发请求数 默认是10
+hystrix.command.default.fallback.isolation.semaphore.maxConcurrentRequests=10
+# 服务降级是否开启,默认为true
+hystrix.command.default.fallback.enabled=true
+# 是否使用断路器来跟踪健康指标和熔断请求
+hystrix.command.default.circuitBreaker.enabled=true
+# 熔断器的最小请求数,默认20. (这个不是很理解,欢迎补充)
+hystrix.command.default.circuitBreaker.requestVolumeThreshold=20
+# 断路器打开后的休眠时间,默认5000
+hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds=5000
+# 断路器打开的容错比,默认50
+hystrix.command.default.circuitBreaker.errorThresholdPercentage=50
+# 强制打开断路器,拒绝所有请求. 默认false, 优先级高于forceClosed
+hystrix.command.default.circuitBreaker.forceOpen=false
+# 强制关闭断路器,接收所有请求,默认false,优先级低于forceOpen
+hystrix.command.default.circuitBreaker.forceClosed=false
+
+# hystrix command 命令执行核心线程数,最大并发 默认10
+hystrix.threadpool.default.coreSize=10
+----
+
+* 信息参见:
+** https://github.com/Netflix/Hystrix/wiki/Configuration
+** http://hwood.lofter.com/post/1cc7fbdc_e8c5c96
+
 使用断路保护可有效果的防止系统雪崩，`Spring Cloud` 对` Hystrix` 做了封装，详见：http://cloud.spring.io/spring-cloud-netflix/single/spring-cloud-netflix.html#_circuit_breaker_hystrix_clients
-需要说明的是 `Hystrix` 使用新线程执行代码，导致Threadlocal数据能同步，使用时需要将用到的数据做为参数传入，如果需要使用Dew框架的上下文（请求链路/用户等获取）需要先传入再设值，e.g.
+
+需要说明的是 `Hystrix` 使用新线程执行代码，导致Threadlocal数据不能同步，使用时需要将用到的数据做为参数传入，如果需要使用Dew框架的上下文（请求链路/用户等获取）需要先传入再设值，e.g.
 
 [source,java]
-.Context处理
+.Hystrix Command 示例,及Context处理
 ----
-@HystrixCommand(...)
-public <return> someMethod(..., DewContext context) {
-    DewContext.setContext(context);
-    ....
+public class HystrixExampleService {
+    @HystrixCommand(fallbackMethod = "defaultFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000")
+    })
+    public String someMethod(Map<String, Object> parameters, DewContext context) {
+        // ！！！ Hystrix使用新线程执行代码，导致Threadlocal数据不能同步，
+        // 使用时需要将用到的数据做为参数传入，如果需要使用Dew框架的上下文需要先传入再设值
+        DewContext.setContext(context);
+        try {
+            Thread.sleep(new Random().nextInt(3000));
+            logger.info("Normal Service Token:" + Dew.context().getToken());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return "ok";
+    }
+
+    // 降级处理方法定义
+    public String defaultFallback(Map<String, Object> parameters, DewContext context, Throwable e) {
+        DewContext.setContext(context);
+        logger.info("Error Service Token:" + Dew.context().getToken());
+        return "fail";
+    }
 }
 ----
 
 === 配置中心
 
-使用spring config 配置中心refresh时,在@RefreshScope注解的类中,@Scheduled注解的自动任务会失效.
-建议使用实现SchedulingConfigurer接口的方式添加自动任务.
+使用 `Spring Config`  配置中心 `refresh` 时,在 `@RefreshScope` 注解的类中,` @Scheduled` 注解的自动任务会失效。
+建议使用实现 `SchedulingConfigurer` 接口的方式添加自动任务。
 
 [source,java]
 .自动任务添加
@@ -87,9 +144,354 @@ public class SchedulingConfiguration implements SchedulingConfigurer {
 }
 ----
 
+=== `ribbon` 负载均衡
 
-    
+NOTE: 本条实践为``netflix``的``1.3.4.RELEASE``版本
 
+* example: service-dew.ribbon.NFLoadBalancerRuleClassName=com.netflix.loadbalancer.RandomRule
 
+NOTE: ``service-dew``为服务名，配置时自行选取规则，类均在``com.netflix.loadbalancer``包下
 
+[source,yml]
+.若指定zone，默认会优先调用相同zone的服务,此优先级高于策略配置，配置如下
+----
+#指定属于哪个zone
+eureka:
+  instance:
+    metadata-map:
+      zone: #zone 名称
 
+#指定region（此处region为项目在不同区域的部署，为项目规范，不同region间能互相调用）
+eureka:
+  client:
+    region: #region名称
+----
+
+=== `feign` 配置特定方法超时时间
+
+*`hystrix` 超时时间配置*
+
+ # 配置默认的hystrix超时时间
+ hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=10000
+ # 配置特定方法的超时时间,优于默认配置
+ hystrix.command.<hystrixcommandkey>.execution.isolation.thread.timeoutInMilliseconds=10000
+ # <hystrixcommandkey>的format为FeignClassName#methodSignature,下面是示例配置
+ hystrix.command.PressureService#getBalance(int).execution.isolation.thread.timeoutInMilliseconds=10000
+
+*`ribbon` 超时时间配置*
+
+ # 配置默认ribbon超时时间
+ ribbon.ReadTimeout=60000
+ # 配置特定服务超时时间,优于默认配置
+ <client>.ribbon.ReadTimeout=6000
+ # <client>为实际服务名,下面是示例配置
+ pressure-service.ribbon.ReadTimeout=5000
+
+*`hystrix` 和 `ribbon` 的超时时间配置相互独立,以低为准,使用时请根据实际情况进行配置*
+
+TIP:  如果要针对某个服务做超时设置,建议使用 `ribbon` 的配置；在同时使用 `ribbon` 和 `hystrix` 时,请特别注意超时时间的配置。
+
+=== 主要性能影响参数
+
+*内置 `tomcat` 参数* tomcat参数调整效果并不大,如果需要调整,建议适当调大 `max-treads` 和 `accept-count`
+
+  # 最大等待请求数 默认100
+  server.tomcat.accept-count=1000
+  # 最大并发数 默认200
+  server.tomcat.max-threads=1000
+  # 最大连接数 默认BIO:200 NIO:10000 APR:8192
+  server.tomcat.max-connections=2000
+
+*`zuul` 性能参数说明*
+
+  # 连接池最大连接，默认是200
+  zuul.host.maxTotalConnections=1000
+  每个route可用的最大连接数，默认值是20
+  zuul.host.maxPerRouteConnections=1000
+  Hystrix最大的并发请求 默认值是100
+  zuul.semaphore.maxSemaphores=1000
+
+NOTE: `zuul` 的最大并发数主要调整 `maxSemaphores` 优先级高于 `hystrix` 的最大线程数配置.
+
+*`ribbon` 性能参数说明* 调整 `MaxTotalConnections` 和 `MaxConnectionsPerHost` 时建议同比调整 `Pool` 相关的参数
+
+  # ribbon 单主机最大连接数,默认50
+  ribbon.MaxConnectionsPerHost=500
+  # ribbon 总连接数,默认 200
+  ribbon.MaxTotalConnections=1000
+  # 默认200
+  ribbon.PoolMaxThreads=1000
+  # 默认1
+  ribbon.PoolMinThreads=500
+
+NOTE: `zuul` 和其它使用 `ribbon` 的服务一样,TPS主要调整 `ribbon` 的 `MaxConnectionsPerHost` 和 `MaxTotalConnections`
+
+*`hystrix` 性能参数说明*
+
+  # 并发执行的最大线程数,默认10
+  hystrix.threadpool.default.coreSize=100
+
+NOTE: 普通 `service` 使用 `hystrix` 时,最大并发主要调整 `hystrix.threadpool.default.coreSize`
+
+WARNING: `hystrix` 的默认超时时间为1s,在高并发下容易出现超时,建议将默认超时时间适当调长,
+特殊接口需要将时间调短或更长的,使用特定配置,见上面 `feign` 配置特定方法超时时间.
+
+TIP: 详细参见文档 file://./files/Spring%20Cloud框架负载测试报告.pdf[Spring Cloud框架负载测试报告]
+
+=== 缓存处理
+`Spring Cache` 提供了很好的注解式缓存，但默认没有超时，需要根据使用的缓存容器特殊配置，e.g.
+
+[source,java]
+.Redis缓存过期时间设置
+----
+@Bean
+RedisCacheManager cacheManager() {
+    final RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate);
+    redisCacheManager.setUsePrefix(true);
+    redisCacheManager.setDefaultExpiration(<过期秒数>);
+    return redisCacheManager;
+}
+----
+
+=== 日志处理
+
+对微服务而言 `服务API调用` 日志可选择 `Sleuth` + `Zipkin` 的方案， `Dew` 没有选择 `Zipkin` 理由如下：
+
+. `Zipkin` 需要再部署一套 `Zipkin` 服务，多了一个依赖
+. `Zipkin` 日志走 `HTTP` 协议对性能有比较大的影响，走 `MQ` 方案又会让使用方多了一个技术依赖，且 `Rabbit` 的性能也是个瓶颈，`Kafka` 才比较适合
+. `Zipkin` 日志存储方案中 `MySQL` 有明显的问题， `Cassandra` 不错，但选型比较偏， `ES` 最为合适
+. `Zipkin` 方案导致 `服务API调用` 日志 与 `应用程序` 日志不统一，后则多选择 `ELK` 方案
+
+ `Dew` 框架采用的是 `Sleuth` + `Slf4j` + `ES`（可选）的方案，因为：
+
+. 简单，使用方没有额外的技术依赖，只要像普通日志一样处理即可
+. 统一，所有类型的日志都可统一使用类似 `Logback` 的日志框架记录，方便统一维护
+. 高效，可异步批量提交到 `ES`
+
+当然这一方案会损失一定的可读性，即没有可视化的接口调用展现。
+
+[source,xml]
+.logback模板
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <springProperty scope="context" name="springAppName" source="spring.application.name"/>
+    <springProperty scope="context" name="logPath" source="logging.path" defaultValue="/tmp"/>
+    <springProperty scope="context" name="esUrl" source="logging.es.url"/>
+    <springProperty scope="context" name="esIndex" source="logging.es.index" defaultValue="dew-log"/>
+    <springProperty scope="context" name="esConnectTimeout" source="logging.es.connectTimeout" defaultValue="30000"/>
+    <springProperty scope="context" name="esReadTimeout" source="logging.es.readTimeout" defaultValue="30000"/>
+    <springProperty scope="context" name="esMaxQueueSize" source="logging.es.maxQueueSize" defaultValue="104857600"/>
+    <springProperty scope="context" name="esMaxMessageSize" source="logging.es.maxMessageSize" defaultValue="-1"/>
+
+    <property name="LOG_FILE" value="${logPath}/${springAppName}/%d{yyyy-MM-dd}.log"/>​
+    <property name="ES_INDEX" value="${esIndex}-%d{yyyy-MM-dd}"/>​
+
+    <appender name="dailyRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_FILE}</FileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [${springAppName:-},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-}]
+                [%thread] %logger{35} - %msg %n
+            </Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <appender name="ASYNC_LOG" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="dailyRollingFile"/>
+    </appender>
+
+    <appender name="ELASTIC" class="com.internetitem.logback.elasticsearch.ElasticsearchAppender">
+        <url>${esUrl}/_bulk</url>
+        <index>${ES_INDEX}</index>
+        <type>log</type>
+        <connectTimeout>${esConnectTimeout}</connectTimeout> <!-- optional (in ms, default 30000) -->
+        <readTimeout>${esReadTimeout}</readTimeout> <!-- optional (in ms, default 30000) -->
+        <maxQueueSize>${esMaxQueueSize}</maxQueueSize> <!-- optional (default 104857600) -->
+        <maxMessageSize>${esMaxMessageSize}</maxMessageSize> <!-- optional (default -1 -->
+        <errorsToStderr>true</errorsToStderr> <!-- optional (default false) -->
+        <maxRetries>3</maxRetries> <!-- optional (default 3) -->
+        <sleepTime>250</sleepTime> <!-- optional (in ms, default 250) -->
+        <!--<authentication class="com.internetitem.logback.elasticsearch.config.BasicAuthentication" /> --><!-- optional -->
+        <properties>
+            <property>
+                <name>severity</name>
+                <value>%level</value>
+            </property>
+            <property>
+                <name>service</name>
+                <value>${springAppName:-}</value>
+                <allowEmpty>false</allowEmpty>
+            </property>
+            <property>
+                <name>trace</name>
+                <value>%X{X-B3-TraceId:-}</value>
+                <allowEmpty>false</allowEmpty>
+            </property>
+            <property>
+                <name>span</name>
+                <value>%X{X-B3-SpanId:-}</value>
+                <allowEmpty>false</allowEmpty>
+            </property>
+            <property>
+                <name>host</name>
+                <value>${HOSTNAME}</value>
+                <allowEmpty>false</allowEmpty>
+            </property>
+            <property>
+                <name>thread</name>
+                <value>%thread</value>
+            </property>
+            <property>
+                <name>logger</name>
+                <value>%logger</value>
+            </property>
+            <property>
+                <name>stacktrace</name>
+                <value>%ex</value>
+            </property>
+        </properties>
+        <headers>
+            <header>
+                <name>Content-Type</name>
+                <value>text/plain</value>
+            </header>
+        </headers>
+    </appender>
+    <springProfile name="dev,default">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+    <springProfile name="test">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC_LOG"/>
+        </root>
+    </springProfile>
+    <springProfile name="uat,prd">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC_LOG"/>
+            <appender-ref ref="ELASTIC"/>
+        </root>
+    </springProfile>
+</configuration>
+----
+
+=== servo 内存泄漏问题
+
+已知在某此情况下 `servo` 统计会导致内存泄漏，如无特殊需要建议关闭 `spring.metrics.servo.enabled: false`
+
+=== '@Validated'注解
+
+* 在Spring controller类里，``@Validated``注解初使用会比较不易上手，在此做下总结
+
+. 对于基本数据类型和String类型，要使校验的注解生效，需在该类上方加``@Validated``注解
+. 对于抽象数据类型，需在形式参数前加``@Validated``注解
+
+TIP: spring对抽象数据类型校验抛出异常为``MethodArgumentNotValidException``，http状态码为400，对基本数据类型校验抛出异常为``ConstraintViolationException``，http状态码为500，dew对这两种异常做了统一处理，http状态码均返回200，code为400
+
+=== jackson对于java8时间转换（springmvc以jackson接收json数据）
+
+. 对于LocalDateTime类型，需在参数上加``@JsonFormat``注解，如下：`@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")`
+. LocalDate,LocalTime,Instant等，无需配置可自行转换
+
+TIP: ``jackson``对于``LocalDateTime``类型的支持与其他三种类型不具有一致性，这是jackson需要优化的一个点
+
+=== swagger离线文档
+
+* 以启动参数``api.file.name``指定导出文件名
+
+[source,shell]
+.执行如下命令(加上 `-Dapi.file.name= [name]` 可指定文件名)
+----
+mvn -Dtest=DocTest clean test -P doc
+
+mvn -Dtest=DocTest -Dapi.file.name=dew-example clean test -P doc
+----
+
+=== `feign` 接口添加http请求头信息
+
+TIP: 在FeignClient类中的接口方法里添加新的形参，并加上@RequestHeader注解指定key值
+
+=== `zuul` 保护(隐藏)内部服务的http接口
+
+在yml配置文件里配置(`ignored-patterns`,`ignored-services`)这两项中的一项即可
+[source,yml]
+.配置示例
+----
+zuul: #配置一项即可!
+  ignored-patterns: /dew-example/**   #排除此路径
+  ignored-services: dew-example       #排除此服务
+----
+
+=== Spring Boot Admin 监控实践
+
+在`Spring Boot Actuator`中提供很多像`health`、`metrics`等实时监控接口，可以方便我们随时跟踪服务的性能指标。
+`Spring Boot`默认是开放这些接口提供调用的，那么就问题来了，如果这些接口公开在外网中，很容易被不法分子所利用，这肯定不是我们想要的结果。
+在这里我们提供一种比较好的解决方案
+
+* 被监控的服务配置
+
+[source,yaml]
+.为被保护的http请求添加请求前缀
+----
+management:
+  context-path: /dew-example //<1>
+eureka:
+  instance:
+    status-page-url-path: ${management.context-path}/info //<2>
+    health-check-url-path: ${management.context-path}/health
+----
+<1> 添加请求前缀
+
+<2> `Spring Boot Admin`在启动的时候会去`eureka`拉去服务信息，其中`health`与`info`需要特殊处理，这两者的地址是根据`status-page-url-path`和`health-check-url-path`的值
+
+--
+
+* `zuul`网关配置
+
+[source,yaml]
+.`zuul`保护内部服务http接口
+----
+zuul:
+  ignoredPatterns: /*/dew-example/** //<1>
+----
+<1> 这里之所以不是`/dew-example/**`，由于网关存在项目前缀，需要往前一级，大家可以具体场景具体配置
+
+--
+
+* `Spring Boot Admin`配置
+
+[source,yaml]
+.配置监控的指标参数
+----
+spring:
+  application:
+    name: monitor
+  boot:
+    admin:
+      discovery:
+        converter:
+          management-context-path: /dew-example # The endpoints URL prefix //<1>
+      routes:
+        endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream
+      turbine:
+        clusters: default
+        location: monitor
+
+turbine:
+  aggregator:
+    clusterConfig: default
+  appConfig: monitor-example //<2>
+  clusterNameExpression: metadata['cluster']
+----
+<1> 与应用配置的`management.context-path`相同
+<2> 添加需要被监控的应用`Service-Id`，以逗号分隔

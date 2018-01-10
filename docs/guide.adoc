@@ -30,7 +30,7 @@ https://www.google.ca/search?dcr=0&q=pet+store+sample+application&oq=pet+store+s
         <groupId>com.ecfront.dew</groupId>
         <artifactId>parent</artifactId>
         <!--生产环境切不可以使用快照版本!!!!!!!!-->
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.2.2-RC</version>
     </parent>
 
     <groupId>yourgroup</groupId>
@@ -42,7 +42,7 @@ https://www.google.ca/search?dcr=0&q=pet+store+sample+application&oq=pet+store+s
         <!--dew的核心包-->
         <dependency>
             <groupId>com.ecfront.dew</groupId>
-            <artifactId>boot-core</artifactId>
+            <artifactId>boot-starter</artifactId>
         </dependency>
         <!--引入集群能力-redis实现-->
         <dependency>
@@ -63,15 +63,10 @@ https://www.google.ca/search?dcr=0&q=pet+store+sample+application&oq=pet+store+s
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
         </dependency>
-        <!--添加spring jdbc template支持-->
+        <!--引入JDBC依赖-->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-        <!--使用druid连接池-->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>jdbc-starter</artifactId>
         </dependency>
         <!--测试项目，使用h2数据库-->
         <dependency>
@@ -91,13 +86,15 @@ https://www.google.ca/search?dcr=0&q=pet+store+sample+application&oq=pet+store+s
 
 TIP: `parent` 中已包含各模块的版本，引用模块依赖时可省略版本号。
 
-TIP: `dew` 支持 `Spring boot` 下各类数据持久化框架，此处使用基于 `Spring jdbc template` 封装的轻量实现。
+TIP: `dew` 支持 `Spring boot` 下各类数据持久化框架，此处使用基于 `Spring jdbc template` 封装的轻量实现，此实现对应的连接池必须为 `Druid` 。
 
 * 添加添加文件到 `src/main/resources/application.yml` ，内容如下：
 
 [source,yml]
 ----
 spring:
+  cache:
+    type: redis
   application:
     name: pet-store # 项目名称，对Spring Cloud而言也是service-id
   datasource: # 数据库连接信息
@@ -121,6 +118,8 @@ dew:
       base-package: your.group.controller # API文档路径
   cluster:
     cache: redis # 指定集群缓存实现为redis
+  jdbc:
+    base-packages: ["your.group.jdbc"]
 ----
 
 * 添加工程启动类
@@ -131,8 +130,8 @@ dew:
  * 工程启动类
  * 重写父类的ComponentScan，先扫描Dew下的包，再是项目的根包
  */
-@ComponentScan(basePackageClasses = {Dew.class,PetStoreApplication.class})
-public class PetStoreApplication extends DewBootApplication {
+@DewBootApplication(scanBasePackageClasses = {Dew.class,PetStoreApplication.class})
+public class PetStoreApplication {
 
     public static void main(String[] args) {
         new SpringApplicationBuilder(PetStoreApplication.class).run(args);
@@ -178,7 +177,7 @@ public class PetstoreInitiator {
     @PostConstruct
     public void init() {
         // 初始宠物表
-        Dew.ds().jdbc().execute("CREATE TABLE pet\n" +
+        ((DewDS) Dew.ds()).jdbc().execute("CREATE TABLE pet\n" +
                 "(\n" +
                 "id int primary key auto_increment,\n" +
                 "type varchar(50),\n" +
@@ -188,13 +187,13 @@ public class PetstoreInitiator {
                 "enabled bool\n" +
                 ")");
         // 初始化客户表
-        Dew.ds().jdbc().execute("CREATE TABLE customer\n" +
+        ((DewDS) Dew.ds()).jdbc().execute("CREATE TABLE customer\n" +
                 "(\n" +
                 "id int primary key auto_increment,\n" +
                 "name varchar(50)\n" +
                 ")");
         // 初始化订单表
-        Dew.ds().jdbc().execute("CREATE TABLE t_order\n" +
+        ((DewDS) Dew.ds()).jdbc().execute("CREATE TABLE t_order\n" +
                 "(\n" +
                 "id int primary key auto_increment,\n" +
                 "pet_id int,\n" +
@@ -207,7 +206,7 @@ public class PetstoreInitiator {
 }
 ----
 
-* 添加数据对象到 `src/main/java/your/group/domain` 下，共3个类：
+* 添加数据对象到 `src/main/java/your/group/entity` 下，共3个类：
 
 [source,java]
 ----
@@ -221,19 +220,13 @@ public class Pet {
     @Column(notNull = true)
     private BigDecimal price;
     @CreateTimeColumn
-    private Date createTime;
+    private LocalDateTime createTime;
     @UpdateTimeColumn
-    private Date updateTime;
+    private LocalDateTime updateTime;
     @EnabledColumn
     private boolean enabled;
 
     // get/set...
-
-    public static ActiveRecord $$ = new ActiveRecord();
-
-    public static class ActiveRecord implements DewDao<Integer, Pet> {
-
-    }
 }
 
 @Entity
@@ -245,12 +238,6 @@ public class Customer {
     private String name;
 
     // get/set...
-
-    public static ActiveRecord $$ = new ActiveRecord();
-
-    public static class ActiveRecord implements DewDao<Integer, Customer> {
-
-    }
 }
 
 @Entity(tableName = "t_order") // order对象对应的是t_order表
@@ -264,30 +251,9 @@ public class Order {
     private int customerId;
 
     // get/set...
-
-    public static ActiveRecord $$ = new ActiveRecord();
-
-    public static class ActiveRecord implements DewDao<Integer, Order> {
-
-        public Page<Order> findOrders(int customerId, String petType, long pageNumber, int pageSize) {
-            return getDS().paging("SELECT ord.* FROM t_order ord " +
-                            "INNER JOIN pet p ON p.id = ord.pet_id " +
-                            "WHERE ord.customer_id = ? AND p.type = ?",
-                    new Object[]{customerId, petType}, pageNumber, pageSize, Order.class);
-        }
-
-    }
 }
 
 ----
-
-[NOTE]
-.ActiveRecord风格
-====
-最正统的 `ActiveRecord` 是与模型强绑定的，如 `new Order().insert()` ，但这一做法不利于解耦。
-框架本身支持使用传统的 `失血模型` + `Dao` 来实现数据处理，但更推荐使用优化的 `ActiveRecord` 风格编程，如上示例。
-在每个领域对象中添加 `$$` 静态属性，此属性类型为 `DewDao` 接口的实现。
-====
 
 [TIP]
 .注解说明
@@ -299,6 +265,34 @@ public class Order {
 . `@EnabledColumn` 标识状态字段，用于软删除操作
 ====
 
+* 添加 `DAO` 到 `src/main/java/your/group/jdbc` 下，共3个接口：
+
+[source,java]
+----
+public interface PetDao extends DewDao<Integer, Pet> {
+}
+
+public interface CustomerDao extends DewDao<Integer, Customer> {
+}
+
+public interface OrderDao extends DewDao<Integer, Order> {
+
+    @Select(value = "SELECT ord.* FROM t_order ord " +
+            "INNER JOIN pet p ON p.id = ord.pet_id " +
+            "WHERE ord.customer_id = #{customerId} AND p.type = #{petType}",entityClass = Order.class)
+    Page<Order> findOrders(@Param("customerId") int customerId, @Param("petType") String petType,
+                           @Param("pageNumber") long pageNumber, @Param("pageSize") int pageSize);
+
+}
+----
+
+[TIP]
+.DAO说明
+====
+. `DewDao` 是所有DAO的父类，实现了基础的CRUD方法
+. `@Select` 允许自定义查询语句
+====
+
 === 添加逻辑服务
 
 * 添加 `Service` 到 `src/main/java/your/group/service` 下，共3个类：
@@ -307,7 +301,7 @@ public class Order {
 ----
 @Service
 @CacheConfig(cacheNames = "petstore:pet") // 启用缓存指定key前缀
-public class PetService implements CRUSService<Pet.ActiveRecord, Integer, Pet> {
+public class PetService implements CRUSService<PetDao, Integer, Pet> {
 
     @Override
     @Cacheable // 缓存id对应的内容
@@ -322,23 +316,24 @@ public class PetService implements CRUSService<Pet.ActiveRecord, Integer, Pet> {
     }
 
     @Override
+    @CachePut("#pet.id") // 添加/更新id对应的内容
     public Resp<Pet> save(Pet pet) {
         return CRUSService.super.save(pet);
     }
 
     @Override
-    @CachePut(key = "#id")// 更新id对应的内容
+    @CachePut("#id")// 添加/更新id对应的内容
     public Resp<Pet> updateById(Integer id, Pet pet) {
         return CRUSService.super.updateById(id, pet);
     }
 }
 
 @Service
-public class CustomerService implements CRUDSService<Customer.ActiveRecord, Integer, Customer> {
+public class CustomerService implements CRUDSService<CustomerDao, Integer, Customer> {
 }
 
 @Service
-public class OrderService implements CRUService<Order.ActiveRecord, Integer, Order> {
+public class OrderService implements CRUService<OrderDao, Integer, Order> {
 
     // 使用分布式锁
     private ClusterDistLock lock;
@@ -517,9 +512,7 @@ Dew 已集成 `Sonar` 插件，只需要在maven中配置 `sonar.host.url` 为�
 public class DocTest {
 
     @Test
-    public void empty() throws IOException{
-            DocProcessor.create($.http.get("http://127.0.0.1:8080/v2/api-docs"));
-    }
+    public void empty(){}
 
 }
 ----

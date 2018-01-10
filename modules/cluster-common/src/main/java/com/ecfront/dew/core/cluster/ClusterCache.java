@@ -2,6 +2,7 @@ package com.ecfront.dew.core.cluster;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 缓存服务
@@ -25,21 +26,53 @@ public interface ClusterCache {
     String get(String key);
 
     /**
-     * 设置字符串
-     *
-     * @param key       key
-     * @param value     value
-     * @param expireSec 过期时间(seconds)，0表示永不过期
-     */
-    void set(String key, String value, int expireSec);
-
-    /**
-     * 设置字符串
+     * 设置字符串值
      *
      * @param key   key
      * @param value value
      */
     void set(String key, String value);
+
+    /**
+     * 设置字符串值，带过期时间
+     * <p>
+     * 此方法弃用，参见
+     *
+     * @param key       key
+     * @param value     value
+     * @param expireSec 过期时间(seconds)，0表示永不过期
+     * @see #setex
+     */
+    @Deprecated
+    void set(String key, String value, long expireSec);
+
+    /**
+     * 设置字符串值，带过期时间
+     *
+     * @param key       key
+     * @param value     value
+     * @param expireSec 过期时间(seconds)，0表示永不过期
+     */
+    void setex(String key, String value, long expireSec);
+
+    /**
+     * 字符串不存在时设置值，带过期时间
+     *
+     * @param key       key
+     * @param value     value
+     * @param expireSec 过期时间(seconds)，0表示永不过期
+     * @return true 设置成功 , false 设置失败（key已存在）
+     */
+    boolean setnx(String key, String value, long expireSec);
+
+
+    /**
+     * 设置字符串值，并返回其旧值
+     *
+     * @param key   key
+     * @param value value
+     */
+    String getSet(String key, String value);
 
     /**
      * 删除key
@@ -57,16 +90,16 @@ public interface ClusterCache {
     void lpush(String key, String value);
 
     /**
-     * 设置列表
+     * 添加列表
      *
      * @param key       key
      * @param values    values
      * @param expireSec 过期时间(seconds)，0表示永不过期
      */
-    void lmset(String key, List<String> values, int expireSec);
+    void lmset(String key, List<String> values, long expireSec);
 
     /**
-     * 设置列表
+     * 添加列表
      *
      * @param key    key
      * @param values values
@@ -99,25 +132,83 @@ public interface ClusterCache {
     List<String> lget(String key);
 
     /**
-     * 设置Hash集合
+     * 添加Set集合
+     *
+     * @param key    key
+     * @param values values
+     */
+    void smset(String key, List<String> values);
+
+    /**
+     * 添加Set集合
      *
      * @param key       key
      * @param values    values
      * @param expireSec 过期时间(seconds)，0表示永不过期
      */
-    void hmset(String key, Map<String, String> values, int expireSec);
+    void smset(String key, List<String> values, long expireSec);
+
+    /**
+     * 设置Set集合
+     *
+     * @param key   key
+     * @param value value
+     */
+    void sset(String key, String value);
+
+    /**
+     * 返回一个随机的成员值
+     *
+     * @param key key
+     * @return 返回值
+     */
+    String spop(String key);
+
+    /**
+     * 获取Set集合的长度
+     *
+     * @param key key
+     * @return 长度
+     */
+    long slen(String key);
+
+    /**
+     * 删除Set集合对应的values
+     *
+     * @param key    key
+     * @param values values
+     * @return 影响的行数
+     */
+    long sdel(String key, String... values);
+
+    /**
+     * 返回set集合
+     *
+     * @param key key
+     * @return 值集合
+     */
+    Set<String> sget(String key);
 
     /**
      * 设置Hash集合
      *
-     * @param key    key
-     * @param values values
+     * @param key       key
+     * @param items     items
+     * @param expireSec 过期时间(seconds)，0表示永不过期
      */
-    void hmset(String key, Map<String, String> values);
+    void hmset(String key, Map<String, String> items, long expireSec);
+
+    /**
+     * 设置Hash集合
+     *
+     * @param key   key
+     * @param items items
+     */
+    void hmset(String key, Map<String, String> items);
 
 
     /**
-     * 修改Hash集合field对应的值
+     * 设置Hash集合field对应的value
      *
      * @param key   key
      * @param field field
@@ -126,13 +217,21 @@ public interface ClusterCache {
     void hset(String key, String field, String value);
 
     /**
-     * 获取Hash集合field对应的值
+     * 获取Hash集合field对应的value
      *
      * @param key   key
      * @param field field
-     * @return field对应的值
+     * @return field对应的value
      */
     String hget(String key, String field);
+
+    /**
+     * 获取Hash集合的所有items
+     *
+     * @param key key
+     * @return 所有items
+     */
+    Map<String, String> hgetAll(String key);
 
     /**
      * 判断Hash集合field是否存在
@@ -144,12 +243,28 @@ public interface ClusterCache {
     boolean hexists(String key, String field);
 
     /**
-     * 获取Hash集合的所有值
+     * 获取Hash集合的所有keys
      *
      * @param key key
-     * @return 所有值
+     * @return 所有keys
      */
-    Map<String, String> hgetAll(String key);
+    Set<String> hkeys(String key);
+
+    /**
+     * 获取Hash集合的所有values
+     *
+     * @param key key
+     * @return 所有values
+     */
+    Set<String> hvalues(String key);
+
+    /**
+     * 获取Hash集合的长度
+     *
+     * @param key key
+     * @return 长度
+     */
+    long hlen(String key);
 
     /**
      * 删除Hash集合是对应的field
@@ -183,11 +298,23 @@ public interface ClusterCache {
      * @param key       key
      * @param expireSec 过期时间(seconds)，0表示永不过期
      */
-    void expire(String key, int expireSec);
+    void expire(String key, long expireSec);
+
+    /**
+     * 获取过期时间（秒）
+     *
+     * @param key key
+     * @return -2 key不存在，-1 对应的key永不过期，正数 过期时间(seconds)
+     */
+    long ttl(String key);
 
     /**
      * 删除当前数据库中的所有Key
      */
     void flushdb();
+
+    boolean setBit(String key, long offset, boolean value);
+
+    boolean getBit(String key, long offset);
 
 }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.ecfront.dew</groupId>
+        <artifactId>parent-starter</artifactId>
+        <version>1.2.2-RC</version>
+        <relativePath>../../modules/parent-starter/</relativePath>
+    </parent>
+
+    <artifactId>cluster-spi-kafka</artifactId>
+    <name>Dew Cluster Kafka</name>
+    <description>Dew 集群 Kafka 实现</description>
+    <packaging>jar</packaging>
+
+    <properties>
+        <kafka.version>2.0.0.RELEASE</kafka.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>cluster-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.kafka/spring-kafka -->
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+            <version>${kafka.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

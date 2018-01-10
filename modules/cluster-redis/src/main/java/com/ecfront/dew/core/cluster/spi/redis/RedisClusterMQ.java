@@ -1,10 +1,11 @@
 package com.ecfront.dew.core.cluster.spi.redis;
 
 import com.ecfront.dew.core.cluster.ClusterMQ;
+import com.ecfront.dew.core.cluster.ClusterMQ;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.data.redis.core.RedisCallback;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.function.Consumer;
 public class RedisClusterMQ implements ClusterMQ {
 
     @Autowired
-    private StringRedisTemplate redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
 
     @Override
     public boolean publish(String topic, String message) {
@@ -29,7 +30,6 @@ public class RedisClusterMQ implements ClusterMQ {
 
     @Override
     public void subscribe(String topic, Consumer<String> consumer) {
-
         new Thread(() -> redisTemplate.execute((RedisCallback<Void>) connection -> {
             connection.subscribe((message, pattern) -> {
                 try {

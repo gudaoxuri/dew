@@ -6,35 +6,30 @@
 
     <parent>
         <groupId>com.ecfront.dew</groupId>
-        <artifactId>parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
-        <relativePath>../../modules/parent/</relativePath>
+        <artifactId>parent-starter</artifactId>
+        <version>1.2.2-RC</version>
+        <relativePath>../../modules/parent-starter/</relativePath>
     </parent>
 
     <artifactId>jdbc-example</artifactId>
     <name>Dew JDBC 示例</name>
     <description>Dew JDBC 示例</description>
     <packaging>jar</packaging>
-    <version>1.0.0-SNAPSHOT</version>
 
     <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
         <sonar.skip>true</sonar.skip>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.ecfront.dew</groupId>
-            <artifactId>boot-core</artifactId>
+            <artifactId>boot-starter</artifactId>
         </dependency>
         <!--引入JDBC依赖-->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-        </dependency>
-        <!--使用druid连接池-->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>jdbc-starter</artifactId>
         </dependency>
         <!--示例项目，使用h2数据库-->
         <dependency>

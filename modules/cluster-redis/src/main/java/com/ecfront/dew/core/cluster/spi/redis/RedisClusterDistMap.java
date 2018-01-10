@@ -1,8 +1,9 @@
 package com.ecfront.dew.core.cluster.spi.redis;
 
-import com.ecfront.dew.common.$;
 import com.ecfront.dew.core.cluster.ClusterDistMap;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import com.ecfront.dew.core.cluster.ClusterDistMap;
+import com.ecfront.dew.common.$;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -11,9 +12,9 @@ public class RedisClusterDistMap<M> implements ClusterDistMap<M> {
 
     private String mapKey;
     private Class<M> clazz;
-    private StringRedisTemplate redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
 
-    RedisClusterDistMap(String mapKey, Class<M> clazz, StringRedisTemplate redisTemplate) {
+    RedisClusterDistMap(String mapKey, Class<M> clazz, RedisTemplate<String, String> redisTemplate) {
         this.mapKey = "dew:dist:map:" + mapKey;
         this.clazz = clazz;
         this.redisTemplate = redisTemplate;

@@ -5,6 +5,10 @@ spring:
     host: localhost
     port: 6379
     database: 0
+    pool:
+      max-active: 10
+      max-wait: -1
+      max-idle: 1
 
 dew:
   cluster:

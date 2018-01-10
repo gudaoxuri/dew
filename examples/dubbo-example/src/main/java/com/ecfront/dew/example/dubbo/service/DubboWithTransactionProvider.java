@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 带声明式事务的Dubbo服务，需要指定interfaceName
  */
-@Service(version = "1.0.0",interfaceName = "DubboWithTransactionAPI")
+@Service(version = "1.0.0",interfaceName = "com.ecfront.dew.example.dubbo.service.DubboWithTransactionAPI")
 public class DubboWithTransactionProvider implements DubboWithTransactionAPI {
 
     @Override

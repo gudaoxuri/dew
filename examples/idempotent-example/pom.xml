@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.ecfront.dew</groupId>
+        <artifactId>parent-starter</artifactId>
+        <version>1.2.2-RC</version>
+        <relativePath>../../modules/parent-starter/</relativePath>
+    </parent>
+
+    <artifactId>idempotent-example</artifactId>
+    <name>Dew Idempotent 示例</name>
+    <description>Dew Idempotent 示例</description>
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <sonar.skip>true</sonar.skip>
+    </properties>
+
+    <dependencies>
+        <!--引入幂等支持-->
+        <dependency>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>idempotent-starter</artifactId>
+        </dependency>
+        <!--使用幂等的Redis实现-->
+        <dependency>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>cluster-spi-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>test-starter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

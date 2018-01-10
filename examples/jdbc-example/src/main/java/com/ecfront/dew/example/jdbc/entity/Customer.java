@@ -1,8 +1,11 @@
 package com.ecfront.dew.example.jdbc.entity;
 
-import com.ecfront.dew.core.entity.Column;
-import com.ecfront.dew.core.entity.Entity;
-import com.ecfront.dew.core.entity.PkColumn;
+import com.ecfront.dew.jdbc.entity.Column;
+import com.ecfront.dew.jdbc.entity.Entity;
+import com.ecfront.dew.jdbc.entity.PkColumn;
+import com.ecfront.dew.jdbc.entity.Column;
+import com.ecfront.dew.jdbc.entity.Entity;
+import com.ecfront.dew.jdbc.entity.PkColumn;
 
 import java.io.Serializable;
 

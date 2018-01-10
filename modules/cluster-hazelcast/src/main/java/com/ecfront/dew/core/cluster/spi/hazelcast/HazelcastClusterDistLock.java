@@ -1,5 +1,7 @@
 package com.ecfront.dew.core.cluster.spi.hazelcast;
 
+import com.ecfront.dew.core.cluster.ClusterDistLock;
+import com.ecfront.dew.core.cluster.VoidProcessFun;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ILock;
 import com.ecfront.dew.core.cluster.ClusterDistLock;
@@ -84,7 +86,7 @@ public class HazelcastClusterDistLock implements ClusterDistLock {
     public boolean unLock() {
         try {
             lock.unlock();
-        } catch (Throwable e) {
+        } catch (Exception e) {
             return false;
         }
         return true;
