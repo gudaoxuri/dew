@@ -235,23 +235,14 @@
         <profile>
             <id>release</id>
             <distributionManagement>
-                <repository>
-                    <id>trc-releases</id>
-                    <url>http://121.41.17.205:18081/nexus/content/repositories/releases/</url>
-                </repository>
-                <snapshotRepository>
-                    <id>trc-snapshots</id>
-                    <url>http://121.41.17.205:18081/nexus/content/repositories/snapshots/</url>
-                    <uniqueVersion>false</uniqueVersion>
-                </snapshotRepository>
-                <!-- <snapshotRepository>
+                 <snapshotRepository>
                      <id>oss</id>
                      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
                  </snapshotRepository>
                  <repository>
                      <id>oss</id>
                      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                 </repository>-->
+                 </repository>
             </distributionManagement>
             <build>
                 <plugins>
@@ -559,12 +550,12 @@
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
         <repository>
-            <id>oss-snapshots-repo</id>
+            <id>oss-repo</id>
             <name>Sonatype OSS Maven Repository</name>
             <url>https://oss.sonatype.org/content/groups/public</url>
         </repository>
         <repository>
-            <id>Sonatype OSS Snapshot Repository</id>
+            <id>oss-snapshot-repo</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
