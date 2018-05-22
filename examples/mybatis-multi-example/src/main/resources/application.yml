@@ -1,0 +1,69 @@
+dew:
+  mybatis:
+    second: true
+spring:
+  application:
+    name: mybatis-multi-example
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/dew?useUnicode=true&characterEncoding=utf-8&rewriteBatchedStatements=true
+    username: root
+    password: 123456
+  multi-datasources:
+      test1:
+        driver-class-name: org.h2.Driver
+        url: jdbc:h2:mem:test
+      test2:
+        driver-class-name: com.mysql.jdbc.Driver
+        url: jdbc:mysql://127.0.0.1:3306/transaction?useUnicode=true&characterEncoding=utf-8
+        username: root
+        password: 123456
+sharding:
+  enabled: true
+  transaction:
+    name: test2
+  jdbc:
+    datasource:
+      names: ds_0,ds_1
+      ds_0:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/ds_yaml_0
+        username: root
+        password: 123456
+      ds_1:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/ds_yaml_1
+        username: root
+        password: 123456
+    config:
+      sharding:
+        tables:
+          t_order:
+            actualDataNodes: ds_${0..1}.t_order_${0..1}
+            #generateKeyColumns:
+              #- columnName: order_id
+            tableStrategy:
+              standard:
+                shardingColumn: order_id
+                preciseAlgorithmClassName: com.tairanchina.csp.dew.jdbc.sharding.algorithm.DewLongShardingAlgorithm
+          t_order_item:
+            actualDataNodes: ds_${0..1}.t_order_item_${0..1}
+            tableStrategy:
+              standard:
+                shardingColumn: order_id
+                preciseAlgorithmClassName: com.tairanchina.csp.dew.jdbc.sharding.algorithm.DewLongShardingAlgorithm
+        #绑定表中其余的表的策略与第一张表的策略相同
+        bindingTables:
+          - t_order,t_order_item
+        #默认数据库分片策略
+        defaultDatabaseStrategy:
+          standard:
+            shardingColumn: user_id
+            preciseAlgorithmClassName: com.tairanchina.csp.dew.jdbc.sharding.algorithm.DewIntegerShardingAlgorithm
+        props:
+          sql:
+            show: true
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml

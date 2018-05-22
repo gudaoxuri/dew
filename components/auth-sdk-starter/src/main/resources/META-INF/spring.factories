@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.tairanchina.csp.dew.auth.sdk.AuthSDKAutoConfiguration,\
+  com.tairanchina.csp.dew.auth.sdk.AuthSDKMvcConfigurer

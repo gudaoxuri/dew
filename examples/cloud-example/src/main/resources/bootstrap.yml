@@ -1,0 +1,19 @@
+spring:
+  cloud:
+    config:
+      enabled: false
+  application:
+    name: cloud-example
+server:
+  port: 8081
+
+dew:
+  basic:
+    name: service-cloud
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://registry:123456@localhost:9999/eureka
+
+

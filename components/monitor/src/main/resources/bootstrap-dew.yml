@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: monitor
+  boot:
+    admin:
+      discovery:
+        converter:
+          management-context-path: ${management.context-path} # The endpoints URL prefix
+      routes:
+        endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream,turbine.stream
+      turbine:
+        clusters: default
+        location: ${spring.application.name}
+
+turbine:
+  instanceUrlSuffix: ${management.context-path}/hystrix.stream
+  aggregator:
+    clusterConfig: default
+  appConfig: hystrix-feign-example,hystrix-feign-example2
+  clusterNameExpression: metadata['cluster']
+
+security:
+  basic:
+    enabled: false
+
+server:
+  port: 12000
+
+eureka:
+  instance:
+    metadata-map:
+      cluster: default
+    status-page-url-path: ${management.context-path}/info
+    health-check-url-path: ${management.context-path}/health
+  client:
+    serviceUrl:
+      defaultZone: http://registry:123456@localhost:9999/eureka
+management:
+  security:
+    enabled: false
+  context-path: /management-admin

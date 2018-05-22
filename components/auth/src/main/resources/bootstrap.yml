@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: dew-auth
+
+management:
+  security:
+    enabled: false
+  context-path: /management-admin
+
+endpoints:
+  restart:
+    enabled: true
+
+logging:
+  path: ./logs
+  level:
+    com:
+      tairanchina:
+        dew: DEBUG
+
+server:
+  port: 8080
+

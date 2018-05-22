@@ -1,0 +1,28 @@
+dew:
+  basic:
+    name: Dew多租户的RBAC权限服务
+    version: 1.0.0
+    desc: Dew多租户的RBAC权限服务
+    webSite:
+    doc:
+      base-packages: ["com.tairanchina.csp.dew.auth.controller"]
+  security:
+    cors:
+      allow-headers: X-Requested-With,Content-Type,Authorization,X-Platform-Info,X-Device-Info
+    token-flag: Authorization
+  cluster:
+    cache: redis
+    mq: redis
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+logging:
+  level:
+    org:
+      hibernate:
+        type: TRACE

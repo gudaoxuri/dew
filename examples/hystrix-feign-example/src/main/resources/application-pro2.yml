@@ -1,0 +1,56 @@
+dew:
+  basic:
+    name: hystrix-feign样例工程
+  cloud:
+    error:
+      enabled: true
+      notify-interval-sec: 10
+      notify-emails: 71964899@qq.com
+      #notify-include-keys: ["ExampleClient#deleteExe(int,String)","ExampleClient#postExe(int,String)","ExampleClient2#deleteExe(int,String)"]
+spring:
+  mail:
+    host: smtp.alibaba.com
+    username: jiangji@tairanchina.com
+    password: gSQiQxGR5wLUFkNh
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: false
+            required: fasle
+  application:
+    name: hystrix-feign-example
+server:
+  tomcat:
+    max-threads: 300
+  port: 11100
+eureka:
+  instance:
+    prefer-ip-address: true
+    status-page-url-path: ${management.context-path}/info
+    health-check-url-path: ${management.context-path}/health
+    metadata-map:
+      cluster: default
+  client:
+    fetch-registry: true
+    serviceUrl:
+      defaultZone:  http://registry:123456@localhost:9999/eureka
+ribbon:
+  ReadTimeout: 3000
+feign:
+  hystrix:
+    enabled: true
+hystrix:
+  command:
+    default:
+      fallback:
+        enabled: true
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 500000
+management:
+  security:
+    enabled: false
+  context-path: /management-admin
