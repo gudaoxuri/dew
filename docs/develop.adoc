@@ -2,7 +2,7 @@
 
 === SCM
 
-https://rep.360taihe.com/csp/dew-framework/[https://rep.360taihe.com/csp/dew-framework/]
+https://github.com/gudaoxuri/dew[https://github.com/gudaoxuri/dew]
 
 === 环境要求
 

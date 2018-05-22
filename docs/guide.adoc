@@ -27,7 +27,7 @@ https://www.google.ca/search?dcr=0&q=pet+store+sample+application&oq=pet+store+s
 
     <!--引入Dew父依赖，也可以使用import方式-->
     <parent>
-        <groupId>com.ecfront.dew</groupId>
+        <groupId>com.tairanchina.csp.dew</groupId>
         <artifactId>parent</artifactId>
         <!--生产环境切不可以使用快照版本!!!!!!!!-->
         <version>1.2.2-RC</version>
@@ -41,12 +41,12 @@ https://www.google.ca/search?dcr=0&q=pet+store+sample+application&oq=pet+store+s
     <dependencies>
         <!--dew的核心包-->
         <dependency>
-            <groupId>com.ecfront.dew</groupId>
+            <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>boot-starter</artifactId>
         </dependency>
         <!--引入集群能力-redis实现-->
         <dependency>
-            <groupId>com.ecfront.dew</groupId>
+            <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cluster-spi-redis</artifactId>
         </dependency>
         <!--添加web（spring mvc）功能-->
@@ -65,7 +65,7 @@ https://www.google.ca/search?dcr=0&q=pet+store+sample+application&oq=pet+store+s
         </dependency>
         <!--引入JDBC依赖-->
         <dependency>
-            <groupId>com.ecfront.dew</groupId>
+            <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>jdbc-starter</artifactId>
         </dependency>
         <!--测试项目，使用h2数据库-->
@@ -75,7 +75,7 @@ https://www.google.ca/search?dcr=0&q=pet+store+sample+application&oq=pet+store+s
         </dependency>
         <!--引入Dew封装的单元测试功能-->
         <dependency>
-            <groupId>com.ecfront.dew</groupId>
+            <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>test-starter</artifactId>
             <scope>test</scope>
         </dependency>
@@ -130,7 +130,10 @@ dew:
  * 工程启动类
  * 重写父类的ComponentScan，先扫描Dew下的包，再是项目的根包
  */
-@DewBootApplication(scanBasePackageClasses = {Dew.class,PetStoreApplication.class})
+@SpringBootApplication
+@EnableAspectJAutoProxy(exposeProxy = true,proxyTargetClass = true) //开启事务或catche时都需要加该注解
+@EnableTransactionManagement // 开启注解式事务需要添加
+@EnableCaching(proxyTargetClass = true) // 开启注解式catche需要添加
 public class PetStoreApplication {
 
     public static void main(String[] args) {
@@ -488,7 +491,7 @@ public class PetStoreTest {
 ====
 由于引用了
 
-  <groupId>com.ecfront.dew</groupId>
+  <groupId>com.tairanchina.csp.dew</groupId>
   <artifactId>test-starter</artifactId>
 
 其自带了嵌入式的redis及h2数据库，所以无须第三方依赖即可使用。

@@ -1,8 +1,8 @@
 package your.group.entity;
 
-import com.ecfront.dew.jdbc.entity.Column;
-import com.ecfront.dew.jdbc.entity.Entity;
-import com.ecfront.dew.jdbc.entity.PkColumn;
+import com.tairanchina.csp.dew.jdbc.entity.Column;
+import com.tairanchina.csp.dew.jdbc.entity.Entity;
+import com.tairanchina.csp.dew.jdbc.entity.PkColumn;
 
 import java.io.Serializable;
 

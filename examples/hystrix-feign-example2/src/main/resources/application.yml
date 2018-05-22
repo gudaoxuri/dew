@@ -1,36 +1,48 @@
 dew:
   cloud:
     error:
-      notify-interval-sec: 5
-      notify-emails:
-      notify-event-types: FAILURE,SHORT_CIRCUITED
+      notify-interval-sec: 10
+      notify-emails: 71964899@qq.com
+#      enabled: true
+      #notify-event-types: FAILURE,SHORT_CIRCUITED
       #notify-include-keys: ["ExampleClient#deleteExe(int,String)","ExampleClient#postExe(int,String)"]
 spring:
   mail:
-    host: smtp.163.com
-    username:
-    password:
+    host: smtp.alibaba.com
+    username: jiangji@tairanchina.com
+    password: gSQiQxGR5wLUFkNh
     properties:
       mail:
         smtp:
           auth: true
           starttls:
-            enable: true
-            required: true
+            enable: false
+            required: fasle
   application:
     name: hystrix-feign-example2
 server:
-  port: 12000
+  tomcat:
+    max-threads: 300
+  port: 11500
 eureka:
   instance:
     prefer-ip-address: true
+    status-page-url-path: ${management.context-path}/info
+    health-check-url-path: ${management.context-path}/health
+    metadata-map:
+      cluster: default
   client:
     fetch-registry: true
     serviceUrl:
       defaultZone:  http://registry:123456@localhost:9999/eureka
 ribbon:
+  PoolMaxThreads: 12
+  OkToRetryOnAllOperations: false
   ConnectTimeout: 1000
-  ReadTimeout: 2000
+  ReadTimeout: 2000000
+  MaxAutoRetriesNextServer: 1
+  MaxAutoRetries: 2
+
 feign:
   hystrix:
     enabled: true
@@ -42,4 +54,12 @@ hystrix:
       execution:
         isolation:
           thread:
-            timeoutInMilliseconds: 3000
+            timeoutInMilliseconds: 500000
+  threadpool:
+    default:
+      allowMaximumSizeToDivergeFromCoreSize: true
+      maximumSize: 300
+management:
+  security:
+    enabled: false
+  context-path: /management-admin

@@ -7,9 +7,9 @@ dew:
       message-field-name: customHttpCode
     doc:
       enabled: false
-      base-package: com.ecfront.dew.core.test.web
+      base-package: com.tairanchina.csp.dew.core.test.web
     error-mapping:
-      "[com.ecfront.dew.core.AuthException]":
+      "[com.tairanchina.csp.dew.core.AuthException]":
         http-code: 401
         business-code: x00010
         message: 认证错误
@@ -63,9 +63,6 @@ spring:
     addresses: ["127.0.0.1"]
   ignite:
     addresses: ["127.0.0.1"]
-endpoints:
-  metrics:
-    enabled: true
 management:
   security:
     enabled: false

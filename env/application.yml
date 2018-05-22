@@ -3,9 +3,9 @@ dew:
     name: Dew服务框架
     version: 1.0
     desc:
-    webSite: www.ecfront.com
+    webSite: www.tairanchina.com
     doc:
-      base-packages: ["com.ecfront"]
+      base-packages: ["com.tairanchina"]
   cluster:
     cache: redis
     dist: redis

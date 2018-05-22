@@ -9,7 +9,7 @@
         <appender-ref ref="CONSOLE"/>
     </root>
 
-    <logger name="com.ecfront" level="TRACE"/>
+    <logger name="com.tairanchina" level="TRACE"/>
     <logger name="org.springframework.jdbc.core" level="TRACE"/>
 
 </configuration>

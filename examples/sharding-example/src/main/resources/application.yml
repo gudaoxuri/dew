@@ -7,18 +7,27 @@ spring:
     username: root
     password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
+  multi-datasources:
+    dewts:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/transaction?useUnicode=true&characterEncoding=utf-8
+      username: root
+      password: 123456
 sharding:
+  enabled: true
+  transaction:
+    name: dewts
   jdbc:
     datasource:
       names: ds_0,ds_1
       ds_0:
-        type: org.apache.commons.dbcp.BasicDataSource
+        type: com.alibaba.druid.pool.DruidDataSource
         driverClassName: com.mysql.jdbc.Driver
         url: jdbc:mysql://localhost:3306/ds_yaml_0
         username: root
         password: 123456
       ds_1:
-        type: org.apache.commons.dbcp.BasicDataSource
+        type: com.alibaba.druid.pool.DruidDataSource
         driverClassName: com.mysql.jdbc.Driver
         url: jdbc:mysql://localhost:3306/ds_yaml_1
         username: root
@@ -31,22 +40,22 @@ sharding:
             #generateKeyColumns:
               #- columnName: order_id
             tableStrategy:
-              inline:
+              standard:
                 shardingColumn: order_id
-                algorithmInlineExpression: t_order_${order_id.longValue() % 2}
+                preciseAlgorithmClassName: com.tairanchina.csp.dew.jdbc.sharding.algorithm.DewLongShardingAlgorithm
           t_order_item:
             actualDataNodes: ds_${0..1}.t_order_item_${0..1}
             tableStrategy:
-              inline:
+              standard:
                 shardingColumn: order_id
-                algorithmInlineExpression: t_order_item_${order_id.longValue() % 2}
+                preciseAlgorithmClassName: com.tairanchina.csp.dew.jdbc.sharding.algorithm.DewLongShardingAlgorithm
         #绑定表中其余的表的策略与第一张表的策略相同
         bindingTables:
           - t_order,t_order_item
         #默认数据库分片策略
         defaultDatabaseStrategy:
-          inline:
+          standard:
             shardingColumn: user_id
-            algorithmInlineExpression: ds_${user_id.longValue() % 2}
+            preciseAlgorithmClassName: com.tairanchina.csp.dew.jdbc.sharding.algorithm.DewIntegerShardingAlgorithm
         props:
-          sql.show: false
+          sql.show: true

@@ -16,11 +16,15 @@ spring:
           starttls:
             enable: false
             required: fasle
-
 server:
-  port: 11000
+  port: 11001
 
 eureka:
+  instance:
+    metadata-map:
+      cluster: default
+    status-page-url-path: ${management.context-path}/info
+    health-check-url-path: ${management.context-path}/health
   client:
     serviceUrl:
       defaultZone:  http://registry:123456@localhost:9999/eureka
@@ -31,6 +35,11 @@ dew:
   cloud:
     error:
       enabled: true
+      notify-title: dew-test
       notify-interval-sec: 5
       notify-emails: 71964899@qq.com
-      notify-include-keys: ["ExampleClient#deleteExe(int,String)","ExampleClient#postExe(int,String)","ExampleClient2#deleteExe(int,String)"]
+
+management:
+  security:
+    enabled: false
+  context-path: /management-admin

@@ -1,13 +1,13 @@
 package your.group;
 
-import com.ecfront.dew.Dew;
-import com.ecfront.dew.core.autoconfigure.DewBootApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.annotation.DependsOn;
 
 /**
  * 工程启动类
  */
-@DewBootApplication(scanBasePackageClasses = {PetStoreApplication.class,Dew.class})
+@SpringBootApplication
 public class PetStoreApplication {
 
     public static void main(String[] args) {

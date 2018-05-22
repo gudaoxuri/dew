@@ -10,7 +10,7 @@ spring:
       port: -1
     registry:
       address: zookeeper://127.0.0.1:2181
-    scan: com.ecfront.dew.example
+    scan: com.tairanchina.csp.dew.example
     monitor:
       protocol: registry
 

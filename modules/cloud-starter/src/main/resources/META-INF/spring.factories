@@ -1,2 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.ecfront.dew.core.autoconfigure.CloudAutoConfiguration
+  com.tairanchina.csp.dew.core.TraceAutoConfiguration,\
+  com.tairanchina.csp.dew.core.NotifyAutoConfiguration,\
+  com.tairanchina.csp.dew.core.logger.DewLoggerWebMvcConfigurer

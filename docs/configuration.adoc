@@ -81,6 +81,9 @@ spring:
 
 #sharding-jdbc配置（分库分表样例，详细见使用手册及sharding-example）
 sharding:
+  enabled: true
+  transaction:
+    name: transaction #默认值为transaction
   jdbc:
     datasource:
       names: ds_0,ds_1
@@ -123,7 +126,9 @@ sharding:
             algorithmInlineExpression: ds_${user_id.longValue() % 2}
         props:
           sql.show: false
-
+    mybatis:
+      second:
+        enabled: true
 ----
 
 === `Spring boot` 核心参数

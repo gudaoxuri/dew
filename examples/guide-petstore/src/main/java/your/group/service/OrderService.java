@@ -2,9 +2,9 @@ package your.group.service;
 
 import com.ecfront.dew.common.Page;
 import com.ecfront.dew.common.Resp;
-import com.ecfront.dew.Dew;
-import com.ecfront.dew.core.cluster.ClusterDistLock;
-import com.ecfront.dew.core.service.CRUService;
+import com.tairanchina.csp.dew.Dew;
+import com.tairanchina.csp.dew.core.cluster.ClusterDistLock;
+import com.tairanchina.csp.dew.core.service.CRUService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import your.group.dao.OrderDao;

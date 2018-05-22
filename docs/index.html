@@ -5,7 +5,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.5.dev">
-<meta name="author" content="v1.2.2-RC,2017-11-29">
+<meta name="author" content="v1.3.0-RC,2018-02-06">
 <title>Dew-Framework（轻量服务框架）</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -423,7 +423,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Dew-Framework（轻量服务框架）</h1>
 <div class="details">
-<span id="author" class="author">v1.2.2-RC,2017-11-29</span><br>
+<span id="author" class="author">v1.3.0-RC,2018-02-06</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -477,6 +477,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#truedubbo">3.3.4. Dubbo兼容</a></li>
 <li><a href="#truesharding-jdbc">3.3.5. sharding-jdbc集成</a></li>
 <li><a href="#true--32">3.3.6. 幂等支持</a></li>
+<li><a href="#truemybatis-starter">3.3.7. mybatis-starter模块</a></li>
 </ul>
 </li>
 <li><a href="#true--33">3.4. 工程化</a>
@@ -487,131 +488,86 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#true--36">3.4.4. 服务调用开发期优化</a></li>
 <li><a href="#true-code-hystrix-code">3.4.5. <code>hystrix</code> 降级增加邮件通知</a></li>
 <li><a href="#true-code-api-code">3.4.6. <code>服务API调用</code> （追踪）日志处理</a></li>
-<li><a href="#truetps">3.4.7. TPS查询接口</a></li>
-<li><a href="#truedew-2">3.4.8. Dew 启动类配置多样性</a></li>
+<li><a href="#truemetrics">3.4.7. metrics查询接口</a></li>
 </ul>
 </li>
-<li><a href="#truejdbc">3.5. JDBC框架的选择</a></li>
-<li><a href="#true--37">3.6. 服务调用开发期使用</a></li>
-<li><a href="#true--38">3.7. 断路保护</a></li>
-<li><a href="#true--39">3.8. 配置中心</a></li>
-<li><a href="#true-code-ribbon-code">3.9. <code>ribbon</code> 负载均衡</a></li>
-<li><a href="#true-code-feign-code">3.10. <code>feign</code> 配置特定方法超时时间</a></li>
-<li><a href="#true--40">3.11. 主要性能影响参数</a></li>
-<li><a href="#true--41">3.12. 缓存处理</a></li>
-<li><a href="#true--42">3.13. 日志处理</a></li>
-<li><a href="#trueservo">3.14. servo 内存泄漏问题</a></li>
-<li><a href="#true-validated">3.15. '@Validated'注解</a></li>
-<li><a href="#truejackson-java8-springmvc-jackson-json">3.16. jackson对于java8时间转换（springmvc以jackson接收json数据）</a></li>
-<li><a href="#trueswagger">3.17. swagger离线文档</a></li>
-<li><a href="#true-code-feign-code-http">3.18. <code>feign</code> 接口添加http请求头信息</a></li>
-<li><a href="#true-code-zuul-code-http">3.19. <code>zuul</code> 保护(隐藏)内部服务的http接口</a></li>
-<li><a href="#truespring-boot-admin">3.20. Spring Boot Admin 监控实践</a></li>
 </ul>
 </li>
-<li><a href="#true--43">4. 技术指标</a>
+<li><a href="#true--37">4. 最佳实践</a>
 <ul class="sectlevel2">
-<li><a href="#true--44">4.1. 性能</a></li>
+<li><a href="#truejdbc">4.1. JDBC框架的选择</a></li>
+<li><a href="#true--38">4.2. 服务调用开发期使用</a></li>
+<li><a href="#true-code-validated-code">4.3. <code>@Validated</code> 注解</a></li>
+<li><a href="#true-code-jackson-code-code-java8-code-code-springmvc-code-code-jackson-code-code-json-code">4.4. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</a></li>
+<li><a href="#true-code-swagger-code">4.5. <code>Swagger</code> 离线文档</a></li>
+<li><a href="#true-code-ribbon-code">4.6. <code>Ribbon</code> 负载均衡</a></li>
+<li><a href="#true-code-feign-code">4.7. <code>Feign</code> 配置特定方法超时时间</a></li>
+<li><a href="#true-code-feign-code-code-http-code">4.8. <code>Feign</code> 接口添加 <code>Http</code> 请求头信息</a></li>
+<li><a href="#true-code-feign-code-2">4.9. <code>Feign</code> 文件上传实践</a></li>
+<li><a href="#true--39">4.10. 自定义降级方法</a></li>
+<li><a href="#true--40">4.11. 断路保护</a></li>
+<li><a href="#true--41">4.12. 配置中心</a></li>
+<li><a href="#true-code-spring-boot-spring-cloud-jar-code">4.13. <code>Spring Boot（Spring Cloud）jar</code> 包扫描配置文件顺序</a></li>
+<li><a href="#true--42">4.14. 主要性能影响参数</a></li>
+<li><a href="#true-code-zuul-code-code-http-code">4.15. <code>Zuul</code> 保护(隐藏)内部服务的 <code>Http</code> 接口</a></li>
+<li><a href="#true--43">4.16. 缓存处理</a></li>
+<li><a href="#true--44">4.17. 日志处理</a></li>
+<li><a href="#true-code-servo-code">4.18. <code>servo</code> 内存泄漏问题</a></li>
+<li><a href="#truespring-boot-admin">4.19. Spring Boot Admin 监控实践</a></li>
+<li><a href="#truejdbc-2">4.20. jdbc 批量插入性能问题</a></li>
+<li><a href="#truehttp">4.21. http请求并发数性能瓶颈</a></li>
+<li><a href="#true-message-property">4.22. 日志中解析message,动态显示property</a></li>
 </ul>
 </li>
-<li><a href="#true--45">5. 开发指南</a>
+<li><a href="#true--45">5. 技术指标</a>
 <ul class="sectlevel2">
-<li><a href="#truescm">5.1. SCM</a></li>
-<li><a href="#true--46">5.2. 环境要求</a></li>
+<li><a href="#true--46">5.1. 性能</a></li>
 </ul>
 </li>
-<li><a href="#true--47">6. 编译部署</a>
+<li><a href="#true--47">6. 开发指南</a>
 <ul class="sectlevel2">
-<li><a href="#true--48">6.1. 开发期热部署</a></li>
-<li><a href="#true--49">6.2. 打包</a></li>
-<li><a href="#true--50">6.3. 部署</a>
-<ul class="sectlevel3">
-<li><a href="#true--51">6.3.1. 准备</a></li>
-<li><a href="#true--52">6.3.2. 手工发布</a></li>
-<li><a href="#trueci">6.3.3. CI</a></li>
+<li><a href="#truescm">6.1. SCM</a></li>
+<li><a href="#true--48">6.2. 环境要求</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li><a href="#true--53">7. 配置速查</a>
+<li><a href="#true--49">7. 编译部署</a>
 <ul class="sectlevel2">
-<li><a href="#true-code-dew-code">7.1. <code>Dew</code> 参数</a></li>
-<li><a href="#true-code-spring-boot-code">7.2. <code>Spring boot</code> 核心参数</a></li>
-<li><a href="#true-code-druid-code">7.3. <code>Druid</code> 连接池参数</a></li>
-<li><a href="#true-code-spring-cloud-code">7.4. <code>Spring cloud</code> 核心参数</a></li>
+<li><a href="#true--50">7.1. 开发期热部署</a></li>
+<li><a href="#true--51">7.2. 打包</a></li>
+<li><a href="#true--52">7.3. 部署</a>
+<ul class="sectlevel3">
+<li><a href="#true--53">7.3.1. 准备</a></li>
+<li><a href="#true--54">7.3.2. 手工发布</a></li>
+<li><a href="#trueci">7.3.3. CI</a></li>
 </ul>
 </li>
-<li><a href="#true--54">8. 版本说明</a>
+</ul>
+</li>
+<li><a href="#true--55">8. 配置速查</a>
 <ul class="sectlevel2">
-<li><a href="#true1-2-0-rc">8.1. 1.2.2-RC</a>
-<ul class="sectlevel3">
-<li><a href="#truefeature">8.1.1. Feature</a></li>
-<li><a href="#trueimprovement">8.1.2. Improvement</a></li>
-<li><a href="#truefixed">8.1.3. Fixed</a></li>
-<li><a href="#true-code-1-1-0-rc-code-code-1-2-0-rc-code">8.1.4. 从 <code>1.1.0-RC</code> 迁移到 <code>1.2.2-RC</code></a></li>
+<li><a href="#true-code-dew-code">8.1. <code>Dew</code> 参数</a></li>
+<li><a href="#true-code-spring-boot-code">8.2. <code>Spring boot</code> 核心参数</a></li>
+<li><a href="#true-code-druid-code">8.3. <code>Druid</code> 连接池参数</a></li>
+<li><a href="#true-code-spring-cloud-code">8.4. <code>Spring cloud</code> 核心参数</a></li>
 </ul>
 </li>
-<li><a href="#true1-1-0-rc">8.2. 1.1.0-RC</a>
-<ul class="sectlevel3">
-<li><a href="#truefeature-2">8.2.1. Feature</a></li>
-<li><a href="#trueimprovement-2">8.2.2. Improvement</a></li>
-<li><a href="#truefixed-2">8.2.3. Fixed</a></li>
-<li><a href="#true-code-1-1-0-beta1-code-code-1-1-0-rc-code">8.2.4. 从 <code>1.1.0-beta1</code> 迁移到 <code>1.1.0-RC</code></a></li>
+<li><a href="#true--56">9. 版本说明</a>
+<ul class="sectlevel2">
+<li><a href="#true1-3-0-rc">9.1. 1.3.0-RC</a></li>
+<li><a href="#true1-2-2-rc">9.2. 1.2.2-RC</a></li>
+<li><a href="#true1-2-1-rc">9.3. 1.2.1-RC</a></li>
+<li><a href="#true1-2-0-rc">9.4. 1.2.0-RC</a></li>
+<li><a href="#true1-1-0-rc">9.5. 1.1.0-RC</a></li>
+<li><a href="#true1-1-0-beta1">9.6. 1.1.0-beta1</a></li>
+<li><a href="#true1-0-0-rc">9.7. 1.0.0-RC</a></li>
+<li><a href="#true1-0-0-beta5">9.8. 1.0.0-beta5</a></li>
+<li><a href="#true1-0-0-beta4">9.9. 1.0.0-beta4</a></li>
+<li><a href="#true1-0-0-beta3">9.10. 1.0.0-beta3</a></li>
+<li><a href="#true1-0-0-beta2">9.11. 1.0.0-Beta2</a></li>
+<li><a href="#true1-0-0-beta1">9.12. 1.0.0-beta1</a></li>
 </ul>
 </li>
-<li><a href="#true1-1-0-beta1">8.3. 1.1.0-beta1</a>
-<ul class="sectlevel3">
-<li><a href="#truefeature-3">8.3.1. Feature</a></li>
-<li><a href="#trueimprovement-3">8.3.2. Improvement</a></li>
-<li><a href="#truefixed-3">8.3.3. Fixed</a></li>
-<li><a href="#true-code-1-0-0-rc-betax-code-code-1-1-0-code">8.3.4. 从 <code>1.0.0-RC/betaX</code> 迁移到 <code>1.1.0</code></a></li>
-</ul>
-</li>
-<li><a href="#true1-0-0-rc">8.4. 1.0.0-RC</a>
-<ul class="sectlevel3">
-<li><a href="#truefeature-4">8.4.1. Feature</a></li>
-<li><a href="#trueimprovement-4">8.4.2. Improvement</a></li>
-<li><a href="#truefixed-4">8.4.3. Fixed</a></li>
-</ul>
-</li>
-<li><a href="#true1-0-0-beta5">8.5. 1.0.0-beta5</a>
-<ul class="sectlevel3">
-<li><a href="#truefeature-5">8.5.1. Feature</a></li>
-<li><a href="#trueimprovement-5">8.5.2. Improvement</a></li>
-<li><a href="#truefixed-5">8.5.3. Fixed</a></li>
-</ul>
-</li>
-<li><a href="#true1-0-0-beta4">8.6. 1.0.0-beta4</a>
-<ul class="sectlevel3">
-<li><a href="#truefeature-6">8.6.1. Feature</a></li>
-<li><a href="#trueimprovement-6">8.6.2. Improvement</a></li>
-<li><a href="#truefixed-6">8.6.3. Fixed</a></li>
-</ul>
-</li>
-<li><a href="#true1-0-0-beta3">8.7. 1.0.0-beta3</a>
-<ul class="sectlevel3">
-<li><a href="#truefeature-7">8.7.1. Feature</a></li>
-<li><a href="#trueimprovement-7">8.7.2. Improvement</a></li>
-<li><a href="#truefixed-7">8.7.3. Fixed</a></li>
-</ul>
-</li>
-<li><a href="#true1-0-0-beta2">8.8. 1.0.0-Beta2</a>
-<ul class="sectlevel3">
-<li><a href="#truefeature-8">8.8.1. Feature</a></li>
-<li><a href="#trueimprovement-8">8.8.2. Improvement</a></li>
-<li><a href="#truefixed-8">8.8.3. Fixed</a></li>
-</ul>
-</li>
-<li><a href="#true1-0-0-beta1">8.9. 1.0.0-beta1</a>
-<ul class="sectlevel3">
-<li><a href="#truefeature-9">8.9.1. Feature</a></li>
-<li><a href="#trueimprovement-9">8.9.2. Improvement</a></li>
-<li><a href="#truefixed-9">8.9.3. Fixed</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#true--55">9. 路线图</a></li>
+<li><a href="#true--57">10. 路线图</a></li>
 </ul>
 </div>
 </div>
@@ -729,7 +685,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 
     &lt;!--引入Dew父依赖，也可以使用import方式--&gt;
     &lt;parent&gt;
-        &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+        &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
         &lt;artifactId&gt;parent&lt;/artifactId&gt;
         &lt;!--生产环境切不可以使用快照版本!!!!!!!!--&gt;
         &lt;version&gt;1.2.2-RC&lt;/version&gt;
@@ -743,12 +699,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
     &lt;dependencies&gt;
         &lt;!--dew的核心包--&gt;
         &lt;dependency&gt;
-            &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+            &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
             &lt;artifactId&gt;boot-starter&lt;/artifactId&gt;
         &lt;/dependency&gt;
         &lt;!--引入集群能力-redis实现--&gt;
         &lt;dependency&gt;
-            &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+            &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
             &lt;artifactId&gt;cluster-spi-redis&lt;/artifactId&gt;
         &lt;/dependency&gt;
         &lt;!--添加web（spring mvc）功能--&gt;
@@ -767,7 +723,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
         &lt;/dependency&gt;
         &lt;!--引入JDBC依赖--&gt;
         &lt;dependency&gt;
-            &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+            &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
             &lt;artifactId&gt;jdbc-starter&lt;/artifactId&gt;
         &lt;/dependency&gt;
         &lt;!--测试项目，使用h2数据库--&gt;
@@ -777,7 +733,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
         &lt;/dependency&gt;
         &lt;!--引入Dew封装的单元测试功能--&gt;
         &lt;dependency&gt;
-            &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+            &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
             &lt;artifactId&gt;test-starter&lt;/artifactId&gt;
             &lt;scope&gt;test&lt;/scope&gt;
         &lt;/dependency&gt;
@@ -862,7 +818,10 @@ dew:
  * 工程启动类
  * 重写父类的ComponentScan，先扫描Dew下的包，再是项目的根包
  */
-@DewBootApplication(scanBasePackageClasses = {Dew.class,PetStoreApplication.class})
+@SpringBootApplication
+@EnableAspectJAutoProxy(exposeProxy = true,proxyTargetClass = true) //开启事务或catche时都需要加该注解
+@EnableTransactionManagement // 开启注解式事务需要添加
+@EnableCaching(proxyTargetClass = true) // 开启注解式catche需要添加
 public class PetStoreApplication {
 
     public static void main(String[] args) {
@@ -1355,7 +1314,7 @@ public class PetStoreTest {
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>&lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+<pre>&lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
 &lt;artifactId&gt;test-starter&lt;/artifactId&gt;</pre>
 </div>
 </div>
@@ -1491,7 +1450,7 @@ public class DocTest {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;!--引入Dew父依赖，也可以使用import方式--&gt;
 &lt;parent&gt;
-    &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
     &lt;artifactId&gt;parent&lt;/artifactId&gt;
     &lt;!--生产环境请选择合适的版本!!!!!!!!--&gt;
     &lt;version&gt;${dew.version}&lt;/version&gt;
@@ -1500,7 +1459,7 @@ public class DocTest {
 &lt;dependencies&gt;
     &lt;!--引入需要的模块--&gt;
     &lt;dependency&gt;
-        &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+        &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
         &lt;artifactId&gt;&lt;模块名&gt;&lt;/artifactId&gt;
     &lt;/dependency&gt;
 &lt;/dependencies&gt;
@@ -1556,16 +1515,16 @@ public class DocTest {
 <td class="tableblock halign-left valign-top"><p class="tableblock">基于Spring Cloud的扩展，基于<code>boot-starter</code></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cloud-starter</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">基于Spring Cloud的扩展，基于<code>boot-starter</code></p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>idempotent-starter</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">幂性处理模块</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>jdbc-starter</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Dew JDBC模块</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>mybatis-starter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">mybatis适配模块</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>csp-starter</code></p></td>
@@ -1625,57 +1584,15 @@ public class DocTest {
 <div class="sect3">
 <h4 id="true--12"><a class="anchor" href="#true--12"></a>3.1.3. 启动类</h4>
 <div class="paragraph">
-<p><code>Dew</code> 有两个核心启动类 <code>DewBootApplication</code> 和 <code>DewCloudApplication</code> ，前者引用的依赖是 <code>boot-starter</code> 用于启动 <code>Spring boot</code> 类型的工程，后者依赖的是<code>cloud-starter</code> 继承自 <code>DewBootApplication</code> 用于启动 <code>Spring cloud</code> 类型的工程。</p>
+<p><code>Dew</code> 自<code>1.3.0-SNAPSHOT</code>版本起，去掉了对启动类的改造，正如dew的设计初衷：</p>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="title">DewBootApplication使用如下注解</div>
+<div class="listingblock">
+<div class="content">
+<pre>Dew [du:] 意为`露水`，希望此框架可以像晨间的露水一样透明、静谧、丰盈。让使用者尽量不要感知框架的存在，专注业务实现。</pre>
+</div>
+</div>
 <div class="paragraph">
-<p>@SpringBootApplication<br>
-@EnableTransactionManagement<br>
-@EnableAutoConfiguration(exclude = {FreeMarkerAutoConfiguration.class, GsonAutoConfiguration.class, WebSocketAutoConfiguration.class})<br>
-@ComponentScan(basePackageClasses = {Dew.class})<br>
-@EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true)<br>
-@EnableCaching(proxyTargetClass = true)</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="title">DewCloudApplication使用如下注解</div>
-<div class="paragraph">
-<p>@SpringCloudApplication</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="title">@ComponentScan说明</div>
-<div class="paragraph">
-<p><code>Spring boot</code> 严重依赖于包扫描功能，所以工程中需要重写 <code>@ComponentScan</code> 加入当前工程的根包，要求为 <code>Dew</code> 包在前，工程包在后，如： <code>(basePackageClasses = {Dew.class,PetStoreApplication.class})</code></p>
-</div>
-</td>
-</tr>
-</table>
+<p>so，原生的springboot和springcloud如何使用，现在就如何使用。</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1685,9 +1602,30 @@ public class DocTest {
 </td>
 <td class="content">
 示例见 <code>example/guide-petstore</code>
+* 添加工程启动类
 </td>
 </tr>
 </table>
+</div>
+<div class="listingblock">
+<div class="title">example</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">/**
+ * 工程启动类
+ * 重写父类的ComponentScan，先扫描Dew下的包，再是项目的根包
+ */
+@SpringBootApplication
+@EnableAspectJAutoProxy(exposeProxy = true,proxyTargetClass = true) //开启事务或catche时都需要加该注解
+@EnableTransactionManagement // 开启注解式事务需要添加
+@EnableCaching(proxyTargetClass = true) // 开启注解式catche需要添加
+public class PetStoreApplication {
+
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(PetStoreApplication.class).run(args);
+    }
+
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -1833,7 +1771,7 @@ public class DocTest {
 <pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;dependencies&gt;
     &lt;!--dew的核心包--&gt;
     &lt;dependency&gt;
-        &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+        &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
         &lt;artifactId&gt;boot-starter&lt;/artifactId&gt;
         &lt;version&gt;${dew.version}&lt;/version&gt;
     &lt;/dependency&gt;
@@ -1870,9 +1808,9 @@ dew:
     name: web
     version: 1.0
     desc: desc
-    web-site: www.ecfront.com
+    web-site: www.tairanchina.com
     doc:
-      base-package: com.ecfront # API文档路径</code></pre>
+      base-package: com.tairanchina # API文档路径</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -2014,7 +1952,7 @@ public class WebExampleController {
 <div class="ulist">
 <ul>
 <li>
-<p>协议无关：<code>Resp&lt;E&gt;</code> 响应，对于 <code>HTTP</code> 统一返回 <code>200</code> (业务操作不需要降级) 或 <code>1000</code> (业务操作需要降级) HTTP状态码，使用 <code>code</code> 表示业务状态码，<code>Resp</code> 对象包含:</p>
+<p>协议无关：<code>Resp&lt;E&gt;</code> 响应，对于 <code>HTTP</code> 统一返回 <code>200</code> (业务操作不需要降级) 或 <code>500</code> (业务操作需要降级) HTTP状态码，使用 <code>code</code> 表示业务状态码，<code>Resp</code> 对象包含:</p>
 <div class="literalblock">
 <div class="content">
 <pre>code 响应编码，与http状态码类似，200表示成功
@@ -2044,17 +1982,17 @@ body 响应正文</pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<div class="title">1000 Http状态码说明</div>
+<div class="title">500 Http状态码说明</div>
 <div class="paragraph">
-<p><code>1000</code> 状态码仅用于告诉 <code>Hystrix</code> 这次请求是需要降级的错误，对于 <code>Resp</code> 中的 <code>code</code> 没有影响。</p>
+<p><code>500</code> 状态码仅用于告诉 <code>Hystrix</code> 这次请求是需要降级的错误，对于 <code>Resp</code> 中的 <code>code</code> 没有影响。</p>
 </div>
 <div class="paragraph">
-<p><code>dew</code> 框架会把所有 <code>5xx</code>（服务端错误，需要降级） 的异常统一转换成 <code>1000</code> 的Http状态码返回给调用方。</p>
+<p><code>dew</code> 框架会把所有 <code>5xx</code>（服务端错误，需要降级） 的异常统一转换成 <code>500</code> 的Http状态码返回给调用方。</p>
 </div>
 <div class="paragraph">
 <p><code>Resp.xxx.fallback()</code> 用于显示声明当前返回需要降级，
 比如 <code>Resp.serverError("some message")</code> 不会降级，返回http状态码为200，body为 <code>{"code":"500","message":"some message","body":null}</code>，
-但 <code>Resp.serverError("some message").fallback()</code> 会降级，返回http状态码为1000，body为 同上。</p>
+但 <code>Resp.serverError("some message").fallback()</code> 会降级，返回http状态码为500，body为 同上。</p>
 </div>
 </td>
 </tr>
@@ -2163,7 +2101,7 @@ dew:
     format:
       use-unity-error: true
     error-mapping:
-      "[com.ecfront.dew.core.AuthException]":
+      "[com.tairanchina.csp.dew.core.AuthException]":
         http-code: 401
         business-code: x00010
         message: 认证错误</code></pre>
@@ -2319,12 +2257,12 @@ SQL输出日志需要在 <code>logback-spring.xml</code> 中添加 <code>&lt;log
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;dependencies&gt;
     &lt;dependency&gt;
-        &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+        &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
         &lt;artifactId&gt;boot-starter&lt;/artifactId&gt;
     &lt;/dependency&gt;
     &lt;!--引入JDBC依赖--&gt;
     &lt;dependency&gt;
-        &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+        &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
         &lt;artifactId&gt;jdbc-starter&lt;/artifactId&gt;
     &lt;/dependency&gt;
     &lt;!-- 对应的数据库JDBC驱动 --&gt;
@@ -2587,7 +2525,7 @@ SB desc(String filed)</code></pre>
 <pre class="highlightjs highlight"><code class="language-java" data-lang="java">// 在配置文件中添加Dao的路径
 Dew:
   jdbc:
-    base-packages: ["com.ecfront.dew.example.jdbc.jdbc"]
+    base-packages: ["com.tairanchina.csp.dew.example.jdbc.jdbc"]
 
 // 添加PetDao
 public interface PetDao extends DewDao&lt;Integer, Pet&gt; {
@@ -2862,29 +2800,29 @@ private JdbcTemplate secondaryJdbcTemplate;
 <div class="title">引入依赖</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
     &lt;artifactId&gt;boot-starter&lt;/artifactId&gt;
 &lt;/dependency&gt;
 &lt;!--引入集群依赖，可选redis/hazelcast/rabbit/ignite/eureka--&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
     &lt;artifactId&gt;cluster-spi-redis&lt;/artifactId&gt;
 &lt;/dependency&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
     &lt;artifactId&gt;cluster-spi-hazelcast&lt;/artifactId&gt;
 &lt;/dependency&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
     &lt;artifactId&gt;cluster-spi-rabbit&lt;/artifactId&gt;
 &lt;/dependency&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
     &lt;artifactId&gt;cluster-spi-ignite&lt;/artifactId&gt;
 &lt;/dependency&gt;
 &lt;!--此实现需要引用 cloud-starter --&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
     &lt;artifactId&gt;cluster-spi-eureka&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -3811,7 +3749,7 @@ csp模式使用CSPOptInfo对象基类
 <div class="title">pom.xml依赖配置</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
-          &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+          &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
           &lt;artifactId&gt;csp-starter&lt;/artifactId&gt;
  &lt;/dependency&gt;</code></pre>
 </div>
@@ -4125,7 +4063,7 @@ sharding-jdbc的2.0.0.M1版本源码存在问题，反射获取方法时存在bu
 </table>
 </div>
 <div class="listingblock">
-<div class="title"><code>sharding-jdbc</code>在<code>/resources/META-INF/</code>下的配置文件示例，该示例为分库分表+读写分离</div>
+<div class="title"><code>sharding-jdbc</code>配置文件示例，该示例为分库分表+读写分离</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">sharding:
   jdbc:
@@ -4161,6 +4099,7 @@ sharding-jdbc的2.0.0.M1版本源码存在问题，反射获取方法时存在bu
         url: jdbc:mysql://localhost:3306/demo_ds_master_1_slave_0
         username: root
         password: 123456
+
       ds_master_1_slave_1:
         type: org.apache.commons.dbcp.BasicDataSource
         driverClassName: com.mysql.jdbc.Driver
@@ -4176,18 +4115,18 @@ sharding-jdbc的2.0.0.M1版本源码存在问题，反射获取方法时存在bu
             tableStrategy:
               inline:
                 shardingColumn: order_id
-                algorithmInlineExpression: t_order_${order_id % 2}
+                algorithmExpression: t_order_${order_id % 2}
           t_order_item:
             actualDataNodes: ds_${0..1}.t_order_item_${0..1}
             tableStrategy:
               inline:
                 shardingColumn: order_id
-                algorithmInlineExpression: t_order_item_${order_id % 2}
+                algorithmExpression: t_order_item_${order_id % 2}
         #默认数据库分片策略
         defaultDatabaseStrategy:
           inline:
             shardingColumn: user_id
-            algorithmInlineExpression: ds_${user_id.longValue() % 2}
+            algorithmExpression: ds_${user_id.longValue() % 2}
         masterSlaveRules:
           ds_0:
             masterDataSourceName: ds_master_0
@@ -4196,18 +4135,6 @@ sharding-jdbc的2.0.0.M1版本源码存在问题，反射获取方法时存在bu
             masterDataSourceName: ds_master_1
             slaveDataSourceNames: [ds_master_1_slave_0, ds_master_1_slave_1]</code></pre>
 </div>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-inline写法在2.0.0.M1之后被废除。
-</td>
-</tr>
-</table>
 </div>
 <div class="listingblock">
 <div class="title">所有策略配置方式</div>
@@ -4225,7 +4152,7 @@ inline写法在2.0.0.M1之后被废除。
                 algorithmClassName: #分片算法类名称。该类需使用默认的构造器或者提供无参数的构造器
             inline: #inline表达式分片策略
                 shardingColumn : #分片列名
-                algorithmInlineExpression: #分库算法表达式，需要符合groovy动态语法
+                algorithmExpression: #分库算法表达式，需要符合groovy动态语法
             hint: #Hint分片策略
                 algorithmClassName: #分片算法类名称。该类需使用默认的构造器或者提供无参数的构造器
             none: #不分片
@@ -4245,12 +4172,12 @@ inline写法在2.0.0.M1之后被废除。
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;!--引入幂等支持--&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
     &lt;artifactId&gt;idempotent-starter&lt;/artifactId&gt;
 &lt;/dependency&gt;
 &lt;!--使用幂等的Redis实现--&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
     &lt;artifactId&gt;cluster-spi-redis&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -4368,6 +4295,138 @@ public void transferAReceive(String id) {
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="truemybatis-starter"><a class="anchor" href="#truemybatis-starter"></a>3.3.7. mybatis-starter模块</h4>
+<div class="paragraph">
+<p>考虑到业务团队较多采用mybatis框架,dew定制了mybatis的dew实现方式，同时针对sharding-jdbc做出整合。对应example为<code>mybatis-multi-example</code></p>
+</div>
+<div class="listingblock">
+<div class="title">启动类配置示例</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">@SpringbootApplication
+@DewMapperScan(basePackages = "com.tairanchina.csp.dew.mybatis.multi.mapper")
+public class MybatisMultiApplication {
+
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(MybatisMultiApplication.class).web(false).run(args);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">配置文件示例</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">spring:
+  multi-datasources:
+    test1:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/transaction?useUnicode=true&amp;characterEncoding=utf-8
+      username: root
+      password: 123456
+
+sharding:
+  enabled: true #
+  transaction:
+    name: transaction #指定事务记录的数据库</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">mapper接口类</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">// 数据源为sharding-jdbc datasource
+@DS(isSharding = true)
+public interface TOrderMapper extends BaseMapper&lt;TOrder&gt; {
+}
+// 数据源为主数据源
+@DS
+public interface UserMapper extends BaseMapper&lt;User&gt; {
+
+    @Select("select age from user group by age")
+    List&lt;String&gt; ageGroup();
+}
+// 数据源为第二数据源
+@DS(dataSource = "test1")
+public interface UserMapper2 extends BaseMapper&lt;User&gt; {
+
+    @Select("select age from user group by age")
+    List&lt;String&gt; ageGroup();
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+这里讲述下使用事务带来的问题，sharding-jdbc目前仅提供最大努力型事务（TCC还待开发），保证最终一致性。sharding-jdbc默认对执行失败的语句同步重试三次，若都失败，则记录在事务表中。笔者对于大数据量大并发下的数据插入做了测试，具体的数据量和并发量详见<code>mybatis-multi-example</code>项目，无事务情况下两次耗时为675751ms,750752ms,有事务情况下两次耗时为1939277ms,1942079ms,有无事务均全部数据插入成功，显然用了事务后耗时接近原来的三倍，具体是否使用请自行取舍
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">事务使用示例</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">@Autowired
+private SoftTransactionManager softTransactionManager;
+
+
+@Autowired
+private ShardingEnvironmentAware shardingEnvironmentAware;
+
+public void example(){
+ BEDSoftTransaction softTransaction = (BEDSoftTransaction) softTransactionManager.getTransaction(SoftTransactionType.BestEffortsDelivery);
+            try {
+                try {
+                    softTransaction.begin(shardingEnvironmentAware.dataSource().getConnection());
+                } catch (SQLException e) {
+                    logger.info("sharding transaction begin failed");
+                }
+                TOrder tOrder = new TOrder();
+                tOrder.setUserId(12).setStatus("test");
+                tOrder.setOrderId(1012);
+                tOrderService.insert(tOrder);
+                tOrderService.insert(tOrder);
+                tOrderService.insert(tOrder);
+                logger.info("sharding init test end");
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } finally {
+                try {
+                    softTransaction.end();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+ }</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml配置</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml" data-lang="xml"> &lt;dependency&gt;
+    &lt;groupId&gt;io.shardingjdbc&lt;/groupId&gt;
+    &lt;artifactId&gt;sharding-jdbc-core&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+   &lt;groupId&gt;io.shardingjdbc&lt;/groupId&gt;
+   &lt;artifactId&gt;sharding-jdbc-transaction&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+   &lt;groupId&gt;io.shardingjdbc&lt;/groupId&gt;
+   &lt;artifactId&gt;sharding-jdbc-transaction-storage&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+   &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
+   &lt;artifactId&gt;mybatis-starter&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="true--33"><a class="anchor" href="#true--33"></a>3.4. 工程化</h3>
@@ -4413,7 +4472,7 @@ Dew使用"内嵌式"工具解决，数据库使用 <code>H2</code> ，Redis使�
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-xml" data-lang="xml"># maven
 &lt;dependency&gt;
-    &lt;groupId&gt;com.ecfront.dew&lt;/groupId&gt;
+    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
     &lt;artifactId&gt;test-starter&lt;/artifactId&gt;
 &lt;/dependency&gt;
 
@@ -4494,7 +4553,7 @@ management.security.enabled: false # 需要关闭安全管理，可通过IP来�
 <div class="sect3">
 <h4 id="true--36"><a class="anchor" href="#true--36"></a>3.4.4. 服务调用开发期优化</h4>
 <div class="paragraph">
-<p>在Spring Cloud体系下，服务调用需要启动<code>Eureka</code>服务（对于Dew中的<code>Regstry</code>组件），这对开发阶段并不友好：</p>
+<p>在Spring Cloud体系下，服务调用需要启动<code>Eureka</code>服务（对于Dew中的<code>Registry</code>组件），这对开发阶段并不友好：</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -4553,6 +4612,7 @@ management.security.enabled: false # 需要关闭安全管理，可通过IP来�
 dew:
   cloud:
     error:
+      enabled: true
       notify-interval-sec: 1800
       notify-emails: 71964899@qq.com
       notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED
@@ -4609,13 +4669,38 @@ spring:
 <p>之后可选择 <code>ELK</code> 方案，或是 <code>Dew</code> 推荐的 <code>EK</code> 方案（跳过 <code>Logstash</code>，直接向 <code>ES</code> 提交）</p>
 </div>
 <div class="paragraph">
-<p>一次调用日志的查看，以 <code>ES</code> 为例，过滤条件是: logger:com.ecfront.dew.core.logger.DewTraceLogWrap &amp; trace:&lt;对应的traceID&gt;</p>
+<p>一次调用日志的查看，以 <code>ES</code> 为例，过滤条件是: logger:com.tairanchina.csp.dew.core.logger.DewTraceLogWrap &amp; trace:&lt;对应的traceID&gt;</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="truetps"><a class="anchor" href="#truetps"></a>3.4.7. TPS查询接口</h4>
+<h4 id="truemetrics"><a class="anchor" href="#truemetrics"></a>3.4.7. metrics查询接口</h4>
 <div class="paragraph">
 <p>基于<code>Spring Boot Actuator</code>提供的metrics接口，dew增加了三个TPS指标，最大响应时间，平均响应时间，90%的响应时间。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+开发者可以get请求访问根路径下的/metrics接口，即可看到新增的 <code>dew.response.nityPercent</code>,<code>dew.response.average</code>,<code>dew.response.max</code>,<code>dew.response.tps</code> 四个指标
+      及针对接口的对应指标,生产或测试环境中多以登陆admin服务来查看统计数据
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+1.3.0后metrics指标增加线程、内存、cpu、磁盘等统计
+</td>
+</tr>
+</table>
 </div>
 <div class="listingblock">
 <div class="title">需要配置如下</div>
@@ -4641,88 +4726,14 @@ dew:
 及针对接口的对应指标</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="truedew-2"><a class="anchor" href="#truedew-2"></a>3.4.8. Dew 启动类配置多样性</h4>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<code>dew</code>启动类支持注解式配置和继承式配置，注解为<code>@DewBootApplication</code>和<code>@DewCloudApplication</code>,抽象类为<code>DewBootApplication</code>和<code>DewCloudApplication</code>
-</td>
-</tr>
-</table>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>注解式配置</p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-注解式配置必须详细配置扫描基类
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="title">在启动类上加@DewBootApplication注解</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">@DewBootApplication(scanBasePackageClasses = {Dew.class, ExampleApplication.class})
-public class ExampleApplication {
-
-    public static void main(String[] args) throws InterruptedException {
-        new SpringApplicationBuilder(ExampleApplication.class).run(args);
-    }
-}</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>继承式配置</p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-继承式配置注解继承自父类
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="title">启动类继承DewBootApplication类</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java" data-lang="java">public class ExampleApplication extends DewBootApplication类 {
-
-    public static void main(String[] args) throws InterruptedException {
-        new SpringApplicationBuilder(ExampleApplication.class).run(args);
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><code>``</code>== 最佳实践</p>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="true--37"><a class="anchor" href="#true--37"></a>4. 最佳实践</h2>
+<div class="sectionbody">
 <div class="sect2">
-<h3 id="truejdbc"><a class="anchor" href="#truejdbc"></a>3.5. JDBC框架的选择</h3>
+<h3 id="truejdbc"><a class="anchor" href="#truejdbc"></a>4.1. JDBC框架的选择</h3>
 <div class="paragraph">
 <p>主流JDBC框架有Hibernate、MyBatis、Spring JDBC Template、Ebean、DBUtils等，Dew基于Spring Boot，所以对于这些框架都提供了很好的兼容。那么如何选择呢？</p>
 </div>
@@ -4792,9 +4803,9 @@ public class ExampleApplication {
 </div>
 </div>
 <div class="sect2">
-<h3 id="true--37"><a class="anchor" href="#true--37"></a>3.6. 服务调用开发期使用</h3>
+<h3 id="true--38"><a class="anchor" href="#true--38"></a>4.2. 服务调用开发期使用</h3>
 <div class="paragraph">
-<p>在Spring Cloud体系下，服务调用需要启动 <code>Eureka</code> 服务（对于Dew中的 <code>Regstry</code> 组件），这对开发阶段并不友好：</p>
+<p>在 <code>Spring Cloud</code> 体系下，服务调用需要启动 <code>Eureka</code> 服务（对于 <code>Dew</code> 中的 <code>Registry</code> 组件），这对开发阶段并不友好：</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -4810,7 +4821,7 @@ public class ExampleApplication {
 </ol>
 </div>
 <div class="paragraph">
-<p>为解决上述问题,在使用` Spring Cloud` 的 <code>RestTemplate</code> 时,增加 <code>Ribbon</code> 的服务配置.</p>
+<p>为解决上述问题,在使用 <code>Spring Cloud</code> 的 <code>RestTemplate</code> 时,增加 <code>Ribbon</code> 的服务配置.</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -4822,7 +4833,434 @@ performance-service.ribbon.listOfServers: 127.0.0.1:8812</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="true--38"><a class="anchor" href="#true--38"></a>3.7. 断路保护</h3>
+<h3 id="true-code-validated-code"><a class="anchor" href="#true-code-validated-code"></a>4.3. <code>@Validated</code> 注解</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>在Spring Controller类里，<code>@Validated</code> 注解初使用会比较不易上手，在此做下总结</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>对于基本数据类型和String类型，要使校验的注解生效，需在该类上方加 <code>@Validated</code> 注解</p>
+</li>
+<li>
+<p>对于抽象数据类型，需在形式参数前加<code>@Validated</code>注解</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+spring对抽象数据类型校验抛出异常为<code>MethodArgumentNotValidException</code>，http状态码为400，对基本数据类型校验抛出异常为<code>ConstraintViolationException</code>，http状态码为500，dew对这两种异常做了统一处理，http状态码均返回200，code为400
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="true-code-jackson-code-code-java8-code-code-springmvc-code-code-jackson-code-code-json-code"><a class="anchor" href="#true-code-jackson-code-code-java8-code-code-springmvc-code-code-jackson-code-code-json-code"></a>4.4. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>对于 <code>LocalDateTime</code> 类型，需在参数上加 <code>@JsonFormat</code> 注解，如下：<code>@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")</code></p>
+</li>
+<li>
+<p><code>LocalDate,LocalTime,Instant</code> 等，无需配置可自行转换</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<code>jackson</code> 对于 <code>LocalDateTime</code> 类型的支持与其他三种类型不具有一致性，这是 <code>jackson</code> 需要优化的一个点
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="true-code-swagger-code"><a class="anchor" href="#true-code-swagger-code"></a>4.5. <code>Swagger</code> 离线文档</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>以启动参数 <code>api.file.name</code> 指定导出文件名</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">执行如下命令(加上 <code>-Dapi.file.name= [name]</code> 可指定文件名)</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell" data-lang="shell">mvn -Dtest=DocTest clean test -P doc
+
+mvn -Dtest=DocTest -Dapi.file.name=dew-example clean test -P doc</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="true-code-ribbon-code"><a class="anchor" href="#true-code-ribbon-code"></a>4.6. <code>Ribbon</code> 负载均衡</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+本条实践为<code>netflix</code>的<code>1.3.4.RELEASE</code>版本
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>example: service-dew.ribbon.NFLoadBalancerRuleClassName=com.netflix.loadbalancer.RandomRule</code></p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>service-dew</code>为服务名，配置时自行选取规则，类均在<code>com.netflix.loadbalancer</code>包下
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">若指定zone，默认会优先调用相同zone的服务,此优先级高于策略配置，配置如下</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">#指定属于哪个zone
+eureka:
+  instance:
+    metadata-map:
+      zone: #zone 名称
+
+#指定region（此处region为项目在不同区域的部署，为项目规范，不同region间能互相调用）
+eureka:
+  client:
+    region: #region名称</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="true-code-feign-code"><a class="anchor" href="#true-code-feign-code"></a>4.7. <code>Feign</code> 配置特定方法超时时间</h3>
+<div class="paragraph">
+<p><strong><code>Hystrix</code> 超时时间配置</strong></p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre># 配置默认的hystrix超时时间
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=10000
+# 配置特定方法的超时时间,优于默认配置
+hystrix.command.&lt;hystrixcommandkey&gt;.execution.isolation.thread.timeoutInMilliseconds=10000
+# &lt;hystrixcommandkey&gt;的format为FeignClassName#methodSignature,下面是示例配置
+hystrix.command.PressureService#getBalance(int).execution.isolation.thread.timeoutInMilliseconds=10000</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong><code>Ribbon</code> 超时时间配置</strong></p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre># 配置默认ribbon超时时间
+ribbon.ReadTimeout=60000
+# 配置特定服务超时时间,优于默认配置
+&lt;client&gt;.ribbon.ReadTimeout=6000
+# &lt;client&gt;为实际服务名,下面是示例配置
+pressure-service.ribbon.ReadTimeout=5000</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong><code>Hystrix</code> 和 <code>Ribbon</code> 的超时时间配置相互独立,以低为准,使用时请根据实际情况进行配置</strong></p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+如果要针对某个服务做超时设置,建议使用 <code>Ribbon</code> 的配置；在同时使用 <code>Ribbon</code> 和 <code>Hystrix</code> 时,请特别注意超时时间的配置。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="true-code-feign-code-code-http-code"><a class="anchor" href="#true-code-feign-code-code-http-code"></a>4.8. <code>Feign</code> 接口添加 <code>Http</code> 请求头信息</h3>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+在 <code>@FeignClient</code> 修饰类中的接口方法里添加新的形参，并加上 <code>@RequestHeader</code> 注解指定key值
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">示例</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">@PostMapping(value = "ca/all", consumes = MediaType.APPLICATION_JSON_VALUE)
+Resp&lt;CustomerInfoVO&gt; applyCA(@RequestBody CAIdentificationDTO params,
+     @RequestHeader Map&lt;String, Object&gt; headers);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="true-code-feign-code-2"><a class="anchor" href="#true-code-feign-code-2"></a>4.9. <code>Feign</code> 文件上传实践</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>在 <code>SDK</code> 工程处，添加包依赖 e.g.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">pom</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">        &lt;dependency&gt;
+            &lt;groupId&gt;io.github.openfeign.form&lt;/groupId&gt;
+            &lt;artifactId&gt;feign-form&lt;/artifactId&gt;
+            &lt;version&gt;3.0.1&lt;/version&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;io.github.openfeign.form&lt;/groupId&gt;
+            &lt;artifactId&gt;feign-form-spring&lt;/artifactId&gt;
+            &lt;version&gt;3.0.1&lt;/version&gt;
+        &lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>在 <code>SDK</code> 工程处，创建一个 <code>Configuration</code></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">MultipartSupportConfig</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">import feign.codec.Encoder;
+import feign.form.spring.SpringFormEncoder;
+import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
+import org.springframework.cloud.netflix.feign.support.SpringEncoder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class MultipartSupportConfig {
+
+    @Autowired
+    private ObjectFactory&lt;HttpMessageConverters&gt; messageConverters;
+
+    @Bean
+    public Encoder feignFormEncoder() {
+        return new SpringFormEncoder(new SpringEncoder(messageConverters));
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>修改接口</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">FeginExample</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">@FeignClient(name = "demo")
+public interface FeginExample {
+@PostMapping(value = "images", consumes = MULTIPART_FORM_DATA_VALUE)
+ Resp&lt;String&gt; uploadImage(
+            @RequestParam MultipartFile image,
+            @RequestParam("id") String id);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>@RequestPart</code> 与 <code>@RequestParam</code> 效果是一样的，大家就不用花时间在这上面了。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>修改服务器接口</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">FeginServiceExample</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">@RestController
+public class FeginServiceExample {
+  @PostMapping(value = "images", consumes = MULTIPART_FORM_DATA_VALUE)
+    public Resp&lt;String&gt; uploadImage(
+            @RequestParam("image") MultipartFile image,
+            @RequestParam("id") String id,
+            HttpServletRequest request) {
+              return Resp.success(null);
+            }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>常见问题：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>HTTP Status 400 - Required request part 'file' is not present</code></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>请求文件参数的名称与实际接口接受名称不一致</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>feign.codec.EncodeException: Could not write request: no suitable HttpMessageConverter found for request type [org.springframework.mock.web.MockMultipartFile] and content type [multipart/form-data]</code></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>转换器没有生效，检查一下MultipartSupportConfig</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="true--39"><a class="anchor" href="#true--39"></a>4.10. 自定义降级方法</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+构建类继承HystrixCommand抽象类，重写run方法，getFallback方法，getFallback为run的降级，再执行excute方法即可
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+每个HystrixCommand的子类的实例只能excute一次。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">下面附上代码</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">public class HelloHystrixCommand extends HystrixCommand&lt;HelloHystrixCommand.Model&gt; {
+
+    public static final Logger logger = LoggerFactory.getLogger(HelloHystrixCommand.class);
+
+    private Model model;
+
+    protected HelloHystrixCommand(HystrixCommandGroupKey group) {
+        super(group);
+    }
+
+    protected HelloHystrixCommand(HystrixCommandGroupKey group, HystrixThreadPoolKey threadPool) {
+        super(group, threadPool);
+    }
+
+    protected HelloHystrixCommand(HystrixCommandGroupKey group, int executionIsolationThreadTimeoutInMilliseconds) {
+        super(group, executionIsolationThreadTimeoutInMilliseconds);
+    }
+
+    protected HelloHystrixCommand(HystrixCommandGroupKey group, HystrixThreadPoolKey threadPool, int executionIsolationThreadTimeoutInMilliseconds) {
+        super(group, threadPool, executionIsolationThreadTimeoutInMilliseconds);
+    }
+
+    protected HelloHystrixCommand(Setter setter) {
+        super(setter);
+    }
+
+    public static HelloHystrixCommand getInstance(String key){
+        return new HelloHystrixCommand(HystrixCommandGroupKey.Factory.asKey(key));
+    }
+
+    @Override
+    protected Model run() throws Exception {
+        int i = 1 / 0;
+        logger.info("run:   thread id:  " + Thread.currentThread().getId());
+        return model;
+    }
+
+    @Override
+    protected Model getFallback() {
+        return new Model("fallback");
+    }
+
+    public static void main(String[] args) throws Exception {
+        HelloHystrixCommand helloHystrixCommand = HelloHystrixCommand.getInstance("dew");
+        helloHystrixCommand.model = helloHystrixCommand.new Model("run");
+        logger.info("main:      " + helloHystrixCommand.model + "thread id: " + Thread.currentThread().getId());
+        System.out.println(helloHystrixCommand.execute());
+
+    }
+
+
+    class Model {
+
+        public Model(String name) {
+            this.name = name;
+        }
+
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return "Model{" +
+                    "name='" + name + '\'' +
+                    '}';
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="true--40"><a class="anchor" href="#true--40"></a>4.11. 断路保护</h3>
 <div class="listingblock">
 <div class="title">Hystrix配置</div>
 <div class="content">
@@ -4875,10 +5313,10 @@ hystrix.threadpool.default.coreSize=10</code></pre>
 </ul>
 </div>
 <div class="paragraph">
-<p>使用断路保护可有效果的防止系统雪崩，<code>Spring Cloud</code> 对` Hystrix` 做了封装，详见：http://cloud.spring.io/spring-cloud-netflix/single/spring-cloud-netflix.html#_circuit_breaker_hystrix_clients</p>
+<p>使用断路保护可有效果的防止系统雪崩，<code>Spring Cloud</code> 对 <code>Hystrix</code> 做了封装，详见： <a href="http://cloud.spring.io/spring-cloud-netflix/single/spring-cloud-netflix.html#_circuit_breaker_hystrix_clients" class="bare">http://cloud.spring.io/spring-cloud-netflix/single/spring-cloud-netflix.html#_circuit_breaker_hystrix_clients</a></p>
 </div>
 <div class="paragraph">
-<p>需要说明的是 <code>Hystrix</code> 使用新线程执行代码，导致Threadlocal数据不能同步，使用时需要将用到的数据做为参数传入，如果需要使用Dew框架的上下文（请求链路/用户等获取）需要先传入再设值，e.g.</p>
+<p>需要说明的是 <code>Hystrix</code> 使用新线程执行代码，导致 <code>Threadlocal</code> 数据不能同步，使用时需要将用到的数据做为参数传入，如果需要使用 <code>Dew</code> 框架的上下文（请求链路/用户等获取）需要先传入再设值，e.g.</p>
 </div>
 <div class="listingblock">
 <div class="title">Hystrix Command 示例,及Context处理</div>
@@ -4911,9 +5349,9 @@ hystrix.threadpool.default.coreSize=10</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="true--39"><a class="anchor" href="#true--39"></a>3.8. 配置中心</h3>
+<h3 id="true--41"><a class="anchor" href="#true--41"></a>4.12. 配置中心</h3>
 <div class="paragraph">
-<p>使用 <code>Spring Config</code>  配置中心 <code>refresh</code> 时,在 <code>@RefreshScope</code> 注解的类中,` @Scheduled` 注解的自动任务会失效。
+<p>使用 <code>Spring Config</code>  配置中心 <code>refresh</code> 时,在 <code>@RefreshScope</code> 注解的类中, <code>@Scheduled</code> 注解的自动任务会失效。
 建议使用实现 <code>SchedulingConfigurer</code> 接口的方式添加自动任务。</p>
 </div>
 <div class="listingblock">
@@ -4942,25 +5380,81 @@ public class SchedulingConfiguration implements SchedulingConfigurer {
 </div>
 </div>
 <div class="sect2">
-<h3 id="true-code-ribbon-code"><a class="anchor" href="#true-code-ribbon-code"></a>3.9. <code>ribbon</code> 负载均衡</h3>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-本条实践为<code>netflix</code>的<code>1.3.4.RELEASE</code>版本
-</td>
-</tr>
-</table>
-</div>
+<h3 id="true-code-spring-boot-spring-cloud-jar-code"><a class="anchor" href="#true-code-spring-boot-spring-cloud-jar-code"></a>4.13. <code>Spring Boot（Spring Cloud）jar</code> 包扫描配置文件顺序</h3>
 <div class="ulist">
 <ul>
 <li>
-<p>example: service-dew.ribbon.NFLoadBalancerRuleClassName=com.netflix.loadbalancer.RandomRule</p>
+<p>Spring Boot 所提供的配置优先级顺序比较复杂。按照 <strong>优先级从高到低</strong> 的顺序，具体的列表如下所示。</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>命令行参数。</p>
+</li>
+<li>
+<p>通过 <code>System.getProperties()</code> 获取的 <code>Java</code> 系统参数。</p>
+</li>
+<li>
+<p>操作系统环境变量。</p>
+</li>
+<li>
+<p>从 <code>java:comp/env</code> 得到的 <code>JNDI</code> 属性。</p>
+</li>
+<li>
+<p>通过 <code>RandomValuePropertySource</code> 生成的 <code>random.*</code> 属性。</p>
+</li>
+<li>
+<p>应用 <code>jar</code> 文件之外的属性文件。(通过 <code>spring.config.location</code> 参数)</p>
+</li>
+<li>
+<p>应用 <code>jar</code> 文件内部的属性文件。</p>
+</li>
+<li>
+<p>在应用配置 <code>Java</code> 类（包含 <code>@Configuration</code> 注解的 <code>Java</code> 类）中通过 <code>@PropertySource</code> 注解声明的属性文件。</p>
+</li>
+<li>
+<p>通过 <code>SpringApplication.setDefaultProperties</code> 声明的默认属性。</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>说明</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>1）<code>Spring Boot</code> 应用在启动命令中使用--开头的命令行参数，可修改应用的配置。</p>
+</div>
+<div class="listingblock">
+<div class="title">启动命令</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell" data-lang="shell">java -server -Xms8000m -Xmx8000m -jar luckydrawall-0.1.1.jar --spring.profiles.active=rel-Xmx8000m</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">使用如下代码进行关闭</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell" data-lang="shell">SpringApplication.setAddCommandLineProperties(false)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>6）属性文件是比较推荐的配置方式。<code>Spring Boot</code> 在启动时会对如下目录进行搜查，读取相应配置文件。优先级从高到低。</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>当前 <code>jar</code> 目录的 <code>/config</code> 子目录</p>
+</li>
+<li>
+<p>当前 <code>jar</code> 目录</p>
+</li>
+<li>
+<p><code>classpath</code> 中的 <code>/config</code> 包</p>
+</li>
+<li>
+<p><code>classpath</code></p>
+</li>
+</ol>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -4969,76 +5463,61 @@ public class SchedulingConfiguration implements SchedulingConfigurer {
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<code>service-dew</code>为服务名，配置时自行选取规则，类均在<code>com.netflix.loadbalancer</code>包下
+可以通过 <code>spring.config.name</code> 配置属性来指定不同的属性文件名称。也可以通过 <code>spring.config.location</code> 来添加额外的属性文件的搜索路径。如果应用中包含多个 <code>profile</code>，可以为每个 <code>profile</code> 定义各自的属性文件，按照 <code>application-{profile}</code> 来命名。
+ <code>Spring Cloud Config</code> 配置方式就属于这种配置方式，其优先级低于本地 <code>jar</code> 外配置文件
 </td>
 </tr>
 </table>
 </div>
 <div class="listingblock">
-<div class="title">若指定zone，默认会优先调用相同zone的服务,此优先级高于策略配置，配置如下</div>
+<div class="title">示例</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">#指定属于哪个zone
-eureka:
-  instance:
-    metadata-map:
-      zone: #zone 名称
-
-#指定region（此处region为项目在不同区域的部署，为项目规范，不同region间能互相调用）
-eureka:
-  client:
-    region: #region名称</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell" data-lang="shell">java -jar demo.jar --spring.config.location=/path/test_evn.properties</code></pre>
 </div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>使用 <code>Profile</code> 区分环境</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>在 <code>Spring Boot</code> 中可以使用 <code>application.yml</code> ，<code>application-default.yml</code> ， <code>application-dev.yml</code> ， <code>application-test.yml</code> 进行不同环境的配置。默认时，会读取 <code>application.yml</code> ，<code>application-default.yml</code> 这两个文件中的配置，优先级高的会覆盖优先级低的配置。无论切换到哪个环境，指定的环境的配置的优先级是最高的。</p>
+</div>
+<div class="paragraph">
+<p>可以使用 <code>spring.profiles.active=dev</code> 指定环境。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>其他</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>bootstrap.yml</code> ( <code>jar</code> 包外) &gt; <code>bootstrap.yml</code> ( <code>jar</code> 包内) &gt; <code>application.yml</code> ( <code>jar</code> 包外) &gt; <code>application.yml</code> ( <code>jar</code> 包内)</p>
+</li>
+<li>
+<p>当启用 <code>Spring Cloud Config</code> 配置后， <code>Git</code> 仓库中的 <code>application.yml</code> &gt;  <code>[application-name].yml</code>  &gt;  <code>[application-name]-[profile].yml</code></p>
+</li>
+<li>
+<p>配置的覆盖不是以文件为单位，而是以配置中的参数为单位。</p>
+</li>
+<li>
+<p>同一参数取最先扫描到的value！</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="true-code-feign-code"><a class="anchor" href="#true-code-feign-code"></a>3.10. <code>feign</code> 配置特定方法超时时间</h3>
-<div class="paragraph">
-<p><strong><code>hystrix</code> 超时时间配置</strong></p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre># 配置默认的hystrix超时时间
-hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=10000
-# 配置特定方法的超时时间,优于默认配置
-hystrix.command.&lt;hystrixcommandkey&gt;.execution.isolation.thread.timeoutInMilliseconds=10000
-# &lt;hystrixcommandkey&gt;的format为FeignClassName#methodSignature,下面是示例配置
-hystrix.command.PressureService#getBalance(int).execution.isolation.thread.timeoutInMilliseconds=10000</pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong><code>ribbon</code> 超时时间配置</strong></p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre># 配置默认ribbon超时时间
-ribbon.ReadTimeout=60000
-# 配置特定服务超时时间,优于默认配置
-&lt;client&gt;.ribbon.ReadTimeout=6000
-# &lt;client&gt;为实际服务名,下面是示例配置
-pressure-service.ribbon.ReadTimeout=5000</pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong><code>hystrix</code> 和 <code>ribbon</code> 的超时时间配置相互独立,以低为准,使用时请根据实际情况进行配置</strong></p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-如果要针对某个服务做超时设置,建议使用 <code>ribbon</code> 的配置；在同时使用 <code>ribbon</code> 和 <code>hystrix</code> 时,请特别注意超时时间的配置。
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="true--40"><a class="anchor" href="#true--40"></a>3.11. 主要性能影响参数</h3>
-<div class="paragraph">
-<p><strong>内置 <code>tomcat</code> 参数</strong> tomcat参数调整效果并不大,如果需要调整,建议适当调大 <code>max-treads</code> 和 <code>accept-count</code></p>
-</div>
+<h3 id="true--42"><a class="anchor" href="#true--42"></a>4.14. 主要性能影响参数</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>内置 <code>Tomcat</code> 参数调整效果并不大,如果需要调整,建议适当调大 <code>max-treads</code> 和 <code>accept-count</code></p>
 <div class="literalblock">
 <div class="content">
 <pre># 最大等待请求数 默认100
@@ -5049,9 +5528,9 @@ server.tomcat.max-threads=1000
 server.tomcat.max-connections=2000</pre>
 </div>
 </div>
-<div class="paragraph">
-<p><strong><code>zuul</code> 性能参数说明</strong></p>
-</div>
+</li>
+<li>
+<p><code>Zuul</code> 性能参数说明</p>
 <div class="literalblock">
 <div class="content">
 <pre># 连接池最大连接，默认是200
@@ -5062,6 +5541,9 @@ Hystrix最大的并发请求 默认值是100
 zuul.semaphore.maxSemaphores=1000</pre>
 </div>
 </div>
+</li>
+</ul>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -5069,14 +5551,15 @@ zuul.semaphore.maxSemaphores=1000</pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<code>zuul</code> 的最大并发数主要调整 <code>maxSemaphores</code> 优先级高于 <code>hystrix</code> 的最大线程数配置.
+<code>Zuul</code> 的最大并发数主要调整 <code>maxSemaphores</code> 优先级高于 <code>Hystrix</code> 的最大线程数配置.
 </td>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p><strong><code>ribbon</code> 性能参数说明</strong> 调整 <code>MaxTotalConnections</code> 和 <code>MaxConnectionsPerHost</code> 时建议同比调整 <code>Pool</code> 相关的参数</p>
-</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Ribbon</code> 性能参数说明调整 <code>MaxTotalConnections</code> 和 <code>MaxConnectionsPerHost</code> 时建议同比调整 <code>Pool</code> 相关的参数</p>
 <div class="literalblock">
 <div class="content">
 <pre># ribbon 单主机最大连接数,默认50
@@ -5089,6 +5572,9 @@ ribbon.PoolMaxThreads=1000
 ribbon.PoolMinThreads=500</pre>
 </div>
 </div>
+</li>
+</ul>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -5096,20 +5582,24 @@ ribbon.PoolMinThreads=500</pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<code>zuul</code> 和其它使用 <code>ribbon</code> 的服务一样,TPS主要调整 <code>ribbon</code> 的 <code>MaxConnectionsPerHost</code> 和 <code>MaxTotalConnections</code>
+<code>Zuul</code> 和其它使用 <code>Ribbon</code> 的服务一样,TPS主要调整 <code>Ribbon</code> 的 <code>MaxConnectionsPerHost</code> 和 <code>MaxTotalConnections</code>
 </td>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p><strong><code>hystrix</code> 性能参数说明</strong></p>
-</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Hystrix</code> 性能参数说明</p>
 <div class="literalblock">
 <div class="content">
 <pre># 并发执行的最大线程数,默认10
 hystrix.threadpool.default.coreSize=100</pre>
 </div>
 </div>
+</li>
+</ul>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -5117,7 +5607,7 @@ hystrix.threadpool.default.coreSize=100</pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-普通 <code>service</code> 使用 <code>hystrix</code> 时,最大并发主要调整 <code>hystrix.threadpool.default.coreSize</code>
+普通 <code>Service</code> 使用 <code>Hystrix</code> 时,最大并发主要调整 <code>hystrix.threadpool.default.coreSize</code>
 </td>
 </tr>
 </table>
@@ -5129,8 +5619,8 @@ hystrix.threadpool.default.coreSize=100</pre>
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-<code>hystrix</code> 的默认超时时间为1s,在高并发下容易出现超时,建议将默认超时时间适当调长,
-特殊接口需要将时间调短或更长的,使用特定配置,见上面 <code>feign</code> 配置特定方法超时时间.
+<code>Hystrix</code> 的默认超时时间为1s,在高并发下容易出现超时,建议将默认超时时间适当调长,
+特殊接口需要将时间调短或更长的,使用特定配置,见上面 <code>Feign</code> 配置特定方法超时时间.
 </td>
 </tr>
 </table>
@@ -5149,7 +5639,21 @@ hystrix.threadpool.default.coreSize=100</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="true--41"><a class="anchor" href="#true--41"></a>3.12. 缓存处理</h3>
+<h3 id="true-code-zuul-code-code-http-code"><a class="anchor" href="#true-code-zuul-code-code-http-code"></a>4.15. <code>Zuul</code> 保护(隐藏)内部服务的 <code>Http</code> 接口</h3>
+<div class="paragraph">
+<p>在yml配置文件里配置(<code>ignored-patterns</code>,<code>ignored-services</code>)这两项中的一项即可</p>
+</div>
+<div class="listingblock">
+<div class="title">配置示例</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">zuul: #配置一项即可!
+  ignored-patterns: /dew-example/**   #排除此路径
+  ignored-services: dew-example       #排除此服务</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="true--43"><a class="anchor" href="#true--43"></a>4.16. 缓存处理</h3>
 <div class="paragraph">
 <p><code>Spring Cache</code> 提供了很好的注解式缓存，但默认没有超时，需要根据使用的缓存容器特殊配置，e.g.</p>
 </div>
@@ -5167,7 +5671,7 @@ RedisCacheManager cacheManager() {
 </div>
 </div>
 <div class="sect2">
-<h3 id="true--42"><a class="anchor" href="#true--42"></a>3.13. 日志处理</h3>
+<h3 id="true--44"><a class="anchor" href="#true--44"></a>4.17. 日志处理</h3>
 <div class="paragraph">
 <p>对微服务而言 <code>服务API调用</code> 日志可选择 <code>Sleuth</code> + <code>Zipkin</code> 的方案， <code>Dew</code> 没有选择 <code>Zipkin</code> 理由如下：</p>
 </div>
@@ -5204,122 +5708,145 @@ RedisCacheManager cacheManager() {
 <div class="paragraph">
 <p>当然这一方案会损失一定的可读性，即没有可视化的接口调用展现。</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+开发中我们可能会改变profile,切记同时修改<code>logback-spring.xml</code>,在&lt;springProfile&gt;标签里配上该prifile。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">logback-spring.xml模板</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;configuration&gt;
+    &lt;include resource="org/springframework/boot/logging/logback/defaults.xml"/&gt;
+    &lt;include resource="org/springframework/boot/logging/logback/console-appender.xml"/&gt;
+
+    &lt;springProperty scope="context" name="springAppName" source="spring.application.name"/&gt;
+    &lt;springProperty scope="context" name="logPath" source="logging.path" defaultValue="/tmp"/&gt;
+    &lt;springProperty scope="context" name="esUrl" source="logging.es.url"/&gt;
+    &lt;springProperty scope="context" name="esIndex" source="logging.es.index" defaultValue="dew-log"/&gt;
+    &lt;springProperty scope="context" name="esConnectTimeout" source="logging.es.connectTimeout" defaultValue="30000"/&gt;
+    &lt;springProperty scope="context" name="esReadTimeout" source="logging.es.readTimeout" defaultValue="30000"/&gt;
+    &lt;springProperty scope="context" name="esMaxQueueSize" source="logging.es.maxQueueSize" defaultValue="104857600"/&gt;
+    &lt;springProperty scope="context" name="esMaxMessageSize" source="logging.es.maxMessageSize" defaultValue="-1"/&gt;
+
+    &lt;property name="LOG_FILE" value="${logPath}/${springAppName}/%d{yyyy-MM-dd}.log"/&gt;​
+    &lt;property name="ES_INDEX" value="${esIndex}-%d{yyyy-MM-dd}"/&gt;​
+
+    &lt;appender name="dailyRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender"&gt;
+        &lt;rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy"&gt;
+            &lt;FileNamePattern&gt;${LOG_FILE}&lt;/FileNamePattern&gt;
+            &lt;maxHistory&gt;30&lt;/maxHistory&gt;
+        &lt;/rollingPolicy&gt;
+        &lt;encoder&gt;
+            &lt;Pattern&gt;%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [${springAppName:-},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-}]
+                [%thread] %logger{35} - %msg %n
+            &lt;/Pattern&gt;
+            &lt;charset&gt;UTF-8&lt;/charset&gt;
+        &lt;/encoder&gt;
+    &lt;/appender&gt;
+    &lt;appender name="ASYNC_LOG" class="ch.qos.logback.classic.AsyncAppender"&gt;
+        &lt;discardingThreshold&gt;0&lt;/discardingThreshold&gt;
+        &lt;appender-ref ref="dailyRollingFile"/&gt;
+    &lt;/appender&gt;
+
+    &lt;appender name="ELASTIC" class="com.internetitem.logback.elasticsearch.ElasticsearchAppender"&gt;
+        &lt;url&gt;${esUrl}/_bulk&lt;/url&gt;
+        &lt;index&gt;${ES_INDEX}&lt;/index&gt;
+        &lt;type&gt;log&lt;/type&gt;
+        &lt;connectTimeout&gt;${esConnectTimeout}&lt;/connectTimeout&gt; &lt;!-- optional (in ms, default 30000) --&gt;
+        &lt;readTimeout&gt;${esReadTimeout}&lt;/readTimeout&gt; &lt;!-- optional (in ms, default 30000) --&gt;
+        &lt;maxQueueSize&gt;${esMaxQueueSize}&lt;/maxQueueSize&gt; &lt;!-- optional (default 104857600) --&gt;
+        &lt;maxMessageSize&gt;${esMaxMessageSize}&lt;/maxMessageSize&gt; &lt;!-- optional (default -1 --&gt;
+        &lt;errorsToStderr&gt;true&lt;/errorsToStderr&gt; &lt;!-- optional (default false) --&gt;
+        &lt;maxRetries&gt;3&lt;/maxRetries&gt; &lt;!-- optional (default 3) --&gt;
+        &lt;sleepTime&gt;250&lt;/sleepTime&gt; &lt;!-- optional (in ms, default 250) --&gt;
+        &lt;!--&lt;authentication class="com.internetitem.logback.elasticsearch.config.BasicAuthentication" /&gt; --&gt;&lt;!-- optional --&gt;
+        &lt;properties&gt;
+            &lt;property&gt;
+                &lt;name&gt;severity&lt;/name&gt;
+                &lt;value&gt;%level&lt;/value&gt;
+            &lt;/property&gt;
+            &lt;property&gt;
+                &lt;name&gt;service&lt;/name&gt;
+                &lt;value&gt;${springAppName:-}&lt;/value&gt;
+                &lt;allowEmpty&gt;false&lt;/allowEmpty&gt;
+            &lt;/property&gt;
+            &lt;property&gt;
+                &lt;name&gt;trace&lt;/name&gt;
+                &lt;value&gt;%X{X-B3-TraceId:-}&lt;/value&gt;
+                &lt;allowEmpty&gt;false&lt;/allowEmpty&gt;
+            &lt;/property&gt;
+            &lt;property&gt;
+                &lt;name&gt;span&lt;/name&gt;
+                &lt;value&gt;%X{X-B3-SpanId:-}&lt;/value&gt;
+                &lt;allowEmpty&gt;false&lt;/allowEmpty&gt;
+            &lt;/property&gt;
+            &lt;property&gt;
+                &lt;name&gt;host&lt;/name&gt;
+                &lt;value&gt;${HOSTNAME}&lt;/value&gt;
+                &lt;allowEmpty&gt;false&lt;/allowEmpty&gt;
+            &lt;/property&gt;
+            &lt;property&gt;
+                &lt;name&gt;thread&lt;/name&gt;
+                &lt;value&gt;%thread&lt;/value&gt;
+            &lt;/property&gt;
+            &lt;property&gt;
+                &lt;name&gt;logger&lt;/name&gt;
+                &lt;value&gt;%logger&lt;/value&gt;
+            &lt;/property&gt;
+            &lt;property&gt;
+                &lt;name&gt;stacktrace&lt;/name&gt;
+                &lt;value&gt;%ex&lt;/value&gt;
+            &lt;/property&gt;
+        &lt;/properties&gt;
+        &lt;headers&gt;
+            &lt;header&gt;
+                &lt;name&gt;Content-Type&lt;/name&gt;
+                &lt;value&gt;text/plain&lt;/value&gt;
+            &lt;/header&gt;
+        &lt;/headers&gt;
+    &lt;/appender&gt;
+    &lt;springProfile name="dev,default"&gt;
+        &lt;root level="INFO"&gt;
+            &lt;appender-ref ref="CONSOLE"/&gt;
+        &lt;/root&gt;
+    &lt;/springProfile&gt;
+    &lt;springProfile name="test"&gt;
+        &lt;root level="INFO"&gt;
+            &lt;appender-ref ref="CONSOLE"/&gt;
+            &lt;appender-ref ref="ASYNC_LOG"/&gt;
+        &lt;/root&gt;
+    &lt;/springProfile&gt;
+    &lt;springProfile name="uat,prd"&gt;
+        &lt;root level="INFO"&gt;
+            &lt;appender-ref ref="CONSOLE"/&gt;
+            &lt;appender-ref ref="ASYNC_LOG"/&gt;
+            &lt;appender-ref ref="ELASTIC"/&gt;
+        &lt;/root&gt;
+    &lt;/springProfile&gt;
+&lt;/configuration&gt;</code></pre>
+</div>
+</div>
 </div>
 <div class="sect2">
-<h3 id="trueservo"><a class="anchor" href="#trueservo"></a>3.14. servo 内存泄漏问题</h3>
+<h3 id="true-code-servo-code"><a class="anchor" href="#true-code-servo-code"></a>4.18. <code>servo</code> 内存泄漏问题</h3>
 <div class="paragraph">
 <p>已知在某此情况下 <code>servo</code> 统计会导致内存泄漏，如无特殊需要建议关闭 <code>spring.metrics.servo.enabled: false</code></p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="true-validated"><a class="anchor" href="#true-validated"></a>3.15. '@Validated'注解</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>在Spring controller类里，<code>@Validated</code>注解初使用会比较不易上手，在此做下总结</p>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>对于基本数据类型和String类型，要使校验的注解生效，需在该类上方加<code>@Validated</code>注解</p>
-</li>
-<li>
-<p>对于抽象数据类型，需在形式参数前加<code>@Validated</code>注解</p>
-</li>
-</ol>
-</div>
-</li>
-</ul>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-spring对抽象数据类型校验抛出异常为<code>MethodArgumentNotValidException</code>，http状态码为400，对基本数据类型校验抛出异常为<code>ConstraintViolationException</code>，http状态码为500，dew对这两种异常做了统一处理，http状态码均返回200，code为400
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="truejackson-java8-springmvc-jackson-json"><a class="anchor" href="#truejackson-java8-springmvc-jackson-json"></a>3.16. jackson对于java8时间转换（springmvc以jackson接收json数据）</h3>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>对于LocalDateTime类型，需在参数上加<code>@JsonFormat</code>注解，如下：<code>@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")</code></p>
-</li>
-<li>
-<p>LocalDate,LocalTime,Instant等，无需配置可自行转换</p>
-</li>
-</ol>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<code>jackson</code>对于<code>LocalDateTime</code>类型的支持与其他三种类型不具有一致性，这是jackson需要优化的一个点
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="trueswagger"><a class="anchor" href="#trueswagger"></a>3.17. swagger离线文档</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>以启动参数<code>api.file.name</code>指定导出文件名</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="title">执行如下命令(加上 <code>-Dapi.file.name= [name]</code> 可指定文件名)</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-shell" data-lang="shell">mvn -Dtest=DocTest clean test -P doc
-
-mvn -Dtest=DocTest -Dapi.file.name=dew-example clean test -P doc</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="true-code-feign-code-http"><a class="anchor" href="#true-code-feign-code-http"></a>3.18. <code>feign</code> 接口添加http请求头信息</h3>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-在FeignClient类中的接口方法里添加新的形参，并加上@RequestHeader注解指定key值
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="true-code-zuul-code-http"><a class="anchor" href="#true-code-zuul-code-http"></a>3.19. <code>zuul</code> 保护(隐藏)内部服务的http接口</h3>
+<h3 id="truespring-boot-admin"><a class="anchor" href="#truespring-boot-admin"></a>4.19. Spring Boot Admin 监控实践</h3>
 <div class="paragraph">
-<p>在yml配置文件里配置(<code>ignored-patterns</code>,<code>ignored-services</code>)这两项中的一项即可</p>
-</div>
-<div class="listingblock">
-<div class="title">配置示例</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">zuul: #配置一项即可!
-  ignored-patterns: /dew-example/**   #排除此路径
-  ignored-services: dew-example       #排除此服务</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="truespring-boot-admin"><a class="anchor" href="#truespring-boot-admin"></a>3.20. Spring Boot Admin 监控实践</h3>
-<div class="paragraph">
-<p>在<code>Spring Boot Actuator</code>中提供很多像<code>health</code>、<code>metrics</code>等实时监控接口，可以方便我们随时跟踪服务的性能指标。
-<code>Spring Boot</code>默认是开放这些接口提供调用的，那么就问题来了，如果这些接口公开在外网中，很容易被不法分子所利用，这肯定不是我们想要的结果。
+<p>在 <code>Spring Boot Actuator</code> 中提供很多像 <code>health</code> 、 <code>metrics</code> 等实时监控接口，可以方便我们随时跟踪服务的性能指标。
+ <code>Spring Boot</code> 默认是开放这些接口提供调用的，那么就问题来了，如果这些接口公开在外网中，很容易被不法分子所利用，这肯定不是我们想要的结果。
 在这里我们提供一种比较好的解决方案</p>
 </div>
 <div class="ulist">
@@ -5330,25 +5857,28 @@ mvn -Dtest=DocTest -Dapi.file.name=dew-example clean test -P doc</code></pre>
 </ul>
 </div>
 <div class="listingblock">
-<div class="title">为被保护的http请求添加请求前缀</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">management:
-  context-path: /dew-example <i class="conum" data-value="1"></i><b>(1)</b>
+  security:
+    enabled: false # 关闭管理认证
+  context-path: /management <i class="conum" data-value="1"></i><b>(1)</b>
 eureka:
   instance:
-    status-page-url-path: ${management.context-path}/info <i class="conum" data-value="2"></i><b>(2)</b>
-    health-check-url-path: ${management.context-path}/health</code></pre>
+    status-page-url-path: ${management.context-path}/info
+    health-check-url-path: ${management.context-path}/health
+    metadata-map:
+      cluster: default <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>添加请求前缀</td>
+<td>管理前缀</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code>Spring Boot Admin</code>在启动的时候会去<code>eureka</code>拉去服务信息，其中<code>health</code>与<code>info</code>需要特殊处理，这两者的地址是根据<code>status-page-url-path</code>和<code>health-check-url-path</code>的值</td>
+<td>集群名称</td>
 </tr>
 </table>
 </div>
@@ -5357,22 +5887,21 @@ eureka:
 <div class="ulist">
 <ul>
 <li>
-<p><code>zuul</code>网关配置</p>
+<p><code>Zuul</code> 网关配置</p>
 </li>
 </ul>
 </div>
 <div class="listingblock">
-<div class="title"><code>zuul</code>保护内部服务http接口</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">zuul:
-  ignoredPatterns: /*/dew-example/** <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+  ignoredPatterns: /*/management/** <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>这里之所以不是<code>/dew-example/**</code>，由于网关存在项目前缀，需要往前一级，大家可以具体场景具体配置</td>
+<td>同上文 <code>management.context-path</code> , 这里之所以不是 <code>/management/**</code> ，由于网关存在项目前缀，需要往前一级，大家可以具体场景具体配置</td>
 </tr>
 </table>
 </div>
@@ -5381,12 +5910,11 @@ eureka:
 <div class="ulist">
 <ul>
 <li>
-<p><code>Spring Boot Admin</code>配置</p>
+<p><code>Spring Boot Admin</code> 配置</p>
 </li>
 </ul>
 </div>
 <div class="listingblock">
-<div class="title">配置监控的指标参数</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml" data-lang="yaml">spring:
   application:
@@ -5395,40 +5923,223 @@ eureka:
     admin:
       discovery:
         converter:
-          management-context-path: /dew-example # The endpoints URL prefix <i class="conum" data-value="1"></i><b>(1)</b>
+          management-context-path: ${management.context-path}
       routes:
-        endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream
+        endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream,turbine.stream  <i class="conum" data-value="1"></i><b>(1)</b>
       turbine:
-        clusters: default
-        location: monitor
+        clusters: default  <i class="conum" data-value="2"></i><b>(2)</b>
+        location: ${spring.application.name}
 
 turbine:
+  instanceUrlSuffix: ${management.context-path}/hystrix.stream
   aggregator:
-    clusterConfig: default
-  appConfig: monitor-example <i class="conum" data-value="2"></i><b>(2)</b>
-  clusterNameExpression: metadata['cluster']</code></pre>
+    clusterConfig: default <i class="conum" data-value="2"></i><b>(2)</b>
+  appConfig: monitor-example,hystrix-example <i class="conum" data-value="3"></i><b>(3)</b>
+  clusterNameExpression: metadata['cluster']
+
+security:
+  basic:
+    enabled: false
+
+server:
+  port: ...
+
+eureka:
+  instance:
+    metadata-map:
+      cluster: default <i class="conum" data-value="2"></i><b>(2)</b>
+    status-page-url-path: ${management.context-path}/info
+    health-check-url-path: ${management.context-path}/health
+
+  client:
+    serviceUrl:
+      defaultZone: ...
+
+management:
+  security:
+    enabled: false
+  context-path: /management <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>与应用配置的management.context-path相同</td>
+<td>要监控的内容</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>添加需要被监控的应用Service-Id，以逗号分隔</td>
+<td>要监控的集群名称</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>添加需要被监控的应用 <code>Service-Id</code> ，以逗号分隔</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>同上文 <code>management.context-path</code></td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="truejdbc-2"><a class="anchor" href="#truejdbc-2"></a>4.20. jdbc 批量插入性能问题</h3>
+<div class="paragraph">
+<p>如果不开启rewriteBatchedStatements=true，那么jdbc会把批量插入当做一行行的单条处理，也就没有达到批量插入的效果</p>
+</div>
+<div class="listingblock">
+<div class="title">jdbc配置示例</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/dew?useUnicode=true&amp;characterEncoding=utf-8&amp;rewriteBatchedStatements=true
+    username: root
+    password: 123456</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>对于一张七列的表，插入1500条数据，分别对mybatis和jdbctemplate进行测试，记录三次数据如下,可以看到，该配置对于jdbctemplate影响是极大的，而对于mybatis影响却不大，后续有时间再继续深入了解</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. 测试数据</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">rewriteBatchedStatements</th>
+<th class="tableblock halign-left valign-top">mybatis(ms)</th>
+<th class="tableblock halign-left valign-top">jdbctemplate(ms)</th>
+<th class="tableblock halign-left valign-top">dew(ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">401</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">88</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">174</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">427</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">78</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">167</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">422</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">75</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">176</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">428</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1967</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2065</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">410</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2641</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2744</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">369</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2299</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2398</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="truehttp"><a class="anchor" href="#truehttp"></a>4.21. http请求并发数性能瓶颈</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>当策略为Thread时（默认是Thread)，hystrix.threadpool.default.maximumSize为第一个性能瓶颈，默认值为10.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+修改值时，需要先设置hystrix.threadpool.default.allowMaximumSizeToDivergeFromCoreSize为true，默认为false
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<div class="title">hystrix详细配置参见https://github.com/Netflix/Hystrix/wiki/configuration#allowMaximumSizeToDivergeFromCoreSize</div>
+<ul>
+<li>
+<p>第二个瓶颈为springboot内置的tomcat的最大连接数，参数为server.tomcat.maxThreads，默认值为200</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="true-message-property"><a class="anchor" href="#true-message-property"></a>4.22. 日志中解析message,动态显示property</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>在启动类的main方法中注册converter，如下<code>PatternLayout.defaultConverterMap.put("dew", TestConverter.class.getName());</code></p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+这个是解析%dew的内容
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>自定义Converter继承DynamicConverter&lt;ILoggingEvent&gt;，解析message，获取有效信息并返回解析后得到的字符串。</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">Converter代码示例</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java" data-lang="java">public class TestConverter extends DynamicConverter&lt;ILoggingEvent&gt; {
+
+    @Override
+    public String convert(ILoggingEvent event) {
+        // 这里未做解析，示例代码
+        return event.getMessage();
+    }
+}</code></pre>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="true--43"><a class="anchor" href="#true--43"></a>4. 技术指标</h2>
+<h2 id="true--45"><a class="anchor" href="#true--45"></a>5. 技术指标</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="true--44"><a class="anchor" href="#true--44"></a>4.1. 性能</h3>
+<h3 id="true--46"><a class="anchor" href="#true--46"></a>5.1. 性能</h3>
 <div class="paragraph">
 <p>服务器基本情况介绍
     172.30.250.153
@@ -5663,16 +6374,16 @@ MaxTotalConnections两个参数，改问题就能解决，这里还是建议将P
 </div>
 </div>
 <div class="sect1">
-<h2 id="true--45"><a class="anchor" href="#true--45"></a>5. 开发指南</h2>
+<h2 id="true--47"><a class="anchor" href="#true--47"></a>6. 开发指南</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="truescm"><a class="anchor" href="#truescm"></a>5.1. SCM</h3>
+<h3 id="truescm"><a class="anchor" href="#truescm"></a>6.1. SCM</h3>
 <div class="paragraph">
 <p><a href="https://rep.360taihe.com/csp/dew-framework/">https://rep.360taihe.com/csp/dew-framework/</a></p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="true--46"><a class="anchor" href="#true--46"></a>5.2. 环境要求</h3>
+<h3 id="true--48"><a class="anchor" href="#true--48"></a>6.2. 环境要求</h3>
 <div class="paragraph">
 <p>基础环境： <code>&gt;=java8</code></p>
 </div>
@@ -5703,10 +6414,10 @@ docker run -d --name dew-elk -p 5601:5601 -p 9200:9200 -p 5044:5044 -e "ES_JAVA_
 </div>
 </div>
 <div class="sect1">
-<h2 id="true--47"><a class="anchor" href="#true--47"></a>6. 编译部署</h2>
+<h2 id="true--49"><a class="anchor" href="#true--49"></a>7. 编译部署</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="true--48"><a class="anchor" href="#true--48"></a>6.1. 开发期热部署</h3>
+<h3 id="true--50"><a class="anchor" href="#true--50"></a>7.1. 开发期热部署</h3>
 <div class="admonitionblock important">
 <table>
 <tr>
@@ -5748,13 +6459,13 @@ docker run -d --name dew-elk -p 5601:5601 -p 9200:9200 -p 5044:5044 -e "ES_JAVA_
 </div>
 </div>
 <div class="sect2">
-<h3 id="true--49"><a class="anchor" href="#true--49"></a>6.2. 打包</h3>
+<h3 id="true--51"><a class="anchor" href="#true--51"></a>7.2. 打包</h3>
 <div class="paragraph">
 <p><code>mvn clean package -P fatjar</code> 即可打出一个包含所有依赖的包，后把 <code>target</code> 目录下生成的jar放到 <code>release/apps</code> 下。</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="true--50"><a class="anchor" href="#true--50"></a>6.3. 部署</h3>
+<h3 id="true--52"><a class="anchor" href="#true--52"></a>7.3. 部署</h3>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -5771,7 +6482,7 @@ docker run -d --name dew-elk -p 5601:5601 -p 9200:9200 -p 5044:5044 -e "ES_JAVA_
 </table>
 </div>
 <div class="sect3">
-<h4 id="true--51"><a class="anchor" href="#true--51"></a>6.3.1. 准备</h4>
+<h4 id="true--53"><a class="anchor" href="#true--53"></a>7.3.1. 准备</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -5793,7 +6504,7 @@ docker run -d --name dew-elk -p 5601:5601 -p 9200:9200 -p 5044:5044 -e "ES_JAVA_
 </div>
 </div>
 <div class="sect3">
-<h4 id="true--52"><a class="anchor" href="#true--52"></a>6.3.2. 手工发布</h4>
+<h4 id="true--54"><a class="anchor" href="#true--54"></a>7.3.2. 手工发布</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -5809,7 +6520,7 @@ docker run -d --name dew-elk -p 5601:5601 -p 9200:9200 -p 5044:5044 -e "ES_JAVA_
 </div>
 </div>
 <div class="sect3">
-<h4 id="trueci"><a class="anchor" href="#trueci"></a>6.3.3. CI</h4>
+<h4 id="trueci"><a class="anchor" href="#trueci"></a>7.3.3. CI</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -5825,10 +6536,10 @@ docker run -d --name dew-elk -p 5601:5601 -p 9200:9200 -p 5044:5044 -e "ES_JAVA_
 </div>
 </div>
 <div class="sect1">
-<h2 id="true--53"><a class="anchor" href="#true--53"></a>7. 配置速查</h2>
+<h2 id="true--55"><a class="anchor" href="#true--55"></a>8. 配置速查</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="true-code-dew-code"><a class="anchor" href="#true-code-dew-code"></a>7.1. <code>Dew</code> 参数</h3>
+<h3 id="true-code-dew-code"><a class="anchor" href="#true-code-dew-code"></a>8.1. <code>Dew</code> 参数</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yml" data-lang="yml">dew: # Dew 参数key前缀
@@ -5874,6 +6585,7 @@ docker run -d --name dew-elk -p 5601:5601 -p 9200:9200 -p 5044:5044 -e "ES_JAVA_
         trace-log:
             enabled: true # 是否启用服务API调用（追踪）日志
         error:
+             enabled: true #启用降级邮件通知，默认为false
              notify-interval-sec: 1800 # 通知的间隔时间
              notify-emails:  # 通知的邮箱，逗号分隔
              notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED # 通知的事件类型
@@ -5907,6 +6619,9 @@ spring:
 
 #sharding-jdbc配置（分库分表样例，详细见使用手册及sharding-example）
 sharding:
+  enabled: true
+  transaction:
+    name: transaction #默认值为transaction
   jdbc:
     datasource:
       names: ds_0,ds_1
@@ -5948,12 +6663,15 @@ sharding:
             shardingColumn: user_id
             algorithmInlineExpression: ds_${user_id.longValue() % 2}
         props:
-          sql.show: false</code></pre>
+          sql.show: false
+    mybatis:
+      second:
+        enabled: true</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="true-code-spring-boot-code"><a class="anchor" href="#true-code-spring-boot-code"></a>7.2. <code>Spring boot</code> 核心参数</h3>
+<h3 id="true-code-spring-boot-code"><a class="anchor" href="#true-code-spring-boot-code"></a>8.2. <code>Spring boot</code> 核心参数</h3>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -5968,7 +6686,7 @@ sharding:
 </div>
 </div>
 <div class="sect2">
-<h3 id="true-code-druid-code"><a class="anchor" href="#true-code-druid-code"></a>7.3. <code>Druid</code> 连接池参数</h3>
+<h3 id="true-code-druid-code"><a class="anchor" href="#true-code-druid-code"></a>8.3. <code>Druid</code> 连接池参数</h3>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -5983,7 +6701,7 @@ sharding:
 </div>
 </div>
 <div class="sect2">
-<h3 id="true-code-spring-cloud-code"><a class="anchor" href="#true-code-spring-cloud-code"></a>7.4. <code>Spring cloud</code> 核心参数</h3>
+<h3 id="true-code-spring-cloud-code"><a class="anchor" href="#true-code-spring-cloud-code"></a>8.4. <code>Spring cloud</code> 核心参数</h3>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -6000,13 +6718,93 @@ sharding:
 </div>
 </div>
 <div class="sect1">
-<h2 id="true--54"><a class="anchor" href="#true--54"></a>8. 版本说明</h2>
+<h2 id="true--56"><a class="anchor" href="#true--56"></a>9. 版本说明</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="true1-2-0-rc"><a class="anchor" href="#true1-2-0-rc"></a>8.1. 1.2.2-RC</h3>
-<div class="sect3">
-<h4 id="truefeature"><a class="anchor" href="#truefeature"></a>8.1.1. Feature</h4>
+<h3 id="true1-3-0-rc"><a class="anchor" href="#true1-3-0-rc"></a>9.1. 1.3.0-RC</h3>
 <div class="ulist">
+<div class="title">Features</div>
+<ul>
+<li>
+<p>#87 局部使用sharding-jdbc，mybatis实现，增加mybatis-starter模块</p>
+</li>
+<li>
+<p>#89 支持配置提示</p>
+</li>
+<li>
+<p>#91 Dew实例加载机制优化</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Improvement</div>
+<ul>
+<li>
+<p>#82 metrics指标增加线程、内存、cpu、磁盘等统计</p>
+</li>
+<li>
+<p>#86 ErrorController增加zuul日志追踪支持</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Fixed</div>
+<ul>
+<li>
+<p>#92 修复logback-elasticsearch日志压力过大时导致的内存泄漏</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">升级指南</div>
+<ol class="arabic">
+<li>
+<p>修改pom.xml中dew版本号为1.3.0-RC</p>
+</li>
+<li>
+<p>1.3.0-RC版本中已移除启动类配置，直接用<code>@SpringBootApplication</code>或<code>@SpringCloudApplication</code></p>
+</li>
+<li>
+<p>启动类需要的注解不要忘记自行添加，如<code>@EnableTransactionManagement</code>、<code>@EnableScheduling</code></p>
+</li>
+<li>
+<p>新增的mybatis-starter模块，详见使用说明</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="true1-2-2-rc"><a class="anchor" href="#true1-2-2-rc"></a>9.2. 1.2.2-RC</h3>
+<div class="ulist">
+<div class="title">Fixed</div>
+<ul>
+<li>
+<p>#45 邮件通知修正</p>
+</li>
+<li>
+<p>#85 日志配置优化</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="true1-2-1-rc"><a class="anchor" href="#true1-2-1-rc"></a>9.3. 1.2.1-RC</h3>
+<div class="ulist">
+<div class="title">Fixed</div>
+<ul>
+<li>
+<p>#38 RabbitMQ消息未设置持久化</p>
+</li>
+<li>
+<p>使用 统一响应——协议无关 类型时，降级HTTP状态码改为500</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="true1-2-0-rc"><a class="anchor" href="#true1-2-0-rc"></a>9.4. 1.2.0-RC</h3>
+<div class="ulist">
+<div class="title">Feature</div>
 <ul>
 <li>
 <p>#75 添加幂等处理功能， #77 可选策略类型Bloom Filter尚在开发中</p>
@@ -6016,10 +6814,8 @@ sharding:
 </li>
 </ul>
 </div>
-</div>
-<div class="sect3">
-<h4 id="trueimprovement"><a class="anchor" href="#trueimprovement"></a>8.1.2. Improvement</h4>
 <div class="ulist">
+<div class="title">Improvement</div>
 <ul>
 <li>
 <p>#68 支持自定义离线文档文件名</p>
@@ -6044,20 +6840,16 @@ sharding:
 </li>
 </ul>
 </div>
-</div>
-<div class="sect3">
-<h4 id="truefixed"><a class="anchor" href="#truefixed"></a>8.1.3. Fixed</h4>
 <div class="ulist">
+<div class="title">Fixed</div>
 <ul>
 <li>
 <p>#43 swagger2markup-maven-plugin 在使用 spring.content-path 无效</p>
 </li>
 </ul>
 </div>
-</div>
-<div class="sect3">
-<h4 id="true-code-1-1-0-rc-code-code-1-2-0-rc-code"><a class="anchor" href="#true-code-1-1-0-rc-code-code-1-2-0-rc-code"></a>8.1.4. 从 <code>1.1.0-RC</code> 迁移到 <code>1.2.2-RC</code></h4>
 <div class="olist arabic">
+<div class="title">从 <code>1.1.0-RC</code> 迁移到 <code>1.2.0-RC</code></div>
 <ol class="arabic">
 <li>
 <p>使用 <code>统一响应——协议无关</code> 类型时，UI端由原来只需要获取200状态下的数据改成需要获取 200 和 555 状态下的数据，两者对UI端没有区别。( @See <a href="https://rep.360taihe.com/csp/dew-framework/issues/53" class="bare">https://rep.360taihe.com/csp/dew-framework/issues/53</a> )</p>
@@ -6065,12 +6857,10 @@ sharding:
 </ol>
 </div>
 </div>
-</div>
 <div class="sect2">
-<h3 id="true1-1-0-rc"><a class="anchor" href="#true1-1-0-rc"></a>8.2. 1.1.0-RC</h3>
-<div class="sect3">
-<h4 id="truefeature-2"><a class="anchor" href="#truefeature-2"></a>8.2.1. Feature</h4>
+<h3 id="true1-1-0-rc"><a class="anchor" href="#true1-1-0-rc"></a>9.5. 1.1.0-RC</h3>
 <div class="ulist">
+<div class="title">Feature</div>
 <ul>
 <li>
 <p>[功能] #45 支持服务调用（ <code>Hystrix</code> ）异常邮件通知</p>
@@ -6083,10 +6873,8 @@ sharding:
 </li>
 </ul>
 </div>
-</div>
-<div class="sect3">
-<h4 id="trueimprovement-2"><a class="anchor" href="#trueimprovement-2"></a>8.2.2. Improvement</h4>
 <div class="ulist">
+<div class="title">Improvement</div>
 <ul>
 <li>
 <p>[优化] #53 统一响应——协议无关 类型的http返回码由统一的200改成 <code>200</code> 或 <code>1000</code> ，前者表示操作成功或不需要降级的错误，后者表示需要做降级（Hystrix fallback）的错误</p>
@@ -6102,14 +6890,8 @@ sharding:
 </li>
 </ul>
 </div>
-</div>
-<div class="sect3">
-<h4 id="truefixed-2"><a class="anchor" href="#truefixed-2"></a>8.2.3. Fixed</h4>
-
-</div>
-<div class="sect3">
-<h4 id="true-code-1-1-0-beta1-code-code-1-1-0-rc-code"><a class="anchor" href="#true-code-1-1-0-beta1-code-code-1-1-0-rc-code"></a>8.2.4. 从 <code>1.1.0-beta1</code> 迁移到 <code>1.1.0-RC</code></h4>
 <div class="olist arabic">
+<div class="title">从 <code>1.1.0-beta1</code> 迁移到 <code>1.1.0-RC</code></div>
 <ol class="arabic">
 <li>
 <p>使用 <code>统一响应——协议无关</code> 类型时，UI端由原来只需要获取200状态下的数据改成需要获取 200 和 1000 状态下的数据，两者对UI端没有区别。( @See <a href="https://rep.360taihe.com/csp/dew-framework/issues/53" class="bare">https://rep.360taihe.com/csp/dew-framework/issues/53</a> )</p>
@@ -6117,22 +6899,18 @@ sharding:
 </ol>
 </div>
 </div>
-</div>
 <div class="sect2">
-<h3 id="true1-1-0-beta1"><a class="anchor" href="#true1-1-0-beta1"></a>8.3. 1.1.0-beta1</h3>
-<div class="sect3">
-<h4 id="truefeature-3"><a class="anchor" href="#truefeature-3"></a>8.3.1. Feature</h4>
+<h3 id="true1-1-0-beta1"><a class="anchor" href="#true1-1-0-beta1"></a>9.6. 1.1.0-beta1</h3>
 <div class="ulist">
+<div class="title">Feature</div>
 <ul>
 <li>
 <p>[功能] #19 支持局部 <code>ShardingJDBC</code>(由于ShardingJDBC 2.0还未RC，测试发现存在较多问题，此功能需要等待官方RC)</p>
 </li>
 </ul>
 </div>
-</div>
-<div class="sect3">
-<h4 id="trueimprovement-3"><a class="anchor" href="#trueimprovement-3"></a>8.3.2. Improvement</h4>
 <div class="ulist">
+<div class="title">Improvement</div>
 <ul>
 <li>
 <p>[优化] 支持Java8时间处理</p>
@@ -6151,20 +6929,16 @@ sharding:
 </li>
 </ul>
 </div>
-</div>
-<div class="sect3">
-<h4 id="truefixed-3"><a class="anchor" href="#truefixed-3"></a>8.3.3. Fixed</h4>
 <div class="ulist">
+<div class="title">Fixed</div>
 <ul>
 <li>
 <p>[修正] 统一错误拦截返回指定为 <code>MediaType=APPLICATION_JSON_UTF8</code> 以解决 <code>Feign</code> 调用解码错误</p>
 </li>
 </ul>
 </div>
-</div>
-<div class="sect3">
-<h4 id="true-code-1-0-0-rc-betax-code-code-1-1-0-code"><a class="anchor" href="#true-code-1-0-0-rc-betax-code-code-1-1-0-code"></a>8.3.4. 从 <code>1.0.0-RC/betaX</code> 迁移到 <code>1.1.0</code></h4>
 <div class="paragraph">
+<div class="title">从 <code>1.0.0-RC/betaX</code> 迁移到 <code>1.1.0</code></div>
 <p><code>1.1.0</code> 修正了 <code>1.0.0</code> 版本的几个设计缺陷，需要做如下的迁移操作：</p>
 </div>
 <div class="ulist">
@@ -6176,7 +6950,7 @@ sharding:
 <p>Maven: <code>boot-core</code> 更名为 <code>boot-starter</code> , <code>cloud-core</code> 更名为 <code>cloud-starter</code></p>
 </li>
 <li>
-<p>核心代码: <code>com.ecfront.dew.core.Dew</code> 包路径改成 <code>com.ecfront.dew.Dew</code></p>
+<p>核心代码: <code>com.tairanchina.csp.dew.Dew</code> 包路径改成 <code>com.tairanchina.csp.dew.Dew</code></p>
 </li>
 <li>
 <p><code>Dew JDBC</code> 模块（使用MyBatis等其它持久化框架的项目可以忽略）</p>
@@ -6186,7 +6960,7 @@ sharding:
 <p><code>SafeEntity</code> 的创建/更新时间 由 <code>Date</code> 换成了 <code>LocalDateTime</code></p>
 </li>
 <li>
-<p>所有 <code>entity</code> 包 迁移到 <code>com.ecfront.dew.jdbc.entity</code></p>
+<p>所有 <code>entity</code> 包 迁移到 <code>com.tairanchina.csp.dew.jdbc.entity</code></p>
 </li>
 <li>
 <p>使用 <code>JdbcTemplate</code> 原生方法时 原来是： <code>Dew.ds().jdbc.xx</code> ，需要修改成 <code>((DewDS)Dew.ds).jdbc.xx</code></p>
@@ -6197,12 +6971,10 @@ sharding:
 </ul>
 </div>
 </div>
-</div>
 <div class="sect2">
-<h3 id="true1-0-0-rc"><a class="anchor" href="#true1-0-0-rc"></a>8.4. 1.0.0-RC</h3>
-<div class="sect3">
-<h4 id="truefeature-4"><a class="anchor" href="#truefeature-4"></a>8.4.1. Feature</h4>
+<h3 id="true1-0-0-rc"><a class="anchor" href="#true1-0-0-rc"></a>9.7. 1.0.0-RC</h3>
 <div class="ulist">
+<div class="title">Feature</div>
 <ul>
 <li>
 <p>[功能]支持新版用户权限中心认证适配(* 新版用户权限中心Release后，此功能代码会有一定变更)</p>
@@ -6215,10 +6987,8 @@ sharding:
 </li>
 </ul>
 </div>
-</div>
-<div class="sect3">
-<h4 id="trueimprovement-4"><a class="anchor" href="#trueimprovement-4"></a>8.4.2. Improvement</h4>
 <div class="ulist">
+<div class="title">Improvement</div>
 <ul>
 <li>
 <p>[功能]支持rabbit confirm(单条)模式</p>
@@ -6249,10 +7019,8 @@ sharding:
 </li>
 </ul>
 </div>
-</div>
-<div class="sect3">
-<h4 id="truefixed-4"><a class="anchor" href="#truefixed-4"></a>8.4.3. Fixed</h4>
 <div class="ulist">
+<div class="title">Fixed</div>
 <ul>
 <li>
 <p>修正Redis锁 <code>Unlock</code> 处理的线程问题</p>
@@ -6263,12 +7031,10 @@ sharding:
 </ul>
 </div>
 </div>
-</div>
 <div class="sect2">
-<h3 id="true1-0-0-beta5"><a class="anchor" href="#true1-0-0-beta5"></a>8.5. 1.0.0-beta5</h3>
-<div class="sect3">
-<h4 id="truefeature-5"><a class="anchor" href="#truefeature-5"></a>8.5.1. Feature</h4>
+<h3 id="true1-0-0-beta5"><a class="anchor" href="#true1-0-0-beta5"></a>9.8. 1.0.0-beta5</h3>
 <div class="ulist">
+<div class="title">Feature</div>
 <ul>
 <li>
 <p>添加服务调用限制（可定义A服务不允许B服务调用，防止服务双向依赖） e.g.</p>
@@ -6291,10 +7057,8 @@ sharding:
 </li>
 </ul>
 </div>
-</div>
-<div class="sect3">
-<h4 id="trueimprovement-5"><a class="anchor" href="#trueimprovement-5"></a>8.5.2. Improvement</h4>
 <div class="ulist">
+<div class="title">Improvement</div>
 <ul>
 <li>
 <p>优化CURD脚手架</p>
@@ -6325,10 +7089,8 @@ sharding:
 </li>
 </ul>
 </div>
-</div>
-<div class="sect3">
-<h4 id="truefixed-5"><a class="anchor" href="#truefixed-5"></a>8.5.3. Fixed</h4>
 <div class="ulist">
+<div class="title">Fixed</div>
 <ul>
 <li>
 <p>修正事务失败，重试成功后还是被回滚的问题</p>
@@ -6336,12 +7098,10 @@ sharding:
 </ul>
 </div>
 </div>
-</div>
 <div class="sect2">
-<h3 id="true1-0-0-beta4"><a class="anchor" href="#true1-0-0-beta4"></a>8.6. 1.0.0-beta4</h3>
-<div class="sect3">
-<h4 id="truefeature-6"><a class="anchor" href="#truefeature-6"></a>8.6.1. Feature</h4>
+<h3 id="true1-0-0-beta4"><a class="anchor" href="#true1-0-0-beta4"></a>9.9. 1.0.0-beta4</h3>
 <div class="ulist">
+<div class="title">Feature</div>
 <ul>
 <li>
 <p>整合 <code>Spring boot admin</code> 与 <code>Turbine</code>，可直观的监控各个性能及访问指标</p>
@@ -6360,10 +7120,8 @@ sharding:
 </li>
 </ul>
 </div>
-</div>
-<div class="sect3">
-<h4 id="trueimprovement-6"><a class="anchor" href="#trueimprovement-6"></a>8.6.2. Improvement</h4>
 <div class="ulist">
+<div class="title">Improvement</div>
 <ul>
 <li>
 <p>添加了几个自定义验证方式</p>
@@ -6389,26 +7147,18 @@ sharding:
 </table>
 </div>
 </div>
-<div class="sect3">
-<h4 id="truefixed-6"><a class="anchor" href="#truefixed-6"></a>8.6.3. Fixed</h4>
-
-</div>
-</div>
 <div class="sect2">
-<h3 id="true1-0-0-beta3"><a class="anchor" href="#true1-0-0-beta3"></a>8.7. 1.0.0-beta3</h3>
-<div class="sect3">
-<h4 id="truefeature-7"><a class="anchor" href="#truefeature-7"></a>8.7.1. Feature</h4>
+<h3 id="true1-0-0-beta3"><a class="anchor" href="#true1-0-0-beta3"></a>9.10. 1.0.0-beta3</h3>
 <div class="olist arabic">
+<div class="title">Feature</div>
 <ol class="arabic">
 <li>
 <p>Cluster的MQ添加RabbitMQ SPI</p>
 </li>
 </ol>
 </div>
-</div>
-<div class="sect3">
-<h4 id="trueimprovement-7"><a class="anchor" href="#trueimprovement-7"></a>8.7.2. Improvement</h4>
 <div class="olist arabic">
+<div class="title">Improvement</div>
 <ol class="arabic">
 <li>
 <p>支持自定义http错误码( <code>Dew.e(String code, E ex, StandardCode customHttpCode)</code> )</p>
@@ -6422,26 +7172,18 @@ sharding:
 </ol>
 </div>
 </div>
-<div class="sect3">
-<h4 id="truefixed-7"><a class="anchor" href="#truefixed-7"></a>8.7.3. Fixed</h4>
-
-</div>
-</div>
 <div class="sect2">
-<h3 id="true1-0-0-beta2"><a class="anchor" href="#true1-0-0-beta2"></a>8.8. 1.0.0-Beta2</h3>
-<div class="sect3">
-<h4 id="truefeature-8"><a class="anchor" href="#truefeature-8"></a>8.8.1. Feature</h4>
+<h3 id="true1-0-0-beta2"><a class="anchor" href="#true1-0-0-beta2"></a>9.11. 1.0.0-Beta2</h3>
 <div class="olist arabic">
+<div class="title">Feature</div>
 <ol class="arabic">
 <li>
 <p>支持生成Html及PDF版本的离线文档</p>
 </li>
 </ol>
 </div>
-</div>
-<div class="sect3">
-<h4 id="trueimprovement-8"><a class="anchor" href="#trueimprovement-8"></a>8.8.2. Improvement</h4>
 <div class="olist arabic">
+<div class="title">Improvement</div>
 <ol class="arabic">
 <li>
 <p>添加Dubbo整合示例，提供Dubbo服务提供无法处理<code>声明式事务</code>的方案</p>
@@ -6464,16 +7206,10 @@ sharding:
 </ol>
 </div>
 </div>
-<div class="sect3">
-<h4 id="truefixed-8"><a class="anchor" href="#truefixed-8"></a>8.8.3. Fixed</h4>
-
-</div>
-</div>
 <div class="sect2">
-<h3 id="true1-0-0-beta1"><a class="anchor" href="#true1-0-0-beta1"></a>8.9. 1.0.0-beta1</h3>
-<div class="sect3">
-<h4 id="truefeature-9"><a class="anchor" href="#truefeature-9"></a>8.9.1. Feature</h4>
+<h3 id="true1-0-0-beta1"><a class="anchor" href="#true1-0-0-beta1"></a>9.12. 1.0.0-beta1</h3>
 <div class="olist arabic">
+<div class="title">Feature</div>
 <ol class="arabic">
 <li>
 <p>多数据源支持，详见说明文档<code>多数据源支持</code>章节</p>
@@ -6492,10 +7228,8 @@ sharding:
 </tr>
 </table>
 </div>
-</div>
-<div class="sect3">
-<h4 id="trueimprovement-9"><a class="anchor" href="#trueimprovement-9"></a>8.9.2. Improvement</h4>
 <div class="olist arabic">
+<div class="title">Improvement</div>
 <ol class="arabic">
 <li>
 <p>新增<code>mybatisplus-example</code></p>
@@ -6511,10 +7245,8 @@ sharding:
 </li>
 </ol>
 </div>
-</div>
-<div class="sect3">
-<h4 id="truefixed-9"><a class="anchor" href="#truefixed-9"></a>8.9.3. Fixed</h4>
 <div class="olist arabic">
+<div class="title">Fixed</div>
 <ol class="arabic">
 <li>
 <p>修正<code>tryLock</code>锁（<code>Redis</code>实现），锁被其它线程或JVM占用时等待时间的计算错误</p>
@@ -6524,9 +7256,8 @@ sharding:
 </div>
 </div>
 </div>
-</div>
 <div class="sect1">
-<h2 id="true--55"><a class="anchor" href="#true--55"></a>9. 路线图</h2>
+<h2 id="true--57"><a class="anchor" href="#true--57"></a>10. 路线图</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>见 <a href="https://rep.360taihe.com/csp/dew-framework/milestones" class="bare">https://rep.360taihe.com/csp/dew-framework/milestones</a></p>
@@ -6536,7 +7267,7 @@ sharding:
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-11-29 09:38:02 CST
+Last updated 2018-02-06 17:26:10
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.9.1/styles/github.min.css">

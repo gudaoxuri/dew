@@ -10,12 +10,12 @@
         <version>1.5.6.RELEASE</version>
     </parent>
 
-    <groupId>com.ecfront.dew</groupId>
+    <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>parent-starter</artifactId>
     <name>Dew Parent Starter</name>
     <description>Dew 父工程</description>
     <packaging>pom</packaging>
-    <version>1.2.2-RC</version>
+    <version>2.0.0-SNAPSHOT</version>
 
     <properties>
         <java.version>1.8</java.version>
@@ -26,11 +26,11 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
         <maven.deploy.skip>false</maven.deploy.skip>
-        <dew.version>1.2.2-RC</dew.version>
-        <dew-common.version>1.4.5</dew-common.version>
+        <dew.version>2.0.0-SNAPSHOT</dew.version>
+        <dew-common.version>1.4.6</dew-common.version>
         <aspectjrt.version>1.8.10</aspectjrt.version>
         <swagger.version>2.6.1</swagger.version>
-        <druid.version>1.1.2</druid.version>
+        <druid.version>1.1.5</druid.version>
         <mysql.version>5.1.42</mysql.version>
         <h2.version>1.4.195</h2.version>
         <embedded-redis.version>0.6</embedded-redis.version>
@@ -38,10 +38,10 @@
         <sonar.host.url></sonar.host.url>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.version>3.3.0.603</sonar.version>
-        <sharding-jdbc.version>2.0.0.M1</sharding-jdbc.version>
-        <logback-elasticsearch-appender.version>1.6</logback-elasticsearch-appender.version>
+        <sharding-jdbc.version>2.0.0</sharding-jdbc.version>
         <api.file.name>index</api.file.name>
-        <sonar.host.url>http://10.200.131.24:9000</sonar.host.url>
+        <sonar.host.url></sonar.host.url>
+        <mybatisplus-spring-boot-starter.version>1.0.2</mybatisplus-spring-boot-starter.version>
     </properties>
 
     <developers>
@@ -63,6 +63,10 @@
             <name>丁忠发</name>
             <email>hzdzf@tairanchina.com</email>
         </developer>
+        <developer>
+            <name>李正先</name>
+            <email>hzlizx@tairanchina.com</email>
+        </developer>
     </developers>
 
     <licenses>
@@ -73,9 +77,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:https://github.com/gudaoxuri/dew.git</connection>
-        <developerConnection>scm:git:https://github.com/gudaoxuri/dew.git</developerConnection>
-        <url>https://github.com/gudaoxuri/dew.git</url>
+        <connection>scm:git:https://github.com/tairangroup/dew-framework.git</connection>
+        <developerConnection>scm:git:https://github.com/tairangroup/dew-framework.git</developerConnection>
+        <url>https://github.com/tairangroup/dew-framework.git</url>
     </scm>
 
     <dependencyManagement>
@@ -93,18 +97,23 @@
                 <version>${dew-common.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ecfront.dew</groupId>
+                <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>boot-starter</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ecfront.dew</groupId>
+                <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>cloud-starter</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ecfront.dew</groupId>
+                <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>idempotent-starter</artifactId>
+                <version>${dew.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tairanchina.csp.dew</groupId>
+                <artifactId>mybatis-starter</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
@@ -117,39 +126,49 @@
                 <artifactId>aspectjweaver</artifactId>
                 <version>${aspectjrt.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.tairanchina.csp.dew</groupId>
+                <artifactId>auth</artifactId>
+                <version>${dew.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tairanchina.csp.dew</groupId>
+                <artifactId>auth-sdk-starter</artifactId>
+                <version>${dew.version}</version>
+            </dependency>
             <!-- Cluster -->
             <dependency>
-                <groupId>com.ecfront.dew</groupId>
+                <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>cluster-common</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ecfront.dew</groupId>
+                <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>cluster-spi-redis</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ecfront.dew</groupId>
+                <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>cluster-spi-rabbit</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ecfront.dew</groupId>
+                <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>cluster-spi-hazelcast</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ecfront.dew</groupId>
+                <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>cluster-spi-ignite</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ecfront.dew</groupId>
+                <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>cluster-spi-eureka</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ecfront.dew</groupId>
+                <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>cluster-spi-kafka</artifactId>
                 <version>${dew.version}</version>
             </dependency>
@@ -160,7 +179,17 @@
                 <version>${sharding-jdbc.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ecfront.dew</groupId>
+                <groupId>io.shardingjdbc</groupId>
+                <artifactId>sharding-jdbc-transaction</artifactId>
+                <version>${sharding-jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.shardingjdbc</groupId>
+                <artifactId>sharding-jdbc-transaction-storage</artifactId>
+                <version>${sharding-jdbc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>jdbc-starter</artifactId>
                 <version>${dew.version}</version>
             </dependency>
@@ -196,16 +225,16 @@
                 <version>${swagger.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.ecfront.dew</groupId>
+                <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>test-starter</artifactId>
                 <version>${dew.version}</version>
                 <scope>test</scope>
             </dependency>
             <!--Others-->
             <dependency>
-                <groupId>com.internetitem</groupId>
-                <artifactId>logback-elasticsearch-appender</artifactId>
-                <version>${logback-elasticsearch-appender.version}</version>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatisplus-spring-boot-starter</artifactId>
+                <version>${mybatisplus-spring-boot-starter.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -235,14 +264,23 @@
         <profile>
             <id>release</id>
             <distributionManagement>
-                 <snapshotRepository>
+                <repository>
+                    <id>trc-releases</id>
+                    <url>http://121.41.17.205:18081/nexus/content/repositories/releases/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>trc-snapshots</id>
+                    <url>http://121.41.17.205:18081/nexus/content/repositories/snapshots/</url>
+                    <uniqueVersion>false</uniqueVersion>
+                </snapshotRepository>
+                <!-- <snapshotRepository>
                      <id>oss</id>
                      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
                  </snapshotRepository>
                  <repository>
                      <id>oss</id>
                      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                 </repository>
+                 </repository>-->
             </distributionManagement>
             <build>
                 <plugins>
@@ -258,7 +296,7 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
+                    <!--<plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <executions>
@@ -269,7 +307,7 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>
+                    </plugin>-->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
@@ -546,16 +584,14 @@
     <repositories>
         <repository>
             <id>central</id>
-            <name>Central Repository</name>
             <url>https://repo.maven.apache.org/maven2</url>
         </repository>
         <repository>
-            <id>oss-repo</id>
-            <name>Sonatype OSS Maven Repository</name>
+            <id>oss-snapshots-repo</id>
             <url>https://oss.sonatype.org/content/groups/public</url>
         </repository>
         <repository>
-            <id>oss-snapshot-repo</id>
+            <id>Sonatype OSS Snapshot Repository</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
@@ -563,6 +599,10 @@
                 <checksumPolicy>warn</checksumPolicy>
             </snapshots>
         </repository>
+        <!--<repository>
+            <id>redhat-repo</id>
+            <url>https://maven.repository.redhat.com/ga</url>
+        </repository>-->
     </repositories>
 
 </project>

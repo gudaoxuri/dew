@@ -1,2 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.ecfront.dew.idempotent.DewIdempotentAutoConfiguration
+  com.tairanchina.csp.dew.idempotent.interceptor.DewIdempotentWebMvcConfigurer
+
+

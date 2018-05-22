@@ -28,7 +28,7 @@ NOTE: `Dew` 框架是对 `Spring Boot/Cloud` 的扩展，使用之前务必了�
 ----
 <!--引入Dew父依赖，也可以使用import方式-->
 <parent>
-    <groupId>com.ecfront.dew</groupId>
+    <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>parent</artifactId>
     <!--生产环境请选择合适的版本!!!!!!!!-->
     <version>${dew.version}</version>
@@ -37,7 +37,7 @@ NOTE: `Dew` 框架是对 `Spring Boot/Cloud` 的扩展，使用之前务必了�
 <dependencies>
     <!--引入需要的模块-->
     <dependency>
-        <groupId>com.ecfront.dew</groupId>
+        <groupId>com.tairanchina.csp.dew</groupId>
         <artifactId><模块名></artifactId>
     </dependency>
 </dependencies>
@@ -66,10 +66,9 @@ TIP: `parent` 中已包含各模块的版本，引用模块依赖时可省略版
 
 |`boot-starter` |基于Spring Boot的扩展，Dew的核心模块
 |`cloud-starter` |基于Spring Cloud的扩展，基于`boot-starter`
-|`cloud-starter` |基于Spring Cloud的扩展，基于`boot-starter`
 |`idempotent-starter` |幂性处理模块
 |`jdbc-starter` |Dew JDBC模块
-|`csp-starter` |用户权限中心扩展模块
+|`mybatis-starter` |mybatis适配模块
 |`cluster-common` |集群能力接口
 |`cluster-redis` |集群能力-Redis实现
 |`cluster-hazelcast` |集群能力-Hazelcast实现
@@ -86,32 +85,34 @@ TIP: `parent` 中已包含各模块的版本，引用模块依赖时可省略版
 
 ==== 启动类
 
-`Dew` 有两个核心启动类 `DewBootApplication` 和 `DewCloudApplication` ，前者引用的依赖是 `boot-starter` 用于启动 `Spring boot` 类型的工程，后者依赖的是`cloud-starter` 继承自 `DewBootApplication` 用于启动 `Spring cloud` 类型的工程。
-
-[TIP]
-.DewBootApplication使用如下注解
-====
-@SpringBootApplication +
-@EnableTransactionManagement +
-@EnableAutoConfiguration(exclude = {FreeMarkerAutoConfiguration.class, GsonAutoConfiguration.class, WebSocketAutoConfiguration.class}) +
-@ComponentScan(basePackageClasses = {Dew.class}) +
-@EnableAspectJAutoProxy(proxyTargetClass = true, exposeProxy = true) +
-@EnableCaching(proxyTargetClass = true)
-====
-
-[TIP]
-.DewCloudApplication使用如下注解
-====
-@SpringCloudApplication
-====
-
-[NOTE]
-.@ComponentScan说明
-====
-`Spring boot` 严重依赖于包扫描功能，所以工程中需要重写 `@ComponentScan` 加入当前工程的根包，要求为 `Dew` 包在前，工程包在后，如： `(basePackageClasses = {Dew.class,PetStoreApplication.class})`
-====
+`Dew` 自``1.3.0-SNAPSHOT``版本起，去掉了对启动类的改造，正如dew的设计初衷：
+----
+Dew [du:] 意为`露水`，希望此框架可以像晨间的露水一样透明、静谧、丰盈。让使用者尽量不要感知框架的存在，专注业务实现。
+----
+so，原生的springboot和springcloud如何使用，现在就如何使用。
 
 TIP: 示例见 `example/guide-petstore`
+* 添加工程启动类
+
+[source,java]
+.example
+----
+/**
+ * 工程启动类
+ * 重写父类的ComponentScan，先扫描Dew下的包，再是项目的根包
+ */
+@SpringBootApplication
+@EnableAspectJAutoProxy(exposeProxy = true,proxyTargetClass = true) //开启事务或catche时都需要加该注解
+@EnableTransactionManagement // 开启注解式事务需要添加
+@EnableCaching(proxyTargetClass = true) // 开启注解式catche需要添加
+public class PetStoreApplication {
+
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(PetStoreApplication.class).run(args);
+    }
+
+}
+----
 
 ==== 配置说明
 
@@ -177,7 +178,7 @@ TIP: 完整使用手册见 https://gudaoxuri.github.io/dew-common/
 <dependencies>
     <!--dew的核心包-->
     <dependency>
-        <groupId>com.ecfront.dew</groupId>
+        <groupId>com.tairanchina.csp.dew</groupId>
         <artifactId>boot-starter</artifactId>
         <version>${dew.version}</version>
     </dependency>
@@ -214,9 +215,9 @@ dew:
     name: web
     version: 1.0
     desc: desc
-    web-site: www.ecfront.com
+    web-site: www.tairanchina.com
     doc:
-      base-package: com.ecfront # API文档路径
+      base-package: com.tairanchina # API文档路径
 ----
 
 [source,java]
@@ -326,7 +327,7 @@ public class WebExampleController {
 
 `Dew` 支持两种格式：
 
-* 协议无关：`Resp<E>` 响应，对于 `HTTP` 统一返回 `200` (业务操作不需要降级) 或 `1000` (业务操作需要降级) HTTP状态码，使用 `code` 表示业务状态码，`Resp` 对象包含:
+* 协议无关：`Resp<E>` 响应，对于 `HTTP` 统一返回 `200` (业务操作不需要降级) 或 `500` (业务操作需要降级) HTTP状态码，使用 `code` 表示业务状态码，`Resp` 对象包含:
 
  code 响应编码，与http状态码类似，200表示成功
  message 响应附加消息，多有于错误描述
@@ -335,15 +336,15 @@ public class WebExampleController {
 TIP: `Resp`类提供了常用操作：详见 https://gudaoxuri.github.io/dew-common/#true-resp[https://gudaoxuri.github.io/dew-common/#true-resp]
 
 [NOTE]
-.1000 Http状态码说明
+.500 Http状态码说明
 ====
-`1000` 状态码仅用于告诉 `Hystrix` 这次请求是需要降级的错误，对于 `Resp` 中的 `code` 没有影响。
+`500` 状态码仅用于告诉 `Hystrix` 这次请求是需要降级的错误，对于 `Resp` 中的 `code` 没有影响。
 
-`dew` 框架会把所有 `5xx`（服务端错误，需要降级） 的异常统一转换成 `1000` 的Http状态码返回给调用方。
+`dew` 框架会把所有 `5xx`（服务端错误，需要降级） 的异常统一转换成 `500` 的Http状态码返回给调用方。
 
 `Resp.xxx.fallback()` 用于显示声明当前返回需要降级，
 比如 `Resp.serverError("some message")` 不会降级，返回http状态码为200，body为 `{"code":"500","message":"some message","body":null}`，
-但 `Resp.serverError("some message").fallback()` 会降级，返回http状态码为1000，body为 同上。
+但 `Resp.serverError("some message").fallback()` 会降级，返回http状态码为500，body为 同上。
 ====
 
 
@@ -423,7 +424,7 @@ dew:
     format:
       use-unity-error: true
     error-mapping:
-      "[com.ecfront.dew.core.AuthException]":
+      "[com.tairanchina.csp.dew.core.AuthException]":
         http-code: 401
         business-code: x00010
         message: 认证错误
@@ -509,12 +510,12 @@ TIP: SQL输出日志需要在 `logback-spring.xml` 中添加 `<logger name="org.
 ----
 <dependencies>
     <dependency>
-        <groupId>com.ecfront.dew</groupId>
+        <groupId>com.tairanchina.csp.dew</groupId>
         <artifactId>boot-starter</artifactId>
     </dependency>
     <!--引入JDBC依赖-->
     <dependency>
-        <groupId>com.ecfront.dew</groupId>
+        <groupId>com.tairanchina.csp.dew</groupId>
         <artifactId>jdbc-starter</artifactId>
     </dependency>
     <!-- 对应的数据库JDBC驱动 -->
@@ -676,7 +677,7 @@ DewSB.inst()
 // 在配置文件中添加Dao的路径
 Dew:
   jdbc:
-    base-packages: ["com.ecfront.dew.example.jdbc.jdbc"]
+    base-packages: ["com.tairanchina.csp.dew.example.jdbc.jdbc"]
 
 // 添加PetDao
 public interface PetDao extends DewDao<Integer, Pet> {
@@ -859,29 +860,29 @@ IMPORTANT: `TransactionManager` Bean名称规则：主数据源= `transactionMan
 .引入依赖
 ----
 <dependency>
-    <groupId>com.ecfront.dew</groupId>
+    <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>boot-starter</artifactId>
 </dependency>
 <!--引入集群依赖，可选redis/hazelcast/rabbit/ignite/eureka-->
 <dependency>
-    <groupId>com.ecfront.dew</groupId>
+    <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>cluster-spi-redis</artifactId>
 </dependency>
 <dependency>
-    <groupId>com.ecfront.dew</groupId>
+    <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>cluster-spi-hazelcast</artifactId>
 </dependency>
 <dependency>
-    <groupId>com.ecfront.dew</groupId>
+    <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>cluster-spi-rabbit</artifactId>
 </dependency>
 <dependency>
-    <groupId>com.ecfront.dew</groupId>
+    <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>cluster-spi-ignite</artifactId>
 </dependency>
 <!--此实现需要引用 cloud-starter -->
 <dependency>
-    <groupId>com.ecfront.dew</groupId>
+    <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>cluster-spi-eureka</artifactId>
 </dependency>
 ----
@@ -1608,7 +1609,7 @@ NOTE: csp模式使用CSPOptInfo对象基类
 .pom.xml依赖配置
 ----
 <dependency>
-          <groupId>com.ecfront.dew</groupId>
+          <groupId>com.tairanchina.csp.dew</groupId>
           <artifactId>csp-starter</artifactId>
  </dependency>
 ----
@@ -1850,7 +1851,7 @@ NOTE: dew里有两个分库分表策略模版(DewIntegerShardingAlgorithm,DewLon
 WARNING: sharding-jdbc的2.0.0.M1版本源码存在问题，反射获取方法时存在bug，不支持druid连接池，暂时还不建议使用
 
 [source,yml]
-.``sharding-jdbc``在``/resources/META-INF/``下的配置文件示例，该示例为分库分表+读写分离
+.``sharding-jdbc``配置文件示例，该示例为分库分表+读写分离
 ----
 sharding:
   jdbc:
@@ -1886,6 +1887,7 @@ sharding:
         url: jdbc:mysql://localhost:3306/demo_ds_master_1_slave_0
         username: root
         password: 123456
+
       ds_master_1_slave_1:
         type: org.apache.commons.dbcp.BasicDataSource
         driverClassName: com.mysql.jdbc.Driver
@@ -1901,18 +1903,18 @@ sharding:
             tableStrategy:
               inline:
                 shardingColumn: order_id
-                algorithmInlineExpression: t_order_${order_id % 2}
+                algorithmExpression: t_order_${order_id % 2}
           t_order_item:
             actualDataNodes: ds_${0..1}.t_order_item_${0..1}
             tableStrategy:
               inline:
                 shardingColumn: order_id
-                algorithmInlineExpression: t_order_item_${order_id % 2}
+                algorithmExpression: t_order_item_${order_id % 2}
         #默认数据库分片策略
         defaultDatabaseStrategy:
           inline:
             shardingColumn: user_id
-            algorithmInlineExpression: ds_${user_id.longValue() % 2}
+            algorithmExpression: ds_${user_id.longValue() % 2}
         masterSlaveRules:
           ds_0:
             masterDataSourceName: ds_master_0
@@ -1922,8 +1924,6 @@ sharding:
             slaveDataSourceNames: [ds_master_1_slave_0, ds_master_1_slave_1]
 
 ----
-
-TIP: inline写法在2.0.0.M1之后被废除。
 
 [source,yml]
 .所有策略配置方式
@@ -1941,7 +1941,7 @@ tables: #分库分表配置，可配置多个logic_table_name
                 algorithmClassName: #分片算法类名称。该类需使用默认的构造器或者提供无参数的构造器
             inline: #inline表达式分片策略
                 shardingColumn : #分片列名
-                algorithmInlineExpression: #分库算法表达式，需要符合groovy动态语法
+                algorithmExpression: #分库算法表达式，需要符合groovy动态语法
             hint: #Hint分片策略
                 algorithmClassName: #分片算法类名称。该类需使用默认的构造器或者提供无参数的构造器
             none: #不分片
@@ -1959,12 +1959,12 @@ tables: #分库分表配置，可配置多个logic_table_name
 ----
 <!--引入幂等支持-->
 <dependency>
-    <groupId>com.ecfront.dew</groupId>
+    <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>idempotent-starter</artifactId>
 </dependency>
 <!--使用幂等的Redis实现-->
 <dependency>
-    <groupId>com.ecfront.dew</groupId>
+    <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>cluster-spi-redis</artifactId>
 </dependency>
 ----
@@ -2059,6 +2059,123 @@ public void transferAReceive(String id) {
 }
 ----
 
+==== mybatis-starter模块
+
+考虑到业务团队较多采用mybatis框架,dew定制了mybatis的dew实现方式，同时针对sharding-jdbc做出整合。对应example为``mybatis-multi-example``
+
+[source,java]
+.启动类配置示例
+----
+@SpringbootApplication
+@DewMapperScan(basePackages = "com.tairanchina.csp.dew.mybatis.multi.mapper")
+public class MybatisMultiApplication {
+
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(MybatisMultiApplication.class).web(false).run(args);
+    }
+}
+----
+[source,yml]
+.配置文件示例
+----
+spring:
+  multi-datasources:
+    test1:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/transaction?useUnicode=true&characterEncoding=utf-8
+      username: root
+      password: 123456
+
+sharding:
+  enabled: true #
+  transaction:
+    name: transaction #指定事务记录的数据库
+----
+[source,java]
+.mapper接口类
+----
+// 数据源为sharding-jdbc datasource
+@DS(isSharding = true)
+public interface TOrderMapper extends BaseMapper<TOrder> {
+}
+// 数据源为主数据源
+@DS
+public interface UserMapper extends BaseMapper<User> {
+
+    @Select("select age from user group by age")
+    List<String> ageGroup();
+}
+// 数据源为第二数据源
+@DS(dataSource = "test1")
+public interface UserMapper2 extends BaseMapper<User> {
+
+    @Select("select age from user group by age")
+    List<String> ageGroup();
+}
+----
+TIP: 这里讲述下使用事务带来的问题，sharding-jdbc目前仅提供最大努力型事务（TCC还待开发），保证最终一致性。sharding-jdbc默认对执行失败的语句同步重试三次，若都失败，则记录在事务表中。笔者对于大数据量大并发下的数据插入做了测试，具体的数据量和并发量详见``mybatis-multi-example``项目，无事务情况下两次耗时为675751ms,750752ms,有事务情况下两次耗时为1939277ms,1942079ms,有无事务均全部数据插入成功，显然用了事务后耗时接近原来的三倍，具体是否使用请自行取舍
+[source,java]
+.事务使用示例
+----
+
+@Autowired
+private SoftTransactionManager softTransactionManager;
+
+
+@Autowired
+private ShardingEnvironmentAware shardingEnvironmentAware;
+
+public void example(){
+ BEDSoftTransaction softTransaction = (BEDSoftTransaction) softTransactionManager.getTransaction(SoftTransactionType.BestEffortsDelivery);
+            try {
+                try {
+                    softTransaction.begin(shardingEnvironmentAware.dataSource().getConnection());
+                } catch (SQLException e) {
+                    logger.info("sharding transaction begin failed");
+                }
+                TOrder tOrder = new TOrder();
+                tOrder.setUserId(12).setStatus("test");
+                tOrder.setOrderId(1012);
+                tOrderService.insert(tOrder);
+                tOrderService.insert(tOrder);
+                tOrderService.insert(tOrder);
+                logger.info("sharding init test end");
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } finally {
+                try {
+                    softTransaction.end();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+ }
+----
+[source,xml]
+.pom.xml配置
+----
+ <dependency>
+    <groupId>io.shardingjdbc</groupId>
+    <artifactId>sharding-jdbc-core</artifactId>
+</dependency>
+<dependency>
+   <groupId>io.shardingjdbc</groupId>
+   <artifactId>sharding-jdbc-transaction</artifactId>
+</dependency>
+<dependency>
+   <groupId>io.shardingjdbc</groupId>
+   <artifactId>sharding-jdbc-transaction-storage</artifactId>
+</dependency>
+<dependency>
+   <groupId>com.tairanchina.csp.dew</groupId>
+   <artifactId>mybatis-starter</artifactId>
+</dependency>
+----
+
+
 === 工程化
 
 ==== 代码质量检查
@@ -2080,7 +2197,7 @@ Dew使用"内嵌式"工具解决，数据库使用 `H2` ，Redis使用 `embedded
 ----
 # maven
 <dependency>
-    <groupId>com.ecfront.dew</groupId>
+    <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>test-starter</artifactId>
 </dependency>
 
@@ -2156,7 +2273,7 @@ management.security.enabled: false # 需要关闭安全管理，可通过IP来�
 
 ==== 服务调用开发期优化
 
-在Spring Cloud体系下，服务调用需要启动`Eureka`服务（对于Dew中的`Regstry`组件），这对开发阶段并不友好：
+在Spring Cloud体系下，服务调用需要启动`Eureka`服务（对于Dew中的`Registry`组件），这对开发阶段并不友好：
 
 . 开发期间会不断启停服务，`Eureka` 保护机制会影响服务注册（当然这是可以关闭的）
 . 多人协作时可能会出现调用到他人服务的情况（同一服务多个实例）
@@ -2225,11 +2342,16 @@ dew:
 
 之后可选择 `ELK` 方案，或是 `Dew` 推荐的 `EK` 方案（跳过 `Logstash`，直接向 `ES` 提交）
 
-一次调用日志的查看，以 `ES` 为例，过滤条件是: logger:com.ecfront.dew.core.logger.DewTraceLogWrap & trace:<对应的traceID>
+一次调用日志的查看，以 `ES` 为例，过滤条件是: logger:com.tairanchina.csp.dew.core.logger.DewTraceLogWrap & trace:<对应的traceID>
 
-==== TPS查询接口
+==== metrics查询接口
 
 基于``Spring Boot Actuator``提供的metrics接口，dew增加了三个TPS指标，最大响应时间，平均响应时间，90%的响应时间。
+
+NOTE: 开发者可以get请求访问根路径下的/metrics接口，即可看到新增的 `dew.response.nityPercent`,`dew.response.average`,`dew.response.max`,`dew.response.tps` 四个指标
+      及针对接口的对应指标,生产或测试环境中多以登陆admin服务来查看统计数据
+
+TIP: 1.3.0后metrics指标增加线程、内存、cpu、磁盘等统计
 
 [source,yml]
 .需要配置如下
@@ -2253,38 +2375,3 @@ dew:
 开发者可以get请求访问根路径下的/metrics接口，即可看到新增的 `dew.response.nityPercent`,`dew.response.average`,`dew.response.max`,`dew.response.tps` 四个指标
 及针对接口的对应指标
 
-==== Dew 启动类配置多样性
-
-NOTE: ``dew``启动类支持注解式配置和继承式配置，注解为``@DewBootApplication``和``@DewCloudApplication``,抽象类为``DewBootApplication``和``DewCloudApplication``
-
-* 注解式配置
-
-TIP: 注解式配置必须详细配置扫描基类
-
-[source,java]
-.在启动类上加@DewBootApplication注解
-----
-@DewBootApplication(scanBasePackageClasses = {Dew.class, ExampleApplication.class})
-public class ExampleApplication {
-
-    public static void main(String[] args) throws InterruptedException {
-        new SpringApplicationBuilder(ExampleApplication.class).run(args);
-    }
-}
-----
-
-* 继承式配置
-
-TIP: 继承式配置注解继承自父类
-
-[source,java]
-.启动类继承DewBootApplication类
-----
-
-public class ExampleApplication extends DewBootApplication类 {
-
-    public static void main(String[] args) throws InterruptedException {
-        new SpringApplicationBuilder(ExampleApplication.class).run(args);
-    }
-}
-----

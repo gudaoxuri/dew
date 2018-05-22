@@ -22,5 +22,6 @@ dew:
       basePackage: your.group.controller # API文档路径
   cluster:
     cache: redis # 指定集群缓存实现为redis
+    dist: redis
   jdbc:
     base-packages: ["your.group.dao"]

@@ -1,5 +1,5 @@
 = Dew-Framework（轻量服务框架）
-v1.2.1-RC,2017-11-29
+v1.3.0-RC,2018-02-06
 :doctype: book
 :encoding: utf-8
 :lang: zh-CN

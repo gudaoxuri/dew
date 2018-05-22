@@ -15,7 +15,7 @@
  */
 package feign;
 
-import com.ecfront.dew.core.logger.DewTraceLogWrap;
+import com.tairanchina.csp.dew.core.logger.DewTraceLogWrap;
 import feign.Request.Options;
 
 import javax.net.ssl.HostnameVerifier;

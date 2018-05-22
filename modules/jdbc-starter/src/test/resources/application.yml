@@ -1,7 +1,8 @@
 dew:
+  metric:
+    enabled: true
   jdbc:
-    base-packages: ["com.ecfront.dew.jdbc.test.select.dao"]
-
+    base-packages: ["com.trc.dew.select.dao"]
 spring:
   application:
     name: jdbc-test
@@ -25,17 +26,20 @@ spring:
       username: postgres
       password: tairan.2017
 sharding:
+  enabled: true
+  transaction:
+    name: test1
   jdbc:
     datasource:
       names: ds_0,ds_1
       ds_0:
-        type: org.apache.commons.dbcp.BasicDataSource
+        type: com.alibaba.druid.pool.DruidDataSource
         driverClassName: com.mysql.jdbc.Driver
         url: jdbc:mysql://localhost:3306/ds_yaml_0
         username: root
         password: 123456
       ds_1:
-        type: org.apache.commons.dbcp.BasicDataSource
+        type: com.alibaba.druid.pool.DruidDataSource
         driverClassName: com.mysql.jdbc.Driver
         url: jdbc:mysql://localhost:3306/ds_yaml_1
         username: root
@@ -50,21 +54,23 @@ sharding:
             tableStrategy:
               inline:
                 shardingColumn: order_id
-                algorithmInlineExpression: t_order_${order_id.longValue() % 2}
+                algorithmExpression: t_order_${order_id.longValue() % 2}
           t_order_item:
             actualDataNodes: ds_${0..1}.t_order_item_${0..1}
             #绑定表中其余的表的策略与第一张表的策略相同
             tableStrategy:
               inline:
                 shardingColumn: order_id
-                algorithmInlineExpression: t_order_item_${order_id.longValue() % 2}
+                algorithmExpression: t_order_item_${order_id.longValue() % 2}
         bindingTables:
           - t_order,t_order_item
         #默认数据库分片策略
         defaultDatabaseStrategy:
           inline:
             shardingColumn: user_id
-            algorithmInlineExpression: ds_${user_id.longValue() % 2}
+            algorithmExpression: ds_${user_id.longValue() % 2}
         props:
-          sql.show: true
+          sql.show: false
+server:
+  port: 8080
 #      masterslave:

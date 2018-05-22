@@ -1,8 +1,8 @@
 package your.group;
 
 
-import com.ecfront.dew.Dew;
-import com.ecfront.dew.jdbc.DewDS;
+import com.tairanchina.csp.dew.Dew;
+import com.tairanchina.csp.dew.jdbc.DewDS;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;

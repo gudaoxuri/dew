@@ -1,4 +1,4 @@
-package com.ecfront.dew.example.sleuth;
+package com.tairanchina.csp.dew.example.sleuth;
 
 import com.ecfront.dew.common.$;
 import org.junit.Test;

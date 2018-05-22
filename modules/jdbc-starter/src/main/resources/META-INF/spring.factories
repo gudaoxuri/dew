@@ -1,2 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.ecfront.dew.jdbc.DewJDBCAutoConfiguration
+  com.tairanchina.csp.dew.jdbc.sharding.transaction.ShardingTransactionConfiguration,\
+  com.tairanchina.csp.dew.jdbc.DewDSAutoConfiguration,\
+  com.tairanchina.csp.dew.jdbc.DewJDBCAutoConfiguration

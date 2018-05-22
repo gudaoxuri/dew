@@ -1,7 +1,7 @@
 package your.group.service;
 
 import com.ecfront.dew.common.Resp;
-import com.ecfront.dew.core.service.CRUSService;
+import com.tairanchina.csp.dew.core.service.CRUSService;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;

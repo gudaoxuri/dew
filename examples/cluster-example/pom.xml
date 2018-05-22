@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.ecfront.dew</groupId>
+        <groupId>com.tairanchina.csp.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>1.2.2-RC</version>
+        <version>2.0.0-SNAPSHOT</version>
         <relativePath>../../modules/parent-starter/</relativePath>
     </parent>
 
@@ -27,30 +27,30 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.ecfront.dew</groupId>
+            <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>boot-starter</artifactId>
         </dependency>
         <!--引入集群依赖，可选redis/hazelcast/rabbit/ignite/eureka-->
         <dependency>
-            <groupId>com.ecfront.dew</groupId>
+            <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cluster-spi-redis</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.ecfront.dew</groupId>
+            <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cluster-spi-hazelcast</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.ecfront.dew</groupId>
+            <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cluster-spi-rabbit</artifactId>
         </dependency>
 <!--        <dependency>
-            <groupId>com.ecfront.dew</groupId>
+            <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cluster-spi-eureka</artifactId>
         </dependency>-->
-        <dependency>
-            <groupId>com.ecfront.dew</groupId>
+        <!--<dependency>
+            <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cluster-spi-ignite</artifactId>
-        </dependency>
+        </dependency>-->
     </dependencies>
 
 </project>

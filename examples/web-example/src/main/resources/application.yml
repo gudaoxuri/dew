@@ -4,15 +4,18 @@ spring:
 
 server:
   port: 8080 # http端口号
+  tomcat:
+    max-threads: 1000
+
 
 dew:
   basic:
     name: web
     version: 1.0
     desc: desc
-    web-site: www.ecfront.com
+    web-site: www.tairanchina.com
     doc:
-      base-package: com.ecfront # API文档路径
+      base-package: com.tairanchina # API文档路径
     format:
       use-unity-error: true #是否启用统一响应，默认true
       reuse-http-state: false # 默认true， true:重用http状态码，false:使用协议无关格式

@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>parent-starter</artifactId>
-        <groupId>com.ecfront.dew</groupId>
-        <version>1.2.2-RC</version>
+        <groupId>com.tairanchina.csp.dew</groupId>
+        <version>2.0.0-SNAPSHOT</version>
         <relativePath>../../modules/parent-starter/</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -21,7 +21,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.ecfront.dew</groupId>
+            <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cloud-starter</artifactId>
         </dependency>
         <dependency>

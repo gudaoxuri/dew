@@ -4,15 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.ecfront.dew</groupId>
+    <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>build-starter</artifactId>
     <name>Dew Build Starter</name>
     <packaging>pom</packaging>
-    <version>1.2.2-RC</version>
+    <version>2.0.0-SNAPSHOT</version>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <sonar.host.url>http://10.200.131.24:9000</sonar.host.url>
+        <sonar.host.url></sonar.host.url>
     </properties>
 
     <modules>
@@ -21,23 +21,29 @@
         <module>modules/cluster-redis</module>
         <module>modules/cluster-hazelcast</module>
         <module>modules/cluster-rabbit</module>
-        <module>modules/cluster-ignite</module>
         <module>modules/cluster-eureka</module>
+       <!-- <module>modules/cluster-ignite</module>-->
+        <module>modules/cluster-kafka</module>
         <module>modules/boot-starter</module>
         <module>modules/cloud-starter</module>
         <module>modules/jdbc-starter</module>
+        <module>modules/mybatis-starter</module>
         <module>modules/idempotent-starter</module>
         <module>modules/test-starter</module>
         <module>components/registry</module>
         <module>components/config</module>
         <module>components/gateway</module>
         <module>components/monitor</module>
+        <module>components/auth</module>
+        <module>components/auth-sdk-starter</module>
+        <module>examples/mybatis-multi-example</module>
         <module>examples/guide-petstore</module>
         <module>examples/bone-example</module>
         <module>examples/web-example</module>
         <module>examples/jdbc-example</module>
         <module>examples/sharding-example</module>
         <module>examples/cache-example</module>
+        <module>examples/cloud-example</module>
         <module>examples/hystrix-feign-example</module>
         <module>examples/hystrix-feign-example2</module>
         <module>examples/cluster-example</module>
@@ -52,6 +58,9 @@
         <module>examples/sleuth-invoke3-example</module>
         <module>examples/performance-test-api</module>
         <module>examples/performance-test-service</module>
+        <!--
+       <module>examples/config-example</module>
+               -->
     </modules>
 
 </project>
