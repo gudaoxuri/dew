@@ -27,7 +27,7 @@
         <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
         <maven.deploy.skip>false</maven.deploy.skip>
         <dew.version>2.0.0-SNAPSHOT</dew.version>
-        <dew-common.version>1.4.6</dew-common.version>
+        <dew-common.version>1.4.7</dew-common.version>
         <aspectjrt.version>1.8.10</aspectjrt.version>
         <swagger.version>2.6.1</swagger.version>
         <druid.version>1.1.5</druid.version>
