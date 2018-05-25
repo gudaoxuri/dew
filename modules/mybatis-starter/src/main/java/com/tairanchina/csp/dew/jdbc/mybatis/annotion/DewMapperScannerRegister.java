@@ -52,14 +52,7 @@ public class DewMapperScannerRegister implements ImportBeanDefinitionRegistrar, 
                 logger.error("mapper init failed");
                 continue;
             }
-            mappers.forEach(c -> {
-                if (c.getAnnotation(DS.class).isSharding()) {
-                    dataSources.add("sharding");
-                } else {
-                    dataSources.add(c.getAnnotation(DS.class).dataSource());
-                }
-
-            });
+            mappers.forEach(c -> dataSources.add(c.getAnnotation(DS.class).dataSource()));
         }
         for (String dataSource : dataSources) {
             scan(new MapperScaner(registry).setDataSource(dataSource), annoAttrs);

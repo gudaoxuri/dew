@@ -38,7 +38,6 @@
         <sonar.host.url></sonar.host.url>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.version>3.3.0.603</sonar.version>
-        <sharding-jdbc.version>2.0.0</sharding-jdbc.version>
         <api.file.name>index</api.file.name>
         <sonar.host.url></sonar.host.url>
         <mybatisplus-spring-boot-starter.version>1.0.2</mybatisplus-spring-boot-starter.version>
@@ -171,22 +170,6 @@
                 <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>cluster-spi-kafka</artifactId>
                 <version>${dew.version}</version>
-            </dependency>
-            <!-- DB -->
-            <dependency>
-                <groupId>io.shardingjdbc</groupId>
-                <artifactId>sharding-jdbc-core</artifactId>
-                <version>${sharding-jdbc.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.shardingjdbc</groupId>
-                <artifactId>sharding-jdbc-transaction</artifactId>
-                <version>${sharding-jdbc.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.shardingjdbc</groupId>
-                <artifactId>sharding-jdbc-transaction-storage</artifactId>
-                <version>${sharding-jdbc.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.tairanchina.csp.dew</groupId>
