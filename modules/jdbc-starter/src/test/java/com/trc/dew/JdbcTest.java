@@ -1,6 +1,5 @@
 package com.trc.dew;
 
-import com.trc.dew.sharding.TestSharding;
 import com.trc.dew.crud.TestCRUDS;
 import com.trc.dew.ds.TestJDBC;
 import com.trc.dew.select.TestSelect;
@@ -24,8 +23,6 @@ public class JdbcTest {
     @Resource
     private TestSelect testSelect;
 
-    @Resource
-    private TestSharding testSharding;
 
 
 
@@ -58,8 +55,4 @@ public class JdbcTest {
         testCRUDS.testAll();
     }
 
-    @Test
-    public void testShardingJDBC()throws Exception{
-        testSharding.testSharding();
-    }
 }

@@ -7,8 +7,5 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Documented
 public @interface DS {
-
     String dataSource() default "primary";
-
-    boolean isSharding() default false;
 }

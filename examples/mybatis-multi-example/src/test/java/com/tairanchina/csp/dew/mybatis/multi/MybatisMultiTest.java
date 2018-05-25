@@ -5,16 +5,11 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.tairanchina.csp.dew.Dew;
 import com.tairanchina.csp.dew.jdbc.DewDS;
-import com.tairanchina.csp.dew.jdbc.DewSB;
-import com.tairanchina.csp.dew.jdbc.sharding.ShardingEnvironmentAware;
 import com.tairanchina.csp.dew.mybatis.multi.entity.TOrder;
 import com.tairanchina.csp.dew.mybatis.multi.entity.User;
 import com.tairanchina.csp.dew.mybatis.multi.service.TOrderService;
 import com.tairanchina.csp.dew.mybatis.multi.service.UserService;
 import com.tairanchina.csp.dew.mybatis.multi.service.UserService2;
-import io.shardingjdbc.transaction.api.SoftTransactionManager;
-import io.shardingjdbc.transaction.bed.BEDSoftTransaction;
-import io.shardingjdbc.transaction.constants.SoftTransactionType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,13 +46,6 @@ public class MybatisMultiTest {
 
     @Autowired
     private TOrderService tOrderService;
-
-    @Autowired
-    private SoftTransactionManager softTransactionManager;
-
-
-    @Autowired
-    private ShardingEnvironmentAware shardingEnvironmentAware;
 
     @Before
     public void init() {
@@ -138,72 +126,6 @@ public class MybatisMultiTest {
         logger.info("========userList=========ages====={}", ages);
     }
 
-    @Test
-    public void testShardingPlus() {
-        long countStart = tOrderService.selectCount(new EntityWrapper<>());
-        TOrder tOrder = new TOrder();
-        tOrder.setUserId(13).setStatus("test");
-        for (int i = 1110; i < 1120; i++) {
-            tOrder.setId(null).setOrderId(i);
-            tOrderService.insert(tOrder);
-        }
-        tOrder.setUserId(12).setStatus("test");
-        for (int i = 1010; i < 1020; i++) {
-            tOrder.setId(null).setOrderId(i);
-            tOrderService.insert(tOrder);
-        }
-        Assert.assertTrue((tOrderService.selectCount(null) - countStart) == 20);
-        List<TOrder> tOrderList = tOrderService.selectList(new EntityWrapper<TOrder>().eq("status", "test"));
-        Assert.assertEquals(20, tOrderList.size());
-        tOrderService.delete(new EntityWrapper<TOrder>().eq("user_id", 12));
-        tOrderService.delete(new EntityWrapper<TOrder>().eq("user_id", 13));
-        Assert.assertEquals(20, Dew.ds("sharding").countAll(TOrder.class));
-    }
-
-    @Test
-    public void testShardingDew() {
-        long countStart = Dew.ds("sharding").countAll(TOrder.class);
-        TOrder tOrder = new TOrder();
-        tOrder.setUserId(13).setStatus("test");
-        for (int i = 1110; i < 1120; i++) {
-            tOrder.setOrderId(i);
-            Dew.ds("sharding").insert(tOrder);
-        }
-        tOrder.setUserId(12).setStatus("test");
-        for (int i = 1010; i < 1020; i++) {
-            tOrder.setOrderId(i);
-            Dew.ds("sharding").insert(tOrder);
-        }
-        Assert.assertTrue((Dew.ds("sharding").countAll(TOrder.class) - countStart) == 20);
-        List<TOrder> tOrderList = Dew.ds("sharding").find(DewSB.inst().eq("status", "test"), TOrder.class);
-        Assert.assertEquals(20, tOrderList.size());
-        Dew.ds("sharding").delete(DewSB.inst().eq("userId", 12), TOrder.class);
-        Dew.ds("sharding").delete(DewSB.inst().eq("userId", 13), TOrder.class);
-        Assert.assertEquals(20, Dew.ds("sharding").countAll(TOrder.class));
-    }
-
-    @Test
-    public void testShardingWithXml() {
-        long countStart = tOrderService.countAllByXml();
-        TOrder tOrder = new TOrder();
-        tOrder.setUserId(13).setStatus("test");
-        for (int i = 1110; i < 1120; i++) {
-            tOrder.setId(i + "").setOrderId(i);
-            tOrderService.insert(tOrder);
-        }
-        tOrder.setUserId(12).setStatus("test");
-        for (int i = 1010; i < 1020; i++) {
-            tOrder.setId(i + "").setOrderId(i);
-            tOrderService.insert(tOrder);
-        }
-        Assert.assertTrue((tOrderService.countAllByXml() - countStart) == 20);
-        List<TOrder> tOrderList = tOrderService.selectList(new EntityWrapper<TOrder>().eq("status", "test"));
-        Assert.assertEquals(20, tOrderList.size());
-        tOrderService.deleteByXml(12);
-        tOrderService.deleteByXml(13);
-        Assert.assertEquals(20, Dew.ds("sharding").countAll(TOrder.class));
-
-    }
 
 
     @Test
@@ -241,16 +163,7 @@ public class MybatisMultiTest {
 
         @Override
         public void run() {
-            BEDSoftTransaction softTransaction = (BEDSoftTransaction) softTransactionManager.getTransaction(SoftTransactionType.BestEffortsDelivery);
             try {
-                // 是否开启事务
-                if (enableTransaction) {
-                    try {
-                        softTransaction.begin(shardingEnvironmentAware.dataSource().getConnection());
-                    } catch (SQLException e) {
-                        logger.error("sharding transaction begin failed", e);
-                    }
-                }
                 TOrder tOrder = new TOrder();
                 tOrder.setUserId(13).setStatus("test");
                 for (int i = start; i < end; i++) {
@@ -266,18 +179,10 @@ public class MybatisMultiTest {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     Thread.interrupted();
-                    logger.error("sharding transaction begin failed", e);
+                    logger.error("failed", e);
                 }
             } finally {
-                try {
-                    // 是否开启事务
-                    if (enableTransaction) {
-                        softTransaction.end();
-                    }
-                    countDownLatch.countDown();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                countDownLatch.countDown();
             }
         }
     }

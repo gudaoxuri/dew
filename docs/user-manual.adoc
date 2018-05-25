@@ -1842,112 +1842,6 @@ public @interface Service {
 @Service(version = "",interfaceName = "")
 ----
 
-==== sharding-jdbc集成
-
-NOTE: sharding-jdbc官网 https://github.com/shardingjdbc
-
-NOTE: dew里有两个分库分表策略模版(DewIntegerShardingAlgorithm,DewLongShardingAlgorithm)，各团队在使用时可直接使用，或参考模版自行配置
-
-WARNING: sharding-jdbc的2.0.0.M1版本源码存在问题，反射获取方法时存在bug，不支持druid连接池，暂时还不建议使用
-
-[source,yml]
-.``sharding-jdbc``配置文件示例，该示例为分库分表+读写分离
-----
-sharding:
-  jdbc:
-    dataSource:
-      names: ds_master_0,ds_master_1,ds_master_0_slave_0,ds_master_0_slave_1,ds_master_1_slave_0,ds_master_1_slave_1
-      ds_master_0:
-        type: org.apache.commons.dbcp.BasicDataSource
-        driverClassName: com.mysql.jdbc.Driver
-        url: jdbc:mysql://localhost:3306/demo_ds_master_0
-        username: root
-        password: 123456
-      ds_master_0_slave_0:
-        type: org.apache.commons.dbcp.BasicDataSource
-        driverClassName: com.mysql.jdbc.Driver
-        url: jdbc:mysql://localhost:3306/demo_ds_master_0_slave_0
-        username: root
-        password: 123456
-      ds_master_0_slave_1:
-        type: org.apache.commons.dbcp.BasicDataSource
-        driverClassName: com.mysql.jdbc.Driver
-        url: jdbc:mysql://localhost:3306/demo_ds_master_0_slave_1
-        username: root
-        password: 123456
-      ds_master_1:
-        type: org.apache.commons.dbcp.BasicDataSource
-        driverClassName: com.mysql.jdbc.Driver
-        url: jdbc:mysql://localhost:3306/demo_ds_master_1
-        username: root
-        password: 123456
-      ds_master_1_slave_0:
-        type: org.apache.commons.dbcp.BasicDataSource
-        driverClassName: com.mysql.jdbc.Driver
-        url: jdbc:mysql://localhost:3306/demo_ds_master_1_slave_0
-        username: root
-        password: 123456
-
-      ds_master_1_slave_1:
-        type: org.apache.commons.dbcp.BasicDataSource
-        driverClassName: com.mysql.jdbc.Driver
-        url: jdbc:mysql://localhost:3306/demo_ds_master_1_slave_1
-        username: root
-        password: 123456
-
-    config:
-      sharding:
-        tables:
-          t_order:
-            actualDataNodes: ds_${0..1}.t_order_${0..1}
-            tableStrategy:
-              inline:
-                shardingColumn: order_id
-                algorithmExpression: t_order_${order_id % 2}
-          t_order_item:
-            actualDataNodes: ds_${0..1}.t_order_item_${0..1}
-            tableStrategy:
-              inline:
-                shardingColumn: order_id
-                algorithmExpression: t_order_item_${order_id % 2}
-        #默认数据库分片策略
-        defaultDatabaseStrategy:
-          inline:
-            shardingColumn: user_id
-            algorithmExpression: ds_${user_id.longValue() % 2}
-        masterSlaveRules:
-          ds_0:
-            masterDataSourceName: ds_master_0
-            slaveDataSourceNames: [ds_master_0_slave_0, ds_master_0_slave_1]
-          ds_1:
-            masterDataSourceName: ds_master_1
-            slaveDataSourceNames: [ds_master_1_slave_0, ds_master_1_slave_1]
-
-----
-
-[source,yml]
-.所有策略配置方式
-----
-tables: #分库分表配置，可配置多个logic_table_name
-    able_name: #逻辑表名
-        actualDataNodes: #真实数据节点，由库名 + 表名组成，以小数点分隔。多个表以逗号分隔，支持inline表达式。不填写表示为只分库不分表。
-        databaseStrategy: #分库策略，以下的分片策略只能任选其一
-            standard: #标准分片策略，用于单分片键的场景
-                shardingColumn: #分片列名
-                preciseAlgorithmClassName: #精确的分片算法类名称，用于=和IN。该类需使用默认的构造器或者提供无参数的构造器
-                rangeAlgorithmClassName: #范围的分片算法类名称，用于BETWEEN，可以不配置。该类需使用默认的构造器或者提供无参数的构造器
-            complex: #复合分片策略，用于多分片键的场景
-                shardingColumns : #分片列名，多个列以逗号分隔
-                algorithmClassName: #分片算法类名称。该类需使用默认的构造器或者提供无参数的构造器
-            inline: #inline表达式分片策略
-                shardingColumn : #分片列名
-                algorithmExpression: #分库算法表达式，需要符合groovy动态语法
-            hint: #Hint分片策略
-                algorithmClassName: #分片算法类名称。该类需使用默认的构造器或者提供无参数的构造器
-            none: #不分片
-        tableStrategy: #分表策略，同分库策略
-----
-
 ==== 幂等支持
 
 ----
@@ -2061,7 +1955,7 @@ public void transferAReceive(String id) {
 
 ==== mybatis-starter模块
 
-考虑到业务团队较多采用mybatis框架,dew定制了mybatis的dew实现方式，同时针对sharding-jdbc做出整合。对应example为``mybatis-multi-example``
+考虑到业务团队较多采用mybatis框架,dew定制了mybatis的dew实现方式
 
 [source,java]
 .启动类配置示例
@@ -2086,18 +1980,11 @@ spring:
       username: root
       password: 123456
 
-sharding:
-  enabled: true #
-  transaction:
-    name: transaction #指定事务记录的数据库
 ----
 [source,java]
 .mapper接口类
 ----
-// 数据源为sharding-jdbc datasource
-@DS(isSharding = true)
-public interface TOrderMapper extends BaseMapper<TOrder> {
-}
+
 // 数据源为主数据源
 @DS
 public interface UserMapper extends BaseMapper<User> {
@@ -2113,68 +2000,6 @@ public interface UserMapper2 extends BaseMapper<User> {
     List<String> ageGroup();
 }
 ----
-TIP: 这里讲述下使用事务带来的问题，sharding-jdbc目前仅提供最大努力型事务（TCC还待开发），保证最终一致性。sharding-jdbc默认对执行失败的语句同步重试三次，若都失败，则记录在事务表中。笔者对于大数据量大并发下的数据插入做了测试，具体的数据量和并发量详见``mybatis-multi-example``项目，无事务情况下两次耗时为675751ms,750752ms,有事务情况下两次耗时为1939277ms,1942079ms,有无事务均全部数据插入成功，显然用了事务后耗时接近原来的三倍，具体是否使用请自行取舍
-[source,java]
-.事务使用示例
-----
-
-@Autowired
-private SoftTransactionManager softTransactionManager;
-
-
-@Autowired
-private ShardingEnvironmentAware shardingEnvironmentAware;
-
-public void example(){
- BEDSoftTransaction softTransaction = (BEDSoftTransaction) softTransactionManager.getTransaction(SoftTransactionType.BestEffortsDelivery);
-            try {
-                try {
-                    softTransaction.begin(shardingEnvironmentAware.dataSource().getConnection());
-                } catch (SQLException e) {
-                    logger.info("sharding transaction begin failed");
-                }
-                TOrder tOrder = new TOrder();
-                tOrder.setUserId(12).setStatus("test");
-                tOrder.setOrderId(1012);
-                tOrderService.insert(tOrder);
-                tOrderService.insert(tOrder);
-                tOrderService.insert(tOrder);
-                logger.info("sharding init test end");
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            } finally {
-                try {
-                    softTransaction.end();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
- }
-----
-[source,xml]
-.pom.xml配置
-----
- <dependency>
-    <groupId>io.shardingjdbc</groupId>
-    <artifactId>sharding-jdbc-core</artifactId>
-</dependency>
-<dependency>
-   <groupId>io.shardingjdbc</groupId>
-   <artifactId>sharding-jdbc-transaction</artifactId>
-</dependency>
-<dependency>
-   <groupId>io.shardingjdbc</groupId>
-   <artifactId>sharding-jdbc-transaction-storage</artifactId>
-</dependency>
-<dependency>
-   <groupId>com.tairanchina.csp.dew</groupId>
-   <artifactId>mybatis-starter</artifactId>
-</dependency>
-----
-
 
 === 工程化
 

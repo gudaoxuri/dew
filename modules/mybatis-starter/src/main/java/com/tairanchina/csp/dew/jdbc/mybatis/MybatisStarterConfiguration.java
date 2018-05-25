@@ -101,13 +101,6 @@ public class MybatisStarterConfiguration {
                 }
             }
 
-            // sharding-jdbc注入
-            try{
-                DataSource shardingDataSource = ((JdbcTemplate) applicationContext.getBean("shardingJdbcTemplate")).getDataSource();
-                registerBeanDefinitions(shardingDataSource, "sharding");
-            }catch (NoSuchBeanDefinitionException noSuchBeanDefinitionException){
-                logger.debug("without shardingDataSource");
-            }
         } catch (Exception e) {
             logger.error("dew sqlsessiontemplate init failed", e);
         }

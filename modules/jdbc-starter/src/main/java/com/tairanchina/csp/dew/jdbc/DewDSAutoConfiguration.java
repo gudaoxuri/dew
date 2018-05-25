@@ -6,7 +6,6 @@ import com.tairanchina.csp.dew.core.jdbc.DSManager;
 import com.tairanchina.csp.dew.core.loding.DewLoadImmediately;
 import com.tairanchina.csp.dew.core.utils.convert.ConvertAutoConfiguration;
 import com.tairanchina.csp.dew.jdbc.config.DewMultiDSConfig;
-import com.tairanchina.csp.dew.jdbc.sharding.ShardingEnvironmentAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +47,6 @@ public class DewDSAutoConfiguration implements DSManager {
 
     @Autowired
     private DataSource dataSource;
-
-    @Autowired(required = false)
-    private ShardingEnvironmentAware shardingEnvironmentAware;
 
     private DefaultListableBeanFactory beanFactory;
 
@@ -109,10 +105,6 @@ public class DewDSAutoConfiguration implements DSManager {
                 ds.setConnectProperties(properties);
                 register(dsName, entry.getValue().get("url"), ds);
             }
-        }
-        // Register sharding ds
-        if (shardingEnvironmentAware != null) {
-            register("sharding", shardingEnvironmentAware.getJdbcUrls().iterator().next(), shardingEnvironmentAware.dataSource());
         }
 
     }
