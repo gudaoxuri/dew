@@ -35,17 +35,6 @@
             <artifactId>mysql-connector-java</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--sharddsjdbc 2.0.0-->
-        <dependency>
-            <groupId>io.shardingjdbc</groupId>
-            <artifactId>sharding-jdbc-core</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>io.shardingjdbc</groupId>
-            <artifactId>sharding-jdbc-transaction</artifactId>
-            <optional>true</optional>
-        </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>

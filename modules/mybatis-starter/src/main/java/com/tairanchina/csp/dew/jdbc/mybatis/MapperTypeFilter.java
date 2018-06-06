@@ -38,7 +38,7 @@ public class MapperTypeFilter extends AbstractTypeHierarchyTraversingFilter {
         try {
             mapper = Class.forName(metadataReader.getClassMetadata().getClassName());
             DS annotation = (DS) mapper.getAnnotation(DS.class);
-            return annotation.isSharding() && dataSource.equals("sharding") || annotation.dataSource().equals(dataSource);
+            return annotation.dataSource().equals(dataSource);
         } catch (Exception e) {
             logger.error(metadataReader.getClassMetadata().getClassName() + " is not annotationed by DS");
             return false;

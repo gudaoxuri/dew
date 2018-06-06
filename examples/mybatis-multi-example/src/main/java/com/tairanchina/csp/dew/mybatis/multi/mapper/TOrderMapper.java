@@ -11,7 +11,7 @@ import java.util.List;
  * desription:
  * Created by ding on 2017/12/28.
  */
-@DS(isSharding = true)
+@DS
 public interface TOrderMapper extends BaseMapper<TOrder> {
 
     Long countAllByXml();

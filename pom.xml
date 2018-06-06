@@ -40,7 +40,6 @@
         <module>examples/bone-example</module>
         <module>examples/web-example</module>
         <module>examples/jdbc-example</module>
-        <module>examples/sharding-example</module>
         <module>examples/cache-example</module>
         <module>examples/cloud-example</module>
         <module>examples/hystrix-feign-example</module>
