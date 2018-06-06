@@ -11,15 +11,6 @@ public interface ClusterDistLock {
     Logger logger = LoggerFactory.getLogger(ClusterDistLock.class);
 
     /**
-     * 加锁，加锁成功后执行对应的函数，执行完成自动解锁
-     * <p>
-     * 推荐使用 {@link #tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun)}
-     *
-     * @param fun 加锁成功后执行的函数
-     */
-    void lockWithFun(VoidProcessFun fun) throws Exception;
-
-    /**
      * 尝试加锁，加锁成功后执行对应的函数，执行完成自动解锁
      * <p>
      * 推荐使用 {@link #tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun)}
@@ -45,13 +36,6 @@ public interface ClusterDistLock {
      * @param fun          加锁成功后执行的函数
      */
     void tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun) throws Exception;
-
-    /**
-     * 加锁
-     * <p>
-     * 推荐使用 {@link #tryLock(long waitMillSec, long leaseMillSec)}
-     */
-    void lock();
 
     /**
      * 尝试加锁

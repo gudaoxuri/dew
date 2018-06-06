@@ -9,7 +9,7 @@
         <groupId>com.tairanchina.csp.dew</groupId>
         <artifactId>parent-starter</artifactId>
         <!--生产环境切不可以使用快照版本!!!!!!!!-->
-        <version>2.0.0-SNAPSHOT</version>
+        <version>1.5.0-SNAPSHOT</version>
         <!--自己编写时请删除relativePath-->
         <relativePath>../../modules/parent-starter/</relativePath>
     </parent>

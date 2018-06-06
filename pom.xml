@@ -8,7 +8,7 @@
     <artifactId>build-starter</artifactId>
     <name>Dew Build Starter</name>
     <packaging>pom</packaging>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>1.5.0-SNAPSHOT</version>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
