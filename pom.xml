@@ -8,7 +8,7 @@
     <artifactId>build-starter</artifactId>
     <name>Dew Build Starter</name>
     <packaging>pom</packaging>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>1.5.0-SNAPSHOT</version>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
@@ -22,7 +22,7 @@
         <module>modules/cluster-hazelcast</module>
         <module>modules/cluster-rabbit</module>
         <module>modules/cluster-eureka</module>
-        <module>modules/cluster-kafka</module>
+        <!--<module>modules/cluster-kafka</module>-->
         <module>modules/boot-starter</module>
         <module>modules/cloud-starter</module>
         <module>modules/jdbc-starter</module>

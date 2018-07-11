@@ -16,16 +16,6 @@ public class HazelcastClusterDistLock implements ClusterDistLock {
     }
 
     @Override
-    public void lockWithFun(VoidProcessFun fun) throws Exception {
-        try {
-            lock();
-            fun.exec();
-        } finally {
-            unLock();
-        }
-    }
-
-    @Override
     public void tryLockWithFun(VoidProcessFun fun) throws Exception {
         tryLockWithFun(0, fun);
     }
@@ -50,11 +40,6 @@ public class HazelcastClusterDistLock implements ClusterDistLock {
                 unLock();
             }
         }
-    }
-
-    @Override
-    public void lock() {
-        lock.lock();
     }
 
     @Override

@@ -30,7 +30,14 @@ public class RabbitClusterMQ implements ClusterMQ {
                 channel.confirmSelect();
             }
             channel.exchangeDeclare(topic, "fanout", true);
-            channel.basicPublish(topic, "", MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
+            AMQP.BasicProperties properties = new AMQP.BasicProperties("text/plain",
+                    null,
+                    getMQHeader(topic),
+                    2,
+                    0, null, null, null,
+                    null, null, null, null,
+                    null, null);
+            channel.basicPublish(topic, "", properties, message.getBytes());
             if (confirm) {
                 try {
                     return channel.waitForConfirms();
@@ -79,7 +86,14 @@ public class RabbitClusterMQ implements ClusterMQ {
             }
             channel.queueDeclare(queueName, true, false, false, null);
             channel.exchangeDeclare(topic, BuiltinExchangeType.TOPIC, true);
-            channel.basicPublish(topic, routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
+            AMQP.BasicProperties properties = new AMQP.BasicProperties("text/plain",
+                    null,
+                    getMQHeader(topic),
+                    2,
+                    0, null, null, null,
+                    null, null, null, null,
+                    null, null);
+            channel.basicPublish(topic, routingKey, properties, message.getBytes());
             if (confirm) {
                 try {
                     return channel.waitForConfirms();
@@ -104,7 +118,7 @@ public class RabbitClusterMQ implements ClusterMQ {
         }
     }
 
-    public void subscribewithTopic(String topic, String routingKey, String queueName, Consumer<String> consumer) {
+    public void subscribeWithTopic(String topic, String routingKey, String queueName, Consumer<String> consumer) {
         Channel channel = rabbitAdapter.getConnection().createChannel(false);
         try {
             channel.queueDeclare(queueName, true, false, false, null);
@@ -116,7 +130,6 @@ public class RabbitClusterMQ implements ClusterMQ {
             logger.error("[MQ] Rabbit response error.", e);
         }
     }
-
 
     @Override
     public boolean request(String address, String message) {
@@ -132,7 +145,14 @@ public class RabbitClusterMQ implements ClusterMQ {
                 channel.confirmSelect();
             }
             channel.queueDeclare(address, true, false, false, null);
-            channel.basicPublish("", address, MessageProperties.PERSISTENT_TEXT_PLAIN, message.getBytes());
+            AMQP.BasicProperties properties = new AMQP.BasicProperties("text/plain",
+                    null,
+                    getMQHeader(address),
+                    2,
+                    0, null, null, null,
+                    null, null, null, null,
+                    null, null);
+            channel.basicPublish("", address, properties, message.getBytes());
             if (confirm) {
                 try {
                     return channel.waitForConfirms();
@@ -163,35 +183,24 @@ public class RabbitClusterMQ implements ClusterMQ {
         try {
             channel.queueDeclare(address, true, false, false, null);
             channel.basicQos(1);
-            channel.basicConsume(address, false, new DefaultConsumer(channel) {
-                @Override
-                public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                    String message = new String(body, "UTF-8");
-                    logger.trace("[MQ] response {}:{}", address, message);
-                    try {
-                        consumer.accept(message);
-                        channel.basicAck(envelope.getDeliveryTag(), false);
-                    } catch (Exception e) {
-                        logger.error("[MQ] Rabbit response error.", e);
-                    }
-                }
-            });
+            channel.basicConsume(address, false, getDefaultConsumer(channel, address, consumer));
         } catch (IOException e) {
             logger.error("[MQ] Rabbit response error.", e);
         }
     }
 
-    public DefaultConsumer getDefaultConsumer(Channel channel, String topic, Consumer<String> consumer) {
+    private DefaultConsumer getDefaultConsumer(Channel channel, String topic, Consumer<String> consumer) {
         return new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                setMQHeader(topic, properties.getHeaders());
                 String message = new String(body, "UTF-8");
-                logger.trace("[MQ] subscribe {}:{}", topic, message);
+                logger.trace("[MQ] response/subscribe {}:{}", topic, message);
                 try {
                     consumer.accept(message);
                     channel.basicAck(envelope.getDeliveryTag(), false);
                 } catch (Exception e) {
-                    logger.error("[MQ] Rabbit subscribe error.", e);
+                    logger.error("[MQ] Rabbit response/subscribe error.", e);
                 }
             }
         };

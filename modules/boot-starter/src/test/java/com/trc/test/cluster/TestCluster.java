@@ -242,21 +242,6 @@ public class TestCluster {
         //lock
         ClusterDistLock lock = Dew.cluster.dist.lock("test_lock");
         lock.delete();
-        Thread t1 = new Thread(() -> {
-            lock.lock();
-            logger.info("Lock1 > " + Thread.currentThread().getId());
-            try {
-                Thread.sleep(500);
-            } catch (Exception e) {
-                logger.error(e.getMessage());
-                Assert.assertTrue(false);
-            } finally {
-                logger.info("UnLock1 > " + Thread.currentThread().getId());
-                lock.unLock();
-            }
-        });
-        t1.start();
-        t1.join();
         Thread t2 = new Thread(() -> {
             ClusterDistLock lockLocal = Dew.cluster.dist.lock("test_lock");
             try {
@@ -346,7 +331,6 @@ public class TestCluster {
                 e.printStackTrace();
             }
         };
-        clusterDistLock.lockWithFun(voidProcessFun);
         Assert.assertTrue(clusterDistLock.tryLock());
         clusterDistLock.unLock();
         clusterDistLock.tryLockWithFun(voidProcessFun);

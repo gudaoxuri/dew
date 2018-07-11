@@ -3,6 +3,7 @@ package com.tairanchina.csp.dew.core.cluster;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -14,7 +15,7 @@ public interface ClusterMQ {
 
     /**
      * MQ 发布订阅模式 之 发布
-     *
+     * <p>
      * 请确保发布之前 topic 已经存在
      *
      * @param topic   主题
@@ -25,7 +26,7 @@ public interface ClusterMQ {
 
     /**
      * MQ 发布订阅模式 之 订阅
-     *
+     * <p>
      * 非阻塞方式
      *
      * @param topic    主题
@@ -44,12 +45,20 @@ public interface ClusterMQ {
 
     /**
      * MQ 请求响应模式 之 响应
-     *
+     * <p>
      * 非阻塞方式
      *
      * @param address  请求对应的地址
      * @param consumer 响应处理方法
      */
     void response(String address, Consumer<String> consumer);
+
+    default Map<String, Object> getMQHeader(String name) {
+        return Cluster.getMQHeader(name);
+    }
+
+    default void setMQHeader(String name,Map<String, Object> header) {
+        Cluster.setMQHeader(name,header);
+    }
 
 }

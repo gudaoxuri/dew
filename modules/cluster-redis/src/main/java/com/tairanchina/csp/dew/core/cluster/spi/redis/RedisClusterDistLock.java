@@ -9,6 +9,11 @@ import redis.clients.jedis.JedisCommands;
 
 import java.util.Date;
 
+/**
+ * Redis锁实现
+ *
+ * 存在一定几率的错误，见各方法说明
+ */
 public class RedisClusterDistLock implements ClusterDistLock {
 
     private String key;
@@ -17,16 +22,6 @@ public class RedisClusterDistLock implements ClusterDistLock {
     RedisClusterDistLock(String key, RedisTemplate<String, String> redisTemplate) {
         this.key = "dew:dist:lock:" + key;
         this.redisTemplate = redisTemplate;
-    }
-
-    @Override
-    public void lockWithFun(VoidProcessFun fun) throws Exception {
-        try {
-            lock();
-            fun.exec();
-        } finally {
-            unLock();
-        }
     }
 
     @Override
@@ -57,13 +52,8 @@ public class RedisClusterDistLock implements ClusterDistLock {
     }
 
     @Override
-    public void lock() {
-        redisTemplate.opsForValue().setIfAbsent(key, getCurrThreadId());
-    }
-
-    @Override
     public boolean tryLock() {
-        return redisTemplate.opsForValue().setIfAbsent(key, getCurrThreadId()) || redisTemplate.opsForValue().get(key).equals(getCurrThreadId());
+        return redisTemplate.opsForValue().setIfAbsent(key, getCurrThreadId());
     }
 
     @Override
@@ -74,10 +64,9 @@ public class RedisClusterDistLock implements ClusterDistLock {
                 Thread.sleep(100);
             } else {
                 if (tryLock()) {
-                    return Boolean.TRUE;
+                    return true;
                 }
             }
-
         }
         return tryLock();
     }
@@ -96,13 +85,16 @@ public class RedisClusterDistLock implements ClusterDistLock {
                 if (isLocked()) {
                     Thread.sleep(100);
                 } else if (putLockKey(leaseMillSec)) {
-                    return Boolean.TRUE;
+                    return true;
                 }
             }
             return putLockKey(leaseMillSec);
         }
     }
 
+    /**
+     * 存在非原子操作，有误解锁可能
+     */
     @Override
     public boolean unLock() {
         if (getCurrThreadId().equals(redisTemplate.opsForValue().get(key))) {
@@ -127,10 +119,10 @@ public class RedisClusterDistLock implements ClusterDistLock {
         RedisConnection redisConnection = redisTemplate.getConnectionFactory().getConnection();
         String res = ((JedisCommands) redisConnection.getNativeConnection()).set(key, getCurrThreadId(), "NX", "PX", leaseMillSec);
         redisConnection.close();
-        return (res != null && "OK".equalsIgnoreCase(res)) || redisTemplate.opsForValue().get(key).equals(getCurrThreadId());
+        return "OK".equalsIgnoreCase(res);
     }
 
-    private String getCurrThreadId(){
+    private String getCurrThreadId() {
         return Cluster.CLASS_LOAD_UNIQUE_FLAG + "-" + Thread.currentThread().getId();
     }
 }

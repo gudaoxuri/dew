@@ -26,6 +26,7 @@ public class SleuthExampleController {
 
     @GetMapping("ping")
     public String ping(@RequestParam("code") String code) throws InterruptedException {
+        logger.info("ssss");
         return restTemplate.getForObject("http://sleuth-invoke2-example/ping?code=" + code, String.class);
     }
 

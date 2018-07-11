@@ -1,21 +1,17 @@
 == 版本说明
 
-=== 2.0.0-alpha[准备中]
+=== 1.5.0-RC[准备中]
 
 .Features
 * 使用小泰科技Fork版本做为开源版本
 * 添加对Scala的支持
 
-=== 1.3.6-RC
-
-.Features
-* 移除ShardingJDBC的内容
-
-=== 1.3.5-RC
-
-.Features
+.Improvement
+* 分布式锁中删除lock、lockWithFun操作
+* 分布式锁由可重入改为不可重入
 * 将druid更新为1.1.5
 * redis增加hash incr操作 和 hash decr操作
+* 移除ShardingJDBC的内容
 
 === 1.3.4-RC
 
