@@ -22,7 +22,7 @@
         <module>modules/cluster-hazelcast</module>
         <module>modules/cluster-rabbit</module>
         <module>modules/cluster-eureka</module>
-        <module>modules/cluster-kafka</module>
+        <!--<module>modules/cluster-kafka</module>-->
         <module>modules/boot-starter</module>
         <module>modules/cloud-starter</module>
         <module>modules/jdbc-starter</module>
