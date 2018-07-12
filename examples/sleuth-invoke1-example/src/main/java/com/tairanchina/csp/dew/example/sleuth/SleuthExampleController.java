@@ -1,5 +1,6 @@
 package com.tairanchina.csp.dew.example.sleuth;
 
+import com.tairanchina.csp.dew.Dew;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -28,6 +29,13 @@ public class SleuthExampleController {
     public String ping(@RequestParam("code") String code) throws InterruptedException {
         logger.info("ssss");
         return restTemplate.getForObject("http://sleuth-invoke2-example/ping?code=" + code, String.class);
+    }
+
+    @GetMapping("pingmq")
+    public String pingmq(@RequestParam("code") String code) throws InterruptedException {
+        logger.info("测试MQ的Sleuth");
+        boolean publish = Dew.cluster.mq.publish("test712", "message712");
+        return publish+"";
     }
 
     @GetMapping("pong")

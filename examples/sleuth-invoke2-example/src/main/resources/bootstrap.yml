@@ -4,6 +4,13 @@ spring:
   cloud:
     config:
       enabled: false
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /li
+
 
 server:
   port: 8082
@@ -12,3 +19,13 @@ eureka:
   client:
     serviceUrl:
       defaultZone:  http://registry:123456@localhost:9999/eureka
+    eureka-server-read-timeout-seconds: 100
+
+
+
+dew:
+  cluster:
+    cache: redis
+    dist: redis # 可选 redis/hazelcast
+    mq: rabbit # 可选 redis/hazelcast/rabbit
+    election: eureka
