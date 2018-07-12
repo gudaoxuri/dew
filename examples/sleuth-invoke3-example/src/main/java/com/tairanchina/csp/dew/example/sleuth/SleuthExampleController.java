@@ -20,7 +20,13 @@ public class SleuthExampleController {
     @PostMapping("ping")
     public String ping(@RequestBody SomeVO vo) {
         logger.info("收到请求");
-        return sleuthInvoke1Client.pong(vo.code);
+        try {
+            String pong = sleuthInvoke1Client.pong(vo.code);
+            logger.info("pong={}",pong);
+        }catch (Exception e){
+            logger.error("err",e);
+        }
+        return "rest";
     }
 
     public static class SomeVO {

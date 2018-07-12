@@ -29,7 +29,7 @@ public class SleuthLogConfiguration {
             Cluster.initMQHeader(name -> {
                 Span span = tracer.createSpan(name);
                 Long parentId = !span.getParents().isEmpty() ? span.getParents().get(0) : null;
-                return new HashMap<String, Object>() {{
+                HashMap<String, Object> hashMap = new HashMap<String, Object>() {{
                     put(TraceMessageHeaders.TRACE_ID_NAME, Span.idToHex(span.getTraceId()));
                     put(TraceMessageHeaders.SPAN_ID_NAME, Span.idToHex(span.getSpanId()));
                     put(TraceMessageHeaders.SPAN_NAME_NAME, span.getName());
@@ -38,25 +38,27 @@ public class SleuthLogConfiguration {
                         put(Span.PARENT_ID_NAME, Span.idToHex(parentId));
                     }
                 }};
+                tracer.detach(span);
+                return hashMap;
             }, headerWithName -> {
                 String name = (String) headerWithName[0];
                 Map<String, Object> header = (Map<String, Object>) headerWithName[1];
                 if (header == null || header.isEmpty()) {
                     return;
                 }
-                String traceId = header.containsKey(TraceMessageHeaders.TRACE_ID_NAME) ? (String) header.get(TraceMessageHeaders.TRACE_ID_NAME) : null;
+                String traceId = header.containsKey(TraceMessageHeaders.TRACE_ID_NAME) ? String.valueOf(header.get(TraceMessageHeaders.TRACE_ID_NAME)) : null;
                 if (traceId == null) {
                     tracer.createSpan(name);
                 } else {
                     Span.SpanBuilder spanBuilder = Span.builder();
-                    String spanId = header.containsKey(TraceMessageHeaders.SPAN_ID_NAME) ? (String) header.get(TraceMessageHeaders.SPAN_ID_NAME) : traceId;
+                    String spanId = header.containsKey(TraceMessageHeaders.SPAN_ID_NAME) ? String.valueOf(header.get(TraceMessageHeaders.SPAN_ID_NAME)) : traceId;
                     spanBuilder
                             .traceIdHigh(traceId.length() == 32 ? Span.hexToId(traceId, 0) : 0)
                             .traceId(Span.hexToId(traceId))
                             .spanId(Span.hexToId(spanId));
-                    String processId = header.containsKey(TraceMessageHeaders.PROCESS_ID_NAME) ? (String) header.get(TraceMessageHeaders.PROCESS_ID_NAME) : null;
-                    String spanName = header.containsKey(TraceMessageHeaders.SPAN_NAME_NAME) ? (String) header.get(TraceMessageHeaders.SPAN_NAME_NAME) : null;
-                    String parentId = header.containsKey(TraceMessageHeaders.PARENT_ID_NAME) ? (String) header.get(TraceMessageHeaders.PARENT_ID_NAME) : null;
+                    String processId = header.containsKey(TraceMessageHeaders.PROCESS_ID_NAME) ? String.valueOf(header.get(TraceMessageHeaders.PROCESS_ID_NAME)) : null;
+                    String spanName = header.containsKey(TraceMessageHeaders.SPAN_NAME_NAME) ? String.valueOf(header.get(TraceMessageHeaders.SPAN_NAME_NAME)) : null;
+                    String parentId = header.containsKey(TraceMessageHeaders.PARENT_ID_NAME) ? String.valueOf(header.get(TraceMessageHeaders.PARENT_ID_NAME)) : null;
                     if (processId != null) {
                         spanBuilder.processId(processId);
                     }
