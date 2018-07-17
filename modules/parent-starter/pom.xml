@@ -41,6 +41,7 @@
         <api.file.name>index</api.file.name>
         <sonar.host.url></sonar.host.url>
         <mybatisplus-spring-boot-starter.version>1.0.2</mybatisplus-spring-boot-starter.version>
+        <micrometer.version>1.0.5</micrometer.version>
     </properties>
 
     <developers>

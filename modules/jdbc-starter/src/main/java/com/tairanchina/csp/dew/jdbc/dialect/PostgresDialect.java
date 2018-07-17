@@ -9,7 +9,12 @@ class PostgresDialect implements Dialect {
 
     @Override
     public String count(String sql) {
-        return "SELECT COUNT(1) FROM ( " + sql + " ) _" + (Math.abs(sql.hashCode()) & 0x7fffffff);
+        int hashCode = sql.hashCode();
+        if (hashCode != Integer.MIN_VALUE) {
+            return "SELECT COUNT(1) FROM ( " + sql + " ) _" + (Math.abs(hashCode));
+        } else {
+            return "SELECT COUNT(1) FROM ( " + sql + " ) _" + (Math.abs(hashCode) & 0x7fffffff);
+        }
     }
 
     @Override

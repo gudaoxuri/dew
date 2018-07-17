@@ -23,6 +23,21 @@ public class WebExampleController {
 
     private AtomicInteger atomicInteger = new AtomicInteger();
 
+    @GetMapping("/monitor")
+    public String monitor(){
+        return "monitor";
+    }
+    @GetMapping("/monitor2")
+    public String monitor2() throws InterruptedException {
+        Thread.sleep(1000);
+        return "monitor2";
+    }
+
+    @GetMapping("/monitor3")
+    public String monitor3(){
+        return "monitor3";
+    }
+
     /**
      * 最基础的Controller示例
      */
