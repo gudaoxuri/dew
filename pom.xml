@@ -16,6 +16,7 @@
     </properties>
 
     <modules>
+        <module>docs</module>
         <module>modules/parent-starter</module>
         <module>modules/cluster-common</module>
         <module>modules/cluster-redis</module>
