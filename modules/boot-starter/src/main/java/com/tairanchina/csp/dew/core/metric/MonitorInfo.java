@@ -2,6 +2,8 @@ package com.tairanchina.csp.dew.core.metric;
 
 
 
+import com.ecfront.dew.common.$;
+
 import java.util.Map;
 
 public class MonitorInfo {
@@ -248,5 +250,10 @@ public class MonitorInfo {
 
     public void setThreadTimes(Map<String, Double> threadTimes) {
         this.threadTimes = threadTimes;
+    }
+
+    @Override
+    public String toString() {
+        return $.json.toJsonString(this);
     }
 }

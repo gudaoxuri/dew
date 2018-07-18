@@ -33,7 +33,7 @@ public class KafkaTest {
 
     private final Logger logger = LoggerFactory.getLogger(KafkaTest.class);
 
-    @Test
+    //@Test
     public void testAutoCommit() throws Exception {
         logger.info("Start auto");
         ContainerProperties containerProps = new ContainerProperties("topic1", "topic2");

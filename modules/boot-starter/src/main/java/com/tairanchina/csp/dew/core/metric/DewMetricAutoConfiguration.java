@@ -1,11 +1,9 @@
 package com.tairanchina.csp.dew.core.metric;
 
-import com.tairanchina.csp.dew.Dew;
 import com.tairanchina.csp.dew.core.DewConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -16,9 +14,6 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.Filter;
-import java.time.Instant;
-import java.util.Iterator;
-import java.util.Map;
 
 @Configuration
 @EnableConfigurationProperties(DewConfig.class)
@@ -36,20 +31,6 @@ public class DewMetricAutoConfiguration {
     @PostConstruct
     public void init() {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
-        long standardTime = Instant.now().minusSeconds(dewConfig.getMetric().getPeriodSec()).toEpochMilli();
-        Dew.Timer.periodic(60, () -> {
-            for (Map<Long, Integer> map : DewFilter.RECORD_MAP.values()) {
-                Iterator<Map.Entry<Long, Integer>> iterator = map.entrySet().iterator();
-                while (iterator.hasNext()) {
-                    Map.Entry<Long, Integer> entry = iterator.next();
-                    if (entry.getKey() < standardTime) {
-                        iterator.remove();
-                    } else {
-                        break;
-                    }
-                }
-            }
-        });
     }
 
     @Bean
@@ -73,6 +54,4 @@ public class DewMetricAutoConfiguration {
     public DewMetrics dewMetrics() {
         return new DewMetrics(dewConfig);
     }
-
-
 }

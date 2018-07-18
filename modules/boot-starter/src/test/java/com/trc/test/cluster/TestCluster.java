@@ -316,9 +316,10 @@ public class TestCluster {
 //        clusterDistLock.delete();
         boolean flag = clusterDistLock.tryLock();
         Assert.assertTrue(flag);
+        clusterDistLock.unLock();
         boolean flag2 = clusterDistLock.tryLock();
         // 可重入
-        Assert.assertTrue(flag2);
+        Assert.assertTrue("无法再拿到锁", flag2);
         new Thread(() -> {
             Assert.assertFalse(clusterDistLock.tryLock());
             Assert.assertFalse(clusterDistLock.unLock());
@@ -326,12 +327,12 @@ public class TestCluster {
         VoidProcessFun voidProcessFun = () -> {
             try {
                 Thread.sleep(200);
-                Assert.assertTrue(clusterDistLock.tryLock());
+                Assert.assertTrue(!clusterDistLock.tryLock());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         };
-        Assert.assertTrue(clusterDistLock.tryLock());
+        Assert.assertTrue(!clusterDistLock.tryLock());
         clusterDistLock.unLock();
         clusterDistLock.tryLockWithFun(voidProcessFun);
         clusterDistLock.tryLockWithFun(100, 1000, voidProcessFun);

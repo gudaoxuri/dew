@@ -148,8 +148,8 @@ public class MonitorUtil {
                 double cpuUsage = b1.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                 return cpuUsage;
             } catch (InterruptedException e) {
-                Thread.interrupted();
                 logger.error("{\"error\":\"cpuUsage load failed\"}", e);
+                Thread.currentThread().interrupt();
             }
         }
         return 0;
