@@ -1,8 +1,8 @@
 == Dew-Framework
 
 image::https://img.shields.io/travis/gudaoxuri/dew.svg[link="https://travis-ci.org/gudaoxuri/dew"]
-image:https://api.codacy.com/project/badge/Grade/b27405dea94b4b4085324ae6107945ba["Codacy code quality", link="https://www.codacy.com/app/gudaoxuri/dew?utm_source=github.com&utm_medium=referral&utm_content=gudaoxuri/dew&utm_campaign=Badge_Grade"]
-image:https://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2",link="https://www.apache.org/licenses/LICENSE-2.0.txt"]
+image::https://api.codacy.com/project/badge/Grade/b27405dea94b4b4085324ae6107945ba["Codacy code quality", link="https://www.codacy.com/app/gudaoxuri/dew?utm_source=github.com&utm_medium=referral&utm_content=gudaoxuri/dew&utm_campaign=Badge_Grade"]
+image::https://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2",link="https://www.apache.org/licenses/LICENSE-2.0.txt"]
 
 对Spring Cloud/Boot的封装扩展、整合公司现有能力、提供最佳实践，做为基础服务框架，支撑公司新项目地研发。
 
