@@ -28,7 +28,6 @@ public class DewFilter implements Filter {
         String servletPath = httpServletRequest.getServletPath();
         String method = httpServletRequest.getMethod();
         if(!StringUtils.isEmpty(servletPath) && !"/favicon.ico".equalsIgnoreCase(servletPath)){
-            String key = "{[" + method + "]:" + servletPath + "}";
             filterChain.doFilter(servletRequest, servletResponse);
         }else {
             filterChain.doFilter(servletRequest, servletResponse);
