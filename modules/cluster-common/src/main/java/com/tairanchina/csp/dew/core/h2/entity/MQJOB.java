@@ -8,12 +8,22 @@ import java.util.Date;
  * Created by hzlizx on 2018/7/31 0031
  */
 public class MQJOB {
+
+    private String ADDRESS;
     private String JOB_ID;
 
     private String STATUS;
     private String MSG;
 
     private Date CREATED_TIME;
+
+    public String getADDRESS() {
+        return ADDRESS;
+    }
+
+    public void setADDRESS(String ADDRESS) {
+        this.ADDRESS = ADDRESS;
+    }
 
     public String getJOB_ID() {
         return JOB_ID;

@@ -53,16 +53,6 @@ public interface ClusterMQ {
      */
     void response(String address, Consumer<String> consumer);
 
-    /**
-     * MQ 请求响应模式 之 响应
-     * <p>
-     * 非阻塞方式
-     *
-     * @param address  请求对应的地址
-     * @param consumer 响应处理方法
-     */
-    void responseAsyn(String address, int threadNum, Consumer<String> consumer, Consumer<Exception> failed);
-
     default Map<String, Object> getMQHeader(String name) {
         return Cluster.getMQHeader(name);
     }

@@ -1,7 +1,9 @@
 package com.tairanchina.csp.dew.core.cluster.spi.hazelcast;
 
+import com.ecfront.dew.common.$;
 import com.hazelcast.client.HazelcastClientNotActiveException;
 import com.tairanchina.csp.dew.core.cluster.ClusterMQ;
+import com.tairanchina.csp.dew.core.h2.H2Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
@@ -46,11 +48,15 @@ public class HazelcastClusterMQ implements ClusterMQ {
     @Override
     public void response(String address, Consumer<String> consumer) {
         new Thread(() -> {
+            H2Utils.runH2Job(address, consumer);
             try {
                 while (hazelcastAdapter.isActive()) {
                     String message = (String) hazelcastAdapter.getHazelcastInstance().getQueue(address).take();
+                    String uuid = $.field.createUUID();
+                    H2Utils.createJob(address, uuid, "RUNNING", message);
                     logger.trace("[MQ] response {}:{}", address, message);
                     consumer.accept(message);
+                    H2Utils.deleteJob(uuid);
                 }
             } catch (HazelcastClientNotActiveException e) {
                 if (hazelcastAdapter.isActive()) {
@@ -60,11 +66,6 @@ public class HazelcastClusterMQ implements ClusterMQ {
                 logger.error("Hazelcast Response error.", e);
             }
         }).start();
-    }
-
-    @Override
-    public void responseAsyn(String address, int threadNum, Consumer<String> consumer, Consumer<Exception> failed) {
-
     }
 
 }

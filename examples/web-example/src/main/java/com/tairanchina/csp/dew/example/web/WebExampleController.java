@@ -36,6 +36,7 @@ public class WebExampleController {
 
     @GetMapping("/monitor3")
     public String monitor3(){
+        Dew.cluster.mq.request("abc","xxxxx52");
         return "monitor3";
     }
 
@@ -48,11 +49,6 @@ public class WebExampleController {
         for (int i = 0;i<100;i++){
             logger.info(atomicInteger.getAndIncrement()+" Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
         }
-        Dew.cluster.mq.responseAsyn("",1 , msg-> {
-            //todo 接收成功
-        }, exp -> {
-            //todo 接收失败
-        });
         return "enjoy!";
     }
 

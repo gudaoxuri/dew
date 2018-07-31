@@ -1,12 +1,16 @@
 package com.tairanchina.csp.dew.core.cluster.spi.kafka;
 
+import com.ecfront.dew.common.$;
 import com.tairanchina.csp.dew.core.cluster.ClusterMQ;
+import com.tairanchina.csp.dew.core.h2.H2Utils;
+import com.tairanchina.csp.dew.core.h2.entity.MQJOB;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -69,19 +73,25 @@ public class KafkaClusterMQ implements ClusterMQ {
     @Override
     public void response(String topic, Consumer<String> consumer) {
         new Thread(() -> {
+            H2Utils.runH2Job(topic, consumer);
             KafkaConsumer<String, String> kafkaConsumer = kafkaAdapter.getKafkaConsumer(false);
             kafkaConsumer.subscribe(Collections.singletonList(topic));
             while (true) {
                 ConsumerRecords<String, String> records = kafkaConsumer.poll(1000);
-                executorService.execute(() -> records.forEach(record -> consumer.accept(record.value())));
+                executorService.execute(() -> records.forEach(record -> {
+                    try {
+                        String uuid = $.field.createUUID();
+                        H2Utils.createJob(topic, uuid, "RUNNING", record.value());
+                        consumer.accept(record.value());
+                        H2Utils.deleteJob(uuid);
+                    } catch (SQLException e) {
+                        logger.error("insert to h2 error", e);
+                    }
+                }));
             }
         }).start();
     }
 
-    @Override
-    public void responseAsyn(String address, int threadNum, Consumer<String> consumer, Consumer<Exception> failed) {
-
-    }
 
     class KafkaCallBack implements Callback {
 

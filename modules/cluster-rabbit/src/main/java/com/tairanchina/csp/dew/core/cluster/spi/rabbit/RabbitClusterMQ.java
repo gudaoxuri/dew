@@ -185,60 +185,19 @@ public class RabbitClusterMQ implements ClusterMQ {
 
     @Override
     public void response(String address, Consumer<String> consumer) {
-        Channel channel = rabbitAdapter.getConnection().createChannel(false);
-        try {
-            channel.queueDeclare(address, true, false, false, null);
-            channel.basicQos(1);
-            channel.basicConsume(address, false, getDefaultConsumer(channel, address, consumer));
-        } catch (IOException e) {
-            logger.error("[MQ] Rabbit response error.", e);
-        }
-    }
-
-    @Override
-    public void responseAsyn(String address, int threadNum, Consumer<String> consumer, Consumer<Exception> failed) {
-
-        Runnable h2Runnable = () -> {
-            do {
-                try {
-                    MQJOB lastJob = lastJob = H2Utils.getLastJob();
-                    if (lastJob != null) {
-                        consumer.accept(lastJob.getMSG());
-                        H2Utils.deleteJob(lastJob.getJOB_ID());
-                    }
-                } catch (SQLException e) {
-                    logger.error("h2 job run error", e);
-                }
-            } while (true);
-        };
-
-        Runnable runnable = () -> {
-            //1.先消费Redis里存着的没成功的信息
+        new Thread(() -> {
+            H2Utils.runH2Job(address, consumer);
+            Channel channel = rabbitAdapter.getConnection().createChannel(false);
             try {
-                MQJOB lastJob = H2Utils.getLastJob();
-                if (lastJob != null) {
-                    consumer.accept(lastJob.getMSG());
-                    H2Utils.deleteJob(lastJob.getJOB_ID());
-                } else {
-                    Channel channel = rabbitAdapter.getConnection().createChannel(false);
-                    try {
-                        channel.queueDeclare(address, true, false, false, null);
-                        channel.basicQos(1);
-                        channel.basicConsume(address, false, getDefaultConsumerAsyn(channel, address, consumer, failed));
-                    } catch (IOException e) {
-                        logger.error("[MQ] Rabbit response error.", e);
-                        failed.accept(e);
-                    }
-                }
-            } catch (SQLException e) {
-                logger.error("get h2 job error", e);
+                channel.queueDeclare(address, true, false, false, null);
+                channel.basicQos(1);
+                channel.basicConsume(address, false, getDefaultConsumer(channel, address, consumer));
+            } catch (IOException e) {
+                logger.error("[MQ] Rabbit response error.", e);
             }
-        };
-
-        for (int i = 0; i < threadNum; i++) {
-            new Thread(runnable).start();
-        }
+        }).start();
     }
+
 
     private DefaultConsumer getDefaultConsumer(Channel channel, String topic, Consumer<String> consumer) {
         return new DefaultConsumer(channel) {
@@ -248,31 +207,13 @@ public class RabbitClusterMQ implements ClusterMQ {
                 String message = new String(body, "UTF-8");
                 logger.trace("[MQ] response/subscribe {}:{}", topic, message);
                 try {
-                    consumer.accept(message);
-                    channel.basicAck(envelope.getDeliveryTag(), false);
-                } catch (Exception e) {
-                    logger.error("[MQ] Rabbit response/subscribe error.", e);
-                }
-            }
-        };
-    }
-
-    private DefaultConsumer getDefaultConsumerAsyn(Channel channel, String topic, Consumer<String> consumer, Consumer<Exception> failed) {
-        return new DefaultConsumer(channel) {
-            @Override
-            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                setMQHeader(topic, properties.getHeaders());
-                String message = new String(body, "UTF-8");
-                logger.trace("[MQ] response/subscribe {}:{}", topic, message);
-                try {
                     String uuid = $.field.createUUID();
-                    H2Utils.createJob(uuid, "RUNNING", message);
+                    H2Utils.createJob(topic, uuid, "RUNNING", message);
                     consumer.accept(message);
                     channel.basicAck(envelope.getDeliveryTag(), false);
                     H2Utils.deleteJob(uuid);
                 } catch (Exception e) {
                     logger.error("[MQ] Rabbit response/subscribe error.", e);
-                    failed.accept(e);
                 }
             }
         };
