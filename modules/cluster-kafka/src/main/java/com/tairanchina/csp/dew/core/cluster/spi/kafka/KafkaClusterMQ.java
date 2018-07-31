@@ -78,6 +78,11 @@ public class KafkaClusterMQ implements ClusterMQ {
         }).start();
     }
 
+    @Override
+    public void responseAsyn(String address, int threadNum, Consumer<String> consumer, Consumer<Exception> failed) {
+
+    }
+
     class KafkaCallBack implements Callback {
 
         private String message;

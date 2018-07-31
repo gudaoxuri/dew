@@ -73,4 +73,9 @@ public class RedisClusterMQ implements ClusterMQ {
         )).start();
     }
 
+    @Override
+    public void responseAsyn(String address, int threadNum, Consumer<String> consumer, Consumer<Exception> failed) {
+
+    }
+
 }

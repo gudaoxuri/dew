@@ -1,10 +1,16 @@
 package com.tairanchina.csp.dew.core.cluster.spi.rabbit;
 
+import com.ecfront.dew.common.$;
 import com.rabbitmq.client.*;
+import com.tairanchina.csp.dew.core.cluster.Cluster;
 import com.tairanchina.csp.dew.core.cluster.ClusterMQ;
+import com.tairanchina.csp.dew.core.h2.H2Utils;
+import com.tairanchina.csp.dew.core.h2.entity.MQJOB;
+import org.h2.jdbcx.JdbcConnectionPool;
 import org.springframework.amqp.rabbit.connection.Connection;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
@@ -189,6 +195,51 @@ public class RabbitClusterMQ implements ClusterMQ {
         }
     }
 
+    @Override
+    public void responseAsyn(String address, int threadNum, Consumer<String> consumer, Consumer<Exception> failed) {
+
+        Runnable h2Runnable = () -> {
+            do {
+                try {
+                    MQJOB lastJob = lastJob = H2Utils.getLastJob();
+                    if (lastJob != null) {
+                        consumer.accept(lastJob.getMSG());
+                        H2Utils.deleteJob(lastJob.getJOB_ID());
+                    }
+                } catch (SQLException e) {
+                    logger.error("h2 job run error", e);
+                }
+            } while (true);
+        };
+
+        Runnable runnable = () -> {
+            //1.先消费Redis里存着的没成功的信息
+            try {
+                MQJOB lastJob = H2Utils.getLastJob();
+                if (lastJob != null) {
+                    consumer.accept(lastJob.getMSG());
+                    H2Utils.deleteJob(lastJob.getJOB_ID());
+                } else {
+                    Channel channel = rabbitAdapter.getConnection().createChannel(false);
+                    try {
+                        channel.queueDeclare(address, true, false, false, null);
+                        channel.basicQos(1);
+                        channel.basicConsume(address, false, getDefaultConsumerAsyn(channel, address, consumer, failed));
+                    } catch (IOException e) {
+                        logger.error("[MQ] Rabbit response error.", e);
+                        failed.accept(e);
+                    }
+                }
+            } catch (SQLException e) {
+                logger.error("get h2 job error", e);
+            }
+        };
+
+        for (int i = 0; i < threadNum; i++) {
+            new Thread(runnable).start();
+        }
+    }
+
     private DefaultConsumer getDefaultConsumer(Channel channel, String topic, Consumer<String> consumer) {
         return new DefaultConsumer(channel) {
             @Override
@@ -201,6 +252,27 @@ public class RabbitClusterMQ implements ClusterMQ {
                     channel.basicAck(envelope.getDeliveryTag(), false);
                 } catch (Exception e) {
                     logger.error("[MQ] Rabbit response/subscribe error.", e);
+                }
+            }
+        };
+    }
+
+    private DefaultConsumer getDefaultConsumerAsyn(Channel channel, String topic, Consumer<String> consumer, Consumer<Exception> failed) {
+        return new DefaultConsumer(channel) {
+            @Override
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                setMQHeader(topic, properties.getHeaders());
+                String message = new String(body, "UTF-8");
+                logger.trace("[MQ] response/subscribe {}:{}", topic, message);
+                try {
+                    String uuid = $.field.createUUID();
+                    H2Utils.createJob(uuid, "RUNNING", message);
+                    consumer.accept(message);
+                    channel.basicAck(envelope.getDeliveryTag(), false);
+                    H2Utils.deleteJob(uuid);
+                } catch (Exception e) {
+                    logger.error("[MQ] Rabbit response/subscribe error.", e);
+                    failed.accept(e);
                 }
             }
         };

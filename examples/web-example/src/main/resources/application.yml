@@ -4,7 +4,7 @@ spring:
 
 
 server:
-  port: 8086 # http端口号
+  port: 8083 # http端口号
   tomcat:
     max-threads: 1000
 

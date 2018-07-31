@@ -1,5 +1,6 @@
 package com.tairanchina.csp.dew.example.web;
 
+import com.tairanchina.csp.dew.Dew;
 import com.tairanchina.csp.dew.core.validation.CreateGroup;
 import com.tairanchina.csp.dew.core.validation.IdNumber;
 import com.tairanchina.csp.dew.core.validation.Phone;
@@ -47,6 +48,11 @@ public class WebExampleController {
         for (int i = 0;i<100;i++){
             logger.info(atomicInteger.getAndIncrement()+" Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
         }
+        Dew.cluster.mq.responseAsyn("",1 , msg-> {
+            //todo 接收成功
+        }, exp -> {
+            //todo 接收失败
+        });
         return "enjoy!";
     }
 

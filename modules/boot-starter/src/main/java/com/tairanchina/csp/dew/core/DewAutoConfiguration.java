@@ -1,6 +1,10 @@
 package com.tairanchina.csp.dew.core;
 
+import com.ecfront.dew.common.$;
 import com.tairanchina.csp.dew.Dew;
+import com.tairanchina.csp.dew.core.cluster.Cluster;
+import com.tairanchina.csp.dew.core.h2.H2Utils;
+import com.tairanchina.csp.dew.core.h2.entity.MQJOB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * desription:
@@ -27,7 +32,8 @@ public class DewAutoConfiguration {
     private String applicationName;
 
     @PostConstruct
-    public void init() {
+    public void init() throws SQLException {
+        Cluster.initH2Database(null, null, null);
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 
