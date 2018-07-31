@@ -44,6 +44,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--引入集群依赖，可选redis/hazelcast/rabbit/ignite/eureka-->
+        <dependency>
+            <groupId>com.tairanchina.csp.dew</groupId>
+            <artifactId>cluster-spi-redis</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

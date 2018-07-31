@@ -1,10 +1,16 @@
 package com.tairanchina.csp.dew.core.cluster.spi.rabbit;
 
+import com.ecfront.dew.common.$;
 import com.rabbitmq.client.*;
+import com.tairanchina.csp.dew.core.cluster.Cluster;
 import com.tairanchina.csp.dew.core.cluster.ClusterMQ;
+import com.tairanchina.csp.dew.core.h2.H2Utils;
+import com.tairanchina.csp.dew.core.h2.entity.MQJOB;
+import org.h2.jdbcx.JdbcConnectionPool;
 import org.springframework.amqp.rabbit.connection.Connection;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
@@ -179,15 +185,19 @@ public class RabbitClusterMQ implements ClusterMQ {
 
     @Override
     public void response(String address, Consumer<String> consumer) {
-        Channel channel = rabbitAdapter.getConnection().createChannel(false);
-        try {
-            channel.queueDeclare(address, true, false, false, null);
-            channel.basicQos(1);
-            channel.basicConsume(address, false, getDefaultConsumer(channel, address, consumer));
-        } catch (IOException e) {
-            logger.error("[MQ] Rabbit response error.", e);
-        }
+        new Thread(() -> {
+            H2Utils.runH2Job(address, consumer);
+            Channel channel = rabbitAdapter.getConnection().createChannel(false);
+            try {
+                channel.queueDeclare(address, true, false, false, null);
+                channel.basicQos(1);
+                channel.basicConsume(address, false, getDefaultConsumer(channel, address, consumer));
+            } catch (IOException e) {
+                logger.error("[MQ] Rabbit response error.", e);
+            }
+        }).start();
     }
+
 
     private DefaultConsumer getDefaultConsumer(Channel channel, String topic, Consumer<String> consumer) {
         return new DefaultConsumer(channel) {
@@ -197,8 +207,11 @@ public class RabbitClusterMQ implements ClusterMQ {
                 String message = new String(body, "UTF-8");
                 logger.trace("[MQ] response/subscribe {}:{}", topic, message);
                 try {
+                    String uuid = $.field.createUUID();
+                    H2Utils.createJob(topic, uuid, "RUNNING", message);
                     consumer.accept(message);
                     channel.basicAck(envelope.getDeliveryTag(), false);
+                    H2Utils.deleteJob(uuid);
                 } catch (Exception e) {
                     logger.error("[MQ] Rabbit response/subscribe error.", e);
                 }

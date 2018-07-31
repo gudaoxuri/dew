@@ -1,5 +1,6 @@
 package com.tairanchina.csp.dew.example.web;
 
+import com.tairanchina.csp.dew.Dew;
 import com.tairanchina.csp.dew.core.validation.CreateGroup;
 import com.tairanchina.csp.dew.core.validation.IdNumber;
 import com.tairanchina.csp.dew.core.validation.Phone;
@@ -35,6 +36,7 @@ public class WebExampleController {
 
     @GetMapping("/monitor3")
     public String monitor3(){
+        Dew.cluster.mq.request("abc","xxxxx52");
         return "monitor3";
     }
 

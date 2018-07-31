@@ -57,8 +57,8 @@ public interface ClusterMQ {
         return Cluster.getMQHeader(name);
     }
 
-    default void setMQHeader(String name,Map<String, Object> header) {
-        Cluster.setMQHeader(name,header);
+    default void setMQHeader(String name, Map<String, Object> header) {
+        Cluster.setMQHeader(name, header);
     }
 
 }

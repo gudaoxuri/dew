@@ -88,7 +88,7 @@
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>swagger-bootstrap-ui</artifactId>
-            <version>1.7</version>
+            <version>${swagger-bootstrap-ui.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
