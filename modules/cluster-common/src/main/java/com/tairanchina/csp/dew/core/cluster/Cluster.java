@@ -30,10 +30,10 @@ public class Cluster {
         logger.info("init h2 database...");
         try {
             H2Utils.init(url, user, password);
+            logger.info("h2 database initialized");
         } catch (SQLException e) {
             logger.error("init h2 database error", e);
         }
-        logger.info("h2 database initialized");
     }
 
     public static Map<String, Object> getMQHeader(String name) {

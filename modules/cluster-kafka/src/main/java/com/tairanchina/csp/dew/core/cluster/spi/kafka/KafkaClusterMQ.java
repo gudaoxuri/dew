@@ -3,7 +3,6 @@ package com.tairanchina.csp.dew.core.cluster.spi.kafka;
 import com.ecfront.dew.common.$;
 import com.tairanchina.csp.dew.core.cluster.ClusterMQ;
 import com.tairanchina.csp.dew.core.h2.H2Utils;
-import com.tairanchina.csp.dew.core.h2.entity.MQJOB;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.Callback;

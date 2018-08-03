@@ -1,6 +1,6 @@
 package com.tairanchina.csp.dew.core.h2;
 
-import com.tairanchina.csp.dew.core.h2.entity.MQJOB;
+import com.tairanchina.csp.dew.core.h2.entity.Job;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.h2.util.StringUtils;
 import org.slf4j.Logger;
@@ -22,28 +22,29 @@ public class H2Utils {
 
     /**
      * 初始化H2数据库
-     * @param url       地址（默认 jdbc:h2:data/cluster）
-     * @param user      用户名（默认 default_user）
-     * @param password  密码（默认 default_password）
+     *
+     * @param url      地址（默认 jdbc:h2:data/cluster）
+     * @param user     用户名（默认 default_user）
+     * @param pd       密码（默认 default_password）
      */
-    public static void init(String url, String user, String password) throws SQLException {
-        if(StringUtils.isNullOrEmpty(url)){
+    public static void init(String url, String user, String pd) throws SQLException {
+        if (StringUtils.isNullOrEmpty(url)) {
             url = "jdbc:h2:./data/cluster";
         }
-        if(StringUtils.isNullOrEmpty(user)){
+        if (StringUtils.isNullOrEmpty(user)) {
             user = "default_user";
         }
-        if(StringUtils.isNullOrEmpty(password)){
-            password = "default_password";
+        if (StringUtils.isNullOrEmpty(pd)) {
+            pd = "default_password";
         }
-        jdbcConnectionPool = JdbcConnectionPool.create(url, user, password);
+        jdbcConnectionPool = JdbcConnectionPool.create(url, user, pd);
         Connection conn = null;
         Statement stmt = null;
         try {
             conn = jdbcConnectionPool.getConnection();
             DatabaseMetaData meta = conn.getMetaData();
             ResultSet rsTables = meta.getTables(null, null, "MQ_JOB_2",
-                    new String[] { "TABLE" });
+                    new String[]{"TABLE"});
             if (!rsTables.next()) {
                 stmt = conn.createStatement();
                 stmt.execute("CREATE TABLE IF NOT EXISTS MQ_JOB_2(ADDRESS VARCHAR(1024),JOB_ID VARCHAR(1024),STATUS VARCHAR(1024),MSG TEXT,CREATED_TIME TIMESTAMP ,PRIMARY KEY(JOB_ID))");
@@ -66,8 +67,8 @@ public class H2Utils {
     }
 
 
-    public static boolean createJob(String address,String jobId,String status,String msg) throws SQLException {
-        if(!inited){
+    public static boolean createJob(String address, String jobId, String status, String msg) throws SQLException {
+        if (!inited) {
             throw new SQLException("H2 not initialized");
         }
         Connection conn = null;
@@ -88,7 +89,7 @@ public class H2Utils {
     }
 
     public static boolean deleteJob(String jobId) throws SQLException {
-        if(!inited){
+        if (!inited) {
             throw new SQLException("H2 not initialized");
         }
         Connection conn = null;
@@ -105,8 +106,8 @@ public class H2Utils {
     }
 
 
-    public static MQJOB getJob(String jobId) throws SQLException {
-        if(!inited){
+    public static Job getJob(String jobId) throws SQLException {
+        if (!inited) {
             throw new SQLException("H2 not initialized");
         }
         Connection conn = null;
@@ -118,24 +119,14 @@ public class H2Utils {
                     .prepareStatement("SELECT * FROM MQ_JOB_2 WHERE JOB_ID=?");
             stmt.setString(1, jobId);
             rs = stmt.executeQuery();
-            if(rs.next()){
-                MQJOB mqjob = new MQJOB();
-                mqjob.setADDRESS(rs.getString(1));
-                mqjob.setJOB_ID(rs.getString(2));
-                mqjob.setSTATUS(rs.getString(3));
-                mqjob.setMSG(rs.getString(4));
-                mqjob.setCREATED_TIME(rs.getDate(5));
-                return mqjob;
-            }else {
-                return null;
-            }
+            return convertResultSetToJob(rs);
         } finally {
             releaseConnection(conn, stmt, null);
         }
     }
 
-    public static MQJOB getLastJob(String address) throws SQLException {
-        if(!inited){
+    public static Job getLastJob(String address) throws SQLException {
+        if (!inited) {
             throw new SQLException("H2 not initialized");
         }
         Connection conn = null;
@@ -147,30 +138,20 @@ public class H2Utils {
                     .prepareStatement("SELECT * FROM MQ_JOB_2 where ADDRESS = ? ORDER BY CREATED_TIME DESC LIMIT 0,1");
             stmt.setString(1, address);
             rs = stmt.executeQuery();
-            if(rs.next()){
-                MQJOB mqjob = new MQJOB();
-                mqjob.setADDRESS(rs.getString(1));
-                mqjob.setJOB_ID(rs.getString(2));
-                mqjob.setSTATUS(rs.getString(3));
-                mqjob.setMSG(rs.getString(4));
-                mqjob.setCREATED_TIME(rs.getDate(5));
-                return mqjob;
-            }else {
-                return null;
-            }
+            return convertResultSetToJob(rs);
         } finally {
             releaseConnection(conn, stmt, null);
         }
     }
 
-    public static void runH2Job(String address,Consumer<String> consumer){
+    public static void runH2Job(String address, Consumer<String> consumer) {
         do {
             try {
-                MQJOB lastJob = lastJob = H2Utils.getLastJob(address);
+                Job lastJob = H2Utils.getLastJob(address);
                 if (lastJob != null) {
                     logger.info("accept message from h2");
-                    consumer.accept(lastJob.getMSG());
-                    H2Utils.deleteJob(lastJob.getJOB_ID());
+                    consumer.accept(lastJob.getMsg());
+                    H2Utils.deleteJob(lastJob.getJobId());
                 } else {
                     logger.info("message from h2 clean");
                     break;
@@ -192,6 +173,23 @@ public class H2Utils {
         }
         if (conn != null) {
             conn.close();
+        }
+    }
+
+    private static Job convertResultSetToJob(ResultSet rs) throws SQLException {
+        if (rs == null) {
+            return null;
+        }
+        if (rs.next()) {
+            Job job = new Job();
+            job.setAddress(rs.getString(1));
+            job.setJobId(rs.getString(2));
+            job.setStatus(rs.getString(3));
+            job.setMsg(rs.getString(4));
+            job.setCreatedTime(rs.getDate(5));
+            return job;
+        } else {
+            return null;
         }
     }
 }
