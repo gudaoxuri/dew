@@ -2,15 +2,11 @@ package com.tairanchina.csp.dew.core.cluster.spi.rabbit;
 
 import com.ecfront.dew.common.$;
 import com.rabbitmq.client.*;
-import com.tairanchina.csp.dew.core.cluster.Cluster;
 import com.tairanchina.csp.dew.core.cluster.ClusterMQ;
 import com.tairanchina.csp.dew.core.h2.H2Utils;
-import com.tairanchina.csp.dew.core.h2.entity.MQJOB;
-import org.h2.jdbcx.JdbcConnectionPool;
 import org.springframework.amqp.rabbit.connection.Connection;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 

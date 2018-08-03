@@ -1,10 +1,7 @@
 package com.tairanchina.csp.dew.core;
 
-import com.ecfront.dew.common.$;
 import com.tairanchina.csp.dew.Dew;
 import com.tairanchina.csp.dew.core.cluster.Cluster;
-import com.tairanchina.csp.dew.core.h2.H2Utils;
-import com.tairanchina.csp.dew.core.h2.entity.MQJOB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

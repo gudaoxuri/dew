@@ -3,11 +3,9 @@ package com.tairanchina.csp.dew.core.cluster.spi.redis;
 import com.ecfront.dew.common.$;
 import com.tairanchina.csp.dew.core.cluster.ClusterMQ;
 import com.tairanchina.csp.dew.core.h2.H2Utils;
-import com.tairanchina.csp.dew.core.h2.entity.MQJOB;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.function.Consumer;
 
