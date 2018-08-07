@@ -2,7 +2,6 @@ package com.tairanchina.csp.dew.core.logger;
 
 import com.tairanchina.csp.dew.Dew;
 import com.tairanchina.csp.dew.core.DewCloudConfig;
-import com.tairanchina.csp.dew.core.DewConfig;
 import com.tairanchina.csp.dew.core.cluster.Cluster;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

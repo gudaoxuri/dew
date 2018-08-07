@@ -47,7 +47,7 @@ public class DewLoggerWebMvcConfigurer extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    Client client(BeanFactory beanFactory){
+    public Client client(BeanFactory beanFactory){
         return new TraceLogFeignClient(beanFactory); //对Client进行重新包装
     }
 }
