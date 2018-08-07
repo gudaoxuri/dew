@@ -1,8 +1,10 @@
 package com.tairanchina.csp.dew.core.logger;
 
+import com.tairanchina.csp.dew.core.DewCloudConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -20,6 +22,9 @@ import javax.annotation.PostConstruct;
 public class DewLoggerWebMvcConfigurer extends WebMvcConfigurerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(DewLoggerWebMvcConfigurer.class);
+
+    @Autowired
+    private DewCloudConfig dewCloudConfig;
 
     @PostConstruct
     private void init(){
@@ -47,6 +52,10 @@ public class DewLoggerWebMvcConfigurer extends WebMvcConfigurerAdapter {
 
     @Bean
     public TraceLogBeanPostProcessor traceLogBeanPostProcessor(BeanFactory beanFactory){
-        return new TraceLogBeanPostProcessor(beanFactory); //对Client进行重新包装
+        if(dewCloudConfig.getTraceLog().isEnabled()){
+            return new TraceLogBeanPostProcessor(beanFactory); //对Client进行重新包装
+        }else {
+            return null;
+        }
     }
 }

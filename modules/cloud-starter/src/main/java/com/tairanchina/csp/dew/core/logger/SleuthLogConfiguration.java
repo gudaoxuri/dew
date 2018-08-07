@@ -23,11 +23,16 @@ public class SleuthLogConfiguration {
     @Autowired
     private Tracer tracer;
 
+    @Autowired
+    private DewCloudConfig dewCloudConfig;
+
     @PostConstruct
     public void init() {
         if (Dew.cluster != null && Dew.cluster.mq != null) {
             Cluster.initMQHeader(name -> {
-                DewTraceLogWrap.request("Cluster", "request", null);
+                if(dewCloudConfig.getTraceLog().isEnabled()){
+                    DewTraceLogWrap.request("Cluster", "request", name);
+                }
                 Span span = tracer.createSpan(name);
                 Long parentId = !span.getParents().isEmpty() ? span.getParents().get(0) : null;
                 HashMap<String, Object> hashMap = new HashMap<String, Object>() {{
@@ -42,8 +47,10 @@ public class SleuthLogConfiguration {
                 tracer.detach(span);
                 return hashMap;
             }, headerWithName -> {
-                DewTraceLogWrap.response("Cluster", 200, "response", null);
                 String name = (String) headerWithName[0];
+                if(dewCloudConfig.getTraceLog().isEnabled()){
+                    DewTraceLogWrap.response("Cluster", 200, "response", name);
+                }
                 Map<String, Object> header = (Map<String, Object>) headerWithName[1];
                 if (header == null || header.isEmpty()) {
                     return;
