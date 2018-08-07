@@ -1,6 +1,5 @@
 package com.tairanchina.csp.dew.core.logger;
 
-import feign.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -47,7 +46,7 @@ public class DewLoggerWebMvcConfigurer extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public Client client(BeanFactory beanFactory){
-        return new TraceLogFeignClient(beanFactory); //对Client进行重新包装
+    public TraceLogBeanPostProcessor traceLogBeanPostProcessor(BeanFactory beanFactory){
+        return new TraceLogBeanPostProcessor(beanFactory); //对Client进行重新包装
     }
 }
