@@ -34,7 +34,7 @@ eureka:
     health-check-url-path: ${management.context-path}/health
   client:
     serviceUrl:
-      defaultZone: http://registry:123456@localhost:9999/eureka
+      defaultZone: # eureka addresss e.g. http://username:pwd@localhost:9999/eureka
 management:
   security:
     enabled: false
