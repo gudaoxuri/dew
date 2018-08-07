@@ -1,7 +1,9 @@
 package com.tairanchina.csp.dew.core.logger;
 
+import feign.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -44,4 +46,8 @@ public class DewLoggerWebMvcConfigurer extends WebMvcConfigurerAdapter {
         return new RestTemplate();
     }
 
+    @Bean
+    Client client(BeanFactory beanFactory){
+        return new TraceLogFeignClient(beanFactory); //对Client进行重新包装
+    }
 }

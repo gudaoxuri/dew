@@ -13,10 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package feign;
+package feign1;
 
 import com.tairanchina.csp.dew.core.logger.DewTraceLogWrap;
+import feign.Request;
 import feign.Request.Options;
+import feign.Response;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -40,6 +42,7 @@ import static java.lang.String.format;
  * Submits HTTP {@link Request requests}. Implementations are expected to be thread-safe.
  */
 // fixme 使用更优雅的方式
+@Deprecated
 public interface Client {
 
   /**

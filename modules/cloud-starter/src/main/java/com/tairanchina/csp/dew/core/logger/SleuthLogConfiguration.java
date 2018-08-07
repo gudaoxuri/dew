@@ -2,6 +2,7 @@ package com.tairanchina.csp.dew.core.logger;
 
 import com.tairanchina.csp.dew.Dew;
 import com.tairanchina.csp.dew.core.DewCloudConfig;
+import com.tairanchina.csp.dew.core.DewConfig;
 import com.tairanchina.csp.dew.core.cluster.Cluster;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -27,6 +28,7 @@ public class SleuthLogConfiguration {
     public void init() {
         if (Dew.cluster != null && Dew.cluster.mq != null) {
             Cluster.initMQHeader(name -> {
+                DewTraceLogWrap.request("Cluster", "request", null);
                 Span span = tracer.createSpan(name);
                 Long parentId = !span.getParents().isEmpty() ? span.getParents().get(0) : null;
                 HashMap<String, Object> hashMap = new HashMap<String, Object>() {{
@@ -41,6 +43,7 @@ public class SleuthLogConfiguration {
                 tracer.detach(span);
                 return hashMap;
             }, headerWithName -> {
+                DewTraceLogWrap.response("Cluster", 200, "response", null);
                 String name = (String) headerWithName[0];
                 Map<String, Object> header = (Map<String, Object>) headerWithName[1];
                 if (header == null || header.isEmpty()) {
