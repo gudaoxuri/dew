@@ -1,17 +1,3 @@
-#spring:
-#  application:
-#    name: config
-#  profiles:
-#    active: native
-#  cloud:
-#    config:
-#      server:
-#        native:
-#          searchLocations: file:/C:/Users/i/OneDrive/projects/tairan/projects/dew-framework/env
-##        git:
-##          uri: https://code.aliyun.com/wangzi/ws.sp.config_file.git
-##          username: root
-##          password: 123456
 spring:
   application:
     name: config
@@ -21,19 +7,16 @@ spring:
     config:
       server:
         git:
-          uri: https://rep.360taihe.com/env/fake.git
+          uri: # git addresss. e.g. github.com
           repos:
-            crm:
-              pattern: crm*
-              uri: https://rep.360taihe.com/env/crm.git
-            springcloudtest:
-              pattern: springcloudtest*
-              uri: https://rep.360taihe.com/env/springcloudtest.git
-            fd:
-              pattern: fd*
-              uri: https://rep.360taihe.com/env/fd.git
-          username: cdman
-          password: cdman123
+            dew:
+              pattern: # application name pattern. e.g. dew*
+              uri: # application setting file addresss https://www.github.com/env/dew.git
+            other1:
+              pattern: # other1*
+              uri: # https://www.github.com/env/other1.git
+          username: # git username
+          password: # git pwd
 #endpoints:
 #  restart:
 #    enabled: true
@@ -43,20 +26,20 @@ server:
   port: 9000
 
 encrypt:
-  key: sdk$30o#@#$$SDX
+  key: # to support config server encryption
 
 security:
   basic:
     enabled: true
   user:
-    name: config
-    password: 123456
+    name: # setting config server username
+    password: # setting config server password
 
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
     serviceUrl:
-      defaultZone: http://registry:123456@localhost:9999/eureka
+      defaultZone: # eureka addresss e.g. http://username:pwd@localhost:9999/eureka
 logging:
   path: ./logs
