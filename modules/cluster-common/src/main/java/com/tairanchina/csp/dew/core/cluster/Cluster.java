@@ -37,11 +37,17 @@ public class Cluster {
     }
 
     public static Map<String, Object> getMQHeader(String name) {
-        return _mqGetHeader.apply(name);
+        if(_mqGetHeader!=null){
+            return _mqGetHeader.apply(name);
+        }else {
+            return null;
+        }
     }
 
     public static void setMQHeader(String name, Map<String, Object> header) {
-        _mqSetHeader.accept(new Object[]{name, header});
+        if(_mqSetHeader!=null){
+            _mqSetHeader.accept(new Object[]{name, header});
+        }
     }
 
     /**

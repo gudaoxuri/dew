@@ -17,7 +17,6 @@ import javax.annotation.PostConstruct;
 @Configuration
 @ConditionalOnWebApplication
 public class DewLoggerWebMvcConfigurer extends WebMvcConfigurerAdapter {
-
     private static final Logger logger = LoggerFactory.getLogger(DewLoggerWebMvcConfigurer.class);
 
     @PostConstruct
@@ -43,5 +42,4 @@ public class DewLoggerWebMvcConfigurer extends WebMvcConfigurerAdapter {
     protected RestTemplate restTemplate() {
         return new RestTemplate();
     }
-
 }
