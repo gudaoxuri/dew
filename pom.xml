@@ -12,7 +12,6 @@
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
-        <sonar.host.url>http://10.200.131.24:9000</sonar.host.url>
     </properties>
 
     <modules>

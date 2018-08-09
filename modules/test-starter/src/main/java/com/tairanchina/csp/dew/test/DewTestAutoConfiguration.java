@@ -1,6 +1,5 @@
 package com.tairanchina.csp.dew.test;
 
-import com.tairanchina.csp.dew.core.loding.DewLoadImmediately;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import javax.annotation.PreDestroy;
 import java.io.IOException;
 
 @Configuration
-@DewLoadImmediately
 public class DewTestAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(DewTestAutoConfiguration.class);

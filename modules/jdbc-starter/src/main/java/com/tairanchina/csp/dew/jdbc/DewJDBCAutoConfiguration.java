@@ -1,13 +1,12 @@
 package com.tairanchina.csp.dew.jdbc;
 
 import com.tairanchina.csp.dew.Dew;
-import com.tairanchina.csp.dew.core.loding.DewLoadImmediately;
+import com.tairanchina.csp.dew.core.loading.DewLoadImmediately;
 import com.tairanchina.csp.dew.jdbc.config.DewJDBCConfig;
 import com.tairanchina.csp.dew.jdbc.entity.EntityContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.GenericApplicationContext;

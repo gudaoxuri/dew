@@ -55,9 +55,7 @@ public class RedisClusterMQ implements ClusterMQ {
     }
 
     @Override
-    public void response(String address, Consumer<String> consumer) {
-        new Thread(() -> {
-            H2Utils.runH2Job(address, consumer);
+    public void doResponse(String address, Consumer<String> consumer) {
             redisTemplate.execute((RedisCallback<Void>) connection -> {
                         try {
                             while (!connection.isClosed()) {
@@ -78,6 +76,5 @@ public class RedisClusterMQ implements ClusterMQ {
                         return null;
                     }
             );
-        }).start();
     }
 }

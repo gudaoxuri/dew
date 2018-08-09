@@ -40,7 +40,6 @@ import java.nio.file.Paths;
 @ConditionalOnProperty(prefix = "dew.basic.doc", name = "enabled", havingValue = "true", matchIfMissing = true)
 @ConditionalOnClass(EnableSwagger2.class)
 @EnableSwagger2
-@Profile({"default", "test", "dev"})
 public class DocProcessor implements ApplicationListener<EmbeddedServletContainerInitializedEvent> {
 
     private static final Logger logger = LoggerFactory.getLogger(DocProcessor.class);

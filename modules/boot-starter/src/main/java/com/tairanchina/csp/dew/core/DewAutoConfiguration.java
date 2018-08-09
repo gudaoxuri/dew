@@ -29,8 +29,8 @@ public class DewAutoConfiguration {
     private String applicationName;
 
     @PostConstruct
-    public void init() throws SQLException {
-        Cluster.initH2Database(null, null, null);
+    public void init() {
+        Cluster.checkpoint();
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 

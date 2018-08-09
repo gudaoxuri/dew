@@ -10,10 +10,6 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 
-/**
- * desription:
- * Created by ding on 2018/1/25.
- */
 @Configuration
 public class RabbitAutoConfiguration {
 

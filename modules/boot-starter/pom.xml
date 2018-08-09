@@ -13,11 +13,11 @@
 
     <artifactId>boot-starter</artifactId>
     <name>Dew Boot Starter</name>
+    <version>${dew.version}</version>
     <description>Dew Spring Boot 封装</description>
     <packaging>jar</packaging>
 
     <properties>
-        <sonar.host.url>http://10.200.131.24:9000</sonar.host.url>
     </properties>
 
     <dependencies>
@@ -54,11 +54,11 @@
             <artifactId>cluster-spi-rabbit</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
+       <!-- <dependency>
             <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cluster-spi-kafka</artifactId>
             <optional>true</optional>
-        </dependency>
+        </dependency>-->
         <!-- <dependency>
              <groupId>com.tairanchina.csp.dew</groupId>
              <artifactId>cluster-spi-ignite</artifactId>
