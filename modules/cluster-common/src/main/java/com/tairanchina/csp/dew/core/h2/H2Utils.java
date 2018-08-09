@@ -27,17 +27,17 @@ public class H2Utils {
      * @param user     用户名（默认 default_user）
      * @param pd       密码（默认 default_password）
      */
-    public static void init(String url, String user, String pd) throws SQLException {
+    public static void init(String url, String user, String pwd) throws SQLException {
         if (StringUtils.isNullOrEmpty(url)) {
             url = "jdbc:h2:./data/cluster";
         }
         if (StringUtils.isNullOrEmpty(user)) {
             user = "default_user";
         }
-        if (StringUtils.isNullOrEmpty(pd)) {
-            pd = "default_password";
+        if (StringUtils.isNullOrEmpty(pwd)) {
+            pwd = "default_password";
         }
-        jdbcConnectionPool = JdbcConnectionPool.create(url, user, pd);
+        jdbcConnectionPool = JdbcConnectionPool.create(url, user, pwd);
         Connection conn = null;
         Statement stmt = null;
         try {
@@ -54,8 +54,6 @@ public class H2Utils {
         } finally {
             releaseConnection(conn, stmt, null);
         }
-
-
     }
 
     public static JdbcConnectionPool getJdbcConnectionPool() {
@@ -131,7 +129,7 @@ public class H2Utils {
         }
         Connection conn = null;
         PreparedStatement stmt = null;
-        ResultSet rs = null;
+        ResultSet rs ;
         try {
             conn = jdbcConnectionPool.getConnection();
             stmt = conn

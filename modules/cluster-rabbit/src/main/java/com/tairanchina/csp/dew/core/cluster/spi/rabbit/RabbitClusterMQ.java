@@ -7,6 +7,7 @@ import com.tairanchina.csp.dew.core.h2.H2Utils;
 import org.springframework.amqp.rabbit.connection.Connection;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
@@ -20,7 +21,7 @@ public class RabbitClusterMQ implements ClusterMQ {
 
     @Override
     public boolean publish(String topic, String message) {
-        return publish(topic, message, false);
+        return publish(topic, message, true);
     }
 
     public boolean publish(String topic, String message, boolean confirm) {
@@ -135,7 +136,7 @@ public class RabbitClusterMQ implements ClusterMQ {
 
     @Override
     public boolean request(String address, String message) {
-        return request(address, message, false);
+        return request(address, message, true);
     }
 
     public boolean request(String address, String message, boolean confirm) {
@@ -180,18 +181,15 @@ public class RabbitClusterMQ implements ClusterMQ {
     }
 
     @Override
-    public void response(String address, Consumer<String> consumer) {
-        new Thread(() -> {
-            H2Utils.runH2Job(address, consumer);
-            Channel channel = rabbitAdapter.getConnection().createChannel(false);
-            try {
-                channel.queueDeclare(address, true, false, false, null);
-                channel.basicQos(1);
-                channel.basicConsume(address, false, getDefaultConsumer(channel, address, consumer));
-            } catch (IOException e) {
-                logger.error("[MQ] Rabbit response error.", e);
-            }
-        }).start();
+    public void doResponse(String address, Consumer<String> consumer) {
+        Channel channel = rabbitAdapter.getConnection().createChannel(false);
+        try {
+            channel.queueDeclare(address, true, false, false, null);
+            channel.basicQos(1);
+            channel.basicConsume(address, false, getDefaultConsumer(channel, address, consumer));
+        } catch (IOException e) {
+            logger.error("[MQ] Rabbit response error.", e);
+        }
     }
 
 
@@ -200,7 +198,7 @@ public class RabbitClusterMQ implements ClusterMQ {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 setMQHeader(topic, properties.getHeaders());
-                String message = new String(body, "UTF-8");
+                String message = new String(body, StandardCharsets.UTF_8);
                 logger.trace("[MQ] response/subscribe {}:{}", topic, message);
                 try {
                     String uuid = $.field.createUUID();

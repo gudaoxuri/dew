@@ -1,8 +1,10 @@
 package com.tairanchina.csp.dew.core.cluster;
 
+import com.tairanchina.csp.dew.core.h2.H2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -51,7 +53,14 @@ public interface ClusterMQ {
      * @param address  请求对应的地址
      * @param consumer 响应处理方法
      */
-    void response(String address, Consumer<String> consumer);
+    default void response(String address, Consumer<String> consumer){
+        new Thread(() -> {
+            H2Utils.runH2Job(address, consumer);
+            doResponse(address,consumer);
+        }).start();
+    }
+
+    void doResponse(String address, Consumer<String> consumer);
 
     default Map<String, Object> getMQHeader(String name) {
         return Cluster.getMQHeader(name);

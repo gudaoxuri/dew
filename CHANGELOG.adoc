@@ -1,4 +1,5 @@
 ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
+
 == 版本说明
 
 === 1.5.0-RC[准备中]

@@ -46,9 +46,7 @@ public class HazelcastClusterMQ implements ClusterMQ {
     }
 
     @Override
-    public void response(String address, Consumer<String> consumer) {
-        new Thread(() -> {
-            H2Utils.runH2Job(address, consumer);
+    public void doResponse(String address, Consumer<String> consumer) {
             try {
                 while (hazelcastAdapter.isActive()) {
                     String message = (String) hazelcastAdapter.getHazelcastInstance().getQueue(address).take();
@@ -65,7 +63,6 @@ public class HazelcastClusterMQ implements ClusterMQ {
             } catch (Exception e) {
                 logger.error("Hazelcast Response error.", e);
             }
-        }).start();
     }
 
 }

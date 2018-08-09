@@ -7,8 +7,6 @@ import com.tairanchina.csp.dew.Dew;
 import com.tairanchina.csp.dew.core.DewCloudConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.util.ConcurrentReferenceHashMap;
@@ -62,9 +60,7 @@ public class FailureEventNotifier extends HystrixEventNotifier {
     @Override
     public void markEvent(HystrixEventType eventType, HystrixCommandKey key) {
         if (eventType == HystrixEventType.SUCCESS) {
-            if (failureInfo.containsKey(key.name())) {
-                failureInfo.remove(key.name());
-            }
+            failureInfo.remove(key.name());
             return;
         }
         if (!notifyIncludeKeys.isEmpty() && !notifyIncludeKeys.contains(key.name())) {
@@ -93,7 +89,7 @@ public class FailureEventNotifier extends HystrixEventNotifier {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(emailFrom);
             message.setTo(dewCloudConfig.getError().getNotifyEmails().toArray(new String[]{}));
-            message.setSubject(Dew.dewConfig.getBasic().getName() + dewCloudConfig.getError().getNotifyTitle() + "\t\tserviceId=" + applicationName+"\t\tprofile="+profile);
+            message.setSubject(Dew.dewConfig.getBasic().getName() + dewCloudConfig.getError().getNotifyTitle() + "\t\tserviceId=" + applicationName + "\t\tprofile=" + profile);
             StringBuilder stringBuilder = new StringBuilder();
             failureInfo.forEach((key, value) -> {
                 stringBuilder.append("\r\n").append(

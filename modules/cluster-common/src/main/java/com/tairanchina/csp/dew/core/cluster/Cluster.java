@@ -26,13 +26,12 @@ public class Cluster {
         _mqSetHeader = mqSetHeader;
     }
 
-    public static void initH2Database(String url, String user, String password) {
-        logger.info("init h2 database...");
+    public static void checkpoint() {
         try {
-            H2Utils.init(url, user, password);
-            logger.info("h2 database initialized");
+            H2Utils.init("jdbc:h2:./checkpoint/cluster","","");
+            logger.info("Checkpoint initialized");
         } catch (SQLException e) {
-            logger.error("init h2 database error", e);
+            logger.error("Checkpoint init error", e);
         }
     }
 

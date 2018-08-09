@@ -67,7 +67,7 @@ public interface ClusterCache {
 
 
     /**
-     * 设置字符串值，并返回其旧值
+     * 设置字符串值，并返回其旧值，不存在时返回null
      *
      * @param key   key
      * @param value value

@@ -70,25 +70,22 @@ public class KafkaClusterMQ implements ClusterMQ {
     }
 
     @Override
-    public void response(String topic, Consumer<String> consumer) {
-        new Thread(() -> {
-            H2Utils.runH2Job(topic, consumer);
-            KafkaConsumer<String, String> kafkaConsumer = kafkaAdapter.getKafkaConsumer(false);
-            kafkaConsumer.subscribe(Collections.singletonList(topic));
-            while (true) {
-                ConsumerRecords<String, String> records = kafkaConsumer.poll(1000);
-                executorService.execute(() -> records.forEach(record -> {
-                    try {
-                        String uuid = $.field.createUUID();
-                        H2Utils.createJob(topic, uuid, "RUNNING", record.value());
-                        consumer.accept(record.value());
-                        H2Utils.deleteJob(uuid);
-                    } catch (SQLException e) {
-                        logger.error("insert to h2 error", e);
-                    }
-                }));
-            }
-        }).start();
+    public void doResponse(String topic, Consumer<String> consumer) {
+        KafkaConsumer<String, String> kafkaConsumer = kafkaAdapter.getKafkaConsumer(false);
+        kafkaConsumer.subscribe(Collections.singletonList(topic));
+        while (true) {
+            ConsumerRecords<String, String> records = kafkaConsumer.poll(1000);
+            executorService.execute(() -> records.forEach(record -> {
+                try {
+                    String uuid = $.field.createUUID();
+                    H2Utils.createJob(topic, uuid, "RUNNING", record.value());
+                    consumer.accept(record.value());
+                    H2Utils.deleteJob(uuid);
+                } catch (SQLException e) {
+                    logger.error("insert to h2 error", e);
+                }
+            }));
+        }
     }
 
 
