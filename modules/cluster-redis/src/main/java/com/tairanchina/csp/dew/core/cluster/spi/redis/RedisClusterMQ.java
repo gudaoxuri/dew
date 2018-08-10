@@ -56,25 +56,25 @@ public class RedisClusterMQ implements ClusterMQ {
 
     @Override
     public void doResponse(String address, Consumer<String> consumer) {
-            redisTemplate.execute((RedisCallback<Void>) connection -> {
-                        try {
-                            while (!connection.isClosed()) {
-                                List<byte[]> messages = connection.bRPop(30, address.getBytes());
-                                if (messages == null) {
-                                    continue;
-                                }
-                                String message = new String(messages.get(1), "UTF-8");
-                                logger.trace("[MQ] response {}:{}", address, message);
-                                String uuid = $.field.createUUID();
-                                H2Utils.createJob(address, uuid, "RUNNING", message);
-                                consumer.accept(message);
-                                H2Utils.deleteJob(uuid);
-                            }
-                        } catch (Exception e) {
-                            logger.error("Redis Response error.", e);
+        redisTemplate.execute((RedisCallback<Void>) connection -> {
+                try {
+                    while (!connection.isClosed()) {
+                        List<byte[]> messages = connection.bRPop(30, address.getBytes());
+                        if (messages == null) {
+                            continue;
                         }
-                        return null;
+                        String message = new String(messages.get(1), "UTF-8");
+                        logger.trace("[MQ] response {}:{}", address, message);
+                        String uuid = $.field.createUUID();
+                        H2Utils.createJob(address, uuid, "RUNNING", message);
+                        consumer.accept(message);
+                        H2Utils.deleteJob(uuid);
                     }
-            );
+                } catch (Exception e) {
+                    logger.error("Redis Response error.", e);
+                }
+                return null;
+            }
+        );
     }
 }
