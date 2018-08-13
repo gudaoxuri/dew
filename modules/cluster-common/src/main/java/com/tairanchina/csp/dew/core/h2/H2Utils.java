@@ -23,9 +23,9 @@ public class H2Utils {
     /**
      * 初始化H2数据库
      *
-     * @param url      地址（默认 jdbc:h2:data/cluster）
-     * @param user     用户名（默认 default_user）
-     * @param pd       密码（默认 default_password）
+     * @param url  地址（默认 jdbc:h2:data/cluster）
+     * @param user 用户名（默认 default_user）
+     * @param pwd  密码（默认 default_password）
      */
     public static void init(String url, String user, String pwd) throws SQLException {
         if (StringUtils.isNullOrEmpty(url)) {
@@ -66,80 +66,25 @@ public class H2Utils {
 
 
     public static boolean createJob(String address, String jobId, String status, String msg) throws SQLException {
-        if (!inited) {
-            throw new SQLException("H2 not initialized");
-        }
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try {
-            conn = jdbcConnectionPool.getConnection();
-            stmt = conn
-                    .prepareStatement("INSERT INTO MQ_JOB_2 VALUES(?,?,?,?,?)");
-            stmt.setString(1, address);
-            stmt.setString(2, jobId);
-            stmt.setString(3, status);
-            stmt.setString(4, msg);
-            stmt.setDate(5, new Date(System.currentTimeMillis()));
-            return stmt.execute();
-        } finally {
-            releaseConnection(conn, stmt, null);
-        }
+        String sql = "INSERT INTO MQ_JOB_2 VALUES(?,?,?,?,?)";
+        Date date = new Date(System.currentTimeMillis());
+        return execute(sql, address, jobId, status, msg,date);
     }
 
     public static boolean deleteJob(String jobId) throws SQLException {
-        if (!inited) {
-            throw new SQLException("H2 not initialized");
-        }
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        try {
-            conn = jdbcConnectionPool.getConnection();
-            stmt = conn
-                    .prepareStatement("DELETE FROM MQ_JOB_2 WHERE JOB_ID=?");
-            stmt.setString(1, jobId);
-            return stmt.execute();
-        } finally {
-            releaseConnection(conn, stmt, null);
-        }
+        String sql = "DELETE FROM MQ_JOB_2 WHERE JOB_ID=?";
+        return execute(sql, jobId);
     }
 
 
     public static Job getJob(String jobId) throws SQLException {
-        if (!inited) {
-            throw new SQLException("H2 not initialized");
-        }
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        try {
-            conn = jdbcConnectionPool.getConnection();
-            stmt = conn
-                    .prepareStatement("SELECT * FROM MQ_JOB_2 WHERE JOB_ID=?");
-            stmt.setString(1, jobId);
-            rs = stmt.executeQuery();
-            return convertResultSetToJob(rs);
-        } finally {
-            releaseConnection(conn, stmt, null);
-        }
+        String sql = "SELECT * FROM MQ_JOB_2 WHERE JOB_ID=?";
+        return executeReturn(sql, jobId);
     }
 
     public static Job getLastJob(String address) throws SQLException {
-        if (!inited) {
-            throw new SQLException("H2 not initialized");
-        }
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs ;
-        try {
-            conn = jdbcConnectionPool.getConnection();
-            stmt = conn
-                    .prepareStatement("SELECT * FROM MQ_JOB_2 where ADDRESS = ? ORDER BY CREATED_TIME DESC LIMIT 0,1");
-            stmt.setString(1, address);
-            rs = stmt.executeQuery();
-            return convertResultSetToJob(rs);
-        } finally {
-            releaseConnection(conn, stmt, null);
-        }
+        String sql = "SELECT * FROM MQ_JOB_2 where ADDRESS = ? ORDER BY CREATED_TIME DESC LIMIT 0,1";
+        return executeReturn(sql, address);
     }
 
     public static void runH2Job(String address, Consumer<String> consumer) {
@@ -188,6 +133,45 @@ public class H2Utils {
             return job;
         } else {
             return null;
+        }
+    }
+
+    private static boolean execute(String sql, Object... params) throws SQLException {
+        if (!inited) {
+            throw new SQLException("checkpoint not initialized");
+        }
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
+            conn = jdbcConnectionPool.getConnection();
+            stmt = conn
+                    .prepareStatement(sql);
+            for (int i = 1; i <= params.length; i++) {
+                stmt.setObject(i, params[i-1]);
+            }
+            return stmt.execute();
+        } finally {
+            releaseConnection(conn, stmt, null);
+        }
+    }
+    private static Job executeReturn(String sql, Object... params) throws SQLException {
+        if (!inited) {
+            throw new SQLException("checkpoint not initialized");
+        }
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs;
+        try {
+            conn = jdbcConnectionPool.getConnection();
+            stmt = conn
+                    .prepareStatement(sql);
+            for (int i = 1; i <= params.length; i++) {
+                stmt.setObject(i, params[i-1]);
+            }
+            rs = stmt.executeQuery();
+            return convertResultSetToJob(rs);
+        } finally {
+            releaseConnection(conn, stmt, null);
         }
     }
 }
