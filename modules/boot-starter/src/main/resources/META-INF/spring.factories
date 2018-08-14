@@ -4,5 +4,4 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.tairanchina.csp.dew.core.interceptor.DewWebMvcConfigurer,\
   com.tairanchina.csp.dew.core.utils.convert.ConvertAutoConfiguration,\
   com.tairanchina.csp.dew.core.controller.ControllerAutoConfiguration,\
-  com.tairanchina.csp.dew.core.metric.DewMetricAutoConfiguration,\
   com.tairanchina.csp.dew.core.doc.DocProcessor
