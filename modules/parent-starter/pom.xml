@@ -40,7 +40,7 @@
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.version>3.3.0.603</sonar.version>
         <api.file.name>index</api.file.name>
-        <mybatisplus-spring-boot-starter.version>1.0.2</mybatisplus-spring-boot-starter.version>
+        <mybatisplus-spring-boot-starter.version>1.0.5</mybatisplus-spring-boot-starter.version>
         <micrometer.version>1.0.5</micrometer.version>
     </properties>
 
