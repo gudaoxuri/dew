@@ -22,6 +22,6 @@ public class DewTraceLogWrap {
     }
 
     public static void reply(String source, int status, String method, String url) {
-        logger.trace("[" + source + "] Reply " + status + "by [" + method + "] " + url);
+        logger.trace("[" + source + "] Reply " + status + " by [" + method + "] " + url);
     }
 }
