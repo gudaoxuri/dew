@@ -248,23 +248,14 @@
         <profile>
             <id>release</id>
             <distributionManagement>
-                <repository>
-                    <id>trc-releases</id>
-                    <url>http://121.41.17.205:18081/nexus/content/repositories/releases/</url>
-                </repository>
-                <snapshotRepository>
-                    <id>trc-snapshots</id>
-                    <url>http://121.41.17.205:18081/nexus/content/repositories/snapshots/</url>
-                    <uniqueVersion>false</uniqueVersion>
-                </snapshotRepository>
-                <!-- <snapshotRepository>
+                 <snapshotRepository>
                      <id>oss</id>
                      <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
                  </snapshotRepository>
                  <repository>
                      <id>oss</id>
                      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                 </repository>-->
+                 </repository>
             </distributionManagement>
             <build>
                 <plugins>
@@ -280,7 +271,7 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <!--<plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
                         <executions>
@@ -291,7 +282,7 @@
                                 </goals>
                             </execution>
                         </executions>
-                    </plugin>-->
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>

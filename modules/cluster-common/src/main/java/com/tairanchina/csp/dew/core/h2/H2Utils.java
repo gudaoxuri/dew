@@ -29,7 +29,7 @@ public class H2Utils {
      */
     public static void init(String url, String user, String pwd) throws SQLException {
         if (StringUtils.isNullOrEmpty(url)) {
-            url = "jdbc:h2:./data/cluster";
+            url = "jdbc:h2:./data/ha";
         }
         if (StringUtils.isNullOrEmpty(user)) {
             user = "default_user";

@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: dew-example
+
+conf:
+  load: remote-application-someapp

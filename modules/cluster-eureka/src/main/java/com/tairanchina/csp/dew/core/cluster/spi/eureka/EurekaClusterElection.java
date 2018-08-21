@@ -39,8 +39,7 @@ public class EurekaClusterElection implements ClusterElection {
             Optional<InstanceInfo> firstInstanceR = discoveryClient.getInstances(applicationName).stream()
                     .map(instance -> ((EurekaDiscoveryClient.EurekaServiceInstance) instance).getInstanceInfo())
                     .filter(instance -> instance.getStatus() == InstanceInfo.InstanceStatus.UP)
-                    .sorted(Comparator.comparingLong(inst -> inst.getLeaseInfo().getRegistrationTimestamp()))
-                    .findFirst();
+                    .min(Comparator.comparingLong(inst -> inst.getLeaseInfo().getRegistrationTimestamp()));
             leader = firstInstanceR.isPresent() && eurekaRegistration.getInstanceConfig().getInstanceId().equals(firstInstanceR.get().getInstanceId());
         });
     }

@@ -26,12 +26,12 @@ public class Cluster {
         _mqSetHeader = mqSetHeader;
     }
 
-    public static void checkpoint() {
+    public static void ha() {
         try {
-            H2Utils.init("jdbc:h2:./checkpoint/cluster","","");
-            logger.info("Checkpoint initialized");
+            H2Utils.init("jdbc:h2:./checkpoint/ha","","");
+            logger.info("HA initialized");
         } catch (SQLException e) {
-            logger.error("Checkpoint init error", e);
+            logger.error("HA init error", e);
         }
     }
 

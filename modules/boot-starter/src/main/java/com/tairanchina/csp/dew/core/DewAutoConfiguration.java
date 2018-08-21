@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.sql.SQLException;
 
 /**
  * desription:
@@ -28,9 +27,14 @@ public class DewAutoConfiguration {
     @Value("${spring.application.name}")
     private String applicationName;
 
+    @Autowired
+    private DewConfig dewConfig;
+
     @PostConstruct
     public void init() {
-        Cluster.checkpoint();
+        if (dewConfig.getCluster().getHaEnabled()) {
+            Cluster.ha();
+        }
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 

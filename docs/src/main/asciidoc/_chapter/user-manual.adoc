@@ -1494,14 +1494,8 @@ IMPORTANT: 目前服务脚手架需与 `Dew JDBC` 配合使用，后期会适配
 
 [quote,]
 ____
-Dew 内核不支持鉴权处理（Auth组件），现支持两种模式
-
-. basic模式，它支持`认证缓存`，即支持将鉴权系统生成的登录信息缓存到业务系统中方便即时调用。
-
-. csp模式，支持用户中心权限系统
+支持`认证缓存`，即支持将鉴权系统生成的登录信息缓存到业务系统中方便即时调用，并提供三方适配。
 ____
-====
-- basic模式
 
 [source,yml]
 .配置认证缓存
@@ -1596,91 +1590,7 @@ public Resp<Void> logout() {
     return Resp.success(null);
 }
 ----
-====
 
-====
-- csp模式
-
-TIP: 增加csp-starter依赖，则强制权限认证采用csp模式
-
-NOTE: csp模式使用CSPOptInfo对象基类
-
-[source,xml]
-.pom.xml依赖配置
-----
-<dependency>
-          <groupId>com.tairanchina.csp.dew</groupId>
-          <artifactId>csp-starter</artifactId>
- </dependency>
-----
-
-[source,yml]
-.csp模式配置
-----
-dew:
-    security:
-        auth:
-            csp:
-                party-id: #partyId在header中的key值 默认为'X-User-Id'
-                app-id: #appId在header中的key值 默认为'X-App-Id'
-                roles: #角色在header中的key值 默认为'X-Roles'
-----
-
-[source,java]
-.csp模式接口
-----
-// 添加登录信息，optInfo封装自鉴权系统过来的登录信息
-// 一般在登录认证后操作
-Dew.auth.setOptInfo(OptInfo optInfo);// 框架自动加载
-// 获取登录信息，要求在http请求加上token，appId,roles
-Dew.context().optInfo();//
-// 删除登录信息
-// 一般在注销登录后操作（无需手动操作）
-Dew.auth.removeOptInfo();
-
-// 登录信息
-public class OptInfo<E> {
-    // Token
-    String token;
-    // 账号编码
-    String accountCode;
-}
-----
-
-TIP: `OptInfo` 为认证缓存信息的基类，使用时可以继承并扩展自己的属性。
-
-IMPORTANT: 使用 `OptInfo` 扩展类型时需要在工程启动时指定扩展类： `DewContext.setOptInfoClazz(<扩展类型>)` 。
-
-[source,java]
-.csp模式示例
-----
-
-    /**
-     * 模拟业务操作
-     */
-    @GetMapping(value = "business/someopt")
-    public Resp<Void> someOpt() {
-        // 获取登录用户信息
-        Optional<CSPOptInfo> optInfoExtOpt = Dew.auth.getOptInfo();
-        if (!optInfoExtOpt.isPresent()) {
-            return Resp.unAuthorized("用户认证错误");
-        }
-        // 登录用户的信息
-        optInfoExtOpt.get();
-        return Resp.success(null);
-    }
-
-    /**
-     * 模拟用户注销
-     */
-    @DeleteMapping(value = "auth/logout")
-    public Resp<Void> logout() {
-        // 实际注册处理
-        Dew.auth.removeOptInfo();
-        return Resp.success(null);
-    }
-----
-====
 ==== 追踪日志
 
 `Dew` 集成了可追踪日志的功能，本质上一个 `slf4j` 的装饰器，会在每条日志内容前面打印 `用户账号 #` 。
