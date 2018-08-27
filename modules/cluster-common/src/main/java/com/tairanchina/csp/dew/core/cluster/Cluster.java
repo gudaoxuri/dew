@@ -28,7 +28,7 @@ public class Cluster {
 
     public static void ha() {
         try {
-            H2Utils.init("jdbc:h2:./checkpoint/ha","","");
+            H2Utils.init("jdbc:h2:./checkpoint/ha;DB_CLOSE_ON_EXIT=FALSE","","");
             logger.info("HA initialized");
         } catch (SQLException e) {
             logger.error("HA init error", e);
