@@ -227,7 +227,7 @@ public class FeginServiceExample {
 
 NOTE: 构建类继承HystrixCommand抽象类，重写run方法，getFallback方法，getFallback为run的降级，再执行excute方法即可
 
-TIP: 每个HystrixCommand的子类的实例只能excute一次。
+TIP: 每个HystrixCommand的子类的实例只能execute一次。
 
 [source,java]
 .下面附上代码
@@ -466,7 +466,7 @@ java -jar demo.jar --spring.config.location=/path/test_evn.properties
 
 * 其他
 
-** `bootstrap.yml` ( `jar` 包外) > `bootstrap.yml` ( `jar` 包内) > `application.yml` ( `jar` 包外) > `application.yml` ( `jar` 包内)
+    ** `bootstrap.yml` ( `jar` 包外) > `bootstrap.yml` ( `jar` 包内) > `application.yml` ( `jar` 包外) > `application.yml` ( `jar` 包内)
 
 ** 当启用 `Spring Cloud Config` 配置后， `Git` 仓库中的 `application.yml` >  `[application-name].yml`  >  `[application-name]-[profile].yml`
 

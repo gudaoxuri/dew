@@ -2,8 +2,6 @@ package com.tairanchina.csp.dew.core;
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
@@ -223,6 +221,8 @@ public class DewConfig {
         private String dist = "redis";
         private String election = "eureka";
 
+        private Boolean haEnabled = true;
+
         public String getMq() {
             return mq;
         }
@@ -253,6 +253,14 @@ public class DewConfig {
 
         public void setElection(String election) {
             this.election = election;
+        }
+
+        public Boolean getHaEnabled() {
+            return haEnabled;
+        }
+
+        public void setHaEnabled(Boolean haEnabled) {
+            this.haEnabled = haEnabled;
         }
     }
 

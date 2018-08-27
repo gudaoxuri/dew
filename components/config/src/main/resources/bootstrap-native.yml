@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: config
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          searchLocations: classpath:/native_config
+
+server:
+  port: 9000
+
+security:
+  basic:
+    enabled: true
+  user:
+    name: config
+    password: 123456
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://registry:123456@localhost:8000/eureka
+
