@@ -35,12 +35,6 @@ public class RedisClusterCache implements ClusterCache {
     }
 
     @Override
-    @Deprecated
-    public void set(String key, String value, long expireSec) {
-        redisTemplate.opsForValue().set(key, value, expireSec, TimeUnit.SECONDS);
-    }
-
-    @Override
     public void setex(String key, String value, long expireSec) {
         redisTemplate.opsForValue().set(key, value, expireSec, TimeUnit.SECONDS);
     }

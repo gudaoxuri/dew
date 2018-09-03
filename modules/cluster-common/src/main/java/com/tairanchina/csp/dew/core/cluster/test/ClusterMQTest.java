@@ -11,7 +11,7 @@ import java.util.concurrent.CountDownLatch;
 
 public class ClusterMQTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClusterMQ.class);
+    private static final Logger logger = LoggerFactory.getLogger(ClusterMQTest.class);
 
     public void test(ClusterMQ mq) throws InterruptedException {
         testPubSub(mq);
@@ -71,7 +71,7 @@ public class ClusterMQTest {
     private void testHA(ClusterMQ mq) throws InterruptedException {
         Cluster.ha();
         CountDownLatch waitingOccurError = new CountDownLatch(1);
-       Thread mockErrorThread= new Thread(() -> mq.subscribe("test_ha", message -> {
+        Thread mockErrorThread = new Thread(() -> mq.subscribe("test_ha", message -> {
             logger.info("subscribe instance: pub_sub_ha>>" + message);
             waitingOccurError.countDown();
             if (waitingOccurError.getCount() == 0) {

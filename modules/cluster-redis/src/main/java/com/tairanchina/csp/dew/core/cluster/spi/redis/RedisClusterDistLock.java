@@ -7,11 +7,9 @@ import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisTemplate;
 import redis.clients.jedis.JedisCommands;
 
-import java.util.Date;
-
 /**
  * Redis锁实现
- *
+ * <p>
  * 存在一定几率的错误，见各方法说明
  */
 public class RedisClusterDistLock implements ClusterDistLock {
@@ -19,7 +17,7 @@ public class RedisClusterDistLock implements ClusterDistLock {
     private String key;
     private RedisTemplate<String, String> redisTemplate;
 
-    RedisClusterDistLock(String key, RedisTemplate<String, String> redisTemplate) {
+    public RedisClusterDistLock(String key, RedisTemplate<String, String> redisTemplate) {
         this.key = "dew:dist:lock:" + key;
         this.redisTemplate = redisTemplate;
     }
@@ -58,14 +56,12 @@ public class RedisClusterDistLock implements ClusterDistLock {
 
     @Override
     public boolean tryLock(long waitMillSec) throws InterruptedException {
-        long now = new Date().getTime();
-        while (new Date().getTime() - now < waitMillSec) {
+        long now = System.currentTimeMillis();
+        while (System.currentTimeMillis() - now < waitMillSec) {
             if (isLocked()) {
                 Thread.sleep(100);
-            } else {
-                if (tryLock()) {
-                    return true;
-                }
+            } else if (tryLock()) {
+                return true;
             }
         }
         return tryLock();
@@ -80,8 +76,8 @@ public class RedisClusterDistLock implements ClusterDistLock {
         } else if (waitMillSec == 0) {
             return putLockKey(leaseMillSec);
         } else {
-            long now = new Date().getTime();
-            while (new Date().getTime() - now < waitMillSec) {
+            long now = System.currentTimeMillis();
+            while (System.currentTimeMillis() - now < waitMillSec) {
                 if (isLocked()) {
                     Thread.sleep(100);
                 } else if (putLockKey(leaseMillSec)) {

@@ -75,8 +75,6 @@ public interface ClusterDistLock {
 
     /**
      * 判断是否有锁
-     *
-     * @return
      */
     boolean isLocked();
 

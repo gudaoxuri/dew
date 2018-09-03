@@ -31,7 +31,7 @@ public class DewTestAutoConfiguration {
                 redisServer.start();
                 redisTemplate.getConnectionFactory().getConnection();
             } catch (Exception e) {
-                logger.error("Start embedded redis error.", e);
+                logger.warn("Start embedded redis error.");
             }
         }
     }

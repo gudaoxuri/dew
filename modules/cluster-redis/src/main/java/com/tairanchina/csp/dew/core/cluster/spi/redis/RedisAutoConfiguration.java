@@ -19,14 +19,6 @@ public class RedisAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisAutoConfiguration.class);
 
-    @Bean
-    @ConditionalOnMissingBean(name = "redisTemplate")
-    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, String> template = new RedisTemplate<>();
-        template.setConnectionFactory(redisConnectionFactory);
-        return template;
-    }
-
     @PostConstruct
     private void init() {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
