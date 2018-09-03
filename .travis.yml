@@ -1,1 +1,1 @@
-language: javascript: mvn -Dmaven.test.skip=true clean packagejdk:  - oraclejdk8notifications:  email:    - i@sunisle.org
+language: javascript: mvn clean test packagejdk:  - oraclejdk8notifications:  email:    - i@sunisle.org    - syl_527@163.com

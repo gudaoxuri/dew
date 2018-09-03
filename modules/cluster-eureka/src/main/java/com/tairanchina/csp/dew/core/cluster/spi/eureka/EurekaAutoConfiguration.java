@@ -7,10 +7,6 @@ import org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistrati
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * desription:
- * Created by ding on 2018/1/25.
- */
 @Configuration
 public class EurekaAutoConfiguration {
 

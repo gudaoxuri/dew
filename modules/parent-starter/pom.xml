@@ -29,20 +29,18 @@
         <dew.version>1.5.0-SNAPSHOT</dew.version>
         <dew-common.version>1.4.7</dew-common.version>
         <aspectjrt.version>1.8.10</aspectjrt.version>
+        <spring-boot.version>1.5.13.RELEASE</spring-boot.version>
         <swagger.version>2.8.0</swagger.version>
-        <swagger-bootstrap-ui.version>1.7</swagger-bootstrap-ui.version>
-        <druid.version>1.1.5</druid.version>
+        <swagger-bootstrap-ui.version>1.8.2</swagger-bootstrap-ui.version>
         <mysql.version>5.1.42</mysql.version>
         <h2.version>1.4.197</h2.version>
         <embedded-redis.version>0.6</embedded-redis.version>
-        <spring-boot-admin.version>1.5.4</spring-boot-admin.version>
+        <spring-boot-admin.version>2.0.2</spring-boot-admin.version>
         <sonar.host.url></sonar.host.url>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.version>3.3.0.603</sonar.version>
         <api.file.name>index</api.file.name>
-        <mybatisplus-spring-boot-starter.version>1.0.5</mybatisplus-spring-boot-starter.version>
-        <mybatis-plus.version>2.3</mybatis-plus.version>
-        <micrometer.version>1.0.5</micrometer.version>
+        <micrometer.version>1.0.6</micrometer.version>
     </properties>
 
     <developers>
@@ -68,6 +66,10 @@
             <name>李正先</name>
             <email>hzlizx@tairanchina.com</email>
         </developer>
+        <developer>
+            <name>孙豫蕾</name>
+            <email>syl_527@163.com</email>
+        </developer>
     </developers>
 
     <licenses>
@@ -78,9 +80,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:https://github.com/tairangroup/dew-framework.git</connection>
-        <developerConnection>scm:git:https://github.com/tairangroup/dew-framework.git</developerConnection>
-        <url>https://github.com/tairangroup/dew-framework.git</url>
+        <connection>scm:git:https://github.com/gudaoxuri/dew-framework.git</connection>
+        <developerConnection>scm:git:https://github.com/gudaoxuri/dew-framework.git</developerConnection>
+        <url>https://github.com/gudaoxuri/dew-framework.git</url>
     </scm>
 
     <dependencyManagement>
@@ -88,15 +90,37 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Edgware.SR3</version>
+                <version>Edgware.SR4</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- Basic -->
             <dependency>
                 <groupId>com.ecfront.dew</groupId>
                 <artifactId>common</artifactId>
                 <version>${dew-common.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>${aspectjrt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectjrt.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+            </dependency>
+            <!-- Modules -->
             <dependency>
                 <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>boot-starter</artifactId>
@@ -118,23 +142,8 @@
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjrt</artifactId>
-                <version>${aspectjrt.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjweaver</artifactId>
-                <version>${aspectjrt.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.tairanchina.csp.dew</groupId>
-                <artifactId>auth</artifactId>
-                <version>${dew.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.tairanchina.csp.dew</groupId>
-                <artifactId>auth-sdk-starter</artifactId>
+                <artifactId>jdbc-starter</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <!-- Cluster -->
@@ -160,11 +169,6 @@
             </dependency>
             <dependency>
                 <groupId>com.tairanchina.csp.dew</groupId>
-                <artifactId>cluster-spi-ignite</artifactId>
-                <version>${dew.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>cluster-spi-eureka</artifactId>
                 <version>${dew.version}</version>
             </dependency>
@@ -172,31 +176,6 @@
                 <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>cluster-spi-kafka</artifactId>
                 <version>${dew.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.tairanchina.csp.dew</groupId>
-                <artifactId>jdbc-starter</artifactId>
-                <version>${dew.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
-                <version>${druid.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <version>${h2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.kstyrc</groupId>
-                <artifactId>embedded-redis</artifactId>
-                <version>${embedded-redis.version}</version>
             </dependency>
             <!-- Doc -->
             <dependency>
@@ -209,22 +188,28 @@
                 <artifactId>springfox-swagger-ui</artifactId>
                 <version>${swagger.version}</version>
             </dependency>
+            <!-- Test -->
             <dependency>
                 <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>test-starter</artifactId>
                 <version>${dew.version}</version>
                 <scope>test</scope>
             </dependency>
-            <!--Others-->
             <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatisplus-spring-boot-starter</artifactId>
-                <version>${mybatisplus-spring-boot-starter.version}</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring-boot.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus</artifactId>
-                <version>${mybatis-plus.version}</version>
+                <groupId>com.github.kstyrc</groupId>
+                <artifactId>embedded-redis</artifactId>
+                <version>${embedded-redis.version}</version>
+            </dependency>
+            <!-- Others -->
+            <dependency>
+                <groupId>com.tairanchina.csp.dew</groupId>
+                <artifactId>auth-sdk-starter</artifactId>
+                <version>${dew.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -581,10 +566,6 @@
                 <checksumPolicy>warn</checksumPolicy>
             </snapshots>
         </repository>
-        <!--<repository>
-            <id>redhat-repo</id>
-            <url>https://maven.repository.redhat.com/ga</url>
-        </repository>-->
     </repositories>
 
 </project>
