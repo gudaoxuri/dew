@@ -68,7 +68,7 @@ public class ClusterLockTest {
         }).start();
 
         waiting.await();
-        // test auto release lock
+        // test auto release instance
         assert lock.tryLock(0, 300);
         assert lock.isLocked();
         Thread.sleep(1000);

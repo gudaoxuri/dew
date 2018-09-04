@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 
 @Configuration
 @ConditionalOnClass(RedisTemplate.class)
+@ConditionalOnExpression("#{'${dew.cluster.cache}'=='redis' || '${dew.cluster.mq}'=='redis' || '${dew.cluster.lock}'=='redis' || '${dew.cluster.map}'=='redis' || '${dew.cluster.election}'=='redis'}")
 public class RedisAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisAutoConfiguration.class);
@@ -30,25 +31,25 @@ public class RedisAutoConfiguration {
 
     @Bean
     @ConditionalOnExpression("'${dew.cluster.lock}'=='redis'")
-    public RedisClusterLockWrap redisClusterLock(@Autowired RedisTemplate<String, String> redisTemplate) {
+    public RedisClusterLockWrap redisClusterLock(RedisTemplate<String, String> redisTemplate) {
         return new RedisClusterLockWrap(redisTemplate);
     }
 
     @Bean
     @ConditionalOnExpression("'${dew.cluster.map}'=='redis'")
-    public RedisClusterMapWrap redisClusterMap(@Autowired RedisTemplate<String, String> redisTemplate) {
+    public RedisClusterMapWrap redisClusterMap(RedisTemplate<String, String> redisTemplate) {
         return new RedisClusterMapWrap(redisTemplate);
     }
 
     @Bean
     @ConditionalOnExpression("'${dew.cluster.mq}'=='redis'")
-    public RedisClusterMQ redisClusterMQ(@Autowired RedisTemplate<String, String> redisTemplate) {
+    public RedisClusterMQ redisClusterMQ(RedisTemplate<String, String> redisTemplate) {
         return new RedisClusterMQ(redisTemplate);
     }
 
     @Bean
     @ConditionalOnExpression("'${dew.cluster.election}'=='redis'")
-    public RedisClusterElectionWrap redisClusterElection(@Autowired RedisTemplate<String, String> redisTemplate) {
+    public RedisClusterElectionWrap redisClusterElection(RedisTemplate<String, String> redisTemplate) {
         return new RedisClusterElectionWrap(redisTemplate);
     }
 

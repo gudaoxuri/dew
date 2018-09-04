@@ -1,48 +1,33 @@
 dew:
   basic:
-    format:
-      use-unity-error: true
-      reuse-http-state: false
-      code-field-name: description
-      message-field-name: customHttpCode
+    name: Spring Boot 测试
+    version: 1.0
+    desc: 测试
+    website: www.trc.com
     doc:
-      enabled: false
-      base-package: com.tairanchina.csp.dew.core.test.web
+      base-package: com.trc.test
     error-mapping:
-      "[com.tairanchina.csp.dew.core.AuthException]":
+      "[com.trc.test.web.AuthException]":
         http-code: 401
         business-code: x00010
         message: 认证错误
   cluster:
     cache: redis
-    dist: redis
+    lock: redis
+    map: redis
     mq: redis
+    election: redis
   security:
     token-flag: _token_
     token-in-header: true
     token-hash: false
-#  security:
-#   includeServices: ["a-serv"]
-  metric:
-    enabled: true
 
 spring:
-  kafka:
-    producer:
-      bootstrap-servers: localhost:9092
-      acks: 1
-      batch-size: 1
-      retries: 1
-    consumer:
-      bootstrap-servers: localhost:9092
-      group-id: boot-starter
+  application:
+    name: boot-start-test
   jackson:
     serialization:
       write_dates_as_timestamps: false
-  cache:
-    type: redis
-  application:
-    name: boot-start
   redis:
     host: 127.0.0.1
     port: 6379
@@ -52,17 +37,11 @@ spring:
       max-wait: -1
       max-idle: 1
       min-idle: 0
-    #password: tairan2017@
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: root
-    password: 123456
-    virtual-host: dew
-  hazelcast:
-    addresses: ["127.0.0.1"]
-  ignite:
-    addresses: ["127.0.0.1"]
+
+eureka:
+  client:
+    enabled: false
+
 management:
   security:
     enabled: false

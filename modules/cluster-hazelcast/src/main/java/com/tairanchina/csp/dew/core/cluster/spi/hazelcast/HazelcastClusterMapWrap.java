@@ -12,7 +12,7 @@ public class HazelcastClusterMapWrap implements ClusterMapWrap {
     }
 
     @Override
-    public <M> ClusterMap<M> map(String key, Class<M> clazz) {
+    public <M> ClusterMap<M> instance(String key, Class<M> clazz) {
         return new HazelcastClusterMap<>(key, hazelcastAdapter.getHazelcastInstance());
     }
 

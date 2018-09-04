@@ -1,7 +1,6 @@
 package com.tairanchina.csp.dew.example.auth.dto;
 
-import com.tairanchina.csp.dew.core.dto.BasicOptInfo;
-import com.tairanchina.csp.dew.core.dto.OptInfo;
+import com.tairanchina.csp.dew.core.auth.dto.BasicOptInfo;
 
 public class OptInfoExt extends BasicOptInfo<OptInfoExt> {
 

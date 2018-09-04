@@ -26,7 +26,7 @@ public class RedisClusterElection extends AbsClusterElection {
     }
 
     public RedisClusterElection(String key, int electionPeriodSec, RedisTemplate<String, String> redisTemplate) {
-        this.key = "dew:election:" + key;
+        this.key = "dew:instance:" + key;
         this.electionPeriodSec = electionPeriodSec;
         this.redisTemplate = redisTemplate;
         election();

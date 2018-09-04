@@ -12,6 +12,7 @@ import javax.annotation.PostConstruct;
 
 @Configuration
 @ConditionalOnClass(RabbitTemplate.class)
+@ConditionalOnExpression("#{'${dew.cluster.cache}'=='rabbit' || '${dew.cluster.mq}'=='rabbit' || '${dew.cluster.lock}'=='rabbit' || '${dew.cluster.map}'=='rabbit' || '${dew.cluster.election}'=='rabbit'}")
 public class RabbitAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(RabbitAutoConfiguration.class);
@@ -22,8 +23,6 @@ public class RabbitAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnExpression("'${dew.cluster.mq}'=='rabbit'")
-    @SuppressWarnings("SpringJavaAutowiringInspection")
     public RabbitAdapter rabbitAdapter(RabbitTemplate rabbitTemplate) {
         return new RabbitAdapter(rabbitTemplate);
     }

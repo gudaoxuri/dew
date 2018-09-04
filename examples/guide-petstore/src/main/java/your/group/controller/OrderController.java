@@ -2,7 +2,6 @@ package your.group.controller;
 
 import com.ecfront.dew.common.Page;
 import com.ecfront.dew.common.Resp;
-import com.tairanchina.csp.dew.core.controller.CRUController;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

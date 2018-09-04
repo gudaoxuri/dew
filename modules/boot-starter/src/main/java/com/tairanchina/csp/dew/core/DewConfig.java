@@ -15,40 +15,6 @@ public class DewConfig {
     private Security security = new Security();
     private Metric metric = new Metric();
 
-    public static class Metric {
-
-        private boolean enabled = true;
-
-        private long periodSec = 600;
-
-        private long urlSize = 2000;
-
-        public long getUrlSize() {
-            return urlSize;
-        }
-
-        public void setUrlSize(long urlSize) {
-            this.urlSize = urlSize;
-        }
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public long getPeriodSec() {
-            return periodSec;
-        }
-
-        public void setPeriodSec(long periodSec) {
-            this.periodSec = periodSec;
-        }
-
-    }
-
     public static class Basic {
 
         private String name = "";
@@ -118,19 +84,6 @@ public class DewConfig {
         public static class Format {
 
             private boolean useUnityError = true;
-            private boolean reuseHttpState = false;
-            // 兼容原系统设置
-            private String messageFieldName = "message";
-
-            private String codeFieldName = "code";
-
-            public String getCodeFieldName() {
-                return codeFieldName;
-            }
-
-            public void setCodeFieldName(String codeFieldName) {
-                this.codeFieldName = codeFieldName;
-            }
 
             public boolean isUseUnityError() {
                 return useUnityError;
@@ -139,23 +92,6 @@ public class DewConfig {
             public void setUseUnityError(boolean useUnityError) {
                 this.useUnityError = useUnityError;
             }
-
-            public boolean isReuseHttpState() {
-                return reuseHttpState;
-            }
-
-            public void setReuseHttpState(boolean reuseHttpState) {
-                this.reuseHttpState = reuseHttpState;
-            }
-
-            public String getMessageFieldName() {
-                return messageFieldName;
-            }
-
-            public void setMessageFieldName(String messageFieldName) {
-                this.messageFieldName = messageFieldName;
-            }
-
         }
 
         public static class ErrorMapping {
@@ -218,10 +154,11 @@ public class DewConfig {
 
         private String mq = "redis";
         private String cache = "redis";
-        private String dist = "redis";
-        private String election = "eureka";
+        private String lock = "redis";
+        private String map = "redis";
+        private String election = "redis";
 
-        private Boolean haEnabled = true;
+        private Config config = new Config();
 
         public String getMq() {
             return mq;
@@ -239,12 +176,20 @@ public class DewConfig {
             this.cache = cache;
         }
 
-        public String getDist() {
-            return dist;
+        public String getLock() {
+            return lock;
         }
 
-        public void setDist(String dist) {
-            this.dist = dist;
+        public void setLock(String lock) {
+            this.lock = lock;
+        }
+
+        public String getMap() {
+            return map;
+        }
+
+        public void setMap(String map) {
+            this.map = map;
         }
 
         public String getElection() {
@@ -255,12 +200,34 @@ public class DewConfig {
             this.election = election;
         }
 
-        public Boolean getHaEnabled() {
-            return haEnabled;
+        public Config getConfig() {
+            return config;
         }
 
-        public void setHaEnabled(Boolean haEnabled) {
-            this.haEnabled = haEnabled;
+        public void setConfig(Config config) {
+            this.config = config;
+        }
+
+        public static class Config {
+
+            private int electionPeriodSec = 60;
+            private boolean haEnabled = true;
+
+            public int getElectionPeriodSec() {
+                return electionPeriodSec;
+            }
+
+            public void setElectionPeriodSec(int electionPeriodSec) {
+                this.electionPeriodSec = electionPeriodSec;
+            }
+
+            public boolean isHaEnabled() {
+                return haEnabled;
+            }
+
+            public void setHaEnabled(boolean haEnabled) {
+                this.haEnabled = haEnabled;
+            }
         }
     }
 
@@ -325,43 +292,56 @@ public class DewConfig {
             this.tokenHash = tokenHash;
         }
 
+        public static class SecurityCORS {
+
+            private String allowOrigin = "*";
+            private String allowMethods = "POST,GET,OPTIONS,PUT,DELETE,HEAD";
+            private String allowHeaders = "x-requested-with,content-type";
+
+            public String getAllowOrigin() {
+                return allowOrigin;
+            }
+
+            public void setAllowOrigin(String allowOrigin) {
+                this.allowOrigin = allowOrigin;
+            }
+
+            public String getAllowMethods() {
+                return allowMethods;
+            }
+
+            public void setAllowMethods(String allowMethods) {
+                this.allowMethods = allowMethods;
+            }
+
+            public String getAllowHeaders() {
+                return allowHeaders;
+            }
+
+            public void setAllowHeaders(String allowHeaders) {
+                this.allowHeaders = allowHeaders;
+            }
+        }
+
     }
 
-    public static class SecurityCORS {
+    public static class Metric {
 
-        private String allowOrigin = "*";
-        private String allowMethods = "POST,GET,OPTIONS,PUT,DELETE,HEAD";
-        private String allowHeaders = "x-requested-with,content-type";
+        private boolean enabled = true;
 
-        public String getAllowOrigin() {
-            return allowOrigin;
+        public boolean isEnabled() {
+            return enabled;
         }
 
-        public void setAllowOrigin(String allowOrigin) {
-            this.allowOrigin = allowOrigin;
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
         }
 
-        public String getAllowMethods() {
-            return allowMethods;
-        }
-
-        public void setAllowMethods(String allowMethods) {
-            this.allowMethods = allowMethods;
-        }
-
-        public String getAllowHeaders() {
-            return allowHeaders;
-        }
-
-        public void setAllowHeaders(String allowHeaders) {
-            this.allowHeaders = allowHeaders;
-        }
     }
 
     public Basic getBasic() {
         return basic;
     }
-
 
     public void setBasic(Basic basic) {
         this.basic = basic;

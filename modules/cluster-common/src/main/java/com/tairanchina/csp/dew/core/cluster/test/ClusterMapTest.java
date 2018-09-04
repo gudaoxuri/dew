@@ -12,17 +12,17 @@ public class ClusterMapTest {
 
     public void test(ClusterMap<TestMapObj> map) throws InterruptedException {
         map.clear();
-        assert !map.containsKey("map");
-        assert map.get("map") == null;
+        assert !map.containsKey("instance");
+        assert map.get("instance") == null;
         // sync
         TestMapObj obj = new TestMapObj();
         obj.setA("测试");
-        map.put("map", obj);
-        assert map.containsKey("map");
-        assert map.get("map").getA().equals("测试");
-        map.remove("map");
-        assert !map.containsKey("map");
-        assert map.get("map") == null;
+        map.put("instance", obj);
+        assert map.containsKey("instance");
+        assert map.get("instance").getA().equals("测试");
+        map.remove("instance");
+        assert !map.containsKey("instance");
+        assert map.get("instance") == null;
         // async
         map.putAsync("async_map", obj);
         while (!map.containsKey("async_map")) {
@@ -33,7 +33,7 @@ public class ClusterMapTest {
         while (map.containsKey("async_map")) {
             Thread.sleep(100);
         }
-        assert map.get("map") == null;
+        assert map.get("instance") == null;
         // getall
         map.put("map1", obj);
         map.put("map2", obj);

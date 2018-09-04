@@ -2,8 +2,8 @@ package com.tairanchina.csp.dew.core.cluster;
 
 public interface ClusterElectionWrap {
 
-    ClusterElection election();
+    ClusterElection instance();
 
-    ClusterElection election(String key);
+    ClusterElection instance(String key);
 
 }

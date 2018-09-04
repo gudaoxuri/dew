@@ -1,12 +1,10 @@
 package com.tairanchina.csp.dew.idempotent.interceptor;
 
-import com.tairanchina.csp.dew.core.controller.ErrorController;
+import com.tairanchina.csp.dew.core.web.error.ErrorController;
 import com.tairanchina.csp.dew.idempotent.DewIdempotent;
 import com.tairanchina.csp.dew.idempotent.DewIdempotentConfig;
 import com.tairanchina.csp.dew.idempotent.annotations.Idempotent;
 import com.tairanchina.csp.dew.idempotent.strategy.StrategyEnum;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;

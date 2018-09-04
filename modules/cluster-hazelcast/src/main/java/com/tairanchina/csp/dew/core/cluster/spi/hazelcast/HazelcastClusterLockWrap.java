@@ -12,7 +12,7 @@ public class HazelcastClusterLockWrap implements ClusterLockWrap {
     }
 
     @Override
-    public ClusterLock lock(String key) {
+    public ClusterLock instance(String key) {
         return new HazelcastClusterLock(key, hazelcastAdapter.getHazelcastInstance());
     }
 

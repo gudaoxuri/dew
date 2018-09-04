@@ -13,12 +13,12 @@ public class RedisClusterElectionWrap implements ClusterElectionWrap {
     }
 
     @Override
-    public ClusterElection election() {
+    public ClusterElection instance() {
         return new RedisClusterElection(redisTemplate);
     }
 
     @Override
-    public ClusterElection election(String key) {
+    public ClusterElection instance(String key) {
         return new RedisClusterElection(key, redisTemplate);
     }
 

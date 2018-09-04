@@ -8,7 +8,7 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 * 使用小泰科技Fork版本做为开源版本
 * 添加领导者选举的Redis实现
 * 添加MQ消费的HA功能
-
+* 默认使用micrometer做为指标采集工具
 * 添加对Scala的支持
 
 .Improvement
@@ -18,6 +18,8 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 * 连接池从druid改为HikariCP
 * Spring Boot Admin升级到2.x
 * 移除ShardingJDBC的内容
+* 移除服务脚手架功能
+* 增加swagger-bootstrap-ui，优化swaggerUI的显示
 
 .Fixed
 

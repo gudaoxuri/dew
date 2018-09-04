@@ -22,7 +22,7 @@ public class ClusterTest {
         CountDownLatch waiting = new CountDownLatch(1);
         new Thread(() -> {
             try {
-                new ClusterElectionTest().test(eurekaClusterElectionWrap.election());
+                new ClusterElectionTest().test(eurekaClusterElectionWrap.instance());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

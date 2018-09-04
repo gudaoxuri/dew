@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.spring.MybatisSqlSessionFactoryBean;
 import com.baomidou.mybatisplus.spring.boot.starter.ConfigurationCustomizer;
 import com.baomidou.mybatisplus.spring.boot.starter.MybatisPlusProperties;
 import com.baomidou.mybatisplus.spring.boot.starter.SpringBootVFS;
-import com.tairanchina.csp.dew.core.loading.DewLoadImmediately;
+import com.tairanchina.csp.dew.core.basic.loading.DewLoadImmediately;
 import com.tairanchina.csp.dew.jdbc.DewDSAutoConfiguration;
 import com.tairanchina.csp.dew.jdbc.config.DewMultiDSConfig;
 import org.apache.ibatis.mapping.DatabaseIdProvider;

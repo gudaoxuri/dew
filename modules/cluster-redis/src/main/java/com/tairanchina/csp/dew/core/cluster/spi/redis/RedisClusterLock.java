@@ -18,7 +18,7 @@ public class RedisClusterLock implements ClusterLock {
     private RedisTemplate<String, String> redisTemplate;
 
     public RedisClusterLock(String key, RedisTemplate<String, String> redisTemplate) {
-        this.key = "dew:dist:lock:" + key;
+        this.key = "dew:dist:instance:" + key;
         this.redisTemplate = redisTemplate;
     }
 

@@ -3,7 +3,7 @@ package com.tairanchina.csp.dew.auth.sdk;
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
 import com.tairanchina.csp.dew.Dew;
-import com.tairanchina.csp.dew.core.controller.ErrorController;
+import com.tairanchina.csp.dew.core.web.error.ErrorController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;

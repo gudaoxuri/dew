@@ -1,10 +1,10 @@
 package com.tairanchina.csp.dew.example.web;
 
 import com.tairanchina.csp.dew.Dew;
-import com.tairanchina.csp.dew.core.validation.CreateGroup;
-import com.tairanchina.csp.dew.core.validation.IdNumber;
-import com.tairanchina.csp.dew.core.validation.Phone;
-import com.tairanchina.csp.dew.core.validation.UpdateGroup;
+import com.tairanchina.csp.dew.core.web.validation.CreateGroup;
+import com.tairanchina.csp.dew.core.web.validation.IdNumber;
+import com.tairanchina.csp.dew.core.web.validation.Phone;
+import com.tairanchina.csp.dew.core.web.validation.UpdateGroup;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;

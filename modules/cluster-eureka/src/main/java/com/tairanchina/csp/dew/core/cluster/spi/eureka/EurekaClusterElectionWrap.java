@@ -24,12 +24,12 @@ public class EurekaClusterElectionWrap implements ClusterElectionWrap {
     }
 
     @Override
-    public ClusterElection election() {
+    public ClusterElection instance() {
         return new EurekaClusterElection(electionPeriodSec, applicationName, discoveryClient, eurekaRegistration);
     }
 
     @Override
-    public ClusterElection election(String key) {
+    public ClusterElection instance(String key) {
         throw new NotImplementedException();
     }
 

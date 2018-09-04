@@ -39,12 +39,12 @@ public class ClusterTest {
 
     @Test
     public void testLock() throws InterruptedException {
-        new ClusterLockTest().test(hazelcastClusterLockWrap.lock("test"));
+        new ClusterLockTest().test(hazelcastClusterLockWrap.instance("test"));
     }
 
     @Test
     public void testMap() throws InterruptedException {
-        new ClusterMapTest().test(hazelcastClusterMapWrap.map("test", ClusterMapTest.TestMapObj.class));
+        new ClusterMapTest().test(hazelcastClusterMapWrap.instance("test", ClusterMapTest.TestMapObj.class));
     }
 
 }

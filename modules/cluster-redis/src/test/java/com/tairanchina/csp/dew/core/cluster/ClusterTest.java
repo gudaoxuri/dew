@@ -37,17 +37,17 @@ public class ClusterTest {
 
     @Test
     public void testLock() throws InterruptedException {
-        new ClusterLockTest().test(redisClusterLockWrap.lock("test"));
+        new ClusterLockTest().test(redisClusterLockWrap.instance("test"));
     }
 
     @Test
     public void testMap() throws InterruptedException {
-        new ClusterMapTest().test(redisClusterMapWrap.map("test", ClusterMapTest.TestMapObj.class));
+        new ClusterMapTest().test(redisClusterMapWrap.instance("test", ClusterMapTest.TestMapObj.class));
     }
 
     @Test
     public void testElection() throws InterruptedException {
-        new ClusterElectionTest().test(redisClusterElectionWrap.election("test"));
+        new ClusterElectionTest().test(redisClusterElectionWrap.instance("test"));
     }
 
 }

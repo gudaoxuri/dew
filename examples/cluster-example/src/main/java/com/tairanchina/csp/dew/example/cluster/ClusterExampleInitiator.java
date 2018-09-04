@@ -32,7 +32,7 @@ public class ClusterExampleInitiator {
         assert null == Dew.cluster.cache.get("n_test");
         // ...
 
-        // dist map
+        // dist instance
         ClusterMap<TestMapObj> mapObj = Dew.cluster.dist.map("test_obj_map", TestMapObj.class);
         mapObj.clear();
         TestMapObj obj = new TestMapObj();
@@ -41,7 +41,7 @@ public class ClusterExampleInitiator {
         assert "测试".equals(mapObj.get("test").a);
         // ...
 
-        // dist lock
+        // dist instance
         ClusterLock lock = Dew.cluster.dist.lock("test_lock");
         // tryLock 示例，等待0ms，忘了手工unLock或出异常时1s后自动解锁
         if (lock.tryLock(0, 1000)) {

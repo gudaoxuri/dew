@@ -14,30 +14,30 @@
     <artifactId>boot-starter</artifactId>
     <name>Dew Boot Starter</name>
     <version>${dew.version}</version>
-    <description>Dew Spring Boot 封装</description>
+    <description>扩展 Spring Boot 能力</description>
     <packaging>jar</packaging>
 
     <properties>
     </properties>
 
     <dependencies>
+        <!-- Basic -->
         <dependency>
             <groupId>com.ecfront.dew</groupId>
             <artifactId>common</artifactId>
         </dependency>
+ <!--       <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+        </dependency>-->
+        <!-- Cluster -->
         <dependency>
             <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cluster-common</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.ecfront.dew</groupId>
-                    <artifactId>common</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
         <dependency>
             <groupId>com.tairanchina.csp.dew</groupId>
@@ -54,67 +54,45 @@
             <artifactId>cluster-spi-rabbit</artifactId>
             <optional>true</optional>
         </dependency>
-       <!-- <dependency>
+        <dependency>
             <groupId>com.tairanchina.csp.dew</groupId>
-            <artifactId>cluster-spi-kafka</artifactId>
+            <artifactId>cluster-spi-eureka</artifactId>
             <optional>true</optional>
-        </dependency>-->
-        <!-- <dependency>
-             <groupId>com.tairanchina.csp.dew</groupId>
-             <artifactId>cluster-spi-ignite</artifactId>
-             <scope>test</scope>
-         </dependency>-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-        </dependency>
+        <!-- Others -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>swagger-bootstrap-ui</artifactId>
-            <version>${swagger-bootstrap-ui.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-configuration-processor</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-            <version>${micrometer.version}</version>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-spring-legacy</artifactId>
             <version>${micrometer.version}</version>
         </dependency>
-        <!--<dependency>
-            <groupId>org.hyperic</groupId>
-            <artifactId>sigar</artifactId>
-            <version>1.6.5.132-7</version>
-        </dependency>-->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <version>${micrometer.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>swagger-bootstrap-ui</artifactId>
+            <version>${swagger-bootstrap-ui.version}</version>
+        </dependency>
+        <!-- Test -->
+        <dependency>
+            <groupId>com.tairanchina.csp.dew</groupId>
+            <artifactId>test-starter</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

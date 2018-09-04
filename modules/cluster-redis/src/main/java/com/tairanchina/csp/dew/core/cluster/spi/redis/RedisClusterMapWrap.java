@@ -13,7 +13,7 @@ public class RedisClusterMapWrap implements ClusterMapWrap {
     }
 
     @Override
-    public <M> ClusterMap<M> map(String key, Class<M> clazz) {
+    public <M> ClusterMap<M> instance(String key, Class<M> clazz) {
         return new RedisClusterMap<>(key, clazz, redisTemplate);
     }
 

@@ -5,6 +5,7 @@ import com.ecfront.dew.common.Page;
 import java.util.List;
 
 public interface Dao<P, E> {
+
     String ds();
 
     DS getDS();

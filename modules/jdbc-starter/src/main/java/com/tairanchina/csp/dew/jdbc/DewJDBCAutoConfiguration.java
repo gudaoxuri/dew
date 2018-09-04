@@ -1,7 +1,7 @@
 package com.tairanchina.csp.dew.jdbc;
 
 import com.tairanchina.csp.dew.Dew;
-import com.tairanchina.csp.dew.core.loading.DewLoadImmediately;
+import com.tairanchina.csp.dew.core.basic.loading.DewLoadImmediately;
 import com.tairanchina.csp.dew.jdbc.config.DewJDBCConfig;
 import com.tairanchina.csp.dew.jdbc.entity.EntityContainer;
 import org.slf4j.Logger;

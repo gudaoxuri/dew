@@ -12,7 +12,7 @@ public class HazelcastClusterLock implements ClusterLock {
     private ILock lock;
 
     public HazelcastClusterLock(String key, HazelcastInstance hazelcastInstance) {
-        lock = hazelcastInstance.getLock("dew:dist:lock:" + key);
+        lock = hazelcastInstance.getLock("dew:dist:instance:" + key);
     }
 
     @Override

@@ -13,7 +13,7 @@ public class RedisClusterLockWrap implements ClusterLockWrap {
     }
 
     @Override
-    public ClusterLock lock(String key) {
+    public ClusterLock instance(String key) {
         return new RedisClusterLock(key, redisTemplate);
     }
 
