@@ -28,7 +28,7 @@ public class ClusterCacheTest {
         // setex
         cache.setex("key", "value", 1);
         assert cache.get("key").equals("value");
-        Thread.sleep(1000);
+        Thread.sleep(1100);
         assert cache.get("key") == null;
         assert !cache.exists("key");
 

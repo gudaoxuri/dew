@@ -2,7 +2,6 @@ package com.trc.test;
 
 
 import com.trc.test.auth.TestAuth;
-import com.trc.test.cluster.TestCluster;
 import com.trc.test.dewutil.TestDewUtil;
 import com.trc.test.web.TestWeb;
 import org.junit.Test;

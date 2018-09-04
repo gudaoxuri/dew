@@ -1,5 +1,6 @@
 package com.tairanchina.csp.dew.core.cluster;
 
+import com.ecfront.dew.common.$;
 import com.tairanchina.csp.dew.core.cluster.ha.ClusterHA;
 import com.tairanchina.csp.dew.core.cluster.ha.H2ClusterHA;
 import org.slf4j.Logger;
@@ -8,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -18,7 +18,7 @@ import java.util.function.Function;
 public class Cluster {
     private static final Logger logger = LoggerFactory.getLogger(Cluster.class);
 
-    public static final String CLASS_LOAD_UNIQUE_FLAG = UUID.randomUUID().toString();
+    public static final String CLASS_LOAD_UNIQUE_FLAG = $.field.createUUID();
 
 
     private static Function<String, Map<String, Object>> _mqGetHeader;
@@ -46,7 +46,7 @@ public class Cluster {
         return clusterHA != null;
     }
 
-    public static ClusterHA getClusterHA(){
+    public static ClusterHA getClusterHA() {
         return clusterHA;
     }
 
@@ -70,9 +70,14 @@ public class Cluster {
     public ClusterMQ mq;
 
     /**
-     * 常用分布式服务，锁与Map
+     * 分布式锁服务
      */
-    public ClusterDist dist;
+    public ClusterLockWrap lock;
+
+    /**
+     * 分布式Map服务
+     */
+    public ClusterMapWrap map;
 
     /**
      * 缓存服务
@@ -82,6 +87,6 @@ public class Cluster {
     /**
      * 领导者选举服务
      */
-    public ClusterElection election;
+    public ClusterElectionWrap election;
 
 }

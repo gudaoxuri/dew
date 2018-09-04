@@ -1,6 +1,6 @@
 package com.tairanchina.csp.dew.core.cluster.test;
 
-import com.tairanchina.csp.dew.core.cluster.ClusterDistLock;
+import com.tairanchina.csp.dew.core.cluster.ClusterLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +10,7 @@ public class ClusterLockTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterLockTest.class);
 
-    public void test(ClusterDistLock lock) throws InterruptedException {
+    public void test(ClusterLock lock) throws InterruptedException {
         CountDownLatch waiting = new CountDownLatch(3);
         lock.delete();
         new Thread(() -> {
@@ -69,9 +69,9 @@ public class ClusterLockTest {
 
         waiting.await();
         // test auto release lock
-        assert lock.tryLock(0, 500);
+        assert lock.tryLock(0, 300);
         assert lock.isLocked();
-        Thread.sleep(510);
+        Thread.sleep(1000);
         assert !lock.isLocked();
     }
 

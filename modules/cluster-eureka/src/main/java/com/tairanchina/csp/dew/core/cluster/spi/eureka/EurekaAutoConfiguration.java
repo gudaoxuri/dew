@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class EurekaAutoConfiguration {
 
-    @Value("${dew.cluster.election.config.election-period-sec:60}")
+    @Value("${dew.cluster.config.election-period-sec:60}")
     private int electionPeriodSec;
 
     @Value("${spring.application.name}")
@@ -19,7 +19,8 @@ public class EurekaAutoConfiguration {
     @Bean
     @ConditionalOnExpression("#{'${dew.cluster.election}'=='eureka'}")
     @SuppressWarnings("SpringJavaAutowiringInspection")
-    public EurekaClusterElection eurekaClusterElection(DiscoveryClient discoveryClient, EurekaRegistration eurekaRegistration){
-        return new EurekaClusterElection(electionPeriodSec,applicationName,discoveryClient,eurekaRegistration);
+    public EurekaClusterElectionWrap eurekaClusterElection(DiscoveryClient discoveryClient, EurekaRegistration eurekaRegistration){
+        return new EurekaClusterElectionWrap(electionPeriodSec,applicationName,discoveryClient,eurekaRegistration);
     }
+
 }

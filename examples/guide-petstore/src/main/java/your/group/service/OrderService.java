@@ -3,7 +3,7 @@ package your.group.service;
 import com.ecfront.dew.common.Page;
 import com.ecfront.dew.common.Resp;
 import com.tairanchina.csp.dew.Dew;
-import com.tairanchina.csp.dew.core.cluster.ClusterDistLock;
+import com.tairanchina.csp.dew.core.cluster.ClusterLock;
 import com.tairanchina.csp.dew.core.service.CRUService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import javax.annotation.PostConstruct;
 public class OrderService implements CRUService<OrderDao, Integer, Order> {
 
     // 使用分布式锁
-    private ClusterDistLock lock;
+    private ClusterLock lock;
 
     @Autowired
     private PetService petService;

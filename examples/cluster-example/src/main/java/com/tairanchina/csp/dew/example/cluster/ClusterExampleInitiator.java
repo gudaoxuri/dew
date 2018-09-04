@@ -3,8 +3,8 @@ package com.tairanchina.csp.dew.example.cluster;
 
 import com.ecfront.dew.common.$;
 import com.tairanchina.csp.dew.Dew;
-import com.tairanchina.csp.dew.core.cluster.ClusterDistLock;
-import com.tairanchina.csp.dew.core.cluster.ClusterDistMap;
+import com.tairanchina.csp.dew.core.cluster.ClusterLock;
+import com.tairanchina.csp.dew.core.cluster.ClusterMap;
 import com.tairanchina.csp.dew.core.cluster.spi.rabbit.RabbitClusterMQ;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public class ClusterExampleInitiator {
         // ...
 
         // dist map
-        ClusterDistMap<TestMapObj> mapObj = Dew.cluster.dist.map("test_obj_map", TestMapObj.class);
+        ClusterMap<TestMapObj> mapObj = Dew.cluster.dist.map("test_obj_map", TestMapObj.class);
         mapObj.clear();
         TestMapObj obj = new TestMapObj();
         obj.a = "测试";
@@ -42,7 +42,7 @@ public class ClusterExampleInitiator {
         // ...
 
         // dist lock
-        ClusterDistLock lock = Dew.cluster.dist.lock("test_lock");
+        ClusterLock lock = Dew.cluster.dist.lock("test_lock");
         // tryLock 示例，等待0ms，忘了手工unLock或出异常时1s后自动解锁
         if (lock.tryLock(0, 1000)) {
             try {

@@ -36,7 +36,7 @@ public class HazelcastAdapter {
         active=true;
     }
 
-    HazelcastInstance getHazelcastInstance() {
+    public HazelcastInstance getHazelcastInstance() {
         return hazelcastInstance;
     }
 

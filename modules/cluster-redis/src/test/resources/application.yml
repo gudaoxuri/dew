@@ -1,3 +1,11 @@
+dew:
+  cluster:
+    cache: redis
+    mq: redis
+    lock: redis
+    map: redis
+    election: redis
+
 spring:
   redis:
     host: 127.0.0.1

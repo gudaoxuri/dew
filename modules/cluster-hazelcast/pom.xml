@@ -35,9 +35,8 @@
             <version>${hazelcast.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.cache</groupId>
-            <artifactId>cache-api</artifactId>
-            <version>1.0.0</version>
+            <groupId>com.tairanchina.csp.dew</groupId>
+            <artifactId>test-starter</artifactId>
         </dependency>
     </dependencies>
 
