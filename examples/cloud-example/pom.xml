@@ -11,7 +11,7 @@
         <relativePath>../../modules/parent-starter/</relativePath>
     </parent>
 
-    <artifactId>service-cloud-example</artifactId>
+    <artifactId>cloud-example</artifactId>
     <name>Dew Service Cloud 示例</name>
     <description>Dew Service Cloud 示例</description>
     <packaging>jar</packaging>

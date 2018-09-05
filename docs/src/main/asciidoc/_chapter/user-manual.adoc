@@ -2077,7 +2077,7 @@ dew:
 
 之后可选择 `ELK` 方案，或是 `Dew` 推荐的 `EK` 方案（跳过 `Logstash`，直接向 `ES` 提交）
 
-一次调用日志的查看，以 `ES` 为例，过滤条件是: logger:com.tairanchina.csp.dew.core.logger.DewTraceLogWrap & trace:<对应的traceID>
+一次调用日志的查看，以 `ES` 为例，过滤条件是: logger:com.tairanchina.csp.dew.core.logger.TraceLogWrap & trace:<对应的traceID>
 
 ==== metrics查询接口
 

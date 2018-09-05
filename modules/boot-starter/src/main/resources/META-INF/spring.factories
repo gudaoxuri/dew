@@ -1,4 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.tairanchina.csp.dew.DewStartup,\
   com.tairanchina.csp.dew.Dew,\
   com.tairanchina.csp.dew.core.web.error.ErrorAutoConfiguration,\
   com.tairanchina.csp.dew.core.web.interceptor.InterceptorWebAutoConfiguration,\

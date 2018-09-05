@@ -23,19 +23,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>boot-starter</artifactId>
         </dependency>
-        <!--引入集群依赖，可选redis/hazelcast/rabbit/ignite/eureka-->
+        <!--引入集群依赖，可选redis/hazelcast/rabbit/eureka-->
         <dependency>
             <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cluster-spi-redis</artifactId>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cluster-spi-hazelcast</artifactId>
         </dependency>
@@ -43,13 +39,9 @@
             <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cluster-spi-rabbit</artifactId>
         </dependency>
-<!--        <dependency>
+        <dependency>
             <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cluster-spi-eureka</artifactId>
-        </dependency>-->
-        <!--<dependency>
-            <groupId>com.tairanchina.csp.dew</groupId>
-            <artifactId>cluster-spi-ignite</artifactId>
         </dependency>-->
     </dependencies>
 

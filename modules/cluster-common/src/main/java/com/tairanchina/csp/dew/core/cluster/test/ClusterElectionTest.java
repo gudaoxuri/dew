@@ -9,7 +9,7 @@ public class ClusterElectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ClusterElectionTest.class);
 
     public void test(ClusterElection election) throws InterruptedException {
-        Thread.sleep(35000);
+        Thread.sleep(10000);
         assert election.isLeader();
     }
 

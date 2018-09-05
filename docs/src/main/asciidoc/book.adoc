@@ -11,13 +11,9 @@ ifndef::imagesdir[:imagesdir: ./images]
 
 include::../../../../README.adoc[]
 
-include::_chapter/guide.adoc[]
-
 include::_chapter/user-manual.adoc[]
 
 include::_chapter/best-practices.adoc[]
-
-include::_chapter/specification.adoc[]
 
 include::_chapter/develop.adoc[]
 

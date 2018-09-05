@@ -1,6 +1,5 @@
 package com.tairanchina.csp.dew.example.web;
 
-import com.tairanchina.csp.dew.Dew;
 import com.tairanchina.csp.dew.core.web.validation.CreateGroup;
 import com.tairanchina.csp.dew.core.web.validation.IdNumber;
 import com.tairanchina.csp.dew.core.web.validation.Phone;
@@ -24,34 +23,17 @@ public class WebExampleController {
 
     private AtomicInteger atomicInteger = new AtomicInteger();
 
-    @GetMapping("/monitor")
-    public String monitor(){
-        return "monitor";
-    }
-    @GetMapping("/monitor2")
-    public String monitor2() throws InterruptedException {
-        Thread.sleep(1000);
-        return "monitor2";
-    }
-
-    @GetMapping("/monitor3")
-    public String monitor3(){
-        Dew.cluster.mq.request("abc","xxxxx52");
-        return "monitor3";
-    }
-
     /**
      * 最基础的Controller示例
      */
     @GetMapping("example")
     @ApiOperation(value = "示例方式")
     public String example() {
-        for (int i = 0;i<100;i++){
-            logger.info(atomicInteger.getAndIncrement()+" Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
+        for (int i = 0; i < 100; i++) {
+            logger.info(atomicInteger.getAndIncrement() + " Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
         }
         return "enjoy!";
     }
-
 
     /**
      * 数据验证示例，针对 CreateGroup 这一标识组的 bean认证
@@ -73,7 +55,7 @@ public class WebExampleController {
      * 数据验证示例，URL认证
      */
     @GetMapping(value = "valid-method/{age}")
-    public String validInMethod(@Min(value = 2,message = "age必须大于2") @PathVariable("age") int age) {
+    public String validInMethod(@Min(value = 2, message = "age必须大于2") @PathVariable("age") int age) {
         return "";
     }
 

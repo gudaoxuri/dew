@@ -26,11 +26,6 @@
             <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>boot-starter</artifactId>
         </dependency>
-        <!-- 引入web依赖 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cluster-spi-redis</artifactId>

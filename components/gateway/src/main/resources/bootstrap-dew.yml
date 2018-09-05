@@ -23,17 +23,17 @@ management:
 
 
 zuul:
-#  semaphore:
-#    max-semaphores: 200
-#  host:
-#    # 最大连接数
-#    max-total-connections: 200
-#    # 每个router最大连接数
-#    max-per-route-connections: 20
-#    # 连接超时时间
-#    connect-timeout-millis: 3000
-#    # 响应超时时间
-#    socket-timeout-millis: 15000
+  semaphore:
+    max-semaphores: 200
+  host:
+    # 最大连接数
+    max-total-connections: 200
+    # 每个router最大连接数
+    max-per-route-connections: 20
+    # 连接超时时间
+    connect-timeout-millis: 3000
+    # 响应超时时间
+    socket-timeout-millis: 15000
 
 hystrix:
 #  threadpool:
@@ -47,9 +47,10 @@ hystrix:
             timeoutInMilliseconds: 3000
           strategy: THREAD
 
-#ribbon:
-#  max-connections-per-host: 200
-#  max-total-connections: 200
-#  connect-timeout: 20000
-#  read-timeout: 20000
+ribbon:
+  MaxConnectionsPerHost: 200
+  MaxTotalConnections: 200
+  ConnectTimeout: 20000
+  ReadTimeout: 20000
+
 

@@ -25,6 +25,6 @@ public class SleuthExampleApplication  {
     @PostConstruct
     public void init(){
         logger.info("开始监听.." );
-        Dew.cluster.mq.subscribe("test712", message -> logger.info("pub_sub->{}" , message));
+        Dew.cluster.mq.subscribe("test", message -> logger.info("pub_sub->{}" , message));
     }
 }

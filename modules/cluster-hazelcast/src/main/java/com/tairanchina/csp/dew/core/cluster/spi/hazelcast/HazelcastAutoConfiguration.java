@@ -30,13 +30,13 @@ public class HazelcastAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnExpression("'${dew.cluster.instance}'=='hazelcast'")
+    @ConditionalOnExpression("'${dew.cluster.lock}'=='hazelcast'")
     public HazelcastClusterLockWrap hazelcastClusterLock(HazelcastAdapter hazelcastAdapter) {
         return new HazelcastClusterLockWrap(hazelcastAdapter);
     }
 
     @Bean
-    @ConditionalOnExpression("'${dew.cluster.instance}'=='hazelcast'")
+    @ConditionalOnExpression("'${dew.cluster.map}'=='hazelcast'")
     public HazelcastClusterMapWrap hazelcastClusterMap(HazelcastAdapter hazelcastAdapter) {
         return new HazelcastClusterMapWrap(hazelcastAdapter);
     }

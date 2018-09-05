@@ -1,8 +1,6 @@
 package com.tairanchina.csp.dew.core;
 
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,7 +26,7 @@ public class DewCloudConfig {
 
     public static class Error {
 
-        private boolean enabled;
+        private boolean enabled = false;
         private Set<String> notifyEmails = new HashSet<>();
         private String notifyTitle = "服务异常";
         private long notifyIntervalSec = 1800;

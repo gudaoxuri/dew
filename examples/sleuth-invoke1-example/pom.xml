@@ -24,14 +24,7 @@
         <dependency>
             <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cloud-starter</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-starter-mail</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
-
         <dependency>
             <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cluster-spi-rabbit</artifactId>

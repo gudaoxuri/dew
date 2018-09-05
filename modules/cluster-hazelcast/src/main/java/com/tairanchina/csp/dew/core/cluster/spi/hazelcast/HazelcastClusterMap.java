@@ -17,7 +17,7 @@ public class HazelcastClusterMap<M> implements ClusterMap<M> {
     private IMap<String, M> map;
 
     public HazelcastClusterMap(String mapKey, HazelcastInstance hazelcastInstance) {
-        map = hazelcastInstance.getMap("dew:dist:instance:" + mapKey);
+        map = hazelcastInstance.getMap("dew:cluster:map:" + mapKey);
     }
 
     @Override

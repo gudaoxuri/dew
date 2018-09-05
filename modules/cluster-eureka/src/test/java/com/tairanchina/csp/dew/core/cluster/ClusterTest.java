@@ -2,6 +2,7 @@ package com.tairanchina.csp.dew.core.cluster;
 
 import com.tairanchina.csp.dew.core.cluster.spi.eureka.EurekaClusterElectionWrap;
 import com.tairanchina.csp.dew.core.cluster.test.ClusterElectionTest;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import java.util.concurrent.CountDownLatch;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = MockEurekaApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@Ignore
 public class ClusterTest {
 
     @Autowired

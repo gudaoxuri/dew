@@ -1,17 +1,6 @@
 spring:
   application:
     name: web-example
-  redis:
-    host: dev-ucenter-redis.fengdai.org
-    port: 6379
-    password: tairanchina.com
-    database: 0
-    pool:
-      max-active: 10
-      max-wait: -1
-      max-idle: 1
-      min-idle: 0
-
 
 server:
   port: 8083 # http端口号
@@ -19,10 +8,6 @@ server:
     max-threads: 1000
 
 dew:
-  cluster:
-    cache: redis
-    dist: redis # 可选 redis/hazelcast
-    mq: redis
   basic:
     name: web
     version: 1.0
@@ -30,15 +15,6 @@ dew:
     web-site: www.tairanchina.com
     doc:
       base-package: com.tairanchina # API文档路径
-    format:
-      use-unity-error: true #是否启用统一响应，默认true
-      reuse-http-state: false # 默认true， true:重用http状态码，false:使用协议无关格式
-  metric:
-    enabled: false
-
 
 logging:
   path: ./logs
-management:
-  security:
-    enabled: false

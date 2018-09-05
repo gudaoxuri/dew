@@ -25,6 +25,3 @@ management:
 
 logging:
   path: ./logs
-dew:
-  metric:
-    enabled: true
