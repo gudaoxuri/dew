@@ -23,10 +23,8 @@
         <module>modules/cluster-rabbit</module>
         <module>modules/cluster-eureka</module>
         <module>modules/boot-starter</module>
-        <module>modules/cloud-starter</module>
-        <module>modules/jdbc-starter</module>
-        <module>modules/mybatis-starter</module>
         <module>modules/idempotent-starter</module>
+        <!--<module>modules/cloud-starter</module>
         <module>modules/test-starter</module>
         <module>components/registry</module>
         <module>components/config</module>
@@ -54,7 +52,7 @@
         <module>examples/sleuth-invoke2-example</module>
         <module>examples/sleuth-invoke3-example</module>
         <module>examples/performance-test-api</module>
-        <module>examples/performance-test-service</module>
+        <module>examples/performance-test-service</module>-->
     </modules>
 
 </project>

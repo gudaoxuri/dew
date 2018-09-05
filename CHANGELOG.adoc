@@ -15,15 +15,16 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 * 分布式锁中删除lock、lockWithFun操作
 * 分布式锁由可重入改为不可重入
 * redis增加hash incr操作 和 hash decr操作
-* 连接池从druid改为HikariCP
 * Spring Boot Admin升级到2.x
 * 移除ShardingJDBC的内容
 * 移除服务脚手架功能
+* 移除mybatis-starter模块
+* 暂时移除Dew JDBC模块
 * 增加swagger-bootstrap-ui，优化swaggerUI的显示
 
 .Fixed
 
-.迁移指南（从1.4.7-RC到此版本）
+.迁移指南（从1.3.4-RC到此版本）
 
 * 配置变更： 拆分``dew.cluster.dist`` 为 ``dew.cluster.lock``和``dew.cluster.map``
 * 配置变更： ``dew.cluster.election.config.election-period-sec`` to ``dew.cluster.config.election-period-sec``

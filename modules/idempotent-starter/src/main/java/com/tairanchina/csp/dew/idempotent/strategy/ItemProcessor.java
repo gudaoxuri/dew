@@ -3,7 +3,7 @@ package com.tairanchina.csp.dew.idempotent.strategy;
 
 import com.tairanchina.csp.dew.Dew;
 
-public class ItemProcessor implements DewIdempotentProcessor {
+public class ItemProcessor implements IdempotentProcessor {
 
     private static final String CACHE_KEY = "dew:idempotent:item:";
 
@@ -14,7 +14,13 @@ public class ItemProcessor implements DewIdempotentProcessor {
             return StatusEnum.NOT_EXIST;
         } else {
             // 设置不成功，表示之前存在，返回存在的值
-            return StatusEnum.valueOf(Dew.cluster.cache.get(CACHE_KEY + optType + ":" + optId));
+            String status = Dew.cluster.cache.get(CACHE_KEY + optType + ":" + optId);
+            if (status == null && status.isEmpty()) {
+                // 设置成功，表示之前不存在
+                return StatusEnum.NOT_EXIST;
+            } else {
+                return StatusEnum.valueOf(status);
+            }
         }
     }
 

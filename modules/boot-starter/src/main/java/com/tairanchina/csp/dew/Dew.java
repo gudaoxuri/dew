@@ -10,8 +10,6 @@ import com.tairanchina.csp.dew.core.auth.BasicAuthAdapter;
 import com.tairanchina.csp.dew.core.cluster.*;
 import com.tairanchina.csp.dew.core.basic.fun.VoidExecutor;
 import com.tairanchina.csp.dew.core.basic.fun.VoidPredicate;
-import com.tairanchina.csp.dew.core.jdbc.DS;
-import com.tairanchina.csp.dew.core.jdbc.DSManager;
 import com.tairanchina.csp.dew.core.basic.loading.DewLoadImmediately;
 import com.tairanchina.csp.dew.core.basic.utils.NetUtils;
 import org.slf4j.Logger;
@@ -89,11 +87,6 @@ public class Dew {
             Cluster.ha();
         }
 
-        if (Dew.applicationContext.containsBean(DSManager.class.getSimpleName())) {
-            logger.info("Load Dew JDBC...");
-            Dew.applicationContext.getBean(DSManager.class);
-        }
-
         logger.info("Load Dew funs...");
         // Load Immediately
         Set<Class<?>> loadOrders = $.clazz.scan(Dew.class.getPackage().getName(), new HashSet<Class<? extends Annotation>>() {{
@@ -126,14 +119,6 @@ public class Dew {
             instance = $.field.createUUID();
         }
 
-    }
-
-    public static DS ds() {
-        return DSManager.select("");
-    }
-
-    public static DS ds(String dsName) {
-        return DSManager.select(dsName);
     }
 
     /**

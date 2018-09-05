@@ -1,5 +1,6 @@
 package com.tairanchina.csp.dew.idempotent.interceptor;
 
+import com.tairanchina.csp.dew.Dew;
 import com.tairanchina.csp.dew.core.web.error.ErrorController;
 import com.tairanchina.csp.dew.idempotent.DewIdempotent;
 import com.tairanchina.csp.dew.idempotent.DewIdempotentConfig;
@@ -12,11 +13,11 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class DewIdempotentHandlerInterceptor extends HandlerInterceptorAdapter {
+public class IdempotentHandlerInterceptor extends HandlerInterceptorAdapter {
 
     private DewIdempotentConfig dewIdempotentConfig;
 
-    public DewIdempotentHandlerInterceptor(DewIdempotentConfig dewIdempotentConfig) {
+    public IdempotentHandlerInterceptor(DewIdempotentConfig dewIdempotentConfig) {
         this.dewIdempotentConfig = dewIdempotentConfig;
     }
 
@@ -27,15 +28,15 @@ public class DewIdempotentHandlerInterceptor extends HandlerInterceptorAdapter {
             return super.preHandle(request, response, handler);
         }
         // 参数设置
-        String optTypeFlag = StringUtils.isEmpty(idempotent.optTypeFlag()) ? dewIdempotentConfig.getDefaultOptTypeFlag() : idempotent.optTypeFlag();
-        String optType = request.getHeader(optTypeFlag);
-        if (StringUtils.isEmpty(optType)) {
-            optType = request.getParameter(optTypeFlag);
-        }
+        String optType = "[" + request.getMethod() + "]" + Dew.Info.name + "/" + request.getRequestURI();
         String optIdFlag = StringUtils.isEmpty(idempotent.optIdFlag()) ? dewIdempotentConfig.getDefaultOptIdFlag() : idempotent.optIdFlag();
         String optId = request.getHeader(optIdFlag);
         if (StringUtils.isEmpty(optId)) {
             optId = request.getParameter(optIdFlag);
+        }
+        if (StringUtils.isEmpty(optId)) {
+            // optId不存在，表示忽略幂等检查，强制执行
+            return super.preHandle(request, response, handler);
         }
         if (!DewIdempotent.existOptTypeInfo(optType)) {
             long expireMs = idempotent.expireMs() == -1 ? dewIdempotentConfig.getDefaultExpireMs() : idempotent.expireMs();
@@ -47,10 +48,10 @@ public class DewIdempotentHandlerInterceptor extends HandlerInterceptorAdapter {
             case NOT_EXIST:
                 return super.preHandle(request, response, handler);
             case UN_CONFIRM:
-                ErrorController.error(request, response, 409, "The last operation was still going on, please wait.", DewIdempotentException.class.getName());
+                ErrorController.error(request, response, 409, "The last operation was still going on, please wait.", IdempotentException.class.getName());
                 return false;
             case CONFIRMED:
-                ErrorController.error(request, response, 423, "Resources have been processed, can't repeat the request.", DewIdempotentException.class.getName());
+                ErrorController.error(request, response, 423, "Resources have been processed, can't repeat the request.", IdempotentException.class.getName());
                 return false;
             default:
                 return false;

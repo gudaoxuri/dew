@@ -1,10 +1,6 @@
 dew:
   cluster:
     cache: redis
-  basic:
-    format:
-      use-unity-error: true #是否启用统一响应，默认true
-      reuse-http-state: false # 默认true， true:重用http状态码，false:使用协议无关格式
 spring:
   application:
     name: Idempotent-test
