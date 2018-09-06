@@ -15,7 +15,7 @@
     <name>Dew Parent Starter</name>
     <description>Dew 父工程</description>
     <packaging>pom</packaging>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.0-Beta</version>
 
     <properties>
         <java.version>1.8</java.version>
@@ -26,9 +26,8 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
         <maven.deploy.skip>false</maven.deploy.skip>
-        <dew.version>1.5.0-SNAPSHOT</dew.version>
+        <dew.version>1.5.0-Beta</dew.version>
         <dew-common.version>1.4.7</dew-common.version>
-        <aspectjrt.version>1.8.10</aspectjrt.version>
         <spring-boot.version>1.5.13.RELEASE</spring-boot.version>
         <swagger.version>2.8.0</swagger.version>
         <swagger-bootstrap-ui.version>1.8.2</swagger-bootstrap-ui.version>
@@ -99,16 +98,6 @@
                 <groupId>com.ecfront.dew</groupId>
                 <artifactId>common</artifactId>
                 <version>${dew-common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjrt</artifactId>
-                <version>${aspectjrt.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjweaver</artifactId>
-                <version>${aspectjrt.version}</version>
             </dependency>
             <dependency>
                 <groupId>mysql</groupId>

@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.tairanchina.csp.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>1.5.0-SNAPSHOT</version>
+        <version>1.5.0-Beta</version>
         <relativePath>../../modules/parent-starter/</relativePath>
     </parent>
 
@@ -15,7 +15,7 @@
     <name>Dew Gateway</name>
     <description>Dew 网关服务</description>
     <packaging>jar</packaging>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.0-Beta</version>
 
     <properties>
     </properties>
