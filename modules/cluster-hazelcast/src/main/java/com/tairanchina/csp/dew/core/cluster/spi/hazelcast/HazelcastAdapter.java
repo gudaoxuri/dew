@@ -22,8 +22,8 @@ public class HazelcastAdapter {
     public void init() {
         ClientConfig clientConfig = new ClientConfig();
         clientConfig.setProperty("hazelcast.logging.type", "slf4j");
-        if (hazelcastConfig.getUserName() != null) {
-            clientConfig.getGroupConfig().setName(hazelcastConfig.getUserName()).setPassword(hazelcastConfig.getPassword());
+        if (hazelcastConfig.getUsername() != null) {
+            clientConfig.getGroupConfig().setName(hazelcastConfig.getUsername()).setPassword(hazelcastConfig.getPassword());
         }
         clientConfig.getNetworkConfig().setConnectionTimeout(hazelcastConfig.getConnectionTimeout());
         clientConfig.getNetworkConfig().setConnectionAttemptLimit(hazelcastConfig.getConnectionAttemptLimit());

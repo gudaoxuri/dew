@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnExpression("#{'${dew.cluster.cache}'=='eureka' || '${dew.cluster.mq}'=='eureka' || '${dew.cluster.lock}'=='eureka' || '${dew.cluster.map}'=='eureka' || '${dew.cluster.election}'=='eureka'}")
 public class EurekaAutoConfiguration {
 
-    @Value("${dew.cluster.config.instance-period-sec:60}")
+    @Value("${dew.cluster.config.election-period-sec:60}")
     private int electionPeriodSec;
 
     @Value("${spring.application.name}")

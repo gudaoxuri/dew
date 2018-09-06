@@ -42,7 +42,7 @@ public class Dew {
 
     public static AuthAdapter auth;
 
-    @Value("${spring.application.name}")
+    @Value("${spring.application.name:please-setting-this}")
     private String applicationName;
     @Autowired
     private DewConfig injectDewConfig;

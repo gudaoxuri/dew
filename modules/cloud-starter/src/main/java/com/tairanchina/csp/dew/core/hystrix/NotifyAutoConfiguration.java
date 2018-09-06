@@ -26,7 +26,7 @@ public class NotifyAutoConfiguration {
     @Autowired
     private DewCloudConfig dewCloudConfig;
 
-    @Value("${spring.mail.username:dew:}")
+    @Value("${spring.mail.username:dew}")
     private String emailFrom;
 
     @Value("${spring.application.name}")

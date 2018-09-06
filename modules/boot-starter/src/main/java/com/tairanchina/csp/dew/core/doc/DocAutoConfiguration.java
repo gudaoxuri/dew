@@ -53,7 +53,7 @@ public class DocAutoConfiguration implements ApplicationListener<EmbeddedServlet
     @Value("${server.context-path:}")
     private String contextPath;
 
-    @Value("${api.file.name:index}")
+    @Value("${dew.basic.doc.fileName:index}")
     private String apiFileName;
 
     @Bean
@@ -91,10 +91,10 @@ public class DocAutoConfiguration implements ApplicationListener<EmbeddedServlet
     @Override
     public void onApplicationEvent(EmbeddedServletContainerInitializedEvent event) {
         int port = event.getEmbeddedServletContainer().getPort();
-        String generate = System.getProperty("dew.doc.generate");
+        String generate = System.getProperty("dew.basic.doc.generate");
         if (generate != null && generate.equalsIgnoreCase("true")) {
-            String outputDir = System.getProperty("dew.doc.outputDir");
-            String swaggerDir = System.getProperty("dew.doc.swaggerDir");
+            String outputDir = System.getProperty("dew.basic.doc.outputDir");
+            String swaggerDir = System.getProperty("dew.basic.doc.swaggerDir");
             logger.info("Generating Doc to :" + outputDir);
             try {
                 Files.createDirectories(Paths.get(outputDir));
