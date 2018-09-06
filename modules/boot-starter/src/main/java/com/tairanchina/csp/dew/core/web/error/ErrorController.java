@@ -91,7 +91,8 @@ public class ErrorController extends AbstractErrorController {
     }
 
 
-    private static Object[] error(HttpServletRequest request, String path, int statusCode, String message, String exClass, String exMsg, List exDetail, Throwable specialError) {
+    private static Object[] error(HttpServletRequest request, String path, int statusCode, String msg, String exClass, String exMsg, List exDetail, Throwable specialError) {
+        String message = msg;
         String requestFrom = request.getHeader(Dew.Constant.HTTP_REQUEST_FROM_FLAG);
         int httpCode = statusCode;
         int customHttpCode = -1;
@@ -130,17 +131,15 @@ public class ErrorController extends AbstractErrorController {
                     );
             message += DETAIL_FLAG + $.json.toJsonString(errorExt);
         }
-        if (specialError instanceof MethodArgumentNotValidException) {
-            if (exDetail != null && !exDetail.isEmpty()) {
-                ArrayNode errorExt = $.json.createArrayNode();
-                for (JsonNode json : $.json.toJson(exDetail)) {
-                    errorExt.add($.json.createObjectNode()
-                            .put("field", json.get("field").asText(""))
-                            .put("reason", json.get("codes").get(0).asText().split("\\.")[0])
-                            .put("msg", json.get("defaultMessage").asText("")));
-                }
-                message += DETAIL_FLAG + $.json.toJsonString(errorExt);
+        if (specialError instanceof MethodArgumentNotValidException && exDetail != null && !exDetail.isEmpty()) {
+            ArrayNode errorExt = $.json.createArrayNode();
+            for (JsonNode json : $.json.toJson(exDetail)) {
+                errorExt.add($.json.createObjectNode()
+                        .put("field", json.get("field").asText(""))
+                        .put("reason", json.get("codes").get(0).asText().split("\\.")[0])
+                        .put("msg", json.get("defaultMessage").asText("")));
             }
+            message += DETAIL_FLAG + $.json.toJsonString(errorExt);
         }
 
         logger.error("Request [{}-{}] from [{}] {} , error {} : {}", request.getMethod(), path, requestFrom, Dew.context().getSourceIP(), busCode, message);

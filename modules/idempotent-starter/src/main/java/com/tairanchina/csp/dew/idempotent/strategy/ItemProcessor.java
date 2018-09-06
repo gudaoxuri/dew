@@ -15,7 +15,7 @@ public class ItemProcessor implements IdempotentProcessor {
         } else {
             // 设置不成功，表示之前存在，返回存在的值
             String status = Dew.cluster.cache.get(CACHE_KEY + optType + ":" + optId);
-            if (status == null && status.isEmpty()) {
+            if (status == null || status.isEmpty()) {
                 // 设置成功，表示之前不存在
                 return StatusEnum.NOT_EXIST;
             } else {
