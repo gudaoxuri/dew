@@ -1,10 +1,9 @@
 package com.tairanchina.csp.dew.auth.dto.management
 
-import javax.validation.constraints.NotNull
-
 import com.tairanchina.csp.dew.auth.domain.Ident
 import com.tairanchina.csp.dew.auth.dto.common.StatusDTO
 import com.tairanchina.csp.dew.auth.helper.CommonConverter
+import javax.validation.constraints.NotNull
 
 import scala.beans.BeanProperty
 

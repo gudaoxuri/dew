@@ -1,8 +1,7 @@
 package com.tairanchina.csp.dew.auth.repository
 
-import javax.annotation.Resource
-
 import com.tairanchina.csp.dew.auth.domain.Ident
+import javax.annotation.Resource
 import org.springframework.data.jpa.repository.{JpaRepository, Modifying, Query}
 
 import scala.language.implicitConversions

@@ -1,7 +1,7 @@
 package com.tairanchina.csp.dew.core.cluster.spi.redis;
 
-import com.tairanchina.csp.dew.core.cluster.ClusterMap;
 import com.ecfront.dew.common.$;
+import com.tairanchina.csp.dew.core.cluster.ClusterMap;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Map;

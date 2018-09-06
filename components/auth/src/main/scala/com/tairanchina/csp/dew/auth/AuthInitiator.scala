@@ -1,13 +1,12 @@
 package com.tairanchina.csp.dew.auth
 
-import javax.annotation.PostConstruct
-
 import com.ecfront.dew.common.$
 import com.tairanchina.csp.dew.Dew
 import com.tairanchina.csp.dew.auth.domain._
 import com.tairanchina.csp.dew.auth.dto.management._
 import com.tairanchina.csp.dew.auth.repository.{RoleRepository, TenantRepository}
 import com.tairanchina.csp.dew.auth.service.{BasicService, ManagementService}
+import javax.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional

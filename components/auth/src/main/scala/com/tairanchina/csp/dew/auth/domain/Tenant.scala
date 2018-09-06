@@ -2,8 +2,6 @@ package com.tairanchina.csp.dew.auth.domain
 
 import javax.persistence._
 
-import com.ecfront.dew.common.{$, Resp}
-
 import scala.beans.BeanProperty
 
 @Entity

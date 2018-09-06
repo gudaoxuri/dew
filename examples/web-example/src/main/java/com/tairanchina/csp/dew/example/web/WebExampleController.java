@@ -63,7 +63,7 @@ public class WebExampleController {
 
         // 仅在CreateGroup组下才校验
         @NotNull(groups = CreateGroup.class)
-        @IdNumber(message = "身份证号错误", groups = CreateGroup.class)
+        @IdNumber(groups = CreateGroup.class)
         private String idCard;
 
         // CreateGroup、UpdateGroup组下校验
@@ -71,7 +71,7 @@ public class WebExampleController {
         private int age;
 
         // CreateGroup、UpdateGroup组下校验
-        @Phone(message = "手机号错误", groups = {CreateGroup.class, UpdateGroup.class})
+        @Phone(groups = {CreateGroup.class, UpdateGroup.class})
         private String phone;
 
         public String getIdCard() {

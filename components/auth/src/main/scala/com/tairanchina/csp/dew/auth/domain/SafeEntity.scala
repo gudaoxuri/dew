@@ -1,8 +1,8 @@
 package com.tairanchina.csp.dew.auth.domain
 
 import java.util.Date
-import javax.persistence._
 
+import javax.persistence._
 import org.hibernate.annotations.{CreationTimestamp, UpdateTimestamp}
 
 import scala.beans.BeanProperty

@@ -3,6 +3,7 @@ spring:
     host: localhost
     port: 6379
     database: 0
+    password: 123456
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:test
