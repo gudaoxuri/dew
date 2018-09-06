@@ -11,10 +11,10 @@ import java.time.format.DateTimeFormatter;
 public class LocalDateTimeConverter implements Converter<String, LocalDateTime> {
     @Override
     public LocalDateTime convert(String str) {
-        if (StringUtils.isEmpty(str)){
+        if (StringUtils.isEmpty(str)) {
             return null;
         }
-        if (str.matches("[1-9][0-9]+")){
+        if (str.matches("[1-9][0-9]+")) {
             return LocalDateTime.ofInstant(Instant.ofEpochMilli(Long.valueOf(str)), ZoneId.systemDefault());
         }
         return LocalDateTime.parse(str, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));

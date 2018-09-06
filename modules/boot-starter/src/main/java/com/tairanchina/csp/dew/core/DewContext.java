@@ -72,8 +72,8 @@ public class DewContext {
         return cxt;
     }
 
-    public static boolean exist(){
-        return CONTEXT.get()!=null;
+    public static boolean exist() {
+        return CONTEXT.get() != null;
     }
 
     public static void setContext(DewContext _context) {

@@ -64,7 +64,7 @@ public class BasicOptInfo<E> extends OptInfo<E> {
 
     public E setMobile(String mobile) {
         this.mobile = mobile;
-        return (E)this;
+        return (E) this;
     }
 
     public String getEmail() {

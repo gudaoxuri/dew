@@ -65,7 +65,7 @@ public class Dew {
         }
         // Load Auth Adapter
         auth = Dew.applicationContext.getBean(BasicAuthAdapter.class);
-        logger.info("Use Auth Adapter:"+auth.getClass().getName());
+        logger.info("Use Auth Adapter:" + auth.getClass().getName());
 
         logger.info("Load Dew cluster...");
         if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getCache() + "ClusterCache")) {

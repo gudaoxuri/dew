@@ -10,6 +10,6 @@ class AuthCacheData {
 
   // tenantId -> resourceUri -> roleIds
   @BeanProperty
-  var resources: Map[String,Map[String, Set[String]]] = _
+  var resources: Map[String, Map[String, Set[String]]] = _
 
 }

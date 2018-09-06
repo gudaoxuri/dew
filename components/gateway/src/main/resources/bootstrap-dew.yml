@@ -36,9 +36,9 @@ zuul:
     socket-timeout-millis: 15000
 
 hystrix:
-#  threadpool:
-#    default:
-#      core-Size: 200
+  #  threadpool:
+  #    default:
+  #      core-Size: 200
   command:
     default:
       execution:

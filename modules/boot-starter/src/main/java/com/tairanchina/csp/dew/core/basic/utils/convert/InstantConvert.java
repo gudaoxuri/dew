@@ -5,10 +5,10 @@ import org.springframework.util.StringUtils;
 
 import java.time.Instant;
 
-public class InstantConvert implements Converter<String,Instant> {
+public class InstantConvert implements Converter<String, Instant> {
     @Override
     public Instant convert(String str) {
-        if (StringUtils.isEmpty(str)){
+        if (StringUtils.isEmpty(str)) {
             return null;
         }
         return Instant.ofEpochMilli(Long.valueOf(str));

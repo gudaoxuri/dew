@@ -10,7 +10,7 @@ public class LocalDateConverter implements Converter<String, LocalDate> {
 
     @Override
     public LocalDate convert(String str) {
-        if (StringUtils.isEmpty(str)){
+        if (StringUtils.isEmpty(str)) {
             return null;
         }
         return LocalDate.parse(str, DateTimeFormatter.ofPattern("yyyy-MM-dd"));

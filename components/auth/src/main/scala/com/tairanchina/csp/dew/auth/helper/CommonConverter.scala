@@ -12,7 +12,7 @@ object CommonConverter {
     dest
   }
 
-  def convertPage[E,O <: AnyRef](ori: org.springframework.data.domain.Page[O])(implicit m: Manifest[E]): Page[E] = {
+  def convertPage[E, O <: AnyRef](ori: org.springframework.data.domain.Page[O])(implicit m: Manifest[E]): Page[E] = {
     if (ori.getContent.size() > 0) {
       Page.build(ori.getNumber(), ori.getSize(), ori.getTotalElements, ori.getContent.asScala.map(convert[E](_)).asJava)
     } else {

@@ -31,18 +31,18 @@
             <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>cluster-spi-redis</artifactId>
         </dependency>
-<!--        <dependency>
-            <groupId>com.tairanchina.csp.dew</groupId>
-            <artifactId>cluster-spi-hazelcast</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tairanchina.csp.dew</groupId>
-            <artifactId>cluster-spi-rabbit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tairanchina.csp.dew</groupId>
-            <artifactId>cluster-spi-eureka</artifactId>
-        </dependency>-->
+        <!--        <dependency>
+                    <groupId>com.tairanchina.csp.dew</groupId>
+                    <artifactId>cluster-spi-hazelcast</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tairanchina.csp.dew</groupId>
+                    <artifactId>cluster-spi-rabbit</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tairanchina.csp.dew</groupId>
+                    <artifactId>cluster-spi-eureka</artifactId>
+                </dependency>-->
     </dependencies>
 
 </project>

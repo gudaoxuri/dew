@@ -13,8 +13,8 @@ public class MetricsTest {
 
     @Test
     public void testMetric() throws IOException, InterruptedException {
-        for (int i=0;i<100;i++){
-            $.http.get( "http://localhost:8080/test/valid-method-spring/2");
+        for (int i = 0; i < 100; i++) {
+            $.http.get("http://localhost:8080/test/valid-method-spring/2");
             Thread.sleep(5);
         }
     }

@@ -13,7 +13,7 @@ public class WebTest {
 
     @Test
     public void testPre() throws IOException {
-        for (int i=0;i<5000;i++){
+        for (int i = 0; i < 5000; i++) {
             $.http.get("http://127.0.0.1:8080/example");
         }
     }

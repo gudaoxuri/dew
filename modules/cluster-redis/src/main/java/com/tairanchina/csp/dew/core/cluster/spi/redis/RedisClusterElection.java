@@ -33,7 +33,7 @@ public class RedisClusterElection extends AbsClusterElection {
     }
 
     @Override
-    public void election()  {
+    public void election() {
         $.timer.periodic(electionPeriodSec, false, this::doElection);
     }
 

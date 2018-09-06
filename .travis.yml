@@ -1,1 +1,1 @@
-language: javascript: mvn clean compilejdk:  - oraclejdk8notifications:  email:    - i@sunisle.org    - syl_527@163.com
+language: javascript: mvn clean compilejdk:- oraclejdk8notifications:  email:  - i@sunisle.org  - syl_527@163.com

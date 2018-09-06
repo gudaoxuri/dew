@@ -19,8 +19,8 @@ public class EurekaAutoConfiguration {
 
     @Bean
     @SuppressWarnings("SpringJavaAutowiringInspection")
-    public EurekaClusterElectionWrap eurekaClusterElection(DiscoveryClient discoveryClient, EurekaRegistration eurekaRegistration){
-        return new EurekaClusterElectionWrap(electionPeriodSec,applicationName,discoveryClient,eurekaRegistration);
+    public EurekaClusterElectionWrap eurekaClusterElection(DiscoveryClient discoveryClient, EurekaRegistration eurekaRegistration) {
+        return new EurekaClusterElectionWrap(electionPeriodSec, applicationName, discoveryClient, eurekaRegistration);
     }
 
 }

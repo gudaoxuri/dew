@@ -30,20 +30,20 @@ public class HazelcastAdapter {
         clientConfig.getNetworkConfig().setConnectionAttemptPeriod(hazelcastConfig.getConnectionAttemptPeriod());
         hazelcastConfig.getAddresses().forEach(i -> clientConfig.getNetworkConfig().addAddress(i));
         hazelcastInstance = HazelcastClient.newHazelcastClient(clientConfig);
-        active=true;
+        active = true;
     }
 
     public HazelcastInstance getHazelcastInstance() {
         return hazelcastInstance;
     }
 
-    boolean isActive(){
+    boolean isActive() {
         return active;
     }
 
     @PreDestroy
-    public void shutdown(){
-        active=false;
+    public void shutdown() {
+        active = false;
         hazelcastInstance.shutdown();
     }
 

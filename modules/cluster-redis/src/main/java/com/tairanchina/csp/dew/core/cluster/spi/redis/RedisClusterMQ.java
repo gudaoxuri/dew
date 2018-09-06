@@ -30,7 +30,7 @@ public class RedisClusterMQ implements ClusterMQ {
     public void doSubscribe(String topic, Consumer<String> consumer) {
         new Thread(() -> redisTemplate.execute((RedisCallback<Void>) connection -> {
             connection.subscribe((message, pattern) ->
-                    consumer.accept(new String(message.getBody(), StandardCharsets.UTF_8))
+                            consumer.accept(new String(message.getBody(), StandardCharsets.UTF_8))
                     , topic.getBytes());
             return null;
         })).start();

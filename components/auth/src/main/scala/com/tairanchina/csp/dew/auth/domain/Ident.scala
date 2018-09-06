@@ -17,7 +17,7 @@ object Ident {
 @Table(name = "dew_auth_ident", indexes = Array(
   new Index(name = "idx_ident_accountId", columnList = "accountId"),
   new Index(name = "idx_ident_enabled", columnList = "enabled"),
-  new Index(name = "uni_ident", columnList = "category,key,tenantId",unique = true),
+  new Index(name = "uni_ident", columnList = "category,key,tenantId", unique = true),
 ))
 class Ident extends SafeStatusEntity {
 

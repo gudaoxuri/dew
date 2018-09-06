@@ -21,7 +21,9 @@
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
-            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [${springAppName:-},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-}] [%thread] %logger{35} - %msg %n</Pattern>
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [${springAppName:-},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-}]
+                [%thread] %logger{35} - %msg %n
+            </Pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
