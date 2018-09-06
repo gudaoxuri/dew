@@ -75,13 +75,20 @@ public class IdempotentTest {
 
     @Test
     public void testWithoutHttp() throws IOException, InterruptedException {
+        // 初始化类型为transfer_a的幂等操作，需要手工确认，过期时间为1秒
         DewIdempotent.initOptTypeInfo("transfer_a", true, 1000, StrategyEnum.ITEM);
+        // 第一次请求transfer_a类型下的xxxxxxx这个ID，返回不存在，表示可以下一步操作
         Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "xxxxxxx"));
         Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "yyyyyyy"));
+        // 第二次请求transfer_a类型下的xxxxxxx这个ID，返回未确认，表示上次操作还在进行中
         Assert.assertEquals(StatusEnum.UN_CONFIRM, DewIdempotent.process("transfer_a", "xxxxxxx"));
+        // 确认操作完成
         DewIdempotent.confirm("transfer_a", "xxxxxxx");
+        // 第三次请求transfer_a类型下的xxxxxxx这个ID，返回已确认，但未过期，仍不能操作
         Assert.assertEquals(StatusEnum.CONFIRMED, DewIdempotent.process("transfer_a", "xxxxxxx"));
+        // 延时1秒
         Thread.sleep(1000);
+        // 再次请求transfer_a类型下的xxxxxxx这个ID，返回不存在（上次请求已过期），表示可以下一步操作
         Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "xxxxxxx"));
     }
 

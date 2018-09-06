@@ -27,11 +27,6 @@
             <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>idempotent-starter</artifactId>
         </dependency>
-        <!--使用幂等的Redis实现-->
-        <dependency>
-            <groupId>com.tairanchina.csp.dew</groupId>
-            <artifactId>cluster-spi-redis</artifactId>
-        </dependency>
         <dependency>
             <groupId>com.tairanchina.csp.dew</groupId>
             <artifactId>test-starter</artifactId>

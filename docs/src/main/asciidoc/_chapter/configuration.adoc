@@ -84,13 +84,8 @@ spring:
 
 TIP: https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 
-
-=== `Druid` 连接池参数
-
-TIP: https://github.com/alibaba/druid/wiki/DruidDataSource配置属性列表
-
 === `Spring cloud` 核心参数
 
-TIP: http://cloud.spring.io/spring-cloud-static/spring-cloud-netflix/1.3.4.RELEASE/
+TIP: http://cloud.spring.io/spring-cloud-static/Edgware.SR4/single/spring-cloud.html
 
 

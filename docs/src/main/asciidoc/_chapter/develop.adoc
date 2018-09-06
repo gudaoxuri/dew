@@ -20,14 +20,10 @@ docker run -d --name dew-redis -p 6379:6379 redis
 docker run -d --name dew-rabbit --hostname dew-rabbit -p 15671:15671 -p 15672:15672 -p 4369:4369 -p 5671:5671 -p 5672:5672 -p 25672:25672 -e RABBITMQ_DEFAULT_USER=root -e RABBITMQ_DEFAULT_PASS=123456 -e RABBITMQ_DEFAULT_VHOST=dew rabbitmq:3-management-alpine
 # Hazelcast环境
 docker run -d --name dew-hazelcast -p 5701:5701 hazelcast/hazelcast
-# Ignite环境
-docker run -d --name dew-ignite -p 11211:11211 -p 47100:47100 -p 47500:47500 -p 49112:49112 apacheignite/ignite
 # Zookeeper环境
 docker run -d --name dew-zookeeper -p 2181 -t wurstmeister/zookeeper
 # Kafka环境
 docker run --name dew-kafka -e HOST_IP=localhost -e KAFKA_ADVERTISED_PORT=9092 -e KAFKA_BROKER_ID=1 -e ZK=zk -p 9092:9092 --link dew-zookeeper:zk -t wurstmeister/kafka
-# ELK环境
-docker run -d --name dew-elk -p 5601:5601 -p 9200:9200 -p 5044:5044 -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" sebp/elk
 ----
 
 
