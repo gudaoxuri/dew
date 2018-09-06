@@ -11,11 +11,15 @@ dew: # Dew 参数key前缀
         desc: # 服务描述，用于API文档显示等
         webSite: # 官网，用于API文档显示等
         doc:
-            enabled: true # 是否启用默认文档配置，关闭后可自定义文档管理
+            enabled: true # 是否启用默认文档配置，关闭后可自定义文档管理，默认为true
             base-package: # API文档要扫描的根包，多指定到 Controller 包中
+            ## 生成离线文档需要以下配置：
+            generate: true #是否生成离线文档
+            output-dir: # 生成路径
+            swagger-dir:
+            file-name: # 要导出的API离线文档的名称
         format:
         use-unity-error: true # 是否启用统一响应
-        reuse-http-state: false # true:重用http状态码，false:使用协议无关格式
         error-mapping: # 自定义错误映射
             "[<异常类名>]":
                 http-code: # http状态码，不存在时使用实例级http状态码
@@ -23,11 +27,13 @@ dew: # Dew 参数key前缀
                 message: # 错误描述，不存在时使用实例级错误描述
     cluster: # 集群功能
         cache: redis # 缓存实现
-        dist: redis # 分布式锁和Map实现，可选 redis/hazelcast
-        mq: redis # MQ实现，可选 redis/hazelcast/rabbit
-        election: eureka # 领导者选举实现，可选 eureka
-    jdbc: # DewJDBC 功能
-        base-packages:[""] # 要扫描的根包，多指定到 jdbc 包中
+        lock: redis # 分布式锁实现，可选 redis/hazelcast，默认redis
+        map: redis # 分布式Map实现，可选 redis/hazelcast，默认redis
+        mq: redis # MQ实现，可选 redis/hazelcast/rabbit，默认redis
+        election: redis # 领导者选举实现，可选 redis/eureka，默认redis
+        config: #集群相关配置
+            election-period-sec: 60 #领导者选举时间区间，默认60秒
+            ha-enabled: true #是否启用HA，默认为true
     security: # 安全功能
         cors:
             allow-origin: * # 允许的来源，建议修改
@@ -38,14 +44,19 @@ dew: # Dew 参数key前缀
         token-hash: false # token值是否需要hash，用于解决token值有特殊字符的情况
         include-services: [""] # 服务白名单，要求源服务头部带上 Request-From
         exclude-services: [""] # 服务黑名单，要求源服务头部带上 Request-From
-        auth: # 特殊的认证功能，基础认证不需要配置
-            csp:  # csp模式，引用csp-starter后默认使用该模式
-                party-id: X-User-Id #partyId在header中的key值
-                app-id: X-App-Id #appId在header中的key值
-                roles: X-Roles #角色在header中的key值，逗号分隔
+    component:
+        auth:
+          token-expire-sec: 60 * 60 * 24 * 30 # token有效期，默认为30天
+          max-login-error-times: 3 # 最大登录错误次数，默认3次
+          clean-error-time-min: 10 # 登录错误限制登录时间，默认为10分钟
+          password-salt: # 密码加盐
+          email-account: # 发通知邮件的邮箱账号，比如用来发送用户注册成功邮件
+          sdk:
+              server-url: # 服务器地址
+              white-list: # 白名单，逗号分隔
     cloud:
         trace-log:
-            enabled: true # 是否启用服务API调用（追踪）日志
+            enabled: true # 是否启用服务API调用（追踪）日志，默认为true
         error:
              enabled: true #启用降级邮件通知，默认为false
              notify-interval-sec: 1800 # 通知的间隔时间
@@ -55,29 +66,30 @@ dew: # Dew 参数key前缀
              notify-exclude-keys: # 不需要监控的方法key值，与notify-include-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
     idempotent:
         default-expire-ms: 3600000 # 设置默认过期时间，1小时
-        default-strategy: item # 设置默认策略，支持 bloom(Bloom Filter)和item(逐条记录)
-        opt-type-flag: __IDEMPOTENT_OPT_TYPE__ # 指定幂等操作类型标识，可以位于HTTP Header或请求参数中
-        opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
-    metric:
-        enabled: true # 是否启用Dew的指标统计
-        period-sec: 默认600 # 指定统计周期（多少秒内的指标统计）
+        default-strategy: item # 设置默认策略，目前支持item(逐条记录)
+        default-opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
+
 spring:
-  datasource: # 主数据源配置
-        ... # 数据源配置，详见 Spring boot 核心参数
-       druid: # druid 连接池配置，详见 Spring boot 核心参数
-  multi-datasources: # DewJDBC 多数据源支撑
-       <other ds name>: # 数据源标识
-  mail: #mail配置，需要hystrix降级通知需加以下配置
-       host: smtp.163.com
-       username:
-       password:
-       properties:
-         mail:
-           smtp:
-             auth: true
-             starttls:
-               enable: true
-               required: true
+    application:
+         name:  # 项目名称,若使用Dew，请配置
+    mail: #mail配置，需要hystrix降级通知需加以下配置
+         host: smtp.163.com
+         username:
+         password:
+         properties:
+           mail:
+             smtp:
+               auth: true
+                 starttls:
+                   enable: true
+                   required: true
+    hazelcast: # hazelcast相关配置
+         username:
+         password:
+         addresses: ["127.0.0.1"]
+         connection-timeout: #默认5000
+         connection-attempt-limit: #默认2
+         connection-attempt-period: #默认3000
 ----
 
 === `Spring boot` 核心参数
