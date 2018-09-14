@@ -3,9 +3,8 @@ package com.tairanchina.csp.dew.core.cluster.spi.redis;
 import com.ecfront.dew.common.$;
 import com.tairanchina.csp.dew.core.cluster.AbsClusterElection;
 import com.tairanchina.csp.dew.core.cluster.Cluster;
-import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
-import redis.clients.jedis.JedisCommands;
 
 
 public class RedisClusterElection extends AbsClusterElection {
@@ -39,17 +38,28 @@ public class RedisClusterElection extends AbsClusterElection {
 
     private void doElection() {
         logger.trace("[Election] electing...");
-        try {
-            RedisConnection redisConnection = redisTemplate.getConnectionFactory().getConnection();
-            String res = ((JedisCommands) redisConnection.getNativeConnection()).set(key, Cluster.CLASS_LOAD_UNIQUE_FLAG, "NX", "EX", electionPeriodSec + 1);
-            redisConnection.close();
-            if ("OK".equalsIgnoreCase(res)) {
+        byte[] rawKey = redisTemplate.getStringSerializer().serialize(key);
+        byte[] rawValue = redisTemplate.getStringSerializer().serialize(Cluster.CLASS_LOAD_UNIQUE_FLAG);
+        boolean finish = redisTemplate.execute((RedisCallback<Boolean>) connection -> {
+            if (connection.setNX(rawKey, rawValue)) {
                 leader.set(true);
-            } else {
-                leader.set(redisTemplate.opsForValue().get(key).equals(Cluster.CLASS_LOAD_UNIQUE_FLAG));
+                connection.expire(rawKey, electionPeriodSec * 2 + 2);
+                return true;
             }
-        } catch (Throwable e) {
-            logger.trace("[Election] election error", e);
+            byte[] v = connection.get(rawKey);
+            if (v == null) {
+                return false;
+            }
+            if (redisTemplate.getStringSerializer().deserialize(v).equals(Cluster.CLASS_LOAD_UNIQUE_FLAG)) {
+                leader.set(true);
+                connection.expire(rawKey, electionPeriodSec * 2 + 2);
+            } else {
+                leader.set(false);
+            }
+            return true;
+        });
+        if (!finish) {
+            doElection();
         }
     }
 
