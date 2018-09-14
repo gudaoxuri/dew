@@ -39,13 +39,17 @@ public class RedisClusterElection extends AbsClusterElection {
 
     private void doElection() {
         logger.trace("[Election] electing...");
-        RedisConnection redisConnection = redisTemplate.getConnectionFactory().getConnection();
-        String res = ((JedisCommands) redisConnection.getNativeConnection()).set(key, Cluster.CLASS_LOAD_UNIQUE_FLAG, "NX", "PX", electionPeriodSec + 1);
-        redisConnection.close();
-        if ("OK".equalsIgnoreCase(res)) {
-            leader.set(true);
-        } else {
-            leader.set(redisTemplate.opsForValue().get(key).equals(Cluster.CLASS_LOAD_UNIQUE_FLAG));
+        try {
+            RedisConnection redisConnection = redisTemplate.getConnectionFactory().getConnection();
+            String res = ((JedisCommands) redisConnection.getNativeConnection()).set(key, Cluster.CLASS_LOAD_UNIQUE_FLAG, "NX", "EX", electionPeriodSec + 1);
+            redisConnection.close();
+            if ("OK".equalsIgnoreCase(res)) {
+                leader.set(true);
+            } else {
+                leader.set(redisTemplate.opsForValue().get(key).equals(Cluster.CLASS_LOAD_UNIQUE_FLAG));
+            }
+        } catch (Throwable e) {
+            logger.trace("[Election] election error", e);
         }
     }
 
