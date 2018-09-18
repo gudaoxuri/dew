@@ -550,7 +550,7 @@ management:
   context-path: /management <4>
 ----
 <1> 要监控的内容
-<1> 要监控的集群名称
+<2> 要监控的集群名称
 <3> 添加需要被监控的应用 `Service-Id` ，以逗号分隔
 <4> 同上文 ``management.context-path``
 
