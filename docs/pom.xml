@@ -23,7 +23,7 @@
         <asciidoctorj.version>1.5.6</asciidoctorj.version>
         <asciidoctorj.diagram.version>1.5.4.1</asciidoctorj.diagram.version>
         <jruby.version>1.7.26</jruby.version>
-        <file.output.path>${project.basedir}/files</file.output.path>
+        <file.output.path>${project.basedir}/</file.output.path>
         <resource.path>src/main/resources</resource.path>
     </properties>
 
