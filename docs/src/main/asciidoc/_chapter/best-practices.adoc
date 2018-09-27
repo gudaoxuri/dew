@@ -47,7 +47,7 @@ TIP: `jackson` 对于 `LocalDateTime` 类型的支持与其他三种类型不具
 * 以启动参数 `dew.basic.doc.fileName` 指定导出文件名
 
 [source,shell]
-.执行如下命令(加上 `-Dapi.file.name= [name]` 可指定文件名)
+.执行如下命令(加上 `-Ddew.basic.doc.fileName= [name]` 可指定文件名)
 ----
 mvn -Dtest=DocTest clean test -P doc
 
