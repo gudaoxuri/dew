@@ -8,7 +8,7 @@
     <artifactId>build-starter</artifactId>
     <name>Dew Build</name>
     <packaging>pom</packaging>
-    <version>1.5.0-Beta</version>
+    <version>1.5.0-Beta2</version>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
@@ -24,6 +24,7 @@
         <module>modules/cluster-eureka</module>
         <module>modules/boot-starter</module>
         <module>modules/idempotent-starter</module>
+        <module>modules/jdbc-starter</module>
         <module>modules/cloud-starter</module>
         <module>modules/test-starter</module>
 
@@ -42,6 +43,7 @@
         <module>examples/hystrix-example</module>
         <module>examples/monitor-example</module>
         <module>examples/auth-example</module>
+        <module>examples/jdbc-example</module>
         <module>examples/sleuth-invoke1-example</module>
         <module>examples/sleuth-invoke2-example</module>
     </modules>

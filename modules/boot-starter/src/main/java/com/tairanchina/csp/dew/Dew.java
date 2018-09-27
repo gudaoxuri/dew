@@ -12,6 +12,8 @@ import com.tairanchina.csp.dew.core.basic.fun.VoidPredicate;
 import com.tairanchina.csp.dew.core.basic.loading.DewLoadImmediately;
 import com.tairanchina.csp.dew.core.basic.utils.NetUtils;
 import com.tairanchina.csp.dew.core.cluster.*;
+import com.tairanchina.csp.dew.core.jdbc.DS;
+import com.tairanchina.csp.dew.core.jdbc.DSManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +89,10 @@ public class Dew {
             Cluster.ha();
         }
 
+        if (Dew.applicationContext.containsBean(DSManager.class.getSimpleName())) {
+            Dew.applicationContext.getBean(DSManager.class);
+        }
+
         logger.info("Load Dew funs...");
         // Load Immediately
         Set<Class<?>> loadOrders = $.clazz.scan(Dew.class.getPackage().getName(), new HashSet<Class<? extends Annotation>>() {{
@@ -119,6 +125,14 @@ public class Dew {
             instance = $.field.createUUID();
         }
 
+    }
+
+    public static DS ds() {
+        return DSManager.select("");
+    }
+
+    public static DS ds(String dsName) {
+        return DSManager.select(dsName);
     }
 
     /**
