@@ -89,6 +89,7 @@ public class DewDS implements DS {
                 rightDecorated = "]";
                 break;
             default:
+                break;
         }
     }
 
@@ -723,6 +724,7 @@ public class DewDS implements DS {
                 break;
             default:
                 statement = (SQLSelectStatement) new SQLStatementParser(sql).parseStatementList().get(0);
+                break;
         }
         if (sql.contains("#{")) {
             SQLExpr sqlExpr = ((SQLSelectQueryBlock) statement.getSelect().getQuery()).getWhere();

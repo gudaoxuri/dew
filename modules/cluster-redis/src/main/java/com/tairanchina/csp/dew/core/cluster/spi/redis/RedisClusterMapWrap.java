@@ -4,7 +4,11 @@ import com.tairanchina.csp.dew.core.cluster.ClusterMap;
 import com.tairanchina.csp.dew.core.cluster.ClusterMapWrap;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public class RedisClusterMapWrap implements ClusterMapWrap {
+
+    private static final ConcurrentHashMap<String, ClusterMap> MAP_CONTAINER = new ConcurrentHashMap<>();
 
     private RedisTemplate<String, String> redisTemplate;
 
@@ -14,8 +18,8 @@ public class RedisClusterMapWrap implements ClusterMapWrap {
 
     @Override
     public <M> ClusterMap<M> instance(String key, Class<M> clazz) {
-        return new RedisClusterMap<>(key, clazz, redisTemplate);
+        MAP_CONTAINER.putIfAbsent(key, new RedisClusterMap<>(key, clazz, redisTemplate));
+        return MAP_CONTAINER.get(key);
     }
-
 
 }

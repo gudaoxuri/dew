@@ -3,7 +3,11 @@ package com.tairanchina.csp.dew.core.cluster.spi.hazelcast;
 import com.tairanchina.csp.dew.core.cluster.ClusterLock;
 import com.tairanchina.csp.dew.core.cluster.ClusterLockWrap;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public class HazelcastClusterLockWrap implements ClusterLockWrap {
+
+    private static final ConcurrentHashMap<String, ClusterLock> LOCK_CONTAINER = new ConcurrentHashMap<>();
 
     private HazelcastAdapter hazelcastAdapter;
 
@@ -13,7 +17,8 @@ public class HazelcastClusterLockWrap implements ClusterLockWrap {
 
     @Override
     public ClusterLock instance(String key) {
-        return new HazelcastClusterLock(key, hazelcastAdapter.getHazelcastInstance());
+        LOCK_CONTAINER.putIfAbsent(key, new HazelcastClusterLock(key, hazelcastAdapter.getHazelcastInstance()));
+        return LOCK_CONTAINER.get(key);
     }
 
 }

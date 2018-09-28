@@ -6,7 +6,6 @@ import com.tairanchina.csp.dew.jdbc.DewDS;
 import com.trc.dew.select.dao.SystemConfigDao;
 import com.trc.dew.select.dao.TestInterfaceDao;
 import com.trc.dew.select.dto.ModelDTO;
-import com.trc.dew.select.entity.SystemConfig;
 import com.trc.dew.select.entity.TestSelectEntity;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;

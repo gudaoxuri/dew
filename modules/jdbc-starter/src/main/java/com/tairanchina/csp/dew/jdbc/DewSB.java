@@ -53,7 +53,7 @@ public class DewSB implements SB {
                     parameters.add(cond.value1);
                     break;
                 case LE:
-                    sb.append(AND+ f + " <= ?");
+                    sb.append(AND + f + " <= ?");
                     parameters.add(cond.value1);
                     break;
                 case LIKE:
@@ -83,6 +83,8 @@ public class DewSB implements SB {
                     parameters.add(cond.value1);
                     parameters.add(cond.value2);
                     break;
+                default:
+                    throw new NoSuchFieldError("The " + cond.op + " NOT implemented.");
             }
         });
         if (!order.isEmpty()) {

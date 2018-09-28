@@ -6,7 +6,11 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistration;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public class EurekaClusterElectionWrap implements ClusterElectionWrap {
+
+    private static final ConcurrentHashMap<String, ClusterElection> ELECTION_CONTAINER = new ConcurrentHashMap<>();
 
     private int electionPeriodSec;
 
@@ -25,7 +29,8 @@ public class EurekaClusterElectionWrap implements ClusterElectionWrap {
 
     @Override
     public ClusterElection instance() {
-        return new EurekaClusterElection(electionPeriodSec, applicationName, discoveryClient, eurekaRegistration);
+        ELECTION_CONTAINER.putIfAbsent("", new EurekaClusterElection(electionPeriodSec, applicationName, discoveryClient, eurekaRegistration));
+        return ELECTION_CONTAINER.get("");
     }
 
     @Override
