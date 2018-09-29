@@ -1,9 +1,6 @@
 package com.tairanchina.csp.dew.core.cluster.spi.rabbit;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.DefaultConsumer;
-import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.*;
 import com.tairanchina.csp.dew.core.cluster.ClusterMQ;
 import org.springframework.amqp.rabbit.connection.Connection;
 
@@ -121,6 +118,61 @@ public class RabbitClusterMQ implements ClusterMQ {
                 logger.error("[MQ] Rabbit request error.", e);
             }
             connection.close();
+        }
+    }
+
+    public boolean publishWithTopic(String topic, String routingKey, String queueName, String message, boolean confirm) {
+        logger.trace("[MQ] publishWithTopic {}:{}", topic, message);
+        Connection connection = rabbitAdapter.getConnection();
+        Channel channel = connection.createChannel(false);
+        try {
+            if (confirm) {
+                channel.confirmSelect();
+            }
+            channel.queueDeclare(queueName, true, false, false, null);
+            channel.exchangeDeclare(topic, BuiltinExchangeType.TOPIC, true);
+            AMQP.BasicProperties properties = new AMQP.BasicProperties("text/plain",
+                    null,
+                    getMQHeader(topic),
+                    2,
+                    0, null, null, null,
+                    null, null, null, null,
+                    null, null);
+            channel.basicPublish(topic, routingKey, properties, message.getBytes());
+            if (confirm) {
+                try {
+                    return channel.waitForConfirms();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    logger.error("[MQ] Rabbit publishWithTopic error.", e);
+                    return false;
+                }
+            } else {
+                return true;
+            }
+        } catch (IOException e) {
+            logger.error("[MQ] Rabbit publishWithTopic error.", e);
+            return false;
+        } finally {
+            try {
+                channel.close();
+            } catch (IOException | TimeoutException e) {
+                logger.error("[MQ] Rabbit publishWithTopic error.", e);
+            }
+            connection.close();
+        }
+    }
+
+    public void subscribeWithTopic(String topic, String routingKey, String queueName, Consumer<String> consumer) {
+        Channel channel = rabbitAdapter.getConnection().createChannel(false);
+        try {
+            channel.queueDeclare(queueName, true, false, false, null);
+            channel.exchangeDeclare(topic, BuiltinExchangeType.TOPIC, true);
+            channel.queueBind(queueName, topic, routingKey);
+            channel.basicQos(1);
+            channel.basicConsume(queueName, false, getDefaultConsumer(channel, topic, consumer));
+        } catch (IOException e) {
+            logger.error("[MQ] Rabbit subscribeWithTopic error.", e);
         }
     }
 
