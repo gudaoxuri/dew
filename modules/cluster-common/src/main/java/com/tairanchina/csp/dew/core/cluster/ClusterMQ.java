@@ -102,7 +102,7 @@ public interface ClusterMQ {
                     consumer.accept(msg);
                 }
             } catch (Exception e) {
-                logger.error("[MQ] receive error.", e);
+                throw new RuntimeException("[MQ] receive error:" + msg, e);
             }
         };
         if (isResponse) {

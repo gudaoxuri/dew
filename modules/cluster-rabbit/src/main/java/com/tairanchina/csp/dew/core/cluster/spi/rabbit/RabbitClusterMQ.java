@@ -194,8 +194,13 @@ public class RabbitClusterMQ implements ClusterMQ {
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 setMQHeader(topic, properties.getHeaders());
                 String message = new String(body, StandardCharsets.UTF_8);
-                consumer.accept(message);
-                channel.basicAck(envelope.getDeliveryTag(), false);
+                try {
+                    consumer.accept(message);
+                } catch (RuntimeException e) {
+                    throw e;
+                } finally {
+                    channel.basicAck(envelope.getDeliveryTag(), false);
+                }
             }
         };
     }

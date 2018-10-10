@@ -21,9 +21,8 @@ public class HazelcastClusterMQ implements ClusterMQ {
 
     @Override
     public void doSubscribe(String topic, Consumer<String> consumer) {
-        hazelcastAdapter.getHazelcastInstance().getTopic(topic).addMessageListener(message -> {
-            consumer.accept((String) message.getMessageObject());
-        });
+        hazelcastAdapter.getHazelcastInstance().getTopic(topic).addMessageListener(message ->
+                consumer.accept((String) message.getMessageObject()));
     }
 
     @Override
