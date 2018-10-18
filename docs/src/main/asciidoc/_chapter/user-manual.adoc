@@ -319,7 +319,7 @@ TIP: `Rabbit` 实现支持单条 `confirm` 模式。
 
 .MQ的HA功能
 
-MQ的HA（高可用）支持，默认MQ启用HA（可通过``dew.cluster.config.haEnabled=false``关闭）。
+MQ的HA（高可用）支持，默认MQ启用HA（可通过``dew.cluster.config.ha-enabled=false``关闭）。
 可实现。
 
 Dew的MQ仅在数据处理完成后才做commit，这限制了对同一个队列只能串行处理，

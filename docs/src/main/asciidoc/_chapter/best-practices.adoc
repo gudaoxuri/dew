@@ -482,8 +482,6 @@ management:
   context-path: /management //<1>
 eureka:
   instance:
-    status-page-url-path: ${management.context-path}/info
-    health-check-url-path: ${management.context-path}/health
     metadata-map:
       cluster: default <2>
 ----
@@ -537,9 +535,6 @@ eureka:
   instance:
     metadata-map:
       cluster: default <2>
-    status-page-url-path: ${management.context-path}/info
-    health-check-url-path: ${management.context-path}/health
-
   client:
     serviceUrl:
       defaultZone: ...

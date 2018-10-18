@@ -1,56 +1,15 @@
 spring:
-  cloud:
-    config:
-      enabled: false
   application:
     name: gateway
-
-server:
-  port: 8000
-
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: config
+      username: config
+      password: 123456
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: # eureka addresss e.g. http://username:pwd@localhost:9999/eureka
-
-management:
-  security:
-    enabled: false
-
-#zuul:
-#  ignored-patterns: /hystrix**
-
-
-zuul:
-  semaphore:
-    max-semaphores: 200
-  host:
-    # 最大连接数
-    max-total-connections: 200
-    # 每个router最大连接数
-    max-per-route-connections: 20
-    # 连接超时时间
-    connect-timeout-millis: 3000
-    # 响应超时时间
-    socket-timeout-millis: 15000
-
-hystrix:
-  #  threadpool:
-  #    default:
-  #      core-Size: 200
-  command:
-    default:
-      execution:
-        isolation:
-          thread:
-            timeoutInMilliseconds: 3000
-          strategy: THREAD
-
-ribbon:
-  MaxConnectionsPerHost: 200
-  MaxTotalConnections: 200
-  ConnectTimeout: 20000
-  ReadTimeout: 20000
-
-
+      defaultZone: http://registry:123456@localhost:8000/eureka

@@ -2,30 +2,19 @@ spring:
   application:
     name: registry
 
-
 server:
-  port: 9999
+  port: 8000
 
 security:
   basic:
     enabled: true
   user:
-    name: # eureka username
-    password: # eureka pwd
+    name: registry
+    password: 123456
 
 eureka:
-  instance:
-    metadata-map:
-      cluster: default
-  server:
-    enable-self-preservation: true
-    #eviction-interval-timer-in-ms: 5000
   client:
     register-with-eureka: false
     fetch-registry: false
     serviceUrl:
-      defaultZone: # eureka registry addresss e.g. http://username:pwd@localhost:9999/eureka
-
-logging:
-  path: ./logs
-
+      defaultZone: http://registry:123456@localhost:${server.port}/eureka

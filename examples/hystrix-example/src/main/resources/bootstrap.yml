@@ -1,17 +1,17 @@
 spring:
   application:
     name: hystrix-example
-  mail:
-    host: smtp.alibaba.com
-    username:
-    password:
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: false
-            required: fasle
+#  mail:
+#    host: smtp.alibaba.com
+#    username:
+#    password:
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: false
+#            required: fasle
   cloud:
     config:
       discovery:
@@ -19,8 +19,17 @@ spring:
       enabled: false
 
 eureka:
+  instance:
+    metadata-map:
+      cluster: default
   client:
+    serviceUrl:
+      defaultZone: http://registry:123456@localhost:8000/eureka
+
+management:
+  security:
     enabled: false
+  context-path: /management-admin
 
 dew:
   cloud:
