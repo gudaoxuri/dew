@@ -24,6 +24,11 @@ public class Cluster {
     private static Function<String, Map<String, Object>> _mqGetHeader;
     private static Consumer<Object[]> _mqSetHeader;
     private static ClusterHA clusterHA = null;
+    private static String applicationName = "";
+
+    public static void init(String appName) {
+        applicationName = appName;
+    }
 
     public static void initMQHeader(Function<String, Map<String, Object>> mqGetHeader, Consumer<Object[]> mqSetHeader) {
         _mqGetHeader = mqGetHeader;
@@ -31,11 +36,15 @@ public class Cluster {
     }
 
     public static void ha() {
+        ha(new HashMap<String, String>() {{
+            put("url", "jdbc:h2:./.cluster/" + applicationName + ";DB_CLOSE_ON_EXIT=FALSE");
+        }});
+    }
+
+    public static void ha(Map<String, String> args) {
         clusterHA = new H2ClusterHA();
         try {
-            clusterHA.init(new HashMap<String, String>() {{
-                put("url", "jdbc:h2:./.cluster/ha;DB_CLOSE_ON_EXIT=FALSE");
-            }});
+            clusterHA.init(args);
             logger.info("HA initialized");
         } catch (SQLException e) {
             logger.error("HA init error", e);

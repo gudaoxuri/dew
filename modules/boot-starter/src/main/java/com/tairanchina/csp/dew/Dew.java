@@ -61,6 +61,8 @@ public class Dew {
         Dew.dewConfig = injectDewConfig;
         Dew.applicationContext = injectApplicationContext;
         Dew.Info.name = applicationName;
+        Cluster.init(applicationName);
+
         // Support java8 Time
         if (jacksonProperties != null) {
             jacksonProperties.getSerialization().put(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
