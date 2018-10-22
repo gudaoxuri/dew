@@ -4,13 +4,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class AbsClusterElection implements ClusterElection {
 
     protected static final Logger logger = LoggerFactory.getLogger(AbsClusterElection.class);
 
-    protected AtomicBoolean leader = new AtomicBoolean(false);
+    protected static final long FLAG_UNINITIALIZED = 0;
+    protected static final long FLAG_LEADER = 1;
+    protected static final long FLAG_FOLLOWER = -1;
+
+    // 0 未初始化， 1 是领导者 -1 不是领导者
+    protected AtomicLong leader = new AtomicLong(FLAG_UNINITIALIZED);
 
     /**
      * 执行（重新）选举
@@ -37,7 +42,15 @@ public abstract class AbsClusterElection implements ClusterElection {
      */
     @Override
     public boolean isLeader() {
-        return leader.get();
+        while (leader.get() == FLAG_UNINITIALIZED) {
+            try {
+                Thread.sleep(100);
+                logger.trace("Waiting leader election...");
+            } catch (InterruptedException e) {
+                logger.error("Leader election error", e);
+            }
+        }
+        return leader.get() == FLAG_LEADER;
     }
 
 }

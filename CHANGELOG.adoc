@@ -34,9 +34,12 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 * 配置变更： 拆分``dew.cluster.dist`` 为 ``dew.cluster.lock``和``dew.cluster.map``
 * 配置变更： ``dew.cluster.election.config.election-period-sec`` to ``dew.cluster.config.election-period-sec``
 * 功能变更： 领导者选举、分布式锁、分布式Map的实例化方式由 ``dew.cluster.election/lock/map`` 修改成 ``dew.cluster.election/lock/map.instance(...)``
+* 功能变更： 领导者选举``isLeader``接口需要等待选举产生后再返回（之前逻辑是每次启动时会设置成false再执行选举）
+* 功能变更： 相同``Dew.Info.instance``的实例在选举过期周期内重启任能保持原先状态
 * 功能变更： 移除服务脚手架，需要手工添加需要的接口服务
 * 功能变更： 移除mybatis-starter模块，请使用mybatis官方方案
 * 功能变更： swagger-ui.html 变更成 doc.html
+* 功能变更： ``Dew.Info.instance``由``UUID``修改成``服务名[IP:端口]``
 
 === 1.3.4-RC
 

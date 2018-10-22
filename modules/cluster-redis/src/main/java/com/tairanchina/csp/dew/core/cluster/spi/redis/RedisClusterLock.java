@@ -119,6 +119,6 @@ public class RedisClusterLock implements ClusterLock {
     }
 
     private String getCurrThreadId() {
-        return Cluster.CLASS_LOAD_UNIQUE_FLAG + "-" + Thread.currentThread().getId();
+        return Cluster.instanceId + "-" + Thread.currentThread().getId();
     }
 }

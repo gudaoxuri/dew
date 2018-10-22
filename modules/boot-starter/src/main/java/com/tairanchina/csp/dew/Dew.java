@@ -46,6 +46,9 @@ public class Dew {
 
     @Value("${spring.application.name:please-setting-this}")
     private String applicationName;
+    @Value("${server.port:-1}")
+    private int serverPort;
+
     @Autowired
     private DewConfig injectDewConfig;
     @Autowired
@@ -60,8 +63,9 @@ public class Dew {
         logger.info("Load Dew basic info...");
         Dew.dewConfig = injectDewConfig;
         Dew.applicationContext = injectApplicationContext;
-        Dew.Info.name = applicationName;
-        Cluster.init(applicationName);
+        Info.name = applicationName;
+        Info.instance = applicationName + "[" + Info.ip + ":" + serverPort + "]";
+        Cluster.init(Info.name, Info.instance);
 
         // Support java8 Time
         if (jacksonProperties != null) {
@@ -124,7 +128,6 @@ public class Dew {
             InetAddress inetAddress = NetUtils.getLocalAddress();
             ip = inetAddress.getHostAddress();
             host = inetAddress.getHostName();
-            instance = $.field.createUUID();
         }
 
     }

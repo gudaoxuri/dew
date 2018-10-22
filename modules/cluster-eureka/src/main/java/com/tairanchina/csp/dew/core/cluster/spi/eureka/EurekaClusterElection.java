@@ -37,7 +37,8 @@ public class EurekaClusterElection extends AbsClusterElection {
                     .filter(instance -> instance.getStatus() == InstanceInfo.InstanceStatus.UP)
                     .min(Comparator.comparingLong(inst -> inst.getLeaseInfo().getRegistrationTimestamp()));
             leader.set(firstInstanceR.isPresent()
-                    && eurekaRegistration.getInstanceConfig().getInstanceId().equals(firstInstanceR.get().getInstanceId()));
+                    && eurekaRegistration.getInstanceConfig().getInstanceId().equals(firstInstanceR.get().getInstanceId())
+                    ? FLAG_LEADER : FLAG_FOLLOWER);
         });
     }
 

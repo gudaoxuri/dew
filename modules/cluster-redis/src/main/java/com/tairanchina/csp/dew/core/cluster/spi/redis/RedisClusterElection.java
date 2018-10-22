@@ -6,7 +6,6 @@ import com.tairanchina.csp.dew.core.cluster.Cluster;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 
-
 public class RedisClusterElection extends AbsClusterElection {
 
     private static final String DEFAULT_KEY = "_";
@@ -39,10 +38,10 @@ public class RedisClusterElection extends AbsClusterElection {
     private void doElection() {
         logger.trace("[Election] electing...");
         byte[] rawKey = redisTemplate.getStringSerializer().serialize(key);
-        byte[] rawValue = redisTemplate.getStringSerializer().serialize(Cluster.CLASS_LOAD_UNIQUE_FLAG);
+        byte[] rawValue = redisTemplate.getStringSerializer().serialize(Cluster.instanceId);
         boolean finish = redisTemplate.execute((RedisCallback<Boolean>) connection -> {
             if (connection.setNX(rawKey, rawValue)) {
-                leader.set(true);
+                leader.set(FLAG_LEADER);
                 connection.expire(rawKey, electionPeriodSec * 2 + 2);
                 return true;
             }
@@ -50,11 +49,12 @@ public class RedisClusterElection extends AbsClusterElection {
             if (v == null) {
                 return false;
             }
-            if (redisTemplate.getStringSerializer().deserialize(v).equals(Cluster.CLASS_LOAD_UNIQUE_FLAG)) {
-                leader.set(true);
+            if (redisTemplate.getStringSerializer().deserialize(v).equals(Cluster.instanceId)) {
+                leader.set(FLAG_LEADER);
+                // 默认2个选举周期过期
                 connection.expire(rawKey, electionPeriodSec * 2 + 2);
             } else {
-                leader.set(false);
+                leader.set(FLAG_FOLLOWER);
             }
             return true;
         });

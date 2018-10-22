@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.tairanchina.csp.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>1.5.0-Beta4</version>
+        <version>1.5.0-Beta5</version>
         <relativePath>../../modules/parent-starter/</relativePath>
     </parent>
 

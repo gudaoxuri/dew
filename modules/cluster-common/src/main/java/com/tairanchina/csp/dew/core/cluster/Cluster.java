@@ -18,16 +18,15 @@ import java.util.function.Function;
 public class Cluster {
     private static final Logger logger = LoggerFactory.getLogger(Cluster.class);
 
-    public static final String CLASS_LOAD_UNIQUE_FLAG = $.field.createUUID();
-
-
     private static Function<String, Map<String, Object>> _mqGetHeader;
     private static Consumer<Object[]> _mqSetHeader;
     private static ClusterHA clusterHA = null;
     private static String applicationName = "";
+    public static String instanceId = $.field.createUUID();
 
-    public static void init(String appName) {
+    public static void init(String appName,String instId) {
         applicationName = appName;
+        instanceId = instId;
     }
 
     public static void initMQHeader(Function<String, Map<String, Object>> mqGetHeader, Consumer<Object[]> mqSetHeader) {
