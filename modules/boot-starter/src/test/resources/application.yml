@@ -17,6 +17,34 @@ dew:
     map: redis
     mq: redis
     election: redis
+  notifies:
+    __DEW_ERROR__:
+      type: DD
+      defaultReceivers: 18657120203
+      args:
+        url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+      strategy:
+        minIntervalSec: 5
+    flag1:
+      type: DD
+      defaultReceivers: 18657120203
+      args:
+        url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+      strategy:
+        minIntervalSec: 0
+    flag2:
+      type: DD
+      defaultReceivers: 18657120203,15658132456
+      dndTimeReceivers: 15658132456
+      args:
+        url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+      strategy:
+        dndTime: 18:00-06:00
+        forceSendTimes: 3
+    sendMail:
+      type: MAIL
+      defaultReceivers: i@sunisle.org
+
   security:
     token-flag: _token_
     token-in-header: true

@@ -14,6 +14,7 @@ import com.tairanchina.csp.dew.core.basic.utils.NetUtils;
 import com.tairanchina.csp.dew.core.cluster.*;
 import com.tairanchina.csp.dew.core.jdbc.DS;
 import com.tairanchina.csp.dew.core.jdbc.DSManager;
+import com.tairanchina.csp.dew.core.notify.Notify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ public class Dew {
     private static final Logger logger = LoggerFactory.getLogger(Dew.class);
 
     public static Cluster cluster = new Cluster();
+    public static Notify notify = null;
     public static ApplicationContext applicationContext;
     public static DewConfig dewConfig;
 
@@ -46,6 +48,8 @@ public class Dew {
 
     @Value("${spring.application.name:please-setting-this}")
     private String applicationName;
+    @Value(("${spring.profiles.active:default}"))
+    private String profile;
     @Value("${server.port:-1}")
     private int serverPort;
 
@@ -64,8 +68,11 @@ public class Dew {
         Dew.dewConfig = injectDewConfig;
         Dew.applicationContext = injectApplicationContext;
         Info.name = applicationName;
-        Info.instance = applicationName + "[" + Info.ip + ":" + serverPort + "]";
+        Info.profile = profile;
+        Info.instance = applicationName + "@" + Info.profile + "@" + Info.ip + ":" + serverPort;
         Cluster.init(Info.name, Info.instance);
+
+        Dew.notify = new Notify();
 
         // Support java8 Time
         if (jacksonProperties != null) {
@@ -117,6 +124,8 @@ public class Dew {
     public static class Info {
         // 应用名称
         public static String name;
+        // 应用环境
+        public static String profile;
         // 应用主机IP
         public static String ip;
         // 应用主机名

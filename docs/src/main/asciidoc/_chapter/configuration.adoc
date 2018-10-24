@@ -19,7 +19,8 @@ dew: # Dew 参数key前缀
             swagger-dir:
             file-name: # 要导出的API离线文档的名称
         format:
-        use-unity-error: true # 是否启用统一响应
+            use-unity-error: true # 是否启用统一响应
+            error-flag: __DEW_ERROR__ # 默认的通知标识
         error-mapping: # 自定义错误映射
             "[<异常类名>]":
                 http-code: # http状态码，不存在时使用实例级http状态码
@@ -34,6 +35,17 @@ dew: # Dew 参数key前缀
         config: #集群相关配置
             election-period-sec: 60 #领导者选举时间区间，默认60秒
             ha-enabled: true #是否启用HA，默认为true
+    notifies:
+        "": # 通知的标识
+            type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息
+            defaultReceivers: # 默认接收人列表，钉钉为手机号，邮件为邮箱
+            dndTimeReceivers: # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
+            args: # 不同类型的参数，邮件不需要设置
+                url: # 钉钉的推送地址，说明详见：https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.karFPe&treeId=257&articleId=105735&docType=1
+            strategy: # 通知策略
+                minIntervalSec: 0 # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
+                dndTime: # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
+                forceSendTimes: 3 # 同一免扰周期间通知调用达到几次后强制发送
     security: # 安全功能
         cors:
             allow-origin: * # 允许的来源，建议修改
@@ -58,9 +70,8 @@ dew: # Dew 参数key前缀
         trace-log:
             enabled: true # 是否启用服务API调用（追踪）日志，默认为true
         error:
-             enabled: true #启用降级邮件通知，默认为false
-             notify-interval-sec: 1800 # 通知的间隔时间
-             notify-emails:  # 通知的邮箱，逗号分隔
+             enabled: true # 启用降级邮件通知，默认为false
+             notify-flag: __HYSTRIX__ # 默认的通知标识
              notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED # 通知的事件类型
              notify-include-keys: # 需监控的方法key值，与notify-exclude-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
              notify-exclude-keys: # 不需要监控的方法key值，与notify-include-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)

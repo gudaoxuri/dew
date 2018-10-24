@@ -27,9 +27,8 @@ public class DewCloudConfig {
     public static class Error {
 
         private boolean enabled = false;
-        private Set<String> notifyEmails = new HashSet<>();
+        private String notifyFlag = "__HYSTRIX__";
         private String notifyTitle = "服务异常";
-        private long notifyIntervalSec = 1800;
         private String[] notifyIncludeKeys = new String[]{};
         private String[] notifyExcludeKeys = new String[]{};
         private Set<String> notifyEventTypes = new HashSet<String>() {{
@@ -48,12 +47,12 @@ public class DewCloudConfig {
             this.enabled = enabled;
         }
 
-        public Set<String> getNotifyEmails() {
-            return notifyEmails;
+        public String getNotifyFlag() {
+            return notifyFlag;
         }
 
-        public void setNotifyEmails(Set<String> notifyEmails) {
-            this.notifyEmails = notifyEmails;
+        public void setNotifyFlag(String notifyFlag) {
+            this.notifyFlag = notifyFlag;
         }
 
         public String getNotifyTitle() {
@@ -70,14 +69,6 @@ public class DewCloudConfig {
 
         public void setNotifyEventTypes(Set<String> notifyEventTypes) {
             this.notifyEventTypes = notifyEventTypes;
-        }
-
-        public long getNotifyIntervalSec() {
-            return notifyIntervalSec;
-        }
-
-        public void setNotifyIntervalSec(long notifyIntervalSec) {
-            this.notifyIntervalSec = notifyIntervalSec;
         }
 
         public String[] getNotifyIncludeKeys() {

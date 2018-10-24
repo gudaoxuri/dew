@@ -36,4 +36,3 @@ dew:
     error:
       enabled: true
       notify-title: dew-test
-      notify-interval-sec: 5

@@ -87,6 +87,7 @@ public class ErrorController extends AbstractErrorController {
             exDetail = (List) error.get("errors");
         }
         Object[] result = error(request, path, statusCode, message, exClass, exMsg, exDetail, (Throwable) specialError);
+        Dew.notify.sendAsync(Dew.dewConfig.getBasic().getFormat().getErrorFlag(), (String) result[1], "Uncaught exception");
         return ResponseEntity.status((int) result[0]).contentType(MediaType.APPLICATION_JSON_UTF8).body(result[1]);
     }
 

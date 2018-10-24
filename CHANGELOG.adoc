@@ -7,6 +7,7 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 .Features
 * 使用小泰科技Fork版本做为开源版本
 * 添加领导者选举的Redis实现
+* 添加消息通知（钉钉或邮件）
 * 添加MQ消费的HA功能
 * 默认使用micrometer做为指标采集工具
 * 添加对Scala的支持
@@ -39,7 +40,7 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 * 功能变更： 移除服务脚手架，需要手工添加需要的接口服务
 * 功能变更： 移除mybatis-starter模块，请使用mybatis官方方案
 * 功能变更： swagger-ui.html 变更成 doc.html
-* 功能变更： ``Dew.Info.instance``由``UUID``修改成``服务名[IP:端口]``
+* 功能变更： ``Dew.Info.instance``由``UUID``修改成``服务名@Profile@IP:端口``
 
 === 1.3.4-RC
 

@@ -1297,7 +1297,7 @@ if (Dew.cluster.mq instanceof RabbitClusterMQ) {
 </div>
 <div class="paragraph">
 <div class="title">MQ的HA功能</div>
-<p>MQ的HA（高可用）支持，默认MQ启用HA（可通过<code>dew.cluster.config.haEnabled=false</code>关闭）。
+<p>MQ的HA（高可用）支持，默认MQ启用HA（可通过<code>dew.cluster.config.ha-enabled=false</code>关闭）。
 可实现。</p>
 </div>
 <div class="paragraph">
@@ -2711,8 +2711,6 @@ RedisCacheManager cacheManager() {
   context-path: /management <i class="conum" data-value="1"></i><b>(1)</b>
 eureka:
   instance:
-    status-page-url-path: ${management.context-path}/info
-    health-check-url-path: ${management.context-path}/health
     metadata-map:
       cluster: default <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
@@ -2795,9 +2793,6 @@ eureka:
   instance:
     metadata-map:
       cluster: default <i class="conum" data-value="2"></i><b>(2)</b>
-    status-page-url-path: ${management.context-path}/info
-    health-check-url-path: ${management.context-path}/health
-
   client:
     serviceUrl:
       defaultZone: ...
@@ -3278,10 +3273,25 @@ spring:
 <p>配置变更： <code>dew.cluster.election.config.election-period-sec</code> to <code>dew.cluster.config.election-period-sec</code></p>
 </li>
 <li>
+<p>功能变更： 领导者选举、分布式锁、分布式Map的实例化方式由 <code>dew.cluster.election/lock/map</code> 修改成 <code>dew.cluster.election/lock/map.instance(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p>功能变更： 领导者选举<code>isLeader</code>接口需要等待选举产生后再返回（之前逻辑是每次启动时会设置成false再执行选举）</p>
+</li>
+<li>
+<p>功能变更： 相同<code>Dew.Info.instance</code>的实例在选举过期周期内重启任能保持原先状态</p>
+</li>
+<li>
 <p>功能变更： 移除服务脚手架，需要手工添加需要的接口服务</p>
 </li>
 <li>
 <p>功能变更： 移除mybatis-starter模块，请使用mybatis官方方案</p>
+</li>
+<li>
+<p>功能变更： swagger-ui.html 变更成 doc.html</p>
+</li>
+<li>
+<p>功能变更： <code>Dew.Info.instance</code>由<code>UUID</code>修改成<code>服务名[IP:端口]</code></p>
 </li>
 </ul>
 </div>

@@ -452,6 +452,64 @@ public Resp<String> test(){
 但 `Resp.serverError("some message").fallback()` 会降级，返回http状态码为500，body为 同上。
 ====
 
+==== 消息通知
+
+`Dew` 支持发送消息到钉钉或邮件，默认支持对未捕获异常及Hystrix错误的通知。
+
+[source,xml]
+.通知配置
+----
+# 格式
+dew:
+    notifies:
+        "": # 通知的标识
+            type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息
+            defaultReceivers: # 默认接收人列表，钉钉为手机号，邮件为邮箱
+            dndTimeReceivers: # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
+            args: # 不同类型的参数，邮件不需要设置
+                url: # 钉钉的推送地址，说明详见：https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.karFPe&treeId=257&articleId=105735&docType=1
+            strategy: # 通知策略
+                minIntervalSec: 0 # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
+                dndTime: # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
+                forceSendTimes: 3 # 同一免扰周期间通知调用达到几次后强制发送
+
+# 示例
+dew:
+  notifies:
+    __DEW_ERROR__:
+      type: DD
+      defaultReceivers: xxxx
+      args:
+        url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac49
+      strategy:
+        minIntervalSec: 5
+    sendMail:
+      type: MAIL
+      defaultReceivers: x@y.z
+----
+
+[source,java]
+.通知使用
+----
+# 最简单的调用
+Resp<Void> result = Dew.notify.send("<通知的标识>", "<通知的内容>");
+# 带通知标题，标题会加上``Dew.Info.instance``
+Resp<Void> result = Dew.notify.send("<通知的标识>", "<通知的内容>", "<通知标题>");
+# 加上特殊接收人列表，非免扰时间内的接收人=配置默认接收人列表+特殊接收人列表，免扰时间内的接收人=配置的免扰时间内的接收人列表
+Resp<Void> result = Dew.notify.send("<通知的标识>", "<通知的内容>", "<通知标题>", "<特殊接收人列表>");
+# 上述三个方法都有异步的重载方法，如
+Dew.notify.sendAsync("<通知的标识>", "<通知的内容>");
+----
+
+[NOTE]
+.默认通知标识
+====
+. 非捕获异常: ``__DEW_ERROR__``，所有非捕获异常（ErrorController）调用此标识发送错误，可通过``dew.basic.format.error-flag`` 修改
+. Hystrix错误: ``__HYSTRIX__``，所有Hystrix错误调用此标识发送错误，可通过``dew.cloud.error.notify-flag`` 修改
+
+要启用以上两个通知请确保``dew.notifies``有相应的配置。
+====
+
 ==== 异常处理
 
 `Dew` 会把程序没有捕获的异常统一上抛，同时框架提供了常用的异常检查：
@@ -716,8 +774,6 @@ dew:
   cloud:
     error:
       enabled: true
-      notify-interval-sec: 1800
-      notify-emails: 71964899@qq.com
       notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED
       notify-include-keys: ["ExampleClient#deleteExe(int,String)","ExampleClient#postExe(int,String)"]
 

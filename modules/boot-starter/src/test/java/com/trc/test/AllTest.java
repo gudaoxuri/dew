@@ -3,6 +3,7 @@ package com.trc.test;
 
 import com.trc.test.auth.AuthTest;
 import com.trc.test.cluster.ClusterTest;
+import com.trc.test.notify.NotifyTest;
 import com.trc.test.web.WebTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,11 +27,15 @@ public class AllTest {
     @Resource
     private AuthTest authTest;
 
+    @Resource
+    private NotifyTest notifyTest;
+
     @Test
     public void testAll() throws Exception {
-        clusterTest.testAll();
+        /*clusterTest.testAll();
         webTest.testAll();
-        authTest.testAll();
+        authTest.testAll();*/
+        notifyTest.testAll();
     }
 
 }
