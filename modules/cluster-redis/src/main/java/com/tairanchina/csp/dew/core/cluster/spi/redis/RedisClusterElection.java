@@ -9,7 +9,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 public class RedisClusterElection extends AbsClusterElection {
 
     private static final String DEFAULT_KEY = "_";
-    private static final int DELETE_ELECTION_PERIOD_SEC = 60;
 
     private String key;
     private int electionPeriodSec;
@@ -17,10 +16,6 @@ public class RedisClusterElection extends AbsClusterElection {
 
     public RedisClusterElection(int electionPeriodSec, RedisTemplate<String, String> redisTemplate) {
         this(DEFAULT_KEY, electionPeriodSec, redisTemplate);
-    }
-
-    public RedisClusterElection(String key, RedisTemplate<String, String> redisTemplate) {
-        this(key, DELETE_ELECTION_PERIOD_SEC, redisTemplate);
     }
 
     public RedisClusterElection(String key, int electionPeriodSec, RedisTemplate<String, String> redisTemplate) {

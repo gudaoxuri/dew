@@ -26,7 +26,7 @@ public class RedisClusterElectionWrap implements ClusterElectionWrap {
 
     @Override
     public ClusterElection instance(String key) {
-        ELECTION_CONTAINER.putIfAbsent(key, new RedisClusterElection(electionPeriodSec, redisTemplate));
+        ELECTION_CONTAINER.putIfAbsent(key, new RedisClusterElection(key,electionPeriodSec, redisTemplate));
         return ELECTION_CONTAINER.get(key);
     }
 
