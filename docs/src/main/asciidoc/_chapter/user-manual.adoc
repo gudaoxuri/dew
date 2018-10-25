@@ -492,13 +492,13 @@ dew:
 .通知使用
 ----
 # 最简单的调用
-Resp<Void> result = Dew.notify.send("<通知的标识>", "<通知的内容>");
+Resp<Void> result = Dew.notify.send("<通知的标识>", "<通知的内容或Throwable>");
 # 带通知标题，标题会加上``Dew.Info.instance``
-Resp<Void> result = Dew.notify.send("<通知的标识>", "<通知的内容>", "<通知标题>");
+Resp<Void> result = Dew.notify.send("<通知的标识>", "<通知的内容或Throwable>", "<通知标题>");
 # 加上特殊接收人列表，非免扰时间内的接收人=配置默认接收人列表+特殊接收人列表，免扰时间内的接收人=配置的免扰时间内的接收人列表
-Resp<Void> result = Dew.notify.send("<通知的标识>", "<通知的内容>", "<通知标题>", "<特殊接收人列表>");
+Resp<Void> result = Dew.notify.send("<通知的标识>", "<通知的内容或Throwable>", "<通知标题>", "<特殊接收人列表>");
 # 上述三个方法都有异步的重载方法，如
-Dew.notify.sendAsync("<通知的标识>", "<通知的内容>");
+Dew.notify.sendAsync("<通知的标识>", "<通知的内容或Throwable>");
 ----
 
 [NOTE]
