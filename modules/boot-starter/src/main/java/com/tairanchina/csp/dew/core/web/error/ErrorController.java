@@ -28,6 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -71,7 +73,7 @@ public class ErrorController extends AbstractErrorController {
         if (specialError instanceof Resp.FallbackException) {
             return ResponseEntity.status(FALL_BACK_STATUS).contentType(MediaType.APPLICATION_JSON_UTF8).body(((Resp.FallbackException) specialError).getMessage());
         }
-        Map<String, Object> error = getErrorAttributes(request, false);
+        Map<String, Object> error = getErrorAttributes(request, true);
         String path;
         if (error.containsKey("path")) {
             path = (String) error.getOrDefault("path", Dew.context().getRequestUri());
@@ -87,7 +89,10 @@ public class ErrorController extends AbstractErrorController {
             exDetail = (List) error.get("errors");
         }
         Object[] result = error(request, path, statusCode, message, exClass, exMsg, exDetail, (Throwable) specialError);
-        Dew.notify.sendAsync(Dew.dewConfig.getBasic().getFormat().getErrorFlag(), (String) result[1], "Uncaught exception");
+        if(statusCode>499){
+            // 服务错误才通知
+            Dew.notify.sendAsync(Dew.dewConfig.getBasic().getFormat().getErrorFlag(),  (Throwable) specialError, ((Throwable) specialError).getMessage());
+        }
         return ResponseEntity.status((int) result[0]).contentType(MediaType.APPLICATION_JSON_UTF8).body(result[1]);
     }
 

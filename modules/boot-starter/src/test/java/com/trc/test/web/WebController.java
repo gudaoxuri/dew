@@ -58,6 +58,12 @@ public class WebController {
         throw Dew.E.e("A000", new Exception("io error"));
     }
 
+    @GetMapping(value = "throws")
+    public Resp<String> throwsE(@RequestParam String q) throws Exception {
+        int i = 1 / 0;
+        return Resp.success(null);
+    }
+
     @GetMapping(value = "customHttpState")
     @ApiOperation(value = "customHttpState")
     @ApiImplicitParams({

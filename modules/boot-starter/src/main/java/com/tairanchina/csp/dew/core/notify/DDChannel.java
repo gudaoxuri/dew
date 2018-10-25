@@ -30,10 +30,10 @@ public class DDChannel extends AbsChannel {
     @Override
     public Resp<String> innerSend(String content, String title, Set<String> receivers) throws Exception {
         HttpHelper.ResponseWrap result = $.http.postWrap(ddUrl, "{\n" +
-                "     \"msgtype\": \"markdown\",\n" +
-                "     \"markdown\": {\"title\":\"" + title + "\",\"text\":\"" + content + "\n>" + receivers.stream().map(r -> "@"+r).collect(Collectors.joining(" ")) + "\"},\n" +
+                "     \"msgtype\": \"text\",\n" +
+                "     \"text\": {\"content\":\"[" + title + "]\r\n" + content + "\n|" + receivers.stream().map(r -> "@" + r).collect(Collectors.joining(" ")) + "\"},\n" +
                 "    \"at\": {\n" +
-                "        \"atMobiles\": [" + receivers.stream().map(r -> "\""+r+"\"").collect(Collectors.joining(",")) + "], \n" +
+                "        \"atMobiles\": [" + receivers.stream().map(r -> "\"" + r + "\"").collect(Collectors.joining(",")) + "], \n" +
                 "        \"isAtAll\": false\n" +
                 "    }\n" +
                 " }");

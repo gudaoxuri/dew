@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 public class Notify {
 
@@ -48,12 +49,36 @@ public class Notify {
         Dew.Util.newThread(() -> send(flag, content, title, specialReceivers));
     }
 
+    public void sendAsync(String flag, Throwable content) {
+        sendAsync(flag, content, "");
+    }
+
+    public void sendAsync(String flag, Throwable content, String title) {
+        sendAsync(flag, content, title, new HashSet<>());
+    }
+
+    public void sendAsync(String flag, Throwable content, String title, Set<String> specialReceivers) {
+        Dew.Util.newThread(() -> send(flag, content, title, specialReceivers));
+    }
+
     public Resp<Void> send(String flag, String content) {
         return send(flag, content, "");
     }
 
     public Resp<Void> send(String flag, String content, String title) {
         return send(flag, content, title, new HashSet<>());
+    }
+
+    public Resp<Void> send(String flag, Throwable content) {
+        return send(flag, content, "");
+    }
+
+    public Resp<Void> send(String flag, Throwable content, String title) {
+        return send(flag, content, title, new HashSet<>());
+    }
+
+    public Resp<Void> send(String flag, Throwable content, String title, Set<String> specialReceivers) {
+        return send(flag, Arrays.stream(content.getStackTrace()).map(StackTraceElement::toString).limit(10).collect(Collectors.joining("\n")), title, specialReceivers);
     }
 
     public Resp<Void> send(String flag, String content, String title, Set<String> specialReceivers) {
@@ -109,7 +134,8 @@ public class Notify {
             receivers.addAll(specialReceivers);
         }
         title = (title != null ? title : "") + "[" + Dew.Info.instance + "]";
-        content = content.replaceAll("\"","'");
+        title = title.replaceAll("\"", "'");
+        content = content.replaceAll("\"", "'");
         boolean result = channel.send(content, title, receivers);
         if (result) {
             notifyContext.setLastNotifyTime(System.currentTimeMillis());
