@@ -114,20 +114,30 @@ public class NotifyTest {
 
         result = Dew.notify.send(Dew.dewConfig.getBasic().getFormat().getErrorFlag(), "测试消息，带时间限制，5s只会发一次", "测试");
         Assert.assertTrue(result.ok());
-        result = Dew.notify.send(Dew.dewConfig.getBasic().getFormat().getErrorFlag(), "测试消息，带时间限制，5s只会发一次", "测试");
+        result = Dew.notify.send(Dew.dewConfig.getBasic().getFormat().getErrorFlag(), "测试消息，带时间限制，5s只会发一次，此条消息不应被收到", "测试");
+        Assert.assertFalse(result.ok());
+        result = Dew.notify.send(Dew.dewConfig.getBasic().getFormat().getErrorFlag(), "测试消息，带时间限制，5s只会发一次，此条消息不应被收到", "测试");
+        Assert.assertFalse(result.ok());
+        Thread.sleep(1000);
+        result = Dew.notify.send(Dew.dewConfig.getBasic().getFormat().getErrorFlag(), "测试消息，带时间限制，5s只会发一次，此条消息不应被收到", "测试");
         Assert.assertFalse(result.ok());
         Thread.sleep(5000);
-        result = Dew.notify.send(Dew.dewConfig.getBasic().getFormat().getErrorFlag(), "测试消息，带时间限制，5s只会发一次", "测试");
+        result = Dew.notify.send(Dew.dewConfig.getBasic().getFormat().getErrorFlag(), "测试消息，带时间限制，5s只会发一次，这是5s后的消息", "测试");
         Assert.assertTrue(result.ok());
+        result = Dew.notify.send(Dew.dewConfig.getBasic().getFormat().getErrorFlag(), "测试消息，带时间限制，5s只会发一次，此条消息不应被收到", "测试");
+        Assert.assertFalse(result.ok());
 
-        result = Dew.notify.send("flag2", "测试消息，有免扰时间，超过2次才发送", "测试");
+        result = Dew.notify.send("flag2", "测试消息，有免扰时间，超过2次才发送，此条消息不应被收到", "测试");
+        Assert.assertFalse(result.ok());
+        result = Dew.notify.send("flag2", "测试消息，有免扰时间，超过2次才发送，此条消息不应被收到", "测试");
         Assert.assertFalse(result.ok());
         result = Dew.notify.send("flag2", "测试消息，有免扰时间，超过2次才发送", "测试");
-        Assert.assertFalse(result.ok());
-        result = Dew.notify.send("flag2", "测试消息，有免扰时间，超过2次才发送", "测试");
         Assert.assertTrue(result.ok());
 
+        result = Dew.notify.send("custom", "测试消息，有免扰时间，超过2次才发送", "测试");
+        Assert.assertTrue(result.ok());
 
+        Thread.sleep(10000);
         /*result = Dew.notify.send("sendMail", "测试消息", "测试");
         Assert.assertTrue(result.ok());*/
     }

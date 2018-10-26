@@ -350,7 +350,7 @@ public class DewConfig {
 
     public static class Notify {
 
-        private String type = "DD"; // DD->钉钉 MAIL->邮件
+        private String type = "DD"; // DD->钉钉 MAIL->邮件 HTTP->自定义HTTP Hook
         private Set<String> defaultReceivers = new HashSet<>();
         private Set<String> dndTimeReceivers = new HashSet<>();
         private Map<String, Object> args = new HashMap<>();

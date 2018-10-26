@@ -32,9 +32,9 @@ public class AllTest {
 
     @Test
     public void testAll() throws Exception {
-        clusterTest.testAll();
+        /*clusterTest.testAll();
         webTest.testAll();
-        authTest.testAll();
+        authTest.testAll();*/
         notifyTest.testAll();
     }
 

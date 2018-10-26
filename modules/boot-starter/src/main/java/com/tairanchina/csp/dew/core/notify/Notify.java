@@ -8,6 +8,9 @@ import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.DelayQueue;
+import java.util.concurrent.Delayed;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -18,6 +21,7 @@ public class Notify {
 
     private static final Map<String, Channel> NOTIFY_CHANNELS = new HashMap<>();
     private static final Map<String, Context> NOTIFY_CONTEXT = new HashMap<>();
+    private static final DelayQueue<NotifyDelayed> DELAY_QUEUE = new DelayQueue<>();
 
     {
         Dew.dewConfig.getNotifies().forEach((key, value) -> {
@@ -32,7 +36,7 @@ public class Notify {
             NOTIFY_CHANNELS.put(key, channel);
             NOTIFY_CONTEXT.put(key, new Context());
         });
-
+        delaySend();
         Runtime.getRuntime().addShutdownHook(new Thread(() ->
                 NOTIFY_CHANNELS.values().forEach(Channel::destroy)));
     }
@@ -82,6 +86,10 @@ public class Notify {
     }
 
     public Resp<Void> send(String flag, String content, String title, Set<String> specialReceivers) {
+        return send(flag, content, title, specialReceivers, false);
+    }
+
+    private Resp<Void> send(String flag, String content, String title, Set<String> specialReceivers, boolean force) {
         Channel channel = NOTIFY_CHANNELS.getOrDefault(flag, null);
         if (channel == null) {
             logger.trace("Not found notify flag[" + flag + "] in dew config.");
@@ -90,10 +98,13 @@ public class Notify {
         DewConfig.Notify notifyConfig = Dew.dewConfig.getNotifies().get(flag);
         Context notifyContext = NOTIFY_CONTEXT.get(flag);
         // 策略处理
-        if (notifyConfig.getStrategy().getMinIntervalSec() != 0
-                && (System.currentTimeMillis() - notifyContext.getLastNotifyTime()) / 1000 < notifyConfig.getStrategy().getMinIntervalSec()) {
-            logger.trace("Notify frequency must be > " + notifyConfig.getStrategy().getMinIntervalSec() + "s");
-            return Resp.locked("Notify frequency must be > " + notifyConfig.getStrategy().getMinIntervalSec() + "s");
+        if (!force && notifyConfig.getStrategy().getMinIntervalSec() != 0) {
+            if (notifyContext.intervalNotifyCounter.getAndIncrement() > -1) {
+                logger.trace("Notify frequency must be > " + notifyConfig.getStrategy().getMinIntervalSec() + "s");
+                return Resp.locked("Notify frequency must be > " + notifyConfig.getStrategy().getMinIntervalSec() + "s");
+            } else {
+                DELAY_QUEUE.offer(new NotifyDelayed(flag, specialReceivers, notifyConfig.getStrategy().getMinIntervalSec() * 1000));
+            }
         }
         boolean isDNDTime = false;
         if (!notifyConfig.getStrategy().getDndTime().isEmpty()) {
@@ -114,14 +125,14 @@ public class Notify {
                 isDNDTime = currentShortTime >= dndStartShortTime || currentShortTime <= dndEndShortTime;
                 time.add(Calendar.DATE, 1);
             }
-            if (currentTime > notifyContext.getLastDNDEndTime().getAndSet(
+            if (currentTime > notifyContext.lastDNDEndTime.getAndSet(
                     Long.valueOf(new SimpleDateFormat("yyyyMMdd")
                             .format(time.getTime()) + dndTime[1].replace(":", "")))) {
                 // 已在后几个免扰周期
-                notifyContext.getCurrentForceSendTimes().set(0);
+                notifyContext.currentForceSendTimes.set(0);
             }
-            if (isDNDTime
-                    && notifyConfig.getStrategy().getForceSendTimes() > notifyContext.getCurrentForceSendTimes().incrementAndGet()) {
+            if (!force && isDNDTime
+                    && notifyConfig.getStrategy().getForceSendTimes() > notifyContext.currentForceSendTimes.incrementAndGet()) {
                 logger.trace("Do Not Disturb time and try notify times <=" + notifyConfig.getStrategy().getForceSendTimes());
                 return Resp.locked("Do Not Disturb time and try notify times <=" + notifyConfig.getStrategy().getForceSendTimes());
             }
@@ -133,12 +144,12 @@ public class Notify {
             receivers.addAll(notifyConfig.getDefaultReceivers());
             receivers.addAll(specialReceivers);
         }
-        title = (title != null ? title : "") + "[" + Dew.Info.instance + "]";
+        // 格式化
+        title = (title != null ? title : "") + " FROM " + Dew.Info.instance + " BY " + flag;
         title = title.replaceAll("\"", "'");
         content = content.replaceAll("\"", "'");
         boolean result = channel.send(content, title, receivers);
         if (result) {
-            notifyContext.setLastNotifyTime(System.currentTimeMillis());
             return Resp.success(null);
         } else {
             logger.warn("Notify send error.");
@@ -146,35 +157,69 @@ public class Notify {
         }
     }
 
+    private void delaySend() {
+        Dew.Util.newThread(() -> {
+            while (true) {
+                try {
+                    NotifyDelayed notifyDelayed = DELAY_QUEUE.take();
+                    String flag = notifyDelayed.getFlag();
+                    Context notifyContext = NOTIFY_CONTEXT.get(flag);
+                    long notifyCounter = notifyContext.intervalNotifyCounter.getAndSet(-1);
+                    int delayMs = notifyDelayed.getDelayMs();
+                    Set<String> specialReceivers = notifyDelayed.getSpecialReceivers();
+                    Dew.Util.newThread(() ->
+                            send(flag, "在最近的[" + delayMs / 1000 + "]秒内发生了[" + notifyCounter + "]次通知请求。", "延时通知", specialReceivers, true));
+                } catch (InterruptedException e) {
+                    logger.error("Send delay notify error.", e);
+                }
+            }
+        });
+    }
+
     static class Context {
 
-        private long lastNotifyTime = 0;
-        private AtomicLong lastDNDEndTime = new AtomicLong(0);
-        private AtomicInteger currentForceSendTimes = new AtomicInteger(0);
+        AtomicLong intervalNotifyCounter = new AtomicLong(-1);
+        AtomicLong lastDNDEndTime = new AtomicLong(0);
+        AtomicInteger currentForceSendTimes = new AtomicInteger(0);
 
-        public long getLastNotifyTime() {
-            return lastNotifyTime;
+    }
+
+    static class NotifyDelayed implements Delayed {
+
+        private String flag;
+        private Set<String> specialReceivers;
+        private int delayMs;
+        private long expireMs;
+
+        public String getFlag() {
+            return flag;
         }
 
-        public void setLastNotifyTime(long lastNotifyTime) {
-            this.lastNotifyTime = lastNotifyTime;
+        public Set<String> getSpecialReceivers() {
+            return specialReceivers;
         }
 
-        public AtomicLong getLastDNDEndTime() {
-            return lastDNDEndTime;
+        public int getDelayMs() {
+            return delayMs;
         }
 
-        public void setLastDNDEndTime(AtomicLong lastDNDEndTime) {
-            this.lastDNDEndTime = lastDNDEndTime;
+        public NotifyDelayed(String flag, Set<String> specialReceivers, int delayMs) {
+            this.flag = flag;
+            this.specialReceivers = specialReceivers;
+            this.delayMs = delayMs;
+            this.expireMs = delayMs + System.currentTimeMillis();
         }
 
-        public AtomicInteger getCurrentForceSendTimes() {
-            return currentForceSendTimes;
+        @Override
+        public long getDelay(TimeUnit unit) {
+            return unit.convert(this.expireMs - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
         }
 
-        public void setCurrentForceSendTimes(AtomicInteger currentForceSendTimes) {
-            this.currentForceSendTimes = currentForceSendTimes;
+        @Override
+        public int compareTo(Delayed o) {
+            return (int) (this.getDelay(TimeUnit.MILLISECONDS) - o.getDelay(TimeUnit.MILLISECONDS));
         }
+
     }
 
 
