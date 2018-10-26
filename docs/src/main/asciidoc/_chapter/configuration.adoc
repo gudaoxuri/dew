@@ -37,7 +37,7 @@ dew: # Dew 参数key前缀
             ha-enabled: true #是否启用HA，默认为true
     notifies:
         "": # 通知的标识
-            type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息
+            type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
             defaultReceivers: # 默认接收人列表，钉钉为手机号，邮件为邮箱
             dndTimeReceivers: # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
             args: # 不同类型的参数，邮件不需要设置

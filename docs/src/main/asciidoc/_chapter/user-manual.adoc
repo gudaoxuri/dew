@@ -463,11 +463,11 @@ public Resp<String> test(){
 dew:
     notifies:
         "": # 通知的标识
-            type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息
+            type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
             defaultReceivers: # 默认接收人列表，钉钉为手机号，邮件为邮箱
             dndTimeReceivers: # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
             args: # 不同类型的参数，邮件不需要设置
-                url: # 钉钉的推送地址，说明详见：https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.karFPe&treeId=257&articleId=105735&docType=1
+                url: # 钉钉及自定义HTTP的推送地址，钉钉URL说明详见：https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.karFPe&treeId=257&articleId=105735&docType=1
             strategy: # 通知策略
                 minIntervalSec: 0 # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
                 dndTime: # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
@@ -486,6 +486,12 @@ dew:
     sendMail:
       type: MAIL
       defaultReceivers: x@y.z
+    custom:
+      type: HTTP
+      defaultReceivers: x@y.z
+      args:
+        url: https://...
+
 ----
 
 [source,java]
@@ -508,6 +514,20 @@ Dew.notify.sendAsync("<通知的标识>", "<通知的内容或Throwable>");
 . Hystrix错误: ``__HYSTRIX__``，所有Hystrix错误调用此标识发送错误，可通过``dew.cloud.error.notify-flag`` 修改
 
 要启用以上两个通知请确保``dew.notifies``有相应的配置。
+====
+
+[NOTE]
+.HTTP自定义通知格式
+====
+POST请求，Body格式为:
+
+{
+    "title": "", // 标题
+    "content": "", // 内容
+    "receivers": [] // 接收人列表
+}
+
+调用正常需要返回200状态码
 ====
 
 ==== 异常处理
