@@ -37,7 +37,6 @@ import java.nio.file.Paths;
  */
 @Configuration
 @ConditionalOnProperty(prefix = "dew.basic.doc", name = "enabled", havingValue = "true", matchIfMissing = true)
-@ConditionalOnClass(EnableSwagger2.class)
 @EnableSwagger2
 public class DocAutoConfiguration implements ApplicationListener<EmbeddedServletContainerInitializedEvent> {
 
