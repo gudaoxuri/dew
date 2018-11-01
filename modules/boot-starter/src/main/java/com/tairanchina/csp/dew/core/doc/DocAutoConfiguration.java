@@ -1,34 +1,28 @@
 package com.tairanchina.csp.dew.core.doc;
 
 
-import com.ecfront.dew.common.$;
+import com.tairanchina.csp.dew.Dew;
 import com.tairanchina.csp.dew.core.DewConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerInitializedEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
+import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.paths.RelativePathProvider;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.servlet.ServletContext;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 /**
  * Swagger配置
@@ -38,13 +32,12 @@ import java.nio.file.Paths;
 @Configuration
 @ConditionalOnProperty(prefix = "dew.basic.doc", name = "enabled", havingValue = "true", matchIfMissing = true)
 @EnableSwagger2
-public class DocAutoConfiguration implements ApplicationListener<EmbeddedServletContainerInitializedEvent> {
+@ImportAutoConfiguration({DocClusterAutoConfiguration.class, DocLocalAutoConfiguration.class})
+public class DocAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(DocAutoConfiguration.class);
 
-    // FIXME 此设置可能无效
-    @Value("${server.ssl.key-store:}")
-    private String sslKeyStore;
+    public static final String FLAG_APPLICATION_NAME = "applicationName";
 
     @Autowired
     private DewConfig dewConfig;
@@ -52,15 +45,13 @@ public class DocAutoConfiguration implements ApplicationListener<EmbeddedServlet
     @Value("${server.context-path:}")
     private String contextPath;
 
-    @Value("${dew.basic.doc.fileName:index}")
-    private String apiFileName;
-
     @Bean
     public Docket restApi(ServletContext servletContext) {
         if (dewConfig.getBasic().getDoc().getBasePackage().isEmpty()) {
             return null;
         }
         return new Docket(DocumentationType.SWAGGER_2)
+                .tags(new Tag(FLAG_APPLICATION_NAME, Dew.Info.name))
                 .apiInfo(apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors.basePackage(dewConfig.getBasic().getDoc().getBasePackage()))
@@ -87,48 +78,20 @@ public class DocAutoConfiguration implements ApplicationListener<EmbeddedServlet
                 });
     }
 
-    @Override
-    public void onApplicationEvent(EmbeddedServletContainerInitializedEvent event) {
-        int port = event.getEmbeddedServletContainer().getPort();
-        String generate = System.getProperty("dew.basic.doc.generate");
-        if (generate != null && generate.equalsIgnoreCase("true")) {
-            String outputDir = System.getProperty("dew.basic.doc.outputDir");
-            String swaggerDir = System.getProperty("dew.basic.doc.swaggerDir");
-            logger.info("Generating Doc to :" + outputDir);
-            try {
-                Files.createDirectories(Paths.get(outputDir));
-                if (!new File(outputDir + File.separator + "asciidoc").exists()) {
-                    // Create index.adoc
-                    Files.createDirectories(Paths.get(outputDir + File.separator + "asciidoc"));
-                    try (BufferedWriter writer =
-                                 Files.newBufferedWriter(
-                                         Paths.get(outputDir + File.separator + "asciidoc", apiFileName + ".adoc"),
-                                         StandardCharsets.UTF_8)) {
-                        writer.write("include::{generated}/overview.adoc[]\n" +
-                                "include::{generated}/paths.adoc[]\n" +
-                                "include::{generated}/security.adoc[]\n" +
-                                "include::{generated}/definitions.adoc[]");
-                    }
-                }
-                // Create swagger.json
-                String swaggerJson = $.http.get((sslKeyStore == null || sslKeyStore.isEmpty() ? "http" : "https") + "://localhost:" + port + contextPath + "/v2/api-docs");
-                Files.createDirectories(Paths.get(swaggerDir));
-                try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(swaggerDir, "swagger.json"), StandardCharsets.UTF_8)) {
-                    writer.write(swaggerJson);
-                }
-            } catch (IOException e) {
-                logger.error("Has error", e);
-            }
-        }
-    }
-
     private ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
+        ApiInfoBuilder builder = new ApiInfoBuilder()
                 .title(dewConfig.getBasic().getName())
                 .description(dewConfig.getBasic().getDesc())
                 .termsOfServiceUrl(dewConfig.getBasic().getWebSite())
-                .version(dewConfig.getBasic().getVersion())
-                .build();
+                .version(dewConfig.getBasic().getVersion());
+        if (dewConfig.getBasic().getDoc().getContact() != null) {
+            builder.contact(new Contact(
+                    dewConfig.getBasic().getDoc().getContact().getName(),
+                    dewConfig.getBasic().getDoc().getContact().getUrl(),
+                    dewConfig.getBasic().getDoc().getContact().getEmail()
+            ));
+        }
+        return builder.build();
     }
 
 }

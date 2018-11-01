@@ -3,7 +3,7 @@ spring:
     name: web-example
 
 server:
-  port: 8083 # http端口号
+  port: 80 # http端口号
   tomcat:
     max-threads: 1000
 
@@ -18,3 +18,8 @@ dew:
 
 logging:
   path: ./logs
+
+management:
+  security:
+    enabled: false
+  context-path: /management-admin

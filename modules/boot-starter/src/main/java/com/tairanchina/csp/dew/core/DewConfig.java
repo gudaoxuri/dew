@@ -2,6 +2,7 @@ package com.tairanchina.csp.dew.core;
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import springfox.documentation.service.Contact;
 
 import java.util.*;
 
@@ -61,6 +62,8 @@ public class DewConfig {
 
             private boolean enabled = true;
 
+            private Contact contact = null;
+
             private String basePackage = "";
 
             public boolean isEnabled() {
@@ -78,13 +81,52 @@ public class DewConfig {
             public void setBasePackage(String basePackage) {
                 this.basePackage = basePackage;
             }
+
+            public Contact getContact() {
+                return contact;
+            }
+
+            public void setContact(Contact contact) {
+                this.contact = contact;
+            }
+
+            public static class Contact{
+                private  String name;
+                private  String url;
+                private  String email;
+
+                public String getName() {
+                    return name;
+                }
+
+                public void setName(String name) {
+                    this.name = name;
+                }
+
+                public String getUrl() {
+                    return url;
+                }
+
+                public void setUrl(String url) {
+                    this.url = url;
+                }
+
+                public String getEmail() {
+                    return email;
+                }
+
+                public void setEmail(String email) {
+                    this.email = email;
+                }
+            }
+
         }
 
         public static class Format {
 
             private boolean useUnityError = true;
 
-            private String errorFlag="__DEW_ERROR__";
+            private String errorFlag = "__DEW_ERROR__";
 
             public String getErrorFlag() {
                 return errorFlag;

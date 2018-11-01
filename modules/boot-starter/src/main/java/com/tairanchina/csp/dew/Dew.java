@@ -69,6 +69,7 @@ public class Dew {
         Dew.applicationContext = injectApplicationContext;
         Info.name = applicationName;
         Info.profile = profile;
+        Info.webPort = serverPort;
         Info.instance = applicationName + "@" + Info.profile + "@" + Info.ip + ":" + serverPort;
         Cluster.init(Info.name, Info.instance);
 
@@ -130,6 +131,8 @@ public class Dew {
         public static String ip;
         // 应用主机名
         public static String host;
+        // 应用主机Web端口
+        public static int webPort;
         // 应用实例，各组件唯一
         public static String instance;
 

@@ -11,6 +11,7 @@ import org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptor
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.AbstractErrorController;
 import org.springframework.boot.autoconfigure.web.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
@@ -22,19 +23,20 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.ServletRequestWrapper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 @RestController
+@ApiIgnore
+@ConditionalOnWebApplication
 @RequestMapping("${error.path:/error}")
 public class ErrorController extends AbstractErrorController {
 
@@ -89,9 +91,9 @@ public class ErrorController extends AbstractErrorController {
             exDetail = (List) error.get("errors");
         }
         Object[] result = error(request, path, statusCode, message, exClass, exMsg, exDetail, (Throwable) specialError);
-        if(statusCode>499){
+        if (statusCode > 499) {
             // 服务错误才通知
-            Dew.notify.sendAsync(Dew.dewConfig.getBasic().getFormat().getErrorFlag(),  (Throwable) specialError, ((Throwable) specialError).getMessage());
+            Dew.notify.sendAsync(Dew.dewConfig.getBasic().getFormat().getErrorFlag(), (Throwable) specialError, ((Throwable) specialError).getMessage());
         }
         return ResponseEntity.status((int) result[0]).contentType(MediaType.APPLICATION_JSON_UTF8).body(result[1]);
     }
