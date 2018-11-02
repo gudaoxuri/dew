@@ -1,5 +1,5 @@
 = Web测试
-2018-11-01 18:31:26
+2018-11-01 18:43:20
 :doctype: book
 :encoding: utf-8
 :lang: zh-CN
@@ -59,9 +59,8 @@ produces: */*
 [source,js]
 ----
 {
-"<some keys>":integer
+  "<some keys>":integer
 }
-
 ----
 |
 
@@ -118,13 +117,12 @@ produces: */*
 [source,js]
 ----
 {
-"<some keys>":  {
-    "age":<integer>,
-    "idCard":<string>,
-    "phone":<string>
-  }
+  "<some keys>":{
+      "age":<integer>,
+      "idCard":<string>,
+      "phone":<string>
+    }
 }
-
 ----
 |
 
@@ -181,14 +179,12 @@ produces: */*
 [source,js]
 ----
 {
-"<some keys>":  [{
-    "age":<integer>,
-    "idCard":<string>,
-    "phone":<string>
-  }]
-
+  "<some keys>":[{
+      "age":<integer>,
+      "idCard":<string>,
+      "phone":<string>
+    }]
 }
-
 ----
 |
 
@@ -245,12 +241,10 @@ produces: */*
 [source,js]
 ----
 {
-"<some keys>":{
-  "<some keys>":string
-  }
-
+  "<some keys>":{
+      "<some keys>":string
+    }
 }
-
 ----
 |
 
@@ -473,7 +467,6 @@ produces: */*
 [source,js]
 ----
 [string]
-
 ----
 |
 
@@ -674,7 +667,6 @@ produces: */*
   "idCard":<string>,
   "phone":<string>
 }]
-
 ----
 |
 
@@ -772,12 +764,11 @@ produces: */*
 |
 [source,js]
 ----
-["<some keys>":    {
+["<some keys>":{
       "age":<integer>,
       "idCard":<string>,
       "phone":<string>
     }]
-
 ----
 |
 

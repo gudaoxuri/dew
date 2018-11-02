@@ -1,6 +1,11 @@
 package com.tairanchina.csp.dew.core.hystrix;
 
 import com.netflix.hystrix.strategy.HystrixPlugins;
+import com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategy;
+import com.netflix.hystrix.strategy.eventnotifier.HystrixEventNotifier;
+import com.netflix.hystrix.strategy.executionhook.HystrixCommandExecutionHook;
+import com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisher;
+import com.netflix.hystrix.strategy.properties.HystrixPropertiesStrategy;
 import com.tairanchina.csp.dew.core.DewCloudConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +31,20 @@ public class NotifyAutoConfiguration {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
         if (dewCloudConfig.getError().isEnabled()) {
             logger.info("Enabled Failure Event Notifier");
+
+            HystrixCommandExecutionHook commandExecutionHook = HystrixPlugins.getInstance().getCommandExecutionHook();
+            HystrixEventNotifier eventNotifier = HystrixPlugins.getInstance().getEventNotifier();
+            HystrixMetricsPublisher metricsPublisher = HystrixPlugins.getInstance().getMetricsPublisher();
+            HystrixPropertiesStrategy propertiesStrategy = HystrixPlugins.getInstance().getPropertiesStrategy();
+            HystrixConcurrencyStrategy concurrencyStrategy = HystrixPlugins.getInstance().getConcurrencyStrategy();
+
+            HystrixPlugins.reset();
+
+            HystrixPlugins.getInstance().registerConcurrencyStrategy(concurrencyStrategy);
+            HystrixPlugins.getInstance().registerCommandExecutionHook(commandExecutionHook);
             HystrixPlugins.getInstance().registerEventNotifier(new FailureEventNotifier(dewCloudConfig));
+            HystrixPlugins.getInstance().registerMetricsPublisher(metricsPublisher);
+            HystrixPlugins.getInstance().registerPropertiesStrategy(propertiesStrategy);
         }
     }
 

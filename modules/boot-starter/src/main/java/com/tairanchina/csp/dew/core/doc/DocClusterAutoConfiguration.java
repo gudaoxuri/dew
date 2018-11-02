@@ -18,10 +18,15 @@ public class DocClusterAutoConfiguration {
     private DiscoveryClient discoveryClient;
 
     @Bean
+    public DocService docService() {
+        return new DocService();
+    }
+
+    @Bean
     public DocController docController() {
         return new DocController(() -> discoveryClient.getServices().stream().map(serviceId -> {
             ServiceInstance instance = discoveryClient.getInstances(serviceId).get(0);
-            return (instance.isSecure() ? "https" : "http") + "://" + instance.getHost() + ":" + instance.getPort() + instance.getUri() + "/v2/api-docs";
+            return instance.getUri() + "/v2/api-docs";
         }).collect(Collectors.toList()));
     }
 

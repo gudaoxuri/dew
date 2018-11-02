@@ -4,10 +4,10 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.SpringCloudApplication;
 
 @SpringCloudApplication
-public class ServiceExampleApplication {
+public class CloudExampleApplication {
 
     public static void main(String[] args) {
-        new SpringApplicationBuilder(ServiceExampleApplication.class).run(args);
+        new SpringApplicationBuilder(CloudExampleApplication.class).run(args);
     }
 
 }

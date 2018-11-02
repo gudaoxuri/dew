@@ -1,7 +1,7 @@
 package com.tairanchina.csp.dew.example;
 
 import com.ecfront.dew.common.$;
-import com.tairanchina.csp.dew.core.doc.DocController;
+import com.tairanchina.csp.dew.core.doc.DocService;
 import com.tairanchina.csp.dew.example.web.WebExampleApplication;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,11 +18,11 @@ import java.util.HashMap;
 public class DocTest {
 
     @Autowired
-    private DocController docController;
+    private DocService docService;
 
     @Test
     public void testDocByJson() throws IOException {
-        docController.doGenerateOfflineDoc("Web测试", "测试说明", new HashMap<String, String>() {{
+        docService.doGenerateOfflineDoc("Web测试", "测试说明", new HashMap<String, String>() {{
             put("测试环境", "http://test.ecfront.com");
             put("生产环境", "http://prod.ecfront.com");
         }}, new ArrayList<String>() {{
@@ -32,7 +32,7 @@ public class DocTest {
 
     @Test
     public void testDocByUrl() throws IOException {
-        docController.generateOfflineDoc("Web测试", "测试说明", new HashMap<String, String>() {{
+        docService.generateOfflineDoc("Web测试", "测试说明", new HashMap<String, String>() {{
             put("测试环境", "http://test.ecfront.com");
             put("生产环境", "http://prod.ecfront.com");
         }}, new ArrayList<String>() {{
