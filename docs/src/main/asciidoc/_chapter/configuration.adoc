@@ -13,11 +13,10 @@ dew: # Dew 参数key前缀
         doc:
             enabled: true # 是否启用默认文档配置，关闭后可自定义文档管理，默认为true
             base-package: # API文档要扫描的根包，多指定到 Controller 包中
-            ## 生成离线文档需要以下配置：
-            generate: true #是否生成离线文档
-            output-dir: # 生成路径
-            swagger-dir:
-            file-name: # 要导出的API离线文档的名称
+            contact: # 联系人信息
+                name: # 联系人姓名
+                url: # 联系人URL
+                email: # 联系人邮箱
         format:
             use-unity-error: true # 是否启用统一响应
             error-flag: __DEW_ERROR__ # 默认的通知标识

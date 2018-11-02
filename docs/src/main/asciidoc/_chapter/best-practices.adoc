@@ -42,18 +42,6 @@ TIP: Spring对抽象数据类型校验抛出异常为``MethodArgumentNotValidExc
 
 TIP: `jackson` 对于 `LocalDateTime` 类型的支持与其他三种类型不具有一致性，这是 `jackson` 需要优化的一个点
 
-=== `Swagger` 离线文档
-
-* 以启动参数 `dew.basic.doc.fileName` 指定导出文件名
-
-[source,shell]
-.执行如下命令(加上 `-Ddew.basic.doc.fileName= [name]` 可指定文件名)
-----
-mvn -Dtest=DocTest clean test -P doc
-
-mvn -Dtest=DocTest -Ddew.basic.doc.fileName=dew-example clean test -P doc
-----
-
 === `Ribbon` 负载均衡
 
 `example: service-dew.ribbon.NFLoadBalancerRuleClassName=com.netflix.loadbalancer.RandomRule`

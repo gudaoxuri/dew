@@ -8,6 +8,7 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 * 使用小泰科技Fork版本做为开源版本
 * 添加领导者选举的Redis实现
 * 添加消息通知（钉钉或邮件）
+* 添加生成系统级（多服务）统一离线文档功能
 * 添加MQ消费的HA功能
 * 默认使用micrometer做为指标采集工具
 * 添加对Scala的支持
