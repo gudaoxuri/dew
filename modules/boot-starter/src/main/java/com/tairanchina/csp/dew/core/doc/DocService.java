@@ -111,17 +111,18 @@ public class DocService {
                                                     "==== " + (api.has("deprecated") && api.path("deprecated").asBoolean() ? "[.line-through]#" + api.path("summary").asText() + "#" : api.path("summary").asText()) + "\n" +
                                                     "'''\n" +
                                                     "\n" +
+                                                    "----\n" +
                                                     "" + api.path("description").asText("") + "\n" +
-                                                    "\n" +
+                                                    "----\n" +
                                                     "\n" +
                                                     "请求URI: ``" + httpMethod.toUpperCase() + " " + uri +
                                                     "``\n" +
                                                     "[%hardbreaks]\n");
                                             if (api.has("consumes")) {
-                                                asciidocContent.append("consumes: " + String.join(";", array(api.path("consumes"))) + "\n");
+                                                asciidocContent.append("consumes: ``" + String.join(";", array(api.path("consumes"))) + "``\n");
                                             }
                                             if (api.has("produces")) {
-                                                asciidocContent.append("produces: " + String.join(";", array(api.path("produces"))) + "\n");
+                                                asciidocContent.append("produces: ``" + String.join(";", array(api.path("produces"))) + "``\n");
                                             }
                                             if (api.has("parameters")) {
                                                 asciidocContent.append("\n" +
@@ -236,7 +237,7 @@ public class DocService {
                                                     asciidocContent.append("\n")
                                                             .append("|body\n")
                                                             .append("5+|\n")
-                                                            .append("[source,js]\n")
+                                                            .append("[source]\n")
                                                             .append("----\n")
                                                             .append(bodyJson)
                                                             .append("----\n")
@@ -252,7 +253,7 @@ public class DocService {
                                                 if ($ref.indexOf("#/definitions/Resp") != -1) {
                                                     // Resp类型
                                                     asciidocContent.append("\n")
-                                                            .append("[source,js]\n")
+                                                            .append("[source]\n")
                                                             .append("----\n")
                                                             .append("" + parseTypeOrStructBySchema(swagger.path("definitions"), api.get("responses").path("200").path("schema"), 0) + "\n")
                                                             .append("----\n")
@@ -265,7 +266,7 @@ public class DocService {
                                                     stream(api.get("responses").fields()).forEach(response -> {
                                                         String typeOrStruct = parseTypeOrStructBySchema(swagger.path("definitions"), response.getValue().get("schema"), 0);
                                                         if (!typeOrStruct.trim().isEmpty()) {
-                                                            typeOrStruct = "[source,js]\n----\n" + typeOrStruct + "\n----\n";
+                                                            typeOrStruct = "[source]\n----\n" + typeOrStruct + "\n----\n";
                                                         }
                                                         asciidocContent.append("\n")
                                                                 .append("|" + response.getKey() + "\n")

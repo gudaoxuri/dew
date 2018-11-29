@@ -481,21 +481,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#服务调用开发期使用">3.2. 服务调用开发期使用</a></li>
 <li><a href="#code_validated_code_注解">3.3. <code>@Validated</code> 注解</a></li>
 <li><a href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据">3.4. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</a></li>
-<li><a href="#code_swagger_code_离线文档">3.5. <code>Swagger</code> 离线文档</a></li>
-<li><a href="#code_ribbon_code_负载均衡">3.6. <code>Ribbon</code> 负载均衡</a></li>
-<li><a href="#code_feign_code_配置特定方法超时时间">3.7. <code>Feign</code> 配置特定方法超时时间</a></li>
-<li><a href="#code_feign_code_接口添加_code_http_code_请求头信息">3.8. <code>Feign</code> 接口添加 <code>Http</code> 请求头信息</a></li>
-<li><a href="#code_feign_code_文件上传实践">3.9. <code>Feign</code> 文件上传实践</a></li>
-<li><a href="#自定义降级方法">3.10. 自定义降级方法</a></li>
-<li><a href="#断路保护">3.11. 断路保护</a></li>
-<li><a href="#定时任务">3.12. 定时任务</a></li>
-<li><a href="#主要性能影响参数">3.13. 主要性能影响参数</a></li>
-<li><a href="#code_zuul_code_保护_隐藏_内部服务的_code_http_code_接口">3.14. <code>Zuul</code> 保护(隐藏)内部服务的 <code>Http</code> 接口</a></li>
-<li><a href="#缓存处理">3.15. 缓存处理</a></li>
-<li><a href="#spring_boot_admin_监控实践">3.16. Spring Boot Admin 监控实践</a></li>
-<li><a href="#jdbc_批量插入性能问题">3.17. jdbc 批量插入性能问题</a></li>
-<li><a href="#http请求并发数性能瓶颈">3.18. http请求并发数性能瓶颈</a></li>
-<li><a href="#日志中解析message_动态显示property">3.19. 日志中解析message,动态显示property</a></li>
+<li><a href="#code_ribbon_code_负载均衡">3.5. <code>Ribbon</code> 负载均衡</a></li>
+<li><a href="#code_feign_code_配置特定方法超时时间">3.6. <code>Feign</code> 配置特定方法超时时间</a></li>
+<li><a href="#code_feign_code_接口添加_code_http_code_请求头信息">3.7. <code>Feign</code> 接口添加 <code>Http</code> 请求头信息</a></li>
+<li><a href="#code_feign_code_文件上传实践">3.8. <code>Feign</code> 文件上传实践</a></li>
+<li><a href="#自定义降级方法">3.9. 自定义降级方法</a></li>
+<li><a href="#断路保护">3.10. 断路保护</a></li>
+<li><a href="#定时任务">3.11. 定时任务</a></li>
+<li><a href="#主要性能影响参数">3.12. 主要性能影响参数</a></li>
+<li><a href="#code_zuul_code_保护_隐藏_内部服务的_code_http_code_接口">3.13. <code>Zuul</code> 保护(隐藏)内部服务的 <code>Http</code> 接口</a></li>
+<li><a href="#缓存处理">3.14. 缓存处理</a></li>
+<li><a href="#spring_boot_admin_监控实践">3.15. Spring Boot Admin 监控实践</a></li>
+<li><a href="#jdbc_批量插入性能问题">3.16. jdbc 批量插入性能问题</a></li>
+<li><a href="#http请求并发数性能瓶颈">3.17. http请求并发数性能瓶颈</a></li>
+<li><a href="#日志中解析message_动态显示property">3.18. 日志中解析message,动态显示property</a></li>
 </ul>
 </li>
 <li><a href="#开发指南">4. 开发指南</a>
@@ -520,28 +519,31 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#版本说明">7. 版本说明</a>
 <ul class="sectlevel2">
 <li><a href="#1_5_0_rc_准备中">7.1. 1.5.0-RC[准备中]</a></li>
-<li><a href="#1_3_4_rc">7.2. 1.3.4-RC</a></li>
-<li><a href="#1_3_2_rc">7.3. 1.3.2-RC</a></li>
-<li><a href="#1_3_1_rc">7.4. 1.3.1-RC</a></li>
-<li><a href="#1_3_0_rc">7.5. 1.3.0-RC</a></li>
-<li><a href="#1_2_2_rc">7.6. 1.2.2-RC</a></li>
-<li><a href="#1_2_1_rc">7.7. 1.2.1-RC</a></li>
-<li><a href="#1_2_0_rc">7.8. 1.2.0-RC</a></li>
-<li><a href="#1_1_0_rc">7.9. 1.1.0-RC</a></li>
-<li><a href="#1_1_0_beta1">7.10. 1.1.0-beta1</a></li>
-<li><a href="#1_0_0_rc">7.11. 1.0.0-RC</a></li>
-<li><a href="#1_0_0_beta5">7.12. 1.0.0-beta5</a></li>
-<li><a href="#1_0_0_beta4">7.13. 1.0.0-beta4</a></li>
-<li><a href="#1_0_0_beta3">7.14. 1.0.0-beta3</a></li>
-<li><a href="#1_0_0_beta2">7.15. 1.0.0-Beta2</a></li>
-<li><a href="#1_0_0_beta1">7.16. 1.0.0-beta1</a></li>
 </ul>
 </li>
-<li><a href="#路线图">8. 路线图</a>
+<li><a href="#1_3_4_rc">8. 1.3.4-RC</a>
 <ul class="sectlevel2">
-<li><a href="#2_x">8.1. 2.x</a></li>
-<li><a href="#1_5_0">8.2. 1.5.0</a></li>
-<li><a href="#1_x">8.3. 1.x</a></li>
+<li><a href="#1_3_2_rc">8.1. 1.3.2-RC</a></li>
+<li><a href="#1_3_1_rc">8.2. 1.3.1-RC</a></li>
+<li><a href="#1_3_0_rc">8.3. 1.3.0-RC</a></li>
+<li><a href="#1_2_2_rc">8.4. 1.2.2-RC</a></li>
+<li><a href="#1_2_1_rc">8.5. 1.2.1-RC</a></li>
+<li><a href="#1_2_0_rc">8.6. 1.2.0-RC</a></li>
+<li><a href="#1_1_0_rc">8.7. 1.1.0-RC</a></li>
+<li><a href="#1_1_0_beta1">8.8. 1.1.0-beta1</a></li>
+<li><a href="#1_0_0_rc">8.9. 1.0.0-RC</a></li>
+<li><a href="#1_0_0_beta5">8.10. 1.0.0-beta5</a></li>
+<li><a href="#1_0_0_beta4">8.11. 1.0.0-beta4</a></li>
+<li><a href="#1_0_0_beta3">8.12. 1.0.0-beta3</a></li>
+<li><a href="#1_0_0_beta2">8.13. 1.0.0-Beta2</a></li>
+<li><a href="#1_0_0_beta1">8.14. 1.0.0-beta1</a></li>
+</ul>
+</li>
+<li><a href="#路线图">9. 路线图</a>
+<ul class="sectlevel2">
+<li><a href="#2_x">9.1. 2.x</a></li>
+<li><a href="#1_5_0">9.2. 1.5.0</a></li>
+<li><a href="#1_x">9.3. 1.x</a></li>
 </ul>
 </li>
 </ul>
@@ -1488,11 +1490,11 @@ Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "x
 dew:
     notifies:
         "": # 通知的标识
-            type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息
+            type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
             defaultReceivers: # 默认接收人列表，钉钉为手机号，邮件为邮箱
             dndTimeReceivers: # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
             args: # 不同类型的参数，邮件不需要设置
-                url: # 钉钉的推送地址，说明详见：https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.karFPe&amp;treeId=257&amp;articleId=105735&amp;docType=1
+                url: # 钉钉及自定义HTTP的推送地址，钉钉URL说明详见：https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.karFPe&amp;treeId=257&amp;articleId=105735&amp;docType=1
             strategy: # 通知策略
                 minIntervalSec: 0 # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
                 dndTime: # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
@@ -1510,20 +1512,25 @@ dew:
         minIntervalSec: 5
     sendMail:
       type: MAIL
-      defaultReceivers: x@y.z</code></pre>
+      defaultReceivers: x@y.z
+    custom:
+      type: HTTP
+      defaultReceivers: x@y.z
+      args:
+        url: https://...</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">通知使用</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java"># 最简单的调用
-Resp&lt;Void&gt; result = Dew.notify.send("&lt;通知的标识&gt;", "&lt;通知的内容&gt;");
+Resp&lt;Void&gt; result = Dew.notify.send("&lt;通知的标识&gt;", "&lt;通知的内容或Throwable&gt;");
 # 带通知标题，标题会加上``Dew.Info.instance``
-Resp&lt;Void&gt; result = Dew.notify.send("&lt;通知的标识&gt;", "&lt;通知的内容&gt;", "&lt;通知标题&gt;");
+Resp&lt;Void&gt; result = Dew.notify.send("&lt;通知的标识&gt;", "&lt;通知的内容或Throwable&gt;", "&lt;通知标题&gt;");
 # 加上特殊接收人列表，非免扰时间内的接收人=配置默认接收人列表+特殊接收人列表，免扰时间内的接收人=配置的免扰时间内的接收人列表
-Resp&lt;Void&gt; result = Dew.notify.send("&lt;通知的标识&gt;", "&lt;通知的内容&gt;", "&lt;通知标题&gt;", "&lt;特殊接收人列表&gt;");
+Resp&lt;Void&gt; result = Dew.notify.send("&lt;通知的标识&gt;", "&lt;通知的内容或Throwable&gt;", "&lt;通知标题&gt;", "&lt;特殊接收人列表&gt;");
 # 上述三个方法都有异步的重载方法，如
-Dew.notify.sendAsync("&lt;通知的标识&gt;", "&lt;通知的内容&gt;");</code></pre>
+Dew.notify.sendAsync("&lt;通知的标识&gt;", "&lt;通知的内容或Throwable&gt;");</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1546,6 +1553,31 @@ Dew.notify.sendAsync("&lt;通知的标识&gt;", "&lt;通知的内容&gt;");</cod
 </div>
 <div class="paragraph">
 <p>要启用以上两个通知请确保<code>dew.notifies</code>有相应的配置。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">HTTP自定义通知格式</div>
+<div class="paragraph">
+<p>POST请求，Body格式为:</p>
+</div>
+<div class="paragraph">
+<p>{
+    "title": "", // 标题
+    "content": "", // 内容
+    "receivers": [] // 接收人列表
+}</p>
+</div>
+<div class="paragraph">
+<p>调用正常需要返回200状态码</p>
 </div>
 </td>
 </tr>
@@ -1801,66 +1833,65 @@ spring:
 <div class="sect3">
 <h4 id="api文档"><a class="anchor" href="#api文档"></a>2.4.1. API文档</h4>
 <div class="paragraph">
-<p>实现Html及PDF版本的离线API文档，效果如下：</p>
-</div>
-<div class="paragraph">
-<p><span class="image"><img src="http://swagger2markup.github.io/swagger2markup/1.3.1/images/Swagger2Markup.PNG" alt="Swagger2Markup"></span></p>
+<p>用于生成Asciidoc格式的离线API文档，可通过软件转换成HTML及PDF版本。</p>
 </div>
 <div class="listingblock">
 <div class="title">配置</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">dew:
   basic:
-    name: web # 文档名称
+    name: # 文档名称
     version: 1.0 # 文档版本
-    desc: desc # 文档说明
-    web-site: www.tairanchina.com # 文档站点
+    desc: # 文档说明
+    web-site: # 文档站点
     doc:
-      base-package: com.tairanchina # 文档要扫描的controller路径</code></pre>
+        base-package: # API文档要扫描的根包，多指定到 Controller 包中
+        contact: # 联系人信息，可为空
+            name: # 联系人姓名
+            url: # 联系人URL
+            email: # 联系人邮箱
+
+management: # 文档生成地址前缀为 /management.context-path
+  security:
+    enabled: false # 建议关闭管理功能的安全认证
+  context-path: /management-admin # 建议修改此前缀以便在网关上统一过滤管理请求</code></pre>
 </div>
 </div>
 <div class="listingblock">
-<div class="title">建立如下测试类，WebExampleApplication修改成对应的启动类</div>
+<div class="title">使用</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@RunWith(SpringRunner.class)
-@SpringBootTest(classes = WebExampleApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class DocTest {
+<pre class="prettyprint highlight"><code class="language-txt" data-lang="txt">访问任意服务实例:
 
-    @Test
-    public void empty(){}
+PUT /{management.context-path}/doc/offline
 
+{
+	"docName":"", # 文档名称
+	"docDesc":"", # 文档说明
+	"visitUrls":{ # 不同环境的访问地址
+		"":""
+	},
+	"swaggerJsonUrls":[] # swagger.json的URL列表(http://.../v2/api-docs)，可选
+}
+
+swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，为空时分两种情况：
+
+1. 如果是非集群模式（没有注册中心）则只生成本服务的接口文档
+2. 如果是集群模式（注册到注册中心）则会合成此集群下所有的接口文档
+
+示例：
+
+{
+	"docName":"Dew API 文档",
+	"docDesc":"此为Dew的接口文档\n描述可以换行",
+	"visitUrls":{
+		"开发环境":"http://dev.dew.ecfront.com",
+		"测试环境":"http://test.dew.ecfront.com"
+	}
 }</code></pre>
 </div>
 </div>
-<div class="listingblock">
-<div class="title">执行如下命令(加上 <code>-Ddew.basic.doc.fileName= [name]</code> 可指定文件名)</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-shell" data-lang="shell">mvn -Dtest=DocTest clean test -P doc
-
-mvn -Dtest=DocTest -Ddew.basic.doc.fileName=dew-example clean test -P doc</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>查看工程目录，多了一个 <code>api-docs</code> 的目录，包含了 <code>index.html</code> 和 <code>index.pdf</code> 两个离线文档</p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="title">定制化文档</div>
 <div class="paragraph">
-<p>创建或编辑 <code>api-docs/asciidoc/index.adoc</code> 加入个性化内容，此为 <code>asciidoc</code> 格式，使用见： <a href="http://asciidoctor.org/docs/asciidoc-writers-guide/" class="bare">http://asciidoctor.org/docs/asciidoc-writers-guide/</a></p>
-</div>
-</td>
-</tr>
-</table>
+<p>调用此接口后返回Asciidoc格式的文档内容，复制此内容到相应的转换工具中即可生成对应的HTTP或PDF文档。</p>
 </div>
 </div>
 <div class="sect3">
@@ -2145,25 +2176,7 @@ Spring对抽象数据类型校验抛出异常为<code>MethodArgumentNotValidExce
 </div>
 </div>
 <div class="sect2">
-<h3 id="code_swagger_code_离线文档"><a class="anchor" href="#code_swagger_code_离线文档"></a>3.5. <code>Swagger</code> 离线文档</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>以启动参数 <code>dew.basic.doc.fileName</code> 指定导出文件名</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="title">执行如下命令(加上 <code>-Ddew.basic.doc.fileName= [name]</code> 可指定文件名)</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-shell" data-lang="shell">mvn -Dtest=DocTest clean test -P doc
-
-mvn -Dtest=DocTest -Ddew.basic.doc.fileName=dew-example clean test -P doc</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="code_ribbon_code_负载均衡"><a class="anchor" href="#code_ribbon_code_负载均衡"></a>3.6. <code>Ribbon</code> 负载均衡</h3>
+<h3 id="code_ribbon_code_负载均衡"><a class="anchor" href="#code_ribbon_code_负载均衡"></a>3.5. <code>Ribbon</code> 负载均衡</h3>
 <div class="paragraph">
 <p><code>example: service-dew.ribbon.NFLoadBalancerRuleClassName=com.netflix.loadbalancer.RandomRule</code></p>
 </div>
@@ -2196,7 +2209,7 @@ eureka:
 </div>
 </div>
 <div class="sect2">
-<h3 id="code_feign_code_配置特定方法超时时间"><a class="anchor" href="#code_feign_code_配置特定方法超时时间"></a>3.7. <code>Feign</code> 配置特定方法超时时间</h3>
+<h3 id="code_feign_code_配置特定方法超时时间"><a class="anchor" href="#code_feign_code_配置特定方法超时时间"></a>3.6. <code>Feign</code> 配置特定方法超时时间</h3>
 <div class="paragraph">
 <p><strong><code>Hystrix</code> 超时时间配置</strong></p>
 </div>
@@ -2240,7 +2253,7 @@ x-service.ribbon.ReadTimeout=5000</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="code_feign_code_接口添加_code_http_code_请求头信息"><a class="anchor" href="#code_feign_code_接口添加_code_http_code_请求头信息"></a>3.8. <code>Feign</code> 接口添加 <code>Http</code> 请求头信息</h3>
+<h3 id="code_feign_code_接口添加_code_http_code_请求头信息"><a class="anchor" href="#code_feign_code_接口添加_code_http_code_请求头信息"></a>3.7. <code>Feign</code> 接口添加 <code>Http</code> 请求头信息</h3>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -2263,7 +2276,7 @@ Resp&lt;CustomerInfoVO&gt; applyCA(@RequestBody CAIdentificationDTO params,
 </div>
 </div>
 <div class="sect2">
-<h3 id="code_feign_code_文件上传实践"><a class="anchor" href="#code_feign_code_文件上传实践"></a>3.9. <code>Feign</code> 文件上传实践</h3>
+<h3 id="code_feign_code_文件上传实践"><a class="anchor" href="#code_feign_code_文件上传实践"></a>3.8. <code>Feign</code> 文件上传实践</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -2392,7 +2405,7 @@ public class FeginServiceExample {
 </div>
 </div>
 <div class="sect2">
-<h3 id="自定义降级方法"><a class="anchor" href="#自定义降级方法"></a>3.10. 自定义降级方法</h3>
+<h3 id="自定义降级方法"><a class="anchor" href="#自定义降级方法"></a>3.9. 自定义降级方法</h3>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -2499,7 +2512,7 @@ public class FeginServiceExample {
 </div>
 </div>
 <div class="sect2">
-<h3 id="断路保护"><a class="anchor" href="#断路保护"></a>3.11. 断路保护</h3>
+<h3 id="断路保护"><a class="anchor" href="#断路保护"></a>3.10. 断路保护</h3>
 <div class="listingblock">
 <div class="title">Hystrix配置</div>
 <div class="content">
@@ -2588,7 +2601,7 @@ hystrix.threadpool.default.coreSize=10</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="定时任务"><a class="anchor" href="#定时任务"></a>3.12. 定时任务</h3>
+<h3 id="定时任务"><a class="anchor" href="#定时任务"></a>3.11. 定时任务</h3>
 <div class="paragraph">
 <p>使用 <code>Spring Config</code>  配置中心 <code>refresh</code> 时,在 <code>@RefreshScope</code> 注解的类中, <code>@Scheduled</code> 注解的自动任务会失效。
 建议使用实现 <code>SchedulingConfigurer</code> 接口的方式添加自动任务。</p>
@@ -2619,7 +2632,7 @@ public class SchedulingConfiguration implements SchedulingConfigurer {
 </div>
 </div>
 <div class="sect2">
-<h3 id="主要性能影响参数"><a class="anchor" href="#主要性能影响参数"></a>3.13. 主要性能影响参数</h3>
+<h3 id="主要性能影响参数"><a class="anchor" href="#主要性能影响参数"></a>3.12. 主要性能影响参数</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -2733,7 +2746,7 @@ hystrix.threadpool.default.coreSize=100</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="code_zuul_code_保护_隐藏_内部服务的_code_http_code_接口"><a class="anchor" href="#code_zuul_code_保护_隐藏_内部服务的_code_http_code_接口"></a>3.14. <code>Zuul</code> 保护(隐藏)内部服务的 <code>Http</code> 接口</h3>
+<h3 id="code_zuul_code_保护_隐藏_内部服务的_code_http_code_接口"><a class="anchor" href="#code_zuul_code_保护_隐藏_内部服务的_code_http_code_接口"></a>3.13. <code>Zuul</code> 保护(隐藏)内部服务的 <code>Http</code> 接口</h3>
 <div class="paragraph">
 <p>在yml配置文件里配置(<code>ignored-patterns</code>,<code>ignored-services</code>)这两项中的一项即可</p>
 </div>
@@ -2747,7 +2760,7 @@ hystrix.threadpool.default.coreSize=100</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="缓存处理"><a class="anchor" href="#缓存处理"></a>3.15. 缓存处理</h3>
+<h3 id="缓存处理"><a class="anchor" href="#缓存处理"></a>3.14. 缓存处理</h3>
 <div class="paragraph">
 <p><code>Spring Cache</code> 提供了很好的注解式缓存，但默认没有超时，需要根据使用的缓存容器特殊配置</p>
 </div>
@@ -2765,7 +2778,7 @@ RedisCacheManager cacheManager() {
 </div>
 </div>
 <div class="sect2">
-<h3 id="spring_boot_admin_监控实践"><a class="anchor" href="#spring_boot_admin_监控实践"></a>3.16. Spring Boot Admin 监控实践</h3>
+<h3 id="spring_boot_admin_监控实践"><a class="anchor" href="#spring_boot_admin_监控实践"></a>3.15. Spring Boot Admin 监控实践</h3>
 <div class="paragraph">
 <p>在 <code>Spring Boot Actuator</code> 中提供很多像 <code>health</code> 、 <code>metrics</code> 等实时监控接口，可以方便我们随时跟踪服务的性能指标。
  <code>Spring Boot</code> 默认是开放这些接口提供调用的，那么就问题来了，如果这些接口公开在外网中，很容易被不法分子所利用，这肯定不是我们想要的结果。
@@ -2900,7 +2913,7 @@ management:
 </div>
 </div>
 <div class="sect2">
-<h3 id="jdbc_批量插入性能问题"><a class="anchor" href="#jdbc_批量插入性能问题"></a>3.17. jdbc 批量插入性能问题</h3>
+<h3 id="jdbc_批量插入性能问题"><a class="anchor" href="#jdbc_批量插入性能问题"></a>3.16. jdbc 批量插入性能问题</h3>
 <div class="paragraph">
 <p>如果不开启rewriteBatchedStatements=true，那么jdbc会把批量插入当做一行行的单条处理，也就没有达到批量插入的效果</p>
 </div>
@@ -2979,7 +2992,7 @@ management:
 </table>
 </div>
 <div class="sect2">
-<h3 id="http请求并发数性能瓶颈"><a class="anchor" href="#http请求并发数性能瓶颈"></a>3.18. http请求并发数性能瓶颈</h3>
+<h3 id="http请求并发数性能瓶颈"><a class="anchor" href="#http请求并发数性能瓶颈"></a>3.17. http请求并发数性能瓶颈</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -3009,7 +3022,7 @@ management:
 </div>
 </div>
 <div class="sect2">
-<h3 id="日志中解析message_动态显示property"><a class="anchor" href="#日志中解析message_动态显示property"></a>3.19. 日志中解析message,动态显示property</h3>
+<h3 id="日志中解析message_动态显示property"><a class="anchor" href="#日志中解析message_动态显示property"></a>3.18. 日志中解析message,动态显示property</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -3152,11 +3165,10 @@ docker run --name dew-kafka -e HOST_IP=localhost -e KAFKA_ADVERTISED_PORT=9092 -
         doc:
             enabled: true # 是否启用默认文档配置，关闭后可自定义文档管理，默认为true
             base-package: # API文档要扫描的根包，多指定到 Controller 包中
-            ## 生成离线文档需要以下配置：
-            generate: true #是否生成离线文档
-            output-dir: # 生成路径
-            swagger-dir:
-            file-name: # 要导出的API离线文档的名称
+            contact: # 联系人信息
+                name: # 联系人姓名
+                url: # 联系人URL
+                email: # 联系人邮箱
         format:
             use-unity-error: true # 是否启用统一响应
             error-flag: __DEW_ERROR__ # 默认的通知标识
@@ -3176,7 +3188,7 @@ docker run --name dew-kafka -e HOST_IP=localhost -e KAFKA_ADVERTISED_PORT=9092 -
             ha-enabled: true #是否启用HA，默认为true
     notifies:
         "": # 通知的标识
-            type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息
+            type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
             defaultReceivers: # 默认接收人列表，钉钉为手机号，邮件为邮箱
             dndTimeReceivers: # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
             args: # 不同类型的参数，邮件不需要设置
@@ -3293,6 +3305,9 @@ spring:
 <p>添加消息通知（钉钉或邮件）</p>
 </li>
 <li>
+<p>添加生成系统级（多服务）统一离线文档功能</p>
+</li>
+<li>
 <p>添加MQ消费的HA功能</p>
 </li>
 <li>
@@ -3382,11 +3397,17 @@ spring:
 <li>
 <p>功能变更： <code>Dew.Info.instance</code>由<code>UUID</code>修改成<code>服务名@Profile@IP:端口</code></p>
 </li>
+<li>
+<p>功能变更： 升级后的Tomcat版本不支持Host中带有'_'这种非规范符号</p>
+</li>
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_3_4_rc"><a class="anchor" href="#1_3_4_rc"></a>7.2. 1.3.4-RC</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="1_3_4_rc"><a class="anchor" href="#1_3_4_rc"></a>8. 1.3.4-RC</h2>
+<div class="sectionbody">
 <div class="ulist">
 <div class="title">Features</div>
 <ul>
@@ -3395,9 +3416,8 @@ spring:
 </li>
 </ul>
 </div>
-</div>
 <div class="sect2">
-<h3 id="1_3_2_rc"><a class="anchor" href="#1_3_2_rc"></a>7.3. 1.3.2-RC</h3>
+<h3 id="1_3_2_rc"><a class="anchor" href="#1_3_2_rc"></a>8.1. 1.3.2-RC</h3>
 <div class="ulist">
 <div class="title">Features</div>
 <ul>
@@ -3408,7 +3428,7 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="1_3_1_rc"><a class="anchor" href="#1_3_1_rc"></a>7.4. 1.3.1-RC</h3>
+<h3 id="1_3_1_rc"><a class="anchor" href="#1_3_1_rc"></a>8.2. 1.3.1-RC</h3>
 <div class="ulist">
 <div class="title">Fixed</div>
 <ul>
@@ -3419,7 +3439,7 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="1_3_0_rc"><a class="anchor" href="#1_3_0_rc"></a>7.5. 1.3.0-RC</h3>
+<h3 id="1_3_0_rc"><a class="anchor" href="#1_3_0_rc"></a>8.3. 1.3.0-RC</h3>
 <div class="ulist">
 <div class="title">Features</div>
 <ul>
@@ -3472,7 +3492,7 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="1_2_2_rc"><a class="anchor" href="#1_2_2_rc"></a>7.6. 1.2.2-RC</h3>
+<h3 id="1_2_2_rc"><a class="anchor" href="#1_2_2_rc"></a>8.4. 1.2.2-RC</h3>
 <div class="ulist">
 <div class="title">Fixed</div>
 <ul>
@@ -3486,7 +3506,7 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="1_2_1_rc"><a class="anchor" href="#1_2_1_rc"></a>7.7. 1.2.1-RC</h3>
+<h3 id="1_2_1_rc"><a class="anchor" href="#1_2_1_rc"></a>8.5. 1.2.1-RC</h3>
 <div class="ulist">
 <div class="title">Fixed</div>
 <ul>
@@ -3500,7 +3520,7 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="1_2_0_rc"><a class="anchor" href="#1_2_0_rc"></a>7.8. 1.2.0-RC</h3>
+<h3 id="1_2_0_rc"><a class="anchor" href="#1_2_0_rc"></a>8.6. 1.2.0-RC</h3>
 <div class="ulist">
 <div class="title">Feature</div>
 <ul>
@@ -3556,7 +3576,7 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="1_1_0_rc"><a class="anchor" href="#1_1_0_rc"></a>7.9. 1.1.0-RC</h3>
+<h3 id="1_1_0_rc"><a class="anchor" href="#1_1_0_rc"></a>8.7. 1.1.0-RC</h3>
 <div class="ulist">
 <div class="title">Feature</div>
 <ul>
@@ -3598,7 +3618,7 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="1_1_0_beta1"><a class="anchor" href="#1_1_0_beta1"></a>7.10. 1.1.0-beta1</h3>
+<h3 id="1_1_0_beta1"><a class="anchor" href="#1_1_0_beta1"></a>8.8. 1.1.0-beta1</h3>
 <div class="ulist">
 <div class="title">Feature</div>
 <ul>
@@ -3670,7 +3690,7 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="1_0_0_rc"><a class="anchor" href="#1_0_0_rc"></a>7.11. 1.0.0-RC</h3>
+<h3 id="1_0_0_rc"><a class="anchor" href="#1_0_0_rc"></a>8.9. 1.0.0-RC</h3>
 <div class="ulist">
 <div class="title">Feature</div>
 <ul>
@@ -3730,7 +3750,7 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="1_0_0_beta5"><a class="anchor" href="#1_0_0_beta5"></a>7.12. 1.0.0-beta5</h3>
+<h3 id="1_0_0_beta5"><a class="anchor" href="#1_0_0_beta5"></a>8.10. 1.0.0-beta5</h3>
 <div class="ulist">
 <div class="title">Feature</div>
 <ul>
@@ -3797,7 +3817,7 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="1_0_0_beta4"><a class="anchor" href="#1_0_0_beta4"></a>7.13. 1.0.0-beta4</h3>
+<h3 id="1_0_0_beta4"><a class="anchor" href="#1_0_0_beta4"></a>8.11. 1.0.0-beta4</h3>
 <div class="ulist">
 <div class="title">Feature</div>
 <ul>
@@ -3846,7 +3866,7 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="1_0_0_beta3"><a class="anchor" href="#1_0_0_beta3"></a>7.14. 1.0.0-beta3</h3>
+<h3 id="1_0_0_beta3"><a class="anchor" href="#1_0_0_beta3"></a>8.12. 1.0.0-beta3</h3>
 <div class="olist arabic">
 <div class="title">Feature</div>
 <ol class="arabic">
@@ -3871,7 +3891,7 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="1_0_0_beta2"><a class="anchor" href="#1_0_0_beta2"></a>7.15. 1.0.0-Beta2</h3>
+<h3 id="1_0_0_beta2"><a class="anchor" href="#1_0_0_beta2"></a>8.13. 1.0.0-Beta2</h3>
 <div class="olist arabic">
 <div class="title">Feature</div>
 <ol class="arabic">
@@ -3905,7 +3925,7 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="1_0_0_beta1"><a class="anchor" href="#1_0_0_beta1"></a>7.16. 1.0.0-beta1</h3>
+<h3 id="1_0_0_beta1"><a class="anchor" href="#1_0_0_beta1"></a>8.14. 1.0.0-beta1</h3>
 <div class="olist arabic">
 <div class="title">Feature</div>
 <ol class="arabic">
@@ -3955,10 +3975,10 @@ spring:
 </div>
 </div>
 <div class="sect1">
-<h2 id="路线图"><a class="anchor" href="#路线图"></a>8. 路线图</h2>
+<h2 id="路线图"><a class="anchor" href="#路线图"></a>9. 路线图</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="2_x"><a class="anchor" href="#2_x"></a>8.1. 2.x</h3>
+<h3 id="2_x"><a class="anchor" href="#2_x"></a>9.1. 2.x</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -3968,7 +3988,7 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="1_5_0"><a class="anchor" href="#1_5_0"></a>8.2. 1.5.0</h3>
+<h3 id="1_5_0"><a class="anchor" href="#1_5_0"></a>9.2. 1.5.0</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -3981,7 +4001,7 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="1_x"><a class="anchor" href="#1_x"></a>8.3. 1.x</h3>
+<h3 id="1_x"><a class="anchor" href="#1_x"></a>9.3. 1.x</h3>
 <div class="paragraph">
 <p>实现核心功能，为公司各项目的研发提供能力支撑</p>
 </div>

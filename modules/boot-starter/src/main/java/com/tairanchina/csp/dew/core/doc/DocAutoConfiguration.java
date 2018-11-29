@@ -46,6 +46,11 @@ public class DocAutoConfiguration {
     private String contextPath;
 
     @Bean
+    public DocService docService() {
+        return new DocService();
+    }
+
+    @Bean
     public Docket restApi(ServletContext servletContext) {
         if (dewConfig.getBasic().getDoc().getBasePackage().isEmpty()) {
             return null;

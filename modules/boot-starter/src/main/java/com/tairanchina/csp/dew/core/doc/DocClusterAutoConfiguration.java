@@ -18,11 +18,6 @@ public class DocClusterAutoConfiguration {
     private DiscoveryClient discoveryClient;
 
     @Bean
-    public DocService docService() {
-        return new DocService();
-    }
-
-    @Bean
     public DocController docController() {
         return new DocController(() -> discoveryClient.getServices().stream().map(serviceId -> {
             ServiceInstance instance = discoveryClient.getInstances(serviceId).get(0);

@@ -470,7 +470,7 @@ dew:
                 url: # 钉钉及自定义HTTP的推送地址，钉钉URL说明详见：https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.karFPe&treeId=257&articleId=105735&docType=1
             strategy: # 通知策略
                 minIntervalSec: 0 # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
-                dndTime: # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
+                dndTime: # 开启免扰时间，HH:mm-HH:mm 如，18:00-06:00
                 forceSendTimes: 3 # 同一免扰周期间通知调用达到几次后强制发送
 
 # 示例
@@ -480,7 +480,7 @@ dew:
       type: DD
       defaultReceivers: xxxx
       args:
-        url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac49
+        url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d3269
       strategy:
         minIntervalSec: 5
     sendMail:
