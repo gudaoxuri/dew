@@ -1,11 +1,10 @@
 package com.tairanchina.csp.dew.auth.dto.management
 
-import javax.validation.constraints.NotNull
-
 import com.ecfront.dew.common.$
 import com.tairanchina.csp.dew.auth.domain.{Account, Role}
 import com.tairanchina.csp.dew.auth.dto.common.StatusDTO
 import com.tairanchina.csp.dew.auth.helper.CommonConverter
+import javax.validation.constraints.NotNull
 
 import scala.beans.BeanProperty
 import scala.collection.JavaConverters._

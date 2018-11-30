@@ -13,7 +13,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = IdempotentApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -23,97 +22,73 @@ public class IdempotentTest {
 
     @Test
     public void testManualConfirm() throws IOException, InterruptedException {
-        HashMap<String, String> hashMap = new HashMap<String, String>() {{
-            put(DewIdempotentConfig.DEFAULT_OPT_TYPE_FLAG, "manualConfirm");
+        HashMap<String, String> header = new HashMap<String, String>() {{
             put(DewIdempotentConfig.DEFAULT_OPT_ID_FLAG, "0001");
         }};
-        new Thread(new NeedTask(hashMap)).start();
-        Thread.sleep(1000);
+        Thread thread = new Thread(() -> {
+            // 第一次请求，正常
+            Resp<String> result = null;
+            try {
+                result = Resp.generic($.http.get(urlPre + "manual-confirm?str=dew-test1", header), String.class);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Assert.assertTrue(result.ok());
+        });
+        thread.start();
+        Thread.sleep(500);
         // 上一次请求还在进行中
-        Resp<String> result2 = Resp.generic($.http.get(urlPre + "manual-confirm?str=dew-test2", hashMap), String.class);
-        Assert.assertEquals(StandardCode.CONFLICT.toString(), result2.getCode());
+        Resp<String> result = Resp.generic($.http.get(urlPre + "manual-confirm?str=dew-test2", header), String.class);
+        Assert.assertEquals(StandardCode.CONFLICT.toString(), result.getCode());
         Thread.sleep(1000);
         // 上一次请求已确认，不能重复请求
-        result2 = Resp.generic($.http.get(urlPre + "manual-confirm?str=dew-test3", hashMap), String.class);
-        Assert.assertEquals(StandardCode.LOCKED.toString(), result2.getCode());
-        Thread.sleep(3500);
+        result = Resp.generic($.http.get(urlPre + "manual-confirm?str=dew-test3", header), String.class);
+        Assert.assertEquals(StandardCode.LOCKED.toString(), result.getCode());
+        Thread.sleep(4000);
         // 幂等过期，可以再次提交
-        result2 = Resp.generic($.http.get(urlPre + "manual-confirm?str=dew-test4", hashMap), String.class);
-        Assert.assertTrue(result2.ok());
+        result = Resp.generic($.http.get(urlPre + "manual-confirm?str=dew-test4", header), String.class);
+        Assert.assertTrue(result.ok());
+        // 忽略幂等检查，强制提交
+        result = Resp.generic($.http.get(urlPre + "manual-confirm?str=dew-test5"), String.class);
+        Assert.assertTrue(result.ok());
     }
 
     @Test
     public void testAutoConfirmed() throws IOException, InterruptedException {
-        HashMap<String, String> hashMap = new HashMap<String, String>() {{
-            put(DewIdempotentConfig.DEFAULT_OPT_TYPE_FLAG, "autoConfirm");
+        HashMap<String, String> header = new HashMap<String, String>() {{
             put(DewIdempotentConfig.DEFAULT_OPT_ID_FLAG, "0001");
         }};
         // 第一次请求，正常
-        Resp<String> result = Resp.generic($.http.get(urlPre + "auto-confirm?str=dew-test", hashMap), String.class);
+        Resp<String> result = Resp.generic($.http.get(urlPre + "auto-confirm?str=dew-test1", header), String.class);
         Assert.assertTrue(result.ok());
         // 上一次请求已确认，不能重复请求
-        result = Resp.generic($.http.get(urlPre + "auto-confirm?str=dew-test", hashMap), String.class);
+        result = Resp.generic($.http.get(urlPre + "auto-confirm?str=dew-test2", header), String.class);
         Assert.assertEquals(StandardCode.LOCKED.toString(), result.getCode());
         Thread.sleep(5000);
         // 幂等过期，可以再次提交
-        result = Resp.generic($.http.get(urlPre + "auto-confirm?str=dew-test", hashMap), String.class);
+        result = Resp.generic($.http.get(urlPre + "auto-confirm?str=dew-test3", header), String.class);
         Assert.assertTrue(result.ok());
-    }
-
-    @Test
-    public void testCancel() throws InterruptedException, IOException {
-        // needconfirm
-        HashMap<String, String> needMap = new HashMap<String, String>() {{
-            put(DewIdempotentConfig.DEFAULT_OPT_TYPE_FLAG, "manualConfirm");
-            put(DewIdempotentConfig.DEFAULT_OPT_ID_FLAG, "0001");
-        }};
-        new Thread(new NeedTask(needMap)).start();
-        Thread.sleep(2000);
-        Resp<String> result = Resp.generic($.http.get(urlPre + "manual-confirm?str=dew-test1", needMap), String.class);
-        Assert.assertEquals(StandardCode.LOCKED.toString(), result.getCode());
-        // 删除缓存
-        DewIdempotent.cancel("manualConfirm", "0001");
-        result = Resp.generic($.http.get(urlPre + "manual-confirm?str=dew-test1", needMap), String.class);
-        Assert.assertTrue(result.ok());
-
-
-        // autoconfirm
-        HashMap<String, String> autoMap = new HashMap<String, String>() {{
-            put(DewIdempotentConfig.DEFAULT_OPT_TYPE_FLAG, "autoConfirm");
-            put(DewIdempotentConfig.DEFAULT_OPT_ID_FLAG, "0001");
-        }};
-        // 第一次请求，正常
-        result = Resp.generic($.http.get(urlPre + "auto-confirm?str=dew-test", autoMap), String.class);
-        Assert.assertTrue(result.ok());
-        // 上一次请求已确认，不能重复请求
-        result = Resp.generic($.http.get(urlPre + "auto-confirm?str=dew-test", autoMap), String.class);
-        Assert.assertEquals(StandardCode.LOCKED.toString(), result.getCode());
-        // 删除缓存
-        DewIdempotent.cancel("autoConfirm", "0001");
-        result = Resp.generic($.http.get(urlPre + "auto-confirm?str=dew-test", autoMap), String.class);
-        Assert.assertTrue(result.ok());
-
-
-        // cancel
-        HashMap<String, String> cancelMap = new HashMap<String, String>() {{
-            put(DewIdempotentConfig.DEFAULT_OPT_TYPE_FLAG, "cancleConfirm");
-            put(DewIdempotentConfig.DEFAULT_OPT_ID_FLAG, "0001");
-        }};
-        result = Resp.generic($.http.get(urlPre + "cancel?str=dew-cancel", cancelMap), String.class);
-        Assert.assertTrue(!result.ok());
-        result = Resp.generic($.http.get(urlPre + "cancel?str=dew-cancel", cancelMap), String.class);
+        // 忽略幂等检查，强制提交
+        result = Resp.generic($.http.get(urlPre + "auto-confirm?str=dew-test4"), String.class);
         Assert.assertTrue(result.ok());
     }
 
     @Test
     public void testWithoutHttp() throws IOException, InterruptedException {
+        // 初始化类型为transfer_a的幂等操作，需要手工确认，过期时间为1秒
         DewIdempotent.initOptTypeInfo("transfer_a", true, 1000, StrategyEnum.ITEM);
+        // 第一次请求transfer_a类型下的xxxxxxx这个ID，返回不存在，表示可以下一步操作
         Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "xxxxxxx"));
         Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "yyyyyyy"));
+        // 第二次请求transfer_a类型下的xxxxxxx这个ID，返回未确认，表示上次操作还在进行中
         Assert.assertEquals(StatusEnum.UN_CONFIRM, DewIdempotent.process("transfer_a", "xxxxxxx"));
+        // 确认操作完成
         DewIdempotent.confirm("transfer_a", "xxxxxxx");
+        // 第三次请求transfer_a类型下的xxxxxxx这个ID，返回已确认，但未过期，仍不能操作
         Assert.assertEquals(StatusEnum.CONFIRMED, DewIdempotent.process("transfer_a", "xxxxxxx"));
+        // 延时1秒
         Thread.sleep(1000);
+        // 再次请求transfer_a类型下的xxxxxxx这个ID，返回不存在（上次请求已过期），表示可以下一步操作
         Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "xxxxxxx"));
     }
 
@@ -121,26 +96,6 @@ public class IdempotentTest {
     public void testNormal() throws IOException, InterruptedException {
         Resp<String> result = Resp.generic($.http.get(urlPre + "normal?str=dew-test"), String.class);
         Assert.assertTrue(result.ok());
-    }
-
-    private class NeedTask implements Runnable {
-
-        private Map<String, String> map;
-
-        NeedTask(Map<String, String> map) {
-            this.map = map;
-        }
-
-        @Override
-        public void run() {
-            Resp<String> result = null;
-            try {
-                result = Resp.generic($.http.get(urlPre + "manual-confirm?str=dew-test1", map), String.class);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            Assert.assertTrue(result.ok());
-        }
     }
 
 }

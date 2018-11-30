@@ -23,7 +23,7 @@ public class HystrixExampleController {
     public String exe() {
         logger.info("Controller Token:" + Dew.context().getToken());
         return hystrixExampleService.getStores(new HashMap<String, Object>() {{
-        }},Dew.context());
+        }}, Dew.context());
     }
 
 }

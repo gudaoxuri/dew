@@ -11,22 +11,6 @@
 ** 如果你既要有一定的ORMPPING能力，又希望自己写SQL，那么MyBatis会是不错的选择
 ** 如果你使用了Spring，希望框架简单些，可以接受自己写ORMPPING，未来无切换关系型数据库的计划，那么Spring JDBC Template将是个很好的选择
 
-上述是几个主流JDBC框架的使用场景分析，Dew默认的是哪个呢？Dew默认的是基于Spring JDBC Template的封装，其理由如下：
-
-. Dew做为内部框架，需要能从容地处理公司规划的领域模型结构，但这一数据模型无法与对象模型对应，所以JPA的优势无法体现
-. Dew希望尽可能保持“轻巧”，结构简单、容易上手，Hibernate相对而言过重了
-
-基于两个原因Hibernate并不适合使用，又因为：
-
-. 在数据库设计上一般会存在业务主键、是否启用状态等字段，经常需要针对这些字段查询、修改
-. 在数据库设计上一般会存在创建人/时间、更新人/时间等常规字段，在创建、更新对象时需要自动赋值
-. 希望能有自动化的ORMPPING功能
-. 要求能很好的支持多数据源操作
-
-基于这三个原因MyBatis、Ebean、DBUtils及Spring JDBC Template都无法满足要求。
-
-所以为适应这一场景需求，Dew基于Spring JDBC Template做了扩展以支持上述功能。
-
 === 服务调用开发期使用
 
 在 `Spring Cloud` 体系下，服务调用需要启动 `Eureka` 服务（对于 `Dew` 中的 `Registry` 组件），这对开发阶段并不友好：
@@ -40,7 +24,7 @@
     # <client>为service-id
     <client>.ribbon.listOfServers: <直接访问的IPs>
     # 如
-    performance-service.ribbon.listOfServers: 127.0.0.1:8812
+    x-service.ribbon.listOfServers: 127.0.0.1:8812
 
 === `@Validated` 注解
 
@@ -49,7 +33,7 @@
 . 对于基本数据类型和String类型，要使校验的注解生效，需在该类上方加 `@Validated` 注解
 . 对于抽象数据类型，需在形式参数前加``@Validated``注解
 
-TIP: spring对抽象数据类型校验抛出异常为``MethodArgumentNotValidException``，http状态码为400，对基本数据类型校验抛出异常为``ConstraintViolationException``，http状态码为500，dew对这两种异常做了统一处理，http状态码均返回200，code为400
+TIP: Spring对抽象数据类型校验抛出异常为``MethodArgumentNotValidException``，http状态码为400，对基本数据类型校验抛出异常为``ConstraintViolationException``，http状态码为500，dew对这两种异常做了统一处理，http状态码均返回200，code为400
 
 ===  `jackson` 对于 `Java8` 时间转换（ `SpringMVC` 以 `jackson` 接收 `json` 数据）
 
@@ -58,23 +42,9 @@ TIP: spring对抽象数据类型校验抛出异常为``MethodArgumentNotValidExc
 
 TIP: `jackson` 对于 `LocalDateTime` 类型的支持与其他三种类型不具有一致性，这是 `jackson` 需要优化的一个点
 
-=== `Swagger` 离线文档
-
-* 以启动参数 `api.file.name` 指定导出文件名
-
-[source,shell]
-.执行如下命令(加上 `-Dapi.file.name= [name]` 可指定文件名)
-----
-mvn -Dtest=DocTest clean test -P doc
-
-mvn -Dtest=DocTest -Dapi.file.name=dew-example clean test -P doc
-----
-
 === `Ribbon` 负载均衡
 
-NOTE: 本条实践为``netflix``的``1.3.4.RELEASE``版本
-
-*  `example: service-dew.ribbon.NFLoadBalancerRuleClassName=com.netflix.loadbalancer.RandomRule`
+`example: service-dew.ribbon.NFLoadBalancerRuleClassName=com.netflix.loadbalancer.RandomRule`
 
 NOTE: ``service-dew``为服务名，配置时自行选取规则，类均在``com.netflix.loadbalancer``包下
 
@@ -111,7 +81,7 @@ eureka:
  # 配置特定服务超时时间,优于默认配置
  <client>.ribbon.ReadTimeout=6000
  # <client>为实际服务名,下面是示例配置
- pressure-service.ribbon.ReadTimeout=5000
+ x-service.ribbon.ReadTimeout=5000
 
 *`Hystrix` 和 `Ribbon` 的超时时间配置相互独立,以低为准,使用时请根据实际情况进行配置*
 
@@ -130,7 +100,8 @@ Resp<CustomerInfoVO> applyCA(@RequestBody CAIdentificationDTO params,
 ----
 
 === `Feign` 文件上传实践
-* 在 `SDK` 工程处，添加包依赖 e.g.
+
+* 在 `SDK` 工程处，添加包依赖
 
 [source,xml]
 .pom
@@ -309,7 +280,6 @@ public class HelloHystrixCommand extends HystrixCommand<HelloHystrixCommand.Mode
 }
 ----
 
-
 === 断路保护
 
 [source,properties]
@@ -412,69 +382,6 @@ public class SchedulingConfiguration implements SchedulingConfigurer {
 }
 ----
 
-=== `Spring Boot（Spring Cloud）jar` 配置扫描顺序策略
-
-* Spring Boot 所提供的配置优先级顺序比较复杂。按照 *优先级从高到低* 的顺序，具体的列表如下所示。
-
-. 命令行参数。
-. 通过 `System.getProperties()` 获取的 `Java` 系统参数。
-. 操作系统环境变量。
-. 从 `java:comp/env` 得到的 `JNDI` 属性。
-. 通过 `RandomValuePropertySource` 生成的 `random.*` 属性。
-. 应用 `jar` 文件之外的属性文件。(通过 `spring.config.location` 参数)
-. 应用 `jar` 文件内部的属性文件。
-. 在应用配置 `Java` 类（包含 `@Configuration` 注解的 `Java` 类）中通过 `@PropertySource` 注解声明的属性文件。
-. 通过 `SpringApplication.setDefaultProperties` 声明的默认属性。
-
-* 说明
-
-1）`Spring Boot` 应用在启动命令中使用--开头的命令行参数，可修改应用的配置。
-
-[source,shell]
-.启动命令
-----
-java -server -Xms8000m -Xmx8000m -jar luckydrawall-0.1.1.jar --spring.profiles.active=rel-Xmx8000m
-----
-
-[source,shell]
-.使用如下代码进行关闭
-----
-SpringApplication.setAddCommandLineProperties(false)
-----
-
-2）属性文件是比较推荐的配置方式。`Spring Boot` 在启动时会对如下目录进行搜查，读取相应配置文件。优先级从高到低。
-
-. 当前 `jar` 目录的 `/config` 子目录
-. 当前 `jar` 目录
-.  `classpath` 中的 `/config` 包
-.  `classpath`
-
-NOTE: 可以通过 `spring.config.name` 配置属性来指定不同的属性文件名称。也可以通过 `spring.config.location` 来添加额外的属性文件的搜索路径。如果应用中包含多个 `profile`，可以为每个 `profile` 定义各自的属性文件，按照 `application-{profile}` 来命名。
- `Spring Cloud Config` 配置方式就属于这种配置方式，其优先级低于本地 `jar` 外配置文件
-
-[source,shell]
-.示例
-----
-java -jar demo.jar --spring.config.location=/path/test_evn.properties
-----
-
-* 使用 `Profile` 区分环境
-
-在 `Spring Boot` 中可以使用 `application.yml` ，`application-default.yml` ， `application-dev.yml` ， `application-test.yml` 进行不同环境的配置。默认时，会读取 `application.yml` ，`application-default.yml` 这两个文件中的配置，优先级高的会覆盖优先级低的配置。无论切换到哪个环境，指定的环境的配置的优先级是最高的。
-
-可以使用 `spring.profiles.active=dev` 指定环境。
-
-* 其他
-
-    ** `bootstrap.yml` ( `jar` 包外) > `bootstrap.yml` ( `jar` 包内) > `application.yml` ( `jar` 包外) > `application.yml` ( `jar` 包内)
-
-** 当启用 `Spring Cloud Config` 配置后， `Git` 仓库中的 `application.yml` >  `[application-name].yml`  >  `[application-name]-[profile].yml`
-
-** 配置的覆盖不是以文件为单位，而是以配置中的参数为单位。
-
-** 同一参数取最先扫描到的value！
-
-
 === 主要性能影响参数
 
 * 内置 `Tomcat` 参数调整效果并不大,如果需要调整,建议适当调大 `max-treads` 和 `accept-count`
@@ -520,8 +427,6 @@ NOTE: 普通 `Service` 使用 `Hystrix` 时,最大并发主要调整 `hystrix.th
 WARNING: `Hystrix` 的默认超时时间为1s,在高并发下容易出现超时,建议将默认超时时间适当调长,
 特殊接口需要将时间调短或更长的,使用特定配置,见上面 `Feign` 配置特定方法超时时间.
 
-TIP: 详细参见文档 file://./files/Spring%20Cloud框架负载测试报告.pdf[Spring Cloud框架负载测试报告]
-
 === `Zuul` 保护(隐藏)内部服务的 `Http` 接口
 
 在yml配置文件里配置(`ignored-patterns`,`ignored-services`)这两项中的一项即可
@@ -535,7 +440,7 @@ zuul: #配置一项即可!
 
 === 缓存处理
 
-`Spring Cache` 提供了很好的注解式缓存，但默认没有超时，需要根据使用的缓存容器特殊配置，e.g.
+`Spring Cache` 提供了很好的注解式缓存，但默认没有超时，需要根据使用的缓存容器特殊配置
 
 [source,java]
 .Redis缓存过期时间设置
@@ -548,84 +453,6 @@ RedisCacheManager cacheManager() {
     return redisCacheManager;
 }
 ----
-
-=== 日志处理
-
-对微服务而言 `服务API调用` 日志可选择 `Sleuth` + `Zipkin` 的方案， `Dew` 没有选择 `Zipkin` 理由如下：
-
-. `Zipkin` 需要再部署一套 `Zipkin` 服务，多了一个依赖
-. `Zipkin` 日志走 `HTTP` 协议对性能有比较大的影响，走 `MQ` 方案又会让使用方多了一个技术依赖，且 `Rabbit` 的性能也是个瓶颈，`Kafka` 才比较适合
-. `Zipkin` 日志存储方案中 `MySQL` 有明显的问题， `Cassandra` 不错，但选型比较偏， `ES` 最为合适
-. `Zipkin` 方案导致 `服务API调用` 日志 与 `应用程序` 日志不统一，后则多选择 `ELK` 方案
-
- `Dew` 框架采用的是 `Sleuth` + `Slf4j` + `ES`（可选）的方案，因为：
-
-. 简单，使用方没有额外的技术依赖，只要像普通日志一样处理即可
-. 统一，所有类型的日志都可统一使用类似 `Logback` 的日志框架记录，方便统一维护
-. 高效，可异步批量提交到 `ES`
-
-当然这一方案会损失一定的可读性，即没有可视化的接口调用展现。
-
-TIP: 开发中我们可能会改变profile,切记同时修改``logback-spring.xml``,在<springProfile>标签里配上该prifile。
-
-[source,xml]
-.logback-spring.xml模板
-----
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
-
-    <springProperty scope="context" name="springAppName" source="spring.application.name"/>
-    <springProperty scope="context" name="logPath" source="logging.path" defaultValue="/tmp"/>
-    <springProperty scope="context" name="esUrl" source="logging.es.url"/>
-    <springProperty scope="context" name="esIndex" source="logging.es.index" defaultValue="dew-log"/>
-    <springProperty scope="context" name="esConnectTimeout" source="logging.es.connectTimeout" defaultValue="30000"/>
-    <springProperty scope="context" name="esReadTimeout" source="logging.es.readTimeout" defaultValue="30000"/>
-    <springProperty scope="context" name="esMaxQueueSize" source="logging.es.maxQueueSize" defaultValue="104857600"/>
-    <springProperty scope="context" name="esMaxMessageSize" source="logging.es.maxMessageSize" defaultValue="-1"/>
-
-    <property name="LOG_FILE" value="${logPath}/${springAppName}/%d{yyyy-MM-dd}.log"/>​
-    <property name="ES_INDEX" value="${esIndex}-%d{yyyy-MM-dd}"/>​
-
-    <appender name="dailyRollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>${LOG_FILE}</FileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [${springAppName:-},%X{X-B3-TraceId:-},%X{X-B3-SpanId:-}] [%thread] %logger{35} - %msg %n</Pattern>
-            <charset>UTF-8</charset>
-        </encoder>
-    </appender>
-    <appender name="ASYNC_LOG" class="ch.qos.logback.classic.AsyncAppender">
-        <discardingThreshold>0</discardingThreshold>
-        <appender-ref ref="dailyRollingFile"/>
-    </appender>
-    <springProfile name="dev,default">
-        <root level="INFO">
-            <appender-ref ref="CONSOLE"/>
-        </root>
-    </springProfile>
-    <springProfile name="test">
-        <root level="INFO">
-            <appender-ref ref="CONSOLE"/>
-            <appender-ref ref="ASYNC_LOG"/>
-        </root>
-    </springProfile>
-    <springProfile name="uat,prd">
-        <root level="INFO">
-            <appender-ref ref="CONSOLE"/>
-            <appender-ref ref="ASYNC_LOG"/>
-        </root>
-    </springProfile>
-</configuration>
-----
-
-
-=== `servo` 内存泄漏问题
-
-已知在某此情况下 `servo` 统计会导致内存泄漏，如无特殊需要建议关闭 `spring.metrics.servo.enabled: false`
 
 === Spring Boot Admin 监控实践
 
@@ -643,8 +470,6 @@ management:
   context-path: /management //<1>
 eureka:
   instance:
-    status-page-url-path: ${management.context-path}/info
-    health-check-url-path: ${management.context-path}/health
     metadata-map:
       cluster: default <2>
 ----
@@ -698,9 +523,6 @@ eureka:
   instance:
     metadata-map:
       cluster: default <2>
-    status-page-url-path: ${management.context-path}/info
-    health-check-url-path: ${management.context-path}/health
-
   client:
     serviceUrl:
       defaultZone: ...
@@ -711,7 +533,7 @@ management:
   context-path: /management <4>
 ----
 <1> 要监控的内容
-<1> 要监控的集群名称
+<2> 要监控的集群名称
 <3> 添加需要被监控的应用 `Service-Id` ，以逗号分隔
 <4> 同上文 ``management.context-path``
 
@@ -768,7 +590,6 @@ spring:
 |2398
 |===
 
-
 === http请求并发数性能瓶颈
 
 * 当策略为Thread时（默认是Thread)，hystrix.threadpool.default.maximumSize为第一个性能瓶颈，默认值为10.
@@ -799,38 +620,5 @@ public class TestConverter extends DynamicConverter<ILoggingEvent> {
     }
 }
 ----
-
-==== logstash配置
-
-NOTE: logback直接输入es性能偏弱，采用logstash输入来替换
-
-.读取本地文件，输入es
-----
-input {
-    file {
-                type => 'csp-message'
-                path => "/Users/ding/Desktop/dew/v2.0/dew-2.0/logs/bone-example/2018-03-05.log"
-                start_position => "beginning" #从文件开始处读写
-        }
-}
-output {
-    elasticsearch {
-        hosts => "127.0.0.1"
-        index => "%{type}-%{+YYYY.MM.dd}"
-        template_overwrite => true
-    }
-}
-filter {
-	if [type] == 'csp-message' {
-    grok {
-      match => [
-        "message" , "(?<datetime>.{23}) (%{LOGLEVEL:level}) *\[(?<service>.*),(?<trace>.*),(?<span>.*)] *\[(?<thread>.*)] (?<class>.*) - {\"appId\":(?<appId>.*),\"messageId\":(?<messageId>.*),\"channelMsgId\":(?<channelMsgId>.*),\"receiver\":(?<receiver>.*),\"templateId\":(?<templateId>.*),\"sendStatusType\":(?<sendStatusType>.*),\"sendStatusTypeText\":(?<sendStatusTypeText>.*),\"sendTime\":(?<sendTime>.*),\"channelAccountId\":(?<channelAccountId>.*),\"orgId\":(?<orgId>.*),\"stateDetail\":(?<stateDetail>.*),\"@timestamp\":(?<timestamp>.*)}",
-        "message" , "(?<datetime>.{23}) (%{LOGLEVEL:level}) *\[(?<service>.*),(?<trace>.*),(?<span>.*)] *\[(?<thread>.*)] (?<class>.*) - (?<msg>.*)"
-      ]
-    }
-  }
-}
-----
-
 
 

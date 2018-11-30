@@ -2,10 +2,9 @@ package com.tairanchina.csp.dew.core;
 
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import springfox.documentation.service.Contact;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ConfigurationProperties(prefix = "dew")
 public class DewConfig {
@@ -14,40 +13,7 @@ public class DewConfig {
     private Cluster cluster = new Cluster();
     private Security security = new Security();
     private Metric metric = new Metric();
-
-    public static class Metric {
-
-        private boolean enabled = true;
-
-        private long periodSec = 600;
-
-        private long urlSize = 2000;
-
-        public long getUrlSize() {
-            return urlSize;
-        }
-
-        public void setUrlSize(long urlSize) {
-            this.urlSize = urlSize;
-        }
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public long getPeriodSec() {
-            return periodSec;
-        }
-
-        public void setPeriodSec(long periodSec) {
-            this.periodSec = periodSec;
-        }
-
-    }
+    private Map<String, Notify> notifies = new HashMap<>();
 
     public static class Basic {
 
@@ -96,6 +62,8 @@ public class DewConfig {
 
             private boolean enabled = true;
 
+            private Contact contact = null;
+
             private String basePackage = "";
 
             public boolean isEnabled() {
@@ -113,23 +81,59 @@ public class DewConfig {
             public void setBasePackage(String basePackage) {
                 this.basePackage = basePackage;
             }
+
+            public Contact getContact() {
+                return contact;
+            }
+
+            public void setContact(Contact contact) {
+                this.contact = contact;
+            }
+
+            public static class Contact{
+                private  String name;
+                private  String url;
+                private  String email;
+
+                public String getName() {
+                    return name;
+                }
+
+                public void setName(String name) {
+                    this.name = name;
+                }
+
+                public String getUrl() {
+                    return url;
+                }
+
+                public void setUrl(String url) {
+                    this.url = url;
+                }
+
+                public String getEmail() {
+                    return email;
+                }
+
+                public void setEmail(String email) {
+                    this.email = email;
+                }
+            }
+
         }
 
         public static class Format {
 
             private boolean useUnityError = true;
-            private boolean reuseHttpState = false;
-            // 兼容原系统设置
-            private String messageFieldName = "message";
 
-            private String codeFieldName = "code";
+            private String errorFlag = "__DEW_ERROR__";
 
-            public String getCodeFieldName() {
-                return codeFieldName;
+            public String getErrorFlag() {
+                return errorFlag;
             }
 
-            public void setCodeFieldName(String codeFieldName) {
-                this.codeFieldName = codeFieldName;
+            public void setErrorFlag(String errorFlag) {
+                this.errorFlag = errorFlag;
             }
 
             public boolean isUseUnityError() {
@@ -139,23 +143,6 @@ public class DewConfig {
             public void setUseUnityError(boolean useUnityError) {
                 this.useUnityError = useUnityError;
             }
-
-            public boolean isReuseHttpState() {
-                return reuseHttpState;
-            }
-
-            public void setReuseHttpState(boolean reuseHttpState) {
-                this.reuseHttpState = reuseHttpState;
-            }
-
-            public String getMessageFieldName() {
-                return messageFieldName;
-            }
-
-            public void setMessageFieldName(String messageFieldName) {
-                this.messageFieldName = messageFieldName;
-            }
-
         }
 
         public static class ErrorMapping {
@@ -218,10 +205,11 @@ public class DewConfig {
 
         private String mq = "redis";
         private String cache = "redis";
-        private String dist = "redis";
-        private String election = "eureka";
+        private String lock = "redis";
+        private String map = "redis";
+        private String election = "redis";
 
-        private Boolean haEnabled = true;
+        private Config config = new Config();
 
         public String getMq() {
             return mq;
@@ -239,12 +227,20 @@ public class DewConfig {
             this.cache = cache;
         }
 
-        public String getDist() {
-            return dist;
+        public String getLock() {
+            return lock;
         }
 
-        public void setDist(String dist) {
-            this.dist = dist;
+        public void setLock(String lock) {
+            this.lock = lock;
+        }
+
+        public String getMap() {
+            return map;
+        }
+
+        public void setMap(String map) {
+            this.map = map;
         }
 
         public String getElection() {
@@ -255,12 +251,34 @@ public class DewConfig {
             this.election = election;
         }
 
-        public Boolean getHaEnabled() {
-            return haEnabled;
+        public Config getConfig() {
+            return config;
         }
 
-        public void setHaEnabled(Boolean haEnabled) {
-            this.haEnabled = haEnabled;
+        public void setConfig(Config config) {
+            this.config = config;
+        }
+
+        public static class Config {
+
+            private int electionPeriodSec = 60;
+            private boolean haEnabled = true;
+
+            public int getElectionPeriodSec() {
+                return electionPeriodSec;
+            }
+
+            public void setElectionPeriodSec(int electionPeriodSec) {
+                this.electionPeriodSec = electionPeriodSec;
+            }
+
+            public boolean isHaEnabled() {
+                return haEnabled;
+            }
+
+            public void setHaEnabled(boolean haEnabled) {
+                this.haEnabled = haEnabled;
+            }
         }
     }
 
@@ -325,43 +343,138 @@ public class DewConfig {
             this.tokenHash = tokenHash;
         }
 
+        public static class SecurityCORS {
+
+            private String allowOrigin = "*";
+            private String allowMethods = "POST,GET,OPTIONS,PUT,DELETE,HEAD";
+            private String allowHeaders = "x-requested-with,content-type";
+
+            public String getAllowOrigin() {
+                return allowOrigin;
+            }
+
+            public void setAllowOrigin(String allowOrigin) {
+                this.allowOrigin = allowOrigin;
+            }
+
+            public String getAllowMethods() {
+                return allowMethods;
+            }
+
+            public void setAllowMethods(String allowMethods) {
+                this.allowMethods = allowMethods;
+            }
+
+            public String getAllowHeaders() {
+                return allowHeaders;
+            }
+
+            public void setAllowHeaders(String allowHeaders) {
+                this.allowHeaders = allowHeaders;
+            }
+        }
+
     }
 
-    public static class SecurityCORS {
+    public static class Metric {
 
-        private String allowOrigin = "*";
-        private String allowMethods = "POST,GET,OPTIONS,PUT,DELETE,HEAD";
-        private String allowHeaders = "x-requested-with,content-type";
+        private boolean enabled = true;
 
-        public String getAllowOrigin() {
-            return allowOrigin;
+        public boolean isEnabled() {
+            return enabled;
         }
 
-        public void setAllowOrigin(String allowOrigin) {
-            this.allowOrigin = allowOrigin;
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
         }
 
-        public String getAllowMethods() {
-            return allowMethods;
+    }
+
+    public static class Notify {
+
+        private String type = "DD"; // DD->钉钉 MAIL->邮件 HTTP->自定义HTTP Hook
+        private Set<String> defaultReceivers = new HashSet<>();
+        private Set<String> dndTimeReceivers = new HashSet<>();
+        private Map<String, Object> args = new HashMap<>();
+        private Strategy strategy = new Strategy();
+
+        public static class Strategy {
+
+            private int minIntervalSec = 0;
+            private String dndTime = "";
+            private int forceSendTimes = 3;
+
+            public int getMinIntervalSec() {
+                return minIntervalSec;
+            }
+
+            public void setMinIntervalSec(int minIntervalSec) {
+                this.minIntervalSec = minIntervalSec;
+            }
+
+            public String getDndTime() {
+                return dndTime;
+            }
+
+            public void setDndTime(String dndTime) {
+                this.dndTime = dndTime;
+            }
+
+            public int getForceSendTimes() {
+                return forceSendTimes;
+            }
+
+            public void setForceSendTimes(int forceSendTimes) {
+                this.forceSendTimes = forceSendTimes;
+            }
+
         }
 
-        public void setAllowMethods(String allowMethods) {
-            this.allowMethods = allowMethods;
+        public String getType() {
+            return type;
         }
 
-        public String getAllowHeaders() {
-            return allowHeaders;
+        public void setType(String type) {
+            this.type = type;
         }
 
-        public void setAllowHeaders(String allowHeaders) {
-            this.allowHeaders = allowHeaders;
+        public Set<String> getDefaultReceivers() {
+            return defaultReceivers;
         }
+
+        public void setDefaultReceivers(Set<String> defaultReceivers) {
+            this.defaultReceivers = defaultReceivers;
+        }
+
+        public Set<String> getDndTimeReceivers() {
+            return dndTimeReceivers;
+        }
+
+        public void setDndTimeReceivers(Set<String> dndTimeReceivers) {
+            this.dndTimeReceivers = dndTimeReceivers;
+        }
+
+        public Map<String, Object> getArgs() {
+            return args;
+        }
+
+        public void setArgs(Map<String, Object> args) {
+            this.args = args;
+        }
+
+        public Strategy getStrategy() {
+            return strategy;
+        }
+
+        public void setStrategy(Strategy strategy) {
+            this.strategy = strategy;
+        }
+
     }
 
     public Basic getBasic() {
         return basic;
     }
-
 
     public void setBasic(Basic basic) {
         this.basic = basic;
@@ -389,5 +502,13 @@ public class DewConfig {
 
     public void setMetric(Metric metric) {
         this.metric = metric;
+    }
+
+    public Map<String, Notify> getNotifies() {
+        return notifies;
+    }
+
+    public void setNotifies(Map<String, Notify> notifies) {
+        this.notifies = notifies;
     }
 }

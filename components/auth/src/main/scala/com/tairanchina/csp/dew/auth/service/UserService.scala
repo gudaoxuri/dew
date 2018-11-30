@@ -176,7 +176,7 @@ class UserService @Autowired()(
     tokenInfo.setRoles(account.roles.asScala.map(role => role.id -> role.name).toMap.asJava)
     tokenInfo.setToken($.field.createUUID())
     Dew.cluster.cache.del(AuthConfig.CACHE_LOGIN_ERROR + loginKey)
-    Dew.cluster.cache.setex(AuthConfig.CACHE_TOKEN + tokenInfo.getToken, $.json.toJsonString(tokenInfo), authConfig.tokenExpireSeconds)
+    Dew.cluster.cache.setex(AuthConfig.CACHE_TOKEN + tokenInfo.getToken, $.json.toJsonString(tokenInfo), authConfig.tokenExpireSec)
     Resp.success(tokenInfo)
   }
 

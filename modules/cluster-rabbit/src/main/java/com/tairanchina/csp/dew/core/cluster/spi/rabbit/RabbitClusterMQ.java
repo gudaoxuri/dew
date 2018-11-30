@@ -1,9 +1,7 @@
 package com.tairanchina.csp.dew.core.cluster.spi.rabbit;
 
-import com.ecfront.dew.common.$;
 import com.rabbitmq.client.*;
 import com.tairanchina.csp.dew.core.cluster.ClusterMQ;
-import com.tairanchina.csp.dew.core.h2.H2Utils;
 import org.springframework.amqp.rabbit.connection.Connection;
 
 import java.io.IOException;
@@ -20,12 +18,11 @@ public class RabbitClusterMQ implements ClusterMQ {
     }
 
     @Override
-    public boolean publish(String topic, String message) {
-        return publish(topic, message, true);
+    public boolean doPublish(String topic, String message) {
+        return doPublish(topic, message, true);
     }
 
-    public boolean publish(String topic, String message, boolean confirm) {
-        logger.trace("[MQ] publish {}:{}", topic, message);
+    public boolean doPublish(String topic, String message, boolean confirm) {
         Connection connection = rabbitAdapter.getConnection();
         Channel channel = connection.createChannel(false);
         try {
@@ -66,7 +63,7 @@ public class RabbitClusterMQ implements ClusterMQ {
     }
 
     @Override
-    public void subscribe(String topic, Consumer<String> consumer) {
+    public void doSubscribe(String topic, Consumer<String> consumer) {
         Channel channel = rabbitAdapter.getConnection().createChannel(false);
         try {
             channel.exchangeDeclare(topic, "fanout", true);
@@ -79,68 +76,12 @@ public class RabbitClusterMQ implements ClusterMQ {
         }
     }
 
-    public boolean publishWithTopic(String topic, String routingKey, String queueName, String message, boolean confirm) {
-        logger.trace("[MQ] publish {}:{}", topic, message);
-        Connection connection = rabbitAdapter.getConnection();
-        Channel channel = connection.createChannel(false);
-        try {
-            if (confirm) {
-                channel.confirmSelect();
-            }
-            channel.queueDeclare(queueName, true, false, false, null);
-            channel.exchangeDeclare(topic, BuiltinExchangeType.TOPIC, true);
-            AMQP.BasicProperties properties = new AMQP.BasicProperties("text/plain",
-                    null,
-                    getMQHeader(topic),
-                    2,
-                    0, null, null, null,
-                    null, null, null, null,
-                    null, null);
-            channel.basicPublish(topic, routingKey, properties, message.getBytes());
-            if (confirm) {
-                try {
-                    return channel.waitForConfirms();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    logger.error("[MQ] Rabbit publish error.", e);
-                    return false;
-                }
-            } else {
-                return true;
-            }
-        } catch (IOException e) {
-            logger.error("[MQ] Rabbit publish error.", e);
-            return false;
-        } finally {
-            try {
-                channel.close();
-            } catch (IOException | TimeoutException e) {
-                logger.error("[MQ] Rabbit publish error.", e);
-            }
-            connection.close();
-        }
-    }
-
-    public void subscribeWithTopic(String topic, String routingKey, String queueName, Consumer<String> consumer) {
-        Channel channel = rabbitAdapter.getConnection().createChannel(false);
-        try {
-            channel.queueDeclare(queueName, true, false, false, null);
-            channel.exchangeDeclare(topic, BuiltinExchangeType.TOPIC, true);
-            channel.queueBind(queueName, topic, routingKey);
-            channel.basicQos(1);
-            channel.basicConsume(queueName, false, getDefaultConsumer(channel, topic, consumer));
-        } catch (IOException e) {
-            logger.error("[MQ] Rabbit response error.", e);
-        }
-    }
-
     @Override
-    public boolean request(String address, String message) {
-        return request(address, message, true);
+    public boolean doRequest(String address, String message) {
+        return doRequest(address, message, true);
     }
 
-    public boolean request(String address, String message, boolean confirm) {
-        logger.trace("[MQ] request {}:{}", address, message);
+    public boolean doRequest(String address, String message, boolean confirm) {
         Connection connection = rabbitAdapter.getConnection();
         Channel channel = connection.createChannel(false);
         try {
@@ -180,6 +121,61 @@ public class RabbitClusterMQ implements ClusterMQ {
         }
     }
 
+    public boolean publishWithTopic(String topic, String routingKey, String queueName, String message, boolean confirm) {
+        logger.trace("[MQ] publishWithTopic {}:{}", topic, message);
+        Connection connection = rabbitAdapter.getConnection();
+        Channel channel = connection.createChannel(false);
+        try {
+            if (confirm) {
+                channel.confirmSelect();
+            }
+            channel.queueDeclare(queueName, true, false, false, null);
+            channel.exchangeDeclare(topic, BuiltinExchangeType.TOPIC, true);
+            AMQP.BasicProperties properties = new AMQP.BasicProperties("text/plain",
+                    null,
+                    getMQHeader(topic),
+                    2,
+                    0, null, null, null,
+                    null, null, null, null,
+                    null, null);
+            channel.basicPublish(topic, routingKey, properties, message.getBytes());
+            if (confirm) {
+                try {
+                    return channel.waitForConfirms();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    logger.error("[MQ] Rabbit publishWithTopic error.", e);
+                    return false;
+                }
+            } else {
+                return true;
+            }
+        } catch (IOException e) {
+            logger.error("[MQ] Rabbit publishWithTopic error.", e);
+            return false;
+        } finally {
+            try {
+                channel.close();
+            } catch (IOException | TimeoutException e) {
+                logger.error("[MQ] Rabbit publishWithTopic error.", e);
+            }
+            connection.close();
+        }
+    }
+
+    public void subscribeWithTopic(String topic, String routingKey, String queueName, Consumer<String> consumer) {
+        Channel channel = rabbitAdapter.getConnection().createChannel(false);
+        try {
+            channel.queueDeclare(queueName, true, false, false, null);
+            channel.exchangeDeclare(topic, BuiltinExchangeType.TOPIC, true);
+            channel.queueBind(queueName, topic, routingKey);
+            channel.basicQos(1);
+            channel.basicConsume(queueName, false, getDefaultConsumer(channel, topic, consumer));
+        } catch (IOException e) {
+            logger.error("[MQ] Rabbit subscribeWithTopic error.", e);
+        }
+    }
+
     @Override
     public void doResponse(String address, Consumer<String> consumer) {
         Channel channel = rabbitAdapter.getConnection().createChannel(false);
@@ -192,22 +188,18 @@ public class RabbitClusterMQ implements ClusterMQ {
         }
     }
 
-
     private DefaultConsumer getDefaultConsumer(Channel channel, String topic, Consumer<String> consumer) {
         return new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
                 setMQHeader(topic, properties.getHeaders());
                 String message = new String(body, StandardCharsets.UTF_8);
-                logger.trace("[MQ] response/subscribe {}:{}", topic, message);
                 try {
-                    String uuid = $.field.createUUID();
-                    H2Utils.createJob(topic, uuid, "RUNNING", message);
                     consumer.accept(message);
+                } catch (RuntimeException e) {
+                    throw e;
+                } finally {
                     channel.basicAck(envelope.getDeliveryTag(), false);
-                    H2Utils.deleteJob(uuid);
-                } catch (Exception e) {
-                    logger.error("[MQ] Rabbit response/subscribe error.", e);
                 }
             }
         };

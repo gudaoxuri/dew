@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 
 public class HelloHystrixCommand extends HystrixCommand<HelloHystrixCommand.Model> {
-    
+
     public static final Logger logger = LoggerFactory.getLogger(HelloHystrixCommand.class);
 
     private Model model;
@@ -32,8 +32,8 @@ public class HelloHystrixCommand extends HystrixCommand<HelloHystrixCommand.Mode
     protected HelloHystrixCommand(Setter setter) {
         super(setter);
     }
-    
-    public static HelloHystrixCommand getInstance(String key){
+
+    public static HelloHystrixCommand getInstance(String key) {
         return new HelloHystrixCommand(HystrixCommandGroupKey.Factory.asKey(key));
     }
 

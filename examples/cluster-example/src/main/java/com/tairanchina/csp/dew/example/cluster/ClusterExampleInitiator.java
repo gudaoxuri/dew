@@ -1,11 +1,9 @@
 package com.tairanchina.csp.dew.example.cluster;
 
-
 import com.ecfront.dew.common.$;
 import com.tairanchina.csp.dew.Dew;
-import com.tairanchina.csp.dew.core.cluster.ClusterDistLock;
-import com.tairanchina.csp.dew.core.cluster.ClusterDistMap;
-import com.tairanchina.csp.dew.core.cluster.spi.rabbit.RabbitClusterMQ;
+import com.tairanchina.csp.dew.core.cluster.ClusterLock;
+import com.tairanchina.csp.dew.core.cluster.ClusterMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -32,8 +30,8 @@ public class ClusterExampleInitiator {
         assert null == Dew.cluster.cache.get("n_test");
         // ...
 
-        // dist map
-        ClusterDistMap<TestMapObj> mapObj = Dew.cluster.dist.map("test_obj_map", TestMapObj.class);
+        // map
+        ClusterMap<TestMapObj> mapObj = Dew.cluster.map.instance("test_obj_map", TestMapObj.class);
         mapObj.clear();
         TestMapObj obj = new TestMapObj();
         obj.a = "测试";
@@ -41,8 +39,8 @@ public class ClusterExampleInitiator {
         assert "测试".equals(mapObj.get("test").a);
         // ...
 
-        // dist lock
-        ClusterDistLock lock = Dew.cluster.dist.lock("test_lock");
+        // lock
+        ClusterLock lock = Dew.cluster.lock.instance("test_lock");
         // tryLock 示例，等待0ms，忘了手工unLock或出异常时1s后自动解锁
         if (lock.tryLock(0, 1000)) {
             try {
@@ -68,11 +66,6 @@ public class ClusterExampleInitiator {
                 logger.info("req_resp>>" + message));
         Dew.cluster.mq.request("test_rep_resp", "msg1");
         Dew.cluster.mq.request("test_rep_resp", "msg2");
-        // rabbit confirm
-        if (Dew.cluster.mq instanceof RabbitClusterMQ) {
-            boolean success = ((RabbitClusterMQ) Dew.cluster.mq).publish("test_pub_sub", "confirm message", true);
-            success = ((RabbitClusterMQ) Dew.cluster.mq).request("test_rep_resp", "confirm message", true);
-        }
     }
 
     static class TestMapObj implements Serializable {

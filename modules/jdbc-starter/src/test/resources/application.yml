@@ -1,6 +1,4 @@
 dew:
-  metric:
-    enabled: true
   jdbc:
     base-packages: ["com.trc.dew.select.dao"]
 spring:
@@ -17,14 +15,11 @@ spring:
   multi-datasources:
     test1:
       driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://127.0.0.1:3306/dew?useUnicode=true&characterEncoding=utf-8
+      url: jdbc:mysql://127.0.0.1:3306/mysql?useUnicode=true&characterEncoding=utf-8
       username: root
       password: 123456
     test2:
       driver-class-name: org.postgresql.Driver
-      url: jdbc:postgresql://10.200.131.24:5432/postgres
-      username: postgres
-      password: tairan.2017
-server:
-  port: 8080
-#      masterslave:
+      url: jdbc:postgresql://127.0.0.1:5432/root
+      username: root
+      password: 123456

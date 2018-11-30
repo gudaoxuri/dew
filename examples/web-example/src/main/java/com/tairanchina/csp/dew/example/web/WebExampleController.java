@@ -1,10 +1,10 @@
 package com.tairanchina.csp.dew.example.web;
 
-import com.tairanchina.csp.dew.Dew;
-import com.tairanchina.csp.dew.core.validation.CreateGroup;
-import com.tairanchina.csp.dew.core.validation.IdNumber;
-import com.tairanchina.csp.dew.core.validation.Phone;
-import com.tairanchina.csp.dew.core.validation.UpdateGroup;
+import com.ecfront.dew.common.Resp;
+import com.tairanchina.csp.dew.core.web.validation.CreateGroup;
+import com.tairanchina.csp.dew.core.web.validation.IdNumber;
+import com.tairanchina.csp.dew.core.web.validation.Phone;
+import com.tairanchina.csp.dew.core.web.validation.UpdateGroup;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
@@ -24,34 +28,44 @@ public class WebExampleController {
 
     private AtomicInteger atomicInteger = new AtomicInteger();
 
-    @GetMapping("/monitor")
-    public String monitor(){
-        return "monitor";
-    }
-    @GetMapping("/monitor2")
-    public String monitor2() throws InterruptedException {
-        Thread.sleep(1000);
-        return "monitor2";
-    }
-
-    @GetMapping("/monitor3")
-    public String monitor3(){
-        Dew.cluster.mq.request("abc","xxxxx52");
-        return "monitor3";
-    }
-
     /**
      * 最基础的Controller示例
      */
     @GetMapping("example")
     @ApiOperation(value = "示例方式")
-    public String example() {
-        for (int i = 0;i<100;i++){
-            logger.info(atomicInteger.getAndIncrement()+" Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
+    public Map<String,Integer> example() {
+        for (int i = 0; i < 100; i++) {
+            logger.info(atomicInteger.getAndIncrement() + " Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
         }
-        return "enjoy!";
+        return new HashMap<>();
     }
 
+    @ApiOperation(value = "示例方式")
+    @GetMapping("example2")
+    public Map<Integer,User> example2() {
+        for (int i = 0; i < 100; i++) {
+            logger.info(atomicInteger.getAndIncrement() + " Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
+        }
+        return new HashMap<>();
+    }
+
+    @ApiOperation(value = "示例方式")
+    @GetMapping("example3")
+    public Map<Integer,List<User>> example3() {
+        for (int i = 0; i < 100; i++) {
+            logger.info(atomicInteger.getAndIncrement() + " Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
+        }
+        return new HashMap<>();
+    }
+
+    @ApiOperation(value = "示例方式")
+    @GetMapping("example4")
+    public Map<Integer,Map<String,String>> example4() {
+        for (int i = 0; i < 100; i++) {
+            logger.info(atomicInteger.getAndIncrement() + " Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
+        }
+        return new HashMap<>();
+    }
 
     /**
      * 数据验证示例，针对 CreateGroup 这一标识组的 bean认证
@@ -64,24 +78,40 @@ public class WebExampleController {
     /**
      * 数据验证示例，针对 UpdateGroup 这一标识组的 bean认证，传入的是表单形式
      */
-    @PutMapping(value = "valid-update")
-    public String validUpdate(@Validated(UpdateGroup.class) User user) {
+    @Deprecated
+    @PutMapping(value = "valid-update-dep")
+    public String validUpdateDep(@Validated(UpdateGroup.class) User user) {
         return "";
+    }
+
+    @PutMapping(value = "valid-update")
+    public List<String> validUpdate(@Validated(UpdateGroup.class) User user) {
+        return new ArrayList<>();
+    }
+
+    @PutMapping(value = "valid-update-u")
+    public List<User> validUpdateWithUser(@Validated(UpdateGroup.class) User user) {
+        return new ArrayList<>();
+    }
+
+    @PutMapping(value = "valid-update-u1")
+    public List<Map<String,User>> validUpdateWithUser1(@Validated(UpdateGroup.class) User user) {
+        return new ArrayList<>();
     }
 
     /**
      * 数据验证示例，URL认证
      */
     @GetMapping(value = "valid-method/{age}")
-    public String validInMethod(@Min(value = 2,message = "age必须大于2") @PathVariable("age") int age) {
-        return "";
+    public Resp<User> validInMethod(@Min(value = 2, message = "age必须大于2") @PathVariable("age") int age) {
+        return Resp.success(null);
     }
 
     public static class User {
 
         // 仅在CreateGroup组下才校验
         @NotNull(groups = CreateGroup.class)
-        @IdNumber(message = "身份证号错误", groups = CreateGroup.class)
+        @IdNumber(groups = CreateGroup.class)
         private String idCard;
 
         // CreateGroup、UpdateGroup组下校验
@@ -89,7 +119,7 @@ public class WebExampleController {
         private int age;
 
         // CreateGroup、UpdateGroup组下校验
-        @Phone(message = "手机号错误", groups = {CreateGroup.class, UpdateGroup.class})
+        @Phone(groups = {CreateGroup.class, UpdateGroup.class})
         private String phone;
 
         public String getIdCard() {

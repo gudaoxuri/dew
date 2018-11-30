@@ -5,6 +5,7 @@ import com.ecfront.dew.common.Page;
 import java.util.List;
 
 public interface Dao<P, E> {
+
     String ds();
 
     DS getDS();
@@ -74,4 +75,5 @@ public interface Dao<P, E> {
     Page<E> paging(SB sqlBuilder, long pageNumber, int pageSize);
 
     Page<E> paging(String sql, Object[] params, long pageNumber, int pageSize);
+
 }

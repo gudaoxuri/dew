@@ -3,11 +3,7 @@ package com.tairanchina.csp.dew.idempotent;
 import com.tairanchina.csp.dew.idempotent.strategy.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +11,7 @@ public class DewIdempotent {
 
     private static final Logger logger = LoggerFactory.getLogger(DewIdempotent.class);
 
-    // optType -> DewIdempotentProcessor
+    // optType -> IdempotentProcessor
     private static final Map<String, OptTypeInfo> CONTENT = new HashMap<>();
 
     // optType,optId
@@ -35,7 +31,7 @@ public class DewIdempotent {
      */
     public static void initOptTypeInfo(String optType, boolean needConfirm, long expireMs, StrategyEnum strategy) {
         logger.info("Init OptType[{}] info: needConfirm:{} expireMs:{} strategy:{}", optType, needConfirm, expireMs, strategy.toString());
-        DewIdempotentProcessor processor;
+        IdempotentProcessor processor;
         switch (strategy) {
             case ITEM:
                 processor = itemProcessor;
@@ -66,7 +62,7 @@ public class DewIdempotent {
     }
 
     /**
-     * 持久化
+     * 处理请求，返回是否成功
      *
      * @param optType 操作类型
      * @param optId   操作ID
@@ -92,7 +88,9 @@ public class DewIdempotent {
      */
     public static void confirm() {
         String[] c = CONTEXT.get();
-        CONTENT.get(c[0]).processor.confirm(c[0], c[1]);
+        if (c != null) {
+            CONTENT.get(c[0]).processor.confirm(c[0], c[1]);
+        }
     }
 
     /**
@@ -110,14 +108,16 @@ public class DewIdempotent {
      */
     public static void cancel() {
         String[] c = CONTEXT.get();
-        CONTENT.get(c[0]).processor.cancel(c[0], c[1]);
+        if (c != null) {
+            CONTENT.get(c[0]).processor.cancel(c[0], c[1]);
+        }
     }
 
     private static class OptTypeInfo {
 
-        public DewIdempotentProcessor processor;
-        public long expireMs;
-        public boolean needConfirm;
+        IdempotentProcessor processor;
+        long expireMs;
+        boolean needConfirm;
 
     }
 

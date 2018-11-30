@@ -23,8 +23,8 @@
         <asciidoctorj.version>1.5.6</asciidoctorj.version>
         <asciidoctorj.diagram.version>1.5.4.1</asciidoctorj.diagram.version>
         <jruby.version>1.7.26</jruby.version>
-        <file.output.path>${project.basedir}/files</file.output.path>
-        <resource.path>src/main/asciidoc</resource.path>
+        <file.output.path>${project.basedir}/</file.output.path>
+        <resource.path>src/main/resources</resource.path>
     </properties>
 
     <build>
@@ -36,7 +36,7 @@
             <plugin>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>
-                <version>1.5.5</version>
+                <version>1.5.6</version>
                 <executions>
                     <execution>
                         <id>output-html</id>
@@ -87,6 +87,7 @@
                         </resource>
                     </resources>
                     <outputDirectory>${file.output.path}</outputDirectory>
+                    <outputFile>index.html</outputFile>
                     <imagesDir>./</imagesDir>
                     <preserveDirectories>true</preserveDirectories>
                     <requires>

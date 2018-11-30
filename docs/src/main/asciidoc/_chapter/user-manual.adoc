@@ -3,24 +3,24 @@
 [IMPORTANT]
 .使用申明
 ====
-`Dew` 有多个版本通道，使用时请谨慎选择：
+``Dew``有多个版本通道，使用时请谨慎选择：
 
 . `GA` General Availability，正式版本，通过内部测试没有已知错误并且经过生产验证，生产环境首选！
 . `RC` Release Candidate，发行候选版本，通过内部测试没有已知错误，可用于生产环境。
 . `Beta` 公开测试版本，没有已知的Major类型Bug，但允许存在个别minor类型Bugs，生产环境使用需要谨慎评估！
-. `Alpha` 内容测试版本，很早期的测试版本，未经过内部测试，可能存在较多Bugs，此版本类似技术预览版（Technical Preview），切 *不可* 用于生产环境！
+. `Alpha` 内部测试版本，很早期的测试版本，未经过内部测试，可能存在较多Bugs，此版本类似技术预览版（Technical Preview），切 *不可* 用于生产环境！
 . `SNAPSHOT` 快照版本，类似Nightly版本，更新频繁此不保证质量，切 *不可* 用于生产环境！
 ====
 
-=== Let's Begin
+NOTE: `Dew` 框架是对 ``Spring Boot/Cloud`` 的扩展，使用之前务必了解相关框架的基础知识。
 
-NOTE: `Dew` 框架是对 `Spring Boot/Cloud` 的扩展，使用之前务必了解相关框架的基础知识。
+IMPORTANT: 本手册只介绍``Dew``扩展的功能！
+
+=== 结构说明
 
 ----
-此章节关联示例:guide-petstore、bone-example
+此章节关联示例:bone-example
 ----
-
-==== 结构说明
 
 `Dew` 所有模块均为Maven结构，使用如下：
 
@@ -29,7 +29,7 @@ NOTE: `Dew` 框架是对 `Spring Boot/Cloud` 的扩展，使用之前务必了�
 <!--引入Dew父依赖，也可以使用import方式-->
 <parent>
     <groupId>com.tairanchina.csp.dew</groupId>
-    <artifactId>parent</artifactId>
+    <artifactId>parent-starter</artifactId>
     <!--生产环境请选择合适的版本!!!!!!!!-->
     <version>${dew.version}</version>
 </parent>
@@ -57,22 +57,38 @@ NOTE: `Dew` 框架是对 `Spring Boot/Cloud` 的扩展，使用之前务必了�
 </scm>
 ----
 
-TIP: `parent` 中已包含各模块的版本，引用模块依赖时可省略版本号。
+TIP: ``parent-starter`` 中已包含各模块的版本，引用模块依赖时可省略版本号。
 
-==== 功能模块
+``Dew``推荐的代码结构为：
+
+----
+|- common-service
+|   |- src
+|   |   |- main
+|   |   |   |- java
+|   |   |   |   |- src
+|   |   |   |   |   |- x.y.z
+|   |   |   |   |   |   |- XApplication <1>
+|   |   |   |   |   |   |- XConfig <2>
+|   |   |   |   |   |   |- XInitiator <3>
+----
+<1>	XApplication : 服务启动类
+<2>	XConfig：当前服务的配置文件（Spring Cloud格式）
+<3>	XInitiator：当前服务启动初始化器，原则上所有初始化操作都应该从此类发起，如初始化脚本、定时任务等，以方便排错
+
+
+=== 功能模块
 
 |===
 |模块名 |核心功能
 
+|`parent-starter` |Dew的工程父依赖
 |`boot-starter` |基于Spring Boot的扩展，Dew的核心模块
-|`cloud-starter` |基于Spring Cloud的扩展，基于`boot-starter`
+|`cloud-starter` |基于Spring Cloud的扩展
 |`idempotent-starter` |幂性处理模块
-|`jdbc-starter` |Dew JDBC模块
-|`mybatis-starter` |mybatis适配模块
 |`cluster-common` |集群能力接口
 |`cluster-redis` |集群能力-Redis实现
 |`cluster-hazelcast` |集群能力-Hazelcast实现
-|`cluster-ignite` |集群能力-Ignite实现(开发中）
 |`cluster-rabbit` |集群能力-Rabbit实现
 |`cluster-eureka` |集群能力-Eureka实现
 |`test-starter` |Dew的单元测试封装
@@ -80,57 +96,15 @@ TIP: `parent` 中已包含各模块的版本，引用模块依赖时可省略版
 |`registry` |服务注册中心组件
 |`gateway` |服务网关组件
 |`monitor` |服务监控组件
+|`auth` |多租户的权限组件（Scala语言编写）
 |`<x>-example` |各类示例
 |===
 
-==== 启动类
+=== 核心功能
 
-`Dew` 自``1.3.0-SNAPSHOT``版本起，去掉了对启动类的改造，正如dew的设计初衷：
-----
-Dew [du:] 意为`露水`，希望此框架可以像晨间的露水一样透明、静谧、丰盈。让使用者尽量不要感知框架的存在，专注业务实现。
-----
-so，原生的springboot和springcloud如何使用，现在就如何使用。
+==== 常用工具集
 
-TIP: 示例见 `example/guide-petstore`
-* 添加工程启动类
-
-[source,java]
-.example
-----
-/**
- * 工程启动类
- * 重写父类的ComponentScan，先扫描Dew下的包，再是项目的根包
- */
-@SpringBootApplication
-@EnableAspectJAutoProxy(exposeProxy = true,proxyTargetClass = true) //开启事务或catche时都需要加该注解
-@EnableTransactionManagement // 开启注解式事务需要添加
-@EnableCaching(proxyTargetClass = true) // 开启注解式catche需要添加
-public class PetStoreApplication {
-
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(PetStoreApplication.class).run(args);
-    }
-
-}
-----
-
-==== 配置说明
-
-`Dew` 的配置使用 `Spring boot` 风格，尽量重用已有的配置， `Dew` 的特殊配置均在 `dew.` key下， 推荐使用 `yml` 格式。
-
-==== 日志框架
-
-推荐使用 `logback` ， 使用 `logback-spring.xml` 文件配置日志核心处理。
-
-==== 业务初始化操作
-
-`Spring boot` 可使用 `@PostConstruct` 在 `bean` 加载时做业务初始化操作，它可位于任何类/包中，高度灵活的同时可能会导致初始化操作不可控， `Dew` 推荐在根包中建立名为 `<project>Initiator` 类，所有业务初始化操作都在此类中完成。
-
-=== 核心
-
-==== 常用工具
-
-`Dew` 框架的常用工具由 `Dew-Common` 包提供（ https://github.com/gudaoxuri/dew-common ），功能如下：
+``Dew`` 框架的常用工具由 ``Dew-Common`` 包提供（ https://github.com/gudaoxuri/dew-common ），功能如下：
 
 . Json与Java对象互转，支持泛型
 . Java Bean操作，Bean复制、反射获取/设置注解、字段、方法等
@@ -148,9 +122,9 @@ public class PetStoreApplication {
 . 响应处理及分页模型
 
 [TIP]
-.`Dew Common` 的使用
+.``Dew Common`` 的使用
 ====
-`Dew Common` 功能均以 `$` 开始，比如:
+``Dew Common`` 功能均以``$``开始，比如:
 
 * Json转成Java对象: `$.json.toObject(json,JavaModel.class)`
 * Json字符串转成List对象: `$.json.toList(jsonArray, JavaModel.class)`
@@ -164,706 +138,45 @@ public class PetStoreApplication {
 
 TIP: 完整使用手册见 https://gudaoxuri.github.io/dew-common/
 
-==== Web处理
-
-----
-此章节关联示例:web-example、cache-example
-----
-
-===== 基础Web使用
-
-[source,xml]
-.引入依赖
-----
-<dependencies>
-    <!--dew的核心包-->
-    <dependency>
-        <groupId>com.tairanchina.csp.dew</groupId>
-        <artifactId>boot-starter</artifactId>
-        <version>${dew.version}</version>
-    </dependency>
-    <!--Spring Boot Web核心依赖-->
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <!--添加文档支持-->
-    <dependency>
-        <groupId>io.springfox</groupId>
-        <artifactId>springfox-swagger2</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>io.springfox</groupId>
-        <artifactId>springfox-swagger-ui</artifactId>
-    </dependency>
-</dependencies>
-…
-----
-
-[source,yml]
-.添加配置
-----
-spring:
-  application:
-    name: web-example
-
-server:
-  port: 8080 # http端口号
-
-dew:
-  basic:
-    name: web
-    version: 1.0
-    desc: desc
-    web-site: www.tairanchina.com
-    doc:
-      base-package: com.tairanchina # API文档路径
-----
-
-[source,java]
-.添加Controller
-----
-@RestController
-public class ExampleController {
-   @GetMapping("/example")
-   public String example() {
-       return "enjoy!";
-   }
-}
-----
-
-TIP: `Controller` 的操作请参见 `Spring boot` 文档
-
-===== CORS支持
-
-`CORS` 默认支持
-
-[source,yml]
-.`CORS`实现定制
-----
-dew:
-  security:
-    cors:
-      allow-origin: # 允许来源，默认 *
-      allow-methods: # 允许方法，默认 POST,GET,OPTIONS,PUT,DELETE,HEAD
-      allow-headers: # 允许头信息 x-requested-with,content-type
-----
-
-===== 数据验证
-
-`Dew` 集成了 `Spring validate` 机制，支持针对 `URL` 及 `Bean` 的验证。
-
-* 在 java bean 中添加各项validation，支持标准`javax.validation.constraints`包下的诸如：`NotNull` ，同时框架扩展了几个检查，如：
-   IdNumber、Phone
-* 在Controller中添加 `@Validated` 注解 ( Spring还支持@Vaild，但这一注解不支持分组 )
-* 支持Spring原生分组校验
-* `URL` 类型的验证必须在类头添加 `@Validated` 注解
-* `Dew` 框架内置了 `CreateGroup` `UpdateGroup` 两个验证组，验证组仅是一个标识，可为任何java对象
-
-[source,java]
-.修改之前的Controller
-----
-@RestController
-@Api(description = "示例应用")
-@Validated // URL 类型的验证需要使用此注解
-public class WebExampleController {
-
-    /**
-     * 最基础的Controller示例
-     */
-    @GetMapping("example")
-    @ApiOperation(value = "示例方式")
-    public String example() {
-        return "enjoy!";
-    }
-
-    /**
-     * 数据验证示例，针对 CreateGroup 这一标识组的 bean认证
-     */
-    @PostMapping(value = "valid-create")
-    public String validCreate(@Validated(CreateGroup.class) @RequestBody User user) {
-        return "";
-    }
-
-    /**
-     * 数据验证示例，针对 UpdateGroup 这一标识组的 bean认证，传入的是表单形式
-     */
-    @PutMapping(value = "valid-update")
-    public String validUpdate(@Validated(UpdateGroup.class) User user) {
-        return "";
-    }
-
-    /**
-     * 数据验证示例，URL认证
-     */
-    @GetMapping(value = "valid-method/{age}")
-    public String validInMethod(@Min(value = 2,message = "age必须大于2") @PathVariable("age") int age) {
-        return "";
-    }
-
-    // User类
-    public static class User {
-
-        // 仅在CreateGroup组下才校验
-        @NotNull(groups = CreateGroup.class)
-        @IdNumber(message = "身份证号错误", groups = CreateGroup.class)
-        private String idCard;
-
-        // CreateGroup、UpdateGroup组下校验
-        @Min(value = 10, groups = {CreateGroup.class, UpdateGroup.class})
-        private int age;
-
-        // CreateGroup、UpdateGroup组下校验
-        @Phone(message = "手机号错误", groups = {CreateGroup.class, UpdateGroup.class})
-        private String phone;
-
-        // Get/Set...
-    }
-
-}
-----
-
-===== 统一响应
-
-`Dew` 支持两种格式：
-
-* 协议无关：`Resp<E>` 响应，对于 `HTTP` 统一返回 `200` (业务操作不需要降级) 或 `500` (业务操作需要降级) HTTP状态码，使用 `code` 表示业务状态码，`Resp` 对象包含:
-
- code 响应编码，与http状态码类似，200表示成功
- message 响应附加消息，多有于错误描述
- body 响应正文
-
-TIP: `Resp`类提供了常用操作：详见 https://gudaoxuri.github.io/dew-common/#true-resp[https://gudaoxuri.github.io/dew-common/#true-resp]
-
-[NOTE]
-.500 Http状态码说明
-====
-`500` 状态码仅用于告诉 `Hystrix` 这次请求是需要降级的错误，对于 `Resp` 中的 `code` 没有影响。
-
-`dew` 框架会把所有 `5xx`（服务端错误，需要降级） 的异常统一转换成 `500` 的Http状态码返回给调用方。
-
-`Resp.xxx.fallback()` 用于显示声明当前返回需要降级，
-比如 `Resp.serverError("some message")` 不会降级，返回http状态码为200，body为 `{"code":"500","message":"some message","body":null}`，
-但 `Resp.serverError("some message").fallback()` 会降级，返回http状态码为500，body为 同上。
-====
-
-
-* 重用`HTTP Status Code`: 在无错误时直接返回内容，发生错误时返回 `{"error":{"code":"实际错误码","message":"错误信息"}}`
-
-TIP: 如果启用了字段检查（ `@RequestBody @Validated ...` ），在检查不通过时上述两种格式的 `message` 内容会返回Json格式的错误详细（ `Detail:` 标识之后的内容），格式为：
-     `[{"field":"<字段名>","reason":"<原因，如NotNull,Min>","msg":"<错误描述>"}]`
-
-启用统一响应格式支持：
-
-[source,yml]
-.统一响应格式配置
-----
-dew:
-    basic:
-        format:
-            use-unity-error: true # 是否启用统一响应，默认true
-            reuse-http-state: false # true:重用http状态码，false:使用协议无关格式，默认false
-----
-
-[source,java]
-.统一响应使用
-----
-// 使用协议无关格式
-public Resp<String> test(){
-    return Resp.success("enjoy!");
-    // or return Resp.notFound("…")/conflict("…")/badRequest("…")/…
-}
-
-// 重用http状态码
-// 与协议无关格式区别在于：
-// 1. throws 对应的异常
-// 2. 使用Dew.E.e(<code>,<Exception Instance>)来抛出异常
-public String test() throws IOException{
-    return "enjoy!";
-    // or throw Dew.E.e("A000", new IOException("io error"));
-    // or throw Dew.E.e("A000", new IOException("io error"),StandardCode.UNAUTHORIZED); // 自定义http异常401
-}
-----
-
-[NOTE]
-.统一响应格式的选择
-====
-`Dew` 推荐使用 `协议无关格式`，此格式在 `方法间调用` `非HTTP协议RPC` `MQ` 等数据交互场景做到真正的 `统一响应格式`。
-====
-
-===== 异常处理
-
-`Dew` 会把程序没有捕获的异常统一转成 `500` 异常上抛，同时框架提供了常用的异常检查：
-
-[source,java]
-.异常检查，异常类型要求为RuntimeException及其子类
-----
-Dew.E.check(VoidPredicate notExpected, E ex)
-Dew.E.check(boolean notExpected, E ex)
-Dew.E.checkNotEmpty(Map<?, ?> objects, E ex)
-Dew.E.checkNotEmpty(Iterable<?> objects, E ex)
-Dew.E.checkNotNull(Object obj, E ex)
-----
-
-[source,xml]
-.自定义异常配置
-----
-dew:
-  basic:
-    format:
-      use-unity-error: true // 这个必须为true
-    error-mapping:
-      "[<异常类名>]":
-        http-code: # http状态码，不存在时使用实例级http状态码
-        business-code: # 业务编码，不存在时使用实例级业务编码
-        message: # 错误描述，不存在时使用实例级错误描述
-
-<!--示例-->
-dew:
-  basic:
-    format:
-      use-unity-error: true
-    error-mapping:
-      "[com.tairanchina.csp.dew.core.AuthException]":
-        http-code: 401
-        business-code: x00010
-        message: 认证错误
-----
-
-===== 注解式缓存
-
-[NOTE]
-.配置注解式缓存
-====
-spring:
-  cache:
-    type: # 支持 redis hazelcast 等
-====
-
-`Dew` 支持 `Spring Boot` 的缓存注解，详见示例 `example/cache-example`
-
-===== 访问在线API文档
-
-在 `default` `test` `dev` profile下http访问 `./swagger-ui.html` 即可。
-
-===== 生成离线API文档
-
-实现Html及PDF版本的离线API文档，效果如下：
-
-image:http://swagger2markup.github.io/swagger2markup/1.3.1/images/Swagger2Markup.PNG[]
-
-[source,java]
-.建立如下测试类，WebExampleApplication修改成对应的启动类
-----
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = WebExampleApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class DocTest {
-
-    @Test
-    public void empty(){}
-
-}
-----
-
-[source,shell]
-.执行如下命令(加上 `-Dapi.file.name= [name]` 可指定文件名)
-----
-mvn -Dtest=DocTest clean test -P doc
-
-mvn -Dtest=DocTest -Dapi.file.name=dew-example clean test -P doc
-----
-
-
-* 查看工程目录，多了一个 `api-docs` 的目录，包含了 `index.html` 和 `index.pdf` 两个离线文档
-
-[TIP]
-.定制化文档
-====
-创建或编辑 `api-docs/asciidoc/index.adoc` 加入个性化内容，此为 `asciidoc` 格式，使用见： http://asciidoctor.org/docs/asciidoc-writers-guide/
-====
-
-==== 数据访问
-
-----
-此章节关联示例:jdbc-example、mybatisplus-example
-----
-
-`Dew` 基于 `Spring Boot` ，原生支持 `Hibernate` `MyBatis` `Spring JDBC Template` 等主流的持久化框架。 各类框架的整合参见网络资料，示例中提供了针对 `MybatisPlus` 的整合说明： `mybatisplus` 。
-
-===== `Dew JDBC`
-
-`Dew` 选用 `Spring JDBC Template` 这一轻量的数据处理框架，并做了一定的扩展以支持：
-
-. 支持实体与SQL的映射
-. 支持常用数据处理操作
-. 支持@Select注解
-. 轻松使用多数据源
-
-TIP: `JdbcTemplate` 知识见 https://spring.io/guides/gs/relational-data-access/[https://spring.io/guides/gs/relational-data-access/]
-
-TIP: SQL输出日志需要在 `logback-spring.xml` 中添加 `<logger name="org.springframework.jdbc.core" level="TRACE"/>`
-
-* 启用 `Dew JDBC`
-
-[source,xml]
-.引入依赖
-----
-<dependencies>
-    <dependency>
-        <groupId>com.tairanchina.csp.dew</groupId>
-        <artifactId>boot-starter</artifactId>
-    </dependency>
-    <!--引入JDBC依赖-->
-    <dependency>
-        <groupId>com.tairanchina.csp.dew</groupId>
-        <artifactId>jdbc-starter</artifactId>
-    </dependency>
-    <!-- 对应的数据库JDBC驱动 -->
-    <dependency>
-        <groupId>com.h2database</groupId>
-        <artifactId>h2</artifactId>
-    </dependency>
-</dependencies>
-----
-
-IMPORTANT: `Dew JDBC` 指定使用 `druid` 做为连接池。
-
-[source,yml]
-.增加配置
-----
-spring:
-    datasource:
-    driver-class-name: # 驱动名
-    url: # 驱动url
-    druid:
-      # 连接池配置
-----
-
-====== 实体与SQL的映射
-
-`Dew JDBC` 支持注解方式实现ORMPing，可用的注解有:
-
-* `Entity` : 表示此类可映射为数据库表
-* `PkColumn` : 主键标识 支持 `int/String` 类型，`int` 多用于ID自增场景， `String` 可选择是否自动生成 `uuid` 数据（ `uuid=true` ），存在此注解的实体可以使用 `xxxById` 操作
-* `CodeColumn` : 业务主键 在工程中很多对象的主键不依赖于数据库主键而会使用code（如uuid表示）作为业务主键， 保存（insert）时如果存在业务主键，且  `value==null && uuid=true` 则会自动附加上uuid，存在此注解的实体可以使用 `xxxByCode` 操作
-* `CreateUserColumn` : 创建人，保存（insert）时自动附加当前操作人 `code` （需要与获取操作人动作同一线程）
-* `CreateTimeColumn` : 创建时间，保存（insert）时自动附加当前时间，LocalDateTime类型
-* `UpdateUserColumn` ：更新人，保存（insert）更新（updateById/updateByCode）时自动附加当前操作人 `code` （需要与获取操作人动作同一线程）
-* `UpdateTimeColumn` : 更新时间，保存（insert）更新（updateById/updateByCode）时自动附加当前时间，LocalDateTime类型
-* `EnabledColumn` : 状态，启用或禁用，支持字段字面含义反转（ `reverse=true` ） 存在此注解的实体可以使用 `enableByXX` `disableByXX` `xxEnabled` `xxDisabled` 操作
-* `Column`: 普通字段
-
-IMPORTANT: 只有存在`Entity`注解的类才会被解析，只有存在`XXColumn`的字段才会被映射。
-
-TIP: 为方便操作，框架提供了 `PkEntity` `SafeEntity` `StatusEntity` `SafeStatusEntity` 四个预制的父类。
-
-[source,java]
-.实体与SQL的映射示例
-----
-@Entity
-public class Pet implements Serializable {
-
-    @PkColumn
-    private int id;
-    @Column(notNull = true)
-    private String type;
-    @Column(notNull = true)
-    private BigDecimal price;
-    @CreateTimeColumn
-    private LocalDateTime createTime;
-    @UpdateTimeColumn
-    private LocalDateTime updateTime;
-    @EnabledColumn
-    private boolean enabled;
-
-    // get/set...
-}
-----
-
-TIP: 实体对象需要实现 `Serializable` 接口。
-
-====== 常用数据处理操作
-
-* *增加* `Dew.ds().insert(Object entity) / Dew.ds().insert(Iterable<?> entities)`
-* *更新* `Dew.ds().updateById(P id, Object entity) / Dew.ds().updateByCode(String code, Object entity)`
-* *获取单条* `Dew.ds().getById(P id, Class<E> entityClazz) / Dew.ds().getByCode(String code, Class<E> entityClazz) / Dew.ds().get(SB sqlBuilder, Class<E> entityClazz)`
-* *获取多条* `Dew.ds().findAll(Class<E> entityClazz) / Dew.ds().findEnabled(…) / Dew.ds().findDisabled(…) / Dew.ds().find(SB sqlBuilder, Class<E> entityClazz)`
-* *获取分页* `Dew.ds().paging(long pageNumber, int pageSize, Class<E> entityClazz) / Dew.ds().pagingEnabled(…) / Dew.ds().pagingDisabled(…) / Dew.ds().paging(SB sqlBuilder, long pageNumber, int pageSize, Class<E> entityClazz)`
-* *计数* `Dew.ds().countAll(Class<?> entityClazz) / Dew.ds().countEnabled(Class<?> entityClazz) / Dew.ds().countDisabled(Class<?> entityClazz) / Dew.ds().count(SB sqlBuilder, Class<E> entityClazz)`
-* *启用* `Dew.ds().enableById(P id, Class<?> entityClazz) / Dew.ds().enableByCode(String code, Class<?> entityClazz) / Dew.ds().enable(SB sqlBuilder, Class<E> entityClazz)`
-* *禁用* `Dew.ds().disableById(P id, Class<?> entityClazz) / Dew.ds().disableByCode(String code, Class<?> entityClazz) / Dew.ds().disable(SB sqlBuilder, Class<E> entityClazz)`
-* *是否存在* `Dew.ds().existById(P id, Class<?> entityClazz) / Dew.ds().existByCode(String code, Class<?> entityClazz) / Dew.ds().exist(SB sqlBuilder, Class<E> entityClazz)`
-* *物理删除* `Dew.ds().deleteById(P id, Class<?> entityClazz) / Dew.ds().deleteByCode(String code, Class<?> entityClazz) / Dew.ds().delete(SB sqlBuilder, Class<E> entityClazz)`
-
-TIP: 您可以使用：`((DewDS)Dew.ds()).jdbc()` 获取 `JdbcTemplate` 原生API。
-
-[source,java]
-.常用数据处理操作示例
-----
-// =============== DS 示例 ===============
-// 初始宠物表
-((DewDS)Dew.ds()).jdbc().execute("CREATE TABLE pet\n" +
-        "(\n" +
-        "id int primary key auto_increment,\n" +
-        "type varchar(50),\n" +
-        "price decimal(11,4) not null,\n" +
-        "create_time datetime,\n" +
-        "update_time datetime,\n" +
-        "enabled bool\n" +
-        ")");
-// 初始化订单表
-((DewDS)Dew.ds()).jdbc().execute("CREATE TABLE t_order\n" +
-        "(\n" +
-        "id int primary key auto_increment,\n" +
-        "pet_id int,\n" +
-        "customer_id int,\n" +
-        "price decimal(11,4) not null,\n" +
-        "create_time datetime \n" +
-        ")");
-
-Pet pet = new Pet();
-pet.setType("狗");
-pet.setPrice(new BigDecimal(1000));
-pet.setEnabled(true);
-// insert
-int id = (int) Dew.ds().insert(pet);
-// getById
-pet = Dew.ds().getById(id, Pet.class);
-assert pet.getType().equals("狗");
-----
-
-====== SB，SQL构造器
-
-每个类型的操作都支持使用SQL构造器构造SQL，目前支持针对单表多条件AND连接的Where条件拼装和排序设置。
-
-[source,java]
-.SB方法
-----
-SB eq(String field, Object value)
-SB notEq(String field, Object value)
-SB gt(String field, Object value)
-SB ge(String field, Object value)
-SB lt(String field, Object value)
-SB le(String field, Object value)
-SB like(String field, Object value)
-SB in(String field, List<Object> values)
-SB notIn(String field, List<Object> values)
-SB isNull(String field)
-SB notNull(String field)
-SB between(String field, Object value1, Object value2)
-SB asc(String filed)
-SB desc(String filed)
-----
-
-[source,java]
-.SB示例
-----
-DewSB.inst()
-   .eq("fieldA", "测试A2")
-   .like("fieldB", "%B2")
-   .notNull("code")
-   .desc("createTime")
-----
-
-====== DewDao
-
-`DewDao` 是一个泛型基础 `Dao` 类，实现了常用的操作。
-
-上个章节的示例用 `DewDao` 可写成如下形式：
-
-[source,java]
-.常用数据处理操作示例 `DewDao` 版
-----
-// 在配置文件中添加Dao的路径
-Dew:
-  jdbc:
-    base-packages: ["com.tairanchina.csp.dew.example.jdbc.jdbc"]
-
-// 添加PetDao
-public interface PetDao extends DewDao<Integer, Pet> {
-}
-
-@Autowired
-private PetDao petDao;
-
-// =============== Dao 示例 ===============
-// insert by jdbc
-pet = new Pet();
-pet.setType("猫");
-pet.setPrice(new BigDecimal(2000));
-pet.setEnabled(true);
-id = petDao.insert(pet);
-// getById by jdbc
-pet = petDao.getById(id);
-assert pet.getType().equals("猫");
-----
-
-====== @Select注解
-
-[source,java]
-.`@Select` 格式
-----
-@Select(value = "<SQL，使用#{参数占位名}>", entityClass = <返回的实体，为空时以Map封装>)
-<返回类型，可为单个对象/List/Page> <方法名，java规范即可>(<行参修饰符，@Param(<参数占位名>)或@ModelParam> <行参>);
-----
-
-TIP: 方法参数Bean类型需使用 `@ModelParam` ，参数作为SQL参数需使用 `@Param()` 并指定与#{}相匹配的名称。
-`@Select` 中entityClass用于指定返回类型。
-
-TIP: 分页查询要求返回 `Page<?>` 对象，参数最后两个固定为 `@Param("pageNumber") long pageNumber, @Param("pageSize") int pageSize` 这两个参数框架会自行解析，`pageNumber` 从 `1` 开始。
-
-TIP: `@Select` 中默认对 * 和 .* 自动解析成表对应字段，但不支持表的嵌套查询。
-
-[source,java]
-.`@Select` 示例
-----
-// 返回全量数据
-@Select(value = "select * from t_test_crud_s_entity where field_a= #{ fieldA }", entityClass = CRUDSTestEntity.class)
-List<CRUDSTestEntity> queryByField(@Param("fieldA") String fieldA);
-
-//返回分页数据
-@Select(value = "select * from t_test_crud_s_entity where field_a= #{ fieldA }", entityClass = CRUDSTestEntity.class)
-Page<CRUDSTestEntity> queryByCustomPaging(@ModelParam CRUDSTestEntity model, @Param("pageNumber") Long pageNumber, @Param("pageSize") Integer pageSize);
-
-//返回Bean类型数据
-@Select(value = "select * from t_test_crud_s_entity where id= #{id}", entityClass = CRUDSTestEntity.class)
-CRUDSTestEntity getById(@Param("id") P id);
-
-//返回Map类型数据
-@Select(value = "select * from t_test_crud_s_entity where id= #{id}")
-Map<String,Object> getMapById(@Param("id") P id);
-----
-
-[IMPORTANT]
-.使用限制
-====
-. `@Select` 只能用于接口、暂不支持DSL SQL，比如（HQL）
-. `@ModelParam` 参数不支持 `null` 查询
-====
-
-====== 多数据源
-
-`Dew` 可以很轻松地实现多数据源使用。
-
-[source,yml]
-.多数据源配置
-----
-spring:
-  datasource: # 主数据源配置
-    driver-class-name:
-    url:
-    druid:
-      # 主数据源连接池配置
-  multi-datasources: # 此key下配置其它数据源
-    other: # 数据源标识
-      driver-class-name:
-      url:
-      # 此数据源的连接池配置
-----
-
-TIP: 其它数据源务必配置在 `spring.multi-datasources` 下，格式是 `spring.multi-datasources.<DS Name>.<属性名>=<属性值>`
-
-IMPORTANT: 主数据源连接池要加上 `druid` 或其它类型，其它数据源与 `url` 、 `username` 同级即可。
-
-[source,yml]
-.多数据源配置 示例
-----
-spring:
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:test
-    druid:
-      initial-size: 5
-      min-idle: 5
-      max-active: 20
-      max-wait: 60000
-  multi-datasources:
-    other:
-      driver-class-name: org.h2.Driver
-      url: jdbc:h2:mem:test_other
-      initial-size: 1
-      max-active: 1
-----
-
-[source,java]
-.多数据源使用
-----
-// =============== 1）Dew.ds上直接使用 ===============
-
-Dew.ds(<数据源标识，为空时表示使用主数据源>).XX
-
-// -------- 例如 --------
-
-// 初始化客户表，来自另一个数据源
-((DewDS) Dew.ds("other")).jdbc().execute("CREATE TABLE customer\n" +
-        "(\n" +
-        "id int primary key auto_increment,\n" +
-        "name varchar(50)\n" +
-        ")");
-Customer customer = new Customer();
-customer.setName("张三");
-// insert
-id = (int) Dew.ds("other").insert(customer);
-// getById
-customer = Dew.ds("other").getById(id, Customer.class);
-assert customer.getName().equals("张三");
-
-// =============== 2）Dao层上使用 ===============
-
-// Dao必须重写 `String ds()` 方法，返回对应的数据源标识
-
-// -------- 例如 --------
-
-public interface CustomerDao extends DewDao<Integer, Customer> {
-    @Override
-    default String ds() {
-        return "other";
-    }
-}
-
-// =============== 3）直接使用JdbcTemplate ===============
-
-@Qualifier("<数据源标识+JdbcTemplate>")
-
-// -------- 例如 --------
-
-@Autowired // 主数据源
-private JdbcTemplate jdbcTemplate;
-
-@Autowired
-@Qualifier("otherJdbcTemplate") // 其它数据源
-private JdbcTemplate secondaryJdbcTemplate;
-
-// =============== 事务处理 ===============
-
-@Transactional("<数据源标识+TransactionManager，为空表示主数据源>")
-
-// -------- 例如 --------
-
-@Transactional(otherTransactionManager)
-
-----
-
-IMPORTANT: `JdbcTemplate` Bean名称规则：主数据源= `jdbcTemplate` ，其它数据源= `<DS Name>JdbcTemplate`
-
-IMPORTANT: `TransactionManager` Bean名称规则：主数据源= `transactionManager` ，其它数据源= `<DS Name>TransactionManager`
-
 ==== 集群功能
 
 ----
 此章节关联示例:cluster-example
 ----
 
-`Dew` 的集群支持 `分布式缓存` `分布式Map` `分布式锁` `MQ` `Leader Election`，并且做了接口抽象以适配不同的实现，目前支持 `Redis` `Hazelcast` `Rabbit` `Ignite` `Eureka` 。
+`Dew` 的集群支持 `分布式缓存` `分布式Map` `分布式锁` `MQ` `领导者选举`，
+并且做了接口抽象以适配不同的实现，目前支持 `Redis` `Hazelcast` `Rabbit` `Eureka` 。
+
+各实现对应的支持如下：
+
+|====
+|功能|Redis|Hazelcast|Rabbit|Eureka
+
+|分布式缓存 | * | / | / | /
+|分布式Map |*|*|/|/
+|分布式锁|*|*|/|/
+|MQ|*|*|*|/
+|领导者选举|*|/|/|*
+|====
+
+[NOTE]
+.各实现的差异
+=====
+* Redis实现了所有功能，但其MQ上不适用于高可靠场景
+* 只有Rabbit的MQ支持跟踪日志（见跟踪日志章节）
+* Eureka只支持一个节点一个领导者，Redis支持领导者分类，即一个节点可设置不同的类别对应不同的领导者
+=====
+
+===== 使用
 
 [source,xml]
-.引入依赖
+.依赖
 ----
 <dependency>
     <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>boot-starter</artifactId>
 </dependency>
-<!--引入集群依赖，可选redis/hazelcast/rabbit/ignite/eureka-->
+<!--引入集群依赖，可选redis/hazelcast/rabbit/eureka-->
 <dependency>
     <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>cluster-spi-redis</artifactId>
@@ -875,10 +188,6 @@ IMPORTANT: `TransactionManager` Bean名称规则：主数据源= `transactionMan
 <dependency>
     <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>cluster-spi-rabbit</artifactId>
-</dependency>
-<dependency>
-    <groupId>com.tairanchina.csp.dew</groupId>
-    <artifactId>cluster-spi-ignite</artifactId>
 </dependency>
 <!--此实现需要引用 cloud-starter -->
 <dependency>
@@ -892,10 +201,11 @@ IMPORTANT: `TransactionManager` Bean名称规则：主数据源= `transactionMan
 ----
 dew:
     cluster: # 集群功能
-        cache: # 缓存实现，默认为 redis
-        dist: # 分布式锁和Map实现，默认为 redis，可选 redis/hazelcast
-        mq: # MQ实现，默认为 redis，可选 redis/hazelcast/rabbit
-        election: # 领导者选举实现，默认为 eureka
+        cache: # 分布式缓存实现，默认为 redis
+        map: # 分布式Map实现，默认为 redis
+        lock: # 分布式锁实现，默认为 redis
+        mq: # MQ实现，默认为 redis
+        election: # 领导者选举实现，默认为 redis
 
 spring:
     redis:
@@ -920,191 +230,10 @@ TIP: `eureka` 实现了领导者选择，必须为 `Spring Cloud` 工程。
 
 ===== 分布式缓存
 
-[source,java]
-.MQ服务: `Dew.cluster.cache`
-----
-/**
- * key是否存在
- *
- * @param key key
- * @return 是否存在
- */
-boolean exists(String key);
-
-/**
- * 获取字符串值
- *
- * @param key key
- * @return 值
- */
-String get(String key);
-
-/**
- * 设置字符串
- *
- * @param key       key
- * @param value     value
- * @param expireSec 过期时间(seconds)，0表示永不过期
- */
-void set(String key, String value, int expireSec);
-
-/**
- * 设置字符串
- *
- * @param key   key
- * @param value value
- */
-void set(String key, String value);
-
-/**
- * 删除key
- *
- * @param key key
- */
-void del(String key);
-
-/**
- * 添加列表值
- *
- * @param key   key
- * @param value value
- */
-void lpush(String key, String value);
-
-/**
- * 设置列表
- *
- * @param key       key
- * @param values    values
- * @param expireSec 过期时间(seconds)，0表示永不过期
- */
-void lmset(String key, List<String> values, int expireSec);
-
-/**
- * 设置列表
- *
- * @param key    key
- * @param values values
- */
-void lmset(String key, List<String> values);
-
-/**
- * 弹出栈顶的列表值
- * 注意，Redis的列表是栈结构，先进后出
- *
- * @param key key
- * @return 栈顶的列表值
- */
-String lpop(String key);
-
-/**
- * 获取列表值的长度
- *
- * @param key key
- * @return 长度
- */
-long llen(String key);
-
-/**
- * 获取列表中的所有值
- *
- * @param key key
- * @return 值列表
- */
-List<String> lget(String key);
-
-/**
- * 设置Hash集合
- *
- * @param key       key
- * @param values    values
- * @param expireSec 过期时间(seconds)，0表示永不过期
- */
-void hmset(String key, Map<String, String> values, int expireSec);
-
-/**
- * 设置Hash集合
- *
- * @param key    key
- * @param values values
- */
-void hmset(String key, Map<String, String> values);
-
-
-/**
- * 修改Hash集合field对应的值
- *
- * @param key   key
- * @param field field
- * @param value value
- */
-void hset(String key, String field, String value);
-
-/**
- * 获取Hash集合field对应的值
- *
- * @param key   key
- * @param field field
- * @return field对应的值
- */
-String hget(String key, String field);
-
-/**
- * 判断Hash集合field是否存在
- *
- * @param key   key
- * @param field field
- * @return 是否存在
- */
-boolean hexists(String key, String field);
-
-/**
- * 获取Hash集合的所有值
- *
- * @param key key
- * @return 所有值
- */
-Map<String, String> hgetAll(String key);
-
-/**
- * 删除Hash集合是对应的field
- *
- * @param key   key
- * @param field field
- */
-void hdel(String key, String field);
-
-/**
- * 原子加操作
- *
- * @param key       key，key不存在时会自动创建值为0的对象
- * @param incrValue 要增加的值，必须是Long Int Float 或 Double
- * @return 操作后的值
- */
-long incrBy(String key, long incrValue);
-
-/**
- * 原子减操作
- *
- * @param key       key不存在时会自动创建值为0的对象
- * @param decrValue 要减少的值，必须是Long  或 Int
- * @return 操作后的值
- */
-long decrBy(String key, long decrValue);
-
-/**
- * 设置过期时间
- *
- * @param key       key
- * @param expireSec 过期时间(seconds)，0表示永不过期
- */
-void expire(String key, int expireSec);
-
-void flushdb();
-----
+TIP: 接口见：com.tairanchina.csp.dew.core.cluster.ClusterCache
 
 [source,java]
-.Cache示例
+.示例
 ----
 Dew.cluster.cache.flushdb();
 Dew.cluster.cache.del("n_test");
@@ -1117,96 +246,33 @@ assert !Dew.cluster.cache.exists("n_test");
 assert null == Dew.cluster.cache.get("n_test");
 ----
 
+TIP: Dew的缓存默认只实现了String、List、Set、Hash等结构常用的，时间复杂度低的操作，
+如需要的操作Dew没有提供可使用Spring Boot Data Redis原生的``RedisTemplate<String,String>``
+
+===== 分布式Map
+
+TIP: 接口见：com.tairanchina.csp.dew.core.cluster.ClusterMap
+
+[source,java]
+.示例
+----
+ClusterMap<TestMapObj> mapObj = Dew.cluster.map.instance("test_obj_map", TestMapObj.class);
+mapObj.clear();
+TestMapObj obj = new TestMapObj();
+obj.a = "测试";
+mapObj.put("test", obj);
+assert "测试".equals(mapObj.get("test").a);
+----
+
 ===== 分布式锁
 
-[source,java]
-.MQ服务: `Dew.cluster.dist.lock`
-----
-/**
- * 加锁，加锁成功后执行对应的函数，执行完成自动解锁
- * <p>
- * 推荐使用 {@link #tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun)}
- *
- * @param fun 加锁成功后执行的函数
- */
-void lockWithFun(VoidProcessFun fun) throws Exception;
-
-/**
- * 尝试加锁，加锁成功后执行对应的函数，执行完成自动解锁
- * <p>
- * 推荐使用 {@link #tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun)}
- *
- * @param fun 加锁成功后执行的函数
- */
-void tryLockWithFun(VoidProcessFun fun) throws Exception;
-
-/**
- * 尝试加锁，加锁成功后执行对应的函数，执行完成自动解锁
- * <p>
- * 推荐使用 {@link #tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun)}
- *
- * @param fun 加锁成功后执行的函数
- */
-void tryLockWithFun(long waitMillSec, VoidProcessFun fun) throws Exception;
-
-/**
- * 尝试加锁，加锁成功后执行对应的函数，执行完成自动解锁
- *
- * @param waitMillSec  等待毫秒数
- * @param leaseMillSec 锁释放毫秒数
- * @param fun          加锁成功后执行的函数
- */
-void tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun) throws Exception;
-
-/**
- * 加锁
- * <p>
- * 推荐使用 {@link #tryLock(long waitMillSec, long leaseMillSec)}
- */
-void lock();
-
-/**
- * 尝试加锁
- * <p>
- * 推荐使用 {@link #tryLock(long waitMillSec, long leaseMillSec)}
- */
-boolean tryLock();
-
-/**
- * 尝试加锁
- * <p>
- * 推荐使用 {@link #tryLock(long waitMillSec, long leaseMillSec)}
- *
- * @param waitMillSec 等待毫秒数
- */
-boolean tryLock(long waitMillSec) throws InterruptedException;
-
-/**
- * 尝试加锁
- *
- * @param waitMillSec  等待毫秒数
- * @param leaseMillSec 锁释放毫秒数
- */
-boolean tryLock(long waitMillSec, long leaseMillSec) throws InterruptedException;
-
-/**
- * 解锁操作，只有加锁的实例及线程才能解锁
- */
-boolean unLock();
-
-/**
- * 强制解锁，不用匹配加锁的实例与线程
- * <p>
- * 谨慎使用
- */
-void delete();
-----
+TIP: 接口见：com.tairanchina.csp.dew.core.cluster.ClusterLock
 
 [source,java]
-.Lock示例
+.示例
 ----
 // dist lock
-ClusterDistLock lock = Dew.cluster.dist.lock("test_lock");
+ClusterLock lock = Dew.cluster.lock.instance("test_lock");
 // tryLock 示例，等待0ms，忘了手工unLock或出异常时1s后自动解锁
 if (lock.tryLock(0, 1000)) {
     try {
@@ -1222,174 +288,12 @@ lock.tryLockWithFun(0, 1000, () -> {
 });
 ----
 
-===== 分布式Map
-
-[source,java]
-.MQ服务: `Dew.cluster.dist.map`
-----
-/**
- * 添加Item，同步实现
- *
- * @param key   key
- * @param value value
- */
-void put(String key, M value);
-
-/**
- * 添加Item，异步实现
- *
- * @param key   key
- * @param value value
- */
-void putAsync(String key, M value);
-
-/**
- * 添加不存在的Item，同步实现
- *
- * @param key   key
- * @param value value
- */
-void putIfAbsent(String key, M value);
-
-/**
- * 指定Key是否存在
- *
- * @param key key
- * @return 是否存在
- */
-boolean containsKey(String key);
-
-/**
- * 获取所有Item
- *
- * @return 所有Item
- */
-Map<String, M> getAll();
-
-/**
- * 获取指定key的value
- *
- * @param key key
- * @return 对应的value
- */
-M get(String key);
-
-/**
- * 删除指定key的Item，同步实现
- *
- * @param key key
- */
-void remove(String key);
-
-/**
- * 删除指定key的Item，异步实现
- *
- * @param key key
- */
-void removeAsync(String key);
-
-/**
- * 清空Map
- */
-void clear();
-
-/**
- * 注册新增Item时要执行的函数
- * <p>
- * 目前只支持Hazelcast实现
- *
- * @param fun 执行的函数
- */
-ClusterDistMap<M> regEntryAddedEvent(Consumer<EntryEvent<M>> fun);
-
-/**
- * 注册删除Item时要执行的函数
- * <p>
- * 目前只支持Hazelcast实现
- *
- * @param fun 执行的函数
- */
-ClusterDistMap<M> regEntryRemovedEvent(Consumer<EntryEvent<M>> fun);
-
-/**
- * 注册更新Item时要执行的函数
- * <p>
- * 目前只支持Hazelcast实现
- *
- * @param fun 执行的函数
- */
-ClusterDistMap<M> regEntryUpdatedEvent(Consumer<EntryEvent<M>> fun);
-
-/**
- * 注册清空Map时要执行的函数
- * <p>
- * 目前只支持Hazelcast实现
- *
- * @param fun 执行的函数
- */
-ClusterDistMap<M> regMapClearedEvent(VoidProcessFun fun);
-----
-
-[source,java]
-.Map示例
-----
-ClusterDistMap<TestMapObj> mapObj = Dew.cluster.dist.map("test_obj_map", TestMapObj.class);
-mapObj.clear();
-TestMapObj obj = new TestMapObj();
-obj.a = "测试";
-mapObj.put("test", obj);
-assert "测试".equals(mapObj.get("test").a);
-----
-
 ===== MQ
 
-[source,java]
-.MQ服务: `Dew.cluster.mq`
-----
-/**
- * MQ 发布订阅模式 之 发布
- *
- * 请确保发布之前 topic 已经存在
- *
- * @param topic   主题
- * @param message 消息内容
- * @return 是否发布成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
- */
-boolean publish(String topic, String message);
-
-/**
- * MQ 发布订阅模式 之 订阅
- *
- * 非阻塞方式
- *
- * @param topic    主题
- * @param consumer 订阅处理方法
- */
-void subscribe(String topic, Consumer<String> consumer);
-
-/**
- * MQ 请求响应模式 之 请求
- *
- * @param address 请求地址
- * @param message 消息内容
- * @return 是否请求成功
- */
-boolean request(String address, String message);
-
-/**
- * MQ 请求响应模式 之 响应
- *
- * 非阻塞方式
- *
- * @param address  请求对应的地址
- * @param consumer 响应处理方法
- */
-void response(String address, Consumer<String> consumer);
-----
-
+TIP: 接口见：com.tairanchina.csp.dew.core.cluster.ClusterMQ
 
 [source,java]
-.MQ示例
+.示例
 ----
 // pub-sub
 Dew.cluster.mq.subscribe("test_pub_sub", message ->
@@ -1411,80 +315,271 @@ if (Dew.cluster.mq instanceof RabbitClusterMQ) {
 
 IMPORTANT: 发布订阅模式时，发布前 `topic` 必须已经存在，可先使用 `subscribe` 订阅，此操作会自动创建 `topic` 。
 
-TIP: `rabbit` 实现支持单条 `confirm` 模式。
+TIP: `Rabbit` 实现支持单条 `confirm` 模式。
 
-===== Leader Election
+.MQ的HA功能
+
+MQ的HA（高可用）支持，默认MQ启用HA（可通过``dew.cluster.config.ha-enabled=false``关闭）。
+可实现。
+
+Dew的MQ仅在数据处理完成后才做commit，这限制了对同一个队列只能串行处理，
+MQ的HA开启后，您可以以多线程的方式消费消息，处理过程中如发生服务宕机重启后仍可从未处理完成的消息开始消费。
+
+===== 领导者选举
+
+TIP: 接口见：com.tairanchina.csp.dew.core.cluster.ClusterElection
 
 [source,java]
-.MQ服务: `Dew.cluster.election`
+.示例
 ----
-/**
- * 执行（重新）选举
- *
- * 需调用方定时调用此接口
- *
- * @throws Exception
- */
-void election() throws Exception;
-
-/**
- * 退出选举，暂未实现
- * @throws Exception
- */
-void quit() throws Exception;
-
-/**
- * 当前工程是否是领导者
- * @return 是否是领导者
- */
-boolean isLeader();
+// 实例化fun1类型的领导者选举，Redis的实现支持多类型领导者
+ClusterElection electionFun1 = Dew.cluster.election.instance("fun1");
+// ...
+if (electionFun1.isLeader()) {
+   // 当前节点是fun1类型的领导者
+   // ...
+}
 ----
 
-[IMPORTANT]
-.SPI选型
+==== 幂等处理
+
+----
+此章节关联示例:idempotent-example
+----
+
+支持HTTP和非HTTP幂等操作，对于HTTP操作，要求请求方在请求头或URL参数中加上操作ID标识，非HTTP操作由可自由指定操作类型和操作ID标识的来源。
+
+[source,xml]
+.依赖
+----
+<!--引入幂等支持-->
+<dependency>
+    <groupId>com.tairanchina.csp.dew</groupId>
+    <artifactId>idempotent-starter</artifactId>
+</dependency>
+----
+
+[source,yml]
+.配置
+----
+dew:
+  cluster:
+    cache: redis # 启用Redis支持
+  idempotent:
+    default-expire-ms: 3600000 # 设置默认过期时间，1小时
+    default-strategy: item # 设置默认策略，支持 bloom(Bloom Filter)和item(逐条记录)，目前只支持item
+    default-opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
+----
+
+[source,java]
+.HTTP操作
+----
+@GetMapping(xxx)
+// 启用幂等支持
+// 请求头部或参数加上__IDEMPOTENT_OPT_ID__ = xx
+@Idempotent
+public void test(xxx) {
+    // 业务操作
+    // ...
+    // 业务失败，在保证业务操作的原子性的情况下，在catch中取消幂等，并抛出异常
+    DewIdempotent.cancel();
+    // 手工确认
+    DewIdempotent.confirm();
+}
+----
+
+``Idempotent``注解说明：
+
+* optIdFlag：指定幂等操作ID标识，可以位于HTTP Header或请求参数中
+* expireMs：设置过期时间，单位毫秒
+* strategy：设置默认策略
+* needConfirm：设置是否需要显式确认，true时，需要进行显式确认操作: ``DewIdempotent.confirm() 或 DewIdempotent.confirm(String optType, String optId)`` 前者要求与请求入口在同一线程中
+
+[source,java]
+.非HTTP操作
+----
+// 初始化类型为transfer_a的幂等操作，需要手工确认，过期时间为1秒
+DewIdempotent.initOptTypeInfo("transfer_a", true, 1000, StrategyEnum.ITEM);
+// 第一次请求transfer_a类型下的xxxxxxx这个ID，返回不存在，表示可以下一步操作
+Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "xxxxxxx"));
+// 第二次请求transfer_a类型下的xxxxxxx这个ID，返回未确认，表示上次操作还在进行中
+Assert.assertEquals(StatusEnum.UN_CONFIRM, DewIdempotent.process("transfer_a", "xxxxxxx"));
+// 确认操作完成
+DewIdempotent.confirm("transfer_a", "xxxxxxx");
+// 第三次请求transfer_a类型下的xxxxxxx这个ID，返回已确认，但未过期，仍不能操作
+Assert.assertEquals(StatusEnum.CONFIRMED, DewIdempotent.process("transfer_a", "xxxxxxx"));
+// 延时1秒
+Thread.sleep(1000);
+// 再次请求transfer_a类型下的xxxxxxx这个ID，返回不存在（上次请求已过期），表示可以下一步操作
+Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "xxxxxxx"));
+----
+
+==== 统一响应
+
+`Dew` 推荐使用 `协议无关的响应格式`，此格式在 `方法间调用` `非HTTP协议RPC` `MQ` 等数据交互场景做到真正的 `统一响应格式`。
+要求返回的格式为``Resp``对象，格式为：
+
+----
+{
+    code: "", // 响应编码，与http状态码类似，200表示成功
+    message:"", // 响应附加消息，多有于错误描述
+    body: // 响应正文
+}
+----
+
+[source,java]
+.示例
+----
+public Resp<String> test(){
+    return Resp.success("enjoy!");
+    // or return Resp.notFound("…")/conflict("…")/badRequest("…")/…
+}
+----
+
+``Resp``类提供了常用操作：详见 https://gudaoxuri.github.io/dew-common/#true-resp[https://gudaoxuri.github.io/dew-common/#true-resp]
+
+``Dew``使用返回格式中的code表示操作状态码，此状态码与HTTP状态码无关，一般情况下HTTP状态码均为200，如需要降级处理时返回500。
+
+[NOTE]
+.500 Http状态码说明
 ====
-. Redis: 多用于Cache，可做为轻量MQ，可用于要求不高的Lock(Redis锁存在不安全隐患)及Map
-. Hazelcast: 对Lock及Map支持得很好，可做为轻量MQ
-. Rabbit: 仅做MQ用，支持持久化，支持仅在收到消息并且处理完成后才Acknowledge
-. Eureka: 可用集群选举
+`500` 状态码仅用于告诉 `Hystrix` 这次请求是需要降级的错误，对于 `Resp` 中的 `code` 没有影响。
+
+`dew` 框架会把所有 `5xx`（服务端错误，需要降级） 的异常统一转换成 `500` 的Http状态码返回给调用方。
+
+`Resp.xxx.fallback()` 用于显示声明当前返回需要降级，
+比如 `Resp.serverError("some message")` 不会降级，返回http状态码为200，body为 `{"code":"500","message":"some message","body":null}`，
+但 `Resp.serverError("some message").fallback()` 会降级，返回http状态码为500，body为 同上。
+====
+
+==== 消息通知
+
+`Dew` 支持发送消息到钉钉或邮件，默认支持对未捕获异常及Hystrix错误的通知。
+
+[source,xml]
+.通知配置
+----
+# 格式
+dew:
+    notifies:
+        "": # 通知的标识
+            type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
+            defaultReceivers: # 默认接收人列表，钉钉为手机号，邮件为邮箱
+            dndTimeReceivers: # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
+            args: # 不同类型的参数，邮件不需要设置
+                url: # 钉钉及自定义HTTP的推送地址，钉钉URL说明详见：https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.karFPe&treeId=257&articleId=105735&docType=1
+            strategy: # 通知策略
+                minIntervalSec: 0 # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
+                dndTime: # 开启免扰时间，HH:mm-HH:mm 如，18:00-06:00
+                forceSendTimes: 3 # 同一免扰周期间通知调用达到几次后强制发送
+
+# 示例
+dew:
+  notifies:
+    __DEW_ERROR__:
+      type: DD
+      defaultReceivers: xxxx
+      args:
+        url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d3269
+      strategy:
+        minIntervalSec: 5
+    sendMail:
+      type: MAIL
+      defaultReceivers: x@y.z
+    custom:
+      type: HTTP
+      defaultReceivers: x@y.z
+      args:
+        url: https://...
+
+----
+
+[source,java]
+.通知使用
+----
+# 最简单的调用
+Resp<Void> result = Dew.notify.send("<通知的标识>", "<通知的内容或Throwable>");
+# 带通知标题，标题会加上``Dew.Info.instance``
+Resp<Void> result = Dew.notify.send("<通知的标识>", "<通知的内容或Throwable>", "<通知标题>");
+# 加上特殊接收人列表，非免扰时间内的接收人=配置默认接收人列表+特殊接收人列表，免扰时间内的接收人=配置的免扰时间内的接收人列表
+Resp<Void> result = Dew.notify.send("<通知的标识>", "<通知的内容或Throwable>", "<通知标题>", "<特殊接收人列表>");
+# 上述三个方法都有异步的重载方法，如
+Dew.notify.sendAsync("<通知的标识>", "<通知的内容或Throwable>");
+----
+
+[NOTE]
+.默认通知标识
+====
+. 非捕获异常: ``__DEW_ERROR__``，所有非捕获异常（ErrorController）调用此标识发送错误，可通过``dew.basic.format.error-flag`` 修改
+. Hystrix错误: ``__HYSTRIX__``，所有Hystrix错误调用此标识发送错误，可通过``dew.cloud.error.notify-flag`` 修改
+
+要启用以上两个通知请确保``dew.notifies``有相应的配置。
 ====
 
 [NOTE]
-.Rabbit Confirm模式支持
+.HTTP自定义通知格式
 ====
-((RabbitClusterMQ)Dew.cluster.mq).publish(String topic, String message, boolean confirm) +
-((RabbitClusterMQ)Dew.cluster.mq).request(String address, String message, boolean confirm)
+POST请求，Body格式为:
+
+{
+    "title": "", // 标题
+    "content": "", // 内容
+    "receivers": [] // 接收人列表
+}
+
+调用正常需要返回200状态码
 ====
 
-=== 增强
+==== 异常处理
 
-==== 服务脚手架
+`Dew` 会把程序没有捕获的异常统一上抛，同时框架提供了常用的异常检查：
 
+[source,java]
+.异常检查，异常类型要求为RuntimeException及其子类
 ----
-此章节关联示例:guide-petstore
+Dew.E.check(VoidPredicate notExpected, E ex)
+Dew.E.check(boolean notExpected, E ex)
+Dew.E.checkNotEmpty(Map<?, ?> objects, E ex)
+Dew.E.checkNotEmpty(Iterable<?> objects, E ex)
+Dew.E.checkNotNull(Object obj, E ex)
 ----
 
-一般的，我们对实体对象的操作可以有 `增C删D改U查R` 外加`状态变更S`，`服务脚手架`从`DAO`到`Service`再到`Controller`实现了上述操作。
+[source,xml]
+.自定义异常配置，启用后此类异常均使用此模块
+----
+dew:
+  basic:
+    error-mapping:
+      "[<异常类名>]":
+        http-code: # http状态码，不存在时使用实例级http状态码
+        business-code: # 业务编码，不存在时使用实例级业务编码
+        message: # 错误描述，不存在时使用实例级错误描述
+----
 
-* CRUController: 支持增改查操作
-* CRUDController: 支持增删改查操作
-* CRUSController: 支持增改查状态变更操作
-* CRUDSController: 支持增删改查状态变更操作
-* CRUVOController: 支持增改查操作（带VO-Entity转换）
-* CRUSVOController: 支持增删改查操作（带VO-Entity转换）
-* CRUDVOController: 支持增改查状态变更操作（带VO-Entity转换）
-* CRUDSVOController: 支持增删改查状态变更操作（带VO-Entity转换）
-* CRUService: 支持增改查操作
-* CRUDService: 支持增删改查操作
-* CRUSService: 支持增改查状态变更操作
-* CRUDSService: 支持增删改查状态变更操作
-* DewDao: 支持增删改查状态变更操作
+==== 数据验证
 
-TIP: 详见API文档。
+``Dew``集成了``Spring validate`` 机制，支持针对 `URL` 及 `Bean` 的验证。
 
-TIP: 脚本架方法不带缓存，如需要缓存请在子类复写对应的方法。
+* 在 java bean 中添加各项validation，支持标准`javax.validation.constraints`包下的诸如：`NotNull` ，同时框架扩展了几个检查，如：
+   IdNumber、Phone
+* 在Controller中添加 `@Validated` 注解 ( Spring还支持@Vaild，但这一注解不支持分组 )
+* 支持Spring原生分组校验
+* `URL` 类型的验证必须在类头添加 `@Validated` 注解
+* `Dew` 框架内置了 `CreateGroup` `UpdateGroup` 两个验证组，验证组仅是一个标识，可为任何java对象
 
-IMPORTANT: 目前服务脚手架需与 `Dew JDBC` 配合使用，后期会适配其它持久化框架。
+
+==== CORS支持
+
+[source,yml]
+.配置
+----
+dew:
+  security:
+    cors:
+      allow-origin: # 允许来源，默认 *
+      allow-methods: # 允许方法，默认 POST,GET,OPTIONS,PUT,DELETE,HEAD
+      allow-headers: # 允许头信息 x-requested-with,content-type
+----
 
 ==== 权限认证
 
@@ -1591,356 +686,29 @@ public Resp<Void> logout() {
 }
 ----
 
-==== 追踪日志
-
-`Dew` 集成了可追踪日志的功能，本质上一个 `slf4j` 的装饰器，会在每条日志内容前面打印 `用户账号 #` 。
-
-[source,java]
-.使用方式
-----
-Logger logger = DewLogger.getLogger(<当前的class>);
-logger.info/debug/trace/error...
-----
-
-NOTE: 此功能要求使用 `Threadlocal` 与请求接收同一线程有效，不同线程需要把 `DewContext` 传入到新线程并执行执行 `DewContext.setContext(context)` 。
-
-==== Dubbo兼容
-
-----
-此章节关联示例:dubbo-example
-----
-
-[source,xml]
-.引入依赖
-----
-<dependency>
-    <groupId>io.dubbo.springboot</groupId>
-    <artifactId>spring-boot-starter-dubbo</artifactId>
-    <version>1.0.0</version>
-    <exclusions>
-        <exclusion>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </exclusion>
-        <exclusion>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </exclusion>
-        <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </exclusion>
-        <exclusion>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </exclusion>
-    </exclusions>
-</dependency>
-----
-
-* 配置与使用
-
-Dubbo官方发行版本无法处理存在声明式事务的服务，简单的解决方案是：
-
-[source,java]
-.添加com.alibaba.dubbo.config.annotation.Service到工程
-----
-package com.alibaba.dubbo.config.annotation;
-
-import java.lang.annotation.*;
-
-/**
- * 添加@Inherited，修正带声明式事务的服务提供问题
- */
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
-@Inherited
-public @interface Service {
-
-    Class<?> interfaceClass() default void.class;
-
-    String interfaceName() default "";
-
-    String version() default "";
-
-    String group() default "";
-
-    String path() default "";
-
-    boolean export() default false;
-
-    String token() default "";
-
-    boolean deprecated() default false;
-
-    boolean dynamic() default false;
-
-    String accesslog() default "";
-
-    int executes() default 0;
-
-    boolean register() default false;
-
-    int weight() default 0;
-
-    String document() default "";
-
-    int delay() default 0;
-
-    String local() default "";
-
-    String stub() default "";
-
-    String cluster() default "";
-
-    String proxy() default "";
-
-    int connections() default 0;
-
-    int callbacks() default 0;
-
-    String onconnect() default "";
-
-    String ondisconnect() default "";
-
-    String owner() default "";
-
-    String layer() default "";
-
-    int retries() default 0;
-
-    String loadbalance() default "";
-
-    boolean async() default false;
-
-    int actives() default 0;
-
-    boolean sent() default false;
-
-    String mock() default "";
-
-    String validation() default "";
-
-    int timeout() default 0;
-
-    String cache() default "";
-
-    String[] filter() default {};
-
-    String[] listener() default {};
-
-    String[] parameters() default {};
-
-    String application() default "";
-
-    String module() default "";
-
-    String provider() default "";
-
-    String[] protocol() default {};
-
-    String monitor() default "";
-
-    String[] registry() default {};
-}
-----
-
-[source,java]
-.在带声明式事务的类显示声明 `interfaceName`
-----
-@Service(version = "",interfaceName = "")
-----
-
-==== 幂等支持
-
-----
-此章节关联示例:idempotent-example
-----
-
-[source,xml]
-.引入依赖
-----
-<!--引入幂等支持-->
-<dependency>
-    <groupId>com.tairanchina.csp.dew</groupId>
-    <artifactId>idempotent-starter</artifactId>
-</dependency>
-<!--使用幂等的Redis实现-->
-<dependency>
-    <groupId>com.tairanchina.csp.dew</groupId>
-    <artifactId>cluster-spi-redis</artifactId>
-</dependency>
-----
-
-* 配置
-
-[source,yml]
-----
-dew:
-  cluster:
-    cache: redis # 启用Redis支持
-  idempotent:
-    default-expire-ms: 3600000 # 设置默认过期时间，1小时
-    default-strategy: item # 设置默认策略，支持 bloom(Bloom Filter)和item(逐条记录)
-    opt-type-flag: __IDEMPOTENT_OPT_TYPE__ # 指定幂等操作类型标识，可以位于HTTP Header或请求参数中
-    opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
-----
-
-* 使用
-
-支持HTTP和非HTTP幂等操作，对于HTTP操作，要求请求方在请求头或URL参数中加上操作类型和操作ID标识，非HTTP操作由可自由指定操作类型和操作ID标识的来源。
-
-.HTTP操作
-
-[source,java]
-----
-@GetMapping(xxx)
-// 启用幂等支持
-// 请求头部或参数加上 __IDEMPOTENT_OPT_TYPE__ = xx , __IDEMPOTENT_OPT_ID__ = yy
-@Idempotent(expireMs = 5000)
-public void test(xxx) {
-    // 业务操作
-    // ...
-    // 业务失败，在保证业务操作的原子性的情况下，在catch中取消幂等，并抛出异常
-    DewIdempotent.cancel();
-    // 手工确认
-    DewIdempotent.confirm();
-}
-----
-
-``Idempotent``注解说明：
-
-* optTypeFlag：指定幂等操作类型标识，可以位于HTTP Header或请求参数中，要求全局唯一
-* optIdFlag：指定幂等操作ID标识，可以位于HTTP Header或请求参数中
-* expireMs：设置过期时间，单位毫秒
-* strategy：设置默认策略
-* needConfirm：设置是否需要显式确认，true时，需要进行显式确认操作: ``DewIdempotent.confirm() 或 DewIdempotent.confirm(String optType, String optId)`` 前者要求与请求入口在同一线程中
-
-.非HTTP操作
-
-[source,java]
-.取消幂等与http操作时的使用方式相同
-----
-public void init() {
-    // 初始化用到的操作类型
-    // * DewIdempotent.initOptTypeInfo 参数：
-    // * @param optType     操作类型
-    // * @param needConfirm 是否需要显式确认
-    // * @param expireMs    过期时间
-    // * @param strategy    策略类型
-    DewIdempotent.initOptTypeInfo("transfer_a", true, 1000, StrategyEnum.ITEM);
-}
-
-public void send() {
-    // 调用
-    transferAReceive("xxxx");
-}
-
-public void transferAReceive(String id) {
-    // 收到请求后先调用process
-    // * DewIdempotent.process 参数：
-    // * @param optType 操作类型
-    // * @param optId   操作ID
-    switch (DewIdempotent.process("transfer_a", id)) {
-        case NOT_EXIST:
-            // 业务操作
-            // ...
-            // 手工确认
-            // * DewIdempotent.confirm 参数：
-            // * @param optType 操作类型
-            // * @param optId   操作ID
-            DewIdempotent.confirm();
-        case UN_CONFIRM:
-            // 已收到但操作还未确认
-            // 对应的处理，一般返回请求等待，稍后重试
-        case CONFIRMED:
-            // 已确认操作
-            // 对应的处理，一般直接返回失败
-        default:
-    }
-
-}
-----
-
-==== mybatis-starter模块
-
-考虑到业务团队较多采用mybatis框架,dew定制了mybatis的dew实现方式
-
-[source,java]
-.启动类配置示例
-----
-@SpringbootApplication
-@DewMapperScan(basePackages = "com.tairanchina.csp.dew.mybatis.multi.mapper")
-public class MybatisMultiApplication {
-
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(MybatisMultiApplication.class).web(false).run(args);
-    }
-}
-----
-[source,yml]
-.配置文件示例
-----
-spring:
-  multi-datasources:
-    test1:
-      driver-class-name: com.mysql.jdbc.Driver
-      url: jdbc:mysql://127.0.0.1:3306/transaction?useUnicode=true&characterEncoding=utf-8
-      username: root
-      password: 123456
-
-----
-[source,java]
-.mapper接口类
-----
-
-// 数据源为主数据源
-@DS
-public interface UserMapper extends BaseMapper<User> {
-
-    @Select("select age from user group by age")
-    List<String> ageGroup();
-}
-// 数据源为第二数据源
-@DS(dataSource = "test1")
-public interface UserMapper2 extends BaseMapper<User> {
-
-    @Select("select age from user group by age")
-    List<String> ageGroup();
-}
-----
-
-=== 工程化
-
-==== 代码质量检查
-
-Dew 已集成 `Sonar` 插件，只需要在maven中配置 `sonar.host.url` 为目标地址，然后执行 `mvn clean verify sonar:sonar -P qa` 即可。
-
-TIP: 如提供没有权限访问，请设置 `sonar.forceAuthentication=false` 。
-
-TIP: 使用 `<maven.test.skip>true</maven.test.skip>` 可跳过特定模块的测试，`<sonar.skip>true</sonar.skip>` 可跳过特定模块的Sonar检查。
-
 ==== 测试支持
 
 良好的单元测试可以保证代码的高质量，单测的重要原则是内聚、无依赖，好的单测应该是"函数化"的——结果的变化只与传入参数有关。
 但实际上我们会的代码往往会与数据库、缓存、MQ等外部工具交互，这会使单测的结果不可控，通常的解决方案是使用Mock，但这无行中引入了单测撰写的成本，
-Dew使用"内嵌式"工具解决，数据库使用 `H2` ，Redis使用 `embedded redis` ，由于 `Dew` 集群的 `Cache` `Map` `Lock` `MQ` 都支持 `Redis` 实现，所以可以做到对主流操作的全覆盖。
+``Dew``使用"内嵌式"工具解决，数据库使用 `H2` ，Redis使用 `embedded redis` ，由于 ``Dew`` 集群的 `Cache` `Map` `Lock` `MQ` 都支持 `Redis` 实现，所以可以做到对主流操作的全覆盖。
 
 [source,xml]
-.配置示例
+.依赖
 ----
-# maven
 <dependency>
     <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>test-starter</artifactId>
 </dependency>
+----
 
-# config
+[source,yml]
+.配置
+----
 dew:
   cluster: #所有集群操作都使用reids模拟
     cache: redis
-    dist: redis
+    lock: redis
+    map: redis
     mq: redis
 
 spring:
@@ -1951,6 +719,130 @@ spring:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:test
 ----
+
+=== 工程化
+
+==== API文档
+
+用于生成Asciidoc格式的离线API文档，可通过软件转换成HTML及PDF版本。
+
+[source,yml]
+.配置
+----
+dew:
+  basic:
+    name: # 文档名称
+    version: 1.0 # 文档版本
+    desc: # 文档说明
+    web-site: # 文档站点
+    doc:
+        base-package: # API文档要扫描的根包，多指定到 Controller 包中
+        contact: # 联系人信息，可为空
+            name: # 联系人姓名
+            url: # 联系人URL
+            email: # 联系人邮箱
+
+management: # 文档生成地址前缀为 /management.context-path
+  security:
+    enabled: false # 建议关闭管理功能的安全认证
+  context-path: /management-admin # 建议修改此前缀以便在网关上统一过滤管理请求
+----
+
+[source,txt]
+.使用
+----
+访问任意服务实例:
+
+PUT /{management.context-path}/doc/offline
+
+{
+	"docName":"", # 文档名称
+	"docDesc":"", # 文档说明
+	"visitUrls":{ # 不同环境的访问地址
+		"":""
+	},
+	"swaggerJsonUrls":[] # swagger.json的URL列表(http://.../v2/api-docs)，可选
+}
+
+swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，为空时分两种情况：
+
+1. 如果是非集群模式（没有注册中心）则只生成本服务的接口文档
+2. 如果是集群模式（注册到注册中心）则会合成此集群下所有的接口文档
+
+示例：
+
+{
+	"docName":"Dew API 文档",
+	"docDesc":"此为Dew的接口文档\n描述可以换行",
+	"visitUrls":{
+		"开发环境":"http://dev.dew.ecfront.com",
+		"测试环境":"http://test.dew.ecfront.com"
+	}
+}
+----
+
+调用此接口后返回Asciidoc格式的文档内容，复制此内容到相应的转换工具中即可生成对应的HTTP或PDF文档。
+
+==== 代码质量检查
+
+``Dew`` 已集成 `Sonar` 插件，只需要在maven中配置 `sonar.host.url` 为目标地址，
+然后执行 `mvn clean verify sonar:sonar -P qa -Dsonar.login=<用户名> -Dsonar.password=<密码>` 即可。
+
+TIP: 也可以设置 `sonar.forceAuthentication=false` ，但要注意安全管控。
+
+TIP: 使用 `<maven.test.skip>true</maven.test.skip>` 可跳过特定模块的测试，`<sonar.skip>true</sonar.skip>` 可跳过特定模块的Sonar检查。
+
+==== 降级通知
+
+----
+此章节关联 `hystrix-feign-example` 示例
+----
+
+NOTE: 为能更及时的对服务异常做出处理， `dew` 增加邮件通知功能。
+
+[source,yml]
+----
+# 通知条件配置示例
+dew:
+  cloud:
+    error:
+      enabled: true
+      notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED
+      notify-include-keys: ["ExampleClient#deleteExe(int,String)","ExampleClient#postExe(int,String)"]
+
+# 邮箱配置示例
+spring:
+  mail:
+    host: smtp.163.com
+    username: <邮件地址>
+    password: <password为smtp授权码，非邮箱密码>
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+----
+
+==== 跟踪日志
+
+----
+此章节关联 `sleuth-invokeX-example` 示例
+----
+
+用于记录 `服务API调用` （追踪）日志到 `Slf4j`。
+
+[source,yml]
+.开启追踪日志
+----
+dew:
+  cloud:
+    trace-log:
+        enabled: true # 默认为true
+----
+
+一次调用日志的查看，以 `ES` 为例，过滤条件是: logger:com.tairanchina.csp.dew.core.logger.TraceLogWrap & trace:<对应的traceID>
 
 ==== `Spring Admin` 集成
 
@@ -2006,107 +898,4 @@ eureka:
 management.security.enabled: false # 需要关闭安全管理，可通过IP来限制
 ----
 
-==== 服务调用开发期优化
-
-在Spring Cloud体系下，服务调用需要启动`Eureka`服务（对于Dew中的`Registry`组件），这对开发阶段并不友好：
-
-. 开发期间会不断启停服务，`Eureka` 保护机制会影响服务注册（当然这是可以关闭的）
-. 多人协作时可能会出现调用到他人服务的情况（同一服务多个实例）
-. 需要启动 `Eureka` 服务，多了一个依赖
-
-为解决上述问题，Dew框架做了相应的优化，
-在服务调用时使用 `Dew.EB.post/get/put/delete/options/head` 方法，Dew会根据传入的 `URL` 判断，
-如果是 `IPv4` 则直接调用服务，否则使用Spring Cloud的 `RestTemplate` 调用。
-所以您只需要把服务url做成配置，开发时使用 `ip` ，测试/生产时使用 `service-id` 。
-
-==== `hystrix` 降级增加邮件通知
-
-TIP: 此为 `cloud-starter` 特性
-
-----
-此章节关联 `hystrix-feign-example` 示例
-----
-
-NOTE: 为能更及时的对服务异常做出处理， `dew` 增加邮件通知功能。
-
-[source,yml]
-----
-# 通知条件配置示例
-dew:
-  cloud:
-    error:
-      enabled: true
-      notify-interval-sec: 1800
-      notify-emails: 71964899@qq.com
-      notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED
-      notify-include-keys: ["ExampleClient#deleteExe(int,String)","ExampleClient#postExe(int,String)"]
-
-# 邮箱配置示例
-spring:
-  mail:
-    host: smtp.163.com
-    username: <邮件地址>
-    password: <password为smtp授权码，非邮箱密码>
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
-----
-
-==== `服务API调用` （追踪）日志处理
-
-TIP: 此为 `cloud-starter` 特性
-
-----
-此章节关联 `sleuth-invokeX-example` 示例
-----
-
-用于记录 `服务API调用` （追踪）日志到 `Slf4j`。
-
-[source,yml]
-.开启追踪日志
-----
-dew:
-  cloud:
-    trace-log:
-        enabled: true # 默认为true
-----
-
-之后可选择 `ELK` 方案，或是 `Dew` 推荐的 `EK` 方案（跳过 `Logstash`，直接向 `ES` 提交）
-
-一次调用日志的查看，以 `ES` 为例，过滤条件是: logger:com.tairanchina.csp.dew.core.logger.DewTraceLogWrap & trace:<对应的traceID>
-
-==== metrics查询接口
-
-基于``Spring Boot Actuator``提供的metrics接口，dew增加了三个TPS指标，最大响应时间，平均响应时间，90%的响应时间。
-
-NOTE: 开发者可以get请求访问根路径下的/metrics接口，即可看到新增的 `dew.response.nityPercent`,`dew.response.average`,`dew.response.max`,`dew.response.tps` 四个指标
-      及针对接口的对应指标,生产或测试环境中多以登陆admin服务来查看统计数据
-
-TIP: 1.3.0后metrics指标增加线程、内存、cpu、磁盘等统计
-
-[source,yml]
-.需要配置如下
-----
-# 启用metrics接口
-endpoints:
-  metrics:
-    enabled: true
-
-# spring默认该接口需要security拦截，否则会提示``Unauthorized``，加以下配置即可
-management:
-  security:
-    enabled: false
-
-# 指定统计周期（多少秒内的指标统计）
-dew:
-  metric:
-    period-sec: # 默认600s(10分钟),（单位秒）
-----
-
-开发者可以get请求访问根路径下的/metrics接口，即可看到新增的 `dew.response.nityPercent`,`dew.response.average`,`dew.response.max`,`dew.response.tps` 四个指标
-及针对接口的对应指标
 

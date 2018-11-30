@@ -2,8 +2,8 @@ package com.tairanchina.csp.dew.jdbc;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.tairanchina.csp.dew.Dew;
+import com.tairanchina.csp.dew.core.basic.loading.DewLoadImmediately;
 import com.tairanchina.csp.dew.core.jdbc.DSManager;
-import com.tairanchina.csp.dew.core.loading.DewLoadImmediately;
 import com.tairanchina.csp.dew.jdbc.config.DewMultiDSConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +105,6 @@ public class DewDSAutoConfiguration implements DSManager {
                 register(dsName, entry.getValue().get("url"), ds);
             }
         }
-
     }
 
     private void register(String dsName, String jdbcUrl, DataSource dataSource) {

@@ -1,7 +1,5 @@
 package com.tairanchina.csp.dew.auth
 
-import java.util.concurrent.CountDownLatch
-
 import com.tairanchina.csp.dew.Dew
 import com.tairanchina.csp.dew.auth.domain.{Ident, Resource}
 import com.tairanchina.csp.dew.auth.dto.basic.{AccessTokenReq, AccessTokenResp}
@@ -13,7 +11,6 @@ import org.junit.runner.RunWith
 import org.junit.{Before, Test}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.context.annotation.ComponentScan
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.transaction.annotation.Transactional
 
@@ -21,17 +18,16 @@ import scala.collection.JavaConverters._
 
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[AuthApplication]), webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ComponentScan(basePackageClasses = Array(classOf[Dew], classOf[AuthTest]))
 @Transactional
 class AuthTest extends BasicTest {
 
   @Autowired
   var managementService: ManagementService = _
 
-  @Test
-  def startup(): Unit = {
-    new CountDownLatch(1).await()
-  }
+  /*  @Test
+    def startup(): Unit = {
+      new CountDownLatch(1).await()
+    }*/
 
   @Before
   def init(): Unit = {

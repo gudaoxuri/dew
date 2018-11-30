@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.tairanchina.csp.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>1.5.0-SNAPSHOT</version>
+        <version>1.5.0-Beta7</version>
         <relativePath>../../modules/parent-starter/</relativePath>
     </parent>
 
@@ -27,6 +27,10 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tairanchina.csp.dew</groupId>
+            <artifactId>test-starter</artifactId>
         </dependency>
     </dependencies>
 

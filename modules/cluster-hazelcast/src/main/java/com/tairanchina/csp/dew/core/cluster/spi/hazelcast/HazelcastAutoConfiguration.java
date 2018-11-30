@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnClass(HazelcastInstance.class)
 @EnableConfigurationProperties(HazelcastConfig.class)
+@ConditionalOnExpression("#{'${dew.cluster.cache}'=='hazelcast' || '${dew.cluster.mq}'=='hazelcast' || '${dew.cluster.lock}'=='hazelcast' || '${dew.cluster.map}'=='hazelcast' || '${dew.cluster.election}'=='hazelcast'}")
 public class HazelcastAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(HazelcastAutoConfiguration.class);
@@ -24,15 +25,20 @@ public class HazelcastAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnExpression("#{'${dew.cluster.cache}'=='hazelcast' || '${dew.cluster.mq}'=='hazelcast' || '${dew.cluster.dist}'=='hazelcast'}")
     public HazelcastAdapter hazelcastAdapter() {
         return new HazelcastAdapter(hazelcastConfig);
     }
 
     @Bean
-    @ConditionalOnExpression("'${dew.cluster.dist}'=='hazelcast'")
-    public HazelcastClusterDist hazelcastClusterDist(HazelcastAdapter hazelcastAdapter) {
-        return new HazelcastClusterDist(hazelcastAdapter);
+    @ConditionalOnExpression("'${dew.cluster.lock}'=='hazelcast'")
+    public HazelcastClusterLockWrap hazelcastClusterLock(HazelcastAdapter hazelcastAdapter) {
+        return new HazelcastClusterLockWrap(hazelcastAdapter);
+    }
+
+    @Bean
+    @ConditionalOnExpression("'${dew.cluster.map}'=='hazelcast'")
+    public HazelcastClusterMapWrap hazelcastClusterMap(HazelcastAdapter hazelcastAdapter) {
+        return new HazelcastClusterMapWrap(hazelcastAdapter);
     }
 
     @Bean

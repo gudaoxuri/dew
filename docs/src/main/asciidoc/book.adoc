@@ -1,5 +1,5 @@
 = Dew-Framework（轻量服务框架）
-v1.5.0-SNAPSHOT,2018-08-14
+v1.5.0-RC,2018-09-XX
 :doctype: book
 :encoding: utf-8
 :lang: zh-CN
@@ -11,13 +11,9 @@ ifndef::imagesdir[:imagesdir: ./images]
 
 include::../../../../README.adoc[]
 
-include::_chapter/guide.adoc[]
-
 include::_chapter/user-manual.adoc[]
 
 include::_chapter/best-practices.adoc[]
-
-include::_chapter/specification.adoc[]
 
 include::_chapter/develop.adoc[]
 

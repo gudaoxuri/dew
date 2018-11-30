@@ -14,7 +14,7 @@ public class AuthSDKConfig {
     public static final String HTTP_USER_TOKEN = "X-User-Token";
     public static final String HTTP_URI = "X-Uri";
 
-    private String serverUrl="";
+    private String serverUrl = "";
 
     private Set<String> whiteList = new HashSet<>();
 

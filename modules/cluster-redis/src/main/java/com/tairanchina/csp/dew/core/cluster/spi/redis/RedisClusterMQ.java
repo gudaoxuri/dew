@@ -1,11 +1,10 @@
 package com.tairanchina.csp.dew.core.cluster.spi.redis;
 
-import com.ecfront.dew.common.$;
 import com.tairanchina.csp.dew.core.cluster.ClusterMQ;
-import com.tairanchina.csp.dew.core.h2.H2Utils;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -19,8 +18,7 @@ public class RedisClusterMQ implements ClusterMQ {
     }
 
     @Override
-    public boolean publish(String topic, String message) {
-        logger.trace("[MQ] publish {}:{}", topic, message);
+    public boolean doPublish(String topic, String message) {
         redisTemplate.execute((RedisCallback<Void>) connection -> {
             connection.publish(topic.getBytes(), message.getBytes());
             return null;
@@ -29,24 +27,17 @@ public class RedisClusterMQ implements ClusterMQ {
     }
 
     @Override
-    public void subscribe(String topic, Consumer<String> consumer) {
+    public void doSubscribe(String topic, Consumer<String> consumer) {
         new Thread(() -> redisTemplate.execute((RedisCallback<Void>) connection -> {
-            connection.subscribe((message, pattern) -> {
-                try {
-                    String msg = new String(message.getBody(), "UTF-8");
-                    logger.trace("[MQ] subscribe {}:{}", topic, msg);
-                    consumer.accept(msg);
-                } catch (Exception e) {
-                    logger.error("Redis Subscribe error.", e);
-                }
-            }, topic.getBytes());
+            connection.subscribe((message, pattern) ->
+                            consumer.accept(new String(message.getBody(), StandardCharsets.UTF_8))
+                    , topic.getBytes());
             return null;
         })).start();
     }
 
     @Override
-    public boolean request(String address, String message) {
-        logger.trace("[MQ] request {}:{}", address, message);
+    public boolean doRequest(String address, String message) {
         redisTemplate.execute((RedisCallback<Void>) connection -> {
             connection.lPush(address.getBytes(), message.getBytes());
             return null;
@@ -56,25 +47,16 @@ public class RedisClusterMQ implements ClusterMQ {
 
     @Override
     public void doResponse(String address, Consumer<String> consumer) {
-        redisTemplate.execute((RedisCallback<Void>) connection -> {
-                try {
-                    while (!connection.isClosed()) {
-                        List<byte[]> messages = connection.bRPop(30, address.getBytes());
-                        if (messages == null) {
-                            continue;
-                        }
-                        String message = new String(messages.get(1), "UTF-8");
-                        logger.trace("[MQ] response {}:{}", address, message);
-                        String uuid = $.field.createUUID();
-                        H2Utils.createJob(address, uuid, "RUNNING", message);
-                        consumer.accept(message);
-                        H2Utils.deleteJob(uuid);
-                    }
-                } catch (Exception e) {
-                    logger.error("Redis Response error.", e);
+        new Thread(() -> redisTemplate.execute((RedisCallback<Void>) connection -> {
+            while (!connection.isClosed()) {
+                List<byte[]> messages = connection.bRPop(30, address.getBytes());
+                if (messages == null) {
+                    continue;
                 }
-                return null;
+                String message = new String(messages.get(1), StandardCharsets.UTF_8);
+                consumer.accept(message);
             }
-        );
+            return null;
+        })).start();
     }
 }

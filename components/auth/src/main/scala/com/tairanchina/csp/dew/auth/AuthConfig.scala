@@ -11,7 +11,7 @@ import scala.beans.BeanProperty
 class AuthConfig {
 
   @BeanProperty
-  var tokenExpireSeconds: Int = 60 * 60 * 24 * 30
+  var tokenExpireSec: Int = 60 * 60 * 24 * 30
   @BeanProperty
   var maxLoginErrorTimes: Int = 3
   @BeanProperty

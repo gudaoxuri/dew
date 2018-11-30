@@ -3,26 +3,31 @@ spring:
     name: sleuth-invoke1-example
   cloud:
     config:
+      discovery:
+        enabled: false
       enabled: false
   rabbitmq:
     host: localhost
     port: 5672
-    username: guest
-    password: guest
-    virtual-host: /li
+    username: user
+    password: 123456
 
 server:
   port: 8081
+
 eureka:
   client:
     serviceUrl:
-      defaultZone:  http://registry:123456@localhost:9999/eureka
-    eureka-server-read-timeout-seconds: 100
+      defaultZone: http://registry:123456@localhost:8000/eureka
 
+#eureka:
+#  client:
+#    enabled: false
+
+#sleuth-invoke2-example:
+#  ribbon:
+#    listOfServers: localhost:8082
 
 dew:
   cluster:
-    cache: redis
-    dist: redis # 可选 redis/hazelcast
-    mq: rabbit # 可选 redis/hazelcast/rabbit
-    election: eureka
+    mq: rabbit

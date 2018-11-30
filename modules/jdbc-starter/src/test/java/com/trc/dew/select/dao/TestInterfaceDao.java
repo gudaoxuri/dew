@@ -6,13 +6,13 @@ import com.tairanchina.csp.dew.jdbc.DewDao;
 import com.tairanchina.csp.dew.jdbc.annotations.ModelParam;
 import com.tairanchina.csp.dew.jdbc.annotations.Param;
 import com.tairanchina.csp.dew.jdbc.annotations.Select;
-import com.trc.dew.crud.entity.TestSelectEntity;
+import com.trc.dew.select.entity.TestSelectEntity;
 
 import java.util.List;
 import java.util.Map;
 
 
-public interface TestInterfaceDao extends DewDao<Integer,TestSelectEntity> {
+public interface TestInterfaceDao extends DewDao<Integer, TestSelectEntity> {
 
 
     @Select(value = "select * from `test_select_entity` where field_a= #{ fieldA }", entityClass = TestSelectEntity.class)
@@ -34,6 +34,6 @@ public interface TestInterfaceDao extends DewDao<Integer,TestSelectEntity> {
     TestSelectEntity getById(@Param("id") long id);
 
     @Select(value = "select * from test_select_entity where id= #{id}")
-    Map<String,Object> getMapById(@Param("id") long id);
+    Map<String, Object> getMapById(@Param("id") long id);
 
 }

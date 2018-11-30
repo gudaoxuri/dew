@@ -13,16 +13,16 @@ public class ExampleController {
     @GetMapping("/example")
     @HystrixCommand(fallbackMethod = "exampleFallback")
     public String example(@RequestParam("q") String q) throws InterruptedException {
-        Thread.sleep(new Random().nextBoolean()?0:4000);
+        Thread.sleep(new Random().nextBoolean() ? 0 : 4000);
         return "enjoy!";
     }
 
     @GetMapping("/hello")
     @HystrixCommand(fallbackMethod = "helloFallback")
     public String hello() throws Exception {
-        if(new Random().nextBoolean()){
+        if (new Random().nextBoolean()) {
             return "hello!";
-        }else{
+        } else {
             throw new Exception("error");
         }
     }

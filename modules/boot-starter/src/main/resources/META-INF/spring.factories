@@ -1,7 +1,8 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.tairanchina.csp.dew.core.DewStartup,\
+  com.tairanchina.csp.dew.DewStartup,\
+  com.tairanchina.csp.dew.Dew,\
+  com.tairanchina.csp.dew.core.web.error.ErrorAutoConfiguration,\
+  com.tairanchina.csp.dew.core.web.interceptor.InterceptorWebAutoConfiguration,\
+  com.tairanchina.csp.dew.core.basic.utils.convert.ConvertAutoConfiguration,\
   com.tairanchina.csp.dew.core.auth.AuthAutoConfiguration,\
-  com.tairanchina.csp.dew.core.interceptor.DewWebMvcConfigurer,\
-  com.tairanchina.csp.dew.core.utils.convert.ConvertAutoConfiguration,\
-  com.tairanchina.csp.dew.core.controller.ControllerAutoConfiguration,\
-  com.tairanchina.csp.dew.core.doc.DocProcessor
+  com.tairanchina.csp.dew.core.doc.DocAutoConfiguration

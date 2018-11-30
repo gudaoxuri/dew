@@ -19,7 +19,7 @@ public class AuthExampleController {
     private static Map<String, User> MOCK_USER_CONTAINER = new HashMap<>();
 
     @PostConstruct
-    public void init(){
+    public void init() {
         DewContext.setOptInfoClazz(OptInfoExt.class);
     }
 

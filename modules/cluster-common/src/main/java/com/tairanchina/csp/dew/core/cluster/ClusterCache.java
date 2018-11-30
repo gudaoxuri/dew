@@ -35,19 +35,6 @@ public interface ClusterCache {
 
     /**
      * 设置字符串值，带过期时间
-     * <p>
-     * 此方法弃用，参见
-     *
-     * @param key       key
-     * @param value     value
-     * @param expireSec 过期时间(seconds)，0表示永不过期
-     * @see #setex
-     */
-    @Deprecated
-    void set(String key, String value, long expireSec);
-
-    /**
-     * 设置字符串值，带过期时间
      *
      * @param key       key
      * @param value     value
@@ -221,7 +208,7 @@ public interface ClusterCache {
      *
      * @param key   key
      * @param field field
-     * @return field对应的value
+     * @return field对应的value，不存在时返回null
      */
     String hget(String key, String field);
 

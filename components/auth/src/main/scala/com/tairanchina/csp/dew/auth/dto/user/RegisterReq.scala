@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull
 import scala.beans.BeanProperty
 
 
-case class RegisterReq()  {
+case class RegisterReq() {
 
   @BeanProperty
   var name: String = _

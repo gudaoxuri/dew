@@ -1,38 +1,14 @@
-dew:
-  cluster:
-    cache: redis
-    dist: hazelcast
-    mq: hazelcast
-
 spring:
   application:
-    name: core-test
-  redis:
-    host: localhost
-    port: 6379
-    database: 0
-  hazelcast:
-    addresses: ["127.0.0.1"]
-  ignite:
-    addresses: ["127.0.0.1"]
-  mail:
-    host: smtp.163.com
-    username:
-    password:
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true
+    name: cloud-test
   cloud:
     config:
       discovery:
         enabled: false
+      enabled: false
 
 eureka:
   client:
     enabled: false
 
-performance-service.ribbon.listOfServers: localhost:8812
+#performance-service.ribbon.listOfServers: localhost:8812

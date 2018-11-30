@@ -15,7 +15,7 @@
     <name>Dew Parent Starter</name>
     <description>Dew 父工程</description>
     <packaging>pom</packaging>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.0-Beta7</version>
 
     <properties>
         <java.version>1.8</java.version>
@@ -26,23 +26,19 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
         <maven.deploy.skip>false</maven.deploy.skip>
-        <dew.version>1.5.0-SNAPSHOT</dew.version>
+        <dew.version>1.5.0-Beta7</dew.version>
         <dew-common.version>1.4.7</dew-common.version>
-        <aspectjrt.version>1.8.10</aspectjrt.version>
+        <spring-boot.version>1.5.13.RELEASE</spring-boot.version>
         <swagger.version>2.8.0</swagger.version>
-        <swagger-bootstrap-ui.version>1.7</swagger-bootstrap-ui.version>
-        <druid.version>1.1.5</druid.version>
+        <swagger-bootstrap-ui.version>1.8.5</swagger-bootstrap-ui.version>
         <mysql.version>5.1.42</mysql.version>
         <h2.version>1.4.197</h2.version>
         <embedded-redis.version>0.6</embedded-redis.version>
-        <spring-boot-admin.version>1.5.4</spring-boot-admin.version>
-        <sonar.host.url></sonar.host.url>
+        <spring-boot-admin.version>1.5.7</spring-boot-admin.version>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.version>3.3.0.603</sonar.version>
-        <api.file.name>index</api.file.name>
-        <mybatisplus-spring-boot-starter.version>1.0.5</mybatisplus-spring-boot-starter.version>
-        <mybatis-plus.version>2.3</mybatis-plus.version>
-        <micrometer.version>1.0.5</micrometer.version>
+        <micrometer.version>1.0.6</micrometer.version>
+        <sonar.host.url></sonar.host.url>
     </properties>
 
     <developers>
@@ -68,6 +64,10 @@
             <name>李正先</name>
             <email>hzlizx@tairanchina.com</email>
         </developer>
+        <developer>
+            <name>孙豫蕾</name>
+            <email>syl_527@163.com</email>
+        </developer>
     </developers>
 
     <licenses>
@@ -78,9 +78,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:https://github.com/tairangroup/dew-framework.git</connection>
-        <developerConnection>scm:git:https://github.com/tairangroup/dew-framework.git</developerConnection>
-        <url>https://github.com/tairangroup/dew-framework.git</url>
+        <connection>scm:git:https://github.com/gudaoxuri/dew-framework.git</connection>
+        <developerConnection>scm:git:https://github.com/gudaoxuri/dew-framework.git</developerConnection>
+        <url>https://github.com/gudaoxuri/dew-framework.git</url>
     </scm>
 
     <dependencyManagement>
@@ -88,15 +88,33 @@
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
-                <version>Edgware.SR3</version>
+                <version>Edgware.SR4</version>
                 <type>pom</type>
                 <scope>import</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.tomcat.embed</groupId>
+                        <artifactId>tomcat-embed-core</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
+            <!-- Basic -->
             <dependency>
                 <groupId>com.ecfront.dew</groupId>
                 <artifactId>common</artifactId>
                 <version>${dew-common.version}</version>
             </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+            </dependency>
+            <!-- Modules -->
             <dependency>
                 <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>boot-starter</artifactId>
@@ -118,23 +136,8 @@
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjrt</artifactId>
-                <version>${aspectjrt.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjweaver</artifactId>
-                <version>${aspectjrt.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.tairanchina.csp.dew</groupId>
-                <artifactId>auth</artifactId>
-                <version>${dew.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.tairanchina.csp.dew</groupId>
-                <artifactId>auth-sdk-starter</artifactId>
+                <artifactId>jdbc-starter</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <!-- Cluster -->
@@ -160,11 +163,6 @@
             </dependency>
             <dependency>
                 <groupId>com.tairanchina.csp.dew</groupId>
-                <artifactId>cluster-spi-ignite</artifactId>
-                <version>${dew.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>cluster-spi-eureka</artifactId>
                 <version>${dew.version}</version>
             </dependency>
@@ -173,31 +171,6 @@
                 <artifactId>cluster-spi-kafka</artifactId>
                 <version>${dew.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.tairanchina.csp.dew</groupId>
-                <artifactId>jdbc-starter</artifactId>
-                <version>${dew.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
-                <version>${druid.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <version>${h2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.github.kstyrc</groupId>
-                <artifactId>embedded-redis</artifactId>
-                <version>${embedded-redis.version}</version>
-            </dependency>
             <!-- Doc -->
             <dependency>
                 <groupId>io.springfox</groupId>
@@ -205,26 +178,32 @@
                 <version>${swagger.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-swagger-ui</artifactId>
-                <version>${swagger.version}</version>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>swagger-bootstrap-ui</artifactId>
+                <version>${swagger-bootstrap-ui.version}</version>
             </dependency>
+            <!-- Test -->
             <dependency>
                 <groupId>com.tairanchina.csp.dew</groupId>
                 <artifactId>test-starter</artifactId>
                 <version>${dew.version}</version>
                 <scope>test</scope>
             </dependency>
-            <!--Others-->
             <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatisplus-spring-boot-starter</artifactId>
-                <version>${mybatisplus-spring-boot-starter.version}</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring-boot.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus</artifactId>
-                <version>${mybatis-plus.version}</version>
+                <groupId>com.github.kstyrc</groupId>
+                <artifactId>embedded-redis</artifactId>
+                <version>${embedded-redis.version}</version>
+            </dependency>
+            <!-- Others -->
+            <dependency>
+                <groupId>com.tairanchina.csp.dew</groupId>
+                <artifactId>auth-sdk-starter</artifactId>
+                <version>${dew.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -254,14 +233,14 @@
         <profile>
             <id>release</id>
             <distributionManagement>
-                 <snapshotRepository>
-                     <id>oss</id>
-                     <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-                 </snapshotRepository>
-                 <repository>
-                     <id>oss</id>
-                     <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                 </repository>
+                <snapshotRepository>
+                    <id>oss</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                </snapshotRepository>
+                <repository>
+                    <id>oss</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
             </distributionManagement>
             <build>
                 <plugins>
@@ -340,176 +319,6 @@
             </build>
         </profile>
         <profile>
-            <id>doc</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.springframework.restdocs</groupId>
-                    <artifactId>spring-restdocs-mockmvc</artifactId>
-                    <version>1.2.1.RELEASE</version>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.20</version>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <spring.profiles.active>default</spring.profiles.active>
-                                <dew.doc.generate>true</dew.doc.generate>
-                                <dew.doc.outputDir>${project.basedir}/api-docs</dew.doc.outputDir>
-                                <dew.doc.swaggerDir>${project.build.directory}/swagger</dew.doc.swaggerDir>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>io.github.swagger2markup</groupId>
-                        <artifactId>swagger2markup-maven-plugin</artifactId>
-                        <version>1.3.1</version>
-                        <configuration>
-                            <swaggerInput>${project.build.directory}/swagger/swagger.json</swaggerInput>
-                            <outputDir>${project.build.directory}/asciidoc/generated</outputDir>
-                            <config>
-                                <swagger2markup.markupLanguage>ASCIIDOC</swagger2markup.markupLanguage>
-                                <swagger2markup.pathsGroupedBy>TAGS</swagger2markup.pathsGroupedBy>
-                                <swagger2markup.extensions.dynamicOverview.contentPath>
-                                    ${project.basedir}/src/docs/asciidoc/extensions/overview
-                                </swagger2markup.extensions.dynamicOverview.contentPath>
-                                <swagger2markup.extensions.dynamicDefinitions.contentPath>
-                                    ${project.basedir}/src/docs/asciidoc/extensions/definitions
-                                </swagger2markup.extensions.dynamicDefinitions.contentPath>
-                                <swagger2markup.extensions.dynamicPaths.contentPath>
-                                    ${project.basedir}/src/docs/asciidoc/extensions/paths
-                                </swagger2markup.extensions.dynamicPaths.contentPath>
-                                <swagger2markup.extensions.dynamicSecurity.contentPath>
-                                    ${project.basedir}src/docs/asciidoc/extensions/security/
-                                </swagger2markup.extensions.dynamicSecurity.contentPath>
-                                <swagger2markup.extensions.springRestDocs.snippetBaseUri>
-                                    ${project.build.directory}/asciidoc/snippets
-                                </swagger2markup.extensions.springRestDocs.snippetBaseUri>
-                                <swagger2markup.extensions.springRestDocs.defaultSnippets>true
-                                </swagger2markup.extensions.springRestDocs.defaultSnippets>
-                            </config>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>convertSwagger2markup</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.asciidoctor</groupId>
-                        <artifactId>asciidoctor-maven-plugin</artifactId>
-                        <version>1.5.5</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.asciidoctor</groupId>
-                                <artifactId>asciidoctorj-pdf</artifactId>
-                                <version>1.5.0-alpha.15</version>
-                            </dependency>
-                        </dependencies>
-                        <configuration>
-                            <sourceDirectory>${project.basedir}/api-docs/asciidoc</sourceDirectory>
-                            <sourceDocumentName>${api.file.name}.adoc</sourceDocumentName>
-                            <attributes>
-                                <doctype>book</doctype>
-                                <toc>left</toc>
-                                <toclevels>3</toclevels>
-                                <numbered></numbered>
-                                <hardbreaks></hardbreaks>
-                                <sectlinks></sectlinks>
-                                <sectanchors></sectanchors>
-                                <generated>${project.build.directory}/asciidoc/generated</generated>
-                            </attributes>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>output-html</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>process-asciidoc</goal>
-                                </goals>
-                                <configuration>
-                                    <backend>html5</backend>
-                                    <outputDirectory>${project.build.directory}/asciidoc/html</outputDirectory>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>output-pdf</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>process-asciidoc</goal>
-                                </goals>
-                                <configuration>
-                                    <backend>pdf</backend>
-                                    <outputDirectory>${project.build.directory}/asciidoc/pdf</outputDirectory>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.0.2</version>
-                        <executions>
-                            <execution>
-                                <id>copy-resources</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${project.basedir}/api-docs</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${project.build.directory}/asciidoc/html</directory>
-                                        </resource>
-                                        <resource>
-                                            <directory>${project.build.directory}/asciidoc/pdf</directory>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-            <repositories>
-                <repository>
-                    <id>central</id>
-                    <name>Central Repository</name>
-                    <url>https://repo.maven.apache.org/maven2</url>
-                </repository>
-                <repository>
-                    <id>jcenter-releases</id>
-                    <name>jcenter</name>
-                    <url>http://jcenter.bintray.com</url>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </repository>
-            </repositories>
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>central</id>
-                    <name>Central Repository</name>
-                    <url>https://repo.maven.apache.org/maven2</url>
-                </pluginRepository>
-                <pluginRepository>
-                    <id>jcenter-releases</id>
-                    <name>jcenter</name>
-                    <url>http://jcenter.bintray.com</url>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                </pluginRepository>
-            </pluginRepositories>
-        </profile>
-        <profile>
             <id>qa</id>
             <dependencies>
                 <dependency>
@@ -581,10 +390,6 @@
                 <checksumPolicy>warn</checksumPolicy>
             </snapshots>
         </repository>
-        <!--<repository>
-            <id>redhat-repo</id>
-            <url>https://maven.repository.redhat.com/ga</url>
-        </repository>-->
     </repositories>
 
 </project>

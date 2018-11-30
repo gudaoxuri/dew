@@ -7,18 +7,24 @@ import com.tairanchina.csp.dew.core.DewConfig;
 import com.tairanchina.csp.dew.core.DewContext;
 import com.tairanchina.csp.dew.core.auth.AuthAdapter;
 import com.tairanchina.csp.dew.core.auth.BasicAuthAdapter;
+import com.tairanchina.csp.dew.core.basic.fun.VoidExecutor;
+import com.tairanchina.csp.dew.core.basic.fun.VoidPredicate;
+import com.tairanchina.csp.dew.core.basic.loading.DewLoadImmediately;
+import com.tairanchina.csp.dew.core.basic.utils.NetUtils;
 import com.tairanchina.csp.dew.core.cluster.*;
-import com.tairanchina.csp.dew.core.fun.VoidExecutor;
-import com.tairanchina.csp.dew.core.fun.VoidPredicate;
 import com.tairanchina.csp.dew.core.jdbc.DS;
 import com.tairanchina.csp.dew.core.jdbc.DSManager;
-import com.tairanchina.csp.dew.core.loading.DewLoadImmediately;
-import com.tairanchina.csp.dew.core.utils.NetUtils;
+import com.tairanchina.csp.dew.core.notify.Notify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jackson.JacksonProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -27,41 +33,81 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+@EnableConfigurationProperties(DewConfig.class)
+@Configuration
 public class Dew {
 
     private static final Logger logger = LoggerFactory.getLogger(Dew.class);
 
     public static Cluster cluster = new Cluster();
+    public static Notify notify = null;
     public static ApplicationContext applicationContext;
     public static DewConfig dewConfig;
+
     public static AuthAdapter auth;
 
-    public Dew(String applicationName, DewConfig innerDewConfig, JacksonProperties jacksonProperties, ApplicationContext innerApplicationContext) throws IOException, ClassNotFoundException {
-        logger.info("Load Dew Object");
-        Dew.dewConfig = innerDewConfig;
-        Dew.Info.name = applicationName;
-        Dew.applicationContext = innerApplicationContext;
-        if (Dew.applicationContext.containsBean(innerDewConfig.getCluster().getCache() + "ClusterCache")) {
-            Dew.cluster.cache = (ClusterCache) Dew.applicationContext.getBean(innerDewConfig.getCluster().getCache() + "ClusterCache");
-        }
-        if (Dew.applicationContext.containsBean(innerDewConfig.getCluster().getDist() + "ClusterDist")) {
-            Dew.cluster.dist = (ClusterDist) Dew.applicationContext.getBean(innerDewConfig.getCluster().getDist() + "ClusterDist");
-        }
-        if (Dew.applicationContext.containsBean(innerDewConfig.getCluster().getMq() + "ClusterMQ")) {
-            Dew.cluster.mq = (ClusterMQ) Dew.applicationContext.getBean(innerDewConfig.getCluster().getMq() + "ClusterMQ");
-        }
-        if (Dew.applicationContext.containsBean(innerDewConfig.getCluster().getElection() + "ClusterElection")) {
-            Dew.cluster.election = (ClusterElection) Dew.applicationContext.getBean(innerDewConfig.getCluster().getElection() + "ClusterElection");
-        }
-        if (Dew.applicationContext.containsBean(DSManager.class.getSimpleName())) {
-            Dew.applicationContext.getBean(DSManager.class);
-        }
-        // Load Auth Adapter
-        auth = Dew.applicationContext.getBean(BasicAuthAdapter.class);
+    @Value("${spring.application.name:please-setting-this}")
+    private String applicationName;
+    @Value(("${spring.profiles.active:default}"))
+    private String profile;
+    @Value("${server.port:-1}")
+    private int serverPort;
+
+    @Autowired
+    private DewConfig injectDewConfig;
+    @Autowired
+    private ApplicationContext injectApplicationContext;
+    @Autowired(required = false)
+    private JacksonProperties jacksonProperties;
+
+    @PostConstruct
+    public void init() throws IOException, ClassNotFoundException {
+        logger.info("Load Auto Configuration : {}", this.getClass().getName());
+
+        logger.info("Load Dew basic info...");
+        Dew.dewConfig = injectDewConfig;
+        Dew.applicationContext = injectApplicationContext;
+        Info.name = applicationName;
+        Info.profile = profile;
+        Info.webPort = serverPort;
+        Info.instance = applicationName + "@" + Info.profile + "@" + Info.ip + ":" + serverPort;
+        Cluster.init(Info.name, Info.instance);
+
+        Dew.notify = new Notify();
+
         // Support java8 Time
         if (jacksonProperties != null) {
             jacksonProperties.getSerialization().put(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         }
+        // Load Auth Adapter
+        auth = Dew.applicationContext.getBean(BasicAuthAdapter.class);
+        logger.info("Use Auth Adapter:" + auth.getClass().getName());
+
+        logger.info("Load Dew cluster...");
+        if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getCache() + "ClusterCache")) {
+            Dew.cluster.cache = (ClusterCache) Dew.applicationContext.getBean(injectDewConfig.getCluster().getCache() + "ClusterCache");
+        }
+        if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getLock() + "ClusterLock")) {
+            Dew.cluster.lock = (ClusterLockWrap) Dew.applicationContext.getBean(injectDewConfig.getCluster().getLock() + "ClusterLock");
+        }
+        if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getMap() + "ClusterMap")) {
+            Dew.cluster.map = (ClusterMapWrap) Dew.applicationContext.getBean(injectDewConfig.getCluster().getMap() + "ClusterMap");
+        }
+        if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getMq() + "ClusterMQ")) {
+            Dew.cluster.mq = (ClusterMQ) Dew.applicationContext.getBean(injectDewConfig.getCluster().getMq() + "ClusterMQ");
+        }
+        if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getElection() + "ClusterElection")) {
+            Dew.cluster.election = (ClusterElectionWrap) Dew.applicationContext.getBean(injectDewConfig.getCluster().getElection() + "ClusterElection");
+        }
+        if (dewConfig.getCluster().getConfig().isHaEnabled()) {
+            Cluster.ha();
+        }
+
+        if (Dew.applicationContext.containsBean(DSManager.class.getSimpleName())) {
+            Dew.applicationContext.getBean(DSManager.class);
+        }
+
+        logger.info("Load Dew funs...");
         // Load Immediately
         Set<Class<?>> loadOrders = $.clazz.scan(Dew.class.getPackage().getName(), new HashSet<Class<? extends Annotation>>() {{
             add(DewLoadImmediately.class);
@@ -79,10 +125,14 @@ public class Dew {
     public static class Info {
         // 应用名称
         public static String name;
+        // 应用环境
+        public static String profile;
         // 应用主机IP
         public static String ip;
         // 应用主机名
         public static String host;
+        // 应用主机Web端口
+        public static int webPort;
         // 应用实例，各组件唯一
         public static String instance;
 
@@ -90,7 +140,6 @@ public class Dew {
             InetAddress inetAddress = NetUtils.getLocalAddress();
             ip = inetAddress.getHostAddress();
             host = inetAddress.getHostName();
-            instance = $.field.createUUID();
         }
 
     }

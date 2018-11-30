@@ -1,9 +1,9 @@
 package com.tairanchina.csp.dew.auth.domain
 
 import java.util
-import javax.persistence._
 
 import com.ecfront.dew.common.$
+import javax.persistence._
 
 import scala.beans.BeanProperty
 

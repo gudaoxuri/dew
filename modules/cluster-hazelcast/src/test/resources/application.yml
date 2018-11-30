@@ -1,0 +1,9 @@
+dew:
+  cluster:
+    lock: hazelcast
+    map: hazelcast
+    mq: hazelcast
+
+spring:
+  hazelcast:
+    addresses: ["127.0.0.1"]

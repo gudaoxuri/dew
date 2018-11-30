@@ -1,14 +1,12 @@
 package com.trc.dew.select;
 
 import com.ecfront.dew.common.Page;
-
 import com.tairanchina.csp.dew.Dew;
 import com.tairanchina.csp.dew.jdbc.DewDS;
-import com.trc.dew.crud.entity.TestSelectEntity;
 import com.trc.dew.select.dao.SystemConfigDao;
 import com.trc.dew.select.dao.TestInterfaceDao;
 import com.trc.dew.select.dto.ModelDTO;
-import com.trc.dew.select.entity.SystemConfig;
+import com.trc.dew.select.entity.TestSelectEntity;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,7 +23,6 @@ public class TestSelect {
 
     @Autowired
     private SystemConfigDao systemConfigDao;
-
 
     public void testAll() throws Exception {
         initialize();
@@ -86,8 +83,6 @@ public class TestSelect {
 
     private void testMulti() {
         // 加载entityclassinfo
-        List<TestSelectEntity> testSelectEntities = dao.findAll();
-        List<SystemConfig> systemConfigs = systemConfigDao.findAll();
         TestSelectEntity model = new TestSelectEntity();
         Page<TestSelectEntity> page = dao.queryByCustomPaging(model, 1L, 10);
         Assert.assertTrue(page != null);

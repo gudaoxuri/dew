@@ -16,7 +16,7 @@ turbine:
   instanceUrlSuffix: ${management.context-path}/hystrix.stream
   aggregator:
     clusterConfig: default
-  appConfig: hystrix-feign-example,hystrix-feign-example2
+  appConfig: hystrix-example
   clusterNameExpression: metadata['cluster']
 
 security:
@@ -30,11 +30,10 @@ eureka:
   instance:
     metadata-map:
       cluster: default
-    status-page-url-path: ${management.context-path}/info
-    health-check-url-path: ${management.context-path}/health
   client:
     serviceUrl:
-      defaultZone: # eureka addresss e.g. http://username:pwd@localhost:9999/eureka
+      defaultZone: http://registry:123456@localhost:8000/eureka
+
 management:
   security:
     enabled: false

@@ -1,13 +1,13 @@
 package com.tairanchina.csp.dew.auth.sdk;
 
-import com.tairanchina.csp.dew.core.dto.OptInfo;
+import com.tairanchina.csp.dew.core.auth.dto.OptInfo;
 
 import java.util.Map;
 
 public class TokenInfo extends OptInfo<TokenInfo> {
 
     private String name;
-    private Map<String,String> roles;
+    private Map<String, String> roles;
     private String tenantId;
 
     public String getName() {

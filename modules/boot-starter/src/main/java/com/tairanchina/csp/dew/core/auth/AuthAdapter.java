@@ -1,7 +1,7 @@
 package com.tairanchina.csp.dew.core.auth;
 
 import com.tairanchina.csp.dew.Dew;
-import com.tairanchina.csp.dew.core.dto.OptInfo;
+import com.tairanchina.csp.dew.core.auth.dto.OptInfo;
 
 import java.util.Optional;
 

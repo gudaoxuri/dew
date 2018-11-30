@@ -28,21 +28,10 @@ public class TestJDBC {
     @Autowired
     private TxService txService;
 
-
     @Autowired
     @Qualifier("test2JdbcTemplate")
     private JdbcTemplate jdbcTemplate2;
 
-
-    /**
-     * 测试没有配置多数据库的情况
-     * 在配置中注释掉multi-datasources:
-     */
-   /* @Test
-    public void testNotDynamic(){
-        int temp = Dew.ds().ds().queryForList("select * from basic_entity").size();
-        Assert.assertTrue(temp == 1);
-    }*/
     private void init() {
         ((DewDS) Dew.ds()).jdbc().execute("CREATE TABLE basic_entity\n" +
                 "(\n" +

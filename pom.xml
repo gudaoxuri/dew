@@ -6,9 +6,9 @@
 
     <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>build-starter</artifactId>
-    <name>Dew</name>
+    <name>Dew Build</name>
     <packaging>pom</packaging>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.0-Beta7</version>
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
@@ -22,43 +22,30 @@
         <module>modules/cluster-hazelcast</module>
         <module>modules/cluster-rabbit</module>
         <module>modules/cluster-eureka</module>
-        <module>modules/cluster-kafka</module>
         <module>modules/boot-starter</module>
-        <module>modules/cloud-starter</module>
-        <module>modules/jdbc-starter</module>
-        <module>modules/mybatis-starter</module>
         <module>modules/idempotent-starter</module>
+        <module>modules/jdbc-starter</module>
+        <module>modules/cloud-starter</module>
         <module>modules/test-starter</module>
+
         <module>components/registry</module>
         <module>components/config</module>
         <module>components/gateway</module>
         <module>components/monitor</module>
         <module>components/auth</module>
         <module>components/auth-sdk-starter</module>
-        <module>examples/mybatis-multi-example</module>
-        <module>examples/guide-petstore</module>
+
         <module>examples/bone-example</module>
         <module>examples/web-example</module>
-        <module>examples/jdbc-example</module>
-        <module>examples/cache-example</module>
         <module>examples/cloud-example</module>
-        <module>examples/hystrix-feign-example</module>
-        <module>examples/hystrix-feign-example2</module>
         <module>examples/cluster-example</module>
-        <module>examples/mybatisplus-example</module>
-        <module>examples/auth-example</module>
-        <module>examples/dubbo-example</module>
-        <module>examples/monitor-example</module>
-        <module>examples/hystrix-example</module>
         <module>examples/idempotent-example</module>
+        <module>examples/hystrix-example</module>
+        <module>examples/monitor-example</module>
+        <module>examples/auth-example</module>
+        <module>examples/jdbc-example</module>
         <module>examples/sleuth-invoke1-example</module>
         <module>examples/sleuth-invoke2-example</module>
-        <module>examples/sleuth-invoke3-example</module>
-        <module>examples/performance-test-api</module>
-        <module>examples/performance-test-service</module>
-        <!--
-       <module>examples/config-example</module>
-               -->
     </modules>
 
 </project>

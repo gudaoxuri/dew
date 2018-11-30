@@ -13,8 +13,6 @@ eureka:
     serviceUrl:
       defaultZone: http://registry:123456@localhost:9999/eureka
   instance:
-    status-page-url-path: ${management.context-path}/info
-    health-check-url-path: ${management.context-path}/health
     metadata-map:
       cluster: default
 
@@ -25,6 +23,3 @@ management:
 
 logging:
   path: ./logs
-dew:
-  metric:
-    enabled: true

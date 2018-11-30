@@ -1,12 +1,11 @@
 package com.tairanchina.csp.dew.auth.interceptor
 
-import javax.security.auth.message.AuthException
-import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
-
 import com.tairanchina.csp.dew.Dew
 import com.tairanchina.csp.dew.auth.sdk.AuthSDKConfig
 import com.tairanchina.csp.dew.auth.service.BasicService
-import com.tairanchina.csp.dew.core.controller.ErrorController
+import com.tairanchina.csp.dew.core.web.error.ErrorController
+import javax.security.auth.message.AuthException
+import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter
