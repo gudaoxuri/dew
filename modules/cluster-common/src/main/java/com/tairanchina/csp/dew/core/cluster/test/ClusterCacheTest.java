@@ -111,6 +111,15 @@ public class ClusterCacheTest {
         assert !cache.setBit("bit", 101, true);
         assert cache.getBit("bit", 101);
 
+
+        cache.flushdb();
+        cache.setIfAbsent("key", "Ture");
+        cache.setIfAbsent("key", "False");
+        assert cache.get("key").equals("Ture");
+
+        cache.hsetIfAbsent("hkey", "key", "Ture");
+        cache.hsetIfAbsent("hkey", "key", "False");
+        assert cache.hget("hkey", "key").equals("Ture");
     }
 
 }

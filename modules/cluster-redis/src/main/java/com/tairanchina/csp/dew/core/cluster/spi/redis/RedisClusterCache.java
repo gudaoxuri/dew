@@ -35,6 +35,11 @@ public class RedisClusterCache implements ClusterCache {
     }
 
     @Override
+    public void setIfAbsent(String key, String value) {
+        redisTemplate.opsForValue().setIfAbsent(key, value);
+    }
+
+    @Override
     public void setex(String key, String value, long expireSec) {
         redisTemplate.opsForValue().set(key, value, expireSec, TimeUnit.SECONDS);
     }
@@ -149,6 +154,11 @@ public class RedisClusterCache implements ClusterCache {
     @Override
     public void hset(String key, String field, String value) {
         redisTemplate.opsForHash().put(key, field, value);
+    }
+
+    @Override
+    public void hsetIfAbsent(String key, String field, String value) {
+        redisTemplate.opsForHash().putIfAbsent(key, field, value);
     }
 
     @Override

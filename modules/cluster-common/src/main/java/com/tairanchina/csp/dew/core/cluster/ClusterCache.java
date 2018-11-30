@@ -34,6 +34,14 @@ public interface ClusterCache {
     void set(String key, String value);
 
     /**
+     * 设置字符串值
+     *
+     * @param key   key
+     * @param value value
+     */
+    void setIfAbsent(String key, String value);
+
+    /**
      * 设置字符串值，带过期时间
      *
      * @param key       key
@@ -202,6 +210,16 @@ public interface ClusterCache {
      * @param value value
      */
     void hset(String key, String field, String value);
+
+    /**
+     * 设置Hash集合field对应的value
+     *
+     * @param key   key
+     * @param field field
+     * @param value value
+     */
+    void hsetIfAbsent(String key, String field, String value);
+
 
     /**
      * 获取Hash集合field对应的value
