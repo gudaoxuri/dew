@@ -1,6 +1,7 @@
 package com.tairanchina.csp.dew.core.cluster.spi.rabbit;
 
 import com.rabbitmq.client.*;
+import com.tairanchina.csp.dew.core.cluster.AbsClusterMQ;
 import com.tairanchina.csp.dew.core.cluster.ClusterMQ;
 import org.springframework.amqp.rabbit.connection.Connection;
 
@@ -9,7 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
-public class RabbitClusterMQ implements ClusterMQ {
+public class RabbitClusterMQ extends AbsClusterMQ {
 
     private RabbitAdapter rabbitAdapter;
 
@@ -63,7 +64,7 @@ public class RabbitClusterMQ implements ClusterMQ {
     }
 
     @Override
-    public void doSubscribe(String topic, Consumer<String> consumer) {
+    protected void doSubscribe(String topic, Consumer<String> consumer) {
         Channel channel = rabbitAdapter.getConnection().createChannel(false);
         try {
             channel.exchangeDeclare(topic, "fanout", true);
@@ -77,7 +78,7 @@ public class RabbitClusterMQ implements ClusterMQ {
     }
 
     @Override
-    public boolean doRequest(String address, String message) {
+    protected boolean doRequest(String address, String message) {
         return doRequest(address, message, true);
     }
 
@@ -177,7 +178,7 @@ public class RabbitClusterMQ implements ClusterMQ {
     }
 
     @Override
-    public void doResponse(String address, Consumer<String> consumer) {
+    protected void doResponse(String address, Consumer<String> consumer) {
         Channel channel = rabbitAdapter.getConnection().createChannel(false);
         try {
             channel.queueDeclare(address, true, false, false, null);

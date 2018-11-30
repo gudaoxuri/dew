@@ -15,7 +15,7 @@
     <name>Dew Parent Starter</name>
     <description>Dew 父工程</description>
     <packaging>pom</packaging>
-    <version>1.5.0-Beta7</version>
+    <version>1.5.0-Beta8</version>
 
     <properties>
         <java.version>1.8</java.version>
@@ -26,7 +26,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
         <maven.deploy.skip>false</maven.deploy.skip>
-        <dew.version>1.5.0-Beta7</dew.version>
+        <dew.version>1.5.0-Beta8</dew.version>
         <dew-common.version>1.4.7</dew-common.version>
         <spring-boot.version>1.5.13.RELEASE</spring-boot.version>
         <swagger.version>2.8.0</swagger.version>
