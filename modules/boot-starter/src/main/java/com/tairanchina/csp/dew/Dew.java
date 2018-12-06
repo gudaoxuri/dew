@@ -209,12 +209,13 @@ public class Dew {
             Enumeration<String> header = request.getHeaderNames();
             while (header.hasMoreElements()) {
                 String key = header.nextElement();
-                requestHeader.put(key.toLowerCase(), request.getHeader(key));
+                requestHeader.put(key, request.getHeader(key));
             }
             return getRealIP(requestHeader, request.getRemoteAddr());
         }
 
         public static String getRealIP(Map<String, String> requestHeader, String remoteAddr) {
+            requestHeader.forEach((k,v) -> requestHeader.put(k.toLowerCase(),v));
             if (requestHeader.containsKey("x-forwarded-for") && requestHeader.get("x-forwarded-for") != null && !requestHeader.get("x-forwarded-for").isEmpty()) {
                 return requestHeader.get("x-forwarded-for");
             }
