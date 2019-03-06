@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.tairanchina.csp.dew</groupId>
+        <artifactId>parent-starter</artifactId>
+        <version>2.0.0-Alpha</version>
+        <relativePath>../parent-starter</relativePath>
+    </parent>
+
+    <artifactId>boot-starter</artifactId>
+    <name>0.2.0 Dew Boot Starter</name>
+    <version>${dew.version}</version>
+    <description>Spring Boot 功能扩展</description>
+    <packaging>jar</packaging>
+
+    <properties>
+    </properties>
+
+    <dependencies>
+        <!-- Basic -->
+        <dependency>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
+        <!-- Cluster -->
+        <dependency>
+            <groupId>com.tairanchina.csp.dew</groupId>
+            <artifactId>cluster-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tairanchina.csp.dew</groupId>
+            <artifactId>cluster-spi-redis</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- Others -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>swagger-bootstrap-ui</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-commons</artifactId>
+            <version>${spring-cloud.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <!-- Test -->
+        <dependency>
+            <groupId>com.tairanchina.csp.dew</groupId>
+            <artifactId>cluster-common-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tairanchina.csp.dew</groupId>
+            <artifactId>test-starter</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

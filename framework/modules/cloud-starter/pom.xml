@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.tairanchina.csp.dew</groupId>
+        <artifactId>parent-starter</artifactId>
+        <version>2.0.0-Alpha</version>
+        <relativePath>../parent-starter</relativePath>
+    </parent>
+
+    <artifactId>cloud-starter</artifactId>
+    <name>0.2.1 Dew Cloud Starter</name>
+    <description>Spring Cloud 功能扩展</description>
+    <packaging>jar</packaging>
+
+    <properties>
+        <spring-cloud-kube.version>1.0.0.RELEASE</spring-cloud-kube.version>
+        <opentracing.version>1.0.2</opentracing.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.tairanchina.csp.dew</groupId>
+            <artifactId>boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-kubernetes-discovery</artifactId>
+            <version>${spring-cloud-kube.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-kubernetes-ribbon</artifactId>
+            <version>${spring-cloud-kube.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-config</artifactId>
+            <version>${spring-cloud.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+            <version>${spring-cloud.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+            <version>${spring-cloud.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-spring-jaeger-cloud-starter</artifactId>
+            <version>${opentracing.version}</version>
+        </dependency>
+
+    </dependencies>
+
+</project>

@@ -6,20 +6,21 @@
     <parent>
         <groupId>com.tairanchina.csp.dew</groupId>
         <artifactId>build-starter</artifactId>
-        <version>1.5.0-RC</version>
+        <version>2.0.0-Alpha</version>
     </parent>
 
     <artifactId>docs</artifactId>
     <packaging>pom</packaging>
-    <name>Dew Docs</name>
-    <description>Dew Docs are the Dew Framework document.</description>
+    <name>2.0.0 Dew Docs</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
+        <maven.compiler.encoding>${project.build.sourceEncoding}</maven.compiler.encoding>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
+
         <asciidoctorj.version>1.5.6</asciidoctorj.version>
         <asciidoctorj.diagram.version>1.5.4.1</asciidoctorj.diagram.version>
         <jruby.version>1.7.26</jruby.version>
@@ -28,9 +29,6 @@
     </properties>
 
     <build>
-        <!--https://github.com/asciidoctor/asciidoctor-maven-examples-->
-        <!--https://github.com/asciidoctor/asciidoctor-maven-plugin/blob/master/README_zh-CN.adoc-->
-        <!-- 默认命令，配置后可以直接使用mvn编译 -->
         <defaultGoal>process-resources</defaultGoal>
         <plugins>
             <plugin>

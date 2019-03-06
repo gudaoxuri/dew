@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: web-example
+
+server:
+  port: 80 # http端口号
+  tomcat:
+    max-threads: 1000
+
+dew:
+  basic:
+    name: web
+    version: 1.0
+    desc: desc
+    web-site: www.tairanchina.com
+    doc:
+      base-package: com.tairanchina # API文档路径
+
+management:
+  endpoints:
+    web:
+      base-path: /management
+      exposure:
+        include: '*'
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true

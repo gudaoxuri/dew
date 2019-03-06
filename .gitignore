@@ -1,6 +1,5 @@
 log/
 logs/
-*.log
 tmp/
 *.tmp
 *.bak
@@ -9,13 +8,14 @@ target/
 
 .cluster/
 
+**.db
+
 .mvn/
 mvnw
 mvnw.cmd
 
 .idea/
 out/
-.idea
 *.iws
 *.iml
 *.ipr

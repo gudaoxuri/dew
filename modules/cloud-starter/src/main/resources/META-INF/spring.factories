@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.tairanchina.csp.dew.core.CloudAutoConfiguration,\
-  com.tairanchina.csp.dew.core.logger.TraceAutoConfiguration,\
-  com.tairanchina.csp.dew.core.hystrix.NotifyAutoConfiguration

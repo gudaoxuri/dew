@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: dew-auth
+
+endpoints:
+  restart:
+    enabled: true
+
+logging:
+  level:
+    com.tairanchina.dew: DEBUG
+
+server:
+  port: 8080
+

@@ -2,6 +2,18 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 
 == 版本说明
 
+=== 2.0.0-RC(准备中)
+
+.Features
+* 升级到Spring Boot 2.x
+* 实现兼容Spring Cloud与Istio的部署、监控架构
+* 引入Devops流程
+
+.迁移指南（从1.5.0-RC到此版本）
+
+* 功能变更：移除了 ``dew-jdbc`` 模块
+
+
 === 1.5.0-RC
 
 .Features

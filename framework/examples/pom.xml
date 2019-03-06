@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.tairanchina.csp.dew</groupId>
+    <artifactId>build-example-starter</artifactId>
+    <name>0.4 Dew Example Build</name>
+    <packaging>pom</packaging>
+    <version>2.0.0-Alpha</version>
+
+    <properties>
+        <maven.install.skip>true</maven.install.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <sonar.skip>true</sonar.skip>
+    </properties>
+
+    <modules>
+        <module>bone-example</module>
+        <module>web-example</module>
+        <module>cluster-example</module>
+        <module>idempotent-example</module>
+        <module>auth-example</module>
+        <module>cloud-example</module>
+        <module>hystrix-example</module>
+        <module>tracing-invoke1-example</module>
+        <module>tracing-invoke2-example</module>
+    </modules>
+
+</project>

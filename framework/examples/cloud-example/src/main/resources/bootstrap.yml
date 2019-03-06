@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    config:
+      enabled: false
+  application:
+    name: cloud-example
+server:
+  port: 8081

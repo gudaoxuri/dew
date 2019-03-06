@@ -1,14 +1,25 @@
-== Dew-Framework
+[NOTE]
+====
+Master分支正在构建如下功能：
+
+. 升级到 Spring Boot 2.x
+. 全面容器化，以K8s为容器平台，兼容Spring Cloud与Service Mesh两类微服务体系
+. 支撑中间件优先使用CNCF下的产品，如使用 jaeger 代替 zipkin
+
+如需要存粹的Spring Cloud扩展请切换到 `1.5.0-RC` tag.
+====
+
+== Dew微服务体系
 
 image::https://img.shields.io/travis/gudaoxuri/dew.svg[link="https://travis-ci.org/gudaoxuri/dew"]
 image::https://api.codacy.com/project/badge/Grade/b27405dea94b4b4085324ae6107945ba["Codacy code quality", link="https://www.codacy.com/app/gudaoxuri/dew?utm_source=github.com&utm_medium=referral&utm_content=gudaoxuri/dew&utm_campaign=Badge_Grade"]
 image::https://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2",link="https://www.apache.org/licenses/LICENSE-2.0.txt"]
 
-对Spring Cloud/Boot的封装扩展、整合公司现有能力、提供最佳实践，做为基础服务框架，支撑公司新项目地研发。
+对Spring Boot的封装扩展，兼容Spring Cloud与Istio、整合公司现有能力、提供最佳实践，做为基础服务框架，支撑公司新项目地研发。
 
 [quote,]
 ____
-Dew [du:] 意为`露水`，希望此框架可以像晨间的露水一样透明、静谧、丰盈。让使用者尽量不要感知框架的存在，专注业务实现。
+Dew [du:] 意为`露水`，希望此体系可以像晨间的露水一样透明、静谧、丰盈。让使用者尽量不要感知Dew的存在，专注业务实现。
 ____
 
 === 设计理念
@@ -21,14 +32,28 @@ ____
 . 上手难度大，很多框架喜欢重复造轮子，做出来的与业界主流思想/标准格格不入，导致学习培训成本很高
 . 功能片面，不通用，服务框架讲求通用性，尽量让整个公司使用同一套规范以方便维护，但很多框架只实现了某些特定场景的功能，无法通用化
 . 维护成本高，尤其是对于完全自研的框架，往往需要专职人员维护
+. 与主流脱节，无法分享微服务化、容器化、服务网格化的红利
+. 缺乏一体化的支撑，有统一的框架，但没有提供研发、测试、部署的全流程支持
 
 ==== Dew架构思想
 
-上述问题是Dew框架必须面对的，应对的设计核心理念是：**基于成熟框架扩展** ，具体要做到：
+上述问题是Dew必须面对的，应对的设计核心理念是：
 
-. 简单容易，用最通用的、标准的、开发人员都熟悉的开发模型
-. 功能全面，尽量重用市场已有能力实现，减少框架自身的维护成本
+``扩展主流微服务框架 + 标准化DevOps流程``
+
+在微服务框架上具体要做到：
+
+. 简单，用最通用的、标准的、开发人员都熟悉的开发模型
+. 全面，尽量重用市场已有能力实现，减少框架自身的维护成本
 . 轻量，原则上不引入高侵入性的三方框架/类库
 . 可替换，只做扩展，尽量不修改基础框架代码，开发人员完全可以直接基于基础框架开发
+. 主流，整合流行的微服务框架
 
-实现上我们选择 `Spring Boot/Cloud` 这一业界主流框架。
+实现上我们选择 `Spring Boot` 这一业界主流框架，对上兼容`Spring Cloud` 与 `Istio`。
+
+在标准化DevOps流程上具体要做到：
+
+. CICD流程支持，自动化依赖管理、测试、质检、打包与发布
+. 全面容器化，所有环境均为容器方案
+
+实现上我们选择 `Gitlab CI` 为基础对其进行扩展。

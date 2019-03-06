@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: cloud-test
+  cloud:
+    config:
+      enabled: false
+
+#performance-service.ribbon.listOfServers: localhost:8812

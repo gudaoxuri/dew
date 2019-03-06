@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: tracing-invoke1-example
+  cloud:
+    config:
+      enabled: false
+    kubernetes:
+      ribbon:
+        enabled: false
+  rabbitmq:
+    host: rabbit.dew.env
+    port: 5672
+    username: user
+    password: 123456
+server:
+  port: 8081
+
+tracing-invoke2-example:
+  ribbon:
+    listOfServers: localhost:8082
+
+dew:
+  cluster:
+    mq: rabbit
+
+opentracing:
+  jaeger:
+    enabled: true
+    #    log-spans: false
+#    probabilistic-sampler:
+#      sampling-rate: 0.01
+    udp-sender:
+      host: 10.200.131.182
+      port: 6831
+  spring:
+    web:
+      enabled: true # 是否开启web跟踪，即项目自身暴露的web接口
+      client:
+        enabled: true # 是否开启web client跟踪，即resttemplate调用外部接口
