@@ -26,6 +26,7 @@
         <module>hystrix-example</module>
         <module>tracing-invoke1-example</module>
         <module>tracing-invoke2-example</module>
+        <module>auth-starter-example</module>
     </modules>
 
 </project>

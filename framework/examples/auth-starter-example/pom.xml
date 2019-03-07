@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.tairanchina.csp.dew</groupId>
+        <artifactId>parent-starter</artifactId>
+        <version>2.0.0-Alpha</version>
+        <relativePath>../../modules/parent-starter/</relativePath>
+    </parent>
+
+    <artifactId>auth-starter-example</artifactId>
+    <name>Dew Auth Starter Example</name>
+    <description>Dew Auth Starter Example</description>
+    <packaging>jar</packaging>
+
+    <properties>
+        <foundation.version>3.4.3-RC</foundation.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.tairanchina.csp.dew</groupId>
+            <artifactId>auth-sdk-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tairanchina.csp.foundation</groupId>
+            <artifactId>sdk-kernel-starter</artifactId>
+            <version>${foundation.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tairanchina.csp.foundation</groupId>
+            <artifactId>sdk-kernel</artifactId>
+            <version>3.4.4-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+</project>
