@@ -1,0 +1,176 @@
+=== 开发测试环境准备
+
+[IMPORTANT]
+====
+Kubernetes环境要求使用代理。
+
+详见 <<proxies>>
+====
+
+==== 环境要求
+
+基于本框架测试开发需要如下环境：
+
+|===
+|环境 |组件 |备注
+
+|RabbitMQ |cluster-rabbit |测试RabbitMQ
+|Kubernetes |tracing-invokeX-example |测试服务间调用
+|Opentracing Jaeger |tracing-invokeX-example |测试追踪日志
+|Prometheus、Grafana |web-example |测试Metrics
+|Fluentd、elasticsearch、kibana |web-example |测试日志采集
+|===
+
+==== 环境部署
+
+[source,bash]
+.Kubernetes安装
+----
+# 使用minikube
+
+# 各版本的安装见此
+# https://kubernetes.io/docs/tasks/tools/install-minikube/
+
+# 代理设置见此
+# https://github.com/kubernetes/minikube/blob/master/docs/http_proxy.md
+# !!!特别说明!!!
+# 以上说明有问题，export HTTP_PROXY或set HTTP_PROXY只会设置到宿主环境，但在vm环境不会带入，
+# 故代理的地址要直接写到 minikube start 的启动参数中
+# 代理地址不能写成127.0.0.1，vm中无法解析
+# windows 10 示例
+minikube start \
+    --registry-mirror=https://registry.docker-cn.com \
+    --vm-driver=hyperv --hyperv-virtual-switch=public --memory=4096 \
+    --docker-env=HTTP_PROXY=http://10.200.20.147:1080 \
+    --docker-env=HTTPS_PROXY=http://10.200.20.147:1080 \
+    --docker-env=NO_PROXY=localhost,127.0.0.1,10.96.0.0/12,192.168.99.1/24
+# 查询kubernetes IP
+minikube ip
+# 安装 dashboard
+minikube dashboard
+----
+
+[source,bash]
+.RabbitMQ安装
+----
+minikube ssh
+docker run -d --hostname rabbit --name rabbit \
+    -e RABBITMQ_DEFAULT_USER=dew \
+    -e RABBITMQ_DEFAULT_PASS=dew123456 \
+    -p 15672:15672 \
+    -p 25672:25672\
+    -p 5671:5671 \
+    -p 5672:5672 \
+    -p 4369:4369 \
+    rabbitmq:management
+
+# 访问页面
+# Visit: http://<minikube ip>:15672
+----
+
+[source,bash]
+.Opentracing Jaeger安装
+----
+minikube ssh
+docker run -d --name jaegertracing \
+    -p 5775:5775/udp \
+    -p 6831:6831/udp \
+    -p 6832:6832/udp \
+    -p 5778:5778 \
+    -p 16686:16686 \
+    -p 14268:14268 \
+    -p 9411:9411 \
+    jaegertracing/all-in-one:latest
+
+# 访问页面
+# Visit: http://<minikube ip>:16686
+----
+
+[source,bash]
+.Prometheus、Grafana安装
+----
+minikube ssh
+
+# 参考 https://prometheus.io/docs/prometheus/latest/getting_started/#configuring-prometheus-to-monitor-itself
+# 示例监控的是 web-example 工程，对应的配置: framework/examples/web-example/src/main/resources/application.yml
+# prometheus使用pull的方式，需要配置应用运行服务器的IP
+cat >>./prometheus.yml <<EOF
+scrape_configs:
+  - job_name: 'dew-web-example-actuator'
+    metrics_path: '/management/prometheus'
+    scrape_interval: 5s
+    static_configs:
+    - targets: ['10.200.20.147:80']
+EOF
+docker run -d --name prometheus \
+    -p 9090:9090 \
+    -v $PWD/prometheus.yml:/etc/prometheus/prometheus.yml \
+    prom/prometheus
+
+# 访问页面
+# Visit: http://<minikube ip>:9090
+
+docker run -d --name=grafana \
+    -p 3000:3000 \
+    -e GF_SECURITY_ADMIN_USER=dew \
+    -e GF_SECURITY_ADMIN_PASSWORD=dew123456 \
+    grafana/grafana
+
+# 访问页面
+# Visit: http://<minikube ip>:3000
+----
+
+[source,bash]
+.Fluentd、Elasticsearch、Kibana安装
+----
+TBD
+----
+
+==== 扩展尝试（可选）
+
+NOTE: Windows10请开启 ``WSL``，不支持WSL的Windows请安装 ``cygwin``
+
+[source,bash]
+.Windows10 WSL设置
+----
+# 开启WSL，使用linux环境操作kubernetes，以WSL ubuntu为例
+
+# windows下的用户名
+export WIN_USERNAME=i
+# 为kubernetes IP，使用 ``minikube ip`` 查询
+export KUBE_IP=10.200.20.220
+# 为linux添加代理
+export HTTP_PROXY=http://127.0.0.1:1080
+export HTTPS_PROXY=http://127.0.0.1:1080
+export NO_PROXY=localhost,127.0.0.1,10.96.0.0/12,192.168.99.1/24,$KUBE_IP
+
+# 安装kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl \
+&& chmod +x ./kubectl \
+&& sudo mv ./kubectl /usr/local/bin/kubectl
+
+# 配置kubernetes集群信息
+kubectl config set-cluster minikube \
+    --server=https://$KUBE_IP:8443 \
+    --certificate-authority=/mnt/c/Users/$WIN_USERNAME/.minikube/ca.crt
+kubectl config set-credentials minikube \
+    --client-certificate=/mnt/c/Users/$WIN_USERNAME/.minikube/client.crt \
+    --client-key=/mnt/c/Users/$WIN_USERNAME/.minikube/client.key
+kubectl config set-context minikube \
+    --cluster=minikube \
+    --user=minikube
+
+kubectl config use-context minikube
+kubectl get node
+----
+
+[source,bash]
+.Helm安装
+----
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
+helm init
+# 查询tiller是否部署完成
+kubectl -n kube-system get po | grep tiller
+helm list
+----
+
