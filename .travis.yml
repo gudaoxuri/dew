@@ -1,1 +1,1 @@
-language: javascript: mvn cobertura:coberturajdk:- oraclejdk8after_success:  - bash <(curl -s https://codecov.io/bash)  -notifications:  email:  - i@sunisle.org
+language: javascript: mvn clean compilejdk:  - oraclejdk8notifications:  email:    - i@sunisle.org
