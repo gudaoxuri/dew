@@ -1,0 +1,18 @@
+== 应用创建
+
+为当前应用创建namespace，对于Maven项目建议使用groupId为做库名:
+
+    kubectl create namespace com-tairanchina-csp-dew-example
+
+为应用创建Docker库，对于Maven项目建议使用groupId为做库名，库为私有
+
+为每个Docker库创建用户，指定权限为当前库的项目管理员
+
+创建Docker库密钥
+
+    kubectl -n com-tairanchina-csp-dew-example create secret docker-registry dew-registry \
+        --docker-server=harbor.dew.env \
+        --docker-username=dew \
+        --docker-password=Dew\!123456 \
+        --docker-email=dew@dew.env
+
