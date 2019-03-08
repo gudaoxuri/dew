@@ -37,6 +37,11 @@
             <version>${spring-cloud-kube.version}</version>
         </dependency>
         <dependency>
+            <groupId>io.opentracing.contrib</groupId>
+            <artifactId>opentracing-spring-jaeger-cloud-starter</artifactId>
+            <version>${opentracing.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
             <version>${spring-cloud.version}</version>
@@ -51,12 +56,6 @@
             <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
             <version>${spring-cloud.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.opentracing.contrib</groupId>
-            <artifactId>opentracing-spring-jaeger-cloud-starter</artifactId>
-            <version>${opentracing.version}</version>
-        </dependency>
-
     </dependencies>
 
 </project>
