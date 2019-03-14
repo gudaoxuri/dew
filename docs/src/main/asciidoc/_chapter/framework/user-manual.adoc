@@ -1,4 +1,4 @@
-== 使用手册
+=== 使用手册
 
 [IMPORTANT]
 .使用申明
@@ -16,7 +16,7 @@ NOTE: `Dew` 框架是对 ``Spring Boot/Cloud`` 的扩展，使用之前务必了
 
 IMPORTANT: 本手册只介绍``Dew``扩展的功能！
 
-=== 结构说明
+==== 结构说明
 
 ----
 此章节关联示例:bone-example
@@ -76,8 +76,7 @@ TIP: ``parent-starter`` 中已包含各模块的版本，引用模块依赖时�
 <2>	XConfig：当前服务的配置文件（Spring Cloud格式）
 <3>	XInitiator：当前服务启动初始化器，原则上所有初始化操作都应该从此类发起，如初始化脚本、定时任务等，以方便排错
 
-
-=== 功能模块
+==== 功能模块
 
 |===
 |模块名 |核心功能
@@ -90,19 +89,15 @@ TIP: ``parent-starter`` 中已包含各模块的版本，引用模块依赖时�
 |`cluster-redis` |集群能力-Redis实现
 |`cluster-hazelcast` |集群能力-Hazelcast实现
 |`cluster-rabbit` |集群能力-Rabbit实现
-|`cluster-eureka` |集群能力-Eureka实现
 |`test-starter` |Dew的单元测试封装
 |`config` |统一配置中心组件
-|`registry` |服务注册中心组件
-|`gateway` |服务网关组件
-|`monitor` |服务监控组件
 |`auth` |多租户的权限组件（Scala语言编写）
 |`<x>-example` |各类示例
 |===
 
-=== 核心功能
+==== 核心功能
 
-==== 常用工具集
+===== 常用工具集
 
 ``Dew`` 框架的常用工具由 ``Dew-Common`` 包提供（ https://github.com/gudaoxuri/dew-common ），功能如下：
 
@@ -138,7 +133,7 @@ TIP: ``parent-starter`` 中已包含各模块的版本，引用模块依赖时�
 
 TIP: 完整使用手册见 https://gudaoxuri.github.io/dew-common/
 
-==== 集群功能
+===== 集群功能
 
 ----
 此章节关联示例:cluster-example
@@ -150,13 +145,13 @@ TIP: 完整使用手册见 https://gudaoxuri.github.io/dew-common/
 各实现对应的支持如下：
 
 |====
-|功能|Redis|Hazelcast|Rabbit|Eureka
+|功能|Redis|Hazelcast|Rabbit
 
-|分布式缓存 | * | / | / | /
-|分布式Map |*|*|/|/
-|分布式锁|*|*|/|/
-|MQ|*|*|*|/
-|领导者选举|*|/|/|*
+|分布式缓存 | * | / | /
+|分布式Map |*|*|/
+|分布式锁|*|*|/
+|MQ|*|*|*
+|领导者选举|*|/|/
 |====
 
 [NOTE]
@@ -164,10 +159,9 @@ TIP: 完整使用手册见 https://gudaoxuri.github.io/dew-common/
 =====
 * Redis实现了所有功能，但其MQ上不适用于高可靠场景
 * 只有Rabbit的MQ支持跟踪日志（见跟踪日志章节）
-* Eureka只支持一个节点一个领导者，Redis支持领导者分类，即一个节点可设置不同的类别对应不同的领导者
 =====
 
-===== 使用
+====== 使用
 
 [source,xml]
 .依赖
@@ -188,11 +182,6 @@ TIP: 完整使用手册见 https://gudaoxuri.github.io/dew-common/
 <dependency>
     <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>cluster-spi-rabbit</artifactId>
-</dependency>
-<!--此实现需要引用 cloud-starter -->
-<dependency>
-    <groupId>com.tairanchina.csp.dew</groupId>
-    <artifactId>cluster-spi-eureka</artifactId>
 </dependency>
 ----
 
@@ -224,11 +213,9 @@ spring:
         addresses: [] # hazelcast地址，端口可选
 ----
 
-TIP: `eureka` 实现了领导者选择，必须为 `Spring Cloud` 工程。
-
 集群服务的使用入口统一为： `Dew.cluster.XX`
 
-===== 分布式缓存
+====== 分布式缓存
 
 TIP: 接口见：com.tairanchina.csp.dew.core.cluster.ClusterCache
 
@@ -249,7 +236,7 @@ assert null == Dew.cluster.cache.get("n_test");
 TIP: Dew的缓存默认只实现了String、List、Set、Hash等结构常用的，时间复杂度低的操作，
 如需要的操作Dew没有提供可使用Spring Boot Data Redis原生的``RedisTemplate<String,String>``
 
-===== 分布式Map
+====== 分布式Map
 
 TIP: 接口见：com.tairanchina.csp.dew.core.cluster.ClusterMap
 
@@ -264,7 +251,7 @@ mapObj.put("test", obj);
 assert "测试".equals(mapObj.get("test").a);
 ----
 
-===== 分布式锁
+====== 分布式锁
 
 TIP: 接口见：com.tairanchina.csp.dew.core.cluster.ClusterLock
 
@@ -288,7 +275,7 @@ lock.tryLockWithFun(0, 1000, () -> {
 });
 ----
 
-===== MQ
+====== MQ
 
 TIP: 接口见：com.tairanchina.csp.dew.core.cluster.ClusterMQ
 
@@ -325,7 +312,7 @@ MQ的HA（高可用）支持，默认MQ启用HA（可通过``dew.cluster.config.
 Dew的MQ仅在数据处理完成后才做commit，这限制了对同一个队列只能串行处理，
 MQ的HA开启后，您可以以多线程的方式消费消息，处理过程中如发生服务宕机重启后仍可从未处理完成的消息开始消费。
 
-===== 领导者选举
+====== 领导者选举
 
 TIP: 接口见：com.tairanchina.csp.dew.core.cluster.ClusterElection
 
@@ -341,80 +328,7 @@ if (electionFun1.isLeader()) {
 }
 ----
 
-==== 幂等处理
-
-----
-此章节关联示例:idempotent-example
-----
-
-支持HTTP和非HTTP幂等操作，对于HTTP操作，要求请求方在请求头或URL参数中加上操作ID标识，非HTTP操作由可自由指定操作类型和操作ID标识的来源。
-
-[source,xml]
-.依赖
-----
-<!--引入幂等支持-->
-<dependency>
-    <groupId>com.tairanchina.csp.dew</groupId>
-    <artifactId>idempotent-starter</artifactId>
-</dependency>
-----
-
-[source,yml]
-.配置
-----
-dew:
-  cluster:
-    cache: redis # 启用Redis支持
-  idempotent:
-    default-expire-ms: 3600000 # 设置默认过期时间，1小时
-    default-strategy: item # 设置默认策略，支持 bloom(Bloom Filter)和item(逐条记录)，目前只支持item
-    default-opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
-----
-
-[source,java]
-.HTTP操作
-----
-@GetMapping(xxx)
-// 启用幂等支持
-// 请求头部或参数加上__IDEMPOTENT_OPT_ID__ = xx
-@Idempotent
-public void test(xxx) {
-    // 业务操作
-    // ...
-    // 业务失败，在保证业务操作的原子性的情况下，在catch中取消幂等，并抛出异常
-    DewIdempotent.cancel();
-    // 手工确认
-    DewIdempotent.confirm();
-}
-----
-
-``Idempotent``注解说明：
-
-* optIdFlag：指定幂等操作ID标识，可以位于HTTP Header或请求参数中
-* expireMs：设置过期时间，单位毫秒
-* strategy：设置默认策略
-* needConfirm：设置是否需要显式确认，true时，需要进行显式确认操作: ``DewIdempotent.confirm() 或 DewIdempotent.confirm(String optType, String optId)`` 前者要求与请求入口在同一线程中
-
-[source,java]
-.非HTTP操作
-----
-// 初始化类型为transfer_a的幂等操作，需要手工确认，过期时间为1秒
-DewIdempotent.initOptTypeInfo("transfer_a", true, 1000, StrategyEnum.ITEM);
-// 第一次请求transfer_a类型下的xxxxxxx这个ID，返回不存在，表示可以下一步操作
-Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "xxxxxxx"));
-// 第二次请求transfer_a类型下的xxxxxxx这个ID，返回未确认，表示上次操作还在进行中
-Assert.assertEquals(StatusEnum.UN_CONFIRM, DewIdempotent.process("transfer_a", "xxxxxxx"));
-// 确认操作完成
-DewIdempotent.confirm("transfer_a", "xxxxxxx");
-// 第三次请求transfer_a类型下的xxxxxxx这个ID，返回已确认，但未过期，仍不能操作
-Assert.assertEquals(StatusEnum.CONFIRMED, DewIdempotent.process("transfer_a", "xxxxxxx"));
-// 延时1秒
-Thread.sleep(1000);
-// 再次请求transfer_a类型下的xxxxxxx这个ID，返回不存在（上次请求已过期），表示可以下一步操作
-Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "xxxxxxx"));
-----
-
-==== 统一响应
+===== 统一响应
 
 `Dew` 推荐使用 `协议无关的响应格式`，此格式在 `方法间调用` `非HTTP协议RPC` `MQ` 等数据交互场景做到真正的 `统一响应格式`。
 要求返回的格式为``Resp``对象，格式为：
@@ -452,7 +366,7 @@ public Resp<String> test(){
 但 `Resp.serverError("some message").fallback()` 会降级，返回http状态码为500，body为 同上。
 ====
 
-==== 消息通知
+===== 消息通知
 
 `Dew` 支持发送消息到钉钉或邮件，默认支持对未捕获异常及Hystrix错误的通知。
 
@@ -530,7 +444,7 @@ POST请求，Body格式为:
 调用正常需要返回200状态码
 ====
 
-==== 异常处理
+===== 异常处理
 
 `Dew` 会把程序没有捕获的异常统一上抛，同时框架提供了常用的异常检查：
 
@@ -556,7 +470,7 @@ dew:
         message: # 错误描述，不存在时使用实例级错误描述
 ----
 
-==== 数据验证
+===== 数据验证
 
 ``Dew``集成了``Spring validate`` 机制，支持针对 `URL` 及 `Bean` 的验证。
 
@@ -568,7 +482,7 @@ dew:
 * `Dew` 框架内置了 `CreateGroup` `UpdateGroup` 两个验证组，验证组仅是一个标识，可为任何java对象
 
 
-==== CORS支持
+===== CORS支持
 
 [source,yml]
 .配置
@@ -581,7 +495,7 @@ dew:
       allow-headers: # 允许头信息 x-requested-with,content-type
 ----
 
-==== 权限认证
+===== 权限认证
 
 ----
 此章节关联示例:auth-example
@@ -686,7 +600,7 @@ public Resp<Void> logout() {
 }
 ----
 
-==== 测试支持
+===== 测试支持
 
 良好的单元测试可以保证代码的高质量，单测的重要原则是内聚、无依赖，好的单测应该是"函数化"的——结果的变化只与传入参数有关。
 但实际上我们会的代码往往会与数据库、缓存、MQ等外部工具交互，这会使单测的结果不可控，通常的解决方案是使用Mock，但这无行中引入了单测撰写的成本，
@@ -720,9 +634,82 @@ spring:
     url: jdbc:h2:mem:test
 ----
 
+===== 幂等处理
+
+----
+此章节关联示例:idempotent-example
+----
+
+支持HTTP和非HTTP幂等操作，对于HTTP操作，要求请求方在请求头或URL参数中加上操作ID标识，非HTTP操作由可自由指定操作类型和操作ID标识的来源。
+
+[source,xml]
+.依赖
+----
+<!--引入幂等支持-->
+<dependency>
+    <groupId>com.tairanchina.csp.dew</groupId>
+    <artifactId>idempotent-starter</artifactId>
+</dependency>
+----
+
+[source,yml]
+.配置
+----
+dew:
+  cluster:
+    cache: redis # 启用Redis支持
+  idempotent:
+    default-expire-ms: 3600000 # 设置默认过期时间，1小时
+    default-strategy: item # 设置默认策略，支持 bloom(Bloom Filter)和item(逐条记录)，目前只支持item
+    default-opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
+----
+
+[source,java]
+.HTTP操作
+----
+@GetMapping(xxx)
+// 启用幂等支持
+// 请求头部或参数加上__IDEMPOTENT_OPT_ID__ = xx
+@Idempotent
+public void test(xxx) {
+    // 业务操作
+    // ...
+    // 业务失败，在保证业务操作的原子性的情况下，在catch中取消幂等，并抛出异常
+    DewIdempotent.cancel();
+    // 手工确认
+    DewIdempotent.confirm();
+}
+----
+
+``Idempotent``注解说明：
+
+* optIdFlag：指定幂等操作ID标识，可以位于HTTP Header或请求参数中
+* expireMs：设置过期时间，单位毫秒
+* strategy：设置默认策略
+* needConfirm：设置是否需要显式确认，true时，需要进行显式确认操作: ``DewIdempotent.confirm() 或 DewIdempotent.confirm(String optType, String optId)`` 前者要求与请求入口在同一线程中
+
+[source,java]
+.非HTTP操作
+----
+// 初始化类型为transfer_a的幂等操作，需要手工确认，过期时间为1秒
+DewIdempotent.initOptTypeInfo("transfer_a", true, 1000, StrategyEnum.ITEM);
+// 第一次请求transfer_a类型下的xxxxxxx这个ID，返回不存在，表示可以下一步操作
+Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "xxxxxxx"));
+// 第二次请求transfer_a类型下的xxxxxxx这个ID，返回未确认，表示上次操作还在进行中
+Assert.assertEquals(StatusEnum.UN_CONFIRM, DewIdempotent.process("transfer_a", "xxxxxxx"));
+// 确认操作完成
+DewIdempotent.confirm("transfer_a", "xxxxxxx");
+// 第三次请求transfer_a类型下的xxxxxxx这个ID，返回已确认，但未过期，仍不能操作
+Assert.assertEquals(StatusEnum.CONFIRMED, DewIdempotent.process("transfer_a", "xxxxxxx"));
+// 延时1秒
+Thread.sleep(1000);
+// 再次请求transfer_a类型下的xxxxxxx这个ID，返回不存在（上次请求已过期），表示可以下一步操作
+Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "xxxxxxx"));
+----
+
 === 工程化
 
-==== API文档
+===== API文档
 
 用于生成Asciidoc格式的离线API文档，可通过软件转换成HTML及PDF版本。
 
@@ -783,7 +770,7 @@ swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，�
 
 调用此接口后返回Asciidoc格式的文档内容，复制此内容到相应的转换工具中即可生成对应的HTTP或PDF文档。
 
-==== 代码质量检查
+===== 代码质量检查
 
 ``Dew`` 已集成 `Sonar` 插件，只需要在maven中配置 `sonar.host.url` 为目标地址，
 然后执行 `mvn clean verify sonar:sonar -P qa -Dsonar.login=<用户名> -Dsonar.password=<密码>` 即可。
@@ -792,10 +779,10 @@ TIP: 也可以设置 `sonar.forceAuthentication=false` ，但要注意安全管�
 
 TIP: 使用 `<maven.test.skip>true</maven.test.skip>` 可跳过特定模块的测试，`<sonar.skip>true</sonar.skip>` 可跳过特定模块的Sonar检查。
 
-==== 降级通知
+===== 降级通知
 
 ----
-此章节关联 `hystrix-feign-example` 示例
+此章节关联 `hystrix-example` 示例
 ----
 
 NOTE: 为能更及时的对服务异常做出处理， `dew` 增加邮件通知功能。
@@ -828,74 +815,12 @@ spring:
 ==== 跟踪日志
 
 ----
-此章节关联 `sleuth-invokeX-example` 示例
+此章节关联 `tracing-invokeX-example` 示例
 ----
 
-用于记录 `服务API调用` （追踪）日志到 `Slf4j`。
+用于记录 `服务API调用` （追踪）日志到 `Jaeger`。
 
-[source,yml]
-.开启追踪日志
-----
-dew:
-  cloud:
-    trace-log:
-        enabled: true # 默认为true
-----
+NOTE: 此功能由Devops流程涉及的Kubernetes环境自动完成。
 
-一次调用日志的查看，以 `ES` 为例，过滤条件是: logger:com.tairanchina.csp.dew.core.logger.TraceLogWrap & trace:<对应的traceID>
-
-==== `Spring Admin` 集成
-
-----
-此章节关联示例:monitor-example
-----
-
-`Dew` 集成了 `Spring Admin` ，封装成 `monitor` 组件， 示例 `monitor-example` 演示了如何与 `monitor` 交互。
-
-[source,yml]
-.`monitor` 关键配置
-----
-spring:
-  application:
-    name: monitor # 监控服务名称
-  boot:
-    admin:
-      routes:
-        endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream # 要统计的内容
-      turbine: # turbine集成配置
-        clusters: default # 集群名称
-        location: monitor # 聚合到的服务名称，这里要与 `spring.application.name` 相同
-
-turbine: # turbine配置
-  aggregator:
-    clusterConfig: default # 集群名称
-  appConfig: monitor-example # 要聚合的服务名称，需要把各个服务添加上去
-  clusterNameExpression: metadata['cluster']
-
-server:
-  port: # 端口号
-
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: # eureka 服务地址
-----
-
-[source,yml]
-.要监控的服务 关键配置
-----
-spring:
-  application:
-    name: monitor-example # 服务名称，必须在上文 `turbine.appConfig` 添加上去
-
-eureka:
-  client:
-    serviceUrl: # eureka 服务地址，必须和监控服务在同一集群中
-  instance:
-    metadata-map:
-      cluster: default # 集群名称
-
-management.security.enabled: false # 需要关闭安全管理，可通过IP来限制
-----
 
 

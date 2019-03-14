@@ -19,19 +19,17 @@ https://gudaoxuri.gitbook.io/microservices-architecture/
 
 == 架构 Framework
 
-include::_chapter/framework/prepare.adoc[]
+include::_chapter/framework/user-manual.adoc[]
 
-include::_chapter/user-manual.adoc[]
+include::_chapter/framework/develop.adoc[]
 
 include::_chapter/best-practices.adoc[]
-
-include::_chapter/develop.adoc[]
-
-include::_chapter/deploy.adoc[]
 
 include::_chapter/configuration.adoc[]
 
 == 流程 Devops
+
+
 
 include::../../../../CHANGELOG.adoc[]
 

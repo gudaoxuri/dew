@@ -1,0 +1,26 @@
+mvn -P k8s1 fabric8:undeploy \
+    -Ddew.namespace=$DEW_NAMESPACE
+
+mvn -P k8s1 clean package \
+    fabric8:build fabric8:push fabric8:resource fabric8:deploy \
+    -Dmaven.test.skip=true \
+    -Ddew.namespace=$DEW_NAMESPACE \
+    -Ddew.spring.profiles.active=$DEW_SPRING_PROFILE_ACTIVES \
+    -Ddew.docker.registry=$DEW_DOCKER_REGISTRY
+
+
+
+
+https://linuxhint.com/shared_folders_hypver-v_ubuntu_guest/
+
+
+
+
+
+    cat > ${CI_PROJECT_DIR}/chart/templates/service.yaml <<EOF
+
+  EOF
+
+    cat > ${CI_PROJECT_DIR}/chart/templates/ingress.yaml <<EOF
+
+  EOF
