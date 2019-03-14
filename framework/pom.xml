@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.tairanchina.csp.dew</groupId>
+    <artifactId>build-framework</artifactId>
+    <name>1 Dew Framework Build</name>
+    <packaging>pom</packaging>
+    <version>2.0.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.install.skip>true</maven.install.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <sonar.skip>true</sonar.skip>
+    </properties>
+
+    <modules>
+        <module>modules/parent-starter</module>
+        <module>modules/cluster-common</module>
+        <module>modules/cluster-common-test</module>
+        <module>modules/cluster-redis</module>
+        <module>modules/cluster-hazelcast</module>
+        <module>modules/cluster-rabbit</module>
+        <module>modules/boot-starter</module>
+        <module>modules/idempotent-starter</module>
+        <module>modules/cloud-starter</module>
+        <module>modules/test-starter</module>
+        <module>components/auth-sdk-starter</module>
+        <module>components/auth</module>
+        <module>components/config</module>
+    </modules>
+
+</project>

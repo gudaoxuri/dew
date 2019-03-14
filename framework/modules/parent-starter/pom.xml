@@ -12,10 +12,10 @@
 
     <groupId>com.tairanchina.csp.dew</groupId>
     <artifactId>parent-starter</artifactId>
-    <name>0.0.0 Dew Parent Starter</name>
+    <name>1.0.0 Dew Parent Starter</name>
     <description>Dew 父工程</description>
     <packaging>pom</packaging>
-    <version>2.0.0-Alpha</version>
+    <version>2.0.0-SNAPSHOT</version>
 
     <properties>
         <java.version>1.8</java.version>
@@ -25,11 +25,11 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
-
-        <finalName>${project.artifactId}</finalName>
         <maven.install.skip>false</maven.install.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
-        <dew.version>2.0.0-Alpha</dew.version>
+
+        <finalName>${project.artifactId}</finalName>
+        <dew.version>2.0.0-SNAPSHOT</dew.version>
 
         <spring-cloud.version>2.1.0.RELEASE</spring-cloud.version>
         <dew-common.version>1.4.9</dew-common.version>
@@ -48,16 +48,8 @@
             <organizationUrl>http://www.ecfront.com</organizationUrl>
         </developer>
         <developer>
-            <name>潘帅伟</name>
-            <email>hzpsw@tairanchina.com</email>
-        </developer>
-        <developer>
             <name>葛佳兴</name>
             <email>hzgjx@tairanchina.com</email>
-        </developer>
-        <developer>
-            <name>丁忠发</name>
-            <email>hzdzf@tairanchina.com</email>
         </developer>
         <developer>
             <name>李正先</name>

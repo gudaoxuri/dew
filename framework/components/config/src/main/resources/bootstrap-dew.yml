@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: config
   cloud:
     config:
       server:
@@ -15,27 +13,3 @@ spring:
               uri: # https://www.github.com/env/other1.git
           username: # git username
           password: # git pwd
-#endpoints:
-#  restart:
-#    enabled: true
-#  refresh:
-#    enabled: true
-server:
-  port: 9000
-
-encrypt:
-  key: # to support config server encryption
-
-security:
-  basic:
-    enabled: true
-  user:
-    name: # setting config server username
-    password: # setting config server password
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    serviceUrl:
-      defaultZone: # eureka addresss e.g. http://username:pwd@localhost:9999/eureka

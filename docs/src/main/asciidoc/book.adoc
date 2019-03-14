@@ -1,5 +1,5 @@
 = Dew（轻量微服务体系）
-v2.0.0-Alpha
+v2.0.0-SNAPSHOT
 :doctype: book
 :encoding: utf-8
 :lang: zh-CN
@@ -11,7 +11,13 @@ ifndef::imagesdir[:imagesdir: ./images]
 
 include::../../../../README.adoc[]
 
-== Framework
+== 架构 Architecture
+
+参见本书：
+
+https://gudaoxuri.gitbook.io/microservices-architecture/
+
+== 架构 Framework
 
 include::_chapter/framework/prepare.adoc[]
 
@@ -25,7 +31,7 @@ include::_chapter/deploy.adoc[]
 
 include::_chapter/configuration.adoc[]
 
-== Devops
+== 流程 Devops
 
 include::../../../../CHANGELOG.adoc[]
 

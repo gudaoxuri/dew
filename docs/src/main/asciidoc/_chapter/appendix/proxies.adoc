@@ -29,12 +29,13 @@ python get-pip.py
 pip install https://github.com/shadowsocks/shadowsocks/archive/master.zip -U
 # 可以开多个端口，密码请修改
 # method，加密算法选择参见 https://shadowsocks.org/en/spec/AEAD-Ciphers.html
+# 不要使用80 8080 808等Web服务常用端口
 cat >>/etc/shadowsocks.json <<EOF
 {
     "server":"0.0.0.0",
     "port_password": {
-        "8080": "123456",
-        "8081": "123456"
+        "4456": "123456",
+        "6788": "123456"
     },
     "local_port":1080,
     "timeout":600,

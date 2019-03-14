@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.tairanchina.csp.dew</groupId>
-    <artifactId>build</artifactId>
-    <name>0 Dew Build</name>
+    <artifactId>build-example</artifactId>
+    <name>3 Dew Example Build</name>
     <packaging>pom</packaging>
     <version>2.0.0-SNAPSHOT</version>
 
@@ -17,9 +17,15 @@
     </properties>
 
     <modules>
-        <module>framework</module>
-        <module>examples</module>
-        <module>docs</module>
+        <module>bone-example</module>
+        <module>web-example</module>
+        <module>cluster-example</module>
+        <module>idempotent-example</module>
+        <module>auth-example</module>
+        <module>cloud-example</module>
+        <module>hystrix-example</module>
+        <module>tracing-invoke1-example</module>
+        <module>tracing-invoke2-example</module>
     </modules>
 
 </project>

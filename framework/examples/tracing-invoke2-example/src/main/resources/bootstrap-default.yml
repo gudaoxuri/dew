@@ -1,3 +1,0 @@
-tracing-invoke1-example:
-  ribbon:
-    listOfServers: localhost:8081

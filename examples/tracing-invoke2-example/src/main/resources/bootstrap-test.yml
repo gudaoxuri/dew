@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    config:
+      enabled: false
+  rabbitmq:
+    host: 10.200.20.220
+    port: 5672
+    username: dew
+    password: dew123456
+
+logging:
+  level:
+    ROOT: INFO
+    com.tairanchina: DEBUG
+    org.springframework.jdbc.core: TRACE
+    io.jaegertracing.internal.reporters: OFF

@@ -7,12 +7,12 @@
     <parent>
         <groupId>com.tairanchina.csp.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>2.0.0-Alpha</version>
+        <version>2.0.0-SNAPSHOT</version>
         <relativePath>../parent-starter</relativePath>
     </parent>
 
     <artifactId>cluster-common-test</artifactId>
-    <name>0.1.1 Dew Cluster Common Test</name>
+    <name>1.1.1 Dew Cluster Common Test</name>
     <description>Dew 集群服务测试</description>
     <packaging>jar</packaging>
 

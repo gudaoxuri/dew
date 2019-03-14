@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: config
+  security:
+    user:
+      name: dew
+      password: Dew!123456
+
+server:
+  port: 8080
+
+encrypt:
+  key: sfosdfY22ddf

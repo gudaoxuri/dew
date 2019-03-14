@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: tracing-invoke2-example
+
+dew:
+  cluster:
+    mq: rabbit

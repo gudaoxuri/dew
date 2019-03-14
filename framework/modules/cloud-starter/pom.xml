@@ -7,12 +7,12 @@
     <parent>
         <groupId>com.tairanchina.csp.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>2.0.0-Alpha</version>
+        <version>2.0.0-SNAPSHOT</version>
         <relativePath>../parent-starter</relativePath>
     </parent>
 
     <artifactId>cloud-starter</artifactId>
-    <name>0.2.1 Dew Cloud Starter</name>
+    <name>1.2.1 Dew Cloud Starter</name>
     <description>Spring Cloud 功能扩展</description>
     <packaging>jar</packaging>
 
