@@ -1,0 +1,29 @@
+==== Dew Helm Chart : Spring Cloud Config
+
+本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/
+
+[source,bash]
+.使用
+----
+# 0. 添加库
+helm repo add helm-dew-spring-cloud-config https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/chart/dew-spring-cloud-config/
+
+# 1. 安装
+helm install --name dew-spring-cloud-config --namespace devops \
+    --set ingress.hosts={config.dew.ms} \ # 指定Host
+    .
+
+# 2. 测试（Kubernetes集群已安装Ingress controller并暴露80端口）
+curl http://dew:override@config.dew.ms/encrypt -d abc
+
+# 3. 修改配置，比如加入git设置
+kubectl -n devops edit cm custom-config
+----
+
+[source,bash]
+.发布
+----
+helm package .
+helm repo index .
+git add --all
+----

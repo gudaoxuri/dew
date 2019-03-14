@@ -1,0 +1,7 @@
+spring:
+  security:
+    user:
+      password: override
+
+encrypt:
+  key: dsffjsskeSwku^%&*&
