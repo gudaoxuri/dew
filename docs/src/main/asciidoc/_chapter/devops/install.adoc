@@ -1,243 +1,65 @@
-== 基础环境准备
+=== 测试、生产环境安装配置
 
-*以 Centos7 为例，5台 4核16G服务器，ssh免密互访、关闭防火墙（仅用于测试）、关闭swap、禁用SELINUX*
-
-|===
-|主机名 |IP |服务
-
-|test1.k8 | 10.200.131.18 | kube-apiserver
-                            kube-controller-manager
-                            kube-scheduler
-                            kube-proxy
-                            etcd
-                            coredns
-                            kube-flannel
-                            Helm Client & Helm Tiller
-                            gitlab
-|test2.k8s |10.200.131.179 | Helm Client
-|test3.k8s |10.200.131.180 | Helm Client
-|test4.k8s |10.200.131.181 | Helm Client
-|test5.k8s |db.dew.env | Helm Client Mysql PostgreSql Redis Mongo NFS
-|===
-
-[source,bash]
-----
-// 客户机添加host
-
-10.200.131.18 test1.k8s gitlab.dew.env
-10.200.131.179 test2.k8s harbor.dew.env notary.dew.env
-10.200.131.180 test3.k8s
-10.200.131.181 test4.k8s
-db.dew.env test5.k8s
-----
-
-安装DNS服务器(test1服务器)
-
-yum install -y dnsmasq
-systemctl enable dnsmasq
-systemctl start dnsmasq
-
-编辑各台服务器
-vi /etc/resolv.conf
-
-    nameserver 10.200.131.18
-
-kubectl -n kube-system edit cm coredns
-
-    data:
-      Corefile: |
-        ...
-        dew.env:53 {
-            errors
-            cache 30
-            proxy . 10.200.131.18
-        }
-
-
-=== 存储服务(test5服务器)
-
-*生产环境存储服务推荐非容器化部署*
-
-[WARNING]
+[IMPORTANT]
 ====
-本文仅用于实验，只做单节点，缺少计算、存储、网络的高可用及安全相关的配置
+本文会给出使用代理与不使用代理的安装、配置方式，但强烈推荐使用代理方式，详见 <<proxies>> 。
 ====
 
-==== PostgreSql
+*以 Centos7 为例，做好ssh免密互访、关闭防火墙、关闭swap、禁用SELINUX*
 
 [source,bash]
 ----
-wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm
-rpm -Uvh pgdg-redhat96-9.6-3.noarch.rpm
-yum install -y postgresql96-server
-/usr/pgsql-9.6/bin/postgresql96-setup initdb
-
-vi /var/lib/pgsql/9.6/data/postgresql.conf
-
-    listen_addresses='*'
-
-vi /var/lib/pgsql/9.6/data/pg_hba.conf
-
-    host  all  all 0.0.0.0/0 md5
-
-systemctl enable postgresql-9.6.service
-systemctl start postgresql-9.6.service
-
-su - postgres
-psql -U postgres
-
-    ALTER USER postgres WITH PASSWORD 'Dew!123456';
-
+systemctl stop firewalld.service
+systemctl disable firewalld.service
+swapoff -a
+sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config
 ----
 
-==== Redis
+.服务列表
+|===
+|主机名 |IP |服务 | 备注
+
+|devops | 10.200.10.10 | Gitlab | Gitlab及其CI/CD独立一台服务器部署，实际环境应该做HA
+|middleware | 10.200.10.11 | Docker、RabbitMQ、PostgreSql、Redis、NFS、dnsmasq | 各类中间件，实际环境应该做HA
+|k8s0 | 10.200.10.12 | Docker、kubernetes master、Helm |
+|k8s1 | 10.200.10.13 | Docker、kubernetes node |
+|k8s2 | 10.200.10.14 | Docker、kubernetes node |
+|k8s3 | 10.200.10.15 | Docker、kubernetes node |
+|k8s4 | 10.200.10.16 | Docker、kubernetes node |
+|…… | …… | Docker、kubernetes node |
+|===
 
 [source,bash]
+.各节点Host
 ----
-yum install -y epel-release
-yum -y install redis
-vi /etc/redis.conf
+# 除middleware外的各节点
 
-    // 注释
-    # bind 127.0.0.1
-    // 开启密码
-    requirepass Dew!123456
-
-systemctl start redis
-----
-
-==== NFS
-
-[source,bash]
-----
-yum install -y nfs-utils
-mkdir -p /data/nfs
-chmod 755 /data/nfs
-
-mkdir -p /data/nfs/d{0..9}
-
-vi /etc/exports
-
-    /data/nfs/d0     *(rw,sync,no_root_squash,no_all_squash)
-    /data/nfs/d1     *(rw,sync,no_root_squash,no_all_squash)
-    /data/nfs/d2     *(rw,sync,no_root_squash,no_all_squash)
-    /data/nfs/d3     *(rw,sync,no_root_squash,no_all_squash)
-    /data/nfs/d4     *(rw,sync,no_root_squash,no_all_squash)
-    /data/nfs/d5     *(rw,sync,no_root_squash,no_all_squash)
-    /data/nfs/d6     *(rw,sync,no_root_squash,no_all_squash)
-    /data/nfs/d7     *(rw,sync,no_root_squash,no_all_squash)
-    /data/nfs/d8     *(rw,sync,no_root_squash,no_all_squash)
-    /data/nfs/d9     *(rw,sync,no_root_squash,no_all_squash)
-
-systemctl enable rpcbind
-systemctl enable nfs-server
-systemctl start rpcbind
-systemctl start nfs-server
-
-showmount -e localhost
-
-// 在Kubernetes安装后创建10个PV
-for i in {0..9}; do
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv00${i}
-  labels:
-    pv: pv00${i}
-spec:
-  capacity:
-    storage: 50Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
-  nfs:
-    path: /data/nfs/d${i}
-    server: db.dew.env
-EOF
-done
-
-----
-
-
-=== Gitlab安装(test1服务器)
-
-TIP: https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package
-
-[source,bash]
-----
-curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
-yum install -y gitlab-ce
-
-vi /etc/gitlab/gitlab.rb
-
-// 按需修改 https://docs.gitlab.com/omnibus/settings/
-// 如 external_url 'http://gitlab.dew.env'
-
-gitlab-ctl reconfigure
-
-// 浏览器访问并修改root密码
-
-// 安装 gitlab runner，在完成helm安装后
-helm repo add gitlab https://charts.gitlab.io
-helm fetch --untar gitlab/gitlab-runner
-cd gitlab-runner
-
-vi templates/role-binding.yaml
-
-    # 添加一个账号
-    - kind: ServiceAccount
-      name: default
-      namespace: "{{ .Release.Namespace }}"
-
-vi templates/configmap.yaml
-
-
-    cat >>/home/gitlab-runner/.gitlab-runner/config.toml <<EOF
-            [[runners.kubernetes.volumes.pvc]]
-              name = "gitlab-runner-cache"
-              mount_path = "{{ .Values.runners.cache.cachePath }}"
-            [[runners.kubernetes.volumes.host_path]]
-              name = "docker-socket"
-              mount_path = "/var/run/docker.sock"
-    EOF
-
-    # Start the runner
-
-
-
-cat <<EOF | kubectl apply -f -
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: gitlab-runner-cache
-  namespace: devops
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 50Gi
-  selector:
-    matchLabels:
-      pv: pv009
+cat >>/etc/hosts <<EOF
+10.200.10.10 devops
+10.200.10.11 middleware
+10.200.10.12 k8s0
+10.200.10.13 k8s1
+10.200.10.14 k8s2
+10.200.10.15 k8s3
+10.200.10.16 k8s4
 EOF
 
-helm install --name dew-gitlab-runner --namespace devops \
-    --set gitlabUrl=http://gitlab.dew.env/ \
-    --set runnerRegistrationToken=NzmmsGbMtQgywre9oFXZ \
-    --set concurrent=20 \
-    --set rbac.create=true \
-    --set rbac.clusterWideAccess=true \
-    --set runners.tags=general \
-    --set runners.cache.cachePath=/opt/cache \
-    --set runners.privileged=true \
-    .
+# middleware节点和客户端节点
+
+cat >>/etc/hosts <<EOF
+10.200.10.10 devops gitlab.dew.ms
+10.200.10.11 middleware rabbitmq.dew.ms redis.dew.ms nfs.dew.ms postgre.dew.ms
+10.200.10.12 k8s0
+10.200.10.13 k8s1 harbor.dew.ms notary.dew.ms dashboard.dew.ms es.dew.ms jaeger.dew.ms kibana.dew.ms prometheus.dew.ms grafana.dew.ms
+10.200.10.14 k8s2
+10.200.10.15 k8s3
+10.200.10.16 k8s4
+EOF
 ----
 
-=== Docker
 
-==== 安装(所有服务器)
+==== docker
 
 TIP: https://kubernetes.io/docs/setup/cri/#docker
 
@@ -271,20 +93,25 @@ EOF
 
 mkdir -p /etc/systemd/system/docker.service.d
 
+# 添加代理
+cat >>/etc/systemd/system/docker.service.d/http-proxy.conf <<EOF
+[Service]
+Environment="HTTP_PROXY=http://<代理host>:<代理端口>" "HTTPS_PROXY=http://<代理host>:<代理端口>" "NO_PROXY=localhost,127.0.0.1,dew.ms"
+EOF
+
 systemctl daemon-reload
 systemctl restart docker
+systemctl enable docker.service
 ----
 
-=== Kubernetes
-
-==== 安装(所有服务器)
+==== kubernetes
 
 TIP: https://kubernetes.io/docs/setup/independent/install-kubeadm/
 
 [source,bash]
+.安装
 ----
-
-// 使用阿里云镜像
+# 使用阿里云镜像
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
@@ -310,65 +137,72 @@ yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 systemctl enable --now kubelet
 ----
 
-==== Master配置(test1服务器)
-
 TIP: https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/
 
 [source,bash]
+.Master配置
 ----
-// 后续会用到
+# 安装Git，后续会用到
 yum install -y git
 
-// 通过image-repository 及 --kubernetes-version 避免被墙
+# 初始化Kubernetes，二选一，使用代理方式
+kubeadm init \
+    --kubernetes-version v1.13.4 \
+    --pod-network-cidr=10.244.0.0/16
+
+# 初始化Kubernetes，二选一，不使用代理方式，通过image-repository 及 --kubernetes-version 避免被墙
 kubeadm init \
     --image-repository registry.aliyuncs.com/google_containers \
-    --kubernetes-version v1.13.3 \
+    --kubernetes-version v1.13.4 \
     --pod-network-cidr=10.244.0.0/16
-// 记录上述操作输出中的kubeadm join ，e.g. kubeadm join 10.200.131.18:6443 --token i3i7qw.2gst6kayu1e8ezlg --discovery-token-ca-cert-hash sha256:cabc90823a8e0bcf6e3bf719abc569a47c186f6cfd0e156ed5a3cd5a8d85fab0
+
+# 记录上述操作输出中的kubeadm join
+# e.g. kubeadm join 10.200.131.18:6443 --token i3i7qw.2gst6kayu1e8ezlg --discovery-token-ca-cert-hash sha256:cabc90823a8e0bcf6e3bf719abc569a47c186f6cfd0e156ed5a3cd5a8d85fab0
 
 mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
 
-// 查看一下集群状态
+# 查看集群状态
 kubectl get cs
 
-// 安装flannel
+# 安装flannel
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
 
-// 都为Running后表示完成
+# 都为Running后表示完成
 kubectl get pods --all-namespaces
 ----
 
-==== Node配置(除test1外的所有服务器)
+[NOTE]
+.Master做为Node
+====
+默认情况下 master 不会做为 node 节点，可通过此命令强制启用（不推荐）
+``kubectl taint nodes --all node-role.kubernetes.io/master-``
+====
 
 TIP: https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/
 
 [source,bash]
+.Node配置
 ----
-// 执行上一步输出的 kubeadm join ...
+# 执行上一步输出的 kubeadm join ...
 
-// 这一步一定要做
-从master上cp ~/.kube/config 到各个节点
-
-// 完成后在master上执行情况如下（以1.13.3版本为例）
+# 完成后在master上执行情况如下（以1.13.4版本为例）
 kubectl get no
 NAME        STATUS     ROLES    AGE   VERSION
-test1.k8s   Ready   master   11m   v1.13.3
-test2.k8s   Ready   <none>   70s   v1.13.3
-test3.k8s   Ready   <none>   52s   v1.13.3
-test4.k8s   Ready   <none>   43s   v1.13.3
-test5.k8s   Ready   <none>   34s   v1.13.3
+test1.k8s   Ready   master   11m   v1.13.4
+test2.k8s   Ready   <none>   70s   v1.13.4
+test3.k8s   Ready   <none>   52s   v1.13.4
+test4.k8s   Ready   <none>   43s   v1.13.4
+test5.k8s   Ready   <none>   34s   v1.13.4
 ----
 
-==== Helm安装
+==== helm
 
 TIP: https://docs.helm.sh/using_helm/#installing-helm
 
 [source,bash]
 ----
-
-// test1服务器
 
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
 
@@ -395,19 +229,216 @@ EOF
 
 helm init --service-account tiller
 
+# 不使用代理方式，需要修改镜像
 kubectl set image deployment/tiller-deploy tiller=registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.12.3 -n kube-system
 
 kubectl get pod -n kube-system -l app=helm
-
-// 其它服务器只要安装helm client即可
-curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
 ----
 
-==== NGINX Ingress Controller安装(test1服务器)
+==== dns
 
 [source,bash]
 ----
-// 使用如下方式将80 443暴露出来
+# 在middleware节点上执行安装
+yum install -y dnsmasq
+systemctl enable dnsmasq
+systemctl start dnsmasq
+
+# 编辑各节点，加上middleware节点的IP
+vi /etc/resolv.conf
+-
+nameserver 10.200.10.11
+-
+
+# 编辑Kubernetes的DNS，加上dew.ms的代理
+kubectl -n kube-system edit cm coredns
+-
+data:
+  Corefile: |
+    ...
+    dew.ms:53 {
+        errors
+        cache 30
+        proxy . 10.200.10.11
+    }
+-
+----
+
+==== nfs
+
+[source,bash]
+----
+yum install -y nfs-utils
+mkdir -p /data/nfs
+chmod 755 /data/nfs
+
+mkdir -p /data/nfs/gitlab
+
+vi /etc/exports
+
+    /data/nfs/gitlab     *(rw,sync,no_root_squash,no_all_squash)
+
+systemctl enable rpcbind
+systemctl enable nfs-server
+systemctl start rpcbind
+systemctl start nfs-server
+
+showmount -e localhost
+----
+
+==== postgreSql
+
+[source,bash]
+----
+wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm
+
+rpm -Uvh pgdg-redhat96-9.6-3.noarch.rpm
+yum install -y postgresql96-server
+
+/usr/pgsql-9.6/bin/postgresql96-setup initdb
+
+vi /var/lib/pgsql/9.6/data/postgresql.conf
+-
+listen_addresses='*'
+-
+
+vi /var/lib/pgsql/9.6/data/pg_hba.conf
+-
+host  all  all 0.0.0.0/0 md5
+-
+
+systemctl enable postgresql-9.6.service
+systemctl start postgresql-9.6.service
+
+su - postgres
+psql -U postgres
+-
+ALTER USER postgres WITH PASSWORD 'Dew!123456';
+-
+----
+
+==== redis
+
+[source,bash]
+----
+yum install -y epel-release
+yum -y install redis
+vi /etc/redis.conf
+-
+# 注释
+# bind 127.0.0.1
+# 开启密码
+requirepass Dew!123456
+-
+systemctl start redis
+----
+
+==== gitlab
+
+TIP: https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package
+
+[source,bash]
+----
+curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+yum install -y gitlab-ce
+
+# 按需修改，可修改说明见: https://docs.gitlab.com/omnibus/settings/
+vi /etc/gitlab/gitlab.rb
+-
+external_url 'http://gitlab.dew.ms'
+...
+-
+
+gitlab-ctl reconfigure
+
+# 浏览器访问并修改root密码
+
+# 安装 gitlab runner，Helm方式，在k8s0节点上执行
+helm repo add gitlab https://charts.gitlab.io
+helm fetch --untar gitlab/gitlab-runner
+cd gitlab-runner
+
+# 添加账号绑定关系
+vi templates/role-binding.yaml
+-
+    - kind: ServiceAccount
+      name: default
+      namespace: "{{ .Release.Namespace }}"
+-
+
+# 添加PVC，使用DooD方式
+# 注意添加的位置在 “# Start the runner” 前
+# DooD方式由于直接使用宿主机的Docker，存在一定的安全风险，但DinD模式下Kubernetes无法很好地处理镜像缓存，导致每次都要全量拉取
+# 详见 https://docs.gitlab.com/runner/executors/kubernetes.html#using-docker-in-your-builds
+vi templates/configmap.yaml
+-
+    cat >>/home/gitlab-runner/.gitlab-runner/config.toml <<EOF
+            [[runners.kubernetes.volumes.pvc]]
+              name = "gitlab-runner-cache"
+              mount_path = "{{ .Values.runners.cache.cachePath }}"
+            [[runners.kubernetes.volumes.host_path]]
+              name = "docker-socket"
+              mount_path = "/var/run/docker.sock"
+    EOF
+    # Start the runner
+-
+
+# 创建PV
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv_gitlab
+  labels:
+    pv: pv_gitlab
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /data/nfs/gitlab
+    server: nfs.dew.ms
+EOF
+
+# 创建PVC
+cat <<EOF | kubectl apply -f -
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: gitlab-runner-cache
+  namespace: devops
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  selector:
+    matchLabels:
+      pv: pv_gitlab
+EOF
+
+# runnerRegistrationToken 需要从gitlab页面上获取
+# 特别说明的是这里定义了cachePath，使用PV
+helm install --name dew-gitlab-runner --namespace devops \
+    --set gitlabUrl=http://gitlab.dew.ms/ \
+    --set runnerRegistrationToken=<...> \
+    --set concurrent=20 \
+    --set rbac.create=true \
+    --set rbacWideAccess=true \
+    --set runners.tags=general \
+    --set runners.cache.cachePath=/opt/cache \
+    --set runners.privileged=true \
+    .
+----
+
+==== nginx Ingress Controller
+
+[source,bash]
+----
+# 使用如下方式将80 443暴露出来
 helm install stable/nginx-ingress --name dew-nginx --namespace ingress-nginx \
     --set controller.kind=DaemonSet \
     --set controller.hostNetwork=true \
@@ -415,7 +446,7 @@ helm install stable/nginx-ingress --name dew-nginx --namespace ingress-nginx \
     --set controller.metrics.enabled=true
 ----
 
-=== harbor安装(test1服务器)
+==== harbor
 
 TIP: https://github.com/goharbor/harbor-helm
 
@@ -425,14 +456,15 @@ git clone https://github.com/goharbor/harbor-helm
 cd harbor-helm
 git checkout 1.0.0
 
-// 创建Postgres数据库
-
+# 创建Postgres数据库
+-
 CREATE DATABASE  registry;
 CREATE DATABASE  clair;
 CREATE DATABASE  notary_server;
 CREATE DATABASE  notary_signer;
+-
 
-// 创建3个PV
+# 创建3个PV
 for i in {0..2}; do
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
@@ -442,28 +474,30 @@ metadata:
   namespace: devops
 spec:
   capacity:
-    storage: 50Gi
+    storage: 100Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Recycle
   nfs:
     path: /data/nfs/d${i}
-    server: 10.200.131.182
+    server: nfs.dew.ms
 EOF
 done
 
+# TBD 使用PVC
+
 helm install --name dew-harbor --namespace devops \
-    --set externalURL=https://harbor.dew.env \
+    --set externalURL=https://harbor.dew.ms \
     --set harborAdminPassword=Dew\!12345 \
-    --set expose.ingress.hosts.core=harbor.dew.env \
-    --set expose.ingress.hosts.notary=notary.dew.env \
+    --set expose.ingress.hosts.core=harbor.dew.ms \
+    --set expose.ingress.hosts.notary=notary.dew.ms \
     --set database.type=external \
-    --set database.external.host=10.200.131.182 \
+    --set database.external.host=postgre.dew.ms \
     --set database.external.port=5432 \
     --set database.external.username=postgres \
     --set database.external.password=Dew\!123456 \
     --set redis.type=external \
-    --set redis.external.host=10.200.131.182 \
+    --set redis.external.host=redis.dew.ms \
     --set redis.external.port=6379 \
     --set redis.external.password=Dew\!123456 \
     --set redis.external.coreDatabaseIndex=10 \
@@ -472,150 +506,32 @@ helm install --name dew-harbor --namespace devops \
     --set redis.external.chartmuseumDatabaseIndex=13\
     .
 
-// 初始用户名/密码 admin/Harbor12345
+# 初始用户名/密码 admin/Harbor12345
 
-// 访问 https://harbor.dew.env 并创建名为 test 的仓库
+# 访问 https://harbor.dew.ms
 
-//// 可以不做
-// 获取证书
+# 获取证书
 kubectl -n devops get secrets/dew-harbor-harbor-ingress -o jsonpath="{.data.ca\.crt}" | base64 --decode
 
-// 以下操作在每台服务上执行
+# 以下操作在每台服务上执行
 
-// 添加host
-
-    10.200.131.179 test2.k8s harbor.dew.env notary.dew.env
-
-mkdir -p /etc/docker/certs.d/harbor.dew.env
-cat <<EOF > /etc/docker/certs.d/harbor.dew.env/ca.crt
+mkdir -p /etc/docker/certs.d/harbor.dew.ms
+cat <<EOF > /etc/docker/certs.d/harbor.dew.ms/ca.crt
 <上一步获取的证书>
 EOF
 
 systemctl daemon-reload
 systemctl restart docker
 
-// 用户名/密码 admin/Dew!12345
-docker login harbor.dew.env -u admin -p Dew!12345
+# 登录，用户名/密码 admin/Dew!12345
+docker login harbor.dew.ms -u admin -p Dew!12345
 
-// 测试
-docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.1 harbor.dew.env/test/pause:3.1
-docker push harbor.dew.env/test/pause:3.1
-////
-
+# 测试
+docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.1 harbor.dew.ms/test/pause:3.1
+docker push harbor.dew.ms/test/pause:3.1
 ----
 
-=== 创建DewPipeline Image
-
-包含： docker v18 , open-jdk v8 , maven v3.6.0
-
-[source,dockerfile]
-.DockerFile : dew-native-client
-----
-FROM docker:18
-
-ARG HOME=/root
-
-RUN apk add --no-cache curl
-
-# ----------------- Add Kubectl
-
-ARG KUBE_VERSION=1.13.3
-
-RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/v$KUBE_VERSION/bin/linux/amd64/kubectl \
-    && chmod +x ./kubectl && mv ./kubectl /usr/local/bin/kubectl \
-    && mkdir -p $HOME/.kube
-
-# ----------------- Add Helm
-
-ARG HELM_VERSION=2.12.3
-
-RUN curl -LO https://kubernetes-helm.storage.googleapis.com/helm-v$HELM_VERSION-linux-amd64.tar.gz \
-    && tar -zxvf helm-v$HELM_VERSION-linux-amd64.tar.gz \
-    && mv linux-amd64/helm /usr/local/bin/helm \
-    && rm -rf helm-v$HELM_VERSION-linux-amd64.tar.gz \
-    && rm -rf linux-amd64
-
-CMD ["sh"]
-----
-
-[source,bash]
-.dew-native-client 打包&测试
-----
-docker build -t harbor.dew.env/public/dew-native-client:1.0 .
-
-// 获取 kube config
-echo $(cat ~/.kube/config | base64) | tr -d " "
-
-docker run -it harbor.dew.env/dew-native-client:1.0
-
-    echo -n $KUBE_CONFIG | base64 -d > $HOME/.kube/config
-
-    kubectl version
-    helm list
-
-docker push harbor.dew.env/public/dew-native-client:1.0
-----
-
-[source,dockerfile]
-.DockerFile : dew-devops
-----
-FROM harbor.dew.env/public/dew-native-client:1.0
-
-# ----------------- Add open-jdk from https://github.com/docker-library/openjdk/blob/d93be18f4f2d5e8457169cac00e559d953b6028e/8/jdk/alpine/Dockerfile
-ENV LANG C.UTF-8
-RUN { \
-		echo '#!/bin/sh'; \
-		echo 'set -e'; \
-		echo; \
-		echo 'dirname "$(dirname "$(readlink -f "$(which javac || which java)")")"'; \
-	} > /usr/local/bin/docker-java-home \
-	&& chmod +x /usr/local/bin/docker-java-home
-ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
-ENV PATH $PATH:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openjdk/bin
-
-ENV JAVA_VERSION 8u191
-ENV JAVA_ALPINE_VERSION 8.191.12-r0
-
-RUN set -x \
-	&& apk add --no-cache \
-		openjdk8="$JAVA_ALPINE_VERSION" \
-	&& [ "$JAVA_HOME" = "$(docker-java-home)" ]
-
-# ----------------- Add maven from https://github.com/carlossg/docker-maven/blob/05f4802aa5c253dcf75fe967c6f45b3fb1e2f26e/jdk-8-alpine/Dockerfile
-RUN apk add --no-cache curl tar bash procps
-
-ARG MAVEN_VERSION=3.6.0
-ARG USER_HOME_DIR="/root"
-ARG SHA=fae9c12b570c3ba18116a4e26ea524b29f7279c17cbaadc3326ca72927368924d9131d11b9e851b8dc9162228b6fdea955446be41207a5cfc61283dd8a561d2f
-ARG BASE_URL=https://apache.osuosl.org/maven/maven-3/${MAVEN_VERSION}/binaries
-
-RUN mkdir -p /usr/share/maven /usr/share/maven/ref \
-  && curl -fsSL -o /tmp/apache-maven.tar.gz ${BASE_URL}/apache-maven-${MAVEN_VERSION}-bin.tar.gz \
-  && echo "${SHA}  /tmp/apache-maven.tar.gz" | sha512sum -c - \
-  && tar -xzf /tmp/apache-maven.tar.gz -C /usr/share/maven --strip-components=1 \
-  && rm -f /tmp/apache-maven.tar.gz \
-  && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
-
-ENV MAVEN_HOME /usr/share/maven
-ENV MAVEN_CONFIG "$USER_HOME_DIR/.m2"
-
-CMD ["sh"]
-----
-
-[source,bash]
-.dew-devops 打包&测试
-----
-docker build -t harbor.dew.env/public/dew-devops:1.0 .
-
-docker run -it -e MAVEN_OPTS=-Dmaven.repo.local=/opt/cache/.m2/repository harbor.dew.env/dew-devops:1.0
-
-    java -version
-    mvn -version
-
-docker push harbor.dew.env/public/dew-devops:1.0
-----
-
-=== dashboard安装(test1服务器)
+==== dashboard
 
 [source,bash]
 ----
@@ -630,68 +546,154 @@ metadata:
 type: Opaque
 EOF
 
+# 安装，不使用代理方式需要加上 --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kubernetes-dashboard-amd64
 helm install stable/kubernetes-dashboard --name dew-dashboard --namespace kube-system \
-    --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kubernetes-dashboard-amd64 \
-    --set rbac.clusterAdminRole=true \
+    --set rbacAdminRole=true \
     --set ingress.enabled=true \
     --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/backend-protocol"="HTTPS" \
-    --set ingress.hosts={dashboard.dew.env} \
-    --set ingress.tls[0].hosts={dashboard.dew.env},ingress.tls[0].secretName=kubernetes-dashboard-certs
+    --set ingress.hosts={dashboard.dew.ms} \
+    --set ingress.tls[0].hosts={dashboard.dew.ms},ingress.tls[0].secretName=kubernetes-dashboard-certs
 
-
-// 获取Token
+# 获取Token
 kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep dew-dashboard-kubernetes-dashboard | awk '{print $1}')
 
-// 使用Firefox访问
+# 使用Firefox访问
 ----
 
-=== prometheus+grafana安装(test1服务器)
+==== elasticsearch
+
+TIP: https://github.com/helm/charts/tree/master/stable/elasticsearch
 
 [source,bash]
 ----
-helm install stable/prometheus --name dew-prometheus --namespace devops \
-    --set Master.AdminUser=dew \
-    --set Master.AdminPassword=Dew\!12345 \
-    --set Master.JenkinsAdminEmail=i@sunisle.org \
-    --set Master.HostName=jenkins.dew.env
+# TBD 使用PVC
 
+helm install --name dew-elasticsearch stable/elasticsearch --namespace devops \
+    --set image.tag="6.6.1" \
+    --set cluster.name=dew-elasticsearch \
+    --set client.ingress.enabled=true \
+    --set client.ingress.user=elasticsearch \
+    --set client.ingress.password=Dew\!123456 \
+    --set client.ingress.hosts={es.dew.ms} \
+    --set master.exposeHttp=true \
+    --set master.persistence.enabled=true \
+    --set master.persistence.size=200Gi \
+    --set data.exposeHttp=true \
+    --set data.persistence.enabled=true \
+    --set data.persistence.size=200Gi
 ----
 
-=== fluentd+elasticsearch+kibana安装(test1服务器)
+==== kibana
+
+TIP: https://github.com/helm/charts/tree/master/stable/kibana
 
 [source,bash]
 ----
+# TBD 使用PVC
 
+# TBD 安全认证
+
+helm install stable/kibana --name dew-kibana --namespace devops \
+    --set image.tag="6.6.1" \
+    --set env."ELASTICSEARCH_URL"="http://dew-elasticsearch-client:9200" \
+    --set service.internalPort=5601 \
+    --set ingress.enabled=true \
+    --set ingress.hosts={kibana.dew.ms} \
+    --set-string ingress.annotations."kubernetes\.io/tls-acme"="true" \
+    --set ingress.tls[0].hosts={kibana.dew.ms} \
+    --set ngress.tls[0].secretName=kibana-certs \
+    --set dashboardImport.xpackauth.enabled=true \
+    --set dashboardImport.xpackauth.username=admin \
+    --set dashboardImport.xpackauth.password=Dew\!123456 \
+    --set dashboardImport.dashboards."k8s"="https://raw.githubusercontent.com/monotek/kibana-dashboards/master/k8s-fluentd-elasticsearch.json" \
+    --set serviceAccount.create=true \
+    --set serviceAccountName=kibana \
+    --set plugins.enabled=true \
+    --set plugins.reset=true \
+    --set persistentVolumeClaim.enabled=true \
+    --set persistentVolumeClaim.size=10Gi \
+    --set securityContext.enabled=true \
+    --set securityContext.allowPrivilegeEscalation=true
 ----
 
+==== jaeger
 
-=== jaeger安装(test1服务器)
+TIP: https://github.com/jaegertracing/jaeger-operator
 
 [source,bash]
 ----
+kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/crds/jaegertracing_v1_jaeger_crd.yaml
+curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/service_account.yaml \
+    | sed "s/namespace: observability/namespace: devops/g" \
+    | kubectl create -f -
+curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/service_account.yaml \
+    | sed "s/namespace: observability/namespace: devops/g" \
+    | kubectl create -f -
+curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/role.yaml \
+    | sed "s/namespace: observability/namespace: devops/g" \
+    | kubectl create -f -
+curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/role_binding.yaml \
+    | sed "s/namespace: observability/namespace: devops/g" \
+    | kubectl create -f -
+curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/operator.yaml \
+    | sed "s/namespace: observability/namespace: devops/g" \
+    | kubectl create -f -
 
+cat <<EOF | kubectl apply -n devops -f -
+apiVersion: jaegertracing.io/v1
+kind: Jaeger
+metadata:
+  name: jaeger
+spec:
+  strategy: production
+  storage:
+    type: elasticsearch
+    options:
+      es:
+        server-urls: http://dew-elasticsearch-client:9200
+EOF
+
+cat <<EOF | kubectl -n devops apply -f -
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: jaeger-prod-query
+spec:
+  rules:
+    - host: jaeger.dew.ms
+      http:
+        paths:
+          - backend:
+              serviceName: jaeger-query
+              servicePort: 16686
+            path: /
+EOF
+
+# 删除
+kubectl delete jaeger --all -n devops
+kubectl delete crd jaegers.io.jaegertracing
 ----
 
-==== prometheus安装(test1服务器)
+==== fluentd
+
+TIP: https://github.com/kiwigrid/helm-charts/tree/master/charts/fluentd-elasticsearch
+      https://kiwigrid.github.io/
 
 [source,bash]
 ----
+helm repo add kiwigrid https://kiwigrid.github.io
 
+# 不使用代理要加上  --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/fluentd-elasticsearch
+helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace devops \
+    --set elasticsearch.host=dew-elasticsearch-client \
+    --set elasticsearch.logstash_prefix=dew \
+    --set prometheusRule.enabled=true \
+    --set prometheusRule.prometheusNamespace=devops \
+    --set serviceMonitor.enabled=true
 ----
 
-https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+==== prometheus
 
-https://www.kancloud.cn/huyipow/kubernetes/722822
-
-
-CICD 发布 回滚 通知
-
-自动伸缩
-
-应用日志
-
-监控
-
-注册
-
-配置
+==== grafana

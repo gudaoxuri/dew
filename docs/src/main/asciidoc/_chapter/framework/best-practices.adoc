@@ -1,16 +1,5 @@
 == 最佳实践
 
-=== JDBC框架的选择
-
-主流JDBC框架有Hibernate、MyBatis、Spring JDBC Template、Ebean、DBUtils等，Dew基于Spring Boot，所以对于这些框架都提供了很好的兼容。那么如何选择呢？
-
-* 先说Hibernate，如果你的数据表结构与对象模型基本吻合，那么使用JPA会带来很大的便捷，推荐Hibernate
-* 如果你的数据表结构与对象模型严重不吻合或是你希望对SQL有更多主动权（SQL优化、复杂查询等），那JPA就没什么优势了，这时：
-** 如果你追求极简、不需要ORMPPING，那么DBUtils会是最佳选择
-** 如果你喜欢敏捷开发，推崇充血模型，那么尝试一下Ebean吧，与Play!结合最合适不过
-** 如果你既要有一定的ORMPPING能力，又希望自己写SQL，那么MyBatis会是不错的选择
-** 如果你使用了Spring，希望框架简单些，可以接受自己写ORMPPING，未来无切换关系型数据库的计划，那么Spring JDBC Template将是个很好的选择
-
 === 服务调用开发期使用
 
 在 `Spring Cloud` 体系下，服务调用需要启动 `Eureka` 服务（对于 `Dew` 中的 `Registry` 组件），这对开发阶段并不友好：
@@ -41,244 +30,6 @@ TIP: Spring对抽象数据类型校验抛出异常为``MethodArgumentNotValidExc
 .  `LocalDate,LocalTime,Instant` 等，无需配置可自行转换
 
 TIP: `jackson` 对于 `LocalDateTime` 类型的支持与其他三种类型不具有一致性，这是 `jackson` 需要优化的一个点
-
-=== `Ribbon` 负载均衡
-
-`example: service-dew.ribbon.NFLoadBalancerRuleClassName=com.netflix.loadbalancer.RandomRule`
-
-NOTE: ``service-dew``为服务名，配置时自行选取规则，类均在``com.netflix.loadbalancer``包下
-
-[source,yml]
-.若指定zone，默认会优先调用相同zone的服务,此优先级高于策略配置，配置如下
-----
-#指定属于哪个zone
-eureka:
-  instance:
-    metadata-map:
-      zone: #zone 名称
-
-#指定region（此处region为项目在不同区域的部署，为项目规范，不同region间能互相调用）
-eureka:
-  client:
-    region: #region名称
-----
-
-=== `Feign` 配置特定方法超时时间
-
-*`Hystrix` 超时时间配置*
-
- # 配置默认的hystrix超时时间
- hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=10000
- # 配置特定方法的超时时间,优于默认配置
- hystrix.command.<hystrixcommandkey>.execution.isolation.thread.timeoutInMilliseconds=10000
- # <hystrixcommandkey>的format为FeignClassName#methodSignature,下面是示例配置
- hystrix.command.PressureService#getBalance(int).execution.isolation.thread.timeoutInMilliseconds=10000
-
-*`Ribbon` 超时时间配置*
-
- # 配置默认ribbon超时时间
- ribbon.ReadTimeout=60000
- # 配置特定服务超时时间,优于默认配置
- <client>.ribbon.ReadTimeout=6000
- # <client>为实际服务名,下面是示例配置
- x-service.ribbon.ReadTimeout=5000
-
-*`Hystrix` 和 `Ribbon` 的超时时间配置相互独立,以低为准,使用时请根据实际情况进行配置*
-
-TIP:  如果要针对某个服务做超时设置,建议使用 `Ribbon` 的配置；在同时使用 `Ribbon` 和 `Hystrix` 时,请特别注意超时时间的配置。
-
-=== `Feign` 接口添加 `Http` 请求头信息
-
-TIP: 在 `@FeignClient` 修饰类中的接口方法里添加新的形参，并加上 `@RequestHeader` 注解指定key值
-
-[source,java]
-.示例
-----
-@PostMapping(value = "ca/all", consumes = MediaType.APPLICATION_JSON_VALUE)
-Resp<CustomerInfoVO> applyCA(@RequestBody CAIdentificationDTO params,
-     @RequestHeader Map<String, Object> headers);
-----
-
-=== `Feign` 文件上传实践
-
-* 在 `SDK` 工程处，添加包依赖
-
-[source,xml]
-.pom
-----
-        <dependency>
-            <groupId>io.github.openfeign.form</groupId>
-            <artifactId>feign-form</artifactId>
-            <version>3.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.openfeign.form</groupId>
-            <artifactId>feign-form-spring</artifactId>
-            <version>3.0.1</version>
-        </dependency>
-----
-
-* 在 `SDK` 工程处，创建一个 `Configuration`
-
-[source,java]
-.MultipartSupportConfig
-----
-import feign.codec.Encoder;
-import feign.form.spring.SpringFormEncoder;
-import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
-import org.springframework.cloud.netflix.feign.support.SpringEncoder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-@Configuration
-public class MultipartSupportConfig {
-
-    @Autowired
-    private ObjectFactory<HttpMessageConverters> messageConverters;
-
-    @Bean
-    public Encoder feignFormEncoder() {
-        return new SpringFormEncoder(new SpringEncoder(messageConverters));
-    }
-
-}
-----
-
-* 修改接口
-
-[source,java]
-.FeginExample
-----
-@FeignClient(name = "demo")
-public interface FeginExample {
-@PostMapping(value = "images", consumes = MULTIPART_FORM_DATA_VALUE)
- Resp<String> uploadImage(
-            @RequestParam MultipartFile image,
-            @RequestParam("id") String id);
-}
-----
-`@RequestPart` 与 `@RequestParam` 效果是一样的，大家就不用花时间在这上面了。
-
-* 修改服务器接口
-
-[source,java]
-.FeginServiceExample
-----
-@RestController
-public class FeginServiceExample {
-  @PostMapping(value = "images", consumes = MULTIPART_FORM_DATA_VALUE)
-    public Resp<String> uploadImage(
-            @RequestParam("image") MultipartFile image,
-            @RequestParam("id") String id,
-            HttpServletRequest request) {
-              return Resp.success(null);
-            }
-}
-----
-
-常见问题：
-
-- `HTTP Status 400 - Required request part 'file' is not present`
-
-[listing]
-....
-请求文件参数的名称与实际接口接受名称不一致
-....
-
-- `feign.codec.EncodeException: Could not write request: no suitable HttpMessageConverter found for request type [org.springframework.mock.web.MockMultipartFile] and content type [multipart/form-data]`
-
-[listing]
-....
-转换器没有生效，检查一下MultipartSupportConfig
-....
-
-=== 自定义降级方法
-
-NOTE: 构建类继承HystrixCommand抽象类，重写run方法，getFallback方法，getFallback为run的降级，再执行excute方法即可
-
-TIP: 每个HystrixCommand的子类的实例只能execute一次。
-
-[source,java]
-.下面附上代码
-----
-public class HelloHystrixCommand extends HystrixCommand<HelloHystrixCommand.Model> {
-
-    public static final Logger logger = LoggerFactory.getLogger(HelloHystrixCommand.class);
-
-    private Model model;
-
-    protected HelloHystrixCommand(HystrixCommandGroupKey group) {
-        super(group);
-    }
-
-    protected HelloHystrixCommand(HystrixCommandGroupKey group, HystrixThreadPoolKey threadPool) {
-        super(group, threadPool);
-    }
-
-    protected HelloHystrixCommand(HystrixCommandGroupKey group, int executionIsolationThreadTimeoutInMilliseconds) {
-        super(group, executionIsolationThreadTimeoutInMilliseconds);
-    }
-
-    protected HelloHystrixCommand(HystrixCommandGroupKey group, HystrixThreadPoolKey threadPool, int executionIsolationThreadTimeoutInMilliseconds) {
-        super(group, threadPool, executionIsolationThreadTimeoutInMilliseconds);
-    }
-
-    protected HelloHystrixCommand(Setter setter) {
-        super(setter);
-    }
-
-    public static HelloHystrixCommand getInstance(String key){
-        return new HelloHystrixCommand(HystrixCommandGroupKey.Factory.asKey(key));
-    }
-
-    @Override
-    protected Model run() throws Exception {
-        int i = 1 / 0;
-        logger.info("run:   thread id:  " + Thread.currentThread().getId());
-        return model;
-    }
-
-    @Override
-    protected Model getFallback() {
-        return new Model("fallback");
-    }
-
-    public static void main(String[] args) throws Exception {
-        HelloHystrixCommand helloHystrixCommand = HelloHystrixCommand.getInstance("dew");
-        helloHystrixCommand.model = helloHystrixCommand.new Model("run");
-        logger.info("main:      " + helloHystrixCommand.model + "thread id: " + Thread.currentThread().getId());
-        System.out.println(helloHystrixCommand.execute());
-
-    }
-
-
-    class Model {
-
-        public Model(String name) {
-            this.name = name;
-        }
-
-        private String name;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String toString() {
-            return "Model{" +
-                    "name='" + name + '\'' +
-                    '}';
-        }
-    }
-}
-----
 
 === 断路保护
 
@@ -393,17 +144,6 @@ public class SchedulingConfiguration implements SchedulingConfigurer {
   # 最大连接数 默认BIO:200 NIO:10000 APR:8192
   server.tomcat.max-connections=2000
 
-* `Zuul` 性能参数说明
-
-  # 连接池最大连接，默认是200
-  zuul.host.maxTotalConnections=1000
-  每个route可用的最大连接数，默认值是20
-  zuul.host.maxPerRouteConnections=1000
-  Hystrix最大的并发请求 默认值是100
-  zuul.semaphore.maxSemaphores=1000
-
-NOTE: `Zuul` 的最大并发数主要调整 `maxSemaphores` 优先级高于 `Hystrix` 的最大线程数配置.
-
 * `Ribbon` 性能参数说明调整 `MaxTotalConnections` 和 `MaxConnectionsPerHost` 时建议同比调整 `Pool` 相关的参数
 
   # ribbon 单主机最大连接数,默认50
@@ -415,8 +155,6 @@ NOTE: `Zuul` 的最大并发数主要调整 `maxSemaphores` 优先级高于 `Hys
   # 默认1
   ribbon.PoolMinThreads=500
 
-NOTE: `Zuul` 和其它使用 `Ribbon` 的服务一样,TPS主要调整 `Ribbon` 的 `MaxConnectionsPerHost` 和 `MaxTotalConnections`
-
 * `Hystrix` 性能参数说明
 
   # 并发执行的最大线程数,默认10
@@ -425,18 +163,7 @@ NOTE: `Zuul` 和其它使用 `Ribbon` 的服务一样,TPS主要调整 `Ribbon` �
 NOTE: 普通 `Service` 使用 `Hystrix` 时,最大并发主要调整 `hystrix.threadpool.default.coreSize`
 
 WARNING: `Hystrix` 的默认超时时间为1s,在高并发下容易出现超时,建议将默认超时时间适当调长,
-特殊接口需要将时间调短或更长的,使用特定配置,见上面 `Feign` 配置特定方法超时时间.
-
-=== `Zuul` 保护(隐藏)内部服务的 `Http` 接口
-
-在yml配置文件里配置(`ignored-patterns`,`ignored-services`)这两项中的一项即可
-[source,yml]
-.配置示例
-----
-zuul: #配置一项即可!
-  ignored-patterns: /dew-example/**   #排除此路径
-  ignored-services: dew-example       #排除此服务
-----
+特殊接口需要将时间调短或更长的,使用特定配置。
 
 === 缓存处理
 
@@ -454,90 +181,6 @@ RedisCacheManager cacheManager() {
 }
 ----
 
-=== Spring Boot Admin 监控实践
-
-在 `Spring Boot Actuator` 中提供很多像 `health` 、 `metrics` 等实时监控接口，可以方便我们随时跟踪服务的性能指标。
- `Spring Boot` 默认是开放这些接口提供调用的，那么就问题来了，如果这些接口公开在外网中，很容易被不法分子所利用，这肯定不是我们想要的结果。
-在这里我们提供一种比较好的解决方案
-
-* 被监控的服务配置
-
-[source,yaml]
-----
-management:
-  security:
-    enabled: false # 关闭管理认证
-  context-path: /management //<1>
-eureka:
-  instance:
-    metadata-map:
-      cluster: default <2>
-----
-<1> 管理前缀
-<2> 集群名称
---
-
-* `Zuul` 网关配置
-
-[source,yaml]
-----
-zuul:
-  ignoredPatterns: /*/management/** //<1>
-----
-<1> 同上文 ``management.context-path`` , 这里之所以不是 `/management/**` ，由于网关存在项目前缀，需要往前一级，大家可以具体场景具体配置
---
-
-* `Spring Boot Admin` 配置
-
-[source,yaml]
-----
-spring:
-  application:
-    name: monitor
-  boot:
-    admin:
-      discovery:
-        converter:
-          management-context-path: ${management.context-path}
-      routes:
-        endpoints: env,metrics,dump,jolokia,info,configprops,trace,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents,hystrix.stream,turbine.stream  <1>
-      turbine:
-        clusters: default  <2>
-        location: ${spring.application.name}
-
-turbine:
-  instanceUrlSuffix: ${management.context-path}/hystrix.stream
-  aggregator:
-    clusterConfig: default <2>
-  appConfig: monitor-example,hystrix-example <3>
-  clusterNameExpression: metadata['cluster']
-
-security:
-  basic:
-    enabled: false
-
-server:
-  port: ...
-
-eureka:
-  instance:
-    metadata-map:
-      cluster: default <2>
-  client:
-    serviceUrl:
-      defaultZone: ...
-
-management:
-  security:
-    enabled: false
-  context-path: /management <4>
-----
-<1> 要监控的内容
-<2> 要监控的集群名称
-<3> 添加需要被监控的应用 `Service-Id` ，以逗号分隔
-<4> 同上文 ``management.context-path``
-
-
 === jdbc 批量插入性能问题
 
 如果不开启rewriteBatchedStatements=true，那么jdbc会把批量插入当做一行行的单条处理，也就没有达到批量插入的效果
@@ -553,43 +196,6 @@ spring:
     password: 123456
 ----
 
-* 对于一张七列的表，插入1500条数据，分别对mybatis和jdbctemplate进行测试，记录三次数据如下,可以看到，该配置对于jdbctemplate影响是极大的，而对于mybatis影响却不大，后续有时间再继续深入了解
-
-.测试数据
-|===
-|rewriteBatchedStatements |mybatis(ms) |jdbctemplate(ms) |dew(ms)
-
-|true
-|401
-|88
-|174
-
-|true
-|427
-|78
-|167
-
-|true
-|422
-|75
-|176
-
-|false
-|428
-|1967
-|2065
-
-|false
-|410
-|2641
-|2744
-
-|false
-|369
-|2299
-|2398
-|===
-
 === http请求并发数性能瓶颈
 
 * 当策略为Thread时（默认是Thread)，hystrix.threadpool.default.maximumSize为第一个性能瓶颈，默认值为10.
@@ -599,26 +205,5 @@ TIP: 修改值时，需要先设置hystrix.threadpool.default.allowMaximumSizeTo
 .hystrix详细配置参见https://github.com/Netflix/Hystrix/wiki/configuration#allowMaximumSizeToDivergeFromCoreSize
 
 * 第二个瓶颈为springboot内置的tomcat的最大连接数，参数为server.tomcat.maxThreads，默认值为200
-
-=== 日志中解析message,动态显示property
-
-. 在启动类的main方法中注册converter，如下``PatternLayout.defaultConverterMap.put("dew", TestConverter.class.getName());``
-
-NOTE: 这个是解析%dew的内容
-
-. 自定义Converter继承DynamicConverter<ILoggingEvent>，解析message，获取有效信息并返回解析后得到的字符串。
-
-[source,java]
-.Converter代码示例
-----
-public class TestConverter extends DynamicConverter<ILoggingEvent> {
-
-    @Override
-    public String convert(ILoggingEvent event) {
-        // 这里未做解析，示例代码
-        return event.getMessage();
-    }
-}
-----
 
 

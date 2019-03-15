@@ -29,7 +29,9 @@ include::_chapter/configuration.adoc[]
 
 == 流程 Devops
 
+include::_chapter/devops/install.adoc[]
 
+include::_chapter/devops/deploy.adoc[]
 
 include::../../../../CHANGELOG.adoc[]
 
@@ -38,5 +40,17 @@ include::../../../../ROADMAP.adoc[]
 == 附录
 
 include::_chapter/appendix/proxies.adoc[]
+
+include::_chapter/appendix/middleware.adoc[]
+
+=== 内置Image与Chart
+
+include::../../../../devops/docker/dew-k8s-native-client/readme.adoc[]
+
+include::../../../../devops/docker/dew-devops/readme.adoc[]
+
+include::../../../../devops/docker/dew-spring-cloud-config/readme.adoc[]
+
+include::../../../../devops/chart/dew-spring-cloud-config/readme.adoc[]
 
 

@@ -1,0 +1,111 @@
+[[middleware]]
+=== 常用中间件安装配置
+
+==== MySQL
+
+[source,bash]
+----
+wget https://repo.mysql.com//mysql57-community-release-el7-11.noarch.rpm
+rpm -Uvh mysql57-community-release-el7-11.noarch.rpm
+yum install -y mysql-community-server
+
+# 修改编码
+vi /etc/my.cnf
+-
+[client]
+default-character-set = utf8
+
+[mysqld]
+default-storage-engine = INNODB
+character-set-server = utf8
+collation-server = utf8_general_ci
+-
+
+systemctl start mysqld
+
+# 获取初始密码
+grep 'temporary password' /var/log/mysqld.log
+mysql -uroot -p <获取到的密码>
+-
+# 修改密码
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'Dew!123456';
+# 远程访问(仅测试用)
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'Dew!123456' WITH GRANT OPTION;
+exit;
+-
+----
+
+==== Mongo
+
+[source,bash]
+----
+cat >>/etc/yum.repos.d/mongodb-org-4.0.repo <<EOF
+[mongodb-org-4.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/4.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc
+EOF
+
+yum install -y mongodb-org
+
+mkdir -p /data/mongo
+chown -R mongod:mongod  /data/mongo
+
+mongod --port 27017 --dbpath /data/mongo
+
+# 在另一个终端中执行
+mongo --port 27017
+-
+use admin
+# 修改密码
+db.createUser(
+  {
+    user: "dew",
+    pwd: "Dew!123456",
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
+  }
+)
+-
+
+# 支持远程访问
+mongod --auth --port 27017 \
+    --dbpath /data/mongo \
+    --logpath /var/log/mongo \
+    --bind_ip 0.0.0.0 \
+    --fork
+----
+
+==== jenkins
+
+[source,bash]
+----
+# 创建PV示例（如果没有的话）
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pvXXX
+  namespace: devops
+spec:
+  capacity:
+    storage: 100Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /data/nfs/dXXX
+    server: nfs.dew.ms
+EOF
+
+# 如已创建PVC使用 --set Persistence.ExistingClaim=PVC_NAME
+helm install stable/jenkins --name dew-jenkins --namespace devops \
+    --set Master.AdminUser=dew \
+    --set Master.AdminPassword=Dew\!12345 \
+    --set Master.JenkinsAdminEmail=i@sunisle.org \
+    --set Master.HostName=jenkins.dew.ms
+----
+
+
+

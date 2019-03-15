@@ -9,9 +9,8 @@
 helm repo add helm-dew-spring-cloud-config https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/chart/dew-spring-cloud-config/
 
 # 1. 安装
-helm install --name dew-spring-cloud-config --namespace devops \
-    --set ingress.hosts={config.dew.ms} \ # 指定Host
-    .
+helm install helm-dew-spring-cloud-config/dew-spring-cloud-config --name dew-spring-cloud-config --namespace devops \
+    --set ingress.hosts={config.dew.ms}
 
 # 2. 测试（Kubernetes集群已安装Ingress controller并暴露80端口）
 curl http://dew:override@config.dew.ms/encrypt -d abc

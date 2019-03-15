@@ -1,0 +1,102 @@
+=== 项目部署
+
+==== 前置准备
+
+.集群初始化
+
+[source,bash]
+----
+# 创建集群角色，用于服务发现
+kubectl create clusterrole service-discovery-client \
+    --verb=get,list,watch \
+    --resource=pods,services,configmaps,endpoints
+----
+
+.项目初始化
+
+一个项目对应多个服务，在开始部署服务之前先要做一定的准备。
+
+* 在harbor中创建对应项目的Docker项目私有库（如devops-example），并创建对应项目的用户，设置为该库的管理员
+* 为当前项目初始化Kubernetes配置
+[source,bash]
+----
+# 命名空间，推荐与docker库同名
+DEW_NAMESPACE=devops-example
+# Docker Registry Host
+DEW_DOCKER_REGISTRY=harbor.dew.ms
+# Docker项目库管理员名称，推荐与docker库同名
+DEW_DOCKER_USER_NAME=$DEW_NAMESPACE
+# Docker项目库管理员密码
+DEW_DOCKER_USER_PASS=Dew\!123456
+# Docker项目库管理员邮箱
+DEW_DOCKER_USER_EMAIL=$DEW_DOCKER_USER_NAMEE@dew.ms
+
+# 创建新的命名空间，用于资源隔离
+kubectl create namespace $DEW_NAMESPACE
+
+# 绑定服务发现角色到该命名空间的默认用户
+kubectl create rolebinding default:service-discovery-client \
+    -n $DEW_NAMESPACE \
+    --clusterrole service-discovery-client \
+    --serviceaccount $DEW_NAMESPACE:default
+
+# 创建Docker Registry密钥
+kubectl -n $DEW_NAMESPACE create secret docker-registry dew-registry \
+    --docker-server=$DEW_DOCKER_REGISTRY \
+    --docker-username=$DEW_DOCKER_USER_NAME \
+    --docker-password=$DEW_DOCKER_USER_PASS \
+    --docker-email=$DEW_DOCKER_USER_EMAIL
+
+# 为该命名空间下的默认用户绑定Docker Registry密钥
+kubectl -n $DEW_NAMESPACE patch serviceaccount default \
+    -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
+
+# 创建Ingress
+# 详见 https://kubernetes.io/docs/concepts/services-networking/ingress/
+#######################
+# apiVersion: extensions/v1beta1
+# kind: Ingress
+# metadata:
+#   annotations:
+#     # 所有注解见 https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/
+#     # 重写示例见 https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/rewrite
+#     nginx.ingress.kubernetes.io/rewrite-target: /\$1
+#   name: dew-ingress
+#   namespace: $DEW_NAMESPACE
+# spec:
+#   rules:
+#     # 自定义规则
+#######################
+
+# 示例
+cat <<EOF | kubectl apply -f -
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /\$1
+  name: dew-ingress
+  namespace: $DEW_NAMESPACE
+spec:
+  rules:
+  - host: example.dew.ms
+    http:
+      paths:
+      - backend:
+          serviceName: tracing-invoke1-example
+          servicePort: 8080
+        path: /invoke1/?(.*)
+      - backend:
+          serviceName: tracing-invoke2-example
+          servicePort: 8080
+        path: /invoke2/?(.*)
+EOF
+----
+
+==== Gitlab配置
+
+===== 单库多模块
+
+===== 多库多模块（submodule）
+
+==== 源码变更

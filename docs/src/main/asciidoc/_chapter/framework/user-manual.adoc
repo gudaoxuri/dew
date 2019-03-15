@@ -707,7 +707,7 @@ Thread.sleep(1000);
 Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "xxxxxxx"));
 ----
 
-=== 工程化
+==== 工程化
 
 ===== API文档
 
@@ -812,7 +812,7 @@ spring:
             required: true
 ----
 
-==== 跟踪日志
+===== 跟踪日志
 
 ----
 此章节关联 `tracing-invokeX-example` 示例
