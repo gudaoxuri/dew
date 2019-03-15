@@ -1,9 +1,8 @@
 package com.tairanchina.csp.dew.idempotent.strategy;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import com.tairanchina.csp.dew.core.cluster.exception.NotImplementedException;
 
 public class BloomFilterProcessor implements IdempotentProcessor {
-
 
     @Override
     public StatusEnum process(String optType, String optId, StatusEnum initStatus, long expireMs) {

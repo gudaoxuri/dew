@@ -1,6 +1,7 @@
 package com.tairanchina.csp.dew.core;
 
 
+import com.tairanchina.csp.dew.core.cluster.ha.dto.HAConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.HashMap;
@@ -265,6 +266,7 @@ public class DewConfig {
 
             private int electionPeriodSec = 60;
             private boolean haEnabled = true;
+            private HAConfig ha = new HAConfig();
 
             public int getElectionPeriodSec() {
                 return electionPeriodSec;
@@ -280,6 +282,15 @@ public class DewConfig {
 
             public void setHaEnabled(boolean haEnabled) {
                 this.haEnabled = haEnabled;
+            }
+
+            public HAConfig getHa() {
+                return ha;
+            }
+
+            public Config setHa(HAConfig ha) {
+                this.ha = ha;
+                return this;
             }
         }
     }

@@ -3,6 +3,7 @@ package com.tairanchina.csp.dew.core.cluster;
 import com.ecfront.dew.common.$;
 import com.tairanchina.csp.dew.core.cluster.ha.ClusterHA;
 import com.tairanchina.csp.dew.core.cluster.ha.H2ClusterHA;
+import com.tairanchina.csp.dew.core.cluster.ha.dto.HAConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,10 +22,10 @@ public class Cluster {
     private static Function<String, Map<String, Object>> _mqGetHeader;
     private static Consumer<Object[]> _mqSetHeader;
     private static ClusterHA clusterHA = null;
-    private static String applicationName = "";
+    private static String applicationName = "_default";
     public static String instanceId = $.field.createUUID();
 
-    public static void init(String appName,String instId) {
+    public static void init(String appName, String instId) {
         applicationName = appName;
         instanceId = instId;
     }
@@ -35,15 +36,23 @@ public class Cluster {
     }
 
     public static void ha() {
-        ha(new HashMap<String, String>() {{
-            put("url", "jdbc:h2:./.ha_" + applicationName + ";DB_CLOSE_ON_EXIT=FALSE");
-        }});
+        ha(new HAConfig());
     }
 
-    public static void ha(Map<String, String> args) {
+    public static void ha(HAConfig haConfig) {
         clusterHA = new H2ClusterHA();
         try {
-            clusterHA.init(args);
+            if (haConfig.getStoragePath() == null || haConfig.getStoragePath().isEmpty()) {
+                haConfig.setStoragePath("./");
+            } else {
+                if (!haConfig.getStoragePath().endsWith("/")) {
+                    haConfig.setStoragePath(haConfig.getStoragePath() + "/");
+                }
+            }
+            if (haConfig.getStorageName() == null || haConfig.getStorageName().isEmpty()) {
+                haConfig.setStorageName(applicationName);
+            }
+            clusterHA.init(haConfig);
             logger.info("HA initialized");
         } catch (SQLException e) {
             logger.error("HA init error", e);

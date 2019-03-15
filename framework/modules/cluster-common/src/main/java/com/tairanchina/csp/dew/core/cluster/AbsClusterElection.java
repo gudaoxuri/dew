@@ -1,8 +1,8 @@
 package com.tairanchina.csp.dew.core.cluster;
 
+import com.tairanchina.csp.dew.core.cluster.exception.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.concurrent.atomic.AtomicLong;
 
