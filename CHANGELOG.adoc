@@ -2,6 +2,16 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 
 == 版本说明
 
+=== 1.5.1-RC
+
+.Improvement
+
+* 升级 ``dew-common`` 允许请求与响应编码不同
+
+.Fixed
+
+* 修复 ``Dew.Util.getRealIP`` 错误
+
 === 1.5.0-RC
 
 .Features

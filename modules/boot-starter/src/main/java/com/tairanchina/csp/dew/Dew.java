@@ -215,15 +215,16 @@ public class Dew {
         }
 
         public static String getRealIP(Map<String, String> requestHeader, String remoteAddr) {
-            requestHeader.forEach((k,v) -> requestHeader.put(k.toLowerCase(),v));
-            if (requestHeader.containsKey("x-forwarded-for") && requestHeader.get("x-forwarded-for") != null && !requestHeader.get("x-forwarded-for").isEmpty()) {
-                return requestHeader.get("x-forwarded-for");
+            Map<String, String> formattedRequestHeader=new HashMap<>();
+            requestHeader.forEach((k, v) -> formattedRequestHeader.put(k.toLowerCase(), v));
+            if (formattedRequestHeader.containsKey("x-forwarded-for") && formattedRequestHeader.get("x-forwarded-for") != null && !formattedRequestHeader.get("x-forwarded-for").isEmpty()) {
+                return formattedRequestHeader.get("x-forwarded-for");
             }
-            if (requestHeader.containsKey("wl-proxy-client-ip") && requestHeader.get("wl-proxy-client-ip") != null && !requestHeader.get("wl-proxy-client-ip").isEmpty()) {
-                return requestHeader.get("wl-proxy-client-ip");
+            if (formattedRequestHeader.containsKey("wl-proxy-client-ip") && formattedRequestHeader.get("wl-proxy-client-ip") != null && !formattedRequestHeader.get("wl-proxy-client-ip").isEmpty()) {
+                return formattedRequestHeader.get("wl-proxy-client-ip");
             }
-            if (requestHeader.containsKey("x-forwarded-host") && requestHeader.get("x-forwarded-host") != null && !requestHeader.get("x-forwarded-host").isEmpty()) {
-                return requestHeader.get("x-forwarded-host");
+            if (formattedRequestHeader.containsKey("x-forwarded-host") && formattedRequestHeader.get("x-forwarded-host") != null && !formattedRequestHeader.get("x-forwarded-host").isEmpty()) {
+                return formattedRequestHeader.get("x-forwarded-host");
             }
             return remoteAddr;
         }
