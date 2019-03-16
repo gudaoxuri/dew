@@ -44,6 +44,7 @@
         <maven.install.skip>false</maven.install.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
         <check.skip>false</check.skip>
+        <main.basedir>${basedir}</main.basedir>
 
         <finalName>${project.artifactId}</finalName>
         <dew.version>2.0.0-SNAPSHOT</dew.version>
@@ -201,6 +202,18 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.0.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>8.12</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>io.spring.javaformat</groupId>
+                        <artifactId>spring-javaformat-checkstyle</artifactId>
+                        <version>0.0.6</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <id>checkstyle-validation</id>
@@ -211,6 +224,7 @@
                             <consoleOutput>true</consoleOutput>
                             <failsOnError>true</failsOnError>
                             <configLocation>../../../build/checkstyle.xml</configLocation>
+                            <propertyExpansion>main.basedir=${main.basedir}</propertyExpansion>
                         </configuration>
                         <goals>
                             <goal>check</goal>
