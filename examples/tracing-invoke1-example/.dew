@@ -1,0 +1,5 @@
+namespace: dew
+
+profiles:
+  test:
+    namespace: dew-test

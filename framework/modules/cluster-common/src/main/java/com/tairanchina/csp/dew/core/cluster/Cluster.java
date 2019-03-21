@@ -17,6 +17,7 @@
 package com.tairanchina.csp.dew.core.cluster;
 
 import com.ecfront.dew.common.$;
+import com.ecfront.dew.common.DependencyHelper;
 import com.tairanchina.csp.dew.core.cluster.ha.ClusterHA;
 import com.tairanchina.csp.dew.core.cluster.ha.H2ClusterHA;
 import com.tairanchina.csp.dew.core.cluster.ha.dto.HAConfig;
@@ -56,7 +57,12 @@ public class Cluster {
     }
 
     public static void ha(HAConfig haConfig) {
-        clusterHA = new H2ClusterHA();
+        if (DependencyHelper.hasDependency("org.h2.jdbcx.JdbcConnectionPool")) {
+            clusterHA = new H2ClusterHA();
+        } else {
+            logger.warn("Not found HA implementation drives , HA disabled.");
+            return;
+        }
         try {
             if (haConfig.getStoragePath() == null || haConfig.getStoragePath().isEmpty()) {
                 haConfig.setStoragePath("./");

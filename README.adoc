@@ -6,7 +6,7 @@ Master分支正在构建如下功能：
 . 全面容器化，以K8s为容器平台，兼容Spring Cloud与Service Mesh两类微服务体系
 . 支撑中间件优先使用CNCF下的产品，如使用 jaeger 代替 zipkin
 
-如需要存粹的Spring Cloud扩展请切换到 https://github.com/gudaoxuri/dew/tree/1.5.1-RC[1.5.0-RC] tag.
+如需要存粹的Spring Cloud扩展请切换到 https://github.com/gudaoxuri/dew/tree/1.5.1-RC[1.5.1-RC] tag.
 ====
 
 == Dew微服务体系

@@ -1,6 +1,10 @@
 FROM dewms/k8s-native-client
 MAINTAINER gudaoxuri <i@sunisle.org>
 
+# ----------------- Add git client
+
+RUN apk add --no-cache git
+
 # ----------------- Add open-jdk from https://github.com/docker-library/openjdk/blob/d93be18f4f2d5e8457169cac00e559d953b6028e/8/jdk/alpine/Dockerfile
 ENV LANG C.UTF-8
 RUN { \
@@ -14,11 +18,9 @@ ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
 ENV PATH $PATH:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openjdk/bin
 
 ENV JAVA_VERSION 8u191
-ENV JAVA_ALPINE_VERSION 8.191.12-r0
 
 RUN set -x \
-	&& apk add --no-cache \
-		openjdk8="$JAVA_ALPINE_VERSION" \
+	&& apk add --no-cache openjdk8 \
 	&& [ "$JAVA_HOME" = "$(docker-java-home)" ]
 
 # ----------------- Add maven from https://github.com/carlossg/docker-maven/blob/05f4802aa5c253dcf75fe967c6f45b3fb1e2f26e/jdk-8-alpine/Dockerfile

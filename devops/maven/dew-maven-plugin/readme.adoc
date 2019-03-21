@@ -1,0 +1,16 @@
+==== Dew DevOps Maven Plugin
+
+本插件为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/
+
+[NOTE]
+.环境要求
+====
+. 需要准备好可用的Docker和Kubernetes(1.12.x 及以上版本)环境
+. 如果Docker不在本地则需要启用 ``Docker Host``，详见 https://docs.docker.com/install/linux/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections
+. 如果Kubernetes不在本地则需要获取到Base64编码后的配置信息， e.g. ``KUBE_CONFIG=`echo $(cat ~/.kube/config | base64) | tr -d " "```
+====
+
+[source,bash]
+.使用
+----
+----

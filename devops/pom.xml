@@ -21,8 +21,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.tairanchina.csp.dew</groupId>
-    <artifactId>build-framework</artifactId>
-    <name>1 Dew Framework Build</name>
+    <artifactId>build-devops</artifactId>
+    <name>2 Dew Devops Build</name>
     <packaging>pom</packaging>
     <version>2.0.0-SNAPSHOT</version>
 
@@ -35,19 +35,7 @@
     </properties>
 
     <modules>
-        <module>modules/parent-starter</module>
-        <module>modules/cluster-common</module>
-        <module>modules/cluster-common-test</module>
-        <module>modules/cluster-redis</module>
-        <module>modules/cluster-hazelcast</module>
-        <module>modules/cluster-rabbit</module>
-        <module>modules/boot-starter</module>
-        <module>modules/idempotent-starter</module>
-        <module>modules/cloud-starter</module>
-        <module>modules/test-starter</module>
-        <module>components/auth-sdk-starter</module>
-        <module>components/auth</module>
-        <module>components/config</module>
+        <module>maven/dew-maven-plugin</module>
     </modules>
 
 </project>
