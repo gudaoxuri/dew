@@ -38,7 +38,9 @@ import io.kubernetes.client.util.Yaml;
 import org.apache.maven.plugin.logging.Log;
 
 import java.io.*;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,19 +57,48 @@ import java.util.stream.Collectors;
  */
 public class KubeHelper {
 
-    private static Log log;
-    private static ApiClient client;
-    private static CoreV1Api coreApi;
-    private static ExtensionsV1beta1Api extensionsApi;
-    private static RbacAuthorizationV1Api rbacAuthorizationApi;
-    private static PodLogs podLogs;
+    private static final ConcurrentHashMap<String, String> EXISTS = new ConcurrentHashMap<>();
+    private static final Map<String, KubeHelper.Instance> INSTANCES = new HashMap<>();
+
+    private static class Instance {
+
+        public Instance(Log log, ApiClient client, CoreV1Api coreApi, ExtensionsV1beta1Api extensionsApi, RbacAuthorizationV1Api rbacAuthorizationApi, PodLogs podLogs) {
+            this.log = log;
+            this.client = client;
+            this.coreApi = coreApi;
+            this.extensionsApi = extensionsApi;
+            this.rbacAuthorizationApi = rbacAuthorizationApi;
+            this.podLogs = podLogs;
+        }
+
+        private Log log;
+        private ApiClient client;
+        private CoreV1Api coreApi;
+        private ExtensionsV1beta1Api extensionsApi;
+        private RbacAuthorizationV1Api rbacAuthorizationApi;
+        private PodLogs podLogs;
+
+    }
 
     private static final Map<String, Watch> WATCH_LIST = new ConcurrentHashMap<>();
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 
-    public static void init(Log log, String base64KubeConfig) {
+    public static void init(String instanceId, Log log, String base64KubeConfig) {
+        try {
+            String hash = $.security.digest.digest(base64KubeConfig, "MD5");
+            if (EXISTS.containsKey(hash)) {
+                INSTANCES.put(instanceId, INSTANCES.get(EXISTS.get(hash)));
+                return;
+            }
+            EXISTS.put(hash, instanceId);
+        } catch (NoSuchAlgorithmException ignore) {
+        }
         YamlHelper.init(log);
-        KubeHelper.log = log;
+        ApiClient client = null;
+        CoreV1Api coreApi;
+        ExtensionsV1beta1Api extensionsApi;
+        RbacAuthorizationV1Api rbacAuthorizationApi;
+        PodLogs podLogs;
         try {
             client = Config.fromConfig(
                     KubeConfig.loadKubeConfig(
@@ -84,9 +115,11 @@ public class KubeHelper {
         extensionsApi = new ExtensionsV1beta1Api(client);
         rbacAuthorizationApi = new RbacAuthorizationV1Api(client);
         podLogs = new PodLogs();
+        INSTANCES.put(instanceId, new Instance(log, client, coreApi, extensionsApi, rbacAuthorizationApi, podLogs));
     }
 
-    public static <T> String watch(WatchCall call, Consumer<Watch.Response<T>> callback, Class<T> clazz) throws ApiException {
+    public static <T> String watch(WatchCall call, Consumer<Watch.Response<T>> callback, Class<T> clazz, String instanceId) throws ApiException {
+        KubeHelper.Instance instance = INSTANCES.get(instanceId);
         String watchId = $.field.createShortUUID();
         TypeToken typeToken = null;
         if (clazz == V1Namespace.class) {
@@ -129,7 +162,7 @@ public class KubeHelper {
             typeToken = new TypeToken<Watch.Response<V1ClusterRoleBinding>>() {
             };
         }
-        Watch<T> watch = Watch.createWatch(client, call.call(coreApi, extensionsApi, rbacAuthorizationApi), typeToken.getType());
+        Watch<T> watch = Watch.createWatch(instance.client, call.call(instance.coreApi, instance.extensionsApi, instance.rbacAuthorizationApi), typeToken.getType());
         WATCH_LIST.put(watchId, watch);
         EXECUTOR_SERVICE.execute(() -> {
             try {
@@ -145,194 +178,197 @@ public class KubeHelper {
         return watchId;
     }
 
-    public static void stopWatch(String watchId) throws IOException {
+    public static void stopWatch(String watchId, String instanceId) throws IOException {
         Watch watch = WATCH_LIST.get(watchId);
         WATCH_LIST.remove(watchId);
         watch.close();
     }
 
 
-    public static void create(Object body) throws ApiException {
-        create(Yaml.dump(body));
+    public static void create(Object body, String instanceId) throws ApiException {
+        create(Yaml.dump(body), instanceId);
     }
 
-    public static void create(String body) throws ApiException {
+    public static void create(String body, String instanceId) throws ApiException {
+        KubeHelper.Instance instance = INSTANCES.get(instanceId);
         KubeBasicRes basicRes = YamlHelper.toObject(KubeBasicRes.class, body);
         try {
             switch (RES.parse(basicRes.getKind())) {
                 case NAME_SPACE:
                     V1Namespace namespaceObj = Yaml.loadAs(body, V1Namespace.class);
-                    coreApi.createNamespace(namespaceObj, false, "true", null);
+                    instance.coreApi.createNamespace(namespaceObj, false, "true", null);
                     break;
                 case INGRESS:
                     V1beta1Ingress ingressObj = Yaml.loadAs(body, V1beta1Ingress.class);
-                    extensionsApi.createNamespacedIngress(ingressObj.getMetadata().getNamespace(), ingressObj, false, "true", null);
+                    instance.extensionsApi.createNamespacedIngress(ingressObj.getMetadata().getNamespace(), ingressObj, false, "true", null);
                     break;
                 case SERVICE:
                     V1Service serviceObj = Yaml.loadAs(body, V1Service.class);
-                    coreApi.createNamespacedService(serviceObj.getMetadata().getNamespace(), serviceObj, false, "true", null);
+                    instance.coreApi.createNamespacedService(serviceObj.getMetadata().getNamespace(), serviceObj, false, "true", null);
                     break;
                 case DEPLOYMENT:
                     ExtensionsV1beta1Deployment deploymentObj = Yaml.loadAs(body, ExtensionsV1beta1Deployment.class);
-                    extensionsApi.createNamespacedDeployment(deploymentObj.getMetadata().getNamespace(), deploymentObj, false, "true", null);
+                    instance.extensionsApi.createNamespacedDeployment(deploymentObj.getMetadata().getNamespace(), deploymentObj, false, "true", null);
                     break;
                 case POD:
                     V1Pod podObj = Yaml.loadAs(body, V1Pod.class);
-                    coreApi.createNamespacedPod(podObj.getMetadata().getNamespace(), podObj, false, "true", null);
+                    instance.coreApi.createNamespacedPod(podObj.getMetadata().getNamespace(), podObj, false, "true", null);
                     break;
                 case SECRET:
                     V1Secret secretObj = Yaml.loadAs(body, V1Secret.class);
-                    coreApi.createNamespacedSecret(secretObj.getMetadata().getNamespace(), secretObj, false, "true", null);
+                    instance.coreApi.createNamespacedSecret(secretObj.getMetadata().getNamespace(), secretObj, false, "true", null);
                     break;
                 case CONFIG_MAP:
                     V1ConfigMap configMapObj = Yaml.loadAs(body, V1ConfigMap.class);
-                    coreApi.createNamespacedConfigMap(configMapObj.getMetadata().getNamespace(), configMapObj, false, "true", null);
+                    instance.coreApi.createNamespacedConfigMap(configMapObj.getMetadata().getNamespace(), configMapObj, false, "true", null);
                     break;
                 case SERVICE_ACCOUNT:
                     V1ServiceAccount serviceAccountObj = Yaml.loadAs(body, V1ServiceAccount.class);
-                    coreApi.createNamespacedServiceAccount(serviceAccountObj.getMetadata().getNamespace(), serviceAccountObj, false, "true", null);
+                    instance.coreApi.createNamespacedServiceAccount(serviceAccountObj.getMetadata().getNamespace(), serviceAccountObj, false, "true", null);
                     break;
                 case DAEMON_SET:
                     V1beta1DaemonSet daemonSetObj = Yaml.loadAs(body, V1beta1DaemonSet.class);
-                    extensionsApi.createNamespacedDaemonSet(daemonSetObj.getMetadata().getNamespace(), daemonSetObj, false, "true", null);
+                    instance.extensionsApi.createNamespacedDaemonSet(daemonSetObj.getMetadata().getNamespace(), daemonSetObj, false, "true", null);
                     break;
                 case ROLE:
                     V1Role roleObj = Yaml.loadAs(body, V1Role.class);
-                    rbacAuthorizationApi.createNamespacedRole(roleObj.getMetadata().getNamespace(), roleObj, false, "true", null);
+                    instance.rbacAuthorizationApi.createNamespacedRole(roleObj.getMetadata().getNamespace(), roleObj, false, "true", null);
                     break;
                 case RULE_BINDING:
                     V1RoleBinding roleBindingObj = Yaml.loadAs(body, V1RoleBinding.class);
-                    rbacAuthorizationApi.createNamespacedRoleBinding(roleBindingObj.getMetadata().getNamespace(), roleBindingObj, false, "true", null);
+                    instance.rbacAuthorizationApi.createNamespacedRoleBinding(roleBindingObj.getMetadata().getNamespace(), roleBindingObj, false, "true", null);
                     break;
                 case CLUSTER_ROLE:
                     V1ClusterRole clusterRoleObj = Yaml.loadAs(body, V1ClusterRole.class);
-                    rbacAuthorizationApi.createClusterRole(clusterRoleObj, false, "true", null);
+                    instance.rbacAuthorizationApi.createClusterRole(clusterRoleObj, false, "true", null);
                     break;
                 case CLUSTER_RULE_BINDING:
                     V1ClusterRoleBinding clusterRoleBindingObj = Yaml.loadAs(body, V1ClusterRoleBinding.class);
-                    rbacAuthorizationApi.createClusterRoleBinding(clusterRoleBindingObj, false, "true", null);
+                    instance.rbacAuthorizationApi.createClusterRoleBinding(clusterRoleBindingObj, false, "true", null);
                     break;
             }
         } catch (ApiException e) {
-            log.error("Create error by \r\n" + Yaml.dump(body), e);
+            instance.log.error("Create error for \r\n" + Yaml.dump(body), e);
             throw e;
         }
     }
 
-    public static boolean exist(String name, RES res) throws ApiException {
-        return exist(name, "", res);
+    public static boolean exist(String name, RES res, String instanceId) throws ApiException {
+        return exist(name, "", res, instanceId);
     }
 
-    public static boolean exist(String name, String namespace, RES res) throws ApiException {
-        return read(name, namespace, res, String.class) != null;
+    public static boolean exist(String name, String namespace, RES res, String instanceId) throws ApiException {
+        return read(name, namespace, res, String.class, instanceId) != null;
     }
 
-    public static <T> List<T> list(RES res, Class<T> clazz) throws ApiException {
-        return list("", "", res, clazz);
+    public static <T> List<T> list(RES res, Class<T> clazz, String instanceId) throws ApiException {
+        return list("", "", res, clazz, instanceId);
     }
 
-    public static <T> List<T> list(String labelSelector, String namespace, RES res, Class<T> clazz) throws ApiException {
-        Object instance = null;
+    public static <T> List<T> list(String labelSelector, String namespace, RES res, Class<T> clazz, String instanceId) throws ApiException {
+        KubeHelper.Instance instance = INSTANCES.get(instanceId);
+        Object resource = null;
         switch (res) {
             case NAME_SPACE:
-                instance = coreApi.listNamespace(true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                resource = instance.coreApi.listNamespace(true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
             case INGRESS:
-                instance = extensionsApi.listNamespacedIngress(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                resource = instance.extensionsApi.listNamespacedIngress(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
             case SERVICE:
-                instance = coreApi.listNamespacedService(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                resource = instance.coreApi.listNamespacedService(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
             case DEPLOYMENT:
-                instance = extensionsApi.listNamespacedDeployment(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                resource = instance.extensionsApi.listNamespacedDeployment(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
             case POD:
-                instance = coreApi.listNamespacedPod(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                resource = instance.coreApi.listNamespacedPod(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
             case SECRET:
-                instance = coreApi.listNamespacedSecret(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                resource = instance.coreApi.listNamespacedSecret(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
             case CONFIG_MAP:
-                instance = coreApi.listNamespacedConfigMap(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                resource = instance.coreApi.listNamespacedConfigMap(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
             case SERVICE_ACCOUNT:
-                instance = coreApi.listNamespacedServiceAccount(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                resource = instance.coreApi.listNamespacedServiceAccount(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
             case DAEMON_SET:
-                instance = extensionsApi.listNamespacedDaemonSet(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                resource = instance.extensionsApi.listNamespacedDaemonSet(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
             case ROLE:
-                instance = rbacAuthorizationApi.listNamespacedRole(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                resource = instance.rbacAuthorizationApi.listNamespacedRole(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
             case RULE_BINDING:
-                instance = rbacAuthorizationApi.listNamespacedRoleBinding(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                resource = instance.rbacAuthorizationApi.listNamespacedRoleBinding(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
             case CLUSTER_ROLE:
-                instance = rbacAuthorizationApi.listClusterRole(true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                resource = instance.rbacAuthorizationApi.listClusterRole(true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
             case CLUSTER_RULE_BINDING:
-                instance = rbacAuthorizationApi.listClusterRoleBinding(true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                resource = instance.rbacAuthorizationApi.listClusterRoleBinding(true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
         }
         if (clazz == String.class) {
-            return (List<T>) ((List) instance).stream().map(item -> Yaml.dump(item)).collect(Collectors.toList());
+            return (List<T>) ((List) resource).stream().map(item -> Yaml.dump(item)).collect(Collectors.toList());
         } else {
-            return (List<T>) instance;
+            return (List<T>) resource;
         }
     }
 
-    public static <T> T read(String name, RES res, Class<T> clazz) throws ApiException {
-        return read(name, "", res, clazz);
+    public static <T> T read(String name, RES res, Class<T> clazz, String instanceId) throws ApiException {
+        return read(name, "", res, clazz, instanceId);
     }
 
-    public static <T> T read(String name, String namespace, RES res, Class<T> clazz) throws ApiException {
-        Object instance = null;
+    public static <T> T read(String name, String namespace, RES res, Class<T> clazz, String instanceId) throws ApiException {
+        KubeHelper.Instance instance = INSTANCES.get(instanceId);
+        Object resource = null;
         try {
             switch (res) {
                 case NAME_SPACE:
-                    instance = coreApi.readNamespace(name, "true", false, false);
+                    resource = instance.coreApi.readNamespace(name, "true", false, false);
                     break;
                 case INGRESS:
-                    instance = extensionsApi.readNamespacedIngress(name, namespace, "true", false, false);
+                    resource = instance.extensionsApi.readNamespacedIngress(name, namespace, "true", false, false);
                     break;
                 case SERVICE:
-                    instance = coreApi.readNamespacedService(name, namespace, "true", false, false);
+                    resource = instance.coreApi.readNamespacedService(name, namespace, "true", false, false);
                     break;
                 case DEPLOYMENT:
-                    instance = extensionsApi.readNamespacedDeployment(name, namespace, "true", false, false);
+                    resource = instance.extensionsApi.readNamespacedDeployment(name, namespace, "true", false, false);
                     break;
                 case POD:
-                    instance = coreApi.readNamespacedPod(name, namespace, "true", false, false);
+                    resource = instance.coreApi.readNamespacedPod(name, namespace, "true", false, false);
                     break;
                 case SECRET:
-                    instance = coreApi.readNamespacedSecret(name, namespace, "true", false, false);
+                    resource = instance.coreApi.readNamespacedSecret(name, namespace, "true", false, false);
                     break;
                 case CONFIG_MAP:
-                    instance = coreApi.readNamespacedConfigMap(name, namespace, "true", false, false);
+                    resource = instance.coreApi.readNamespacedConfigMap(name, namespace, "true", false, false);
                     break;
                 case SERVICE_ACCOUNT:
-                    instance = coreApi.readNamespacedServiceAccount(name, namespace, "true", false, false);
+                    resource = instance.coreApi.readNamespacedServiceAccount(name, namespace, "true", false, false);
                     break;
                 case DAEMON_SET:
-                    instance = extensionsApi.readNamespacedDaemonSet(name, namespace, "true", false, false);
+                    resource = instance.extensionsApi.readNamespacedDaemonSet(name, namespace, "true", false, false);
                     break;
                 case ROLE:
-                    instance = rbacAuthorizationApi.readNamespacedRole(name, namespace, "true");
+                    resource = instance.rbacAuthorizationApi.readNamespacedRole(name, namespace, "true");
                     break;
                 case RULE_BINDING:
-                    instance = rbacAuthorizationApi.readNamespacedRoleBinding(name, namespace, "true");
+                    resource = instance.rbacAuthorizationApi.readNamespacedRoleBinding(name, namespace, "true");
                     break;
                 case CLUSTER_ROLE:
-                    instance = rbacAuthorizationApi.readClusterRole(name, "true");
+                    resource = instance.rbacAuthorizationApi.readClusterRole(name, "true");
                     break;
                 case CLUSTER_RULE_BINDING:
-                    instance = rbacAuthorizationApi.readClusterRoleBinding(name, "true");
+                    resource = instance.rbacAuthorizationApi.readClusterRoleBinding(name, "true");
                     break;
             }
             if (clazz == String.class) {
-                return (T) Yaml.dump(instance);
+                return (T) Yaml.dump(resource);
             } else {
-                return (T) instance;
+                return (T) resource;
             }
         } catch (ApiException e) {
             // TODO 优雅的判断是否存在
@@ -343,75 +379,76 @@ public class KubeHelper {
         }
     }
 
-    public static void replace(Object body) throws ApiException {
-        replace(Yaml.dump(body));
+    public static void replace(Object body, String instanceId) throws ApiException {
+        replace(Yaml.dump(body), instanceId);
     }
 
-    public static void replace(String body) throws ApiException {
+    public static void replace(String body, String instanceId) throws ApiException {
+        KubeHelper.Instance instance = INSTANCES.get(instanceId);
         KubeBasicRes basicRes = YamlHelper.toObject(KubeBasicRes.class, body);
         try {
             switch (RES.parse(basicRes.getKind())) {
                 case NAME_SPACE:
                     V1Namespace namespaceObj = Yaml.loadAs(body, V1Namespace.class);
-                    coreApi.replaceNamespace(namespaceObj.getMetadata().getName(), namespaceObj, "true", null);
+                    instance.coreApi.replaceNamespace(namespaceObj.getMetadata().getName(), namespaceObj, "true", null);
                     break;
                 case INGRESS:
                     V1beta1Ingress ingressObj = Yaml.loadAs(body, V1beta1Ingress.class);
-                    extensionsApi.replaceNamespacedIngress(ingressObj.getMetadata().getName(), ingressObj.getMetadata().getNamespace(), ingressObj, "true", null);
+                    instance.extensionsApi.replaceNamespacedIngress(ingressObj.getMetadata().getName(), ingressObj.getMetadata().getNamespace(), ingressObj, "true", null);
                     break;
                 case SERVICE:
                     V1Service serviceObj = Yaml.loadAs(body, V1Service.class);
-                    coreApi.replaceNamespacedService(serviceObj.getMetadata().getName(), serviceObj.getMetadata().getNamespace(), serviceObj, "true", null);
+                    instance.coreApi.replaceNamespacedService(serviceObj.getMetadata().getName(), serviceObj.getMetadata().getNamespace(), serviceObj, "true", null);
                     break;
                 case DEPLOYMENT:
                     ExtensionsV1beta1Deployment deploymentObj = Yaml.loadAs(body, ExtensionsV1beta1Deployment.class);
-                    extensionsApi.replaceNamespacedDeployment(deploymentObj.getMetadata().getName(), deploymentObj.getMetadata().getNamespace(), deploymentObj, "true", null);
+                    instance.extensionsApi.replaceNamespacedDeployment(deploymentObj.getMetadata().getName(), deploymentObj.getMetadata().getNamespace(), deploymentObj, "true", null);
                     break;
                 case POD:
                     V1Pod podObj = Yaml.loadAs(body, V1Pod.class);
-                    coreApi.replaceNamespacedPod(podObj.getMetadata().getName(), podObj.getMetadata().getNamespace(), podObj, "true", null);
+                    instance.coreApi.replaceNamespacedPod(podObj.getMetadata().getName(), podObj.getMetadata().getNamespace(), podObj, "true", null);
                     break;
                 case SECRET:
                     V1Secret secretObj = Yaml.loadAs(body, V1Secret.class);
-                    coreApi.replaceNamespacedSecret(secretObj.getMetadata().getName(), secretObj.getMetadata().getNamespace(), secretObj, "true", null);
+                    instance.coreApi.replaceNamespacedSecret(secretObj.getMetadata().getName(), secretObj.getMetadata().getNamespace(), secretObj, "true", null);
                     break;
                 case CONFIG_MAP:
                     V1ConfigMap configMapObj = Yaml.loadAs(body, V1ConfigMap.class);
-                    coreApi.replaceNamespacedConfigMap(configMapObj.getMetadata().getName(), configMapObj.getMetadata().getNamespace(), configMapObj, "true", null);
+                    instance.coreApi.replaceNamespacedConfigMap(configMapObj.getMetadata().getName(), configMapObj.getMetadata().getNamespace(), configMapObj, "true", null);
                     break;
                 case SERVICE_ACCOUNT:
                     V1ServiceAccount serviceAccountObj = Yaml.loadAs(body, V1ServiceAccount.class);
-                    coreApi.replaceNamespacedServiceAccount(serviceAccountObj.getMetadata().getName(), serviceAccountObj.getMetadata().getNamespace(), serviceAccountObj, "true", null);
+                    instance.coreApi.replaceNamespacedServiceAccount(serviceAccountObj.getMetadata().getName(), serviceAccountObj.getMetadata().getNamespace(), serviceAccountObj, "true", null);
                     break;
                 case DAEMON_SET:
                     V1beta1DaemonSet daemonSetObj = Yaml.loadAs(body, V1beta1DaemonSet.class);
-                    extensionsApi.replaceNamespacedDaemonSet(daemonSetObj.getMetadata().getName(), daemonSetObj.getMetadata().getNamespace(), daemonSetObj, "true", null);
+                    instance.extensionsApi.replaceNamespacedDaemonSet(daemonSetObj.getMetadata().getName(), daemonSetObj.getMetadata().getNamespace(), daemonSetObj, "true", null);
                     break;
                 case ROLE:
                     V1Role roleObj = Yaml.loadAs(body, V1Role.class);
-                    rbacAuthorizationApi.replaceNamespacedRole(roleObj.getMetadata().getName(), roleObj.getMetadata().getNamespace(), roleObj, "true", null);
+                    instance.rbacAuthorizationApi.replaceNamespacedRole(roleObj.getMetadata().getName(), roleObj.getMetadata().getNamespace(), roleObj, "true", null);
                     break;
                 case RULE_BINDING:
                     V1RoleBinding roleBindingObj = Yaml.loadAs(body, V1RoleBinding.class);
-                    rbacAuthorizationApi.replaceNamespacedRoleBinding(roleBindingObj.getMetadata().getName(), roleBindingObj.getMetadata().getNamespace(), roleBindingObj, "true", null);
+                    instance.rbacAuthorizationApi.replaceNamespacedRoleBinding(roleBindingObj.getMetadata().getName(), roleBindingObj.getMetadata().getNamespace(), roleBindingObj, "true", null);
                     break;
                 case CLUSTER_ROLE:
                     V1ClusterRole clusterRoleObj = Yaml.loadAs(body, V1ClusterRole.class);
-                    rbacAuthorizationApi.replaceClusterRole(clusterRoleObj.getMetadata().getName(), clusterRoleObj, "true", null);
+                    instance.rbacAuthorizationApi.replaceClusterRole(clusterRoleObj.getMetadata().getName(), clusterRoleObj, "true", null);
                     break;
                 case CLUSTER_RULE_BINDING:
                     V1ClusterRoleBinding clusterRoleBindingObj = Yaml.loadAs(body, V1ClusterRoleBinding.class);
-                    rbacAuthorizationApi.replaceClusterRoleBinding(clusterRoleBindingObj.getMetadata().getName(), clusterRoleBindingObj, "true", null);
+                    instance.rbacAuthorizationApi.replaceClusterRoleBinding(clusterRoleBindingObj.getMetadata().getName(), clusterRoleBindingObj, "true", null);
                     break;
             }
         } catch (ApiException e) {
-            log.error("Replace error by \r\n" + Yaml.dump(body), e);
+            instance.log.error("Replace error for \r\n" + Yaml.dump(body), e);
             throw e;
         }
     }
 
-    public static void patch(String name, List<String> patchers, RES res) throws ApiException {
-        patch(name, patchers, "", res);
+    public static void patch(String name, List<String> patchers, RES res, String instanceId) throws ApiException {
+        patch(name, patchers, "", res, instanceId);
     }
 
     /**
@@ -422,78 +459,80 @@ public class KubeHelper {
      * @throws ApiException
      * @link http://jsonpatch.com/
      */
-    public static void patch(String name, List<String> patchers, String namespace, RES res) throws ApiException {
+    public static void patch(String name, List<String> patchers, String namespace, RES res, String instanceId) throws ApiException {
+        KubeHelper.Instance instance = INSTANCES.get(instanceId);
         List<JsonObject> jsonPatchers = patchers.stream()
                 .map(patcher -> (new Gson()).fromJson(patcher, JsonElement.class).getAsJsonObject())
                 .collect(Collectors.toList());
         try {
             switch (res) {
                 case NAME_SPACE:
-                    coreApi.patchNamespace(name, jsonPatchers, "true", null);
+                    instance.coreApi.patchNamespace(name, jsonPatchers, "true", null);
                     break;
                 case INGRESS:
-                    extensionsApi.patchNamespacedIngress(name, namespace, jsonPatchers, "true", null);
+                    instance.extensionsApi.patchNamespacedIngress(name, namespace, jsonPatchers, "true", null);
                     break;
                 case SERVICE:
-                    coreApi.patchNamespacedService(name, namespace, jsonPatchers, "true", null);
+                    instance.coreApi.patchNamespacedService(name, namespace, jsonPatchers, "true", null);
                     break;
                 case DEPLOYMENT:
-                    extensionsApi.patchNamespacedDeployment(name, namespace, jsonPatchers, "true", null);
+                    instance.extensionsApi.patchNamespacedDeployment(name, namespace, jsonPatchers, "true", null);
                     break;
                 case POD:
-                    coreApi.patchNamespacedPod(name, namespace, jsonPatchers, "true", null);
+                    instance.coreApi.patchNamespacedPod(name, namespace, jsonPatchers, "true", null);
                     break;
                 case SECRET:
-                    coreApi.patchNamespacedSecret(name, namespace, jsonPatchers, "true", null);
+                    instance.coreApi.patchNamespacedSecret(name, namespace, jsonPatchers, "true", null);
                     break;
                 case CONFIG_MAP:
-                    coreApi.patchNamespacedConfigMap(name, namespace, jsonPatchers, "true", null);
+                    instance.coreApi.patchNamespacedConfigMap(name, namespace, jsonPatchers, "true", null);
                     break;
                 case SERVICE_ACCOUNT:
-                    coreApi.patchNamespacedServiceAccount(name, namespace, jsonPatchers, "true", null);
+                    instance.coreApi.patchNamespacedServiceAccount(name, namespace, jsonPatchers, "true", null);
                     break;
                 case DAEMON_SET:
-                    extensionsApi.patchNamespacedDaemonSet(name, namespace, jsonPatchers, "true", null);
+                    instance.extensionsApi.patchNamespacedDaemonSet(name, namespace, jsonPatchers, "true", null);
                     break;
                 case ROLE:
-                    rbacAuthorizationApi.patchNamespacedRole(name, namespace, jsonPatchers, "true", null);
+                    instance.rbacAuthorizationApi.patchNamespacedRole(name, namespace, jsonPatchers, "true", null);
                     break;
                 case RULE_BINDING:
-                    rbacAuthorizationApi.patchNamespacedRoleBinding(name, namespace, jsonPatchers, "true", null);
+                    instance.rbacAuthorizationApi.patchNamespacedRoleBinding(name, namespace, jsonPatchers, "true", null);
                     break;
                 case CLUSTER_ROLE:
-                    rbacAuthorizationApi.patchClusterRole(name, jsonPatchers, "true", null);
+                    instance.rbacAuthorizationApi.patchClusterRole(name, jsonPatchers, "true", null);
                     break;
                 case CLUSTER_RULE_BINDING:
-                    rbacAuthorizationApi.patchClusterRoleBinding(name, jsonPatchers, "true", null);
+                    instance.rbacAuthorizationApi.patchClusterRoleBinding(name, jsonPatchers, "true", null);
                     break;
             }
         } catch (ApiException e) {
-            log.error("Patch error by \r\n" + $.json.toJsonString(patchers), e);
+            instance.log.error("Patch error for \r\n" + $.json.toJsonString(patchers), e);
             throw e;
         }
     }
 
-    public static void apply(Object body) throws ApiException {
-        apply(Yaml.dump(body));
+    public static void apply(Object body, String instanceId) throws ApiException {
+        apply(Yaml.dump(body), instanceId);
     }
 
-    public static void apply(String body) throws ApiException {
+    public static void apply(String body, String instanceId) throws ApiException {
         KubeBasicRes basicRes = YamlHelper.toObject(KubeBasicRes.class, body);
-        if (exist(basicRes.getMetadata().getName(), basicRes.getMetadata().getNamespace(), RES.parse(basicRes.getKind()))) {
-            replace(body);
+        if (exist(basicRes.getMetadata().getName(), basicRes.getMetadata().getNamespace(), RES.parse(basicRes.getKind()), instanceId)) {
+            replace(body, instanceId);
         } else {
-            create(body);
+            create(body, instanceId);
         }
     }
 
-    public static List<String> log(String name, String namespace, int waitSec) throws ApiException, IOException {
-        return log(name, null, namespace, waitSec);
+    public static List<String> log(String name, String namespace, int waitSec, String instanceId) throws ApiException, IOException {
+        return log(name, null, namespace, waitSec, instanceId);
     }
 
-    public static List<String> log(String name, String container, String namespace, int waitSec) throws ApiException, IOException {
+    public static List<String> log(String name, String container, String namespace, int waitSec, String instanceId) throws ApiException, IOException {
+        KubeHelper.Instance instance = INSTANCES.get(instanceId);
         List<String> logResult = new ArrayList<>();
-        Closeable closeable = log(name, container, namespace, logResult::add);
+        Closeable closeable = log(name, container, namespace, logResult::add, instanceId);
         try {
             Thread.sleep(waitSec * 1000);
         } catch (InterruptedException ignore) {
@@ -503,13 +542,14 @@ public class KubeHelper {
         return logResult;
     }
 
-    public static Closeable log(String name, String container, String namespace, Consumer<String> tailFollowFun) throws ApiException {
+    public static Closeable log(String name, String container, String namespace, Consumer<String> tailFollowFun, String instanceId) throws ApiException {
+        KubeHelper.Instance instance = INSTANCES.get(instanceId);
         if (container == null) {
-            container = read(name, namespace, RES.POD, V1Pod.class).getSpec().getContainers().get(0).getName();
+            container = read(name, namespace, RES.POD, V1Pod.class, instanceId).getSpec().getContainers().get(0).getName();
         }
         String finalContainer = container;
         try {
-            InputStream is = podLogs.streamNamespacedPodLog(namespace, name, finalContainer);
+            InputStream is = instance.podLogs.streamNamespacedPodLog(namespace, name, finalContainer);
             BufferedReader r = new BufferedReader(new InputStreamReader(is));
             EXECUTOR_SERVICE.execute(() -> {
                 try {
@@ -517,12 +557,12 @@ public class KubeHelper {
                         tailFollowFun.accept(r.readLine());
                     }
                 } catch (IOException e) {
-                    log.error("Output log error.", e);
+                    instance.log.error("Output log error.", e);
                 } finally {
                     try {
                         is.close();
                     } catch (IOException e) {
-                        log.error("Close log stream error.", e);
+                        instance.log.error("Close log stream error.", e);
                     }
                 }
             });
@@ -531,58 +571,59 @@ public class KubeHelper {
                 is.close();
             };
         } catch (ApiException | IOException e) {
-            log.error("Output log error.", e);
+            instance.log.error("Output log error.", e);
         }
         return () -> {
         };
     }
 
-    public static void delete(String name, RES res) throws ApiException {
-        delete(name, "", res);
+    public static void delete(String name, RES res, String instanceId) throws ApiException {
+        delete(name, "", res, instanceId);
     }
 
-    public static void delete(String name, String namespace, RES res) throws ApiException {
+    public static void delete(String name, String namespace, RES res, String instanceId) throws ApiException {
+        KubeHelper.Instance instance = INSTANCES.get(instanceId);
         V1DeleteOptions deleteOptions = new V1DeleteOptions();
         try {
             switch (res) {
                 case NAME_SPACE:
-                    coreApi.deleteNamespace(name, deleteOptions, null, null, null, null, null);
+                    instance.coreApi.deleteNamespace(name, deleteOptions, null, null, null, null, null);
                     break;
                 case INGRESS:
-                    extensionsApi.deleteNamespacedIngress(name, namespace, deleteOptions, "true", null, null, null, null);
+                    instance.extensionsApi.deleteNamespacedIngress(name, namespace, deleteOptions, "true", null, null, null, null);
                     break;
                 case SERVICE:
-                    coreApi.deleteNamespacedService(name, namespace, deleteOptions, "true", null, null, null, null);
+                    instance.coreApi.deleteNamespacedService(name, namespace, deleteOptions, "true", null, null, null, null);
                     break;
                 case DEPLOYMENT:
-                    extensionsApi.deleteNamespacedDeployment(name, namespace, deleteOptions, "true", null, null, null, null);
+                    instance.extensionsApi.deleteNamespacedDeployment(name, namespace, deleteOptions, "true", null, null, null, null);
                     break;
                 case POD:
-                    coreApi.deleteNamespacedPod(name, namespace, deleteOptions, "true", null, null, null, null);
+                    instance.coreApi.deleteNamespacedPod(name, namespace, deleteOptions, "true", null, null, null, null);
                     break;
                 case SECRET:
-                    coreApi.deleteNamespacedSecret(name, namespace, deleteOptions, "true", null, null, null, null);
+                    instance.coreApi.deleteNamespacedSecret(name, namespace, deleteOptions, "true", null, null, null, null);
                     break;
                 case CONFIG_MAP:
-                    coreApi.deleteNamespacedConfigMap(name, namespace, deleteOptions, "true", null, null, null, null);
+                    instance.coreApi.deleteNamespacedConfigMap(name, namespace, deleteOptions, "true", null, null, null, null);
                     break;
                 case SERVICE_ACCOUNT:
-                    coreApi.deleteNamespacedServiceAccount(name, namespace, deleteOptions, "true", null, null, null, null);
+                    instance.coreApi.deleteNamespacedServiceAccount(name, namespace, deleteOptions, "true", null, null, null, null);
                     break;
                 case DAEMON_SET:
-                    extensionsApi.deleteNamespacedDaemonSet(name, namespace, deleteOptions, "true", null, null, null, null);
+                    instance.extensionsApi.deleteNamespacedDaemonSet(name, namespace, deleteOptions, "true", null, null, null, null);
                     break;
                 case ROLE:
-                    rbacAuthorizationApi.deleteNamespacedRole(name, namespace, deleteOptions, "true", null, null, null, null);
+                    instance.rbacAuthorizationApi.deleteNamespacedRole(name, namespace, deleteOptions, "true", null, null, null, null);
                     break;
                 case RULE_BINDING:
-                    rbacAuthorizationApi.deleteNamespacedRoleBinding(name, namespace, deleteOptions, "true", null, null, null, null);
+                    instance.rbacAuthorizationApi.deleteNamespacedRoleBinding(name, namespace, deleteOptions, "true", null, null, null, null);
                     break;
                 case CLUSTER_ROLE:
-                    rbacAuthorizationApi.deleteClusterRole(name, deleteOptions, "true", null, null, null, null);
+                    instance.rbacAuthorizationApi.deleteClusterRole(name, deleteOptions, "true", null, null, null, null);
                     break;
                 case CLUSTER_RULE_BINDING:
-                    rbacAuthorizationApi.deleteClusterRoleBinding(name, deleteOptions, "true", null, null, null, null);
+                    instance.rbacAuthorizationApi.deleteClusterRoleBinding(name, deleteOptions, "true", null, null, null, null);
                     break;
             }
         } catch (JsonSyntaxException e) {
@@ -596,14 +637,14 @@ public class KubeHelper {
                 throw e;
             }
         }
-        boolean exist = exist(name, namespace, res);
+        boolean exist = exist(name, namespace, res, instanceId);
         while (exist) {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException ignore) {
                 Thread.currentThread().interrupt();
             }
-            exist = exist(name, namespace, res);
+            exist = exist(name, namespace, res, instanceId);
         }
     }
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tairanchina.csp.dew.kernel.flow.release;
+package com.tairanchina.csp.dew.kernel.flow.build;
 
 import com.ecfront.dew.common.$;
 import com.tairanchina.csp.dew.kernel.Dew;
@@ -23,9 +23,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class JvmServiceReleaseFlow extends BasicReleaseFlow {
+public class JvmServiceBuildFlow extends BasicBuildFlow {
 
     protected boolean preDockerBuild(String buildBasePath) throws IOException, MojoExecutionException {
+        // FIXME 构建未成功
         Dew.Invoke.invoke("org.springframework.boot",
                 "spring-boot-maven-plugin",
                 "2.1.3.RELEASE",

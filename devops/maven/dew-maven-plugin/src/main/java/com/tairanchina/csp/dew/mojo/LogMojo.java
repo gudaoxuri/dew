@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
-package com.tairanchina.csp.dew.kernel.flow.release;
+package com.tairanchina.csp.dew.mojo;
 
 import io.kubernetes.client.ApiException;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
 
 import java.io.IOException;
 
-public class JvmLibReleaseFlow extends BasicReleaseFlow {
+@Mojo(name = "log")
+public class LogMojo extends BasicMojo {
 
     @Override
-    protected boolean preNeedCheck(boolean releaseAll) throws ApiException, IOException {
-        return false;
+    protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
+
+        return true;
     }
+
 }

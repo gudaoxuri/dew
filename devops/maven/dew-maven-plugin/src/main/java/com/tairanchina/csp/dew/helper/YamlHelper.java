@@ -34,6 +34,10 @@ public class YamlHelper {
         }
     }
 
+    public static <T> T toObject(String content) {
+        return yaml.load(content);
+    }
+
     public static <T> T toObject(Class<T> clazz, String content) {
         return yaml.loadAs(content, clazz);
     }
@@ -43,7 +47,7 @@ public class YamlHelper {
         return yaml.loadAs(mergedContent, clazz);
     }
 
-    public static String toYaml(Object content) {
+    public static String toString(Object content) {
         String str = yaml.dump(content);
         if (str.startsWith("!!")) {
             return str.substring(str.indexOf('\n') + 1);

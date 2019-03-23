@@ -16,10 +16,10 @@
 
 package com.tairanchina.csp.dew.kernel.resource;
 
-import com.tairanchina.csp.dew.kernel.config.FinalConfig;
+import com.tairanchina.csp.dew.kernel.config.FinalProjectConfig;
 
 public interface KubeResourceBuilder<T> {
 
-    T build(FinalConfig config);
+    T build(FinalProjectConfig config);
 
 }

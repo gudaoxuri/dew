@@ -18,12 +18,21 @@ package com.tairanchina.csp.dew.kernel.config;
 
 public class DewProfile {
 
+    private String profile;
     private boolean skip = false;
     private String namespace = "dew-default-ns";
 
     private DewApp app = new DewApp();
     private DewDocker docker = new DewDocker();
     private DewKube kube = new DewKube();
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
 
     public boolean isSkip() {
         return skip;

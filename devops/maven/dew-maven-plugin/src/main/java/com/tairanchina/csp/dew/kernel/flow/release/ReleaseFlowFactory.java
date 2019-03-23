@@ -16,19 +16,12 @@
 
 package com.tairanchina.csp.dew.kernel.flow.release;
 
-import com.tairanchina.csp.dew.kernel.Dew;
+import com.tairanchina.csp.dew.kernel.flow.BasicFlow;
 
 public class ReleaseFlowFactory {
 
-    public static BasicReleaseFlow choose() {
-        switch (Dew.config.getAppKind()) {
-            case JVM_SERVICE:
-                return new JvmServiceReleaseFlow();
-            case JVM_LIB:
-                return new JvmLibReleaseFlow();
-            //TODO
-        }
-        return null;
+    public static BasicFlow choose() {
+        return new BasicReleaseFlow();
     }
 
 }

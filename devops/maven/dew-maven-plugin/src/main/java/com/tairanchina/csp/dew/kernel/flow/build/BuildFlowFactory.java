@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.tairanchina.csp.dew.kernel.config;
+package com.tairanchina.csp.dew.kernel.flow.build;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.tairanchina.csp.dew.kernel.Dew;
+import com.tairanchina.csp.dew.kernel.flow.BasicFlow;
 
-public class FinalConfig {
+public class BuildFlowFactory {
 
-    private Map<String, FinalProjectConfig> projects = new HashMap<>();
+    public static BasicFlow choose() {
+        switch (Dew.Config.getCurrentProject().getAppKind()) {
+            case JVM_SERVICE:
+                return new JvmServiceBuildFlow();
+        }
+        return new BasicBuildFlow() {
 
-    public Map<String, FinalProjectConfig> getProjects() {
-        return projects;
-    }
-
-    public void setProjects(Map<String, FinalProjectConfig> projects) {
-        this.projects = projects;
+        };
     }
 
 }

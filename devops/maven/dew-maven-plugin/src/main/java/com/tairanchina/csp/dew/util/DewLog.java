@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tairanchina.csp.dew.utils;
+package com.tairanchina.csp.dew.util;
 
 import org.apache.maven.plugin.logging.Log;
 

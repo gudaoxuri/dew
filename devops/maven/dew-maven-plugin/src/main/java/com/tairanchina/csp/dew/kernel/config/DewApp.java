@@ -52,7 +52,8 @@ public class DewApp {
     }
 
     public int getMetricPort() {
-        return metricPort;
+        return
+                metricPort;
     }
 
     public void setMetricPort(int metricPort) {

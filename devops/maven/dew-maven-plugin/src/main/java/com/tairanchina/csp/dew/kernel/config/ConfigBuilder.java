@@ -19,60 +19,66 @@ package com.tairanchina.csp.dew.kernel.config;
 import com.ecfront.dew.common.$;
 import com.tairanchina.csp.dew.helper.GitHelper;
 import com.tairanchina.csp.dew.kernel.Dew;
+import com.tairanchina.csp.dew.mojo.BasicMojo;
+import org.apache.maven.project.MavenProject;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 
 public class ConfigBuilder {
 
-    public static FinalConfig build(AppKind appKind, String profile, DewConfig dewConfig,
-                                    Boolean skip, String dockerHost, String dockerRegistryUrl, String dockerRegistryUserName, String dockerRegistryPassword, String kubeBase64Config) throws InvocationTargetException, IllegalAccessException {
-        FinalConfig finalConfig = new FinalConfig();
-        finalConfig.setAppKind(appKind);
-        if (profile.toLowerCase().trim().equals("default")) {
-            $.bean.copyProperties(finalConfig, dewConfig);
+    public static FinalProjectConfig buildProject(AppKind appKind, String profile, DewConfig dewConfig, MavenProject mavenProject,
+                                                  String dockerHost, String dockerRegistryUrl, String dockerRegistryUserName, String dockerRegistryPassword, String kubeBase64Config) throws InvocationTargetException, IllegalAccessException {
+        FinalProjectConfig finalProjectConfig = new FinalProjectConfig();
+        if (profile.equalsIgnoreCase(BasicMojo.FLAG_DEW_DEVOPS_DEFAULT_PROFILE)) {
+            $.bean.copyProperties(finalProjectConfig, dewConfig);
         } else {
-            $.bean.copyProperties(finalConfig, dewConfig.getProfiles().get(profile));
+            $.bean.copyProperties(finalProjectConfig, dewConfig.getProfiles().get(profile));
         }
-        finalConfig.setProfile(profile);
-        if (skip != null) {
-            finalConfig.setSkip(skip);
-        }
-        if (finalConfig.isSkip()) {
-            return finalConfig;
-        }
+        finalProjectConfig.setId(mavenProject.getId());
+        finalProjectConfig.setAppKind(appKind);
+        finalProjectConfig.setProfile(profile);
         if (dockerHost != null && !dockerHost.trim().isEmpty()) {
-            finalConfig.getDocker().setHost(dockerHost.trim());
+            finalProjectConfig.getDocker().setHost(dockerHost.trim());
         }
         if (dockerRegistryUrl != null && !dockerRegistryUrl.trim().isEmpty()) {
-            finalConfig.getDocker().setRegistryUrl(dockerRegistryUrl.trim());
+            finalProjectConfig.getDocker().setRegistryUrl(dockerRegistryUrl.trim());
         }
         if (dockerRegistryUserName != null && !dockerRegistryUserName.trim().isEmpty()) {
-            finalConfig.getDocker().setRegistryUserName(dockerRegistryUserName.trim());
+            finalProjectConfig.getDocker().setRegistryUserName(dockerRegistryUserName.trim());
         }
         if (dockerRegistryPassword != null && !dockerRegistryPassword.trim().isEmpty()) {
-            finalConfig.getDocker().setRegistryPassword(dockerRegistryPassword.trim());
+            finalProjectConfig.getDocker().setRegistryPassword(dockerRegistryPassword.trim());
         }
         if (kubeBase64Config != null && !kubeBase64Config.trim().isEmpty()) {
-            finalConfig.getKube().setBase64Config(kubeBase64Config.trim());
+            finalProjectConfig.getKube().setBase64Config(kubeBase64Config.trim());
         }
-        Plugin.fillApp(finalConfig);
-        Plugin.fillGit(finalConfig);
-        return finalConfig;
+        Plugin.fillMaven(finalProjectConfig, mavenProject);
+        Plugin.fillApp(finalProjectConfig, mavenProject);
+        Plugin.fillGit(finalProjectConfig, mavenProject);
+        return finalProjectConfig;
     }
 
     public static class Plugin {
 
-        static void fillApp(FinalConfig finalConfig) {
-            finalConfig.setAppGroup(Dew.mavenProject.getGroupId());
-            finalConfig.setAppName(Dew.mavenProject.getArtifactId());
-            finalConfig.setAppVersion(Dew.mavenProject.getVersion());
+        static void fillMaven(FinalProjectConfig finalProjectConfig, MavenProject mavenProject) {
+            finalProjectConfig.setMvnGroupId(mavenProject.getGroupId());
+            finalProjectConfig.setMvnArtifactId(mavenProject.getArtifactId());
+            finalProjectConfig.setMvnDirectory(mavenProject.getBasedir().getPath() + File.separator);
+            finalProjectConfig.setMvnTargetDirectory(finalProjectConfig.getMvnDirectory() + "target" + File.separator);
         }
 
-        static void fillGit(FinalConfig finalConfig) {
-            // TODO submodule处理
-            finalConfig.setScmUrl(GitHelper.getScmUrl(Dew.rootDirectory));
-            finalConfig.setGitBranch(GitHelper.getCurrentBranch(Dew.rootDirectory));
-            finalConfig.setGitCommit(GitHelper.getCurrentCommit(Dew.rootDirectory));
+        static void fillApp(FinalProjectConfig finalProjectConfig, MavenProject mavenProject) {
+            finalProjectConfig.setAppGroup(mavenProject.getGroupId());
+            finalProjectConfig.setAppName(mavenProject.getArtifactId());
+            finalProjectConfig.setAppVersion(mavenProject.getVersion());
+        }
+
+        static void fillGit(FinalProjectConfig finalProjectConfig, MavenProject mavenProject) {
+            // FIXME submodule处理
+            finalProjectConfig.setScmUrl(GitHelper.getScmUrl(Dew.basicDirectory));
+            finalProjectConfig.setGitBranch(GitHelper.getCurrentBranch(Dew.basicDirectory));
+            finalProjectConfig.setGitCommit(GitHelper.getCurrentCommit(Dew.basicDirectory));
         }
 
     }

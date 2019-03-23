@@ -18,6 +18,7 @@ package com.tairanchina.csp.dew.kernel.resource;
 
 import com.tairanchina.csp.dew.helper.KubeHelper;
 import com.tairanchina.csp.dew.kernel.config.FinalConfig;
+import com.tairanchina.csp.dew.kernel.config.FinalProjectConfig;
 import com.tairanchina.csp.dew.kernel.flow.BasicFlow;
 import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.models.*;
@@ -30,7 +31,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
     public static final String FLAG_CONTAINER_NAME = "dew-app";
 
     @Override
-    public ExtensionsV1beta1Deployment build(FinalConfig config) {
+    public ExtensionsV1beta1Deployment build(FinalProjectConfig config) {
 
         Map<String, String> annotations = new HashMap<>();
         annotations.put(BasicFlow.FLAG_KUBE_RESOURCE_GIT_COMMIT, config.getGitCommit());

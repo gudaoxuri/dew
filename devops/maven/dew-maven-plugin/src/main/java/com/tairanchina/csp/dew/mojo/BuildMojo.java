@@ -16,20 +16,29 @@
 
 package com.tairanchina.csp.dew.mojo;
 
+import com.tairanchina.csp.dew.kernel.flow.build.BuildFlowFactory;
+import com.tairanchina.csp.dew.kernel.function.NeedExecuteByGit;
 import io.kubernetes.client.ApiException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import java.io.IOException;
 
-@Mojo(name = "showVersion")
-public class ShowVersionMojo extends BasicMojo {
+@Mojo(name = "build", defaultPhase = LifecyclePhase.PACKAGE)
+@Execute(phase = LifecyclePhase.PACKAGE, goal = "build")
+public class BuildMojo extends BasicMojo {
+
+    @Override
+    protected boolean preExecute() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
+        NeedExecuteByGit.setNeedExecuteProjects();
+        return super.preExecute();
+    }
 
     @Override
     protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
-
-        return true;
+        return BuildFlowFactory.choose().exec();
     }
-
 }

@@ -17,7 +17,7 @@
 package com.tairanchina.csp.dew.kernel.resource;
 
 import com.tairanchina.csp.dew.helper.KubeHelper;
-import com.tairanchina.csp.dew.kernel.config.FinalConfig;
+import com.tairanchina.csp.dew.kernel.config.FinalProjectConfig;
 import com.tairanchina.csp.dew.kernel.flow.BasicFlow;
 import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.models.*;
@@ -30,7 +30,7 @@ import java.util.Map;
 public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
 
     @Override
-    public V1Service build(FinalConfig config) {
+    public V1Service build(FinalProjectConfig config) {
 
         Map<String, String> annotations = new HashMap<>();
         annotations.put(BasicFlow.FLAG_KUBE_RESOURCE_GIT_COMMIT, config.getGitCommit());
@@ -79,8 +79,8 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
 
     public List<String> buildPatch(V1Service service) {
         List<String> patcher = new ArrayList<>();
-        service.getMetadata().getAnnotations().forEach((key, value) -> patcher.add("{\"op\":\"replace\",\"path\":\"/metadata/annotations/" + key.replaceAll("\\/","~1") + "\",\"value\":\"" + value + "\"}"));
-        service.getMetadata().getLabels().forEach((key, value) -> patcher.add("{\"op\":\"replace\",\"path\":\"/metadata/labels/" + key.replaceAll("\\/","~1") + "\",\"value\":\"" + value + "\"}"));
+        service.getMetadata().getAnnotations().forEach((key, value) -> patcher.add("{\"op\":\"replace\",\"path\":\"/metadata/annotations/" + key.replaceAll("\\/", "~1") + "\",\"value\":\"" + value + "\"}"));
+        service.getMetadata().getLabels().forEach((key, value) -> patcher.add("{\"op\":\"replace\",\"path\":\"/metadata/labels/" + key.replaceAll("\\/", "~1") + "\",\"value\":\"" + value + "\"}"));
         return patcher;
     }
 }

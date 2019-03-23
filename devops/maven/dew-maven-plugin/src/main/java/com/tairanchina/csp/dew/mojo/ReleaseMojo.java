@@ -17,26 +17,28 @@
 package com.tairanchina.csp.dew.mojo;
 
 import com.tairanchina.csp.dew.kernel.flow.release.ReleaseFlowFactory;
+import com.tairanchina.csp.dew.kernel.function.NeedExecuteByGit;
 import io.kubernetes.client.ApiException;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import java.io.IOException;
 
-@Mojo(name = "release", requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "release")
+@Execute(phase = LifecyclePhase.PACKAGE, goal = "build")
 public class ReleaseMojo extends BasicMojo {
 
-    public static final String FLAG_DEW_DEVOPS_RELEASE_ALL = "dew.devops.release.all";
-
-    @Parameter(property = FLAG_DEW_DEVOPS_RELEASE_ALL)
-    private boolean releaseAll;
-
     @Override
-    public void executeInternal() throws ApiException, IOException, MojoExecutionException {
-        ReleaseFlowFactory.choose().process(releaseAll);
+    protected boolean preExecute() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
+        NeedExecuteByGit.setNeedExecuteProjects();
+        return super.preExecute();
     }
 
+    @Override
+    protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
+        return ReleaseFlowFactory.choose().exec();
+    }
 }

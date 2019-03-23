@@ -16,19 +16,20 @@
 
 package com.tairanchina.csp.dew.mojo;
 
+import io.kubernetes.client.ApiException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import java.io.IOException;
 
-@Mojo(name = "rollback", requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "rollback")
 public class RollbackMojo extends BasicMojo {
 
     @Override
-    public void executeInternal() throws MojoExecutionException, MojoFailureException, IOException {
+    protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
 
+        return true;
     }
 
 }

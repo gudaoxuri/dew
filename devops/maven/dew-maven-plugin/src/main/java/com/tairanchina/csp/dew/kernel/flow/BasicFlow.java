@@ -16,8 +16,41 @@
 
 package com.tairanchina.csp.dew.kernel.flow;
 
+import com.tairanchina.csp.dew.kernel.Dew;
+import io.kubernetes.client.ApiException;
+import org.apache.maven.plugin.MojoExecutionException;
+
+import java.io.IOException;
+
 public abstract class BasicFlow {
 
     public static final String FLAG_KUBE_RESOURCE_GIT_COMMIT = "dew.ms/git-commit";
+
+    public final boolean exec() throws ApiException, IOException, MojoExecutionException {
+        Dew.log.debug("Executing " + this.getClass().getSimpleName());
+        if (!preProcess()) {
+            Dew.log.debug("Finished,because [preProcess] is false");
+            return false;
+        }
+        if (!process()) {
+            Dew.log.debug("Finished,because [process] is false");
+            return false;
+        }
+        if (!postProcess()) {
+            Dew.log.debug("Finished,because [postProcess] is false");
+            return false;
+        }
+        return true;
+    }
+
+    abstract protected boolean process() throws ApiException, IOException, MojoExecutionException;
+
+    protected boolean preProcess() throws ApiException, IOException, MojoExecutionException {
+        return true;
+    }
+
+    protected boolean postProcess() throws ApiException, IOException, MojoExecutionException {
+        return true;
+    }
 
 }

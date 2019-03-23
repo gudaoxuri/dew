@@ -17,7 +17,7 @@
 package com.tairanchina.csp.dew.mojo;
 
 import com.tairanchina.csp.dew.kernel.Dew;
-import com.tairanchina.csp.dew.utils.DewLog;
+import com.tairanchina.csp.dew.util.DewLog;
 import io.kubernetes.client.ApiException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -27,7 +27,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 
 import java.io.IOException;
 
@@ -35,16 +34,12 @@ public abstract class BasicMojo extends AbstractMojo {
 
     public static final String FLAG_DEW_DEVOPS_DEFAULT_PROFILE = "default";
 
-    public static final String FLAG_DEW_DEVOPS_SKIP = "dew.devops.skip";
     public static final String FLAG_DEW_DEVOPS_PROFILE = "dew.devops.profile";
     public static final String FLAG_DEW_DEVOPS_DOCKER_HOST = "dew.devops.docker.host";
     public static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL = "dew.devops.docker.registry.url";
     public static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME = "dew.devops.docker.registry.username";
     public static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD = "dew.devops.docker.registry.password";
     public static final String FLAG_DEW_DEVOPS_KUBE_CONFIG = "dew.devops.kube.config";
-
-    @Parameter(property = FLAG_DEW_DEVOPS_SKIP)
-    private Boolean skip;
 
     @Parameter(property = FLAG_DEW_DEVOPS_PROFILE, defaultValue = FLAG_DEW_DEVOPS_DEFAULT_PROFILE)
     private String profile;
@@ -65,35 +60,33 @@ public abstract class BasicMojo extends AbstractMojo {
     private String kubeBase64Config;
 
     @Component
-    protected MavenProject project;
-
-    @Component
     protected MavenSession session;
 
     @Component
     protected BuildPluginManager pluginManager;
 
 
+    protected boolean preExecute() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
+        return true;
+    }
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
             Dew.log = new DewLog(super.getLog(), "[DEW][" + getMojoName() + "]:");
             Dew.log.info("Start...");
-            if (skip != null && skip) {
-                // 传入参数或从各项目pom配置中读取的 dew.devops.skip 为第一优先级
-                Dew.log.info("Skipped");
-                return;
-            }
-            Dew.Init.init(skip, profile,
-                    dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,
-                    project, session, pluginManager);
-            if (Dew.config.isSkip()) {
+            Dew.Init.init(session, pluginManager, profile,
+                    dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config);
+            if (!preExecute() || Dew.Config.getCurrentProject() == null || Dew.Config.getCurrentProject().isSkip()) {
                 // 各项目 .dew 配置 skip=true || 不支持的app kind
                 Dew.log.info("Skipped");
                 return;
             }
-            executeInternal();
-            Dew.log.info("Successful");
+            if (executeInternal()) {
+                Dew.log.info("Successful");
+            } else {
+                Dew.Config.getCurrentProject().setSkip(true);
+            }
         } catch (MojoExecutionException | MojoFailureException e) {
             Dew.log.error("Error", e);
             throw e;
@@ -103,7 +96,7 @@ public abstract class BasicMojo extends AbstractMojo {
         }
     }
 
-    protected abstract void executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException;
+    protected abstract boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException;
 
     private String getMojoName() {
         return this.getClass().getSimpleName().substring(0, this.getClass().getSimpleName().indexOf("Mojo"));

@@ -18,7 +18,7 @@ package com.tairanchina.csp.dew.kernel.resource;
 
 import com.tairanchina.csp.dew.helper.KubeHelper;
 import com.tairanchina.csp.dew.kernel.Dew;
-import com.tairanchina.csp.dew.kernel.config.FinalConfig;
+import com.tairanchina.csp.dew.kernel.config.FinalProjectConfig;
 import io.kubernetes.client.models.V1ConfigMap;
 import io.kubernetes.client.models.V1ConfigMapBuilder;
 import io.kubernetes.client.models.V1ObjectMetaBuilder;
@@ -28,7 +28,7 @@ import java.util.Map;
 public class KubeConfigMapBuilder implements KubeResourceBuilder<V1ConfigMap> {
 
     @Override
-    public V1ConfigMap build(FinalConfig config) {
+    public V1ConfigMap build(FinalProjectConfig config) {
         return null;
     }
 
@@ -39,7 +39,7 @@ public class KubeConfigMapBuilder implements KubeResourceBuilder<V1ConfigMap> {
                 .withData(data)
                 .withMetadata(new V1ObjectMetaBuilder()
                         .withName(name)
-                        .withNamespace(Dew.config.getNamespace())
+                        .withNamespace(Dew.Config.getCurrentProject().getNamespace())
                         .withLabels(labels)
                         .build())
                 .build();

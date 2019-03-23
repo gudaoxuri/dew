@@ -21,6 +21,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Map;
+
 public class YamlHelperTest {
 
     @Before
@@ -45,6 +47,17 @@ public class YamlHelperTest {
         Assert.assertEquals("valc2", o.getC().getC2());
         Assert.assertEquals("vala", o.getA());
         Assert.assertEquals("valb", o.getB());
+
+
+     /*   Map map = YamlHelper.toObject(
+                "a: vala\n" +
+                        "profiles:\n" +
+                        "  test:\n" +
+                        "    a: valaTest\n" +
+                        "  prod:\n" +
+                        "    b: valbProd");
+        map.get("profiles");
+*/
     }
 
 }
