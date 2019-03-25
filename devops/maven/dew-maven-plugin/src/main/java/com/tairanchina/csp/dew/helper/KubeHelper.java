@@ -286,6 +286,9 @@ public class KubeHelper {
             case DEPLOYMENT:
                 resource = instance.extensionsApi.listNamespacedDeployment(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
+            case REPLICA_SET:
+                resource = instance.extensionsApi.listNamespacedReplicaSet(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                break;
             case POD:
                 resource = instance.coreApi.listNamespacedPod(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
@@ -341,6 +344,9 @@ public class KubeHelper {
                     break;
                 case DEPLOYMENT:
                     resource = instance.extensionsApi.readNamespacedDeployment(name, namespace, "true", false, false);
+                    break;
+                case REPLICA_SET:
+                    resource = instance.extensionsApi.readNamespacedReplicaSet(name, namespace, "true", false, false);
                     break;
                 case POD:
                     resource = instance.coreApi.readNamespacedPod(name, namespace, "true", false, false);
@@ -636,6 +642,9 @@ public class KubeHelper {
                 case DEPLOYMENT:
                     instance.extensionsApi.deleteNamespacedDeployment(name, namespace, deleteOptions, "true", null, null, null, null);
                     break;
+                case REPLICA_SET:
+                    instance.extensionsApi.deleteNamespacedReplicaSet(name, namespace, deleteOptions, "true", null, null, null, null);
+                    break;
                 case POD:
                     instance.coreApi.deleteNamespacedPod(name, namespace, deleteOptions, "true", null, null, null, null);
                     break;
@@ -693,6 +702,7 @@ public class KubeHelper {
         SERVICE_ACCOUNT("ServiceAccount"),
         DEPLOYMENT("Deployment"),
         DAEMON_SET("DaemonSet"),
+        REPLICA_SET("ReplicaSet"),
         CONFIG_MAP("ConfigMap"),
         SECRET("Secret"),
         POD("Pod"),
