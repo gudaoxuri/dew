@@ -41,7 +41,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class BasicReleaseFlow extends BasicFlow {
+public class DefaultReleaseFlow extends BasicFlow {
 
     public boolean process() throws ApiException, IOException, MojoExecutionException {
         Dew.log.info("Building kubernetes resources");

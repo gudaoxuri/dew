@@ -16,7 +16,7 @@
 
 package com.tairanchina.csp.dew.mojo;
 
-import com.tairanchina.csp.dew.kernel.flow.release.ReleaseFlowFactory;
+import com.tairanchina.csp.dew.kernel.flow.release.DefaultReleaseFlow;
 import com.tairanchina.csp.dew.kernel.function.NeedExecuteByGit;
 import io.kubernetes.client.ApiException;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -39,6 +39,6 @@ public class ReleaseMojo extends BasicMojo {
 
     @Override
     protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
-        return ReleaseFlowFactory.choose().exec();
+        return new DefaultReleaseFlow().exec();
     }
 }

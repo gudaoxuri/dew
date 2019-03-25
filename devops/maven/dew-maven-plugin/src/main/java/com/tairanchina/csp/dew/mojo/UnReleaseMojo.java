@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-package com.tairanchina.csp.dew.kernel.flow.release;
+package com.tairanchina.csp.dew.mojo;
 
-import com.tairanchina.csp.dew.kernel.flow.BasicFlow;
+import com.tairanchina.csp.dew.kernel.flow.unrelease.DefaultUnReleaseFlow;
+import io.kubernetes.client.ApiException;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
 
-public class ReleaseFlowFactory {
+import java.io.IOException;
 
-    public static BasicFlow choose() {
-        return new BasicReleaseFlow();
+@Mojo(name = "unrelease")
+public class UnReleaseMojo extends BasicMojo {
+
+    @Override
+    protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
+        return new DefaultUnReleaseFlow().exec();
     }
 
 }
