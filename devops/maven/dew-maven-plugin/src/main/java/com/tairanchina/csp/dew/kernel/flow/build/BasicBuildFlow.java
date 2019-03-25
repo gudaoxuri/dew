@@ -36,8 +36,7 @@ public abstract class BasicBuildFlow extends BasicFlow {
     @Override
     public boolean process() throws ApiException, IOException, MojoExecutionException {
         // 先判断是否存在
-        // FIXME 删除后还能找到
-        if (DockerHelper.Image.list(Dew.Config.getCurrentProject().getCurrImageName(), Dew.Config.getCurrentProject().getId()).isEmpty()) {
+        if (!DockerHelper.Registry.exist(Dew.Config.getCurrentProject().getCurrImageName(), Dew.Config.getCurrentProject().getId())) {
             String buildBasePath = Dew.Config.getCurrentProject().getMvnTargetDirectory() + "dew_build" + File.separator;
             Files.createDirectories(Paths.get(buildBasePath));
             Dew.log.info("Building image : " + Dew.Config.getCurrentProject().getCurrImageName());

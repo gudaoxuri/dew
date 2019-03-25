@@ -17,6 +17,7 @@
 package com.tairanchina.csp.dew.helper;
 
 import com.ecfront.dew.common.$;
+import com.ecfront.dew.common.HttpHelper;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.BuildImageCmd;
 import com.github.dockerjava.api.command.PullImageCmd;
@@ -33,6 +34,8 @@ import com.github.dockerjava.core.command.PushImageResultCallback;
 import org.apache.maven.plugin.logging.Log;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,15 +56,21 @@ public class DockerHelper {
 
     private static class Instance {
 
-        Instance(Log log, DockerClient docker, AuthConfig defaultAuthConfig) {
+        public Instance(Log log, DockerClient docker, AuthConfig defaultAuthConfig, String registryApiUrl, String registryUsername, String registryPassword) {
             this.log = log;
             this.docker = docker;
             this.defaultAuthConfig = defaultAuthConfig;
+            this.registryApiUrl = registryApiUrl;
+            this.registryPassword = registryPassword;
+            this.registryUsername = registryUsername;
         }
 
         private Log log;
         private DockerClient docker;
         private AuthConfig defaultAuthConfig;
+        private String registryApiUrl;
+        private String registryPassword;
+        private String registryUsername;
 
     }
 
@@ -90,14 +99,17 @@ public class DockerHelper {
         if (host != null && !host.isEmpty()) {
             builder.withDockerHost(host);
         }
+        String registryApiUrl = "";
         if (registryUrl != null) {
+            registryUrl = registryUrl.endsWith("/") ? registryUrl.substring(0, registryUrl.length() - 1) : registryUrl;
+            registryApiUrl = registryUrl.substring(0, registryUrl.lastIndexOf("/") + 1) + "api";
             defaultAuthConfig = new AuthConfig()
                     .withRegistryAddress(registryUrl)
                     .withUsername(registryUsername)
                     .withPassword(registryPassword);
         }
         docker = DockerClientBuilder.getInstance(builder.build()).build();
-        INSTANCES.put(instanceId, new Instance(log, docker, defaultAuthConfig));
+        INSTANCES.put(instanceId, new Instance(log, docker, defaultAuthConfig, registryApiUrl, registryUsername, registryPassword));
     }
 
     public static class Image {
@@ -182,6 +194,36 @@ public class DockerHelper {
 
         public static void remove(String imageId, String instanceId) {
             INSTANCES.get(instanceId).docker.removeImageCmd(imageId).withForce(true).exec();
+        }
+
+    }
+
+    /**
+     * Harbor Registry API
+     *
+     * @link https://raw.githubusercontent.com/goharbor/harbor/master/docs/swagger.yaml
+     */
+    public static class Registry {
+
+        public static boolean exist(String imageName, String instanceId) throws IOException {
+            String[] item = imageName.split(":");
+            String tag = item[1];
+            String imageNameWithoutHost = item[0].substring(item[0].indexOf("/") + 1);
+            Instance instance = INSTANCES.get(instanceId);
+            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(instance.registryApiUrl + "/repositories/" + imageNameWithoutHost + "/tags/" + tag, wrapHeader(instance));
+            instance.log.debug("Registry exist result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            return responseWrap.statusCode == 200;
+        }
+
+        private static Map<String, String> wrapHeader(Instance instance) {
+            Map<String, String> header = new HashMap<>();
+            try {
+                header.put("Content-Type", "application/json");
+                header.put("accept", "application/json");
+                header.put("authorization", "Basic " + $.security.encodeStringToBase64(instance.registryUsername + ":" + instance.registryPassword, "UTF-8"));
+            } catch (UnsupportedEncodingException ignore) {
+            }
+            return header;
         }
 
     }
