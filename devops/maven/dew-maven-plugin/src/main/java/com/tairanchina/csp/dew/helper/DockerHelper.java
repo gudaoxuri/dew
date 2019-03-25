@@ -211,7 +211,7 @@ public class DockerHelper {
         public static boolean exist(String imageName, String instanceId) throws IOException {
             String[] item = parseImageInfo(imageName);
             Instance instance = INSTANCES.get(instanceId);
-            HttpHelper.ResponseWrap responseWrap = $.http.deleteWrap(instance.registryApiUrl + "/repositories/" + item[0] + "/tags/" + item[1], wrapHeader(instance));
+            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(instance.registryApiUrl + "/repositories/" + item[0] + "/tags/" + item[1], wrapHeader(instance));
             instance.log.debug("Registry delete image result [" + responseWrap.statusCode + "]" + responseWrap.result);
             return responseWrap.statusCode == 200;
         }
@@ -219,7 +219,7 @@ public class DockerHelper {
         public static boolean remove(String imageName, String instanceId) throws IOException {
             String[] item = parseImageInfo(imageName);
             Instance instance = INSTANCES.get(instanceId);
-            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(instance.registryApiUrl + "/repositories/" + item[0] + "/tags/" + item[1], wrapHeader(instance));
+            HttpHelper.ResponseWrap responseWrap = $.http.deleteWrap(instance.registryApiUrl + "/repositories/" + item[0] + "/tags/" + item[1], wrapHeader(instance));
             boolean result = responseWrap.statusCode == 200;
             if (result) {
                 instance.log.debug("Registry exist image result [" + responseWrap.statusCode + "]" + responseWrap.result);
