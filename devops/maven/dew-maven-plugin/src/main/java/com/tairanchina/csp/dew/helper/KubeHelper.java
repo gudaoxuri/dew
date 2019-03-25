@@ -168,8 +168,16 @@ public class KubeHelper {
             try {
                 watch.forEach(callback);
             } catch (RuntimeException e) {
-                if (!WATCH_LIST.containsKey(watchId) && e.getMessage().equals("IO Exception during hasNext method.")) {
-                    // https://github.com/kubernetes-client/java/issues/259
+                if (!WATCH_LIST.containsKey(watchId)) {
+                    if (e instanceof IllegalStateException
+                            && e.getMessage() != null
+                            && e.getMessage().equalsIgnoreCase("closed")
+                            || e.getMessage() != null
+                            && e.getMessage().equals("IO Exception during hasNext method.")) {
+                        // https://github.com/kubernetes-client/java/issues/259
+                    } else {
+                        throw e;
+                    }
                 } else {
                     throw e;
                 }

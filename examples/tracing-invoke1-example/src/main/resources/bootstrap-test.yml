@@ -3,7 +3,7 @@ spring:
     config:
       enabled: false
   rabbitmq:
-    host: 10.200.20.220
+    host: 10.200.131.182
     port: 5672
     username: dew
     password: dew123456

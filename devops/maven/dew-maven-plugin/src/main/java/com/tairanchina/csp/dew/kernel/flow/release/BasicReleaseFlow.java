@@ -128,19 +128,27 @@ public class BasicReleaseFlow extends BasicFlow {
         }}, Dew.Config.getCurrentProject().getNamespace(), KubeHelper.RES.CONFIG_MAP, Dew.Config.getCurrentProject().getId());
     }
 
-    private void removeOldVersions(int revisionHistoryLimit) throws ApiException {
-        List<V1ConfigMap> verConfigMaps = KubeHelper.list("name=" + Dew.Config.getCurrentProject().getAppName() + ",kind=version",
-                Dew.Config.getCurrentProject().getNamespace(), KubeHelper.RES.CONFIG_MAP, V1ConfigMap.class, Dew.Config.getCurrentProject().getId());
-        verConfigMaps.sort((m1, m2) -> Long.valueOf(m2.getMetadata().getLabels().get("lastUpdateTime")).compareTo(Long.valueOf(m1.getMetadata().getLabels().get("lastUpdateTime"))));
+    private void removeOldVersions(int revisionHistoryLimit) throws ApiException, IOException {
+        List<V1ConfigMap> verConfigMaps = KubeHelper.list(
+                "app=" + Dew.Config.getCurrentProject().getAppName() + ",kind=version",
+                Dew.Config.getCurrentProject().getNamespace(),
+                KubeHelper.RES.CONFIG_MAP, V1ConfigMap.class,
+                Dew.Config.getCurrentProject().getId());
+        verConfigMaps.sort((m1, m2) ->
+                Long.valueOf(m2.getMetadata().getLabels().get("lastUpdateTime"))
+                        .compareTo(Long.valueOf(m1.getMetadata().getLabels().get("lastUpdateTime"))));
         int offset = revisionHistoryLimit;
         for (V1ConfigMap configMap : verConfigMaps) {
-            if (configMap.getMetadata().getLabels().get("enabled").equals("true")) {
+            boolean enabled = configMap.getMetadata().getLabels().get("enabled").equalsIgnoreCase("true");
+            if (enabled) {
                 offset--;
             }
-            if (offset <= 0) {
+            if (!enabled || offset <= 0) {
                 String oldGitCommit = configMap.getMetadata().getLabels().get(FLAG_KUBE_RESOURCE_GIT_COMMIT);
+                Dew.log.debug("Remove old version : " + configMap.getMetadata().getName());
                 KubeHelper.delete(configMap.getMetadata().getName(), Dew.Config.getCurrentProject().getNamespace(), KubeHelper.RES.CONFIG_MAP, Dew.Config.getCurrentProject().getId());
                 DockerHelper.Image.remove(Dew.Config.getCurrentProject().getImageName(oldGitCommit), Dew.Config.getCurrentProject().getId());
+                DockerHelper.Registry.remove(Dew.Config.getCurrentProject().getImageName(oldGitCommit), Dew.Config.getCurrentProject().getId());
             }
         }
     }

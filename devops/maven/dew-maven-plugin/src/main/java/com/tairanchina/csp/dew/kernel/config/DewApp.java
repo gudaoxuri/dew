@@ -27,13 +27,15 @@ public class DewApp {
     private int metricPort = 9779;
     private String livenessPath = "/actuator/health";
     private String readinessPath = "/actuator/health";
-    private int livenessInitialDelaySeconds = 180;
-    private int livenessPeriodSeconds = 60;
+    private int livenessInitialDelaySeconds = 60;
+    private int livenessPeriodSeconds = 30;
+    private int livenessFailureThreshold = 6;
     private int readinessInitialDelaySeconds = 10;
     private int readinessPeriodSeconds = 60;
+    private int readinessFailureThreshold = 3;
     private boolean traceLogEnabled = true;
     private String javaOptions = "-Xmx2688M -Xms2688M -Xmn960M -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M -XX:+UseConcMarkSweepGC -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:+CMSClassUnloadingEnabled -XX:+ParallelRefProcEnabled -XX:+CMSScavengeBeforeRemark -XX:+HeapDumpOnOutOfMemoryError";
-    private Set<String> ignoreChangeFiles=new HashSet<>();
+    private Set<String> ignoreChangeFiles = new HashSet<>();
 
     public int getReplicas() {
         return replicas;
@@ -114,6 +116,22 @@ public class DewApp {
 
     public void setReadinessPeriodSeconds(int readinessPeriodSeconds) {
         this.readinessPeriodSeconds = readinessPeriodSeconds;
+    }
+
+    public int getLivenessFailureThreshold() {
+        return livenessFailureThreshold;
+    }
+
+    public void setLivenessFailureThreshold(int livenessFailureThreshold) {
+        this.livenessFailureThreshold = livenessFailureThreshold;
+    }
+
+    public int getReadinessFailureThreshold() {
+        return readinessFailureThreshold;
+    }
+
+    public void setReadinessFailureThreshold(int readinessFailureThreshold) {
+        this.readinessFailureThreshold = readinessFailureThreshold;
     }
 
     public boolean isTraceLogEnabled() {

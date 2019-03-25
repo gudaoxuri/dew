@@ -17,7 +17,6 @@
 package com.tairanchina.csp.dew.kernel.resource;
 
 import com.tairanchina.csp.dew.helper.KubeHelper;
-import com.tairanchina.csp.dew.kernel.config.FinalConfig;
 import com.tairanchina.csp.dew.kernel.config.FinalProjectConfig;
 import com.tairanchina.csp.dew.kernel.flow.BasicFlow;
 import io.kubernetes.client.custom.IntOrString;
@@ -81,6 +80,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                                         .build())
                                 .withInitialDelaySeconds(config.getApp().getLivenessInitialDelaySeconds())
                                 .withPeriodSeconds(config.getApp().getLivenessPeriodSeconds())
+                                .withFailureThreshold(config.getApp().getLivenessFailureThreshold())
                                 .build())
                         .withReadinessProbe(new V1ProbeBuilder()
                                 .withHttpGet(new V1HTTPGetActionBuilder()
@@ -90,6 +90,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                                         .build())
                                 .withInitialDelaySeconds(config.getApp().getReadinessInitialDelaySeconds())
                                 .withPeriodSeconds(config.getApp().getReadinessPeriodSeconds())
+                                .withFailureThreshold(config.getApp().getReadinessFailureThreshold())
                                 .build());
                 break;
             // TODO

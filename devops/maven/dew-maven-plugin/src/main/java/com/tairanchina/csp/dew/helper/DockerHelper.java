@@ -192,8 +192,11 @@ public class DockerHelper {
             }
         }
 
-        public static void remove(String imageId, String instanceId) {
-            INSTANCES.get(instanceId).docker.removeImageCmd(imageId).withForce(true).exec();
+        public static void remove(String imageName, String instanceId) {
+            List<com.github.dockerjava.api.model.Image> images = list(imageName, instanceId);
+            if (!images.isEmpty()) {
+                INSTANCES.get(instanceId).docker.removeImageCmd(images.get(0).getId()).withForce(true).exec();
+            }
         }
 
     }
@@ -206,13 +209,31 @@ public class DockerHelper {
     public static class Registry {
 
         public static boolean exist(String imageName, String instanceId) throws IOException {
+            String[] item = parseImageInfo(imageName);
+            Instance instance = INSTANCES.get(instanceId);
+            HttpHelper.ResponseWrap responseWrap = $.http.deleteWrap(instance.registryApiUrl + "/repositories/" + item[0] + "/tags/" + item[1], wrapHeader(instance));
+            instance.log.debug("Registry delete image result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            return responseWrap.statusCode == 200;
+        }
+
+        public static boolean remove(String imageName, String instanceId) throws IOException {
+            String[] item = parseImageInfo(imageName);
+            Instance instance = INSTANCES.get(instanceId);
+            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(instance.registryApiUrl + "/repositories/" + item[0] + "/tags/" + item[1], wrapHeader(instance));
+            boolean result = responseWrap.statusCode == 200;
+            if (result) {
+                instance.log.debug("Registry exist image result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            } else {
+                instance.log.error("Registry exist image result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            }
+            return result;
+        }
+
+        public static String[] parseImageInfo(String imageName) {
             String[] item = imageName.split(":");
             String tag = item[1];
             String imageNameWithoutHost = item[0].substring(item[0].indexOf("/") + 1);
-            Instance instance = INSTANCES.get(instanceId);
-            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(instance.registryApiUrl + "/repositories/" + imageNameWithoutHost + "/tags/" + tag, wrapHeader(instance));
-            instance.log.debug("Registry exist result [" + responseWrap.statusCode + "]" + responseWrap.result);
-            return responseWrap.statusCode == 200;
+            return new String[]{imageNameWithoutHost, tag};
         }
 
         private static Map<String, String> wrapHeader(Instance instance) {
