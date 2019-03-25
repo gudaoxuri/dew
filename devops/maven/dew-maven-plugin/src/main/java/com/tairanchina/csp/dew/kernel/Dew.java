@@ -151,12 +151,14 @@ public class Dew {
             List<Element> config = configuration.entrySet().stream()
                     .map(item -> element(item.getKey(), item.getValue()))
                     .collect(Collectors.toList());
+            org.apache.maven.model.Plugin plugin;
+            if (version == null) {
+                plugin = plugin(groupId, artifactId);
+            } else {
+                plugin = plugin(groupId, artifactId, version);
+            }
             MojoExecutor.executeMojo(
-                    plugin(
-                            groupId(groupId),
-                            artifactId(artifactId),
-                            version(version)
-                    ),
+                    plugin,
                     goal(goal),
                     configuration(config.toArray(new Element[]{})),
                     executionEnvironment(
@@ -171,6 +173,12 @@ public class Dew {
 
     public static class Utils {
 
+        /**
+         * 注意，此方法调用时未必执行了对应项目的phase,所以有些参数拿不到
+         *
+         * @param mavenProject
+         * @return
+         */
         public static AppKind checkAppKind(MavenProject mavenProject) {
             AppKind appKind = null;
             if (mavenProject.getPackaging().equalsIgnoreCase("pom")

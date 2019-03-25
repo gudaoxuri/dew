@@ -26,10 +26,9 @@ import java.util.HashMap;
 public class JvmServiceBuildFlow extends BasicBuildFlow {
 
     protected boolean preDockerBuild(String buildBasePath) throws IOException, MojoExecutionException {
-        // FIXME 构建未成功
         Dew.Invoke.invoke("org.springframework.boot",
                 "spring-boot-maven-plugin",
-                "2.1.3.RELEASE",
+                null,
                 "repackage",
                 new HashMap<String, String>() {{
                     put("outputDirectory", buildBasePath);
