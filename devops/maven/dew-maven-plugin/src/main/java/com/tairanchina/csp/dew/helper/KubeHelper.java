@@ -39,14 +39,11 @@ import org.apache.maven.plugin.logging.Log;
 
 import java.io.*;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -533,53 +530,86 @@ public class KubeHelper {
         }
     }
 
-    public static List<String> log(String name, String namespace, int waitSec, String instanceId) throws ApiException, IOException {
-        return log(name, null, namespace, waitSec, instanceId);
+    public static List<String> log(String name, String namespace, String instanceId) throws ApiException, IOException {
+        return log(name, null, namespace, 0, instanceId);
     }
 
-    public static List<String> log(String name, String container, String namespace, int waitSec, String instanceId) throws ApiException, IOException {
-        KubeHelper.Instance instance = INSTANCES.get(instanceId);
-        List<String> logResult = new ArrayList<>();
-        Closeable closeable = log(name, container, namespace, logResult::add, instanceId);
+    public static List<String> log(String name, String namespace, int tailLines, String instanceId) throws ApiException, IOException {
+        return log(name, null, namespace, tailLines, instanceId);
+    }
+
+    public static List<String> log(String name, String container, String namespace, String instanceId) throws ApiException, IOException {
+        return log(name, container, namespace, 0, instanceId);
+    }
+
+    public static List<String> log(String name, String container, String namespace, int tailLines, String instanceId) throws ApiException, IOException {
+        List<String> logResult = new CopyOnWriteArrayList<>();
+        Closeable closeable = log(name, container, namespace, logResult::add, tailLines, instanceId);
         try {
-            Thread.sleep(waitSec * 1000);
+            // 等待日志收集
+            Thread.sleep(2000);
+            int length = 0;
+            while (true) {
+                if (logResult.size() == length) {
+                    // 近似认为日志输出到末尾
+                    // TODO 更优雅地判断日志是否到末尾
+                    closeable.close();
+                    return logResult;
+                } else {
+                    length = logResult.size();
+                }
+                Thread.sleep(1);
+            }
         } catch (InterruptedException ignore) {
             Thread.currentThread().interrupt();
+            return logResult;
         }
-        closeable.close();
-        return logResult;
+
     }
 
-    public static Closeable log(String name, String container, String namespace, Consumer<String> tailFollowFun, String instanceId) throws ApiException {
+    public static Closeable log(String name, String container, String namespace,
+                                Consumer<String> tailFollowFun, String instanceId) throws ApiException {
+        return log(name, container, namespace, tailFollowFun, 0, instanceId);
+    }
+
+    public static Closeable log(String name, String container, String namespace,
+                                Consumer<String> tailFollowFun, int tailLines, String instanceId) throws ApiException {
         KubeHelper.Instance instance = INSTANCES.get(instanceId);
         if (container == null) {
             container = read(name, namespace, RES.POD, V1Pod.class, instanceId).getSpec().getContainers().get(0).getName();
         }
         String finalContainer = container;
         try {
-            InputStream is = instance.podLogs.streamNamespacedPodLog(namespace, name, finalContainer);
+            AtomicBoolean closed = new AtomicBoolean(false);
+            InputStream is = instance.podLogs.streamNamespacedPodLog(namespace, name, finalContainer, null, tailLines == 0 ? null : tailLines, false);
             BufferedReader r = new BufferedReader(new InputStreamReader(is));
             EXECUTOR_SERVICE.execute(() -> {
                 try {
-                    while (r.readLine() != null) {
-                        tailFollowFun.accept(r.readLine());
+                    String msg;
+                    while ((msg = r.readLine()) != null) {
+                        tailFollowFun.accept(msg);
                     }
                 } catch (IOException e) {
-                    instance.log.error("Output log error.", e);
+                    if (closed.get()) {
+                        // 正常关闭
+                    } else {
+                        instance.log.error("Output log error", e);
+                    }
                 } finally {
                     try {
                         is.close();
                     } catch (IOException e) {
-                        instance.log.error("Close log stream error.", e);
+                        instance.log.error("Close log stream error", e);
                     }
                 }
             });
             return () -> {
-                r.close();
+                closed.set(true);
                 is.close();
+                r.close();
             };
         } catch (ApiException | IOException e) {
-            instance.log.error("Output log error.", e);
+            instance.log.error("Output log error", e);
         }
         return () -> {
         };

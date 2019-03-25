@@ -16,20 +16,30 @@
 
 package com.tairanchina.csp.dew.mojo;
 
+import com.tairanchina.csp.dew.kernel.flow.log.DefaultLogFlow;
 import io.kubernetes.client.ApiException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.IOException;
 
 @Mojo(name = "log")
 public class LogMojo extends BasicMojo {
 
+    private static final String FLAG_DEW_DEVOPS_POD_NAME = "dew.devops.log.podName";
+    private static final String FLAG_DEW_DEVOPS_LOG_FOLLOW = "dew.devops.log.follow";
+
+
+    @Parameter(property = FLAG_DEW_DEVOPS_POD_NAME)
+    private String podName;
+    @Parameter(property = FLAG_DEW_DEVOPS_LOG_FOLLOW)
+    private boolean follow;
+
     @Override
     protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
-
-        return true;
+        return new DefaultLogFlow(podName, follow).exec();
     }
 
 }
