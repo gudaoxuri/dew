@@ -22,49 +22,66 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+
+/**
+ * 领导者选举服务.
+ *
+ * @author gudaoxuri
+ */
 public abstract class AbsClusterElection implements ClusterElection {
 
     protected static final Logger logger = LoggerFactory.getLogger(AbsClusterElection.class);
 
+    /**
+     * 未完成初始化标识.
+     */
     protected static final long FLAG_UNINITIALIZED = 0;
+    /**
+     * 领导者标识.
+     */
     protected static final long FLAG_LEADER = 1;
+    /**
+     * 非领导者标识.
+     */
     protected static final long FLAG_FOLLOWER = -1;
 
-    // 0 未初始化， 1 是领导者 -1 不是领导者
+    /**
+     * The Leader.
+     * <p>
+     * 0 未初始化， 1 是领导者 -1 不是领导者
+     */
     protected AtomicLong leader = new AtomicLong(FLAG_UNINITIALIZED);
 
     /**
-     * 执行（重新）选举
+     * 执行（重新）选举.
      * <p>
      * 需调用方定时调用此接口
-     *
      */
     protected abstract void election();
 
     /**
-     * 退出选举，暂未实现
-     *
+     * 退出选举，暂未实现.
      */
     protected void quit() {
         throw new NotImplementedException();
     }
 
     /**
-     * 当前工程是否是领导者
+     * 当前工程是否是领导者.
      *
      * @return 是否是领导者
      */
     @Override
     public boolean isLeader() {
-        while (leader.get() == FLAG_UNINITIALIZED) {
+        while (this.leader.get() == FLAG_UNINITIALIZED) {
             try {
                 Thread.sleep(100);
                 logger.trace("Waiting leader election...");
-            } catch (InterruptedException e) {
-                logger.error("Leader election error", e);
+            } catch (InterruptedException ex) {
+                logger.error("Leader election error", ex);
             }
         }
-        return leader.get() == FLAG_LEADER;
+        return this.leader.get() == FLAG_LEADER;
     }
 
 }

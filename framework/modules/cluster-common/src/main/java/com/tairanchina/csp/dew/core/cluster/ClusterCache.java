@@ -21,12 +21,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 缓存服务
+ * 缓存服务.
+ *
+ * @author gudaoxuri
  */
 public interface ClusterCache {
 
     /**
-     * key是否存在
+     * key是否存在.
      *
      * @param key key
      * @return 是否存在
@@ -34,7 +36,7 @@ public interface ClusterCache {
     boolean exists(String key);
 
     /**
-     * 获取字符串值
+     * 获取字符串值.
      *
      * @param key key
      * @return 值
@@ -42,7 +44,7 @@ public interface ClusterCache {
     String get(String key);
 
     /**
-     * 设置字符串值
+     * 设置字符串值.
      *
      * @param key   key
      * @param value value
@@ -50,7 +52,7 @@ public interface ClusterCache {
     void set(String key, String value);
 
     /**
-     * 设置字符串值
+     * 设置字符串值.
      *
      * @param key   key
      * @param value value
@@ -58,7 +60,7 @@ public interface ClusterCache {
     void setIfAbsent(String key, String value);
 
     /**
-     * 设置字符串值，带过期时间
+     * 设置字符串值，带过期时间.
      *
      * @param key       key
      * @param value     value
@@ -67,7 +69,7 @@ public interface ClusterCache {
     void setex(String key, String value, long expireSec);
 
     /**
-     * 字符串不存在时设置值，带过期时间
+     * 字符串不存在时设置值，带过期时间.
      *
      * @param key       key
      * @param value     value
@@ -78,7 +80,7 @@ public interface ClusterCache {
 
 
     /**
-     * 设置字符串值，并返回其旧值，不存在时返回null
+     * 设置字符串值，并返回其旧值，不存在时返回null.
      *
      * @param key   key
      * @param value value
@@ -86,14 +88,14 @@ public interface ClusterCache {
     String getSet(String key, String value);
 
     /**
-     * 删除key
+     * 删除key.
      *
      * @param key key
      */
     void del(String key);
 
     /**
-     * 添加列表值
+     * 添加列表值.
      *
      * @param key   key
      * @param value value
@@ -101,7 +103,7 @@ public interface ClusterCache {
     void lpush(String key, String value);
 
     /**
-     * 添加列表
+     * 添加列表.
      *
      * @param key       key
      * @param values    values
@@ -110,7 +112,7 @@ public interface ClusterCache {
     void lmset(String key, List<String> values, long expireSec);
 
     /**
-     * 添加列表
+     * 添加列表.
      *
      * @param key    key
      * @param values values
@@ -118,7 +120,8 @@ public interface ClusterCache {
     void lmset(String key, List<String> values);
 
     /**
-     * 弹出栈顶的列表值
+     * 弹出栈顶的列表值.
+     * <p>
      * 注意，Redis的列表是栈结构，先进后出
      *
      * @param key key
@@ -127,7 +130,7 @@ public interface ClusterCache {
     String lpop(String key);
 
     /**
-     * 获取列表值的长度
+     * 获取列表值的长度.
      *
      * @param key key
      * @return 长度
@@ -135,7 +138,7 @@ public interface ClusterCache {
     long llen(String key);
 
     /**
-     * 获取列表中的所有值
+     * 获取列表中的所有值.
      *
      * @param key key
      * @return 值列表
@@ -143,7 +146,7 @@ public interface ClusterCache {
     List<String> lget(String key);
 
     /**
-     * 添加Set集合
+     * 添加Set集合.
      *
      * @param key    key
      * @param values values
@@ -151,7 +154,7 @@ public interface ClusterCache {
     void smset(String key, List<String> values);
 
     /**
-     * 添加Set集合
+     * 添加Set集合.
      *
      * @param key       key
      * @param values    values
@@ -160,7 +163,7 @@ public interface ClusterCache {
     void smset(String key, List<String> values, long expireSec);
 
     /**
-     * 设置Set集合
+     * 设置Set集合.
      *
      * @param key   key
      * @param value value
@@ -168,7 +171,7 @@ public interface ClusterCache {
     void sset(String key, String value);
 
     /**
-     * 返回一个随机的成员值
+     * 返回一个随机的成员值.
      *
      * @param key key
      * @return 返回值
@@ -176,7 +179,7 @@ public interface ClusterCache {
     String spop(String key);
 
     /**
-     * 获取Set集合的长度
+     * 获取Set集合的长度.
      *
      * @param key key
      * @return 长度
@@ -184,7 +187,7 @@ public interface ClusterCache {
     long slen(String key);
 
     /**
-     * 删除Set集合对应的values
+     * 删除Set集合对应的values.
      *
      * @param key    key
      * @param values values
@@ -193,7 +196,7 @@ public interface ClusterCache {
     long sdel(String key, String... values);
 
     /**
-     * 返回set集合
+     * 返回set集合.
      *
      * @param key key
      * @return 值集合
@@ -201,7 +204,7 @@ public interface ClusterCache {
     Set<String> sget(String key);
 
     /**
-     * 设置Hash集合
+     * 设置Hash集合.
      *
      * @param key       key
      * @param items     items
@@ -210,7 +213,7 @@ public interface ClusterCache {
     void hmset(String key, Map<String, String> items, long expireSec);
 
     /**
-     * 设置Hash集合
+     * 设置Hash集合.
      *
      * @param key   key
      * @param items items
@@ -219,7 +222,7 @@ public interface ClusterCache {
 
 
     /**
-     * 设置Hash集合field对应的value
+     * 设置Hash集合field对应的value.
      *
      * @param key   key
      * @param field field
@@ -228,7 +231,7 @@ public interface ClusterCache {
     void hset(String key, String field, String value);
 
     /**
-     * 设置Hash集合field对应的value
+     * 设置Hash集合field对应的value.
      *
      * @param key   key
      * @param field field
@@ -238,7 +241,7 @@ public interface ClusterCache {
 
 
     /**
-     * 获取Hash集合field对应的value
+     * 获取Hash集合field对应的value.
      *
      * @param key   key
      * @param field field
@@ -247,7 +250,7 @@ public interface ClusterCache {
     String hget(String key, String field);
 
     /**
-     * 获取Hash集合的所有items
+     * 获取Hash集合的所有items.
      *
      * @param key key
      * @return 所有items
@@ -255,7 +258,7 @@ public interface ClusterCache {
     Map<String, String> hgetAll(String key);
 
     /**
-     * 判断Hash集合field是否存在
+     * 判断Hash集合field是否存在.
      *
      * @param key   key
      * @param field field
@@ -264,7 +267,7 @@ public interface ClusterCache {
     boolean hexists(String key, String field);
 
     /**
-     * 获取Hash集合的所有keys
+     * 获取Hash集合的所有keys.
      *
      * @param key key
      * @return 所有keys
@@ -272,7 +275,7 @@ public interface ClusterCache {
     Set<String> hkeys(String key);
 
     /**
-     * 获取Hash集合的所有values
+     * 获取Hash集合的所有values.
      *
      * @param key key
      * @return 所有values
@@ -280,7 +283,7 @@ public interface ClusterCache {
     Set<String> hvalues(String key);
 
     /**
-     * 获取Hash集合的长度
+     * 获取Hash集合的长度.
      *
      * @param key key
      * @return 长度
@@ -288,7 +291,7 @@ public interface ClusterCache {
     long hlen(String key);
 
     /**
-     * 删除Hash集合是对应的field
+     * 删除Hash集合是对应的field.
      *
      * @param key   key
      * @param field field
@@ -296,7 +299,7 @@ public interface ClusterCache {
     void hdel(String key, String field);
 
     /**
-     * 原子加操作
+     * 原子加操作.
      *
      * @param key       key，key不存在时会自动创建值为0的对象
      * @param incrValue 要增加的值，必须是Long Int Float 或 Double
@@ -305,7 +308,7 @@ public interface ClusterCache {
     long incrBy(String key, long incrValue);
 
     /**
-     * Hash原子加操作
+     * Hash原子加操作.
      *
      * @param h         h
      * @param hk        hk
@@ -316,7 +319,7 @@ public interface ClusterCache {
 
 
     /**
-     * 原子减操作
+     * 原子减操作.
      *
      * @param key       key不存在时会自动创建值为0的对象
      * @param decrValue 要减少的值，必须是Long  或 Int
@@ -325,7 +328,7 @@ public interface ClusterCache {
     long decrBy(String key, long decrValue);
 
     /**
-     * 原子减操作
+     * 原子减操作.
      *
      * @param h         h
      * @param hk        hk
@@ -335,7 +338,7 @@ public interface ClusterCache {
     long hashDecrBy(String h, String hk, long decrValue);
 
     /**
-     * 设置过期时间
+     * 设置过期时间.
      *
      * @param key       key
      * @param expireSec 过期时间(seconds)，0表示永不过期
@@ -343,7 +346,7 @@ public interface ClusterCache {
     void expire(String key, long expireSec);
 
     /**
-     * 获取过期时间（秒）
+     * 获取过期时间（秒）.
      *
      * @param key key
      * @return -2 key不存在，-1 对应的key永不过期，正数 过期时间(seconds)
@@ -351,12 +354,27 @@ public interface ClusterCache {
     long ttl(String key);
 
     /**
-     * 删除当前数据库中的所有Key
+     * 删除当前数据库中的所有Key.
      */
     void flushdb();
 
+    /**
+     * 设置bit.
+     *
+     * @param key    key
+     * @param offset offset
+     * @param value  值
+     * @return 原来的值
+     */
     boolean setBit(String key, long offset, boolean value);
 
+    /**
+     * 获取指定偏移bit的值.
+     *
+     * @param key    key
+     * @param offset offset
+     * @return 指定偏移的值
+     */
     boolean getBit(String key, long offset);
 
 }

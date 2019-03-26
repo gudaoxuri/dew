@@ -17,21 +17,21 @@
 package com.tairanchina.csp.dew.core.cluster.ha;
 
 import com.ecfront.dew.common.$;
-import com.tairanchina.csp.dew.core.cluster.ha.dto.HAConfig;
+import com.tairanchina.csp.dew.core.cluster.ha.dto.HaConfig;
 import com.tairanchina.csp.dew.core.cluster.ha.entity.PrepareCommitMsg;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 集群HA处理 H2 实现.
+ *
+ * @author gudaoxuri
+ */
 public class H2ClusterHA implements ClusterHA {
 
     private static final Logger logger = LoggerFactory.getLogger(H2ClusterHA.class);
@@ -39,11 +39,20 @@ public class H2ClusterHA implements ClusterHA {
     private static JdbcConnectionPool jdbcConnectionPool;
 
     @Override
-    public void init(HAConfig haConfig) throws SQLException {
+    public void init(HaConfig haConfig) throws SQLException {
         String url = "jdbc:h2:" + haConfig.getStoragePath() + haConfig.getStorageName() + ";DB_CLOSE_ON_EXIT=FALSE";
-        jdbcConnectionPool = JdbcConnectionPool.create(url, haConfig.getAuthUsername() == null ? "" : haConfig.getAuthUsername(), haConfig.getAuthPassword() == null ? "" : haConfig.getAuthPassword());
+        jdbcConnectionPool = JdbcConnectionPool
+                .create(url,
+                        haConfig.getAuthUsername() == null ? "" : haConfig.getAuthUsername(),
+                        haConfig.getAuthPassword() == null ? "" : haConfig.getAuthPassword());
         try (Connection conn = jdbcConnectionPool.getConnection(); Statement stmt = conn.createStatement()) {
-            stmt.execute("CREATE TABLE IF NOT EXISTS MQ_MSG(ADDR VARCHAR(1024),MSG_ID VARCHAR(32),MSG TEXT,CREATED_TIME TIMESTAMP ,PRIMARY KEY(MSG_ID))");
+            stmt.execute("CREATE TABLE IF NOT EXISTS MQ_MSG("
+                    + "ADDR VARCHAR(1024),"
+                    + "MSG_ID VARCHAR(32),"
+                    + "MSG TEXT,"
+                    + "CREATED_TIME TIMESTAMP ,"
+                    + "PRIMARY KEY(MSG_ID)"
+                    + ")");
         }
     }
 

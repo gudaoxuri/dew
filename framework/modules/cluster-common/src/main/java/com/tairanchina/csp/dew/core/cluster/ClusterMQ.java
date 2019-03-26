@@ -20,13 +20,14 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * MQ服务
+ * MQ服务.
+ *
+ * @author gudaoxuri
  */
 public interface ClusterMQ {
 
-
     /**
-     * MQ 发布订阅模式 之 发布
+     * MQ 发布订阅模式 之 发布.
      * <p>
      * 请确保发布之前 topic 已经存在
      *
@@ -38,7 +39,7 @@ public interface ClusterMQ {
 
 
     /**
-     * MQ 发布订阅模式 之 订阅
+     * MQ 发布订阅模式 之 订阅.
      * <p>
      * 非阻塞方式
      *
@@ -49,7 +50,7 @@ public interface ClusterMQ {
 
 
     /**
-     * MQ 请求响应模式 之 请求
+     * MQ 请求响应模式 之 请求.
      *
      * @param address 请求地址
      * @param message 消息内容
@@ -57,9 +58,8 @@ public interface ClusterMQ {
      */
     boolean request(String address, String message);
 
-
     /**
-     * MQ 请求响应模式 之 响应
+     * MQ 请求响应模式 之 响应.
      * <p>
      * 非阻塞方式
      *
@@ -68,13 +68,12 @@ public interface ClusterMQ {
      */
     void response(String address, Consumer<String> consumer);
 
-
-    default Map<String, Object> getMQHeader(String name) {
-        return Cluster.getMQHeader(name);
+    default Map<String, Object> getMqHeader(String name) {
+        return Cluster.getMqHeader(name);
     }
 
-    default void setMQHeader(String name, Map<String, Object> header) {
-        Cluster.setMQHeader(name, header);
+    default void setMqHeader(String name, Map<String, Object> header) {
+        Cluster.setMqHeader(name, header);
     }
 
 }

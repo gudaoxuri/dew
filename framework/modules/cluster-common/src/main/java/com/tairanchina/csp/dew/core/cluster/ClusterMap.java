@@ -20,14 +20,15 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * 分布式Map服务
+ * 分布式Map服务.
  *
  * @param <M> 值的类型
+ * @author gudaoxuri
  */
 public interface ClusterMap<M> {
 
     /**
-     * 添加Item，同步实现
+     * 添加Item，同步实现.
      *
      * @param key   key
      * @param value value
@@ -35,7 +36,7 @@ public interface ClusterMap<M> {
     void put(String key, M value);
 
     /**
-     * 添加Item，异步实现
+     * 添加Item，异步实现.
      *
      * @param key   key
      * @param value value
@@ -43,7 +44,7 @@ public interface ClusterMap<M> {
     void putAsync(String key, M value);
 
     /**
-     * 添加不存在的Item，同步实现
+     * 添加不存在的Item，同步实现.
      *
      * @param key   key
      * @param value value
@@ -51,7 +52,7 @@ public interface ClusterMap<M> {
     void putIfAbsent(String key, M value);
 
     /**
-     * 指定Key是否存在
+     * 指定Key是否存在.
      *
      * @param key key
      * @return 是否存在
@@ -59,14 +60,14 @@ public interface ClusterMap<M> {
     boolean containsKey(String key);
 
     /**
-     * 获取所有Item
+     * 获取所有Item.
      *
      * @return 所有Item
      */
     Map<String, M> getAll();
 
     /**
-     * 获取指定key的value
+     * 获取指定key的value.
      *
      * @param key key
      * @return 对应的value
@@ -74,26 +75,26 @@ public interface ClusterMap<M> {
     M get(String key);
 
     /**
-     * 删除指定key的Item，同步实现
+     * 删除指定key的Item，同步实现.
      *
      * @param key key
      */
     void remove(String key);
 
     /**
-     * 删除指定key的Item，异步实现
+     * 删除指定key的Item，异步实现.
      *
      * @param key key
      */
     void removeAsync(String key);
 
     /**
-     * 清空Map
+     * 清空Map.
      */
     void clear();
 
     /**
-     * 注册新增Item时要执行的函数
+     * 注册新增Item时要执行的函数.
      * <p>
      * 目前只支持Hazelcast实现
      *
@@ -104,7 +105,7 @@ public interface ClusterMap<M> {
     }
 
     /**
-     * 注册删除Item时要执行的函数
+     * 注册删除Item时要执行的函数.
      * <p>
      * 目前只支持Hazelcast实现
      *
@@ -115,7 +116,7 @@ public interface ClusterMap<M> {
     }
 
     /**
-     * 注册更新Item时要执行的函数
+     * 注册更新Item时要执行的函数.
      * <p>
      * 目前只支持Hazelcast实现
      *
@@ -126,7 +127,7 @@ public interface ClusterMap<M> {
     }
 
     /**
-     * 注册清空Map时要执行的函数
+     * 注册清空Map时要执行的函数.
      * <p>
      * 目前只支持Hazelcast实现
      *
@@ -136,7 +137,6 @@ public interface ClusterMap<M> {
         return this;
     }
 
-    //V即M
     class EntryEvent<V> {
         private String key;
         private V oldValue;

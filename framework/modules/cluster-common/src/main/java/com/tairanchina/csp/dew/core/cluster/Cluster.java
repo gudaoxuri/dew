@@ -20,7 +20,7 @@ import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.DependencyHelper;
 import com.tairanchina.csp.dew.core.cluster.ha.ClusterHA;
 import com.tairanchina.csp.dew.core.cluster.ha.H2ClusterHA;
-import com.tairanchina.csp.dew.core.cluster.ha.dto.HAConfig;
+import com.tairanchina.csp.dew.core.cluster.ha.dto.HaConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * 集群服务
+ * 集群服务.
+ *
+ * @author gudaoxuri
  */
 public class Cluster {
     private static final Logger logger = LoggerFactory.getLogger(Cluster.class);
@@ -42,21 +44,44 @@ public class Cluster {
     private static String applicationName = "_default";
     public static String instanceId = $.field.createUUID();
 
+    /**
+     * 初始化.
+     *
+     * @param appName 应用名，可用于HA的存储配置
+     * @param instId  实例Id，全局唯一，用于区别不同实例
+     */
     public static void init(String appName, String instId) {
         applicationName = appName;
         instanceId = instId;
     }
 
-    public static void initMQHeader(Function<String, Map<String, Object>> mqGetHeader, Consumer<Object[]> mqSetHeader) {
+    /**
+     * 初始化MQ Header的自定义处理方法.
+     *
+     * @param mqGetHeader 在发送MQ消息前自定义设置MQ Header
+     * @param mqSetHeader 在收到MQ消息时自定义设置MQ Header
+     */
+    public static void initMqHeader(
+            Function<String, Map<String, Object>> mqGetHeader, Consumer<Object[]> mqSetHeader) {
         _mqGetHeader = mqGetHeader;
         _mqSetHeader = mqSetHeader;
     }
 
+    /**
+     * 启用HA.
+     * <p>
+     * 使用默认配置
+     */
     public static void ha() {
-        ha(new HAConfig());
+        ha(new HaConfig());
     }
 
-    public static void ha(HAConfig haConfig) {
+    /**
+     * 启用HA.
+     *
+     * @param haConfig HA配置信息
+     */
+    public static void ha(HaConfig haConfig) {
         if (DependencyHelper.hasDependency("org.h2.jdbcx.JdbcConnectionPool")) {
             clusterHA = new H2ClusterHA();
         } else {
@@ -81,15 +106,15 @@ public class Cluster {
         }
     }
 
-    public static boolean haEnabled() {
+    static boolean haEnabled() {
         return clusterHA != null;
     }
 
-    public static ClusterHA getClusterHA() {
+    static ClusterHA getClusterHA() {
         return clusterHA;
     }
 
-    public static Map<String, Object> getMQHeader(String name) {
+    static Map<String, Object> getMqHeader(String name) {
         if (_mqGetHeader != null) {
             return _mqGetHeader.apply(name);
         } else {
@@ -97,35 +122,34 @@ public class Cluster {
         }
     }
 
-    public static void setMQHeader(String name, Map<String, Object> header) {
+    static void setMqHeader(String name, Map<String, Object> header) {
         if (_mqSetHeader != null) {
             _mqSetHeader.accept(new Object[]{name, header});
         }
     }
 
     /**
-     * MQ服务
+     * MQ服务.
      */
     public ClusterMQ mq;
 
     /**
-     * 分布式锁服务
+     * 分布式锁服务.
      */
     public ClusterLockWrap lock;
 
     /**
-     * 分布式Map服务
+     * 分布式Map服务.
      */
     public ClusterMapWrap map;
 
     /**
-     * 缓存服务
+     * 缓存服务.
      */
     public ClusterCache cache;
 
     /**
-     * 领导者选举服务
+     * 领导者选举服务.
      */
     public ClusterElectionWrap election;
-
 }
