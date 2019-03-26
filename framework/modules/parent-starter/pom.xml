@@ -49,10 +49,10 @@
         <finalName>${project.artifactId}</finalName>
         <dew.version>2.0.0-SNAPSHOT</dew.version>
 
-        <spring-cloud.version>2.1.0.RELEASE</spring-cloud.version>
+        <spring-cloud.version>2.1.1.RELEASE</spring-cloud.version>
         <dew-common.version>1.4.10</dew-common.version>
         <swagger.version>2.9.2</swagger.version>
-        <swagger-bootstrap-ui.version>1.9.0</swagger-bootstrap-ui.version>
+        <swagger-bootstrap-ui.version>1.9.1</swagger-bootstrap-ui.version>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.host.url></sonar.host.url>
 

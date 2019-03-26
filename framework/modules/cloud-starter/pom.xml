@@ -33,8 +33,8 @@
     <packaging>jar</packaging>
 
     <properties>
-        <spring-cloud-kube.version>1.0.0.RELEASE</spring-cloud-kube.version>
-        <opentracing.version>1.0.2</opentracing.version>
+        <spring-cloud-kube.version>1.0.1.RELEASE</spring-cloud-kube.version>
+        <opentracing.version>1.0.3</opentracing.version>
     </properties>
 
     <dependencies>
