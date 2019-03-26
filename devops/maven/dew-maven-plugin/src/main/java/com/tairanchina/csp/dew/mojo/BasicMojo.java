@@ -35,6 +35,7 @@ public abstract class BasicMojo extends AbstractMojo {
     public static final String FLAG_DEW_DEVOPS_DEFAULT_PROFILE = "default";
 
     public static final String FLAG_DEW_DEVOPS_PROFILE = "dew.devops.profile";
+    public static final String FLAG_DEW_DEVOPS_QUIET = "dew.devops.quiet";
     public static final String FLAG_DEW_DEVOPS_DOCKER_HOST = "dew.devops.docker.host";
     public static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL = "dew.devops.docker.registry.url";
     public static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME = "dew.devops.docker.registry.username";
@@ -43,6 +44,9 @@ public abstract class BasicMojo extends AbstractMojo {
 
     @Parameter(property = FLAG_DEW_DEVOPS_PROFILE, defaultValue = FLAG_DEW_DEVOPS_DEFAULT_PROFILE)
     private String profile;
+
+    @Parameter(property = FLAG_DEW_DEVOPS_QUIET)
+    protected boolean quiet;
 
     @Parameter(property = FLAG_DEW_DEVOPS_DOCKER_HOST)
     private String dockerHost;
@@ -72,6 +76,9 @@ public abstract class BasicMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        if (Dew.stopped) {
+            return;
+        }
         try {
             Dew.log = new DewLog(super.getLog(), "[DEW][" + getMojoName() + "]:");
             Dew.log.info("Start...");
@@ -80,6 +87,9 @@ public abstract class BasicMojo extends AbstractMojo {
             if (!preExecute() || Dew.Config.getCurrentProject() == null || Dew.Config.getCurrentProject().isSkip()) {
                 // 各项目 .dew 配置 skip=true || 不支持的app kind
                 Dew.log.info("Skipped");
+                return;
+            }
+            if (Dew.stopped) {
                 return;
             }
             if (executeInternal()) {

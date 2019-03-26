@@ -24,6 +24,9 @@ import com.tairanchina.csp.dew.kernel.config.FinalProjectConfig;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1Service;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -35,7 +38,7 @@ public class NeedExecuteByGit {
 
     private static final AtomicBoolean initialized = new AtomicBoolean(false);
 
-    public static void setNeedExecuteProjects() throws ApiException {
+    public static void setNeedExecuteProjects(boolean quiet) throws ApiException, IOException {
         if (initialized.getAndSet(true)) {
             return;
         }
@@ -54,13 +57,30 @@ public class NeedExecuteByGit {
                 }
             }
         }
-        Dew.log.info("===============================================");
-        Dew.log.info("============= Processing Projects =============");
-        Dew.Config.getProjects().values().stream()
+        List<FinalProjectConfig> processingProjects = Dew.Config.getProjects().values().stream()
                 .filter(config -> !config.isSkip())
-                .forEach(config ->
-                        Dew.log.info("||" + config.getMvnGroupId() + ":" + config.getMvnArtifactId()));
-        Dew.log.info("===============================================");
+                .collect(Collectors.toList());
+        if (processingProjects.isEmpty()) {
+            Dew.stopped=true;
+            Dew.log.info("No project found to be processed");
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("\r\n==================== Processing Projects =====================\r\n");
+        sb.append(processingProjects.stream().map(config ->
+                "> " + config.getMvnGroupId() + ":" + config.getMvnArtifactId())
+                .collect(Collectors.joining("\r\n")));
+        if (quiet) {
+            Dew.log.info(sb.toString());
+        } else {
+            sb.append("\r\n< Y > or < N >");
+            Dew.log.info(sb.toString());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            if (reader.readLine().trim().equalsIgnoreCase("N")) {
+                Dew.stopped=true;
+                Dew.log.info("Process canceled");
+            }
+        }
     }
 
     private static String fetchLastVersionDeployCommit(FinalProjectConfig config) throws ApiException {

@@ -33,8 +33,8 @@ public class ReleaseMojo extends BasicMojo {
 
     @Override
     protected boolean preExecute() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
-        NeedExecuteByGit.setNeedExecuteProjects();
-        return super.preExecute();
+        NeedExecuteByGit.setNeedExecuteProjects(quiet);
+        return true;
     }
 
     @Override

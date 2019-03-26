@@ -72,6 +72,13 @@ public class DefaultReleaseFlow extends BasicFlow {
         V1Service service = (V1Service) kubeResources.get(KubeHelper.RES.SERVICE.getVal());
         ExtensionsV1beta1Deployment deployment = (ExtensionsV1beta1Deployment) kubeResources.get(KubeHelper.RES.DEPLOYMENT.getVal());
         KubeHelper.apply(deployment, Dew.Config.getCurrentProject().getId());
+        // 等待一段时间以清除之前的状态
+        try {
+            // TODO 更优雅的处理
+            Thread.sleep(1000);
+        } catch (InterruptedException ignore) {
+            Thread.currentThread().interrupt();
+        }
         CountDownLatch cdl = new CountDownLatch(1);
         ExtensionsV1beta1Deployment deploymentRes = (ExtensionsV1beta1Deployment) kubeResources.get(KubeHelper.RES.DEPLOYMENT.getVal());
         String watchId = KubeHelper.watch((coreApi, extensionsApi, rbacAuthorizationApi)

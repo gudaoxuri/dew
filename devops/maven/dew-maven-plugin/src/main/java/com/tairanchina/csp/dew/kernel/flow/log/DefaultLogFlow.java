@@ -24,9 +24,13 @@ import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1Pod;
 import org.apache.maven.plugin.MojoExecutionException;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Optional;
+import java.io.InputStreamReader;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class DefaultLogFlow extends BasicFlow {
 
@@ -40,14 +44,23 @@ public class DefaultLogFlow extends BasicFlow {
 
     public boolean process() throws ApiException, IOException, MojoExecutionException {
         if (podName == null) {
-            Optional<V1Pod> podOpt = KubeHelper.list("app=" + Dew.Config.getCurrentProject().getAppName() + ",group=" + Dew.Config.getCurrentProject().getAppGroup() + ",version=" + Dew.Config.getCurrentProject().getAppVersion(),
+            AtomicInteger idx = new AtomicInteger(0);
+            Map<Integer, V1Pod> pods = KubeHelper.list("app=" + Dew.Config.getCurrentProject().getAppName() + ",group=" + Dew.Config.getCurrentProject().getAppGroup() + ",version=" + Dew.Config.getCurrentProject().getAppVersion(),
                     Dew.Config.getCurrentProject().getNamespace(), KubeHelper.RES.POD, V1Pod.class, Dew.Config.getCurrentProject().getId())
                     .stream()
                     .filter(pod -> pod.getStatus().getContainerStatuses().stream()
                             .anyMatch(container -> container.getName().equalsIgnoreCase(KubeDeploymentBuilder.FLAG_CONTAINER_NAME)))
-                    .findAny();
-            if (podOpt.isPresent()) {
-                podName = podOpt.get().getMetadata().getName();
+                    .collect(Collectors.toMap(pod -> idx.incrementAndGet(), pod -> pod));
+            if (pods.size() > 1) {
+                Dew.log.info("\r\n------------------ Found multiple pods, please select number: ------------------\r\n" +
+                        pods.entrySet().stream()
+                                .map(pod -> " < " + pod.getKey() + " > " + pod.getValue().getMetadata().getName() + " | Pod IP:" + pod.getValue().getStatus().getPodIP() + " | Node:" + pod.getValue().getStatus().getHostIP())
+                                .collect(Collectors.joining("\r\n")));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                int selected = Integer.valueOf(reader.readLine().trim());
+                podName = pods.get(selected).getMetadata().getName();
+            } else if (pods.size() == 1) {
+                podName = pods.get(1).getMetadata().getName();
             } else {
                 throw new IOException("Can't found pod with name = " + KubeDeploymentBuilder.FLAG_CONTAINER_NAME);
             }

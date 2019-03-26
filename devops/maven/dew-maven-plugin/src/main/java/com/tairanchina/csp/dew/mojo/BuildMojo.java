@@ -21,10 +21,7 @@ import com.tairanchina.csp.dew.kernel.function.NeedExecuteByGit;
 import io.kubernetes.client.ApiException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Execute;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.annotations.*;
 
 import java.io.IOException;
 
@@ -34,8 +31,8 @@ public class BuildMojo extends BasicMojo {
 
     @Override
     protected boolean preExecute() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
-        NeedExecuteByGit.setNeedExecuteProjects();
-        return super.preExecute();
+        NeedExecuteByGit.setNeedExecuteProjects(quiet);
+        return true;
     }
 
     @Override

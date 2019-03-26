@@ -44,6 +44,8 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 
 public class Dew {
 
+    public static boolean stopped=false;
+
     public static Log log;
     public static String basicDirectory;
 
