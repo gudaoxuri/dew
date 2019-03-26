@@ -34,13 +34,13 @@ public abstract class BasicMojo extends AbstractMojo {
 
     public static final String FLAG_DEW_DEVOPS_DEFAULT_PROFILE = "default";
 
-    public static final String FLAG_DEW_DEVOPS_PROFILE = "dew.devops.profile";
-    public static final String FLAG_DEW_DEVOPS_QUIET = "dew.devops.quiet";
-    public static final String FLAG_DEW_DEVOPS_DOCKER_HOST = "dew.devops.docker.host";
-    public static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL = "dew.devops.docker.registry.url";
-    public static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME = "dew.devops.docker.registry.username";
-    public static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD = "dew.devops.docker.registry.password";
-    public static final String FLAG_DEW_DEVOPS_KUBE_CONFIG = "dew.devops.kube.config";
+    private static final String FLAG_DEW_DEVOPS_PROFILE = "dew.devops.profile";
+    private static final String FLAG_DEW_DEVOPS_QUIET = "dew.devops.quiet";
+    private static final String FLAG_DEW_DEVOPS_DOCKER_HOST = "dew.devops.docker.host";
+    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL = "dew.devops.docker.registry.url";
+    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME = "dew.devops.docker.registry.username";
+    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD = "dew.devops.docker.registry.password";
+    private static final String FLAG_DEW_DEVOPS_KUBE_CONFIG = "dew.devops.kube.config";
 
     @Parameter(property = FLAG_DEW_DEVOPS_PROFILE, defaultValue = FLAG_DEW_DEVOPS_DEFAULT_PROFILE)
     private String profile;
@@ -64,10 +64,10 @@ public abstract class BasicMojo extends AbstractMojo {
     private String kubeBase64Config;
 
     @Component
-    protected MavenSession session;
+    private MavenSession session;
 
     @Component
-    protected BuildPluginManager pluginManager;
+    private BuildPluginManager pluginManager;
 
 
     protected boolean preExecute() throws MojoExecutionException, MojoFailureException, IOException, ApiException {

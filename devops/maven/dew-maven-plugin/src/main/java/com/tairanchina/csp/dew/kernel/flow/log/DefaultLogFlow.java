@@ -42,7 +42,7 @@ public class DefaultLogFlow extends BasicFlow {
         this.follow = follow;
     }
 
-    public boolean process() throws ApiException, IOException, MojoExecutionException {
+    protected boolean process() throws ApiException, IOException, MojoExecutionException {
         if (podName == null) {
             AtomicInteger idx = new AtomicInteger(0);
             Map<Integer, V1Pod> pods = KubeHelper.list("app=" + Dew.Config.getCurrentProject().getAppName() + ",group=" + Dew.Config.getCurrentProject().getAppGroup() + ",version=" + Dew.Config.getCurrentProject().getAppVersion(),

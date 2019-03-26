@@ -29,7 +29,7 @@ import java.util.List;
 
 public class DefaultUnReleaseFlow extends BasicFlow {
 
-    public boolean process() throws ApiException, IOException, MojoExecutionException {
+    protected boolean process() throws ApiException, IOException, MojoExecutionException {
         if (KubeHelper.exist(Dew.Config.getCurrentProject().getAppName(), Dew.Config.getCurrentProject().getNamespace(), KubeHelper.RES.SERVICE, Dew.Config.getCurrentProject().getId())) {
             KubeHelper.delete(Dew.Config.getCurrentProject().getAppName(), Dew.Config.getCurrentProject().getNamespace(), KubeHelper.RES.SERVICE, Dew.Config.getCurrentProject().getId());
         }

@@ -49,7 +49,7 @@ public class KubeHelperTest {
 
         ExtensionsV1beta1Deployment deployment = buildDeployment();
         CountDownLatch cdl = new CountDownLatch(1);
-        String watchId = KubeHelper.watch((coreApi, extensionsApi, rbacAuthorizationApi)
+        String watchId = KubeHelper.watch((coreApi, extensionsApi, rbacAuthorizationApi,autoscalingApi)
                         -> extensionsApi.listNamespacedDeploymentCall(deployment.getMetadata().getNamespace(), null, null, null, null, "name=test-nginx", 1, null, null, Boolean.TRUE, null, null),
                 resp -> {
                     System.out.printf("%s : %s%n", resp.type, $.json.toJsonString(resp.object.getStatus()));

@@ -28,9 +28,9 @@ public class YamlHelper {
     public static void init(Log log) {
         if (yaml == null) {
             YamlHelper.log = log;
-            Representer representer = new Representer();
+            Representer representer = new io.kubernetes.client.util.Yaml.CustomRepresenter();
             representer.getPropertyUtils().setSkipMissingProperties(true);
-            yaml = new Yaml(representer);
+            yaml = new Yaml(new io.kubernetes.client.util.Yaml.CustomConstructor(), representer);
         }
     }
 

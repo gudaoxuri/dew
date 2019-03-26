@@ -34,7 +34,7 @@ public abstract class BasicBuildFlow extends BasicFlow {
     }
 
     @Override
-    public boolean process() throws ApiException, IOException, MojoExecutionException {
+    protected boolean process() throws ApiException, IOException, MojoExecutionException {
         // 先判断是否存在
         if (!DockerHelper.Registry.exist(Dew.Config.getCurrentProject().getCurrImageName(), Dew.Config.getCurrentProject().getId())) {
             String buildBasePath = Dew.Config.getCurrentProject().getMvnTargetDirectory() + "dew_build" + File.separator;

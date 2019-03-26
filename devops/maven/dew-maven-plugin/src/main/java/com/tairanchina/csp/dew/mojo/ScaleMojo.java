@@ -16,20 +16,56 @@
 
 package com.tairanchina.csp.dew.mojo;
 
+import com.tairanchina.csp.dew.kernel.Dew;
+import com.tairanchina.csp.dew.kernel.flow.scale.DefaultScaleFlow;
 import io.kubernetes.client.ApiException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.IOException;
 
 @Mojo(name = "scale")
 public class ScaleMojo extends BasicMojo {
 
+    private static final String FLAG_DEW_DEVOPS_SCALE_REPLICAS = "dew.devops.scale.replicas";
+
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO = "dew.devops.scale.auto";
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN = "dew.devops.scale.auto.minReplicas";
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX = "dew.devops.scale.auto.maxReplicas";
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG = "dew.devops.scale.auto.cpu.averageUtilization";
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_TPS = "dew.devops.scale.auto.cpu.tps";
+
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_REPLICAS)
+    private int replicas;
+
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO)
+    private boolean autoScale;
+
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN)
+    private int minReplicas;
+
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX)
+    private int maxReplicas;
+
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG)
+    private int cpuAvg;
+
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_TPS)
+    private long tps;
+
     @Override
     protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
-
-        return true;
+        if (!autoScale && replicas == 0) {
+            Dew.log.error("Parameter error, When autoScale disabled, " + FLAG_DEW_DEVOPS_SCALE_REPLICAS + " can't be 0");
+            return false;
+        }
+        if (autoScale && (minReplicas == 0 || maxReplicas == 0 || minReplicas >= maxReplicas || (cpuAvg == 0 && tps == 0L))) {
+            Dew.log.error("Parameter error, Current mode is autoScale model");
+            return false;
+        }
+        return new DefaultScaleFlow(replicas, autoScale, minReplicas, maxReplicas, cpuAvg, tps).exec();
     }
 
 }

@@ -46,17 +46,21 @@ public class DefaultReleaseFlow extends BasicFlow {
     public boolean process() throws ApiException, IOException, MojoExecutionException {
         Dew.log.info("Building kubernetes resources");
         Map<String, Object> deployResult = buildResources();
-        appendVersionInfo(deployResult);
-        Dew.log.debug("Add version to ConfigMap ");
-        Dew.log.info("Publishing kubernetes resources");
-        deployResources(deployResult);
-        Dew.log.debug("Enabled version");
-        enabledVersionInfo();
+        release(deployResult, Dew.Config.getCurrentProject().getGitCommit(), false);
         if (Dew.Config.getCurrentProject().getApp().getRevisionHistoryLimit() > 0) {
             Dew.log.debug("Delete old version from kubernetes resources and docker images");
             removeOldVersions(Dew.Config.getCurrentProject().getApp().getRevisionHistoryLimit());
         }
         return true;
+    }
+
+    public void release(Map<String, Object> deployResult, String gitCommit, boolean reRelease) throws ApiException, IOException {
+        appendVersionInfo(deployResult, gitCommit, reRelease);
+        Dew.log.debug("Add version to ConfigMap");
+        Dew.log.info("Publishing kubernetes resources");
+        deployResources(deployResult);
+        Dew.log.debug("Enabled version");
+        enabledVersionInfo(gitCommit);
     }
 
     private Map<String, Object> buildResources() {
@@ -81,7 +85,7 @@ public class DefaultReleaseFlow extends BasicFlow {
         }
         CountDownLatch cdl = new CountDownLatch(1);
         ExtensionsV1beta1Deployment deploymentRes = (ExtensionsV1beta1Deployment) kubeResources.get(KubeHelper.RES.DEPLOYMENT.getVal());
-        String watchId = KubeHelper.watch((coreApi, extensionsApi, rbacAuthorizationApi)
+        String watchId = KubeHelper.watch((coreApi, extensionsApi, rbacAuthorizationApi,autoscalingApi)
                         -> extensionsApi.listNamespacedDeploymentCall(deploymentRes.getMetadata().getNamespace(),
                 null, null, null, null,
                 "app=" + deploymentRes.getMetadata().getName(), 1, null, null, Boolean.TRUE, null, null),
@@ -108,45 +112,39 @@ public class DefaultReleaseFlow extends BasicFlow {
         }
     }
 
-    private void appendVersionInfo(Map<String, Object> kubeResources) throws ApiException {
+    private void appendVersionInfo(Map<String, Object> kubeResources, String gitCommit, boolean reRelease) throws ApiException {
         Map<String, String> resources = kubeResources.entrySet()
                 .stream().collect(Collectors.toMap(Map.Entry::getKey,
                         entry -> {
                             try {
-                                return $.security.encodeStringToBase64(YamlHelper.toString(entry.getValue()), "UTF-8");
+                                return $.security.encodeStringToBase64(KubeHelper.toString(entry.getValue()), "UTF-8");
                             } catch (UnsupportedEncodingException ignore) {
                                 return "";
                             }
                         }));
         V1ConfigMap currVerConfigMap = new KubeConfigMapBuilder().build(
-                getVersionName(), new HashMap<String, String>() {{
-                    put("app", Dew.Config.getCurrentProject().getAppName());
-                    put(FLAG_KUBE_RESOURCE_GIT_COMMIT, Dew.Config.getCurrentProject().getGitCommit());
-                    put("kind", "version");
-                    put("enabled", "false");
-                    put("lastUpdateTime", System.currentTimeMillis() + "");
+                getVersionName(gitCommit), new HashMap<String, String>() {{
+                    put(FLAG_VERSION_APP, Dew.Config.getCurrentProject().getAppName());
+                    put(FLAG_KUBE_RESOURCE_GIT_COMMIT, gitCommit);
+                    put(FLAG_VERSION_KIND, "version");
+                    put(FLAG_VERSION_ENABLED, "false");
+                    put(FLAG_VERSION_LAST_UPDATE_TIME, System.currentTimeMillis() + "");
+                    put(FLAG_VERSION_RE_RELEASE, reRelease + "");
                 }}, resources);
         KubeHelper.apply(currVerConfigMap, Dew.Config.getCurrentProject().getId());
     }
 
-    private void enabledVersionInfo() throws ApiException {
-        KubeHelper.patch(getVersionName(), new ArrayList<String>() {{
+    private void enabledVersionInfo(String gitCommit) throws ApiException {
+        KubeHelper.patch(getVersionName(gitCommit), new ArrayList<String>() {{
             add("{\"op\":\"replace\",\"path\":\"/metadata/labels/enabled\",\"value\":\"true\"}");
         }}, Dew.Config.getCurrentProject().getNamespace(), KubeHelper.RES.CONFIG_MAP, Dew.Config.getCurrentProject().getId());
     }
 
     private void removeOldVersions(int revisionHistoryLimit) throws ApiException, IOException {
-        List<V1ConfigMap> verConfigMaps = KubeHelper.list(
-                "app=" + Dew.Config.getCurrentProject().getAppName() + ",kind=version",
-                Dew.Config.getCurrentProject().getNamespace(),
-                KubeHelper.RES.CONFIG_MAP, V1ConfigMap.class,
-                Dew.Config.getCurrentProject().getId());
-        verConfigMaps.sort((m1, m2) ->
-                Long.valueOf(m2.getMetadata().getLabels().get("lastUpdateTime"))
-                        .compareTo(Long.valueOf(m1.getMetadata().getLabels().get("lastUpdateTime"))));
+        List<V1ConfigMap> verConfigMaps = getVersionHistory(false);
         int offset = revisionHistoryLimit;
         for (V1ConfigMap configMap : verConfigMaps) {
-            boolean enabled = configMap.getMetadata().getLabels().get("enabled").equalsIgnoreCase("true");
+            boolean enabled = configMap.getMetadata().getLabels().get(FLAG_VERSION_ENABLED).equalsIgnoreCase("true");
             if (enabled) {
                 offset--;
             }
@@ -160,8 +158,8 @@ public class DefaultReleaseFlow extends BasicFlow {
         }
     }
 
-    protected String getVersionName() {
-        return "ver." + Dew.Config.getCurrentProject().getAppName() + "." + Dew.Config.getCurrentProject().getGitCommit();
+    protected String getVersionName(String gitCommit) {
+        return "ver." + Dew.Config.getCurrentProject().getAppName() + "." + gitCommit;
     }
 
 }

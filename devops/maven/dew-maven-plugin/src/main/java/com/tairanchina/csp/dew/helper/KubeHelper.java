@@ -27,6 +27,7 @@ import io.kubernetes.client.ApiClient;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.Configuration;
 import io.kubernetes.client.PodLogs;
+import io.kubernetes.client.apis.AutoscalingV2beta2Api;
 import io.kubernetes.client.apis.CoreV1Api;
 import io.kubernetes.client.apis.ExtensionsV1beta1Api;
 import io.kubernetes.client.apis.RbacAuthorizationV1Api;
@@ -59,12 +60,15 @@ public class KubeHelper {
 
     private static class Instance {
 
-        public Instance(Log log, ApiClient client, CoreV1Api coreApi, ExtensionsV1beta1Api extensionsApi, RbacAuthorizationV1Api rbacAuthorizationApi, PodLogs podLogs) {
+        public Instance(Log log, ApiClient client, CoreV1Api coreApi, ExtensionsV1beta1Api extensionsApi,
+                        RbacAuthorizationV1Api rbacAuthorizationApi, AutoscalingV2beta2Api autoscalingApi, PodLogs podLogs) {
             this.log = log;
             this.client = client;
             this.coreApi = coreApi;
             this.extensionsApi = extensionsApi;
             this.rbacAuthorizationApi = rbacAuthorizationApi;
+            this.rbacAuthorizationApi = rbacAuthorizationApi;
+            this.autoscalingApi = autoscalingApi;
             this.podLogs = podLogs;
         }
 
@@ -73,8 +77,8 @@ public class KubeHelper {
         private CoreV1Api coreApi;
         private ExtensionsV1beta1Api extensionsApi;
         private RbacAuthorizationV1Api rbacAuthorizationApi;
+        private AutoscalingV2beta2Api autoscalingApi;
         private PodLogs podLogs;
-
     }
 
     private static final Map<String, Watch> WATCH_LIST = new ConcurrentHashMap<>();
@@ -95,6 +99,7 @@ public class KubeHelper {
         CoreV1Api coreApi;
         ExtensionsV1beta1Api extensionsApi;
         RbacAuthorizationV1Api rbacAuthorizationApi;
+        AutoscalingV2beta2Api autoscalingApi;
         PodLogs podLogs;
         try {
             client = Config.fromConfig(
@@ -111,8 +116,9 @@ public class KubeHelper {
         coreApi = new CoreV1Api(client);
         extensionsApi = new ExtensionsV1beta1Api(client);
         rbacAuthorizationApi = new RbacAuthorizationV1Api(client);
+        autoscalingApi = new AutoscalingV2beta2Api(client);
         podLogs = new PodLogs();
-        INSTANCES.put(instanceId, new Instance(log, client, coreApi, extensionsApi, rbacAuthorizationApi, podLogs));
+        INSTANCES.put(instanceId, new Instance(log, client, coreApi, extensionsApi, rbacAuthorizationApi, autoscalingApi, podLogs));
     }
 
     public static <T> String watch(WatchCall call, Consumer<Watch.Response<T>> callback, Class<T> clazz, String instanceId) throws ApiException {
@@ -159,7 +165,8 @@ public class KubeHelper {
             typeToken = new TypeToken<Watch.Response<V1ClusterRoleBinding>>() {
             };
         }
-        Watch<T> watch = Watch.createWatch(instance.client, call.call(instance.coreApi, instance.extensionsApi, instance.rbacAuthorizationApi), typeToken.getType());
+        Watch<T> watch = Watch.createWatch(instance.client, call.call(instance.coreApi, instance.extensionsApi,
+                instance.rbacAuthorizationApi, instance.autoscalingApi), typeToken.getType());
         WATCH_LIST.put(watchId, watch);
         EXECUTOR_SERVICE.execute(() -> {
             try {
@@ -189,6 +196,13 @@ public class KubeHelper {
         watch.close();
     }
 
+    public static <T> T toResource(String body, Class<T> clazz) {
+        return Yaml.loadAs(body, clazz);
+    }
+
+    public static String toString(Object body) {
+        return Yaml.dump(body);
+    }
 
     public static void create(Object body, String instanceId) throws ApiException {
         create(Yaml.dump(body), instanceId);
@@ -250,6 +264,10 @@ public class KubeHelper {
                 case CLUSTER_RULE_BINDING:
                     V1ClusterRoleBinding clusterRoleBindingObj = Yaml.loadAs(body, V1ClusterRoleBinding.class);
                     instance.rbacAuthorizationApi.createClusterRoleBinding(clusterRoleBindingObj, false, "true", null);
+                    break;
+                case HORIZONTAL_POD_AUTOSCALER:
+                    V2beta2HorizontalPodAutoscaler hpaObj = Yaml.loadAs(body, V2beta2HorizontalPodAutoscaler.class);
+                    instance.autoscalingApi.createNamespacedHorizontalPodAutoscaler(hpaObj.getMetadata().getNamespace(), hpaObj, false, "true", null);
                     break;
             }
         } catch (ApiException e) {
@@ -316,6 +334,9 @@ public class KubeHelper {
             case CLUSTER_RULE_BINDING:
                 resource = instance.rbacAuthorizationApi.listClusterRoleBinding(true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
+            case HORIZONTAL_POD_AUTOSCALER:
+                resource = instance.autoscalingApi.listNamespacedHorizontalPodAutoscaler(namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                break;
         }
         if (clazz == String.class) {
             return (List<T>) ((List) resource).stream().map(item -> Yaml.dump(item)).collect(Collectors.toList());
@@ -374,6 +395,9 @@ public class KubeHelper {
                     break;
                 case CLUSTER_RULE_BINDING:
                     resource = instance.rbacAuthorizationApi.readClusterRoleBinding(name, "true");
+                    break;
+                case HORIZONTAL_POD_AUTOSCALER:
+                    resource = instance.autoscalingApi.readNamespacedHorizontalPodAutoscaler(name, namespace, "true", false, false);
                     break;
             }
             if (clazz == String.class) {
@@ -451,6 +475,10 @@ public class KubeHelper {
                     V1ClusterRoleBinding clusterRoleBindingObj = Yaml.loadAs(body, V1ClusterRoleBinding.class);
                     instance.rbacAuthorizationApi.replaceClusterRoleBinding(clusterRoleBindingObj.getMetadata().getName(), clusterRoleBindingObj, "true", null);
                     break;
+                case HORIZONTAL_POD_AUTOSCALER:
+                    V2beta2HorizontalPodAutoscaler hpaObj = Yaml.loadAs(body, V2beta2HorizontalPodAutoscaler.class);
+                    instance.autoscalingApi.replaceNamespacedHorizontalPodAutoscaler(hpaObj.getMetadata().getName(), hpaObj.getMetadata().getNamespace(), hpaObj, "true", null);
+                    break;
             }
         } catch (ApiException e) {
             instance.log.error("Replace error for \r\n" + Yaml.dump(body), e);
@@ -515,6 +543,9 @@ public class KubeHelper {
                     break;
                 case CLUSTER_RULE_BINDING:
                     instance.rbacAuthorizationApi.patchClusterRoleBinding(name, jsonPatchers, "true", null);
+                    break;
+                case HORIZONTAL_POD_AUTOSCALER:
+                    instance.autoscalingApi.patchNamespacedHorizontalPodAutoscaler(name, namespace, jsonPatchers, "true", null);
                     break;
             }
         } catch (ApiException e) {
@@ -672,6 +703,9 @@ public class KubeHelper {
                 case CLUSTER_RULE_BINDING:
                     instance.rbacAuthorizationApi.deleteClusterRoleBinding(name, deleteOptions, "true", null, null, null, null);
                     break;
+                case HORIZONTAL_POD_AUTOSCALER:
+                    instance.autoscalingApi.deleteNamespacedHorizontalPodAutoscaler(name, namespace, deleteOptions, "true", null, null, null, null);
+                    break;
             }
         } catch (JsonSyntaxException e) {
             // Swagger Bug https://github.com/kubernetes-client/java/issues/86
@@ -709,7 +743,8 @@ public class KubeHelper {
         ROLE("Role"),
         RULE_BINDING("RoleBinding"),
         CLUSTER_ROLE("ClusterRole"),
-        CLUSTER_RULE_BINDING("ClusterRoleBinding");
+        CLUSTER_RULE_BINDING("ClusterRoleBinding"),
+        HORIZONTAL_POD_AUTOSCALER("HorizontalPodAutoscaler");
 
         String val;
 
@@ -734,7 +769,8 @@ public class KubeHelper {
     @FunctionalInterface
     public interface WatchCall {
 
-        Call call(CoreV1Api coreApi, ExtensionsV1beta1Api extensionsApi, RbacAuthorizationV1Api rbacAuthorizationApi) throws ApiException;
+        Call call(CoreV1Api coreApi, ExtensionsV1beta1Api extensionsApi,
+                  RbacAuthorizationV1Api rbacAuthorizationApi, AutoscalingV2beta2Api autoscalingApi) throws ApiException;
 
     }
 
