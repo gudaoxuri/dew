@@ -82,6 +82,16 @@ public class Notify {
     }
 
     /**
+     * 判断flag 是否存在.
+     *
+     * @param flag flag
+     * @return 是否存在
+     */
+    public static boolean contains(String flag) {
+        return NOTIFY_CHANNELS.containsKey(flag);
+    }
+
+    /**
      * Send async.
      *
      * @param flag    the flag

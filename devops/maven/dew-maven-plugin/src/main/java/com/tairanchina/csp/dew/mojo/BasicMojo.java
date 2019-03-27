@@ -94,14 +94,17 @@ public abstract class BasicMojo extends AbstractMojo {
             }
             if (executeInternal()) {
                 Dew.log.info("Successful");
+                Dew.Notify.success("Successful", getMojoName());
             } else {
                 Dew.Config.getCurrentProject().setSkip(true);
             }
         } catch (MojoExecutionException | MojoFailureException e) {
             Dew.log.error("Error", e);
+            Dew.Notify.fail(e, getMojoName());
             throw e;
         } catch (Exception e) {
             Dew.log.error("Error", e);
+            Dew.Notify.fail(e, getMojoName());
             throw new MojoFailureException(e.getMessage());
         }
     }

@@ -16,6 +16,8 @@
 
 package com.tairanchina.csp.dew.kernel.config;
 
+import com.tairanchina.csp.dew.notification.NotifyConfig;
+
 public class DewProfile {
 
     private String profile;
@@ -25,6 +27,7 @@ public class DewProfile {
     private DewApp app = new DewApp();
     private DewDocker docker = new DewDocker();
     private DewKube kube = new DewKube();
+    private NotifyConfig notify = new NotifyConfig();
 
     public String getProfile() {
         return profile;
@@ -72,5 +75,13 @@ public class DewProfile {
 
     public void setKube(DewKube kube) {
         this.kube = kube;
+    }
+
+    public NotifyConfig getNotify() {
+        return notify;
+    }
+
+    public void setNotify(NotifyConfig notify) {
+        this.notify = notify;
     }
 }

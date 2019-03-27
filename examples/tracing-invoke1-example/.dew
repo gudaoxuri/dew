@@ -2,3 +2,9 @@ namespace: dew
 profiles:
   test:
     namespace: dew-test
+    notify:
+      type: DD
+      defaultReceivers:
+      - 18657120203
+      args:
+        url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455

@@ -23,6 +23,7 @@ import com.tairanchina.csp.dew.helper.KubeHelper;
 import com.tairanchina.csp.dew.helper.YamlHelper;
 import com.tairanchina.csp.dew.kernel.config.*;
 import com.tairanchina.csp.dew.mojo.BasicMojo;
+import com.tairanchina.csp.dew.notification.NotifyConfig;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -44,7 +45,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 
 public class Dew {
 
-    public static boolean stopped=false;
+    public static boolean stopped = false;
 
     public static Log log;
     public static String basicDirectory;
@@ -58,7 +59,10 @@ public class Dew {
 
         public static void init(MavenSession session, BuildPluginManager pluginManager,
                                 String profile,
-                                String dockerHost, String dockerRegistryUrl, String dockerRegistryUserName, String dockerRegistryPassword, String kubeBase64Config) throws IllegalAccessException, IOException, InvocationTargetException {
+                                String dockerHost, String dockerRegistryUrl,
+                                String dockerRegistryUserName, String dockerRegistryPassword,
+                                String kubeBase64Config)
+                throws IllegalAccessException, IOException, InvocationTargetException {
             Dew.mavenSession = session;
             Dew.mavenPluginManager = pluginManager;
             if (profile == null) {
@@ -75,6 +79,7 @@ public class Dew {
                             config.getDocker().getRegistryUrl(), config.getDocker().getRegistryUserName(), config.getDocker().getRegistryPassword());
                     KubeHelper.init(config.getId(), log, config.getKube().getBase64Config());
                 });
+                initNotify();
             }
             if (Config.getCurrentProject() != null) {
                 if (Config.getCurrentProject().getKube().getBase64Config() == null
@@ -89,7 +94,10 @@ public class Dew {
         }
 
         private static void initFinalConfig(String profile,
-                                            String dockerHost, String dockerRegistryUrl, String dockerRegistryUserName, String dockerRegistryPassword, String kubeBase64Config) throws IOException, InvocationTargetException, IllegalAccessException {
+                                            String dockerHost, String dockerRegistryUrl,
+                                            String dockerRegistryUserName, String dockerRegistryPassword,
+                                            String kubeBase64Config)
+                throws IOException, InvocationTargetException, IllegalAccessException {
             String basicConfig = "";
             if (new File(basicDirectory + ".dew").exists()) {
                 basicConfig = $.file.readAllByPathName(basicDirectory + ".dew", "UTF-8") + "\r\n";
@@ -130,6 +138,13 @@ public class Dew {
                 log.debug("[" + project.getGroupId() + ":" + project.getArtifactId() + "] configured");
             }
         }
+
+
+        private static void initNotify() {
+            Map<String, NotifyConfig> configMap = Dew.Config.getProjects().entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, config -> config.getValue().getNotify()));
+            com.tairanchina.csp.dew.notification.Notify.init(configMap, flag -> "");
+        }
     }
 
     public static class Config {
@@ -169,6 +184,37 @@ public class Dew {
                             mavenPluginManager
                     )
             );
+        }
+
+    }
+
+    public static class Notify {
+
+        public static void success(String content, String mojoName) {
+            send(null, content, mojoName);
+        }
+
+        public static void fail(Throwable content, String mojoName) {
+            send(content, null, mojoName);
+        }
+
+        private static void send(Throwable failContent, String successContent, String mojoName) {
+            if (mojoName.equalsIgnoreCase("log")) {
+                return;
+            }
+            String flag = Dew.Config.getCurrentProject().getId();
+            if (com.tairanchina.csp.dew.notification.Notify.contains(flag)) {
+                String title = Dew.Config.getCurrentProject().getProfile()
+                        + " "
+                        + Dew.Config.getCurrentProject().getAppName()
+                        + " "
+                        + mojoName;
+                if (failContent != null) {
+                    com.tairanchina.csp.dew.notification.Notify.send(flag, failContent, title);
+                } else {
+                    com.tairanchina.csp.dew.notification.Notify.send(flag, successContent, title);
+                }
+            }
         }
 
     }
