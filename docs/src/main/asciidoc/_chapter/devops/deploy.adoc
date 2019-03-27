@@ -19,6 +19,37 @@ kubectl create clusterrole service-discovery-client \
 一个项目对应多个服务，在开始部署服务之前先要做一定的准备。
 
 * 在harbor中创建对应项目的Docker项目私有库（如devops-example），并创建对应项目的用户，设置为该库的管理员
+[source,bash]
+----
+# 协议类型与host
+SCHEME=https
+HARBOR_HOST=harbor.dew.env
+# 若使用https，需要在每个curl命令后加 -k
+## 或使用service name作为host:
+#  SCHEME=http
+#  HARBOR_HOST=dew-harbor-harbor-core
+
+# 使用harbor管理员账号来创建用户
+DEW_HARBOR_ADMIN=admin
+DEW_HARBOR_ADMIN_PASSWORD=Harbor12345
+ADMIN_AUTHORIZATION=`echo -n ${DEW_HARBOR_ADMIN}:${DEW_HARBOR_ADMIN_PASSWORD} | base64`
+
+# 创建项目使用的参数，值与Kubernetes配置保持一致
+DEW_NAMESPACE=devops-example
+DEW_DOCKER_USER_NAME=$DEW_NAMESPACE
+DEW_DOCKER_USER_PASS=Dew\!123456
+DEW_DOCKER_USER_EMAIL=${DEW_DOCKER_USER_NAME}@dew.ms
+
+# 创建用户(创建成功的状态码为201)
+curl -X POST "${SCHEME}://${HARBOR_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"email\": \"${DEW_DOCKER_USER_EMAIL}\", \"username\": \"${DEW_DOCKER_USER_NAME}\", \"password\": \"${DEW_DOCKER_USER_PASS}\", \"realname\": \"${DEW_DOCKER_USER_NAME}\", \"comment\": \"init\"}" curl -X POST "${SCHEME}://${HARBOR_HOST}/api/projects" -H "accept: application/json" -H "authorization: Basic ${USER_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"project_name\": \"${DEW_NAMESPACE}\"}" -o /dev/nullrl -s -w %{http_code} -k
+
+# 使用上面创建的用户登录
+USER_AUTHORIZATION=`echo -n $DEW_DOCKER_USER_NAME:$DEW_DOCKER_USER_PASS | base64`
+
+# 创建项目（创建项目的项目管理员默认为当前登录用户。创建成功的状态码为201，409为“项目名已存在”。）
+curl -X POST "${SCHEME}://${HARBOR_HOST}/api/projects" -H "accept: application/json" -H "authorization: Basic ${USER_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"project_name\": \"${DEW_NAMESPACE}\"}" -o /dev/nullrl -s -w %{http_code} -k
+----
+
 * 为当前项目初始化Kubernetes配置
 [source,bash]
 ----
