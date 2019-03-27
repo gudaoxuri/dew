@@ -17,7 +17,7 @@
 package com.tairanchina.csp.dew.core.cluster.ha;
 
 import com.ecfront.dew.common.$;
-import com.tairanchina.csp.dew.core.cluster.ha.dto.HaConfig;
+import com.tairanchina.csp.dew.core.cluster.ha.dto.HAConfig;
 import com.tairanchina.csp.dew.core.cluster.ha.entity.PrepareCommitMsg;
 import org.h2.jdbcx.JdbcConnectionPool;
 import org.slf4j.Logger;
@@ -39,7 +39,7 @@ public class H2ClusterHA implements ClusterHA {
     private static JdbcConnectionPool jdbcConnectionPool;
 
     @Override
-    public void init(HaConfig haConfig) throws SQLException {
+    public void init(HAConfig haConfig) throws SQLException {
         String url = "jdbc:h2:" + haConfig.getStoragePath() + haConfig.getStorageName() + ";DB_CLOSE_ON_EXIT=FALSE";
         jdbcConnectionPool = JdbcConnectionPool
                 .create(url,

@@ -84,7 +84,7 @@ public class RabbitClusterMQ extends AbsClusterMQ {
             channel.exchangeDeclare(topic, "fanout", true);
             AMQP.BasicProperties properties = new AMQP.BasicProperties("text/plain",
                     null,
-                    getMqHeader(topic),
+                    getMQHeader(topic),
                     2,
                     0, null, null, null,
                     null, null, null, null,
@@ -148,7 +148,7 @@ public class RabbitClusterMQ extends AbsClusterMQ {
             channel.queueDeclare(address, true, false, false, null);
             AMQP.BasicProperties properties = new AMQP.BasicProperties("text/plain",
                     null,
-                    getMqHeader(address),
+                    getMQHeader(address),
                     2,
                     0, null, null, null,
                     null, null, null, null,
@@ -195,7 +195,7 @@ public class RabbitClusterMQ extends AbsClusterMQ {
             channel.exchangeDeclare(topic, BuiltinExchangeType.TOPIC, true);
             AMQP.BasicProperties properties = new AMQP.BasicProperties("text/plain",
                     null,
-                    getMqHeader(topic),
+                    getMQHeader(topic),
                     2,
                     0, null, null, null,
                     null, null, null, null,
@@ -258,7 +258,7 @@ public class RabbitClusterMQ extends AbsClusterMQ {
         return new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                setMqHeader(flag, properties.getHeaders());
+                setMQHeader(flag, properties.getHeaders());
                 String message = new String(body, StandardCharsets.UTF_8);
                 Object funResult = receiveBeforeFun.invoke(exchange, routingKey, queueName, properties);
                 try {

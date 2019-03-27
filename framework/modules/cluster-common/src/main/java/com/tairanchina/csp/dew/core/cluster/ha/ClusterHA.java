@@ -16,7 +16,7 @@
 
 package com.tairanchina.csp.dew.core.cluster.ha;
 
-import com.tairanchina.csp.dew.core.cluster.ha.dto.HaConfig;
+import com.tairanchina.csp.dew.core.cluster.ha.dto.HAConfig;
 import com.tairanchina.csp.dew.core.cluster.ha.entity.PrepareCommitMsg;
 
 import java.sql.SQLException;
@@ -35,7 +35,7 @@ public interface ClusterHA {
      * @param haConfig HA配置
      * @throws SQLException the sql exception
      */
-    void init(HaConfig haConfig) throws SQLException;
+    void init(HAConfig haConfig) throws SQLException;
 
     /**
      * 获取到消息后的处理方法.

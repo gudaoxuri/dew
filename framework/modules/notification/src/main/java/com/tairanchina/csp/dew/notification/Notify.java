@@ -14,36 +14,60 @@
  * limitations under the License.
  */
 
-package com.tairanchina.csp.dew.core.notify;
+package com.tairanchina.csp.dew.notification;
 
 import com.ecfront.dew.common.Resp;
-import com.tairanchina.csp.dew.Dew;
-import com.tairanchina.csp.dew.core.DewConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.DelayQueue;
-import java.util.concurrent.Delayed;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * 通知处理核心.
+ *
+ * @author gudaoxuri
+ */
 public class Notify {
 
     private static final Logger logger = LoggerFactory.getLogger(Notify.class);
+
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 
     private static final Map<String, Channel> NOTIFY_CHANNELS = new HashMap<>();
     private static final Map<String, Context> NOTIFY_CONTEXT = new HashMap<>();
     private static final DelayQueue<NotifyDelayed> DELAY_QUEUE = new DelayQueue<>();
 
-    public Notify() {
-        Dew.dewConfig.getNotifies().forEach((key, value) -> {
+    private static Map<String, NotifyConfig> notifyConfigMap;
+    private static Function<String, String> instanceFetchFun;
+
+    /**
+     * Init.
+     *
+     * @param notifyConfigMap 配置
+     */
+    public static void init(Map<String, NotifyConfig> notifyConfigMap) {
+        Notify.init(notifyConfigMap, flag -> "");
+    }
+
+    /**
+     * Init.
+     *
+     * @param notifyConfigMap  配置
+     * @param instanceFetchFun 此函数结果会附到title后面用于区分来自哪个实例
+     */
+    public static void init(Map<String, NotifyConfig> notifyConfigMap, Function<String, String> instanceFetchFun) {
+        Notify.notifyConfigMap = notifyConfigMap;
+        Notify.instanceFetchFun = instanceFetchFun;
+        notifyConfigMap.forEach((key, value) -> {
             Channel channel = null;
             try {
-                channel = (Channel) Class.forName("com.tairanchina.csp.dew.core.notify." + value.getType() + "Channel").newInstance();
+                channel = (Channel) Class.forName(Notify.class.getPackage().getName() + "." + value.getType() + "Channel").newInstance();
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                 logger.error("Not exist notify type:" + value.getType());
                 System.exit(1);
@@ -57,65 +81,157 @@ public class Notify {
                 NOTIFY_CHANNELS.values().forEach(Channel::destroy)));
     }
 
-    public void sendAsync(String flag, String content) {
+    /**
+     * Send async.
+     *
+     * @param flag    the flag
+     * @param content the content
+     */
+    public static void sendAsync(String flag, String content) {
         sendAsync(flag, content, "");
     }
 
-    public void sendAsync(String flag, String content, String title) {
+    /**
+     * Send async.
+     *
+     * @param flag    the flag
+     * @param content the content
+     * @param title   the title
+     */
+    public static void sendAsync(String flag, String content, String title) {
         sendAsync(flag, content, title, new HashSet<>());
     }
 
-    public void sendAsync(String flag, String content, String title, Set<String> specialReceivers) {
-        Dew.Util.newThread(() -> send(flag, content, title, specialReceivers));
+    /**
+     * Send async.
+     *
+     * @param flag             the flag
+     * @param content          the content
+     * @param title            the title
+     * @param specialReceivers the special receivers
+     */
+    public static void sendAsync(String flag, String content, String title, Set<String> specialReceivers) {
+        EXECUTOR_SERVICE.execute(() -> send(flag, content, title, specialReceivers));
     }
 
-    public void sendAsync(String flag, Throwable content) {
+    /**
+     * Send async.
+     *
+     * @param flag    the flag
+     * @param content the content
+     */
+    public static void sendAsync(String flag, Throwable content) {
         sendAsync(flag, content, "");
     }
 
-    public void sendAsync(String flag, Throwable content, String title) {
+    /**
+     * Send async.
+     *
+     * @param flag    the flag
+     * @param content the content
+     * @param title   the title
+     */
+    public static void sendAsync(String flag, Throwable content, String title) {
         sendAsync(flag, content, title, new HashSet<>());
     }
 
-    public void sendAsync(String flag, Throwable content, String title, Set<String> specialReceivers) {
-        Dew.Util.newThread(() -> send(flag, content, title, specialReceivers));
+    /**
+     * Send async.
+     *
+     * @param flag             the flag
+     * @param content          the content
+     * @param title            the title
+     * @param specialReceivers the special receivers
+     */
+    public static void sendAsync(String flag, Throwable content, String title, Set<String> specialReceivers) {
+        EXECUTOR_SERVICE.execute(() -> send(flag, content, title, specialReceivers));
     }
 
-    public Resp<Void> send(String flag, String content) {
+    /**
+     * Send resp.
+     *
+     * @param flag    the flag
+     * @param content the content
+     * @return the resp
+     */
+    public static Resp<Void> send(String flag, String content) {
         return send(flag, content, "");
     }
 
-    public Resp<Void> send(String flag, String content, String title) {
+    /**
+     * Send resp.
+     *
+     * @param flag    the flag
+     * @param content the content
+     * @param title   the title
+     * @return the resp
+     */
+    public static Resp<Void> send(String flag, String content, String title) {
         return send(flag, content, title, new HashSet<>());
     }
 
-    public Resp<Void> send(String flag, Throwable content) {
+    /**
+     * Send resp.
+     *
+     * @param flag    the flag
+     * @param content the content
+     * @return the resp
+     */
+    public static Resp<Void> send(String flag, Throwable content) {
         return send(flag, content, "");
     }
 
-    public Resp<Void> send(String flag, Throwable content, String title) {
+    /**
+     * Send resp.
+     *
+     * @param flag    the flag
+     * @param content the content
+     * @param title   the title
+     * @return the resp
+     */
+    public static Resp<Void> send(String flag, Throwable content, String title) {
         return send(flag, content, title, new HashSet<>());
     }
 
-    public Resp<Void> send(String flag, Throwable content, String title, Set<String> specialReceivers) {
-        return send(flag, Arrays.stream(content.getStackTrace()).map(StackTraceElement::toString).limit(10).collect(Collectors.joining("\n")), title, specialReceivers);
+    /**
+     * Send resp.
+     *
+     * @param flag             the flag
+     * @param content          the content
+     * @param title            the title
+     * @param specialReceivers the special receivers
+     * @return the resp
+     */
+    public static Resp<Void> send(String flag, Throwable content, String title, Set<String> specialReceivers) {
+        return send(flag, content.toString()
+                        + "\n" + Arrays.stream(content.getStackTrace()).map(StackTraceElement::toString).limit(10).collect(Collectors.joining("\n")),
+                title, specialReceivers);
     }
 
-    public Resp<Void> send(String flag, String content, String title, Set<String> specialReceivers) {
+    /**
+     * Send resp.
+     *
+     * @param flag             the flag
+     * @param content          the content
+     * @param title            the title
+     * @param specialReceivers the special receivers
+     * @return the resp
+     */
+    public static Resp<Void> send(String flag, String content, String title, Set<String> specialReceivers) {
         return send(flag, content, title, specialReceivers, false);
     }
 
-    private Resp<Void> send(String flag, String content, String title, Set<String> specialReceivers, boolean force) {
+    private static Resp<Void> send(String flag, String content, String title, Set<String> specialReceivers, boolean delayed) {
         Channel channel = NOTIFY_CHANNELS.getOrDefault(flag, null);
         if (channel == null) {
             logger.trace("Not found notify flag[" + flag + "] in dew config.");
             return Resp.badRequest("Not found notify flag[" + flag + "] in dew config.");
         }
-        DewConfig.Notify notifyConfig = Dew.dewConfig.getNotifies().get(flag);
+        NotifyConfig notifyConfig = notifyConfigMap.get(flag);
         Context notifyContext = NOTIFY_CONTEXT.get(flag);
         // 策略处理
-        if (!force && notifyConfig.getStrategy().getMinIntervalSec() != 0) {
-            if (notifyContext.intervalNotifyCounter.getAndIncrement() > -1) {
+        if (!delayed && notifyConfig.getStrategy().getMinIntervalSec() != 0) {
+            if (notifyContext.intervalNotifyCounter.getAndIncrement() > 0) {
                 logger.trace("Notify frequency must be > " + notifyConfig.getStrategy().getMinIntervalSec() + "s");
                 return Resp.locked("Notify frequency must be > " + notifyConfig.getStrategy().getMinIntervalSec() + "s");
             } else {
@@ -147,11 +263,19 @@ public class Notify {
                 // 已在后几个免扰周期
                 notifyContext.currentForceSendTimes.set(0);
             }
-            if (!force && isDNDTime
+            if (isDNDTime
                     && notifyConfig.getStrategy().getForceSendTimes() > notifyContext.currentForceSendTimes.incrementAndGet()) {
+                if (delayed) {
+                    DELAY_QUEUE.offer(new NotifyDelayed(flag, specialReceivers, notifyConfig.getStrategy().getMinIntervalSec() * 1000));
+                }
                 logger.trace("Do Not Disturb time and try notify times <=" + notifyConfig.getStrategy().getForceSendTimes());
                 return Resp.locked("Do Not Disturb time and try notify times <=" + notifyConfig.getStrategy().getForceSendTimes());
             }
+        }
+        if (delayed) {
+            // 发送延迟通知，清空积累的计数
+            notifyContext.totalDelayMs.set(0);
+            notifyContext.totalNotifyCounter.set(0);
         }
         Set<String> receivers = new HashSet<>();
         if (isDNDTime) {
@@ -161,7 +285,9 @@ public class Notify {
             receivers.addAll(specialReceivers);
         }
         // 格式化
-        title = (title != null ? title : "") + " FROM " + Dew.Info.instance + " BY " + flag;
+        title = title != null ? title : "";
+        // 添加实例信息
+        title += instanceFetchFun.apply(flag);
         title = title.replaceAll("\"", "'");
         content = content.replaceAll("\"", "'");
         boolean result = channel.send(content, title, receivers);
@@ -173,33 +299,57 @@ public class Notify {
         }
     }
 
-    private void delaySend() {
-        Dew.Util.newThread(() -> {
+    private static void delaySend() {
+        EXECUTOR_SERVICE.execute(() -> {
             while (true) {
                 try {
                     NotifyDelayed notifyDelayed = DELAY_QUEUE.take();
                     String flag = notifyDelayed.getFlag();
                     Context notifyContext = NOTIFY_CONTEXT.get(flag);
-                    long notifyCounter = notifyContext.intervalNotifyCounter.getAndSet(-1);
-                    int delayMs = notifyDelayed.getDelayMs();
+                    long notifyCounter = notifyContext.intervalNotifyCounter.getAndSet(0);
                     Set<String> specialReceivers = notifyDelayed.getSpecialReceivers();
-                    Dew.Util.newThread(() ->
-                            send(flag, "在最近的[" + delayMs / 1000 + "]秒内发生了[" + notifyCounter + "]次通知请求。", "延时通知", specialReceivers, true));
+                    EXECUTOR_SERVICE.execute(() ->
+                            send(flag, "在最近的["
+                                            + notifyContext.totalDelayMs.addAndGet(notifyDelayed.getDelayMs() / 1000)
+                                            + "]秒内发生了[" + notifyContext.totalNotifyCounter.addAndGet(notifyCounter) + "]次通知请求。",
+                                    "延时通知", specialReceivers, true));
                 } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                     logger.error("Send delay notify error.", e);
                 }
             }
         });
     }
 
+    /**
+     * The type Context.
+     */
     static class Context {
-
-        AtomicLong intervalNotifyCounter = new AtomicLong(-1);
+        /**
+         * The Interval notify counter.
+         */
+        AtomicLong intervalNotifyCounter = new AtomicLong(0);
+        /**
+         * The Last dnd end time.
+         */
         AtomicLong lastDNDEndTime = new AtomicLong(0);
+        /**
+         * The Current force send times.
+         */
         AtomicInteger currentForceSendTimes = new AtomicInteger(0);
-
+        /**
+         * The Total delay ms.
+         */
+        AtomicLong totalDelayMs = new AtomicLong(0);
+        /**
+         * The Total notify counter.
+         */
+        AtomicLong totalNotifyCounter = new AtomicLong(0);
     }
 
+    /**
+     * The type Notify delayed.
+     */
     static class NotifyDelayed implements Delayed {
 
         private String flag;
@@ -207,18 +357,40 @@ public class Notify {
         private int delayMs;
         private long expireMs;
 
+        /**
+         * Gets flag.
+         *
+         * @return the flag
+         */
         public String getFlag() {
             return flag;
         }
 
+        /**
+         * Gets special receivers.
+         *
+         * @return the special receivers
+         */
         public Set<String> getSpecialReceivers() {
             return specialReceivers;
         }
 
+        /**
+         * Gets delay ms.
+         *
+         * @return the delay ms
+         */
         public int getDelayMs() {
             return delayMs;
         }
 
+        /**
+         * Instantiates a new Notify delayed.
+         *
+         * @param flag             the flag
+         * @param specialReceivers the special receivers
+         * @param delayMs          the delay ms
+         */
         public NotifyDelayed(String flag, Set<String> specialReceivers, int delayMs) {
             this.flag = flag;
             this.specialReceivers = specialReceivers;

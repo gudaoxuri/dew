@@ -20,7 +20,7 @@ import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.DependencyHelper;
 import com.tairanchina.csp.dew.core.cluster.ha.ClusterHA;
 import com.tairanchina.csp.dew.core.cluster.ha.H2ClusterHA;
-import com.tairanchina.csp.dew.core.cluster.ha.dto.HaConfig;
+import com.tairanchina.csp.dew.core.cluster.ha.dto.HAConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,7 +73,7 @@ public class Cluster {
      * 使用默认配置
      */
     public static void ha() {
-        ha(new HaConfig());
+        ha(new HAConfig());
     }
 
     /**
@@ -81,7 +81,7 @@ public class Cluster {
      *
      * @param haConfig HA配置信息
      */
-    public static void ha(HaConfig haConfig) {
+    public static void ha(HAConfig haConfig) {
         if (DependencyHelper.hasDependency("org.h2.jdbcx.JdbcConnectionPool")) {
             clusterHA = new H2ClusterHA();
         } else {
@@ -114,7 +114,7 @@ public class Cluster {
         return clusterHA;
     }
 
-    static Map<String, Object> getMqHeader(String name) {
+    static Map<String, Object> getMQHeader(String name) {
         if (_mqGetHeader != null) {
             return _mqGetHeader.apply(name);
         } else {
@@ -122,7 +122,7 @@ public class Cluster {
         }
     }
 
-    static void setMqHeader(String name, Map<String, Object> header) {
+    static void setMQHeader(String name, Map<String, Object> header) {
         if (_mqSetHeader != null) {
             _mqSetHeader.accept(new Object[]{name, header});
         }

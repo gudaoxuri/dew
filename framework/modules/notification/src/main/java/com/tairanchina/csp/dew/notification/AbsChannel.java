@@ -14,28 +14,34 @@
  * limitations under the License.
  */
 
-package com.tairanchina.csp.dew.core.notify;
+package com.tairanchina.csp.dew.notification;
 
 import com.ecfront.dew.common.Resp;
-import com.tairanchina.csp.dew.Dew;
-import com.tairanchina.csp.dew.core.DewConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
+/**
+ * 通知通道.
+ *
+ * @author gudaoxuri
+ */
 public abstract class AbsChannel implements Channel {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private boolean isWork = false;
 
-    private DewConfig.Notify notifyConfig;
+    private NotifyConfig notifyConfig;
 
+    /**
+     * 初始化通道.
+     *
+     * @param notifyConfig the notify config
+     */
     @Override
-    public void init(DewConfig.Notify notifyConfig) {
+    public void init(NotifyConfig notifyConfig) {
         isWork = innerInit(notifyConfig);
         if (isWork) {
             this.notifyConfig = notifyConfig;
@@ -43,8 +49,16 @@ public abstract class AbsChannel implements Channel {
         }
     }
 
-    abstract boolean innerInit(DewConfig.Notify notifyConfig);
+    /**
+     * 初始化通道.
+     *
+     * @param notifyConfig the notify config
+     */
+    protected abstract boolean innerInit(NotifyConfig notifyConfig);
 
+    /**
+     * 销毁通道.
+     */
     @Override
     public void destroy() {
         if (isWork) {
@@ -53,8 +67,21 @@ public abstract class AbsChannel implements Channel {
         }
     }
 
-    abstract void innerDestroy(DewConfig.Notify notifyConfig);
+    /**
+     * 销毁通道.
+     *
+     * @param notifyConfig the notify config
+     */
+    protected abstract void innerDestroy(NotifyConfig notifyConfig);
 
+    /**
+     * 发送消息.
+     *
+     * @param content   消息内容
+     * @param title     消息标题
+     * @param receivers 接收人列表
+     * @return 是否成功
+     */
     @Override
     public boolean send(String content, String title, Set<String> receivers) {
         if (isWork) {
@@ -76,6 +103,14 @@ public abstract class AbsChannel implements Channel {
         }
     }
 
-    abstract Resp<String> innerSend(String content, String title, Set<String> receivers) throws Exception;
+    /**
+     * 发送消息.
+     *
+     * @param content   消息内容
+     * @param title     消息标题
+     * @param receivers 接收人列表
+     * @return 是否成功
+     */
+    protected abstract Resp<String> innerSend(String content, String title, Set<String> receivers) throws Exception;
 
 }

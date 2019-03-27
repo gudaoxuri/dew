@@ -42,6 +42,10 @@
             <groupId>com.ecfront.dew</groupId>
             <artifactId>common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.tairanchina.csp.dew</groupId>
+            <artifactId>notification</artifactId>
+        </dependency>
         <!-- Cluster -->
         <dependency>
             <groupId>com.tairanchina.csp.dew</groupId>

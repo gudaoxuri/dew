@@ -17,13 +17,12 @@
 package com.tairanchina.csp.dew.core;
 
 
-import com.tairanchina.csp.dew.core.cluster.ha.dto.HaConfig;
+import com.tairanchina.csp.dew.core.cluster.ha.dto.HAConfig;
+import com.tairanchina.csp.dew.notification.NotifyConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 @ConfigurationProperties(prefix = "dew")
 public class DewConfig {
@@ -32,7 +31,7 @@ public class DewConfig {
     private Cluster cluster = new Cluster();
     private Security security = new Security();
     private Metric metric = new Metric();
-    private Map<String, Notify> notifies = new HashMap<>();
+    private Map<String, NotifyConfig> notifies = new HashMap<>();
 
     public static class Basic {
 
@@ -282,7 +281,7 @@ public class DewConfig {
 
             private int electionPeriodSec = 60;
             private boolean haEnabled = true;
-            private HaConfig ha = new HaConfig();
+            private HAConfig ha = new HAConfig();
 
             public int getElectionPeriodSec() {
                 return electionPeriodSec;
@@ -300,11 +299,11 @@ public class DewConfig {
                 this.haEnabled = haEnabled;
             }
 
-            public HaConfig getHa() {
+            public HAConfig getHa() {
                 return ha;
             }
 
-            public Config setHa(HaConfig ha) {
+            public Config setHa(HAConfig ha) {
                 this.ha = ha;
                 return this;
             }
@@ -400,88 +399,6 @@ public class DewConfig {
 
     }
 
-    public static class Notify {
-
-        private String type = "DD"; // DD->钉钉 MAIL->邮件 HTTP->自定义HTTP Hook
-        private Set<String> defaultReceivers = new HashSet<>();
-        private Set<String> dndTimeReceivers = new HashSet<>();
-        private Map<String, Object> args = new HashMap<>();
-        private Strategy strategy = new Strategy();
-
-        public static class Strategy {
-
-            private int minIntervalSec = 0;
-            private String dndTime = "";
-            private int forceSendTimes = 3;
-
-            public int getMinIntervalSec() {
-                return minIntervalSec;
-            }
-
-            public void setMinIntervalSec(int minIntervalSec) {
-                this.minIntervalSec = minIntervalSec;
-            }
-
-            public String getDndTime() {
-                return dndTime;
-            }
-
-            public void setDndTime(String dndTime) {
-                this.dndTime = dndTime;
-            }
-
-            public int getForceSendTimes() {
-                return forceSendTimes;
-            }
-
-            public void setForceSendTimes(int forceSendTimes) {
-                this.forceSendTimes = forceSendTimes;
-            }
-
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public Set<String> getDefaultReceivers() {
-            return defaultReceivers;
-        }
-
-        public void setDefaultReceivers(Set<String> defaultReceivers) {
-            this.defaultReceivers = defaultReceivers;
-        }
-
-        public Set<String> getDndTimeReceivers() {
-            return dndTimeReceivers;
-        }
-
-        public void setDndTimeReceivers(Set<String> dndTimeReceivers) {
-            this.dndTimeReceivers = dndTimeReceivers;
-        }
-
-        public Map<String, Object> getArgs() {
-            return args;
-        }
-
-        public void setArgs(Map<String, Object> args) {
-            this.args = args;
-        }
-
-        public Strategy getStrategy() {
-            return strategy;
-        }
-
-        public void setStrategy(Strategy strategy) {
-            this.strategy = strategy;
-        }
-
-    }
-
     public Basic getBasic() {
         return basic;
     }
@@ -514,11 +431,11 @@ public class DewConfig {
         this.metric = metric;
     }
 
-    public Map<String, Notify> getNotifies() {
+    public Map<String, NotifyConfig> getNotifies() {
         return notifies;
     }
 
-    public void setNotifies(Map<String, Notify> notifies) {
+    public void setNotifies(Map<String, NotifyConfig> notifies) {
         this.notifies = notifies;
     }
 }

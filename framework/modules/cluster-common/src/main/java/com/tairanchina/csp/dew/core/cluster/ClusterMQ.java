@@ -68,12 +68,12 @@ public interface ClusterMQ {
      */
     void response(String address, Consumer<String> consumer);
 
-    default Map<String, Object> getMqHeader(String name) {
-        return Cluster.getMqHeader(name);
+    default Map<String, Object> getMQHeader(String name) {
+        return Cluster.getMQHeader(name);
     }
 
-    default void setMqHeader(String name, Map<String, Object> header) {
-        Cluster.setMqHeader(name, header);
+    default void setMQHeader(String name, Map<String, Object> header) {
+        Cluster.setMQHeader(name, header);
     }
 
 }

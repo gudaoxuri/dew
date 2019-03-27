@@ -28,7 +28,7 @@ import com.tairanchina.csp.dew.core.basic.fun.VoidPredicate;
 import com.tairanchina.csp.dew.core.basic.loading.DewLoadImmediately;
 import com.tairanchina.csp.dew.core.basic.utils.NetUtils;
 import com.tairanchina.csp.dew.core.cluster.*;
-import com.tairanchina.csp.dew.core.notify.Notify;
+import com.tairanchina.csp.dew.notification.Notify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +87,8 @@ public class Dew {
         Info.instance = applicationName + "@" + Info.profile + "@" + Info.ip + ":" + serverPort;
         Cluster.init(Info.name, Info.instance);
 
+        Notify.init(Dew.dewConfig.getNotifies(), flag ->
+                " FROM " + Dew.Info.instance + " BY " + flag);
         Dew.notify = new Notify();
 
         // Support java8 Time
@@ -213,7 +215,7 @@ public class Dew {
         }
 
         public static String getRealIP(Map<String, String> requestHeader, String remoteAddr) {
-            Map<String, String> formattedRequestHeader=new HashMap<>();
+            Map<String, String> formattedRequestHeader = new HashMap<>();
             requestHeader.forEach((k, v) -> formattedRequestHeader.put(k.toLowerCase(), v));
             if (formattedRequestHeader.containsKey("x-forwarded-for") && formattedRequestHeader.get("x-forwarded-for") != null && !formattedRequestHeader.get("x-forwarded-for").isEmpty()) {
                 return formattedRequestHeader.get("x-forwarded-for");

@@ -49,7 +49,7 @@
         <dew.version>2.0.0-SNAPSHOT</dew.version>
 
         <spring-cloud.version>2.1.1.RELEASE</spring-cloud.version>
-        <dew-common.version>1.4.10</dew-common.version>
+        <dew-common.version>1.4.11</dew-common.version>
         <swagger.version>2.9.2</swagger.version>
         <swagger-bootstrap-ui.version>1.9.1</swagger-bootstrap-ui.version>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
@@ -98,6 +98,11 @@
                 <groupId>com.ecfront.dew</groupId>
                 <artifactId>common</artifactId>
                 <version>${dew-common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tairanchina.csp.dew</groupId>
+                <artifactId>notification</artifactId>
+                <version>${dew.version}</version>
             </dependency>
             <!-- Modules -->
             <dependency>

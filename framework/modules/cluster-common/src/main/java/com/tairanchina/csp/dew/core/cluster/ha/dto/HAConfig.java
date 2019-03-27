@@ -22,7 +22,7 @@ package com.tairanchina.csp.dew.core.cluster.ha.dto;
  *
  * @author gudaoxuri
  */
-public class HaConfig {
+public class HAConfig {
 
     // 容器环境下请选择持久卷
     private String storagePath = "./";
@@ -45,7 +45,7 @@ public class HaConfig {
      * @param storagePath the storage path
      * @return the storage path
      */
-    public HaConfig setStoragePath(String storagePath) {
+    public HAConfig setStoragePath(String storagePath) {
         this.storagePath = storagePath;
         return this;
     }
@@ -65,7 +65,7 @@ public class HaConfig {
      * @param storageName the storage name
      * @return the storage name
      */
-    public HaConfig setStorageName(String storageName) {
+    public HAConfig setStorageName(String storageName) {
         this.storageName = storageName;
         return this;
     }
@@ -85,7 +85,7 @@ public class HaConfig {
      * @param authUsername the auth username
      * @return the auth username
      */
-    public HaConfig setAuthUsername(String authUsername) {
+    public HAConfig setAuthUsername(String authUsername) {
         this.authUsername = authUsername;
         return this;
     }
@@ -105,7 +105,7 @@ public class HaConfig {
      * @param authPassword the auth password
      * @return the auth password
      */
-    public HaConfig setAuthPassword(String authPassword) {
+    public HAConfig setAuthPassword(String authPassword) {
         this.authPassword = authPassword;
         return this;
     }
