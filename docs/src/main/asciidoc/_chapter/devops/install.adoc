@@ -58,138 +58,6 @@ cat >>/etc/hosts <<EOF
 EOF
 ----
 
-[[podAssignment]]
-==== pod的调度
-TIP: 此处简单说明pod的调度配置，方便后文中各组件的安装配置时的参考。
-     更详细的配置细节请参考以下官方文档：
-     https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
-     https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-
-===== node亲和性和调度
-.nodeName
-nodeName是最简单的pod节点选择的方法，直接根据节点的名字来选择pod要调度的节点：
-[source,yaml]
-----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nginx
-spec:
-  containers:
-  - name: nginx
-    image: nginx
-  nodeName: devops
-----
-
-.nodeSelector
-使用此功能需要先给要被调度的node加上标签： +
-`kubectl label nodes <node-name> <label-key>=<label-value>` +
-eg: +
-`kubectl label nodes devops tag=devops`
-
-查看node的标签： +
-`kubectl get nodes --show-labels`
-
-给pod添加nodeSelector（推荐在controller部分加，eg:Deployment,StatefulSet等）
-[source,yaml]
-----
-spec:
-  containers:
-  - name: nginx
-    image: nginx
-    imagePullPolicy: IfNotPresent
-  nodeSelector:
-    tag: devops
-----
-移除标签：
-`kubectl label nodes devops tag-`
-
-
-.Tolerations
-给node添加污点： +
-`kubectl taint nodes devops key=value:NoSchedule`
-给pod添加tolerations：
-[source,yaml]
-----
-tolerations:
-- key: "key"
-  operator: "Equal"
-  value: "value"
-  effect: "NoSchedule"
-----
-以上配置是指：当node满足pod的tolerations的条件 `key=value:NoSchedule` 时，pod才会被调度到该节点上。
-
-移除node的污点： +
-`kubectl taint nodes devops key:NoSchedule-`
-
-.node的亲和性和反亲和性
-eg:
-[source,bash]
-----
-kubectl label nodes k8s1 devops=1
-kubectl label nodes k8s2 devops=2
-kubectl label nodes k8s3 devops=3
-----
-
-[source,yaml]
-----
-spec:
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: devops
-            operator: In
-            values:
-            - 1
-            - 2
-      preferredDuringSchedulingIgnoredDuringExecution:
-      - weight: 1
-        preference:
-          matchExpressions:
-          - key: devops
-            operator: In
-            values:
-            - 3
-----
-以上例子说明，pod将会被调度到打有 `devops=1` 和 `devops=2` 标签的节点上去， `devops=3`的节点为备选节点。 +
-operator的值可以为：`In, NotIn, Exists, DoesNotExist, Gt, Lt.` +
-此外，可以通过给 `operator`设值 `NotIn` 或 `DoesNotExist`，来实现node的反亲和性功能。
-
-===== pod亲和性与反亲和性调度
-.Inter-pod affinity and anti-affinity
-[source,yaml]
-----
-spec:
-  affinity:
-    podAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchExpressions:
-          - key: security
-            operator: In
-            values:
-            - S1
-        topologyKey: failure-domain.beta.kubernetes.io/zone
-    podAntiAffinity:
-      preferredDuringSchedulingIgnoredDuringExecution:
-      - weight: 100
-        podAffinityTerm:
-          labelSelector:
-            matchExpressions:
-            - key: security
-              operator: In
-              values:
-              - S2
-          topologyKey: kubernetes.io/hostname
-----
-
-pod的亲和性调度，主要是根据pod及node的标签来进行调度的。 +
-当一个节点上已有至少一个正在运行的，并带有满足该pod的podAffinity条件的标签的pod1、且该节点有`failure-domain.beta.kubernetes.io/zone`的标签，则该pod会被调度到pod1的节点上去。 +
-反亲和性与之相反，当某一节点上至少有一个正在运行的、具有满足podAntiAffinity条件的pod2，则该pod不会被调度到pod2的节点上去。
-
-
 ==== docker
 
 TIP: https://kubernetes.io/docs/setup/cri/#docker
@@ -463,6 +331,138 @@ requirepass Dew!123456
 -
 systemctl start redis
 ----
+
+
+[[podAssignment]]
+==== pod的调度
+TIP: 此处简单说明pod的调度配置，方便后文中各组件的安装配置时的参考。
+     更详细的配置细节请参考以下官方文档：
+     https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+     https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+
+===== node亲和性和调度
+.nodeName
+nodeName是最简单的pod节点选择的方法，直接根据节点的名字来选择pod要调度的节点：
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  nodeName: devops
+----
+
+.nodeSelector
+使用此功能需要先给要被调度的node加上标签： +
+`kubectl label nodes <node-name> <label-key>=<label-value>` +
+eg: +
+`kubectl label nodes devops tag=devops`
+
+查看node的标签： +
+`kubectl get nodes --show-labels`
+
+给pod添加nodeSelector（推荐在controller部分加，eg:Deployment,StatefulSet等）
+[source,yaml]
+----
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
+  nodeSelector:
+    tag: devops
+----
+移除标签：
+`kubectl label nodes devops tag-`
+
+
+.Tolerations
+给node添加污点： +
+`kubectl taint nodes devops key=value:NoSchedule`
+给pod添加tolerations： +
+[source,yaml]
+----
+tolerations:
+- key: "key"
+  operator: "Equal"
+  value: "value"
+  effect: "NoSchedule"
+----
+以上配置是指：当node满足pod的tolerations的条件 `key=value:NoSchedule` 时，pod才会被调度到该节点上。
+
+移除node的污点： +
+`kubectl taint nodes devops key:NoSchedule-`
+
+.node的亲和性和反亲和性
+eg:
+[source,bash]
+----
+kubectl label nodes k8s1 devops=1
+kubectl label nodes k8s2 devops=2
+kubectl label nodes k8s3 devops=3
+----
+
+[source,yaml]
+----
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: devops
+            operator: In
+            values:
+            - 1
+            - 2
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: devops
+            operator: In
+            values:
+            - 3
+----
+以上例子说明，pod将会被调度到打有 `devops=1` 和 `devops=2` 标签的节点上去， `devops=3` 的节点为备选节点。 +
+operator的值可以为：`In, NotIn, Exists, DoesNotExist, Gt, Lt.` +
+此外，可以通过给 `operator` 设值 `NotIn` 或 `DoesNotExist`，来实现node的反亲和性功能。
+
+===== pod亲和性与反亲和性调度
+.Inter-pod affinity and anti-affinity
+[source,yaml]
+----
+spec:
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: security
+            operator: In
+            values:
+            - S1
+        topologyKey: failure-domain.beta.kubernetes.io/zone
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: security
+              operator: In
+              values:
+              - S2
+          topologyKey: kubernetes.io/hostname
+----
+
+pod的亲和性调度，主要是根据pod及node的标签来进行调度的。 +
+当一个节点上已有至少一个正在运行的，并带有满足该pod的podAffinity条件的标签的pod1、且该节点有 `failure-domain.beta.kubernetes.io/zone` 的标签，则该pod会被调度到pod1的节点上去。 +
+反亲和性与之相反，当某一节点上至少有一个正在运行的、具有满足podAntiAffinity条件的pod2，则该pod不会被调度到pod2的节点上去。
 
 ==== gitlab
 
@@ -1200,8 +1200,8 @@ INFO: 若验证prometheus的target，kube-scheduler、kube-controller处于down�
 # 监控APP
   1.首先需要将项目instrument
     参考文章：https://prometheus.io/docs/instrumenting/clientlibs/
-  2.部署项目及创建进行监控的ServiceMonitor。 +
-    注意ServiceMonitor的labels要含有Prometheus-operator创建的Prometheus的serviceMonitorSelector的label。 +
+  2.部署项目及创建进行监控的ServiceMonitor。
+    注意ServiceMonitor的labels要含有Prometheus-operator创建的Prometheus的serviceMonitorSelector的label。
     详细文章：https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources
 ----
 
