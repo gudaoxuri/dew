@@ -22,20 +22,31 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
+/**
+ * The type Cluster map test.
+ *
+ * @author gudaoxuri
+ */
 public class ClusterMapTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterMapTest.class);
 
+    /**
+     * Test.
+     *
+     * @param map the map
+     * @throws InterruptedException the interrupted exception
+     */
     public void test(ClusterMap<TestMapObj> map) throws InterruptedException {
         map.clear();
         assert !map.containsKey("instance");
         assert map.get("instance") == null;
         // sync
         TestMapObj obj = new TestMapObj();
-        obj.setA("测试");
+        obj.setField("测试");
         map.put("instance", obj);
         assert map.containsKey("instance");
-        assert map.get("instance").getA().equals("测试");
+        assert map.get("instance").getField().equals("测试");
         map.remove("instance");
         assert !map.containsKey("instance");
         assert map.get("instance") == null;
@@ -44,7 +55,7 @@ public class ClusterMapTest {
         while (!map.containsKey("async_map")) {
             Thread.sleep(100);
         }
-        assert map.get("async_map").getA().equals("测试");
+        assert map.get("async_map").getField().equals("测试");
         map.removeAsync("async_map");
         while (map.containsKey("async_map")) {
             Thread.sleep(100);
@@ -53,19 +64,32 @@ public class ClusterMapTest {
         // getall
         map.put("map1", obj);
         map.put("map2", obj);
-        assert map.getAll().get("map1").getA().equals("测试") && map.getAll().containsKey("map2");
+        assert map.getAll().get("map1").getField().equals("测试") && map.getAll().containsKey("map2");
     }
 
+    /**
+     * The type Test map obj.
+     */
     public static class TestMapObj implements Serializable {
 
-        private String a;
+        private String field;
 
-        public String getA() {
-            return a;
+        /**
+         * Gets a.
+         *
+         * @return the a
+         */
+        public String getField() {
+            return field;
         }
 
-        public void setA(String a) {
-            this.a = a;
+        /**
+         * Sets a.
+         *
+         * @param field the a
+         */
+        public void setField(String field) {
+            this.field = field;
         }
 
     }

@@ -23,10 +23,21 @@ import com.tairanchina.csp.dew.core.cluster.VoidProcessFun;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * 分布式锁服务 Hazelcast 实现.
+ *
+ * @author gudaoxuri
+ */
 public class HazelcastClusterLock implements ClusterLock {
 
     private ILock lock;
 
+    /**
+     * Instantiates a new Hazelcast cluster lock.
+     *
+     * @param key               the key
+     * @param hazelcastInstance the hazelcast instance
+     */
     public HazelcastClusterLock(String key, HazelcastInstance hazelcastInstance) {
         lock = hazelcastInstance.getLock("dew:cluster:lock:" + key);
     }

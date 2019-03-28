@@ -25,10 +25,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
+/**
+ * The type Cluster mq test.
+ *
+ * @author gudaoxuri
+ */
 public class ClusterMQTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterMQTest.class);
 
+    /**
+     * Test.
+     *
+     * @param mq the mq
+     * @throws InterruptedException the interrupted exception
+     */
     public void test(ClusterMQ mq) throws InterruptedException {
         testPubSub(mq);
         testReqResp(mq);
@@ -60,7 +71,7 @@ public class ClusterMQTest {
         List<String> conflictFlag = new ArrayList<>();
         new Thread(() -> mq.response("test_rep_resp", message -> {
             if (conflictFlag.contains(message)) {
-                assert 1 == 2;
+                assert false;
             } else {
                 conflictFlag.add(message);
                 logger.info("response instance 1: req_resp>>" + message);
@@ -69,7 +80,7 @@ public class ClusterMQTest {
         })).start();
         new Thread(() -> mq.response("test_rep_resp", message -> {
             if (conflictFlag.contains(message)) {
-                assert 1 == 2;
+                assert false;
             } else {
                 conflictFlag.add(message);
                 logger.info("response instance 2: req_resp>>" + message);
@@ -101,12 +112,10 @@ public class ClusterMQTest {
         mockErrorThread.stop();
         // restart subscribe
         CountDownLatch waiting = new CountDownLatch(2);
-        new Thread(() -> {
-            mq.subscribe("test_ha", message -> {
-                logger.info("subscribe new instance: pub_sub_ha>>" + message);
-                waiting.countDown();
-            });
-        }).start();
+        new Thread(() -> mq.subscribe("test_ha", message -> {
+            logger.info("subscribe new instance: pub_sub_ha>>" + message);
+            waiting.countDown();
+        })).start();
         Thread.sleep(1000);
         mq.publish("test_ha", "ha_msgB");
         waiting.await();

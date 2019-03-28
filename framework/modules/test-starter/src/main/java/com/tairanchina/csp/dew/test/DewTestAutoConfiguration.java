@@ -27,6 +27,11 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.io.IOException;
 
+/**
+ * The type Dew test auto configuration.
+ *
+ * @author gudaoxuri
+ */
 @Configuration
 public class DewTestAutoConfiguration {
 
@@ -37,6 +42,11 @@ public class DewTestAutoConfiguration {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
+    /**
+     * Init.
+     *
+     * @throws IOException the io exception
+     */
     @PostConstruct
     public void init() throws IOException {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
@@ -52,6 +62,9 @@ public class DewTestAutoConfiguration {
         }
     }
 
+    /**
+     * Destroy.
+     */
     @PreDestroy
     public void destroy() {
         if (redisServer.isActive()) {

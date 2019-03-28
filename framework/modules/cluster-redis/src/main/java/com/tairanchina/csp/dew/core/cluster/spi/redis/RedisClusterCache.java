@@ -27,10 +27,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
+/**
+ * 缓存服务 Redis 实现.
+ *
+ * @author gudaoxuri
+ */
 public class RedisClusterCache implements ClusterCache {
 
     private RedisTemplate<String, String> redisTemplate;
 
+    /**
+     * Instantiates a new Redis cluster cache.
+     *
+     * @param redisTemplate the redis template
+     */
     public RedisClusterCache(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }

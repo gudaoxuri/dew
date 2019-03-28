@@ -28,10 +28,22 @@ import com.tairanchina.csp.dew.core.cluster.VoidProcessFun;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * 分布式Map服务 Hazelcast 实现.
+ *
+ * @param <M> 值的类型
+ * @author gudaoxuri
+ */
 public class HazelcastClusterMap<M> implements ClusterMap<M> {
 
     private IMap<String, M> map;
 
+    /**
+     * Instantiates a new Hazelcast cluster map.
+     *
+     * @param mapKey            the map key
+     * @param hazelcastInstance the hazelcast instance
+     */
     public HazelcastClusterMap(String mapKey, HazelcastInstance hazelcastInstance) {
         map = hazelcastInstance.getMap("dew:cluster:map:" + mapKey);
     }

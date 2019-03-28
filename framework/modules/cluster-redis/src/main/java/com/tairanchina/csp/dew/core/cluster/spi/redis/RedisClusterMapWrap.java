@@ -22,12 +22,22 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 分布式Map服务多实例封装 Redis 实现.
+ *
+ * @author gudaoxuri
+ */
 public class RedisClusterMapWrap implements ClusterMapWrap {
 
     private static final ConcurrentHashMap<String, ClusterMap> MAP_CONTAINER = new ConcurrentHashMap<>();
 
     private RedisTemplate<String, String> redisTemplate;
 
+    /**
+     * Instantiates a new Redis cluster map wrap.
+     *
+     * @param redisTemplate the redis template
+     */
     public RedisClusterMapWrap(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }

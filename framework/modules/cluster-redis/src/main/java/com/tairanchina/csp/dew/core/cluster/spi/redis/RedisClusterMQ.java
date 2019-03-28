@@ -24,11 +24,20 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.Consumer;
 
-
+/**
+ * MQ服务 Redis 实现.
+ *
+ * @author gudaoxuri
+ */
 public class RedisClusterMQ extends AbsClusterMQ {
 
     private RedisTemplate<String, String> redisTemplate;
 
+    /**
+     * Instantiates a new Redis cluster mq.
+     *
+     * @param redisTemplate the redis template
+     */
     public RedisClusterMQ(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
@@ -46,8 +55,8 @@ public class RedisClusterMQ extends AbsClusterMQ {
     protected void doSubscribe(String topic, Consumer<String> consumer) {
         new Thread(() -> redisTemplate.execute((RedisCallback<Void>) connection -> {
             connection.subscribe((message, pattern) ->
-                            consumer.accept(new String(message.getBody(), StandardCharsets.UTF_8))
-                    , topic.getBytes());
+                            consumer.accept(new String(message.getBody(), StandardCharsets.UTF_8)),
+                    topic.getBytes());
             return null;
         })).start();
     }

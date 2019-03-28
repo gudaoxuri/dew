@@ -20,10 +20,21 @@ import com.tairanchina.csp.dew.core.cluster.ClusterElection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The type Cluster election test.
+ *
+ * @author gudaoxuri
+ */
 public class ClusterElectionTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterElectionTest.class);
 
+    /**
+     * Test.
+     *
+     * @param election the election
+     * @throws InterruptedException the interrupted exception
+     */
     public void test(ClusterElection election) throws InterruptedException {
         Thread.sleep(10000);
         assert election.isLeader();

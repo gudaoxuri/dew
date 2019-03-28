@@ -24,8 +24,20 @@ import io.opentracing.tag.Tags;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * The type Rabbit mq tracing utils.
+ *
+ * @author gudaoxuri
+ */
 class RabbitMqTracingUtils {
 
+    /**
+     * Build receive span.
+     *
+     * @param messageProperties the message properties
+     * @param tracer            the tracer
+     * @return the optional
+     */
     static Optional<Scope> buildReceiveSpan(AMQP.BasicProperties messageProperties, Tracer tracer) {
         Optional<SpanContext> context = findParent(messageProperties, tracer);
         if (context.isPresent()) {
@@ -41,6 +53,13 @@ class RabbitMqTracingUtils {
         return Optional.empty();
     }
 
+    /**
+     * Build send span scope.
+     *
+     * @param tracer            the tracer
+     * @param messageProperties the message properties
+     * @return the scope
+     */
     static Scope buildSendSpan(Tracer tracer, AMQP.BasicProperties messageProperties) {
         Tracer.SpanBuilder spanBuilder =
                 tracer

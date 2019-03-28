@@ -22,10 +22,21 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
 
+/**
+ * The type Cluster lock test.
+ *
+ * @author gudaoxuri
+ */
 public class ClusterLockTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterLockTest.class);
 
+    /**
+     * Test.
+     *
+     * @param lock the lock
+     * @throws InterruptedException the interrupted exception
+     */
     public void test(ClusterLock lock) throws InterruptedException {
         CountDownLatch waiting = new CountDownLatch(3);
         lock.delete();

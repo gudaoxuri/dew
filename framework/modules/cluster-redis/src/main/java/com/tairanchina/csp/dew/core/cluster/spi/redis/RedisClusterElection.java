@@ -22,6 +22,11 @@ import com.tairanchina.csp.dew.core.cluster.Cluster;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 
+/**
+ * 领导者选举服务 Redis 实现.
+ *
+ * @author gudaoxuri
+ */
 public class RedisClusterElection extends AbsClusterElection {
 
     private static final String DEFAULT_KEY = "_";
@@ -30,10 +35,23 @@ public class RedisClusterElection extends AbsClusterElection {
     private int electionPeriodSec;
     private RedisTemplate<String, String> redisTemplate;
 
+    /**
+     * Instantiates a new Redis cluster election.
+     *
+     * @param electionPeriodSec the election period sec
+     * @param redisTemplate     the redis template
+     */
     public RedisClusterElection(int electionPeriodSec, RedisTemplate<String, String> redisTemplate) {
         this(DEFAULT_KEY, electionPeriodSec, redisTemplate);
     }
 
+    /**
+     * Instantiates a new Redis cluster election.
+     *
+     * @param key               the key
+     * @param electionPeriodSec the election period sec
+     * @param redisTemplate     the redis template
+     */
     public RedisClusterElection(String key, int electionPeriodSec, RedisTemplate<String, String> redisTemplate) {
         this.key = "dew:cluster:election:" + key;
         this.electionPeriodSec = electionPeriodSec;

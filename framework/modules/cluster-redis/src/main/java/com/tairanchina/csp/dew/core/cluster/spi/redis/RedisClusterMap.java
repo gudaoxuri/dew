@@ -23,12 +23,25 @@ import org.springframework.data.redis.core.RedisTemplate;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * 分布式Map服务 Redis 实现.
+ *
+ * @param <M> 值的类型
+ * @author gudaoxuri
+ */
 public class RedisClusterMap<M> implements ClusterMap<M> {
 
     private String mapKey;
     private Class<M> clazz;
     private RedisTemplate<String, String> redisTemplate;
 
+    /**
+     * Instantiates a new Redis cluster map.
+     *
+     * @param mapKey        the map key
+     * @param clazz         the clazz
+     * @param redisTemplate the redis template
+     */
     public RedisClusterMap(String mapKey, Class<M> clazz, RedisTemplate<String, String> redisTemplate) {
         this.mapKey = "dew:cluster:map:" + mapKey;
         this.clazz = clazz;

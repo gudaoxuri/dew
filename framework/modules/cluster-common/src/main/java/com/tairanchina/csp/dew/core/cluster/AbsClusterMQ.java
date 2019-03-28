@@ -85,7 +85,7 @@ public abstract class AbsClusterMQ implements ClusterMQ {
      *
      * @param address 请求地址
      * @param message 消息内容
-     * @return 是否请求成功
+     * @return 是否请求成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
      */
     @Override
     public boolean request(String address, String message) {
@@ -98,7 +98,7 @@ public abstract class AbsClusterMQ implements ClusterMQ {
      *
      * @param address 请求地址
      * @param message 消息内容
-     * @return 是否请求成功
+     * @return 是否请求成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
      */
     protected abstract boolean doRequest(String address, String message);
 

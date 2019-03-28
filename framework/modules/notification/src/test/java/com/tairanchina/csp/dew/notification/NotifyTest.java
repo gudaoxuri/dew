@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -180,16 +181,13 @@ public class NotifyTest {
 
     @Test
     public void testHttp() throws IOException, InterruptedException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
-        HttpContext context = server.createContext("/notify");
-        context.setHandler(NotifyTest::handleRequest);
-        server.start();
+        startHttpServer(9000, "notify");
 
         NotifyConfig httpConfig = new NotifyConfig();
         httpConfig.setType(NotifyConfig.TYPE_HTTP);
         httpConfig.setArgs(new HashMap<String, Object>() {
             {
-                put("url", "http://127.0.0.1:8080/notify");
+                put("url", "http://localhost:9000/notify");
             }
         });
         httpConfig.setDefaultReceivers(new HashSet<String>() {
@@ -202,7 +200,7 @@ public class NotifyTest {
         strategyConfig.setType(NotifyConfig.TYPE_HTTP);
         strategyConfig.setArgs(new HashMap<String, Object>() {
             {
-                put("url", "http://127.0.0.1:8080/notify");
+                put("url", "http://localhost:9000/notify");
             }
         });
         strategyConfig.setDefaultReceivers(new HashSet<String>() {
@@ -264,10 +262,10 @@ public class NotifyTest {
         cdl.await(10, TimeUnit.SECONDS);
     }
 
-
     private static void handleRequest(HttpExchange exchange) throws IOException {
-        String body = new BufferedReader(new InputStreamReader(exchange.getRequestBody())).lines().collect(Collectors.joining("\n"));
+        String body = new BufferedReader(new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
         JsonNode json = $.json.toJson(body);
+        int httpStatusCode = 200;
         if (json.get("title").asText().equals("正常消息test")
                 && json.get("content").asText().equals("hi")
                 && json.get("receivers").get(0).asText().equals("jzy")) {
@@ -290,14 +288,27 @@ public class NotifyTest {
                 && json.get("receivers").get(0).asText().equals("gudaoxuri")) {
             cdl.countDown();
         } else {
-            throw new RuntimeException("error");
+            httpStatusCode = 500;
         }
-        System.out.println($.json.toJsonString(json));
+        System.out.println("[" + httpStatusCode + "]" + $.json.toJsonString(json));
         String response = "ok";
-        exchange.sendResponseHeaders(200, response.getBytes().length);
+        exchange.sendResponseHeaders(httpStatusCode, response.getBytes().length);
         OutputStream os = exchange.getResponseBody();
         os.write(response.getBytes());
         os.close();
     }
+
+    private static void startHttpServer(int port, String path) throws InterruptedException {
+        HttpServer server = null;
+        try {
+            server = HttpServer.create(new InetSocketAddress(port), 0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        HttpContext context = server.createContext("/" + path);
+        context.setHandler(NotifyTest::handleRequest);
+        server.start();
+    }
+
 
 }

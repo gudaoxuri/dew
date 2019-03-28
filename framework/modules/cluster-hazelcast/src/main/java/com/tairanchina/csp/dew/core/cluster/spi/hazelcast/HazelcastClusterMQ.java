@@ -21,10 +21,20 @@ import com.tairanchina.csp.dew.core.cluster.AbsClusterMQ;
 
 import java.util.function.Consumer;
 
+/**
+ * MQ服务 Hazelcast 实现.
+ *
+ * @author gudaoxuri
+ */
 public class HazelcastClusterMQ extends AbsClusterMQ {
 
     private HazelcastAdapter hazelcastAdapter;
 
+    /**
+     * Instantiates a new Hazelcast cluster mq.
+     *
+     * @param hazelcastAdapter the hazelcast adapter
+     */
     HazelcastClusterMQ(HazelcastAdapter hazelcastAdapter) {
         this.hazelcastAdapter = hazelcastAdapter;
     }

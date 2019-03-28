@@ -25,6 +25,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
+/**
+ * MQ服务 Rabbit 实现.
+ *
+ * @author gudaoxuri
+ */
 public class RabbitClusterMQ extends AbsClusterMQ {
 
     private RabbitAdapter rabbitAdapter;
@@ -40,39 +45,95 @@ public class RabbitClusterMQ extends AbsClusterMQ {
     private static ReceiveFinishFun receiveFinishFun = beforeResult -> {
     };
 
+    /**
+     * Sets send before fun.
+     *
+     * @param sendBeforeFun the send before fun
+     */
     public static void setSendBeforeFun(SendBeforeFun sendBeforeFun) {
         RabbitClusterMQ.sendBeforeFun = sendBeforeFun;
     }
 
+    /**
+     * Sets send error fun.
+     *
+     * @param sendErrorFun the send error fun
+     */
     public static void setSendErrorFun(SendErrorFun sendErrorFun) {
         RabbitClusterMQ.sendErrorFun = sendErrorFun;
     }
 
+    /**
+     * Sets send finish fun.
+     *
+     * @param sendFinishFun the send finish fun
+     */
     public static void setSendFinishFun(SendFinishFun sendFinishFun) {
         RabbitClusterMQ.sendFinishFun = sendFinishFun;
     }
 
+    /**
+     * Sets receive before fun.
+     *
+     * @param receiveBeforeFun the receive before fun
+     */
     public static void setReceiveBeforeFun(ReceiveBeforeFun receiveBeforeFun) {
         RabbitClusterMQ.receiveBeforeFun = receiveBeforeFun;
     }
 
+    /**
+     * Sets receive error fun.
+     *
+     * @param receiveErrorFun the receive error fun
+     */
     public static void setReceiveErrorFun(ReceiveErrorFun receiveErrorFun) {
         RabbitClusterMQ.receiveErrorFun = receiveErrorFun;
     }
 
+    /**
+     * Sets receive finish fun.
+     *
+     * @param receiveFinishFun the receive finish fun
+     */
     public static void setReceiveFinishFun(ReceiveFinishFun receiveFinishFun) {
         RabbitClusterMQ.receiveFinishFun = receiveFinishFun;
     }
 
+    /**
+     * Instantiates a new Rabbit cluster mq.
+     *
+     * @param rabbitAdapter the rabbit adapter
+     */
     public RabbitClusterMQ(RabbitAdapter rabbitAdapter) {
         this.rabbitAdapter = rabbitAdapter;
     }
 
+    /**
+     * MQ 发布订阅模式 之 发布.
+     * <p>
+     * exchange = fanout
+     * 请确保发布之前 topic 已经存在
+     *
+     * @param topic   主题
+     * @param message 消息内容
+     * @return 是否发布成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
+     */
     @Override
     public boolean doPublish(String topic, String message) {
         return doPublish(topic, message, true);
     }
 
+    /**
+     * MQ 发布订阅模式 之 发布.
+     * <p>
+     * exchange = fanout
+     * 请确保发布之前 topic 已经存在
+     *
+     * @param topic   主题
+     * @param message 消息内容
+     * @param confirm 是否需要确认
+     * @return 是否发布成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
+     */
     public boolean doPublish(String topic, String message, boolean confirm) {
         Connection connection = rabbitAdapter.getConnection();
         Channel channel = connection.createChannel(false);
@@ -81,7 +142,7 @@ public class RabbitClusterMQ extends AbsClusterMQ {
             if (confirm) {
                 channel.confirmSelect();
             }
-            channel.exchangeDeclare(topic, "fanout", true);
+            channel.exchangeDeclare(topic, BuiltinExchangeType.FANOUT, true);
             AMQP.BasicProperties properties = new AMQP.BasicProperties("text/plain",
                     null,
                     getMQHeader(topic),
@@ -118,11 +179,20 @@ public class RabbitClusterMQ extends AbsClusterMQ {
         }
     }
 
+    /**
+     * MQ 发布订阅模式 之 订阅.
+     * <p>
+     * exchange = fanout
+     * 非阻塞方式
+     *
+     * @param topic    主题
+     * @param consumer 订阅处理方法
+     */
     @Override
     protected void doSubscribe(String topic, Consumer<String> consumer) {
         Channel channel = rabbitAdapter.getConnection().createChannel(false);
         try {
-            channel.exchangeDeclare(topic, "fanout", true);
+            channel.exchangeDeclare(topic, BuiltinExchangeType.FANOUT, true);
             String queueName = channel.queueDeclare().getQueue();
             channel.queueBind(queueName, topic, "");
             channel.basicQos(1);
@@ -132,11 +202,30 @@ public class RabbitClusterMQ extends AbsClusterMQ {
         }
     }
 
+    /**
+     * MQ 请求响应模式 之 请求.
+     * <p>
+     * exchange = fanout
+     *
+     * @param address 请求地址
+     * @param message 消息内容
+     * @return 是否请求成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
+     */
     @Override
     protected boolean doRequest(String address, String message) {
         return doRequest(address, message, true);
     }
 
+    /**
+     * MQ 请求响应模式 之 请求.
+     * <p>
+     * exchange = fanout
+     *
+     * @param address 请求地址
+     * @param message 消息内容
+     * @param confirm 是否需要确认
+     * @return 是否请求成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
+     */
     public boolean doRequest(String address, String message, boolean confirm) {
         Connection connection = rabbitAdapter.getConnection();
         Channel channel = connection.createChannel(false);
@@ -182,6 +271,18 @@ public class RabbitClusterMQ extends AbsClusterMQ {
         }
     }
 
+    /**
+     * MQ 发布订阅模式 之 发布.
+     * <p>
+     * exchange = topic
+     *
+     * @param topic      主题
+     * @param routingKey 路由Key
+     * @param queueName  队列名
+     * @param message    消息内容
+     * @param confirm    是否需要确认
+     * @return 是否发布成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
+     */
     public boolean publishWithTopic(String topic, String routingKey, String queueName, String message, boolean confirm) {
         logger.trace("[MQ] publishWithTopic {}:{}", topic, message);
         Connection connection = rabbitAdapter.getConnection();
@@ -229,6 +330,17 @@ public class RabbitClusterMQ extends AbsClusterMQ {
         }
     }
 
+    /**
+     * MQ 发布订阅模式 之 订阅.
+     * <p>
+     * exchange = topic
+     * 非阻塞方式
+     *
+     * @param topic      主题
+     * @param routingKey 路由Key
+     * @param queueName  队列名
+     * @param consumer   订阅处理方法
+     */
     public void subscribeWithTopic(String topic, String routingKey, String queueName, Consumer<String> consumer) {
         Channel channel = rabbitAdapter.getConnection().createChannel(false);
         try {
@@ -254,7 +366,8 @@ public class RabbitClusterMQ extends AbsClusterMQ {
         }
     }
 
-    private DefaultConsumer getDefaultConsumer(Channel channel, String flag, String exchange, String routingKey, String queueName, Consumer<String> consumer) {
+    private DefaultConsumer getDefaultConsumer(Channel channel, String flag, String exchange, String routingKey, String queueName,
+                                               Consumer<String> consumer) {
         return new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {

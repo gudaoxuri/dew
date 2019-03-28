@@ -27,9 +27,18 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * The type Redis auto configuration.
+ *
+ * @author gudaoxuri
+ */
 @Configuration
 @ConditionalOnClass(RedisTemplate.class)
-@ConditionalOnExpression("#{'${dew.cluster.cache}'=='redis' || '${dew.cluster.mq}'=='redis' || '${dew.cluster.lock}'=='redis' || '${dew.cluster.map}'=='redis' || '${dew.cluster.election}'=='redis'}")
+@ConditionalOnExpression("#{'${dew.cluster.cache}'=='redis' "
+        + "|| '${dew.cluster.mq}'=='redis' "
+        + "|| '${dew.cluster.lock}'=='redis' "
+        + "|| '${dew.cluster.map}'=='redis' "
+        + "|| '${dew.cluster.election}'=='redis'}")
 public class RedisAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisAutoConfiguration.class);
@@ -42,34 +51,64 @@ public class RedisAutoConfiguration {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 
+    /**
+     * Redis cluster cache redis cluster cache.
+     *
+     * @param redisTemplate the redis template
+     * @return the redis cluster cache
+     */
     @Bean
     @ConditionalOnExpression("'${dew.cluster.cache}'=='redis'")
     public RedisClusterCache redisClusterCache(RedisTemplate<String, String> redisTemplate) {
         return new RedisClusterCache(redisTemplate);
     }
 
+    /**
+     * Redis cluster lock redis cluster lock wrap.
+     *
+     * @param redisTemplate the redis template
+     * @return the redis cluster lock wrap
+     */
     @Bean
     @ConditionalOnExpression("'${dew.cluster.lock}'=='redis'")
     public RedisClusterLockWrap redisClusterLock(RedisTemplate<String, String> redisTemplate) {
         return new RedisClusterLockWrap(redisTemplate);
     }
 
+    /**
+     * Redis cluster map redis cluster map wrap.
+     *
+     * @param redisTemplate the redis template
+     * @return the redis cluster map wrap
+     */
     @Bean
     @ConditionalOnExpression("'${dew.cluster.map}'=='redis'")
     public RedisClusterMapWrap redisClusterMap(RedisTemplate<String, String> redisTemplate) {
         return new RedisClusterMapWrap(redisTemplate);
     }
 
+    /**
+     * Redis cluster mq redis cluster mq.
+     *
+     * @param redisTemplate the redis template
+     * @return the redis cluster mq
+     */
     @Bean
     @ConditionalOnExpression("'${dew.cluster.mq}'=='redis'")
     public RedisClusterMQ redisClusterMQ(RedisTemplate<String, String> redisTemplate) {
         return new RedisClusterMQ(redisTemplate);
     }
 
+    /**
+     * Redis cluster election redis cluster election wrap.
+     *
+     * @param redisTemplate the redis template
+     * @return the redis cluster election wrap
+     */
     @Bean
     @ConditionalOnExpression("'${dew.cluster.election}'=='redis'")
     public RedisClusterElectionWrap redisClusterElection(RedisTemplate<String, String> redisTemplate) {
-        return new RedisClusterElectionWrap(redisTemplate,electionPeriodSec);
+        return new RedisClusterElectionWrap(redisTemplate, electionPeriodSec);
     }
 
 }

@@ -23,6 +23,11 @@ import com.hazelcast.core.HazelcastInstance;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+/**
+ * The type Hazelcast adapter.
+ *
+ * @author gudaoxuri
+ */
 public class HazelcastAdapter {
 
     private HazelcastConfig hazelcastConfig;
@@ -30,10 +35,18 @@ public class HazelcastAdapter {
     private HazelcastInstance hazelcastInstance;
     private boolean active;
 
+    /**
+     * Instantiates a new Hazelcast adapter.
+     *
+     * @param hazelcastConfig the hazelcast config
+     */
     public HazelcastAdapter(HazelcastConfig hazelcastConfig) {
         this.hazelcastConfig = hazelcastConfig;
     }
 
+    /**
+     * Init.
+     */
     @PostConstruct
     public void init() {
         ClientConfig clientConfig = new ClientConfig();
@@ -49,14 +62,27 @@ public class HazelcastAdapter {
         active = true;
     }
 
+    /**
+     * Gets hazelcast instance.
+     *
+     * @return the hazelcast instance
+     */
     public HazelcastInstance getHazelcastInstance() {
         return hazelcastInstance;
     }
 
+    /**
+     * Is active.
+     *
+     * @return active
+     */
     boolean isActive() {
         return active;
     }
 
+    /**
+     * Shutdown.
+     */
     @PreDestroy
     public void shutdown() {
         active = false;

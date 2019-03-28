@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Configuration;
@@ -36,9 +35,18 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * The type Open tracing auto configuration.
+ *
+ * @author gudaoxuri
+ */
 @Configuration
 @ConditionalOnClass(RabbitTemplate.class)
-@ConditionalOnExpression("#{'${dew.cluster.cache}'=='rabbit' || '${dew.cluster.mq}'=='rabbit' || '${dew.cluster.lock}'=='rabbit' || '${dew.cluster.map}'=='rabbit' || '${dew.cluster.election}'=='rabbit'}")
+@ConditionalOnExpression("#{'${dew.cluster.cache}'=='rabbit' "
+        + "|| '${dew.cluster.mq}'=='rabbit' "
+        + "|| '${dew.cluster.lock}'=='rabbit' "
+        + "|| '${dew.cluster.map}'=='rabbit' "
+        + "|| '${dew.cluster.election}'=='rabbit'}")
 public class OpenTracingAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(OpenTracingAutoConfiguration.class);
@@ -46,9 +54,12 @@ public class OpenTracingAutoConfiguration {
     @Autowired(required = false)
     private Tracer tracer;
 
+    /**
+     * Init.
+     */
     @PostConstruct
     public void init() {
-        if(tracer==null){
+        if (tracer == null) {
             return;
         }
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
@@ -58,6 +69,7 @@ public class OpenTracingAutoConfiguration {
                 $.bean.setValue(messageProperties, "headers", messageProperties.getHeaders().entrySet()
                         .stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
             } catch (NoSuchFieldException ignore) {
+                throw new RuntimeException(ignore);
             }
             Scope scope = RabbitMqTracingUtils.buildSendSpan(tracer, messageProperties);
             tracer.inject(

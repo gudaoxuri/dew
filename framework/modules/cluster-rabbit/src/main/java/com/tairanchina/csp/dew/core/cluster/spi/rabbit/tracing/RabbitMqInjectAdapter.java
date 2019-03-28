@@ -22,10 +22,20 @@ import io.opentracing.propagation.TextMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * The type Rabbit mq inject adapter.
+ *
+ * @author gudaoxuri
+ */
 class RabbitMqInjectAdapter implements TextMap {
 
     private final AMQP.BasicProperties messageProperties;
 
+    /**
+     * Instantiates a new Rabbit mq inject adapter.
+     *
+     * @param messageProperties the message properties
+     */
     RabbitMqInjectAdapter(AMQP.BasicProperties messageProperties) {
         this.messageProperties = messageProperties;
     }

@@ -21,12 +21,22 @@ import com.tairanchina.csp.dew.core.cluster.ClusterLockWrap;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 分布式锁服务多实例封装 Hazelcast 实现.
+ *
+ * @author gudaoxuri
+ */
 public class HazelcastClusterLockWrap implements ClusterLockWrap {
 
     private static final ConcurrentHashMap<String, ClusterLock> LOCK_CONTAINER = new ConcurrentHashMap<>();
 
     private HazelcastAdapter hazelcastAdapter;
 
+    /**
+     * Instantiates a new Hazelcast cluster lock wrap.
+     *
+     * @param hazelcastAdapter the hazelcast adapter
+     */
     public HazelcastClusterLockWrap(HazelcastAdapter hazelcastAdapter) {
         this.hazelcastAdapter = hazelcastAdapter;
     }

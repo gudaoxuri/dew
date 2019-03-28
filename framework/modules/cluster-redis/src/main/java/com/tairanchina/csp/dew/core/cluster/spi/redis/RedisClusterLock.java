@@ -24,15 +24,23 @@ import org.springframework.data.redis.core.RedisTemplate;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Redis锁实现
+ * 分布式锁服务 Redis 实现.
  * <p>
  * 存在一定几率的错误，见各方法说明
+ *
+ * @author gudaoxuri
  */
 public class RedisClusterLock implements ClusterLock {
 
     private String key;
     private RedisTemplate<String, String> redisTemplate;
 
+    /**
+     * Instantiates a new Redis cluster lock.
+     *
+     * @param key           the key
+     * @param redisTemplate the redis template
+     */
     public RedisClusterLock(String key, RedisTemplate<String, String> redisTemplate) {
         this.key = "dew:cluster:lock:" + key;
         this.redisTemplate = redisTemplate;
@@ -105,7 +113,9 @@ public class RedisClusterLock implements ClusterLock {
     }
 
     /**
-     * 存在非原子操作，有误解锁可能
+     * 解锁.
+     * <p>
+     * 存在非原子操作，有误解锁可能!
      */
     @Override
     public boolean unLock() {

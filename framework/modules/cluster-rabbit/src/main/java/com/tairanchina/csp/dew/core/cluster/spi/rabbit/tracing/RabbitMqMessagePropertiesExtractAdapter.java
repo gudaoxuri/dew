@@ -22,11 +22,21 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+/**
+ * The type Rabbit mq message properties extract adapter.
+ *
+ * @author gudaoxuri
+ */
 class RabbitMqMessagePropertiesExtractAdapter implements TextMap {
 
   private final Map<String, String> map = new HashMap<>();
 
-  RabbitMqMessagePropertiesExtractAdapter(Map<String, Object> headers) {
+    /**
+     * Instantiates a new Rabbit mq message properties extract adapter.
+     *
+     * @param headers the headers
+     */
+    RabbitMqMessagePropertiesExtractAdapter(Map<String, Object> headers) {
     headers.forEach(
         (key, value) -> {
           if (value == null) {

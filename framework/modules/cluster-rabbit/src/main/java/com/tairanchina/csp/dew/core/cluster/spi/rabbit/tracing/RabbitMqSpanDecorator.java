@@ -23,8 +23,21 @@ import io.opentracing.tag.Tags;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * The type Rabbit mq span decorator.
+ *
+ * @author gudaoxuri
+ */
 class RabbitMqSpanDecorator {
 
+    /**
+     * On send.
+     *
+     * @param messageProperties the message properties
+     * @param exchange          the exchange
+     * @param routingKey        the routing key
+     * @param span              the span
+     */
     static void onSend(AMQP.BasicProperties messageProperties, String exchange, String routingKey, Span span) {
         Tags.COMPONENT.set(span, RabbitMqTracingTags.RABBITMQ);
         RabbitMqTracingTags.EXCHANGE.set(span, exchange);
@@ -32,6 +45,15 @@ class RabbitMqSpanDecorator {
         RabbitMqTracingTags.ROUTING_KEY.set(span, routingKey);
     }
 
+    /**
+     * On receive.
+     *
+     * @param messageProperties the message properties
+     * @param exchange          the exchange
+     * @param routingKey        the routing key
+     * @param queueName         the queue name
+     * @param span              the span
+     */
     static void onReceive(AMQP.BasicProperties messageProperties, String exchange, String routingKey, String queueName, Span span) {
         Tags.COMPONENT.set(span, RabbitMqTracingTags.RABBITMQ);
         RabbitMqTracingTags.EXCHANGE.set(span, exchange);
@@ -40,6 +62,12 @@ class RabbitMqSpanDecorator {
         RabbitMqTracingTags.CONSUMER_QUEUE.set(span, queueName);
     }
 
+    /**
+     * On error.
+     *
+     * @param ex   the ex
+     * @param span the span
+     */
     static void onError(Exception ex, Span span) {
         Map<String, Object> exceptionLogs = new LinkedHashMap<>(2);
         exceptionLogs.put("event", Tags.ERROR.getKey());

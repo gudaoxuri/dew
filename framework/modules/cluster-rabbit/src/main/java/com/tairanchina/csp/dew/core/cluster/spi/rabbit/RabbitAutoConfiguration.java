@@ -26,9 +26,18 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * The type Rabbit auto configuration.
+ *
+ * @author gudaoxuri
+ */
 @Configuration
 @ConditionalOnClass(RabbitTemplate.class)
-@ConditionalOnExpression("#{'${dew.cluster.cache}'=='rabbit' || '${dew.cluster.mq}'=='rabbit' || '${dew.cluster.lock}'=='rabbit' || '${dew.cluster.map}'=='rabbit' || '${dew.cluster.election}'=='rabbit'}")
+@ConditionalOnExpression("#{'${dew.cluster.cache}'=='rabbit' "
+        + "|| '${dew.cluster.mq}'=='rabbit' "
+        + "|| '${dew.cluster.lock}'=='rabbit' "
+        + "|| '${dew.cluster.map}'=='rabbit' "
+        + "|| '${dew.cluster.election}'=='rabbit'}")
 public class RabbitAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(RabbitAutoConfiguration.class);
@@ -38,11 +47,23 @@ public class RabbitAutoConfiguration {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 
+    /**
+     * Rabbit adapter.
+     *
+     * @param rabbitTemplate the rabbit template
+     * @return the rabbit adapter
+     */
     @Bean
     public RabbitAdapter rabbitAdapter(RabbitTemplate rabbitTemplate) {
         return new RabbitAdapter(rabbitTemplate);
     }
 
+    /**
+     * Rabbit cluster mq.
+     *
+     * @param rabbitAdapter the rabbit adapter
+     * @return the rabbit cluster mq
+     */
     @Bean
     @ConditionalOnExpression("'${dew.cluster.mq}'=='rabbit'")
     public RabbitClusterMQ rabbitClusterMQ(RabbitAdapter rabbitAdapter) {

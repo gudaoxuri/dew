@@ -23,10 +23,21 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * The type Cluster cache test.
+ *
+ * @author gudaoxuri
+ */
 public class ClusterCacheTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterCacheTest.class);
 
+    /**
+     * Test.
+     *
+     * @param cache the cache
+     * @throws InterruptedException the interrupted exception
+     */
     public void test(ClusterCache cache) throws InterruptedException {
         cache.flushdb();
         assert !cache.exists("key");
@@ -64,11 +75,13 @@ public class ClusterCacheTest {
         // list
         assert cache.lget("list").isEmpty();
         cache.lpush("list", "1");
-        cache.lmset("list", new ArrayList<String>() {{
-            add("2");
-            add("2");
-            add("3");
-        }});
+        cache.lmset("list", new ArrayList<String>() {
+            {
+                add("2");
+                add("2");
+                add("3");
+            }
+        });
         assert cache.llen("list") == 4;
         assert cache.lget("list").get(0).equals("3");
         assert cache.lpop("list").equals("3");
@@ -76,11 +89,13 @@ public class ClusterCacheTest {
         // set
         assert cache.sget("set").isEmpty();
         cache.sset("set", "1");
-        cache.smset("set", new ArrayList<String>() {{
-            add("2");
-            add("2");
-            add("3");
-        }});
+        cache.smset("set", new ArrayList<String>() {
+            {
+                add("2");
+                add("2");
+                add("3");
+            }
+        });
         assert cache.slen("set") == 3;
         assert cache.sget("set").contains("1");
         cache.spop("set");
@@ -93,10 +108,12 @@ public class ClusterCacheTest {
         assert cache.hget("hash", "field1") == null;
         cache.hset("hash", "field1", "value1");
         assert cache.hget("hash", "field1").equals("value1");
-        cache.hmset("hash", new HashMap<String, String>() {{
-            put("field2", "value2");
-            put("field3", "value3");
-        }});
+        cache.hmset("hash", new HashMap<String, String>() {
+            {
+                put("field2", "value2");
+                put("field3", "value3");
+            }
+        });
         assert cache.hgetAll("hash").containsKey("field2");
         assert cache.hexists("hash", "field2");
         assert cache.hkeys("hash").contains("field2");
