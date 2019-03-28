@@ -100,29 +100,29 @@ public class Dew {
                 throws IOException, InvocationTargetException, IllegalAccessException {
             String basicConfig = "";
             if (new File(basicDirectory + ".dew").exists()) {
-                basicConfig = $.file.readAllByPathName(basicDirectory + ".dew", "UTF-8") + "\r\n";
+                basicConfig = ConfigBuilder.mergeProfiles($.file.readAllByPathName(basicDirectory + ".dew", "UTF-8")) + "\r\n";
             }
             for (MavenProject project : mavenSession.getProjects()) {
                 String projectDirectory = project.getBasedir().getPath() + File.separator;
                 String projectConfig;
-                AppKind appKind = Dew.Utils.checkAppKind(project);
-                if (appKind == null) {
-                    // 不支持的类型
-                    continue;
-                }
                 if (!basicDirectory.equals(projectDirectory) && new File(projectDirectory + ".dew").exists()) {
-                    // FIXME 支持两个文件使用不同缩进
-                    projectConfig = basicConfig + $.file.readAllByPathName(projectDirectory + ".dew", "UTF-8");
+                    projectConfig = ConfigBuilder.mergeProject(basicConfig,
+                            ConfigBuilder.mergeProfiles($.file.readAllByPathName(projectDirectory + ".dew", "UTF-8")));
                 } else {
                     projectConfig = basicConfig;
                 }
                 DewConfig dewConfig;
                 if (!projectConfig.isEmpty()) {
-                    // FIXME 默认值会干扰复制
                     dewConfig = YamlHelper.toObject(DewConfig.class, projectConfig);
-                    // TODO 各profile以default为基础做自定义
                 } else {
                     dewConfig = new DewConfig();
+                }
+                if (dewConfig.getKind() == null) {
+                    dewConfig.setKind(Dew.Utils.checkAppKind(project));
+                }
+                if (dewConfig.getKind() == null) {
+                    // 不支持的类型
+                    continue;
                 }
                 if (!profile.equalsIgnoreCase(BasicMojo.FLAG_DEW_DEVOPS_DEFAULT_PROFILE) && !dewConfig.getProfiles().containsKey(profile)) {
                     throw new IOException("Can't be found [" + profile + "] profile at " + project.getArtifactId());
@@ -133,15 +133,15 @@ public class Dew {
                     continue;
                 }
                 Config.config.getProjects().put(project.getId(),
-                        ConfigBuilder.buildProject(appKind, profile, dewConfig, project,
+                        ConfigBuilder.buildProject(profile, dewConfig, project,
                                 dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config));
                 log.debug("[" + project.getGroupId() + ":" + project.getArtifactId() + "] configured");
             }
         }
 
-
         private static void initNotify() {
             Map<String, NotifyConfig> configMap = Dew.Config.getProjects().entrySet().stream()
+                    .filter(config -> config.getValue().getNotify() != null)
                     .collect(Collectors.toMap(Map.Entry::getKey, config -> config.getValue().getNotify()));
             com.tairanchina.csp.dew.notification.Notify.init(configMap, flag -> "");
         }
@@ -222,16 +222,17 @@ public class Dew {
     public static class Utils {
 
         /**
-         * 注意，此方法调用时未必执行了对应项目的phase,所以有些参数拿不到
+         * 注意，此方法调用时未必执行了对应项目的phase,所以有些参数拿不到.
          *
          * @param mavenProject
          * @return
          */
         public static AppKind checkAppKind(MavenProject mavenProject) {
             AppKind appKind = null;
-            if (mavenProject.getPackaging().equalsIgnoreCase("pom")
-                    || mavenProject.getPackaging().equalsIgnoreCase("maven-plugin")) {
-                // 排除 POM 及 插件类型
+            if (mavenProject.getPackaging().equalsIgnoreCase("maven-plugin")) {
+                // 排除 插件类型
+            } else if (new File(mavenProject.getBasedir().getPath() + File.separator + "package.json").exists()) {
+                appKind = AppKind.FRONTEND;
             } else if (
                     new File(mavenProject.getBasedir().getPath() + File.separator + "src" + File.separator + "main" + File.separator + "resources").exists()
                             && Arrays.stream(Objects.requireNonNull(new File(mavenProject.getBasedir().getPath() + File.separator + "src" + File.separator + "main" + File.separator + "resources").listFiles()))

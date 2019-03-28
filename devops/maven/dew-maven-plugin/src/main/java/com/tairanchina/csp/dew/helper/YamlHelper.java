@@ -17,6 +17,7 @@
 package com.tairanchina.csp.dew.helper;
 
 import org.apache.maven.plugin.logging.Log;
+import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.representer.Representer;
 
@@ -28,9 +29,13 @@ public class YamlHelper {
     public static void init(Log log) {
         if (yaml == null) {
             YamlHelper.log = log;
+            DumperOptions options = new DumperOptions();
+            options.setCanonical(false);
+            options.setDefaultScalarStyle(DumperOptions.ScalarStyle.PLAIN);
+            options.setIndent(2);
             Representer representer = new io.kubernetes.client.util.Yaml.CustomRepresenter();
             representer.getPropertyUtils().setSkipMissingProperties(true);
-            yaml = new Yaml(new io.kubernetes.client.util.Yaml.CustomConstructor(), representer);
+            yaml = new Yaml(new io.kubernetes.client.util.Yaml.CustomConstructor(), representer, options);
         }
     }
 
