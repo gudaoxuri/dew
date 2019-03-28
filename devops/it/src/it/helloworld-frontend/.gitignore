@@ -1,5 +1,5 @@
 .DS_Store
-node_modules
+../../../../../examples/frontend-example/node_modules/vue-eslint-parser/node_modules
 /dist
 
 # local env files

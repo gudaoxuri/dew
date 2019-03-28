@@ -35,23 +35,6 @@
         <maven.install.skip>true</maven.install.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
         <sonar.skip>true</sonar.skip>
-
-        <!-- Dew核心参数 -->
-        <dew.namespace></dew.namespace>
-        <dew.docker.registry></dew.docker.registry>
-        <dew.kubernetes.namespace>${dew.namespace}</dew.kubernetes.namespace>
-        <dew.docker.namespace>${dew.namespace}</dew.docker.namespace>
-        <dew.spring.profiles.active>default</dew.spring.profiles.active>
-        <dew.kubernetes.deployment.replicas>2</dew.kubernetes.deployment.replicas>
-
-        <!-- Fabric8内置参数 -->
-        <fabric8.namespace>${dew.namespace}</fabric8.namespace>
-        <fabric8.generator.name>${dew.docker.namespace}/%a:%l</fabric8.generator.name>
-        <fabric8.generator.registry>${dew.docker.registry}</fabric8.generator.registry>
-        <fabric8.enricher.fmp-controller.replicaCount>${dew.kubernetes.deployment.replicas}
-        </fabric8.enricher.fmp-controller.replicaCount>
-        <fabric8.mode>kubernetes</fabric8.mode>
-        <docker.registry>${dew.docker.registry}</docker.registry>
     </properties>
 
     <dependencies>
@@ -64,30 +47,5 @@
             <artifactId>cluster-spi-rabbit</artifactId>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>devops</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>ms.dew</groupId>
-                        <artifactId>dew-maven-plugin</artifactId>
-                        <version>2.0.0-SNAPSHOT</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>build</goal>
-                                    <goal>release</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
-
 
 </project>

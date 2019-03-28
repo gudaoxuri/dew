@@ -44,7 +44,6 @@
         <module>hystrix-example</module>
         <module>tracing-invoke1-example</module>
         <module>tracing-invoke2-example</module>
-        <module>frontend-example</module>
     </modules>
 
 </project>
