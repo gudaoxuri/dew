@@ -58,7 +58,6 @@ cat >>/etc/hosts <<EOF
 EOF
 ----
 
-
 ==== docker
 
 TIP: https://kubernetes.io/docs/setup/cri/#docker
@@ -333,6 +332,138 @@ requirepass Dew!123456
 systemctl start redis
 ----
 
+
+[[podAssignment]]
+==== pod的调度
+TIP: 此处简单说明pod的调度配置，方便后文中各组件的安装配置时的参考。
+     更详细的配置细节请参考以下官方文档：
+     https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+     https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+
+===== node亲和性和调度
+.nodeName
+nodeName是最简单的pod节点选择的方法，直接根据节点的名字来选择pod要调度的节点：
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  nodeName: devops
+----
+
+.nodeSelector
+使用此功能需要先给要被调度的node加上标签： +
+`kubectl label nodes <node-name> <label-key>=<label-value>` +
+eg: +
+`kubectl label nodes devops tag=devops`
+
+查看node的标签： +
+`kubectl get nodes --show-labels`
+
+给pod添加nodeSelector（推荐在controller部分加，eg:Deployment,StatefulSet等）
+[source,yaml]
+----
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    imagePullPolicy: IfNotPresent
+  nodeSelector:
+    tag: devops
+----
+移除标签：
+`kubectl label nodes devops tag-`
+
+
+.Tolerations
+给node添加污点： +
+`kubectl taint nodes devops key=value:NoSchedule`
+给pod添加tolerations： +
+[source,yaml]
+----
+tolerations:
+- key: "key"
+  operator: "Equal"
+  value: "value"
+  effect: "NoSchedule"
+----
+以上配置是指：当node满足pod的tolerations的条件 `key=value:NoSchedule` 时，pod才会被调度到该节点上。
+
+移除node的污点： +
+`kubectl taint nodes devops key:NoSchedule-`
+
+.node的亲和性和反亲和性
+eg:
+[source,bash]
+----
+kubectl label nodes k8s1 devops=1
+kubectl label nodes k8s2 devops=2
+kubectl label nodes k8s3 devops=3
+----
+
+[source,yaml]
+----
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: devops
+            operator: In
+            values:
+            - 1
+            - 2
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: devops
+            operator: In
+            values:
+            - 3
+----
+以上例子说明，pod将会被调度到打有 `devops=1` 和 `devops=2` 标签的节点上去， `devops=3` 的节点为备选节点。 +
+operator的值可以为：`In, NotIn, Exists, DoesNotExist, Gt, Lt.` +
+此外，可以通过给 `operator` 设值 `NotIn` 或 `DoesNotExist`，来实现node的反亲和性功能。
+
+===== pod亲和性与反亲和性调度
+.Inter-pod affinity and anti-affinity
+[source,yaml]
+----
+spec:
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: security
+            operator: In
+            values:
+            - S1
+        topologyKey: failure-domain.beta.kubernetes.io/zone
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: security
+              operator: In
+              values:
+              - S2
+          topologyKey: kubernetes.io/hostname
+----
+
+pod的亲和性调度，主要是根据pod及node的标签来进行调度的。 +
+当一个节点上已有至少一个正在运行的，并带有满足该pod的podAffinity条件的标签的pod1、且该节点有 `failure-domain.beta.kubernetes.io/zone` 的标签，则该pod会被调度到pod1的节点上去。 +
+反亲和性与之相反，当某一节点上至少有一个正在运行的、具有满足podAntiAffinity条件的pod2，则该pod不会被调度到pod2的节点上去。
+
 ==== gitlab
 
 TIP: https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package
@@ -562,26 +693,136 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | gre
 
 ==== elasticsearch
 
-TIP: https://github.com/helm/charts/tree/master/stable/elasticsearch
+TIP: https://github.com/elastic/helm-charts/blob/master/elasticsearch 注意仔细查看各参数设值的说明。
 
 [source,bash]
 ----
-# TBD 使用PVC
 
-helm install --name dew-elasticsearch stable/elasticsearch --namespace devops \
-    --set image.tag="6.6.1" \
-    --set cluster.name=dew-elasticsearch \
-    --set client.ingress.enabled=true \
-    --set client.ingress.user=elasticsearch \
-    --set client.ingress.password=Dew\!123456 \
-    --set client.ingress.hosts={es.dew.ms} \
-    --set master.exposeHttp=true \
-    --set master.persistence.enabled=true \
-    --set master.persistence.size=200Gi \
-    --set data.exposeHttp=true \
-    --set data.persistence.enabled=true \
-    --set data.persistence.size=200Gi
+# 在NFS服务器上加上文件路径,并创建需要的目录
+
+vi /etc/exports
+
+/data/nfs/elasticsearch    *(rw,sync,no_root_squash,no_all_squash)
+# 重启NFS
+systemctl restart nfs-server
+# 查看结果
+showmount -e localhost
+
+# 创建PV，PV可以加上和helm安装时一致的label,以便和PVC绑定，例： app: dew-elasticsearch-client
+app=dew-elasticsearch-client
+size=100Gi
+# 请根据replicas的个数来决定下面PV的创建个数
+for i in {0..1}; do
+cat <<EOF | kubectl -n devops apply -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    app: ${app}
+  name: ${app}-${i}
+spec:
+  capacity:
+    storage: ${size}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /data/nfs/elasticsearch/${app}-${i}
+    server: 10.200.131.182
+EOF
+done
+
+# TIP：如果pod没有启动成功，报错和路径权限问题有关，可尝试给PV的存储路径添加权限,如：
+chmod 777 /data/nfs/elasticsearch
+
+# 使用helm安装
+helm repo add elastic https://helm.elastic.co
+
+helm install --name dew-elasticsearch elastic/elasticsearch --namespace devops \
+    --set imageTag=6.6.1 \
+    --set clusterName=dew-elasticsearch \
+    --set nodeGroup=client \
+    --set masterService=dew-elasticsearch-client \
+    --set replicas=2 \
+    --set minimumMasterNodes=2 \
+    --set volumeClaimTemplate.storageClassName="" \
+    --set volumeClaimTemplate.resources.requests.storage=200Gi \
+    --set volumeClaimTemplate.selector.matchlabels."app"="dew-elasticsearch-client" \
+    --set fsGroup=0 \
+    --set clusterHealthCheckParams="" \
+    --set ingress.enabled=true \
+    --set ingress.hosts={elasticsearch.dew.ms}
+
+    # pod调度相关配置,请根据需要进行设值
+    --set nodeSelector."tag"="devops" \
+    --set tolerations[0].key="key" \
+    --set tolerations[0].operator="Equal" \
+    --set tolerations[0].value="value" \
+    --set tolerations[0].effect="NoSchedule"
+
+    # 若使用xpack security,请加上以下参数
+    --set-string extraEnvs[0]."name"="xpack\.security\.enabled" \
+    --set-string extraEnvs[0]."value"="true" \
+    --set-string extraEnvs[1]."name"="xpack\.security\.authc\.accept_default_password" \
+    --set-string extraEnvs[1]."value"="true" \
+    --set-string extraEnvs[2]."name"="ELASTIC_USERNAME" \
+    --set-string extraEnvs[2]."value"="elastic" \
+    --set-string extraEnvs[3]."name"="ELASTIC_PASSWORD" \
+    --set-string extraEnvs[3]."value"="123456"
+
+    xpack安装相关文档说明：https://github.com/elastic/helm-charts/blob/master/elasticsearch/README.md#security
+
+    * 开启xpack security的简单例子：
+      . 进入容器内部
+        kubectl exec -it dew-elasticsearch-client-0 -n devops /bin/sh
+      . 激活30天试用license
+        curl -H "Content-Type:application/json" -XPOST  http://localhost:9200/_xpack/license/start_trial?acknowledge=true
+      . 修改密码：
+        bin/elasticsearch-setup-passwords interactive
+      . 测试：
+        curl -u elastic -XGET 'localhost:9200/_cat/health?v&pretty'
+
 ----
+
+TIP: 其他elasticsearch的helm chart : https://github.com/helm/charts/tree/master/stable/elasticsearch
+
+==== fluentd
+
+TIP: https://github.com/kiwigrid/helm-charts/tree/master/charts/fluentd-elasticsearch +
+     https://kiwigrid.github.io/
+
+[source,bash]
+----
+helm repo add kiwigrid https://kiwigrid.github.io
+
+# 不使用代理要加上  --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/fluentd-elasticsearch
+helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace devops \
+    --set elasticsearch.host=dew-elasticsearch-client \
+    --set elasticsearch.logstash_prefix=logstash \
+    # 若 ES 启用 xpack 的 security，加上以下参数
+    --set elasticsearch.user=elastic \
+    --set elasticsearch.password=123456
+    # Prometheus 相关设置(需配合prometheus-operator使用)
+    --set service.type=ClusterIP \
+    --set service.ports[0].name="monitor-agent" \
+    --set service.ports[0].port=24231 \
+    --set prometheusRule.enabled=true \
+    --set prometheusRule.prometheusNamespace=devops \
+    --set prometheusRule.labels.app=prometheus-operator \
+    --set prometheusRule.labels.release=dew-prometheus-operator \
+    --set serviceMonitor.enabled=true \
+    --set serviceMonitor.labels.release=dew-prometheus-operator
+    # 不使用代理要加上
+    --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/fluentd-elasticsearch
+
+    # pod调度相关配置,请根据实际需要进行设值
+    --set nodeSelector."tag"="devops" \
+    --set tolerations[0].key="key" \
+    --set tolerations[0].operator="Equal" \
+    --set tolerations[0].value="value" \
+    --set tolerations[0].effect="NoSchedule"
+----
+
 
 ==== kibana
 
@@ -589,31 +830,95 @@ TIP: https://github.com/helm/charts/tree/master/stable/kibana
 
 [source,bash]
 ----
-# TBD 使用PVC
 
-# TBD 安全认证
+# 在NFS服务器上加上文件路径,并创建需要的目录
 
-helm install stable/kibana --name dew-kibana --namespace devops \
+vi /etc/exports
+
+/data/nfs/kibana    *(rw,sync,no_root_squash,no_all_squash)
+# 重启NFS
+systemctl restart nfs-server
+# 查看结果
+showmount -e localhost
+
+使用PVC
+apps=("kibana")
+size=10Gi
+
+for i in ${apps[@]};do
+cat <<EOF | kubectl -n devops apply -f -
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: ${i}
+  name: dew-${i}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: ${size}
+  selector:
+    matchLabels:
+      app: ${i}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    app: ${i}
+  name: dew-${i}
+spec:
+  capacity:
+    storage: ${size}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /data/nfs/${apps}
+    server: 10.200.131.182
+EOF
+done
+
+helm install --name dew-kibana  stable/kibana  --namespace devops \
     --set image.tag="6.6.1" \
     --set env."ELASTICSEARCH_URL"="http://dew-elasticsearch-client:9200" \
     --set service.internalPort=5601 \
-    --set ingress.enabled=true \
-    --set ingress.hosts={kibana.dew.ms} \
+    --set ingress.enabled=true,ingress.hosts={kibana.dew.ms} \
+    --set-string ingress.annotations."kubernetes\.io/ingress\.class"=nginx \
     --set-string ingress.annotations."kubernetes\.io/tls-acme"="true" \
-    --set ingress.tls[0].hosts={kibana.dew.ms} \
-    --set ngress.tls[0].secretName=kibana-certs \
-    --set dashboardImport.xpackauth.enabled=true \
-    --set dashboardImport.xpackauth.username=admin \
-    --set dashboardImport.xpackauth.password=Dew\!123456 \
+    --set ingress.tls[0].hosts={kibana.dew.ms},ingress.tls[0].secretName=kibana-certs \
+    --set dashboardImport.enabled=true \
     --set dashboardImport.dashboards."k8s"="https://raw.githubusercontent.com/monotek/kibana-dashboards/master/k8s-fluentd-elasticsearch.json" \
-    --set serviceAccount.create=true \
-    --set serviceAccountName=kibana \
+    --set serviceAccount.create=true,serviceAccountName=kibana \
     --set plugins.enabled=true \
-    --set plugins.reset=true \
     --set persistentVolumeClaim.enabled=true \
-    --set persistentVolumeClaim.size=10Gi \
+    --set persistentVolumeClaim.existingClaim=true \
     --set securityContext.enabled=true \
-    --set securityContext.allowPrivilegeEscalation=true
+    --set securityContext.allowPrivilegeEscalation=true \
+    --set securityContext.runAsUser=0 \
+    --set securityContext.fsGroup=0
+
+    # pod调度相关配置，请根据实际情况设值
+    --set nodeSelector."tag"="devops" \
+    --set tolerations[0].key="key" \
+    --set tolerations[0].operator="Equal" \
+    --set tolerations[0].value="value" \
+    --set tolerations[0].effect="NoSchedule" \
+    --set affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key="key" \
+    --set affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].operator=In \
+    --set affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].values[0]=target-host-name \
+
+    # xpack security相关参数：
+    --set image.repository=docker.elastic.co/kibana/kibana \
+    --set env."XPACK_SECURITY_ENABLED"="true" \
+    --set env."ELASTICSEARCH_USERNAME"="kibana" \
+    --set env."ELASTICSEARCH_PASSWORD"="dew123456" \
+    --set dashboardImport.xpackauth.enabled=true \
+    --set dashboardImport.xpackauth.username=kibana\
+    --set dashboardImport.xpackauth.password=dew123456
+
 ----
 
 ==== jaeger
@@ -639,27 +944,49 @@ curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/depl
     | sed "s/namespace: observability/namespace: devops/g" \
     | kubectl create -f -
 
-cat <<EOF | kubectl apply -n devops -f -
-apiVersion: jaegertracing.io/v1
-kind: Jaeger
-metadata:
-  name: jaeger
-spec:
-  strategy: production
-  storage:
-    type: elasticsearch
-    options:
-      es:
-        server-urls: http://dew-elasticsearch-client:9200
-EOF
+# 使用elasticsearch作为jaeger的数据源
+    # 若ES启用Xpack Security，则需要创建secret
+    ELASTICSEARCH_USERNAME=elastic
+    ELASTICSEARCH_PASSWORD=123456
+    cat <<EOF | kubectl -n devops apply -f -
+    apiVersion: v1
+    kind: Secret
+    metadata:
+      name: jaeger-es-secrets
+    type: Opaque
+    data:
+      ES_USERNAME: `echo -n $ELASTICSEARCH_USERNAME | base64`
+      ES_PASSWORD: `echo -n $ELASTICSEARCH_PASSWORD | base64`
+    EOF
 
+    # 创建Jaeger实例
+    cat <<EOF | kubectl apply -n devops -f -
+    apiVersion: jaegertracing.io/v1
+    kind: Jaeger
+    metadata:
+      name: jaeger
+    spec:
+      strategy: production
+      storage:
+        type: elasticsearch
+        options:
+          es:
+            server-urls: http://dew-elasticsearch-client:9200
+        secretName: jaeger-es-secrets  # 若ES启用Xpack Security，需要设置此项及创建secret
+    EOF
+
+    TIP: Jaeger实例可在不同namespace下创建使用，使用中请注意namespace的问题。
+    使用sidecar的方式部署项目：https://github.com/jaegertracing/jaeger-operator#auto-injection-of-jaeger-agent-sidecars
+    使用daemonset的方式部署项目：https://github.com/jaegertracing/jaeger-operator#agent-as-daemonset
+
+# 修改Ingress
 cat <<EOF | kubectl -n devops apply -f -
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
-  name: jaeger-prod-query
+  name: jaeger-query
 spec:
   rules:
     - host: jaeger.dew.ms
@@ -671,29 +998,277 @@ spec:
             path: /
 EOF
 
-# 删除
-kubectl delete jaeger --all -n devops
-kubectl delete crd jaegers.io.jaegertracing
 ----
 
-==== fluentd
+.pod的调度
+目前jaeger-operator暂不支持直接设置，请关注该项目的更新情况。
+可以自行给需要调度的pod的deployment添加限制条件。可参考： <<podAssignment>>
 
-TIP: https://github.com/kiwigrid/helm-charts/tree/master/charts/fluentd-elasticsearch
-      https://kiwigrid.github.io/
+
+==== prometheus-operator 和 grafana
+TIP: https://github.com/helm/charts/tree/master/stable/prometheus-operator
+
+  prometheus-operator结构：
+    |--- prometheus-operator
+    |--- prometheus
+    |--- alertmanager
+    |--- node-exporter
+    |--- kube-state-metrics
+    |--- service monitors to scrape internal kubernetes components
+    |     |---kube-apiserver
+    |     |---kube-scheduler
+    |     |---kube-controller-manager
+    |     |---etcd
+    |     |---kube-dns/coredns
+    |
+    |--- grafana
+
+===== prometheus-operator 使用PV
 
 [source,bash]
 ----
-helm repo add kiwigrid https://kiwigrid.github.io
+# 在NFS服务器上加上文件路径,并创建需要的目录
 
-# 不使用代理要加上  --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/fluentd-elasticsearch
-helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace devops \
-    --set elasticsearch.host=dew-elasticsearch-client \
-    --set elasticsearch.logstash_prefix=dew \
-    --set prometheusRule.enabled=true \
-    --set prometheusRule.prometheusNamespace=devops \
-    --set serviceMonitor.enabled=true
+vi /etc/exports
+
+/data/nfs/prometheus-operator    *(rw,sync,no_root_squash,no_all_squash)
+
+# 重启NFS
+systemctl restart nfs-server
+# 查看结果
+showmount -e localhost
+
+
+# 创建PV,注意label的对应
+
+app=prometheus-operator
+components=("alertmanager" "prometheus")
+size=100Gi
+
+for i in ${components[@]};do
+cat <<EOF | kubectl -n devops apply -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    component: ${i}
+  name: dew-${app}-${i}
+spec:
+  capacity:
+    storage: ${size}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /data/nfs/${app}/${i}
+    server: 10.200.131.182
+EOF
+done
+
 ----
 
-==== prometheus
+===== 创建grafana的PVC和PV
+[source,bash]
+----
+apps=("grafana")
+size=50Gi
 
-==== grafana
+for i in ${apps[@]};do
+cat <<EOF | kubectl -n devops apply -f -
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: ${i}
+  name: dew-${i}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: ${size}
+  selector:
+    matchLabels:
+      app: ${i}
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    app: ${i}
+  name: dew-${i}
+spec:
+  capacity:
+    storage: ${size}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /data/nfs/prometheus-operator/${i}
+    server: 10.200.131.182
+EOF
+done
+
+----
+
+
+===== 使用helm 安装
+
+注意安装前先更新chart仓库
+`helm repo update`
+
+[source,yaml]
+----
+# 若需要对etcd进行监控，则需要先创建secret
+kubectl -n devops create secret generic dew-prometheus-operator-etcd  --from-file=/etc/kubernetes/pki/etcd/ca.crt  --from-file=/etc/kubernetes/pki/etcd/peer.crt  --from-file=/etc/kubernetes/pki/etcd/peer.key
+
+helm install stable/prometheus-operator --name dew-prometheus-operator --namespace devops \
+    --set kubelet.serviceMonitor.https=true \
+    --set prometheus.ingress.enabled=true \
+    --set prometheus.ingress.hosts={prometheus.dew.ms} \
+    --set alertmanager.ingress.enabled=true \
+    --set alertmanager.ingress.hosts={prometheus.alertmanager.ms} \
+    --set prometheusOperator.securityContext.runAsNonRoot=false \
+    --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
+    --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
+    --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.selector.matchLabels."component"="alertmanager" \
+    --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.selector.matchLabels."component"="prometheus"
+    # 对etcd监测相关参数
+    --set prometheus.prometheusSpec.secrets[0]=dew-prometheus-operator-etcd
+    --set kubeEtcd.serviceMonitor.scheme=https \
+    --set kubeEtcd.serviceMonitor.insecureSkipVerify=true \
+    --set kubeEtcd.serviceMonitor.caFile="/etc/prometheus/secrets/dew-prometheus-operator-etcd/ca.crt" \
+    --set kubeEtcd.serviceMonitor.certFile="/etc/prometheus/secrets/dew-prometheus-operator-etcd/peer.crt" \
+    --set kubeEtcd.serviceMonitor.keyFile="/etc/prometheus/secrets/dew-prometheus-operator-etcd/peer.key"
+    # 直接使用prometheus-operator的grafana，添加以下设置
+    --set grafana.enabled=true \
+    --set grafana.adminPassword=Dew123456 \
+    --set grafana.defaultDashboardsEnabled=true \
+    --set grafana.ingress.enabled=true \
+    --set grafana.ingress.hosts={grafana.dew.ms} \
+    --set grafana.ingress.tls[0].host={grafana.dew.ms},ingress.tls[0].secretName=dew-grafana \
+    --set grafana.sidecar.dashboards.enabled=true \
+    --set grafana.sidecar.dashboards.searchNamespace="devops"\
+    --set grafana.sidecar.dashboards.label=grafana_dashboard \
+    --set grafana.sidecar.datasources.enabled=true \
+    --set grafana.sidecar.datasources.searchNamespace="devops" \
+    --set grafana.sidecar.datasources.label=grafana_datasource \
+    --set grafana.'grafana\.ini'.smtp.enabled="true" \
+    --set grafana.'grafana\.ini'.smtp.host="smtp.163.com:25" \
+    --set grafana.'grafana\.ini'.smtp.user=syl_test@163.com \
+    --set grafana.'grafana\.ini'.smtp.password=test123456 \
+    --set grafana.'grafana\.ini'.smtp.from_address="syl_test@163.com" \
+    --set grafana.'grafana\.ini'.smtp.skip_verify=true \
+    --set grafana.persistence.enabled=true \
+    --set grafana.persistence.existingClaim=dew-grafana
+    # 可选设置
+    --set grafana.'grafana\.ini'.server.root_url="https://grafana.dew.ms"
+
+    如不使用代理,更换以下镜像仓库
+    --set kube-state-metrics.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kube-state-metrics
+
+ TIP: grafana默认用户名：admin,
+ 查看密码：
+ kubectl get secret --namespace devops dew-prometheus-operator-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+
+ grafana重置密码：进入grafana的容器内部后
+ grafana-cli admin reset-admin-password passwordvalue
+
+INFO: 若有pod启动失败,报文件权限拒绝相关问题，很可能和PV的文件目录的权限有关，检查下权限是否一致，设置对应的securityContext进行排查。
+例：
+kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops
+设置securityContext为以下内容
+      securityContext:
+        fsGroup: 0
+        runAsNonRoot: false
+        runAsUser: 0
+
+INFO: 若验证prometheus的target，kube-scheduler、kube-controller处于down状态，是因为它们只能在宿主机上通过127.0.0.1访问，可使用以下操作：
+    . 如果使用kubeadm启动的集群，初始化时的config.yml里可以加入如下参数
+        controllerManagerExtraArgs:
+          address: 0.0.0.0
+        schedulerExtraArgs:
+          address: 0.0.0.0
+    . 已经启动后的使用下面命令更改就会滚动更新
+        sed -e "s/- --address=127.0.0.1/- --address=0.0.0.0/" -i /etc/kubernetes/manifests/kube-controller-manager.yaml
+        sed -e "s/- --address=127.0.0.1/- --address=0.0.0.0/" -i /etc/kubernetes/manifests/kube-scheduler.yaml
+      或者全部替换：
+        sed -ri '/--address/s#=.+#=0.0.0.0#' /etc/kubernetes/manifests/kube-*
+    参考文章： http://www.servicemesher.com/blog/prometheus-operator-manual/
+              https://github.com/coreos/prometheus-operator/blob/master/Documentation/troubleshooting.md
+
+# 监控APP
+  1.首先需要将项目instrument
+    参考文章：https://prometheus.io/docs/instrumenting/clientlibs/
+  2.部署项目及创建进行监控的ServiceMonitor。
+    注意ServiceMonitor的labels要含有Prometheus-operator创建的Prometheus的serviceMonitorSelector的label。
+    详细文章：https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources
+----
+
+===== pod的调度
+pod调度相关配置，以下配置仅供参考
+[source,yaml]
+----
+    --set alertmanager.alertmanagerSpec.nodeSelector."tag"="devops" \
+    --set alertmanager.alertmanagerSpec.tolerations[0].key="key" \
+    --set alertmanager.alertmanagerSpec.tolerations[0].operator="Equal" \
+    --set alertmanager.alertmanagerSpec.tolerations[0].value="value" \
+    --set alertmanager.alertmanagerSpec.tolerations[0].effect="NoSchedule"
+    # podAntiAffinity的值可以 hard 或 soft
+    --set alertmanager.alertmanagerSpec.podAntiAffinity="hard" \
+    --set alertmanager.alertmanagerSpec.podAntiAffinityTopologyKey="kubernetes\.io/hostname" \
+
+    --set prometheusOperator.nodeSelector."tag"="devops" \
+    --set prometheusOperator.tolerations[0].key="key" \
+    --set prometheusOperator.tolerations[0].operator="Equal" \
+    --set prometheusOperator.tolerations[0].value="value" \
+    --set prometheusOperator.tolerations[0].effect="NoSchedule"
+    --set prometheusOperator.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key="key" \
+    --set prometheusOperator.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].operator=In \
+    --set prometheusOperator.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].values[0]=target-host-name \
+
+    --set prometheus.prometheusSpec.nodeSelector."tag"="devops" \
+    --set prometheus.prometheusSpec.tolerations[0].key="key" \
+    --set prometheus.prometheusSpec.tolerations[0].operator="Equal" \
+    --set prometheus.prometheusSpec.tolerations[0].value="value" \
+    --set prometheus.prometheusSpec.tolerations[0].effect="NoSchedule" \
+    # podAntiAffinity的值可以 hard 或 soft
+    --set prometheus.prometheusSpec.podAntiAffinity=hard \
+    --set prometheus.prometheusSpec.podAntiAffinityTopologyKey="kubernetes\.io/hostname" \
+
+    --set kube-state-metrics.nodeSelector."tag"="devops" \
+    --set kube-state-metrics.tolerations[0].key="key" \
+    --set kube-state-metrics.tolerations[0].operator="Equal" \
+    --set kube-state-metrics.tolerations[0].value="value" \
+    --set kube-state-metrics.tolerations[0].effect="NoSchedule"
+
+    --set nodeExporter.nodeSelector."tag"="devops" \
+    --set nodeExporter.tolerations[0].key="key" \
+    --set nodeExporter.tolerations[0].operator="Equal" \
+    --set nodeExporter.tolerations[0].value="value" \
+    --set nodeExporter.tolerations[0].effect="NoSchedule" \
+    --set nodeExporter.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key="key" \
+    --set nodeExporter.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].operator=In \
+    --set nodeExporter.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].values[0]=target-host-name \
+
+    --set grafana.nodeSelector."tag"="devops" \
+    --set grafana.tolerations[0].key="key" \
+    --set grafana.tolerations[0].operator="Equal" \
+    --set grafana.tolerations[0].value="value" \
+    --set grafana.tolerations[0].effect="NoSchedule"
+    --set grafana.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key="key" \
+    --set grafana.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].operator=In \
+    --set grafana.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].values[0]=target-host-name \
+----
+
+===== 卸载
+[source,yaml]
+----
+helm del --purge dew-prometheus-operator
+
+kubectl delete crd prometheuses.monitoring.coreos.com prometheusrules.monitoring.coreos.com servicemonitors.monitoring.coreos.com alertmanagers.monitoring.coreos.com
+
+kubectl delete pvc -n devops prometheus-dew-prometheus-operator-prometheus-db-prometheus-dew-prometheus-operator-prometheus-0 alertmanager-dew-prometheus-operator-alertmanager-db-alertmanager-dew-prometheus-operator-alertmanager-0
+
+最后注意删除自己创建的PV、PVC
+----
