@@ -838,7 +838,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;!--引入Dew父依赖，也可以使用import方式--&gt;
 &lt;parent&gt;
-    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
     &lt;!--生产环境请选择合适的版本!!!!!!!!--&gt;
     &lt;version&gt;${dew.version}&lt;/version&gt;
@@ -847,7 +847,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 &lt;dependencies&gt;
     &lt;!--引入需要的模块--&gt;
     &lt;dependency&gt;
-        &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
+        &lt;groupId&gt;ms.dew&lt;/groupId&gt;
         &lt;artifactId&gt;&lt;模块名&gt;&lt;/artifactId&gt;
     &lt;/dependency&gt;
 &lt;/dependencies&gt;
@@ -1176,20 +1176,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="title">依赖</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;boot-starter&lt;/artifactId&gt;
 &lt;/dependency&gt;
 &lt;!--引入集群依赖，可选redis/hazelcast/rabbit/eureka--&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;cluster-spi-redis&lt;/artifactId&gt;
 &lt;/dependency&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;cluster-spi-hazelcast&lt;/artifactId&gt;
 &lt;/dependency&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;cluster-spi-rabbit&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -1235,7 +1235,7 @@ spring:
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-接口见：com.tairanchina.csp.dew.core.cluster.ClusterCache
+接口见：ClusterCache
 </td>
 </tr>
 </table>
@@ -1277,7 +1277,7 @@ Dew的缓存默认只实现了String、List、Set、Hash等结构常用的，时
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-接口见：com.tairanchina.csp.dew.core.cluster.ClusterMap
+接口见：ClusterMap
 </td>
 </tr>
 </table>
@@ -1303,7 +1303,7 @@ assert "测试".equals(mapObj.get("test").a);</code></pre>
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-接口见：com.tairanchina.csp.dew.core.cluster.ClusterLock
+接口见：ClusterLock
 </td>
 </tr>
 </table>
@@ -1338,7 +1338,7 @@ lock.tryLockWithFun(0, 1000, () -&gt; {
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-接口见：com.tairanchina.csp.dew.core.cluster.ClusterMQ
+接口见：ClusterMQ
 </td>
 </tr>
 </table>
@@ -1407,7 +1407,7 @@ MQ的HA开启后，您可以以多线程的方式消费消息，处理过程中�
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-接口见：com.tairanchina.csp.dew.core.cluster.ClusterElection
+接口见：ClusterElection
 </td>
 </tr>
 </table>
@@ -1804,7 +1804,7 @@ public Resp&lt;Void&gt; logout() {
 <div class="title">依赖</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;test-starter&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -1844,7 +1844,7 @@ spring:
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;!--引入幂等支持--&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;com.tairanchina.csp.dew&lt;/groupId&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;idempotent-starter&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -3377,11 +3377,28 @@ EOF</pre>
 <li>
 <p>引入Devops流程</p>
 </li>
+<li>
+<p>独立通知功能到<code>notification</code></p>
+</li>
 </ul>
 </div>
 <div class="ulist">
-<div class="title">迁移指南（从1.5.0-RC到此版本）</div>
+<div class="title">Improvement</div>
 <ul>
+<li>
+<p>核心模块通过<code>checkstyle</code>检查</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">迁移指南（从1.5.1-RC到此版本）</div>
+<ul>
+<li>
+<p>Spring Boot升级：Spring boot 1.x 迁移到 Spring boot 2.x 见 <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide" class="bare">https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide</a></p>
+</li>
+<li>
+<p>功能变更：包名由 <code>com.tairanchina.csp.dew</code> 变更为 <code>ms.dew</code></p>
+</li>
 <li>
 <p>功能变更：移除了 <code>dew-jdbc</code> 模块</p>
 </li>

@@ -21,7 +21,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.tairanchina.csp.dew</groupId>
+        <groupId>ms.dew</groupId>
         <artifactId>parent-starter</artifactId>
         <version>2.0.0-SNAPSHOT</version>
         <relativePath>../parent-starter</relativePath>
@@ -37,7 +37,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.tairanchina.csp.dew</groupId>
+            <groupId>ms.dew</groupId>
             <artifactId>cluster-common</artifactId>
         </dependency>
         <dependency>

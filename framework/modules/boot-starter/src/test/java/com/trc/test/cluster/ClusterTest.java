@@ -16,8 +16,8 @@
 
 package com.trc.test.cluster;
 
-import com.tairanchina.csp.dew.Dew;
-import com.tairanchina.csp.dew.core.cluster.test.*;
+import ms.dew.Dew;
+import ms.dew.core.cluster.test.*;
 import org.springframework.stereotype.Component;
 
 @Component

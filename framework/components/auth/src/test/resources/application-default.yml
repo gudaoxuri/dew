@@ -4,7 +4,7 @@ dew:
     version: 1.0
     website: www.trc.com
     doc:
-      base-package: com.tairanchina.csp.dew.auth.controller
+      base-package: ms.dew.auth.controller
 
 spring:
   redis:

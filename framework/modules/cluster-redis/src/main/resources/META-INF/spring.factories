@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.tairanchina.csp.dew.core.cluster.spi.redis.RedisAutoConfiguration
+  ms.dew.core.cluster.spi.redis.RedisAutoConfiguration

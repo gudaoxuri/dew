@@ -18,7 +18,7 @@ package com.trc.test.notify;
 
 
 import com.ecfront.dew.common.Resp;
-import com.tairanchina.csp.dew.Dew;
+import ms.dew.Dew;
 import org.junit.Assert;
 import org.springframework.stereotype.Component;
 

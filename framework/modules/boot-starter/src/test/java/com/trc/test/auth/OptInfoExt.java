@@ -16,7 +16,7 @@
 
 package com.trc.test.auth;
 
-import com.tairanchina.csp.dew.core.auth.dto.BasicOptInfo;
+import ms.dew.core.auth.dto.BasicOptInfo;
 
 public class OptInfoExt extends BasicOptInfo<OptInfoExt> {
 

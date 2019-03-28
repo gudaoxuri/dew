@@ -11,6 +11,6 @@ spring:
 logging:
   level:
     ROOT: INFO
-    com.tairanchina: DEBUG
+    ms.dew: DEBUG
     org.springframework.jdbc.core: TRACE
     io.jaegertracing.internal.reporters: OFF
