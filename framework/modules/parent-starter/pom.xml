@@ -222,7 +222,7 @@
                             <encoding>UTF-8</encoding>
                             <consoleOutput>true</consoleOutput>
                             <failsOnError>true</failsOnError>
-                            <configLocation>../../../build/checkstyle.xml</configLocation>
+                            <configLocation>../../checkstyle/checkstyle.xml</configLocation>
                         </configuration>
                         <goals>
                             <goal>check</goal>
