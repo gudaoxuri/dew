@@ -117,13 +117,6 @@ public class Dew {
                 } else {
                     dewConfig = new DewConfig();
                 }
-                if (dewConfig.getKind() == null) {
-                    dewConfig.setKind(Dew.Utils.checkAppKind(project));
-                }
-                if (dewConfig.getKind() == null) {
-                    // 不支持的类型
-                    continue;
-                }
                 if (!profile.equalsIgnoreCase(BasicMojo.FLAG_DEW_DEVOPS_DEFAULT_PROFILE) && !dewConfig.getProfiles().containsKey(profile)) {
                     throw new IOException("Can't be found [" + profile + "] profile at " + project.getArtifactId());
                 }
@@ -131,6 +124,23 @@ public class Dew {
                         || !profile.equalsIgnoreCase(BasicMojo.FLAG_DEW_DEVOPS_DEFAULT_PROFILE) && dewConfig.getProfiles().get(profile).isSkip()) {
                     // 配置为跳过
                     continue;
+                }
+                if (profile.equalsIgnoreCase(BasicMojo.FLAG_DEW_DEVOPS_DEFAULT_PROFILE)) {
+                    if (dewConfig.getKind() == null) {
+                        dewConfig.setKind(Dew.Utils.checkAppKind(project));
+                    }
+                    if (dewConfig.getKind() == null) {
+                        // 不支持的类型
+                        continue;
+                    }
+                } else {
+                    if (dewConfig.getProfiles().get(profile).getKind() == null) {
+                        dewConfig.getProfiles().get(profile).setKind(Dew.Utils.checkAppKind(project));
+                    }
+                    if (dewConfig.getProfiles().get(profile).getKind() == null) {
+                        // 不支持的类型
+                        continue;
+                    }
                 }
                 Config.config.getProjects().put(project.getId(),
                         ConfigBuilder.buildProject(profile, dewConfig, project,

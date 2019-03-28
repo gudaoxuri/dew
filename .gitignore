@@ -26,4 +26,7 @@ out/
 .apt_generated
 .factorypath
 .springBeans
+
+node_modules/
+
 !/devops/maven/dew-maven-plugin/src/main/java/com/tairanchina/csp/dew/kernel/flow/log/

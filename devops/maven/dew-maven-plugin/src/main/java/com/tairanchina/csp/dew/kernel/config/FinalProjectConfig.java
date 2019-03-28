@@ -25,8 +25,6 @@ public class FinalProjectConfig extends DewProfile {
     private String appName = "";
     private String appGroup = "";
     private String appVersion = "";
-    private AppKind appKind = null;
-
     private String mvnGroupId;
     private String mvnArtifactId;
     private String mvnDirectory;
@@ -86,14 +84,6 @@ public class FinalProjectConfig extends DewProfile {
 
     public void setAppVersion(String appVersion) {
         this.appVersion = appVersion;
-    }
-
-    public AppKind getAppKind() {
-        return appKind;
-    }
-
-    public void setAppKind(AppKind appKind) {
-        this.appKind = appKind;
     }
 
     public String getMvnGroupId() {

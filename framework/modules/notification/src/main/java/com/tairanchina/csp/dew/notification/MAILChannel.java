@@ -60,12 +60,9 @@ public class MAILChannel extends AbsChannel {
             mailSender.testConnection();
             return true;
         } catch (NullPointerException ex) {
-            logger.error("Parameters error,need [from] [host] [port] [username] [password]", ex);
+            logger.error("Notify Mail channel init error,missing [from] [host] [port] [username] [password] parameters", ex);
             throw ex;
         }
-        /*boolean auth = (Boolean) notifyConfig.getArgs().get("auth");
-        boolean tls = (Boolean) notifyConfig.getArgs().get("tls");*/
-
     }
 
     @Override

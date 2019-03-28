@@ -38,7 +38,7 @@ public class DDChannel extends AbsChannel {
             ddUrl = (String) notifyConfig.getArgs().get("url");
             return true;
         } else {
-            logger.error("Parameters error,need [url]");
+            logger.error("Notify DingDing channel init error,missing [url] parameter");
             return false;
         }
     }

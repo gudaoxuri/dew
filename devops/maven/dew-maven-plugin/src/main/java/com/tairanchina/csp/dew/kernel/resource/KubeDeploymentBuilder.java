@@ -52,7 +52,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         selectorLabels.remove("provider");
 
         V1ContainerBuilder containerBuilder = null;
-        switch (config.getAppKind()) {
+        switch (config.getKind()) {
             case JVM_SERVICE:
                 containerBuilder = new V1ContainerBuilder()
                         .withName(FLAG_CONTAINER_NAME)
@@ -70,7 +70,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                                         .build())
                         .withEnv(new V1EnvVarBuilder()
                                 .withName("JAVA_OPTIONS")
-                                .withValue(config.getApp().getJavaOptions() + " -Dspring.profiles.active=" + config.getProfile())
+                                .withValue(config.getApp().getRunOptions() + " -Dspring.profiles.active=" + config.getProfile())
                                 .build())
                         .withLivenessProbe(new V1ProbeBuilder()
                                 .withHttpGet(new V1HTTPGetActionBuilder()
@@ -91,6 +91,17 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                                 .withInitialDelaySeconds(config.getApp().getReadinessInitialDelaySeconds())
                                 .withPeriodSeconds(config.getApp().getReadinessPeriodSeconds())
                                 .withFailureThreshold(config.getApp().getReadinessFailureThreshold())
+                                .build());
+                break;
+            case FRONTEND:
+                containerBuilder = new V1ContainerBuilder()
+                        .withName(FLAG_CONTAINER_NAME)
+                        .withImage(config.getCurrImageName())
+                        .withImagePullPolicy("IfNotPresent")
+                        .withPorts(new V1ContainerPortBuilder()
+                                .withContainerPort(config.getApp().getPort())
+                                .withName("http")
+                                .withProtocol("TCP")
                                 .build());
                 break;
             // TODO

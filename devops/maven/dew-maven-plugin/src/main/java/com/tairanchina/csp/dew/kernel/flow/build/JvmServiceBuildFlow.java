@@ -34,8 +34,8 @@ public class JvmServiceBuildFlow extends BasicBuildFlow {
                     put("outputDirectory", buildBasePath);
                     put("finalName", "serv");
                 }});
-        $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/java/Dockerfile"), buildBasePath + "Dockerfile");
-        $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/java/run-java.sh"), buildBasePath + "run-java.sh");
+        $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/jvm/Dockerfile"), buildBasePath + "Dockerfile");
+        $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/jvm/run-java.sh"), buildBasePath + "run-java.sh");
         return true;
     }
 

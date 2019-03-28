@@ -77,8 +77,11 @@ public class Notify {
             NOTIFY_CONTEXT.put(key, new Context());
         });
         delaySend();
-        Runtime.getRuntime().addShutdownHook(new Thread(() ->
-                NOTIFY_CHANNELS.values().forEach(Channel::destroy)));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (!NOTIFY_CHANNELS.isEmpty()) {
+                NOTIFY_CHANNELS.values().forEach(Channel::destroy);
+            }
+        }));
     }
 
     /**

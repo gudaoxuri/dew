@@ -20,31 +20,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.tairanchina.csp.dew</groupId>
-    <artifactId>build-example</artifactId>
-    <name>3 Dew Example Build</name>
+    <parent>
+        <groupId>com.tairanchina.csp.dew</groupId>
+        <artifactId>parent-starter</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../../framework/modules/parent-starter</relativePath>
+    </parent>
+
+    <artifactId>frontend-example</artifactId>
+    <name>3.10 Dew Cluster 示例</name>
+    <description>Dew 前端工程 示例</description>
     <packaging>pom</packaging>
-    <version>2.0.0-SNAPSHOT</version>
 
     <properties>
         <maven.install.skip>true</maven.install.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
         <sonar.skip>true</sonar.skip>
-
-        <dew.devops.skip>true</dew.devops.skip>
     </properties>
-
-    <modules>
-        <module>bone-example</module>
-        <module>web-example</module>
-        <module>cluster-example</module>
-        <module>idempotent-example</module>
-        <module>auth-example</module>
-        <module>cloud-example</module>
-        <module>hystrix-example</module>
-        <module>tracing-invoke1-example</module>
-        <module>tracing-invoke2-example</module>
-        <module>frontend-example</module>
-    </modules>
 
 </project>

@@ -22,9 +22,11 @@ import com.tairanchina.csp.dew.kernel.flow.BasicFlow;
 public class BuildFlowFactory {
 
     public static BasicFlow choose() {
-        switch (Dew.Config.getCurrentProject().getAppKind()) {
+        switch (Dew.Config.getCurrentProject().getKind()) {
             case JVM_SERVICE:
                 return new JvmServiceBuildFlow();
+            case FRONTEND:
+                return new FrontendBuildFlow();
         }
         return new BasicBuildFlow() {
 

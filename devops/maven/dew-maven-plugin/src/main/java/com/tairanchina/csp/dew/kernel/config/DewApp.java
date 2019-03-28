@@ -34,7 +34,8 @@ public class DewApp {
     private int readinessPeriodSeconds = 60;
     private int readinessFailureThreshold = 3;
     private boolean traceLogEnabled = true;
-    private String javaOptions = "-Xmx2688M -Xms2688M -Xmn960M -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M -XX:+UseConcMarkSweepGC -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:+CMSClassUnloadingEnabled -XX:+ParallelRefProcEnabled -XX:+CMSScavengeBeforeRemark -XX:+HeapDumpOnOutOfMemoryError";
+    private String buildCmd = "";
+    private String runOptions = "-Xmx2688M -Xms2688M -Xmn960M -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M -XX:+UseConcMarkSweepGC -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:+CMSClassUnloadingEnabled -XX:+ParallelRefProcEnabled -XX:+CMSScavengeBeforeRemark -XX:+HeapDumpOnOutOfMemoryError";
     private Set<String> ignoreChangeFiles = new HashSet<>();
 
     public int getReplicas() {
@@ -142,12 +143,20 @@ public class DewApp {
         this.traceLogEnabled = traceLogEnabled;
     }
 
-    public String getJavaOptions() {
-        return javaOptions;
+    public String getBuildCmd() {
+        return buildCmd;
     }
 
-    public void setJavaOptions(String javaOptions) {
-        this.javaOptions = javaOptions;
+    public void setBuildCmd(String buildCmd) {
+        this.buildCmd = buildCmd;
+    }
+
+    public String getRunOptions() {
+        return runOptions;
+    }
+
+    public void setRunOptions(String runOptions) {
+        this.runOptions = runOptions;
     }
 
     public Set<String> getIgnoreChangeFiles() {

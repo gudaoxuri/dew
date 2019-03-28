@@ -38,7 +38,7 @@ public class HTTPChannel extends AbsChannel {
             httpUrl = (String) notifyConfig.getArgs().get("url");
             return true;
         } else {
-            logger.error("Parameters error,need [url]");
+            logger.error("Notify HTTP channel init error,missing [url] parameter");
             return false;
         }
     }

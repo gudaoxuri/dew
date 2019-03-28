@@ -22,12 +22,13 @@ public class DewProfile {
 
     private String profile;
     private boolean skip = false;
+    private AppKind kind;
     private String namespace = "dew-default-ns";
 
     private DewApp app = new DewApp();
     private DewDocker docker = new DewDocker();
     private DewKube kube = new DewKube();
-    private NotifyConfig notify = new NotifyConfig();
+    private NotifyConfig notify = null;
 
     public String getProfile() {
         return profile;
@@ -43,6 +44,14 @@ public class DewProfile {
 
     public void setSkip(boolean skip) {
         this.skip = skip;
+    }
+
+    public AppKind getKind() {
+        return kind;
+    }
+
+    public void setKind(AppKind kind) {
+        this.kind = kind;
     }
 
     public String getNamespace() {
