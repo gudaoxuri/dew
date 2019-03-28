@@ -51,7 +51,7 @@ cat >>/etc/hosts <<EOF
 10.200.10.10 devops gitlab.dew.ms
 10.200.10.11 middleware rabbitmq.dew.ms redis.dew.ms nfs.dew.ms postgre.dew.ms
 10.200.10.12 k8s0
-10.200.10.13 k8s1 harbor.dew.ms notary.dew.ms dashboard.dew.ms es.dew.ms jaeger.dew.ms kibana.dew.ms prometheus.dew.ms grafana.dew.ms
+10.200.10.13 k8s1 harbor.dew.ms notary.dew.ms dashboard.dew.ms es.dew.ms jaeger.dew.ms kibana.dew.ms prometheus.dew.ms prometheus.alertmanager.ms grafana.dew.ms
 10.200.10.14 k8s2
 10.200.10.15 k8s3
 10.200.10.16 k8s4
@@ -171,12 +171,15 @@ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be008450
 
 # 都为Running后表示完成
 kubectl get pods --all-namespaces
+
+# 创建命名空间，方便后文使用
+kubectl create ns devops
 ----
 
 [NOTE]
 .Master做为Node
 ====
-默认情况下 master 不会做为 node 节点，可通过此命令强制启用（不推荐）
+默认情况下 master 不会做为 node 节点，可通过此命令强制启用（不推荐） +
 ``kubectl taint nodes --all node-role.kubernetes.io/master-``
 ====
 
@@ -195,9 +198,6 @@ test2.k8s   Ready   <none>   70s   v1.14.0
 test3.k8s   Ready   <none>   52s   v1.14.0
 test4.k8s   Ready   <none>   43s   v1.14.0
 test5.k8s   Ready   <none>   34s   v1.14.0
-
-# 创建命名空间，方便后文使用
-kubectl create ns devops
 ----
 
 ==== helm
@@ -772,7 +772,7 @@ TIP: https://github.com/elastic/helm-charts/blob/master/elasticsearch 注意仔�
 
 [source,bash]
 ----
-# 创建PV，PV可以加上和helm安装时与PVC一致的label,以便和PVC绑定，例： app: dew-elasticsearch-client
+# 创建PV
 app=dew-elasticsearch-client
 size=200Gi
 # 请根据replicas的个数来决定下面PV的创建个数
@@ -818,11 +818,10 @@ helm install --name dew-elasticsearch elastic/elasticsearch --namespace devops \
     --set minimumMasterNodes=2 \
     --set volumeClaimTemplate.storageClassName="" \
     --set volumeClaimTemplate.resources.requests.storage=200Gi \
-    --set volumeClaimTemplate.selector.matchlabels."app"="dew-elasticsearch-client" \
     --set fsGroup=0 \
     --set clusterHealthCheckParams="" \
     --set ingress.enabled=true \
-    --set ingress.hosts={elasticsearch.dew.ms}
+    --set ingress.hosts={es.dew.ms}
 
     # pod调度相关配置,请根据需要进行设值
     --set nodeSelector."tag"="devops" \
@@ -1219,7 +1218,7 @@ mkdir -p /data/nfs/prometheus-operator/grafana
 
 ===== 使用helm 安装
 
-注意安装前先更新chart仓库
+注意安装前先更新chart仓库 +
 `helm repo update`
 
 [source,yaml]
@@ -1269,14 +1268,14 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     # 可选设置
     --set grafana.'grafana\.ini'.server.root_url="https://grafana.dew.ms"
 
-    如不使用代理,更换以下镜像仓库
+    # 如不使用代理,更换以下镜像仓库
     --set kube-state-metrics.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kube-state-metrics
 
- TIP: grafana默认用户名：admin,
- 查看密码：
- kubectl get secret --namespace devops dew-prometheus-operator-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
- grafana重置密码：进入grafana的容器内部后执行
- grafana-cli admin reset-admin-password passwordvalue
+TIP: grafana默认用户名：admin,
+查看密码：
+kubectl get secret --namespace devops dew-prometheus-operator-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+grafana重置密码：进入grafana的容器内部后执行
+grafana-cli admin reset-admin-password passwordvalue
 
 INFO: 若有pod启动失败,报文件权限拒绝相关问题，很可能和PV的文件目录的权限有关，检查下权限是否一致，设置对应的securityContext进行排查。
 例：
@@ -1298,8 +1297,9 @@ INFO: 若通过UI查看prometheus的target中，kube-scheduler、kube-controller
         sed -e "s/- --address=127.0.0.1/- --address=0.0.0.0/" -i /etc/kubernetes/manifests/kube-scheduler.yaml
       或者全部替换：
         sed -ri '/--address/s#=.+#=0.0.0.0#' /etc/kubernetes/manifests/kube-*
-    参考文章： http://www.servicemesher.com/blog/prometheus-operator-manual/
-              https://github.com/coreos/prometheus-operator/blob/master/Documentation/troubleshooting.md
+    . 参考文章：
+      http://www.servicemesher.com/blog/prometheus-operator-manual/
+      https://github.com/coreos/prometheus-operator/blob/master/Documentation/troubleshooting.md
 
 # 监控APP
   1.首先需要将项目instrument
