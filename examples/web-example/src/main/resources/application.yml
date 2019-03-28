@@ -12,9 +12,9 @@ dew:
     name: web
     version: 1.0
     desc: desc
-    web-site: www.tairanchina.com
+    web-site: www.dew.ms
     doc:
-      base-package: com.tairanchina # API文档路径
+      base-package: ms.dew # API文档路径
 
 management:
   endpoints:

@@ -28,7 +28,7 @@ IMPORTANT: 本手册只介绍``Dew``扩展的功能！
 ----
 <!--引入Dew父依赖，也可以使用import方式-->
 <parent>
-    <groupId>com.tairanchina.csp.dew</groupId>
+    <groupId>ms.dew</groupId>
     <artifactId>parent-starter</artifactId>
     <!--生产环境请选择合适的版本!!!!!!!!-->
     <version>${dew.version}</version>
@@ -37,7 +37,7 @@ IMPORTANT: 本手册只介绍``Dew``扩展的功能！
 <dependencies>
     <!--引入需要的模块-->
     <dependency>
-        <groupId>com.tairanchina.csp.dew</groupId>
+        <groupId>ms.dew</groupId>
         <artifactId><模块名></artifactId>
     </dependency>
 </dependencies>
@@ -167,20 +167,20 @@ TIP: 完整使用手册见 https://gudaoxuri.github.io/dew-common/
 .依赖
 ----
 <dependency>
-    <groupId>com.tairanchina.csp.dew</groupId>
+    <groupId>ms.dew</groupId>
     <artifactId>boot-starter</artifactId>
 </dependency>
 <!--引入集群依赖，可选redis/hazelcast/rabbit/eureka-->
 <dependency>
-    <groupId>com.tairanchina.csp.dew</groupId>
+    <groupId>ms.dew</groupId>
     <artifactId>cluster-spi-redis</artifactId>
 </dependency>
 <dependency>
-    <groupId>com.tairanchina.csp.dew</groupId>
+    <groupId>ms.dew</groupId>
     <artifactId>cluster-spi-hazelcast</artifactId>
 </dependency>
 <dependency>
-    <groupId>com.tairanchina.csp.dew</groupId>
+    <groupId>ms.dew</groupId>
     <artifactId>cluster-spi-rabbit</artifactId>
 </dependency>
 ----
@@ -217,7 +217,7 @@ spring:
 
 ====== 分布式缓存
 
-TIP: 接口见：com.tairanchina.csp.dew.core.cluster.ClusterCache
+TIP: 接口见：ClusterCache
 
 [source,java]
 .示例
@@ -238,7 +238,7 @@ TIP: Dew的缓存默认只实现了String、List、Set、Hash等结构常用的�
 
 ====== 分布式Map
 
-TIP: 接口见：com.tairanchina.csp.dew.core.cluster.ClusterMap
+TIP: 接口见：ClusterMap
 
 [source,java]
 .示例
@@ -253,7 +253,7 @@ assert "测试".equals(mapObj.get("test").a);
 
 ====== 分布式锁
 
-TIP: 接口见：com.tairanchina.csp.dew.core.cluster.ClusterLock
+TIP: 接口见：ClusterLock
 
 [source,java]
 .示例
@@ -277,7 +277,7 @@ lock.tryLockWithFun(0, 1000, () -> {
 
 ====== MQ
 
-TIP: 接口见：com.tairanchina.csp.dew.core.cluster.ClusterMQ
+TIP: 接口见：ClusterMQ
 
 [source,java]
 .示例
@@ -314,7 +314,7 @@ MQ的HA开启后，您可以以多线程的方式消费消息，处理过程中�
 
 ====== 领导者选举
 
-TIP: 接口见：com.tairanchina.csp.dew.core.cluster.ClusterElection
+TIP: 接口见：ClusterElection
 
 [source,java]
 .示例
@@ -610,7 +610,7 @@ public Resp<Void> logout() {
 .依赖
 ----
 <dependency>
-    <groupId>com.tairanchina.csp.dew</groupId>
+    <groupId>ms.dew</groupId>
     <artifactId>test-starter</artifactId>
 </dependency>
 ----
@@ -647,7 +647,7 @@ spring:
 ----
 <!--引入幂等支持-->
 <dependency>
-    <groupId>com.tairanchina.csp.dew</groupId>
+    <groupId>ms.dew</groupId>
     <artifactId>idempotent-starter</artifactId>
 </dependency>
 ----

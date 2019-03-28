@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.tairanchina.csp.dew.test.DewTestAutoConfiguration
+  ms.dew.test.DewTestAutoConfiguration

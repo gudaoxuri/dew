@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2019. the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ms.dew</groupId>
+    <artifactId>build-devops-it</artifactId>
+    <name>2.1 Dew Devops Integration Tests Build</name>
+    <packaging>pom</packaging>
+    <version>2.0.0-SNAPSHOT</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
+        <maven.compiler.encoding>${project.build.sourceEncoding}</maven.compiler.encoding>
+
+        <maven.install.skip>true</maven.install.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <sonar.skip>true</sonar.skip>
+        <dew.devops.skip>true</dew.devops.skip>
+    </properties>
+
+    <!--<modules>
+        <module>src/it/helloworld-backend</module>
+        <module>src/it/helloworld-frontend</module>
+    </modules>-->
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>devops.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/ITCase</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <configuration>
+                    <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                    <cloneClean>true</cloneClean>
+                    <addTestClassPath>true</addTestClassPath>
+                    <streamLogs>true</streamLogs>
+                    <invokerPropertiesFile>invoker.properties</invokerPropertiesFile>
+                    <scriptVariables>
+                        <version>${project.version}</version>
+                        <artifactId>${project.artifactId}</artifactId>
+                        <groupId>${project.groupId}</groupId>
+                    </scriptVariables>
+                    <properties>
+                        <dew.devops.quiet>true</dew.devops.quiet>
+                        <dew.devops.docker.host>${dew.devops.docker.host}</dew.devops.docker.host>
+                        <dew.devops.docker.registry.url>${dew.devops.docker.registry.url}</dew.devops.docker.registry.url>
+                        <dew.devops.docker.registry.username>${dew.devops.docker.registry.username}</dew.devops.docker.registry.username>
+                        <dew.devops.docker.registry.password>${dew.devops.docker.registry.password}</dew.devops.docker.registry.password>
+                        <dew.devops.kube.config>${dew.devops.kube.config}</dew.devops.kube.config>
+                    </properties>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-tests</id>
+                        <goals>
+                            <goal>install</goal>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

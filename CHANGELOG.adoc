@@ -8,9 +8,14 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 * 升级到Spring Boot 2.x
 * 实现兼容Spring Cloud与Istio的部署、监控架构
 * 引入Devops流程
+* 独立通知功能到``notification``
 
-.迁移指南（从1.5.0-RC到此版本）
+.Improvement
+* 核心模块通过``checkstyle``检查
 
+.迁移指南（从1.5.1-RC到此版本）
+* Spring Boot升级：Spring boot 1.x 迁移到 Spring boot 2.x 见 https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide
+* 功能变更：包名由 ``com.tairanchina.csp.dew`` 变更为 ``ms.dew``
 * 功能变更：移除了 ``dew-jdbc`` 模块
 
 === 1.5.1-RC

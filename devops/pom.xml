@@ -20,7 +20,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.tairanchina.csp.dew</groupId>
+    <groupId>ms.dew</groupId>
     <artifactId>build-devops</artifactId>
     <name>2 Dew Devops Build</name>
     <packaging>pom</packaging>
@@ -36,6 +36,7 @@
 
     <modules>
         <module>maven/dew-maven-plugin</module>
+        <module>it/</module>
     </modules>
 
 </project>

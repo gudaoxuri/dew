@@ -8,7 +8,7 @@ endpoints:
 
 logging:
   level:
-    com.tairanchina.dew: DEBUG
+    ms.dew: DEBUG
 
 server:
   port: 8080

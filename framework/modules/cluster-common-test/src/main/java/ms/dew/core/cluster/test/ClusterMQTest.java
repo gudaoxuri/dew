@@ -1,0 +1,124 @@
+/*
+ * Copyright 2019. the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package ms.dew.core.cluster.test;
+
+import ms.dew.core.cluster.Cluster;
+import ms.dew.core.cluster.ClusterMQ;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
+/**
+ * The type Cluster mq test.
+ *
+ * @author gudaoxuri
+ */
+public class ClusterMQTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(ClusterMQTest.class);
+
+    /**
+     * Test.
+     *
+     * @param mq the mq
+     * @throws InterruptedException the interrupted exception
+     */
+    public void test(ClusterMQ mq) throws InterruptedException {
+        testPubSub(mq);
+        testReqResp(mq);
+        testHA(mq);
+    }
+
+    private void testPubSub(ClusterMQ mq) throws InterruptedException {
+        CountDownLatch waiting = new CountDownLatch(40);
+        new Thread(() -> mq.subscribe("test_pub_sub", message -> {
+            assert message.contains("msg");
+            logger.info("subscribe instance 1: pub_sub>>" + message);
+            waiting.countDown();
+        })).start();
+        new Thread(() -> mq.subscribe("test_pub_sub", message -> {
+            assert message.contains("msg");
+            logger.info("subscribe instance 2: pub_sub>>" + message);
+            waiting.countDown();
+        })).start();
+        Thread.sleep(1000);
+        for (int i = 0; i < 10; i++) {
+            mq.publish("test_pub_sub", "msgA" + i);
+            mq.publish("test_pub_sub", "msgB" + i);
+        }
+        waiting.await();
+    }
+
+    private void testReqResp(ClusterMQ mq) throws InterruptedException {
+        CountDownLatch waiting = new CountDownLatch(20);
+        List<String> conflictFlag = new ArrayList<>();
+        new Thread(() -> mq.response("test_rep_resp", message -> {
+            if (conflictFlag.contains(message)) {
+                assert false;
+            } else {
+                conflictFlag.add(message);
+                logger.info("response instance 1: req_resp>>" + message);
+                waiting.countDown();
+            }
+        })).start();
+        new Thread(() -> mq.response("test_rep_resp", message -> {
+            if (conflictFlag.contains(message)) {
+                assert false;
+            } else {
+                conflictFlag.add(message);
+                logger.info("response instance 2: req_resp>>" + message);
+                waiting.countDown();
+            }
+        })).start();
+        Thread.sleep(1000);
+        for (int i = 0; i < 10; i++) {
+            mq.request("test_rep_resp", "msgA" + i);
+            mq.request("test_rep_resp", "msgB" + i);
+        }
+        waiting.await();
+    }
+
+    private void testHA(ClusterMQ mq) throws InterruptedException {
+        Cluster.ha();
+        CountDownLatch waitingOccurError = new CountDownLatch(1);
+        Thread mockErrorThread = new Thread(() -> mq.subscribe("test_ha", message -> {
+            logger.info("subscribe instance: pub_sub_ha>>" + message);
+            waitingOccurError.countDown();
+            if (waitingOccurError.getCount() == 0) {
+                throw new RuntimeException("Mock Some Error");
+            }
+        }));
+        mockErrorThread.start();
+        Thread.sleep(1000);
+        mq.publish("test_ha", "ha_msgA");
+        waitingOccurError.await();
+        mockErrorThread.stop();
+        // restart subscribe
+        CountDownLatch waiting = new CountDownLatch(2);
+        new Thread(() -> mq.subscribe("test_ha", message -> {
+            logger.info("subscribe new instance: pub_sub_ha>>" + message);
+            waiting.countDown();
+        })).start();
+        Thread.sleep(1000);
+        mq.publish("test_ha", "ha_msgB");
+        waiting.await();
+    }
+
+}

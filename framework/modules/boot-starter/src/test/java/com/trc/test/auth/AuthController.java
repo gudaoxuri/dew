@@ -18,8 +18,8 @@ package com.trc.test.auth;
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
-import com.tairanchina.csp.dew.Dew;
-import com.tairanchina.csp.dew.core.DewContext;
+import ms.dew.Dew;
+import ms.dew.core.DewContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
