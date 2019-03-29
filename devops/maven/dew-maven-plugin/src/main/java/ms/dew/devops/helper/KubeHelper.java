@@ -26,12 +26,12 @@ import org.apache.maven.plugin.logging.Log;
 public class KubeHelper extends MultiInstProcessor {
 
     public static void init(String instanceId, Log log, String base64KubeConfig) {
-        multiInit(instanceId,
+        multiInit("KUBE", instanceId,
                 () -> new KubeOpt(log, base64KubeConfig), base64KubeConfig);
     }
 
     public static KubeOpt inst(String instanceId) {
-        return multiInst(instanceId);
+        return multiInst("KUBE", instanceId);
     }
 
 }

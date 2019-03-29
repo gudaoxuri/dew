@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.flow.preprare;
+package ms.dew.devops.kernel.flow.prepare;
 
 import io.kubernetes.client.ApiException;
 import ms.dew.devops.helper.DockerHelper;
@@ -22,10 +22,7 @@ import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import org.apache.maven.plugin.MojoExecutionException;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public abstract class BasicPrepareFlow extends BasicFlow {
 

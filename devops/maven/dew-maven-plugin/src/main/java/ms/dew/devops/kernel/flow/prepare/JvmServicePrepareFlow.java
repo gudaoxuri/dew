@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.flow.preprare;
+package ms.dew.devops.kernel.flow.prepare;
 
 import ms.dew.devops.kernel.Dew;
 import org.apache.maven.plugin.MojoExecutionException;

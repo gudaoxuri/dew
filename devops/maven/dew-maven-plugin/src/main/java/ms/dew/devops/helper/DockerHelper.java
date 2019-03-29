@@ -35,13 +35,13 @@ public class DockerHelper extends MultiInstProcessor {
      * @link https://docs.docker.com/install/linux/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections
      */
     public static void init(String instanceId, Log log, String host, String registryUrl, String registryUsername, String registryPassword) {
-        multiInit(instanceId,
+        multiInit("DOCKER", instanceId,
                 () -> new DockerOpt(log, host, registryUrl, registryUsername, registryPassword),
                 host, registryUrl, registryUsername);
     }
 
     public static DockerOpt inst(String instanceId) {
-        return multiInst(instanceId);
+        return multiInst("DOCKER", instanceId);
     }
 
 }

@@ -23,6 +23,7 @@ import io.kubernetes.client.models.V1Service;
 import io.kubernetes.client.models.V1beta1ReplicaSet;
 import ms.dew.devops.helper.DockerHelper;
 import ms.dew.devops.helper.KubeHelper;
+import ms.dew.devops.helper.KubeOpt;
 import ms.dew.devops.helper.YamlHelper;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
@@ -55,46 +56,49 @@ public class EnvMgrIT {
                 properties.getProperty("dew.devops.docker.registry.url"),
                 properties.getProperty("dew.devops.docker.registry.username"),
                 properties.getProperty("dew.devops.docker.registry.password"));
-        String namespaces = "dew-it";
+        String namespaces = "dew-test";
         String registryHost = new URL(properties.getProperty("dew.devops.docker.registry.url")).getHost();
-        KubeHelper.list("", namespaces, KubeHelper.RES.SERVICE, V1Service.class, "")
+        KubeHelper.inst("").list("", namespaces, KubeOpt.RES.SERVICE, V1Service.class)
                 .forEach(res -> {
                     try {
-                        KubeHelper.delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeHelper.RES.SERVICE, "");
+                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeOpt.RES.SERVICE);
                     } catch (ApiException e) {
                         e.printStackTrace();
                     }
                 });
-        KubeHelper.list("", namespaces, KubeHelper.RES.DEPLOYMENT, ExtensionsV1beta1Deployment.class, "")
+        KubeHelper.inst("").list("", namespaces, KubeOpt.RES.DEPLOYMENT, ExtensionsV1beta1Deployment.class)
                 .forEach(res -> {
                     try {
-                        KubeHelper.delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeHelper.RES.DEPLOYMENT, "");
+                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeOpt.RES.DEPLOYMENT);
                     } catch (ApiException e) {
                         e.printStackTrace();
                     }
                 });
-        KubeHelper.list("", namespaces, KubeHelper.RES.REPLICA_SET, V1beta1ReplicaSet.class, "")
+        KubeHelper.inst("").list("", namespaces, KubeOpt.RES.REPLICA_SET, V1beta1ReplicaSet.class)
                 .forEach(res -> {
                     try {
-                        KubeHelper.delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeHelper.RES.REPLICA_SET, "");
+                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeOpt.RES.REPLICA_SET);
                     } catch (ApiException e) {
                         e.printStackTrace();
                     }
                 });
-        KubeHelper.list("", namespaces, KubeHelper.RES.POD, V1Pod.class, "")
+        KubeHelper.inst("").list("", namespaces, KubeOpt.RES.POD, V1Pod.class)
                 .forEach(res -> {
                     try {
-                        KubeHelper.delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeHelper.RES.POD, "");
+                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeOpt.RES.POD);
                     } catch (ApiException e) {
                         e.printStackTrace();
                     }
                 });
-        KubeHelper.delete(namespaces, KubeHelper.RES.NAME_SPACE, "");
-        DockerHelper.Image.list("").stream()
+        DockerHelper.inst("").image.list().stream()
                 .filter(image -> image.getRepoTags()[0].startsWith(registryHost))
                 .forEach(image -> {
-                    DockerHelper.Image.remove(image.getRepoTags()[0], "");
-                    DockerHelper.Image.remove(image.getRepoTags()[0], "");
+                    DockerHelper.inst("").image.remove(image.getRepoTags()[0]);
+                    try {
+                        DockerHelper.inst("").registry.remove(image.getRepoTags()[0]);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 });
     }
 }

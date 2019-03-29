@@ -20,7 +20,7 @@ import org.junit.Test;
 /**
  * @author gudaoxuri
  */
-public class BuildITCase {
+public class ItTest {
 
     @Test
     public void test() {

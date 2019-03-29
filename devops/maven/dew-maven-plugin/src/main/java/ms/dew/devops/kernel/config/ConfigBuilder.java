@@ -116,6 +116,7 @@ public class ConfigBuilder {
             finalProjectConfig.setAppVersion(mavenProject.getVersion());
             if (finalProjectConfig.getKind() == AppKind.FRONTEND) {
                 finalProjectConfig.getApp().setPort(80);
+                finalProjectConfig.getApp().setTraceLogEnabled(false);
             }
         }
 

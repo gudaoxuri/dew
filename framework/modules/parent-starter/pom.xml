@@ -218,7 +218,7 @@
                         <executions>
                             <execution>
                                 <goals>
-                                    <goal>preprare</goal>
+                                    <goal>prepare</goal>
                                     <goal>build</goal>
                                     <goal>release</goal>
                                 </goals>

@@ -26,12 +26,12 @@ import org.apache.maven.plugin.logging.Log;
 public class GitHelper extends MultiInstProcessor {
 
     public static void init(Log log) {
-        multiInit("",
+        multiInit("GIT", "",
                 () -> new GitOpt(log), "");
     }
 
     public static GitOpt inst() {
-        return multiInst("");
+        return multiInst("GIT", "");
     }
 
 }

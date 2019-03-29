@@ -23,11 +23,12 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import java.io.IOException;
 
 @Mojo(name = "build")
-@Execute(phase = LifecyclePhase.PACKAGE, goal = "preprare")
+@Execute(phase = LifecyclePhase.PACKAGE, goal = "prepare")
 public class BuildMojo extends BasicMojo {
 
     @Override

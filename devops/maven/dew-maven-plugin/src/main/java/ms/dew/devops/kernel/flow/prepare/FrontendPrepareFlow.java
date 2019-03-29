@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.flow.preprare;
+package ms.dew.devops.kernel.flow.prepare;
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.ReportHandler;

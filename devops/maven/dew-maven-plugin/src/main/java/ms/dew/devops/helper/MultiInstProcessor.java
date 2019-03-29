@@ -29,22 +29,22 @@ public abstract class MultiInstProcessor {
     protected static final ConcurrentHashMap<String, String> EXISTS = new ConcurrentHashMap<>();
     protected static final Map<String, Object> INSTANCES = new HashMap<>();
 
-    protected static <T> void multiInit(String instanceId, Supplier<T> initFun, String... hashItems) {
-        String hashStr = String.join("-", hashItems);
+    protected static <T> void multiInit(String kind,String instanceId, Supplier<T> initFun, String... hashItems) {
+        String hashStr = kind+String.join("-", hashItems);
         try {
             String hash = $.security.digest.digest(hashStr, "MD5");
             if (EXISTS.containsKey(hash)) {
-                INSTANCES.put(instanceId, INSTANCES.get(EXISTS.get(hash)));
+                INSTANCES.put(kind+"-"+instanceId, INSTANCES.get(EXISTS.get(hash)));
                 return;
             }
-            EXISTS.put(hash, instanceId);
+            EXISTS.put(hash, kind+"-"+instanceId);
         } catch (NoSuchAlgorithmException ignore) {
         }
-        INSTANCES.put(instanceId, initFun.get());
+        INSTANCES.put(kind+"-"+instanceId, initFun.get());
     }
 
-    protected static <T> T multiInst(String instanceId) {
-        return (T) INSTANCES.get(instanceId);
+    protected static <T> T multiInst(String kind,String instanceId) {
+        return (T) INSTANCES.get(kind+"-"+instanceId);
     }
 
 }
