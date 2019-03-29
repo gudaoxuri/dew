@@ -16,11 +16,11 @@
 
 package ms.dew.devops.kernel.resource;
 
-import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.kernel.config.FinalProjectConfig;
-import ms.dew.devops.kernel.flow.BasicFlow;
 import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.models.*;
+import ms.dew.devops.helper.KubeOpt;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
+import ms.dew.devops.kernel.flow.BasicFlow;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -108,7 +108,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         }
 
         ExtensionsV1beta1DeploymentBuilder builder = new ExtensionsV1beta1DeploymentBuilder();
-        builder.withKind(KubeHelper.RES.DEPLOYMENT.getVal())
+        builder.withKind(KubeOpt.RES.DEPLOYMENT.getVal())
                 .withApiVersion("extensions/v1beta1")
                 .withMetadata(new V1ObjectMetaBuilder()
                         .withAnnotations(annotations)

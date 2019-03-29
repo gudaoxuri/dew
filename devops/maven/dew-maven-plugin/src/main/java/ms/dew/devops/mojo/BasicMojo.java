@@ -111,8 +111,8 @@ public abstract class BasicMojo extends AbstractMojo {
 
     protected abstract boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException;
 
-    private String getMojoName() {
-        return this.getClass().getSimpleName().substring(0, this.getClass().getSimpleName().indexOf("Mojo"));
+    protected String getMojoName() {
+        return this.getClass().getSimpleName().substring(0, this.getClass().getSimpleName().indexOf("Mojo")).toLowerCase();
     }
 
     @Override

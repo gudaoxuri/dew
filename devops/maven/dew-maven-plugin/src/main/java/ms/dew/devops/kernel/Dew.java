@@ -46,9 +46,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 public class Dew {
 
     public static boolean stopped = false;
-
     public static Log log;
-    public static String basicDirectory;
 
     private static MavenSession mavenSession;
     private static BuildPluginManager mavenPluginManager;
@@ -69,7 +67,6 @@ public class Dew {
                 profile = BasicMojo.FLAG_DEW_DEVOPS_DEFAULT_PROFILE;
             }
             log.info("Active profile : " + profile);
-            initPath(session);
             if (!initialized.getAndSet(true)) {
                 GitHelper.init(log);
                 YamlHelper.init(log);
@@ -89,15 +86,12 @@ public class Dew {
             }
         }
 
-        private static void initPath(MavenSession session) {
-            basicDirectory = session.getTopLevelProject().getBasedir().getPath() + File.separator;
-        }
-
         private static void initFinalConfig(String profile,
                                             String dockerHost, String dockerRegistryUrl,
                                             String dockerRegistryUserName, String dockerRegistryPassword,
                                             String kubeBase64Config)
                 throws IOException, InvocationTargetException, IllegalAccessException {
+            String basicDirectory = mavenSession.getTopLevelProject().getBasedir().getPath() + File.separator;
             String basicConfig = "";
             if (new File(basicDirectory + ".dew").exists()) {
                 basicConfig = ConfigBuilder.mergeProfiles($.file.readAllByPathName(basicDirectory + ".dew", "UTF-8")) + "\r\n";

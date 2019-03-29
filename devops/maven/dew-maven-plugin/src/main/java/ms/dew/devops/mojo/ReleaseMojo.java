@@ -16,9 +16,8 @@
 
 package ms.dew.devops.mojo;
 
-import ms.dew.devops.kernel.flow.release.DefaultReleaseFlow;
-import ms.dew.devops.kernel.function.NeedExecuteByGit;
 import io.kubernetes.client.ApiException;
+import ms.dew.devops.kernel.flow.release.DefaultReleaseFlow;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
@@ -32,13 +31,7 @@ import java.io.IOException;
 public class ReleaseMojo extends BasicMojo {
 
     @Override
-    protected boolean preExecute() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
-        NeedExecuteByGit.setNeedExecuteProjects(quiet);
-        return true;
-    }
-
-    @Override
     protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
-        return new DefaultReleaseFlow().exec();
+        return new DefaultReleaseFlow().exec(getMojoName());
     }
 }

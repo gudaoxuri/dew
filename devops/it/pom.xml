@@ -23,19 +23,37 @@
     <groupId>ms.dew</groupId>
     <artifactId>build-devops-it</artifactId>
     <name>2.1 Dew Devops Integration Tests Build</name>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <version>2.0.0-SNAPSHOT</version>
 
     <properties>
+        <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
         <maven.compiler.encoding>${project.build.sourceEncoding}</maven.compiler.encoding>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.compilerVersion>${java.version}</maven.compiler.compilerVersion>
 
         <maven.install.skip>true</maven.install.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
         <sonar.skip>true</sonar.skip>
         <dew.devops.skip>true</dew.devops.skip>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>ms.dew</groupId>
+            <artifactId>dew-maven-plugin</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
     <!--<modules>
         <module>src/it/helloworld-backend</module>
@@ -65,11 +83,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>**/ITCase</include>
-                    </includes>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -78,6 +91,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -96,9 +117,12 @@
                     <properties>
                         <dew.devops.quiet>true</dew.devops.quiet>
                         <dew.devops.docker.host>${dew.devops.docker.host}</dew.devops.docker.host>
-                        <dew.devops.docker.registry.url>${dew.devops.docker.registry.url}</dew.devops.docker.registry.url>
-                        <dew.devops.docker.registry.username>${dew.devops.docker.registry.username}</dew.devops.docker.registry.username>
-                        <dew.devops.docker.registry.password>${dew.devops.docker.registry.password}</dew.devops.docker.registry.password>
+                        <dew.devops.docker.registry.url>${dew.devops.docker.registry.url}
+                        </dew.devops.docker.registry.url>
+                        <dew.devops.docker.registry.username>${dew.devops.docker.registry.username}
+                        </dew.devops.docker.registry.username>
+                        <dew.devops.docker.registry.password>${dew.devops.docker.registry.password}
+                        </dew.devops.docker.registry.password>
                         <dew.devops.kube.config>${dew.devops.kube.config}</dew.devops.kube.config>
                     </properties>
                 </configuration>

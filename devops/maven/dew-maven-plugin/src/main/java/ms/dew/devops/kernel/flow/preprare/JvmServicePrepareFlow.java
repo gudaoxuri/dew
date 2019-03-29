@@ -14,24 +14,26 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.mojo;
+package ms.dew.devops.kernel.flow.preprare;
 
-import io.kubernetes.client.ApiException;
-import ms.dew.devops.kernel.flow.build.BuildFlowFactory;
+import ms.dew.devops.kernel.Dew;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Execute;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
 
 import java.io.IOException;
+import java.util.HashMap;
 
-@Mojo(name = "build")
-@Execute(phase = LifecyclePhase.PACKAGE, goal = "preprare")
-public class BuildMojo extends BasicMojo {
+public class JvmServicePrepareFlow extends BasicPrepareFlow {
 
-    @Override
-    protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
-        return BuildFlowFactory.choose().exec(getMojoName());
+    protected boolean prePrepareBuild(String flowBasePath) throws IOException, MojoExecutionException {
+        Dew.Invoke.invoke("org.springframework.boot",
+                "spring-boot-maven-plugin",
+                null,
+                "repackage",
+                new HashMap<String, String>() {{
+                    put("outputDirectory", flowBasePath);
+                    put("finalName", "serv");
+                }});
+        return true;
     }
+
 }

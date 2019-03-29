@@ -19,7 +19,6 @@ package ms.dew.devops.kernel.config;
 import com.ecfront.dew.common.$;
 import ms.dew.devops.helper.GitHelper;
 import ms.dew.devops.helper.YamlHelper;
-import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.mojo.BasicMojo;
 import org.apache.maven.project.MavenProject;
 
@@ -121,10 +120,9 @@ public class ConfigBuilder {
         }
 
         static void fillGit(FinalProjectConfig finalProjectConfig, MavenProject mavenProject) {
-            // FIXME submodule处理
-            finalProjectConfig.setScmUrl(GitHelper.getScmUrl(Dew.basicDirectory));
-            finalProjectConfig.setGitBranch(GitHelper.getCurrentBranch(Dew.basicDirectory));
-            finalProjectConfig.setGitCommit(GitHelper.getCurrentCommit(Dew.basicDirectory));
+            finalProjectConfig.setScmUrl(GitHelper.inst().getScmUrl());
+            finalProjectConfig.setGitBranch(GitHelper.inst().getCurrentBranch());
+            finalProjectConfig.setGitCommit(GitHelper.inst().getCurrentCommit());
         }
 
     }

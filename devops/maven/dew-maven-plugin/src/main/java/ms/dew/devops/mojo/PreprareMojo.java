@@ -17,21 +17,29 @@
 package ms.dew.devops.mojo;
 
 import io.kubernetes.client.ApiException;
-import ms.dew.devops.kernel.flow.build.BuildFlowFactory;
+import ms.dew.devops.kernel.flow.preprare.PrepareFlowFactory;
+import ms.dew.devops.kernel.function.NeedExecuteByGit;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import java.io.IOException;
 
-@Mojo(name = "build")
+@Mojo(name = "preprare", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE)
 @Execute(phase = LifecyclePhase.PACKAGE, goal = "preprare")
-public class BuildMojo extends BasicMojo {
+public class PreprareMojo extends BasicMojo {
+
+    @Override
+    protected boolean preExecute() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
+        NeedExecuteByGit.setNeedExecuteProjects(quiet);
+        return true;
+    }
 
     @Override
     protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
-        return BuildFlowFactory.choose().exec(getMojoName());
+        return PrepareFlowFactory.choose().exec(getMojoName());
     }
 }

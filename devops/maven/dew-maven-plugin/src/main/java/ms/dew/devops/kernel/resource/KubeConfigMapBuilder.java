@@ -16,12 +16,12 @@
 
 package ms.dew.devops.kernel.resource;
 
-import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.kernel.Dew;
-import ms.dew.devops.kernel.config.FinalProjectConfig;
 import io.kubernetes.client.models.V1ConfigMap;
 import io.kubernetes.client.models.V1ConfigMapBuilder;
 import io.kubernetes.client.models.V1ObjectMetaBuilder;
+import ms.dew.devops.helper.KubeOpt;
+import ms.dew.devops.kernel.Dew;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 
 import java.util.Map;
 
@@ -34,7 +34,7 @@ public class KubeConfigMapBuilder implements KubeResourceBuilder<V1ConfigMap> {
 
     public V1ConfigMap build(String name, Map<String, String> labels, Map<String, String> data) {
         V1ConfigMapBuilder builder = new V1ConfigMapBuilder();
-        builder.withKind(KubeHelper.RES.CONFIG_MAP.getVal())
+        builder.withKind(KubeOpt.RES.CONFIG_MAP.getVal())
                 .withApiVersion("v1")
                 .withData(data)
                 .withMetadata(new V1ObjectMetaBuilder()

@@ -29,7 +29,7 @@ public class RollbackMojo extends BasicMojo {
 
     @Override
     protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
-        return new DefaultRollbackFlow().exec();
+        return new DefaultRollbackFlow().exec(getMojoName());
     }
 
 }

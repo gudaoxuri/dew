@@ -20,22 +20,19 @@ import com.ecfront.dew.common.$;
 import ms.dew.devops.kernel.Dew;
 import org.apache.maven.plugin.MojoExecutionException;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 public class JvmServiceBuildFlow extends BasicBuildFlow {
 
-    protected boolean preDockerBuild(String buildBasePath) throws IOException, MojoExecutionException {
-        Dew.Invoke.invoke("org.springframework.boot",
-                "spring-boot-maven-plugin",
-                null,
-                "repackage",
-                new HashMap<String, String>() {{
-                    put("outputDirectory", buildBasePath);
-                    put("finalName", "serv");
-                }});
-        $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/jvm/Dockerfile"), buildBasePath + "Dockerfile");
-        $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/jvm/run-java.sh"), buildBasePath + "run-java.sh");
+    protected boolean preDockerBuild(String flowBasePath) throws IOException, MojoExecutionException {
+        String preparePath = Dew.Config.getCurrentProject().getMvnTargetDirectory() + "dew_prepare" + File.separator;
+        Files.move(Paths.get(preparePath + "serv.jar"), Paths.get(flowBasePath + "serv.jar"), StandardCopyOption.REPLACE_EXISTING);
+        $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/jvm/Dockerfile"), flowBasePath + "Dockerfile");
+        $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/jvm/run-java.sh"), flowBasePath + "run-java.sh");
         return true;
     }
 

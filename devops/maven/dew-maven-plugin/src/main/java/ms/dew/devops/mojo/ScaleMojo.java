@@ -65,7 +65,7 @@ public class ScaleMojo extends BasicMojo {
             Dew.log.error("Parameter error, Current mode is autoScale model");
             return false;
         }
-        return new DefaultScaleFlow(replicas, autoScale, minReplicas, maxReplicas, cpuAvg, tps).exec();
+        return new DefaultScaleFlow(replicas, autoScale, minReplicas, maxReplicas, cpuAvg, tps).exec(getMojoName());
     }
 
 }

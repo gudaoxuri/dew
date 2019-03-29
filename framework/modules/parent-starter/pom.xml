@@ -218,6 +218,7 @@
                         <executions>
                             <execution>
                                 <goals>
+                                    <goal>preprare</goal>
                                     <goal>build</goal>
                                     <goal>release</goal>
                                 </goals>

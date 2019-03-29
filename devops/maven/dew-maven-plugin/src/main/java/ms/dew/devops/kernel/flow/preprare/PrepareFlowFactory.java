@@ -14,29 +14,23 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.function;
+package ms.dew.devops.kernel.flow.preprare;
 
 import ms.dew.devops.kernel.Dew;
-import ms.dew.notification.Notify;
-import ms.dew.notification.NotifyConfig;
+import ms.dew.devops.kernel.flow.BasicFlow;
 
-import java.util.Map;
-import java.util.stream.Collectors;
+public class PrepareFlowFactory {
 
-/**
- * 通知处理.
- *
- * @author gudaoxuri
- */
-public class NotifyProcessor {
+    public static BasicFlow choose() {
+        switch (Dew.Config.getCurrentProject().getKind()) {
+            case JVM_SERVICE:
+                return new JvmServicePrepareFlow();
+            case FRONTEND:
+                return new FrontendPrepareFlow();
+        }
+        return new BasicPrepareFlow() {
 
-    public static void init() {
-        Map<String, NotifyConfig> configMap = Dew.Config.getProjects().entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, config -> config.getValue().getNotify()));
-        Notify.init(configMap, flag -> Dew.Config.getCurrentProject().getProfile());
+        };
     }
 
-    public static void send(){
-
-    }
 }

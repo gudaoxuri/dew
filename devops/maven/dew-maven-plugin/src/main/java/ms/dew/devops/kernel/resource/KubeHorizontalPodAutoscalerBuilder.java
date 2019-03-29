@@ -17,6 +17,7 @@
 package ms.dew.devops.kernel.resource;
 
 import ms.dew.devops.helper.KubeHelper;
+import ms.dew.devops.helper.KubeOpt;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import io.kubernetes.client.custom.Quantity;
@@ -62,7 +63,7 @@ public class KubeHorizontalPodAutoscalerBuilder implements KubeResourceBuilder<V
                     .build());
         }
         V2beta2HorizontalPodAutoscalerBuilder builder = new V2beta2HorizontalPodAutoscalerBuilder();
-        builder.withKind(KubeHelper.RES.HORIZONTAL_POD_AUTOSCALER.getVal())
+        builder.withKind(KubeOpt.RES.HORIZONTAL_POD_AUTOSCALER.getVal())
                 .withApiVersion("autoscaling/v2beta2")
                 .withMetadata(new V1ObjectMetaBuilder()
                         .withLabels(new HashMap<String, String>() {{

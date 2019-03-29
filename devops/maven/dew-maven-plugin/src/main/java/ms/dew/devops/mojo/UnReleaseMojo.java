@@ -29,7 +29,7 @@ public class UnReleaseMojo extends BasicMojo {
 
     @Override
     protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
-        return new DefaultUnReleaseFlow().exec();
+        return new DefaultUnReleaseFlow().exec(getMojoName());
     }
 
 }
