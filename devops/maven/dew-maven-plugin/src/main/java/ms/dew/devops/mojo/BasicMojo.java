@@ -42,6 +42,9 @@ public abstract class BasicMojo extends AbstractMojo {
     private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD = "dew.devops.docker.registry.password";
     private static final String FLAG_DEW_DEVOPS_KUBE_CONFIG = "dew.devops.kube.config";
 
+    private static final String FLAG_DEW_DEVOPS_VERSION_CUST = "dew.devops.version.custom";
+    private static final String FLAG_DEW_DEVOPS_MOCK_CLASS_PATH = "dew.devops.mock.classpath";
+
     @Parameter(property = FLAG_DEW_DEVOPS_PROFILE, defaultValue = FLAG_DEW_DEVOPS_DEFAULT_PROFILE)
     private String profile;
 
@@ -63,6 +66,12 @@ public abstract class BasicMojo extends AbstractMojo {
     @Parameter(property = FLAG_DEW_DEVOPS_KUBE_CONFIG)
     private String kubeBase64Config;
 
+    @Parameter(property = FLAG_DEW_DEVOPS_VERSION_CUST)
+    private String customVersion;
+
+    @Parameter(property = FLAG_DEW_DEVOPS_MOCK_CLASS_PATH)
+    private String mockClasspath;
+
     @Component
     private MavenSession session;
 
@@ -83,7 +92,8 @@ public abstract class BasicMojo extends AbstractMojo {
             Dew.log = new DewLog(super.getLog(), "[DEW][" + getMojoName() + "]:");
             Dew.log.info("Start...");
             Dew.Init.init(session, pluginManager, profile,
-                    dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config);
+                    dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,
+                    customVersion,mockClasspath);
             if (!preExecute() || Dew.Config.getCurrentProject() == null || Dew.Config.getCurrentProject().isSkip()) {
                 // 各项目 .dew 配置 skip=true || 不支持的app kind
                 Dew.log.info("Skipped");

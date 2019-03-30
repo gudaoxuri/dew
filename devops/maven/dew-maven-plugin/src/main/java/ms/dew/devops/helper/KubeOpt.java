@@ -53,18 +53,18 @@ import java.util.stream.Collectors;
  */
 public class KubeOpt {
 
-    private final Map<String, Watch> WATCH_LIST = new ConcurrentHashMap<>();
-    private final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
+    protected final Map<String, Watch> WATCH_LIST = new ConcurrentHashMap<>();
+    protected final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 
-    private Log log;
-    private ApiClient client;
-    private CoreV1Api coreApi;
-    private ExtensionsV1beta1Api extensionsApi;
-    private RbacAuthorizationV1Api rbacAuthorizationApi;
-    private AutoscalingV2beta2Api autoscalingApi;
-    private PodLogs podLogs;
+    protected Log log;
+    protected ApiClient client;
+    protected CoreV1Api coreApi;
+    protected ExtensionsV1beta1Api extensionsApi;
+    protected RbacAuthorizationV1Api rbacAuthorizationApi;
+    protected AutoscalingV2beta2Api autoscalingApi;
+    protected PodLogs podLogs;
 
-    KubeOpt(Log log, String base64KubeConfig) {
+    protected KubeOpt(Log log, String base64KubeConfig) {
         this.log = log;
         YamlHelper.init(log);
         try {

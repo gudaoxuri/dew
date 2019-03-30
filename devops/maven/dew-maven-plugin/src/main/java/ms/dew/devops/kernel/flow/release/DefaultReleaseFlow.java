@@ -20,6 +20,7 @@ import com.ecfront.dew.common.$;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.ExtensionsV1beta1Deployment;
 import io.kubernetes.client.models.V1ConfigMap;
+import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1Service;
 import ms.dew.devops.helper.DockerHelper;
 import ms.dew.devops.helper.KubeHelper;
@@ -92,13 +93,31 @@ public class DefaultReleaseFlow extends BasicFlow {
         }
         CountDownLatch cdl = new CountDownLatch(1);
         ExtensionsV1beta1Deployment deploymentRes = (ExtensionsV1beta1Deployment) kubeResources.get(KubeOpt.RES.DEPLOYMENT.getVal());
-        String watchId = KubeHelper.inst(Dew.Config.getCurrentProject().getId()).watch((coreApi, extensionsApi, rbacAuthorizationApi, autoscalingApi)
+        String select = "app="
+                + deploymentRes.getMetadata().getName()
+                + ",group=" + deploymentRes.getMetadata().getLabels().get("group")
+                + ",version=" + deploymentRes.getMetadata().getLabels().get("version");
+        String watchId = KubeHelper.inst(Dew.Config.getCurrentProject().getId()).watch(
+                (coreApi, extensionsApi, rbacAuthorizationApi, autoscalingApi)
                         -> extensionsApi.listNamespacedDeploymentCall(deploymentRes.getMetadata().getNamespace(),
-                null, null, null, null,
-                "app=" + deploymentRes.getMetadata().getName(), 1, null, null, Boolean.TRUE, null, null),
+                        null, null, null, null,
+                        select, 1, null, null, Boolean.TRUE, null, null),
                 resp -> {
+                    // Ready Pod数量是否等于设定的数量
                     if (resp.object.getStatus().getReadyReplicas() != null
                             && resp.object.getStatus().getReadyReplicas().intValue() == resp.object.getSpec().getReplicas()) {
+                        try {
+                            long runningPodSize = KubeHelper.inst(Dew.Config.getCurrentProject().getId())
+                                    .list(select, deploymentRes.getMetadata().getNamespace(), KubeOpt.RES.POD, V1Pod.class)
+                                    .stream().filter(pod -> pod.getStatus().getPhase().equalsIgnoreCase("Running"))
+                                    .count();
+                            if (resp.object.getSpec().getReplicas() != runningPodSize) {
+                                // 之前版本没有销毁
+                                Thread.sleep(1000);
+                            }
+                        } catch (ApiException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         cdl.countDown();
                     }
                 },

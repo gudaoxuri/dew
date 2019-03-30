@@ -19,6 +19,7 @@ package ms.dew.devops.kernel.config;
 import com.ecfront.dew.common.$;
 import ms.dew.devops.helper.GitHelper;
 import ms.dew.devops.helper.YamlHelper;
+import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.mojo.BasicMojo;
 import org.apache.maven.project.MavenProject;
 
@@ -31,7 +32,8 @@ public class ConfigBuilder {
 
     public static FinalProjectConfig buildProject(String profile, DewConfig dewConfig, MavenProject mavenProject,
                                                   String dockerHost, String dockerRegistryUrl,
-                                                  String dockerRegistryUserName, String dockerRegistryPassword, String kubeBase64Config)
+                                                  String dockerRegistryUserName, String dockerRegistryPassword,
+                                                  String kubeBase64Config, String customVersion)
             throws InvocationTargetException, IllegalAccessException {
         FinalProjectConfig finalProjectConfig = new FinalProjectConfig();
         if (profile.equalsIgnoreCase(BasicMojo.FLAG_DEW_DEVOPS_DEFAULT_PROFILE)) {
@@ -58,7 +60,7 @@ public class ConfigBuilder {
         }
         Plugin.fillMaven(finalProjectConfig, mavenProject);
         Plugin.fillApp(finalProjectConfig, mavenProject);
-        Plugin.fillGit(finalProjectConfig, mavenProject);
+        Plugin.fillGit(finalProjectConfig, customVersion);
         return finalProjectConfig;
     }
 
@@ -113,17 +115,23 @@ public class ConfigBuilder {
         static void fillApp(FinalProjectConfig finalProjectConfig, MavenProject mavenProject) {
             finalProjectConfig.setAppGroup(mavenProject.getGroupId());
             finalProjectConfig.setAppName(mavenProject.getArtifactId());
-            finalProjectConfig.setAppVersion(mavenProject.getVersion());
             if (finalProjectConfig.getKind() == AppKind.FRONTEND) {
                 finalProjectConfig.getApp().setPort(80);
                 finalProjectConfig.getApp().setTraceLogEnabled(false);
             }
         }
 
-        static void fillGit(FinalProjectConfig finalProjectConfig, MavenProject mavenProject) {
-            finalProjectConfig.setScmUrl(GitHelper.inst().getScmUrl());
-            finalProjectConfig.setGitBranch(GitHelper.inst().getCurrentBranch());
-            finalProjectConfig.setGitCommit(GitHelper.inst().getCurrentCommit());
+        static void fillGit(FinalProjectConfig finalProjectConfig, String customVersion) {
+            if (customVersion != null && !customVersion.trim().isEmpty()) {
+                Dew.log.warn("Currently in custom version mode, git check is ignored, custom version is " + customVersion);
+                finalProjectConfig.setGitCommit(customVersion);
+                finalProjectConfig.setScmUrl("");
+                finalProjectConfig.setGitBranch("");
+            } else {
+                finalProjectConfig.setScmUrl(GitHelper.inst().getScmUrl());
+                finalProjectConfig.setGitBranch(GitHelper.inst().getCurrentBranch());
+                finalProjectConfig.setGitCommit(GitHelper.inst().getCurrentCommit());
+            }
         }
 
     }

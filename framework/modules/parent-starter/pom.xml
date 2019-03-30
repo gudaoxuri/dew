@@ -163,7 +163,7 @@
                 <artifactId>swagger-bootstrap-ui</artifactId>
                 <version>${swagger-bootstrap-ui.version}</version>
             </dependency>
-            <!-- Test -->
+            <!-- InitTest -->
             <dependency>
                 <groupId>ms.dew</groupId>
                 <artifactId>cluster-common-test</artifactId>

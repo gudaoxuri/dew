@@ -46,7 +46,11 @@ public class NeedExecuteByGit {
         }
         Dew.log.info("Fetch need process projects");
         for (FinalProjectConfig config : Dew.Config.getProjects().values()) {
-            Dew.log.debug("Execute need process checking for" + config.getAppName());
+            if (config.isCustomVersion()) {
+                // 自定义版本时不判断Git
+                return;
+            }
+            Dew.log.info("Execute need process checking for " + config.getAppName());
             String lastVersionDeployCommit = fetchLastVersionDeployCommit(config);
 
             Dew.log.debug("Latest commit is " + lastVersionDeployCommit);
@@ -113,12 +117,12 @@ public class NeedExecuteByGit {
         changedFiles = changedFiles.stream()
                 .filter(file -> file.startsWith(projectPath))
                 .collect(Collectors.toList());
-        Dew.log.debug("Found " + changedFiles.size() + " changed files ");
+        Dew.log.info("Found " + changedFiles.size() + " changed files for " + projectConfig.getAppName());
         if (changedFiles.isEmpty()) {
             return false;
         } else if (!projectConfig.getApp().getIgnoreChangeFiles().isEmpty()) {
             if (!$.file.noneMath(changedFiles, new ArrayList<>(projectConfig.getApp().getIgnoreChangeFiles()))) {
-                Dew.log.debug("Found 0 changed files filter ignore files");
+                Dew.log.info("Found 0 changed files filtered ignore files for " + projectConfig.getAppName());
                 return false;
             }
         }

@@ -1,0 +1,71 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    dew.ms/git-commit: '0001'
+    dew.ms/scm-url: ''
+    inject-jaeger-agent: 'true'
+    sidecar.jaegertracing.io/inject: 'true'
+    dew.ms/git-branch: ''
+  labels:
+    app: helloworld-backend
+    provider: dew
+    version: '0001'
+    group: ms.dew
+  name: helloworld-backend
+  namespace: dew-test
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: helloworld-backend
+      group: ms.dew
+  template:
+    metadata:
+      annotations:
+        dew.ms/git-commit: '0001'
+        dew.ms/scm-url: ''
+        inject-jaeger-agent: 'true'
+        sidecar.jaegertracing.io/inject: 'true'
+        dew.ms/git-branch: ''
+      labels:
+        app: helloworld-backend
+        provider: dew
+        version: '0001'
+        group: ms.dew
+    spec:
+      containers:
+      - env:
+        - name: JAVA_OPTIONS
+          value: -Xmx2688M -Xms2688M -Xmn960M -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M
+            -XX:+UseConcMarkSweepGC -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70
+            -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:+CMSClassUnloadingEnabled
+            -XX:+ParallelRefProcEnabled -XX:+CMSScavengeBeforeRemark -XX:+HeapDumpOnOutOfMemoryError
+            -Dspring.profiles.active=default
+        image: harbor.dew.env/dew-test/helloworld-backend:0001
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 6
+          httpGet:
+            path: /actuator/health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        name: dew-app
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        - containerPort: 9779
+          name: prometheus
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /actuator/health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 60

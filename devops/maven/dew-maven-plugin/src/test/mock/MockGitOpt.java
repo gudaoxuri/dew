@@ -14,37 +14,47 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.helper;
-
-import com.ecfront.dew.common.$;
+package mock;import ms.dew.devops.helper.GitOpt;
 import org.apache.maven.plugin.logging.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class GitOpt {
+/**
+ * @author gudaoxuri
+ */
+public class MockGitOpt extends GitOpt {
 
-    protected Log log;
-
-    protected GitOpt(Log log) {
-        this.log = log;
+    protected MockGitOpt(Log log) {
+        super(log);
     }
 
+    @Override
     public List<String> diff(String startCommitHash, String endCommitHash) {
-        List<String> changedFiles = $.shell.execute("git diff --name-only " + startCommitHash + " " + endCommitHash).getBody();
-        log.info("Found " + changedFiles.size() + " changed files by git diff --name-only " + startCommitHash + " " + endCommitHash);
-        return changedFiles;
+        log.warn("Mock diff");
+        return new ArrayList<String>() {
+            {
+                // 有一个文件变更
+                add("pom.xml");
+            }
+        };
     }
 
+    @Override
     public String getCurrentBranch() {
-        return $.shell.execute("git symbolic-ref --short -q HEAD").getBody().get(0);
+        log.warn("Mock getCurrentBranch");
+        return "mock";
     }
 
+    @Override
     public String getCurrentCommit() {
-        return $.shell.execute("git rev-parse HEAD").getBody().get(0);
+        log.warn("Mock getCurrentCommit");
+        return "00000000000000000000000000";
     }
 
+    @Override
     public String getScmUrl() {
-        return $.shell.execute("git config --get remote.origin.url").getBody().get(0);
+        log.warn("Mock getScmUrl");
+        return "https://github.com/gudaoxuri/dew.git";
     }
-
 }

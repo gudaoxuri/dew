@@ -49,12 +49,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class DockerOpt {
 
-    private Log log;
-    private DockerClient docker;
-    private AuthConfig defaultAuthConfig;
-    private String registryApiUrl;
-    private String registryPassword;
-    private String registryUsername;
+    protected Log log;
+    protected DockerClient docker;
+    protected AuthConfig defaultAuthConfig;
+    protected String registryApiUrl;
+    protected String registryPassword;
+    protected String registryUsername;
 
     public Image image = new Image();
     public Registry registry = new Registry();
@@ -67,7 +67,7 @@ public class DockerOpt {
      * @param registryPassword registry密码
      * @link https://docs.docker.com/install/linux/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections
      */
-    DockerOpt(Log log, String host, String registryUrl, String registryUsername, String registryPassword) {
+    protected DockerOpt(Log log, String host, String registryUrl, String registryUsername, String registryPassword) {
         this.log = log;
         this.registryUsername = registryUsername;
         this.registryPassword = registryPassword;

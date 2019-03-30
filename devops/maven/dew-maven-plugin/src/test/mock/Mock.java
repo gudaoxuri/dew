@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-import org.junit.Assert;
-import org.junit.Test;
+package mock;import ms.dew.devops.helper.GitHelper;
+import org.apache.maven.plugin.logging.SystemStreamLog;
 
 /**
  * @author gudaoxuri
  */
-public class ItTest {
+public class Mock {
 
-    @Test
-    public void test() {
-        System.out.println(">>>>>>>>>>" + this.getClass().getResource("/").getPath());
-        Assert.assertTrue(true);
+    public Mock() {
+        GitHelper.forceInit("GIT", "", new MockGitOpt(new SystemStreamLog()));
     }
+
 }

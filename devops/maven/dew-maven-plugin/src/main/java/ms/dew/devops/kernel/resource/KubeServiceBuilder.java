@@ -46,7 +46,7 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
 
         Map<String, String> labels = new HashMap<>();
         labels.put("app", config.getAppName());
-        labels.put("version", config.getAppVersion());
+        labels.put("version", config.getGitCommit());
         labels.put("group", config.getAppGroup());
         labels.put("provider", "dew");
         labels.put("expose", "true");

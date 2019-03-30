@@ -48,7 +48,7 @@
             <artifactId>simple-java-mail</artifactId>
             <version>${simple-java-mail.version}</version>
         </dependency>
-        <!-- Test -->
+        <!-- InitTest -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

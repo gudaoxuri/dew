@@ -21,7 +21,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ms.dew</groupId>
-    <artifactId>build-devops-it</artifactId>
+    <artifactId>devops-it</artifactId>
     <name>2.1 Dew Devops Integration Tests Build</name>
     <packaging>jar</packaging>
     <version>2.0.0-SNAPSHOT</version>
@@ -55,7 +55,7 @@
         </dependency>
     </dependencies>
 
-    <!--<modules>
+<!--    <modules>
         <module>src/it/helloworld-backend</module>
         <module>src/it/helloworld-frontend</module>
     </modules>-->
@@ -96,8 +96,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.source}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -108,6 +108,8 @@
                     <cloneClean>true</cloneClean>
                     <addTestClassPath>true</addTestClassPath>
                     <streamLogs>true</streamLogs>
+                    <debug>true</debug>
+                    <postBuildHookScript>verify</postBuildHookScript>
                     <invokerPropertiesFile>invoker.properties</invokerPropertiesFile>
                     <scriptVariables>
                         <version>${project.version}</version>

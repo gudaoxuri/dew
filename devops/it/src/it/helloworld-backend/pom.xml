@@ -40,10 +40,6 @@
             <groupId>ms.dew</groupId>
             <artifactId>boot-starter</artifactId>
         </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
     </dependencies>
 
 </project>

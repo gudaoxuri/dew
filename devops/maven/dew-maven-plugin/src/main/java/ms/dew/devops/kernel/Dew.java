@@ -34,12 +34,14 @@ import org.twdata.maven.mojoexecutor.MojoExecutor;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 
@@ -59,7 +61,8 @@ public class Dew {
                                 String profile,
                                 String dockerHost, String dockerRegistryUrl,
                                 String dockerRegistryUserName, String dockerRegistryPassword,
-                                String kubeBase64Config)
+                                String kubeBase64Config,
+                                String customVersion, String mockClasspath)
                 throws IllegalAccessException, IOException, InvocationTargetException {
             Dew.mavenSession = session;
             Dew.mavenPluginManager = pluginManager;
@@ -70,13 +73,14 @@ public class Dew {
             if (!initialized.getAndSet(true)) {
                 GitHelper.init(log);
                 YamlHelper.init(log);
-                initFinalConfig(profile, dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config);
+                initFinalConfig(profile, dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,customVersion);
                 Config.getProjects().values().forEach(config -> {
                     DockerHelper.init(config.getId(), log, config.getDocker().getHost(),
                             config.getDocker().getRegistryUrl(), config.getDocker().getRegistryUserName(), config.getDocker().getRegistryPassword());
                     KubeHelper.init(config.getId(), log, config.getKube().getBase64Config());
                 });
                 initNotify();
+                initMock(mockClasspath);
             }
             if (Config.getCurrentProject() != null) {
                 if (Config.getCurrentProject().getKube().getBase64Config() == null
@@ -89,7 +93,7 @@ public class Dew {
         private static void initFinalConfig(String profile,
                                             String dockerHost, String dockerRegistryUrl,
                                             String dockerRegistryUserName, String dockerRegistryPassword,
-                                            String kubeBase64Config)
+                                            String kubeBase64Config,String customVersion)
                 throws IOException, InvocationTargetException, IllegalAccessException {
             String basicDirectory = mavenSession.getTopLevelProject().getBasedir().getPath() + File.separator;
             String basicConfig = "";
@@ -138,7 +142,7 @@ public class Dew {
                 }
                 Config.config.getProjects().put(project.getId(),
                         ConfigBuilder.buildProject(profile, dewConfig, project,
-                                dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config));
+                                dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,customVersion));
                 log.debug("[" + project.getGroupId() + ":" + project.getArtifactId() + "] configured");
             }
         }
@@ -149,6 +153,25 @@ public class Dew {
                     .collect(Collectors.toMap(Map.Entry::getKey, config -> config.getValue().getNotify()));
             ms.dew.notification.Notify.init(configMap, flag -> "");
         }
+
+        private static void initMock(String mockClasspath) {
+            if (mockClasspath == null || mockClasspath.trim().isEmpty()) {
+                return;
+            }
+            log.warn("Discover mock configuration, mock class path is " + mockClasspath);
+            try {
+                Mock.loadClass(mockClasspath);
+                Mock.invokeMock();
+            } catch (NoSuchMethodException
+                    | InvocationTargetException
+                    | MalformedURLException
+                    | ClassNotFoundException
+                    | IllegalAccessException
+                    | InstantiationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
     }
 
     public static class Config {
@@ -221,6 +244,42 @@ public class Dew {
             }
         }
 
+    }
+
+    public static class Mock {
+
+        public static void loadClass(String classPath) throws NoSuchMethodException, MalformedURLException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
+            File clazzPath = new File(classPath);
+            if (!clazzPath.exists() || clazzPath.isFile()) {
+                log.debug("Not found mock class path in " + classPath);
+                return;
+            }
+            Optional<File> mockFiles = Stream.of(clazzPath.listFiles()).filter(f -> f.getName().equals("mock") && f.isDirectory()).findAny();
+            if (!mockFiles.isPresent()) {
+                log.debug("Mock class path must contain a directory named 'mock'");
+                return;
+            }
+            Method method = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+            boolean accessible = method.isAccessible();
+            try {
+                if (!accessible) {
+                    method.setAccessible(true);
+                }
+                URLClassLoader classLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+                method.invoke(classLoader, clazzPath.toURI().toURL());
+            } finally {
+                method.setAccessible(accessible);
+            }
+            File[] classFiles = mockFiles.get().listFiles(pathname -> pathname.getName().endsWith(".class"));
+            for (File file : classFiles) {
+                log.debug("Loading class " + file.getName());
+                Class.forName("mock." + file.getName().split("\\.")[0]);
+            }
+        }
+
+        public static void invokeMock() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+            Class.forName("mock.Mock").newInstance();
+        }
     }
 
     public static class Utils {

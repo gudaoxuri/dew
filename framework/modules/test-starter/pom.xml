@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>test-starter</artifactId>
-    <name>1.2.2 Dew Test Starter</name>
+    <name>1.2.2 Dew InitTest Starter</name>
     <description>单元测试支持</description>
     <packaging>jar</packaging>
 

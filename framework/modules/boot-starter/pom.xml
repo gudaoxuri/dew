@@ -92,7 +92,7 @@
             <artifactId>spring-boot-starter-mail</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- Test -->
+        <!-- InitTest -->
         <dependency>
             <groupId>ms.dew</groupId>
             <artifactId>cluster-common-test</artifactId>

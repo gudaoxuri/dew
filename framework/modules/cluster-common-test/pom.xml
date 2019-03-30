@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>cluster-common-test</artifactId>
-    <name>1.1.1 Dew Cluster Common Test</name>
+    <name>1.1.1 Dew Cluster Common InitTest</name>
     <description>Dew 集群服务测试</description>
     <packaging>jar</packaging>
 

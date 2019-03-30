@@ -16,6 +16,7 @@
 
 package ms.dew.devops.kernel.config;
 
+import ms.dew.devops.BasicTest;
 import ms.dew.devops.helper.YamlHelper;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Assert;
@@ -26,7 +27,7 @@ import org.junit.Test;
  *
  * @author gudaoxuri
  */
-public class TestConfigBuilder {
+public class TestConfigBuilder extends BasicTest {
 
     @Test
     public void testAll() {

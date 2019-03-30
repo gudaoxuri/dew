@@ -34,14 +34,14 @@ public class DefaultUnReleaseFlow extends BasicFlow {
         KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(Dew.Config.getCurrentProject().getAppName(), Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.SERVICE);
         KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(Dew.Config.getCurrentProject().getAppName(), Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.DEPLOYMENT);
         List<V1beta1ReplicaSet> rsList = KubeHelper.inst(
-                Dew.Config.getCurrentProject().getId()).list("app=" + Dew.Config.getCurrentProject().getAppName() + ",group=" + Dew.Config.getCurrentProject().getAppGroup() + ",version=" + Dew.Config.getCurrentProject().getAppVersion(),
+                Dew.Config.getCurrentProject().getId()).list("app=" + Dew.Config.getCurrentProject().getAppName() + ",group=" + Dew.Config.getCurrentProject().getAppGroup() + ",version=" + Dew.Config.getCurrentProject().getGitCommit(),
                 Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.REPLICA_SET, V1beta1ReplicaSet.class);
         for (V1beta1ReplicaSet rs : rsList) {
             KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(rs.getMetadata().getName(), rs.getMetadata().getNamespace(), KubeOpt.RES.REPLICA_SET);
         }
         List<V1Pod> pods = KubeHelper.inst(
                 Dew.Config.getCurrentProject().getId()).list(
-                "app=" + Dew.Config.getCurrentProject().getAppName() + ",group=" + Dew.Config.getCurrentProject().getAppGroup() + ",version=" + Dew.Config.getCurrentProject().getAppVersion(),
+                "app=" + Dew.Config.getCurrentProject().getAppName() + ",group=" + Dew.Config.getCurrentProject().getAppGroup() + ",version=" + Dew.Config.getCurrentProject().getGitCommit(),
                 Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.POD, V1Pod.class);
         for (V1Pod rs : pods) {
             KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(rs.getMetadata().getName(), rs.getMetadata().getNamespace(), KubeOpt.RES.POD);

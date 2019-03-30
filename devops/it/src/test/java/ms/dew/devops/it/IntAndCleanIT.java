@@ -17,10 +17,7 @@
 package ms.dew.devops.it;
 
 import io.kubernetes.client.ApiException;
-import io.kubernetes.client.models.ExtensionsV1beta1Deployment;
-import io.kubernetes.client.models.V1Pod;
-import io.kubernetes.client.models.V1Service;
-import io.kubernetes.client.models.V1beta1ReplicaSet;
+import io.kubernetes.client.models.*;
 import ms.dew.devops.helper.DockerHelper;
 import ms.dew.devops.helper.KubeHelper;
 import ms.dew.devops.helper.KubeOpt;
@@ -38,14 +35,9 @@ import java.util.Properties;
 /**
  * @author gudaoxuri
  */
-public class EnvMgrIT {
+public class IntAndCleanIT {
 
     @Test
-    public void test() throws IOException, ApiException {
-        System.out.println(">>>>>>>>>>>>>>>>>>>test");
-    }
-
-    //@Test
     public void initAndClean() throws IOException, ApiException {
         Properties properties = new Properties();
         properties.load(new FileInputStream(Paths.get("").toFile().getAbsolutePath() + File.separator + "devops.properties"));
@@ -90,8 +82,18 @@ public class EnvMgrIT {
                         e.printStackTrace();
                     }
                 });
+        KubeHelper.inst("").list("", namespaces, KubeOpt.RES.HORIZONTAL_POD_AUTOSCALER, V2beta2HorizontalPodAutoscaler.class)
+                .forEach(res -> {
+                    try {
+                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeOpt.RES.HORIZONTAL_POD_AUTOSCALER);
+                    } catch (ApiException e) {
+                        e.printStackTrace();
+                    }
+                });
         DockerHelper.inst("").image.list().stream()
-                .filter(image -> image.getRepoTags()[0].startsWith(registryHost))
+                .filter(image -> image.getRepoTags() != null
+                        && image.getRepoTags().length > 0
+                        && image.getRepoTags()[0].startsWith(registryHost))
                 .forEach(image -> {
                     DockerHelper.inst("").image.remove(image.getRepoTags()[0]);
                     try {

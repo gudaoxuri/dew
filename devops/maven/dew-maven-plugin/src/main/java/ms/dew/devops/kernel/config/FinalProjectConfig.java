@@ -16,19 +16,25 @@
 
 package ms.dew.devops.kernel.config;
 
+import java.util.regex.Pattern;
+
 public class FinalProjectConfig extends DewProfile {
 
+    private static final Pattern GIT_HASH = Pattern.compile("[0-9a-f]{40}");
     private String id;
     private String gitCommit = "";
     private String gitBranch = "";
     private String scmUrl = "";
     private String appName = "";
     private String appGroup = "";
-    private String appVersion = "";
     private String mvnGroupId;
     private String mvnArtifactId;
     private String mvnDirectory;
     private String mvnTargetDirectory;
+
+    public boolean isCustomVersion() {
+        return !GIT_HASH.matcher(this.getGitCommit()).matches();
+    }
 
     public String getId() {
         return id;
@@ -76,14 +82,6 @@ public class FinalProjectConfig extends DewProfile {
 
     public void setAppGroup(String appGroup) {
         this.appGroup = appGroup;
-    }
-
-    public String getAppVersion() {
-        return appVersion;
-    }
-
-    public void setAppVersion(String appVersion) {
-        this.appVersion = appVersion;
     }
 
     public String getMvnGroupId() {
