@@ -18,6 +18,11 @@ package ms.dew.idempotent.strategy;
 
 import ms.dew.core.cluster.exception.NotImplementedException;
 
+/**
+ * Bloom filter processor.
+ *
+ * @author gudaoxuri
+ */
 public class BloomFilterProcessor implements IdempotentProcessor {
 
     @Override

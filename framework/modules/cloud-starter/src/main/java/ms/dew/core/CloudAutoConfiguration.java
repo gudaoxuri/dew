@@ -27,17 +27,30 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * Cloud auto configuration.
+ *
+ * @author gudaoxuri
+ */
 @Configuration
 @ConditionalOnWebApplication
 public class CloudAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(CloudAutoConfiguration.class);
 
+    /**
+     * Init.
+     */
     @PostConstruct
     public void init() {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 
+    /**
+     * Create rest template.
+     *
+     * @return rest template
+     */
     @Bean
     @LoadBalanced
     @ConditionalOnMissingBean

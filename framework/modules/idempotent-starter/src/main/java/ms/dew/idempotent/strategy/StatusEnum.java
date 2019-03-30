@@ -16,9 +16,25 @@
 
 package ms.dew.idempotent.strategy;
 
+/**
+ * Status enum.
+ *
+ * @author gudaoxuri
+ */
 public enum StatusEnum {
 
-    NOT_EXIST("NOT_EXIST"), UN_CONFIRM("UN_CONFIRM"), CONFIRMED("CONFIRMED");
+    /**
+     * Not exist status enum.
+     */
+    NOT_EXIST("NOT_EXIST"),
+    /**
+     * Un confirm status enum.
+     */
+    UN_CONFIRM("UN_CONFIRM"),
+    /**
+     * Confirmed status enum.
+     */
+    CONFIRMED("CONFIRMED");
 
     private String value;
 

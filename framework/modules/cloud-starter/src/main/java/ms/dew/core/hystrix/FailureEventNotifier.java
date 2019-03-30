@@ -30,6 +30,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+/**
+ * Failure event notifier.
+ *
+ * @author gudaoxuri
+ */
 public class FailureEventNotifier extends HystrixEventNotifier {
 
     private static final Logger logger = LoggerFactory.getLogger(FailureEventNotifier.class);
@@ -42,10 +47,18 @@ public class FailureEventNotifier extends HystrixEventNotifier {
     // key.name -> eventType.names
     private Map<String, Map<String, String>> failureInfo = new ConcurrentReferenceHashMap<>(50, ConcurrentReferenceHashMap.ReferenceType.SOFT);
 
+    /**
+     * Instantiates a new Failure event notifier.
+     *
+     * @param dewCloudConfig the dew cloud config
+     */
     public FailureEventNotifier(DewCloudConfig dewCloudConfig) {
         this.dewCloudConfig = dewCloudConfig;
     }
 
+    /**
+     * Init.
+     */
     @PostConstruct
     public void init() {
         this.notifyIncludeKeys.addAll(Arrays.asList(dewCloudConfig.getError().getNotifyIncludeKeys()));

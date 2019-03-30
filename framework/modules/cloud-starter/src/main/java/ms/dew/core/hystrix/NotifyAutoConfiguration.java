@@ -32,6 +32,11 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * Notify auto configuration.
+ *
+ * @author gudaoxuri
+ */
 @Configuration
 @ConditionalOnProperty(prefix = "dew.cloud.error", name = "enabled", havingValue = "true", matchIfMissing = true)
 @EnableConfigurationProperties(DewCloudConfig.class)
@@ -48,19 +53,17 @@ public class NotifyAutoConfiguration {
         if (dewCloudConfig.getError().isEnabled()) {
             logger.info("Enabled Failure Event Notifier");
 
-            HystrixCommandExecutionHook commandExecutionHook = HystrixPlugins.getInstance().getCommandExecutionHook();
-            HystrixEventNotifier eventNotifier = HystrixPlugins.getInstance().getEventNotifier();
-            HystrixMetricsPublisher metricsPublisher = HystrixPlugins.getInstance().getMetricsPublisher();
-            HystrixPropertiesStrategy propertiesStrategy = HystrixPlugins.getInstance().getPropertiesStrategy();
-            HystrixConcurrencyStrategy concurrencyStrategy = HystrixPlugins.getInstance().getConcurrencyStrategy();
-
             HystrixPlugins.reset();
 
+            HystrixConcurrencyStrategy concurrencyStrategy = HystrixPlugins.getInstance().getConcurrencyStrategy();
             HystrixPlugins.getInstance().registerConcurrencyStrategy(concurrencyStrategy);
+            HystrixCommandExecutionHook commandExecutionHook = HystrixPlugins.getInstance().getCommandExecutionHook();
             HystrixPlugins.getInstance().registerCommandExecutionHook(commandExecutionHook);
-            HystrixPlugins.getInstance().registerEventNotifier(new FailureEventNotifier(dewCloudConfig));
+            HystrixMetricsPublisher metricsPublisher = HystrixPlugins.getInstance().getMetricsPublisher();
             HystrixPlugins.getInstance().registerMetricsPublisher(metricsPublisher);
+            HystrixPropertiesStrategy propertiesStrategy = HystrixPlugins.getInstance().getPropertiesStrategy();
             HystrixPlugins.getInstance().registerPropertiesStrategy(propertiesStrategy);
+            HystrixPlugins.getInstance().registerEventNotifier(new FailureEventNotifier(dewCloudConfig));
         }
     }
 

@@ -16,9 +16,25 @@
 
 package ms.dew.idempotent.strategy;
 
+/**
+ * Strategy enum.
+ *
+ * @author gudaoxuri
+ */
 public enum StrategyEnum {
 
-    ITEM("item"), BLOOM_FLTER("bloom"), AUTO("auto");
+    /**
+     * Item strategy enum.
+     */
+    ITEM("item"),
+    /**
+     * Bloom flter strategy enum.
+     */
+    BLOOM_FLTER("bloom"),
+    /**
+     * Auto strategy enum.
+     */
+    AUTO("auto");
 
     private String value;
 

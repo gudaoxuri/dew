@@ -17,13 +17,17 @@
 package ms.dew.idempotent;
 
 import ms.dew.idempotent.strategy.*;
-import ms.dew.idempotent.strategy.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Dew idempotent.
+ *
+ * @author gudaoxuri
+ */
 public class DewIdempotent {
 
     private static final Logger logger = LoggerFactory.getLogger(DewIdempotent.class);
@@ -39,7 +43,7 @@ public class DewIdempotent {
 
 
     /**
-     * 初始化操作类型信息
+     * 初始化操作类型信息.
      *
      * @param optType     操作类型
      * @param needConfirm 是否需要显式确认
@@ -69,29 +73,32 @@ public class DewIdempotent {
 
 
     /**
-     * 操作类型是否存在，用于初化判断
+     * 操作类型是否存在，用于初化判断.
      *
      * @param optType 操作类型
-     * @return 是否存在
+     * @return 是否存在 boolean
      */
     public static boolean existOptTypeInfo(String optType) {
         return CONTENT.containsKey(optType);
     }
 
     /**
-     * 处理请求，返回是否成功
+     * 处理请求，返回是否成功.
      *
      * @param optType 操作类型
      * @param optId   操作ID
+     * @return the status enum
      */
     public static StatusEnum process(String optType, String optId) {
         CONTEXT.set(new String[]{optType, optId});
         OptTypeInfo optTypeInfo = CONTENT.get(optType);
-        return optTypeInfo.processor.process(optType, optId, optTypeInfo.needConfirm ? StatusEnum.UN_CONFIRM : StatusEnum.CONFIRMED, optTypeInfo.expireMs);
+        return optTypeInfo.processor.process(optType, optId,
+                optTypeInfo.needConfirm ? StatusEnum.UN_CONFIRM : StatusEnum.CONFIRMED,
+                optTypeInfo.expireMs);
     }
 
     /**
-     * 操作确认
+     * 操作确认.
      *
      * @param optType 操作类型
      * @param optId   操作ID
@@ -101,7 +108,7 @@ public class DewIdempotent {
     }
 
     /**
-     * 操作确认，要求与请求入口在同一线程中
+     * 操作确认，要求与请求入口在同一线程中.
      */
     public static void confirm() {
         String[] c = CONTEXT.get();
@@ -111,7 +118,7 @@ public class DewIdempotent {
     }
 
     /**
-     * 操作取消
+     * 操作取消.
      *
      * @param optType 操作类型
      * @param optId   操作ID
@@ -121,7 +128,7 @@ public class DewIdempotent {
     }
 
     /**
-     * 操作取消，要求与请求入口在同一线程中
+     * 操作取消，要求与请求入口在同一线程中.
      */
     public static void cancel() {
         String[] c = CONTEXT.get();
@@ -132,8 +139,17 @@ public class DewIdempotent {
 
     private static class OptTypeInfo {
 
+        /**
+         * The Processor.
+         */
         IdempotentProcessor processor;
+        /**
+         * The Expire ms.
+         */
         long expireMs;
+        /**
+         * The Need confirm.
+         */
         boolean needConfirm;
 
     }
