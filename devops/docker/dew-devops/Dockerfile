@@ -1,4 +1,4 @@
-FROM 3.6-jdk-8-alpine
+FROM maven:3.6-jdk-8-alpine
 MAINTAINER gudaoxuri <i@sunisle.org>
 
 # ----------------- Add git client
