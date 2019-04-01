@@ -18,43 +18,60 @@ sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config
 
 .服务列表
 |===
-|主机名 |IP |服务 | 备注
+|主机名 |IP(示例) |服务 | 备注
 
-|devops | 10.200.10.10 | Gitlab | Gitlab及其CI/CD独立一台服务器部署，实际环境应该做HA
-|middleware | 10.200.10.11 | Docker、RabbitMQ、PostgreSql、Redis、NFS、dnsmasq | 各类中间件，实际环境应该做HA
-|k8s0 | 10.200.10.12 | Docker、kubernetes master、Helm |
-|k8s1 | 10.200.10.13 | Docker、kubernetes node |
-|k8s2 | 10.200.10.14 | Docker、kubernetes node |
-|k8s3 | 10.200.10.15 | Docker、kubernetes node |
-|k8s4 | 10.200.10.16 | Docker、kubernetes node |
-|…… | …… | Docker、kubernetes node |
+|devops(1-3) | 10.200.10.1-3 | Gitlab | Gitlab及其CI/CD独立一台服务器部署，实际环境应该做HA
+|middleware(1-6) | 10.200.10.4-9 | Docker、RabbitMQ、PostgreSql、Redis、dnsmasq、Minio、harbor | 各类中间件，实际环境应该做HA
+|k8s-master(1-3) | 10.200.10.10-12 | Docker、kubernetes master、Helm | Kubernetes Master节点，实际环境应该做HA
+|k8s-node(1-N) | 10.200.10.13-N | Docker、kubernetes node、nginx Ingress Controller、prometheus node exporter、fluentd | 应用运行容器组 node label = app
+|…… | …… | Docker、kubernetes node | 应用运行容器组 node label = app
+|k8s-node(N+1-M) | 10.200.10.N+1-M | Docker、kubernetes node、nginx Ingress Controller、prometheus node exporter、fluentd、dashboard、elasticsearch、kibana、jaeger、grafana、prometheus | 集成运维容器组 node label = devops
+|…… | …… | Docker、kubernetes node | 集成运维容器组 node label = devops
 |===
 
+NOTE: kubernetes Node 分两个 label, ``label=app`` 用于运行应用， ``label-devops`` 用于运行运维管理工具。
+
 [source,bash]
-.各节点Host
+.各节点Host(示例)
 ----
-# 除middleware外的各节点
+# dnsmasq服务节点
 
 cat >>/etc/hosts <<EOF
-10.200.10.10 devops
-10.200.10.11 middleware
-10.200.10.12 k8s0
-10.200.10.13 k8s1
-10.200.10.14 k8s2
-10.200.10.15 k8s3
-10.200.10.16 k8s4
+10.200.10.1 devops1 gitlab.dew.ms
+10.200.10.2 devops2 gitlab.dew.ms
+...
+10.200.10.4 middleware1 rabbitmq.dew.ms redis.dew.ms postgre.dew.ms minio.dew.ms
+10.200.10.5 middleware2 rabbitmq.dew.ms redis.dew.ms postgre.dew.ms minio.dew.ms
+...
+10.200.10.10 k8s-master1
+10.200.10.11 k8s-master2
+...
+10.200.10.13 k8s-node1
+10.200.10.14 k8s-node2
+...
+10.200.10.101 k8s-node101 harbor.dew.ms notary.dew.ms dashboard.dew.ms es.dew.ms jaeger.dew.ms kibana.dew.ms prometheus.dew.ms grafana.dew.ms
+10.200.10.102 k8s-node102 harbor.dew.ms notary.dew.ms dashboard.dew.ms es.dew.ms jaeger.dew.ms kibana.dew.ms prometheus.dew.ms grafana.dew.ms
+...
 EOF
 
-# middleware节点和客户端节点
+# 除dnsmasq外的各节点
 
 cat >>/etc/hosts <<EOF
-10.200.10.10 devops gitlab.dew.ms
-10.200.10.11 middleware rabbitmq.dew.ms redis.dew.ms nfs.dew.ms postgre.dew.ms
-10.200.10.12 k8s0
-10.200.10.13 k8s1 harbor.dew.ms notary.dew.ms dashboard.dew.ms es.dew.ms jaeger.dew.ms kibana.dew.ms prometheus.dew.ms grafana.dew.ms
-10.200.10.14 k8s2
-10.200.10.15 k8s3
-10.200.10.16 k8s4
+10.200.10.1 devops1
+10.200.10.2 devops2
+...
+10.200.10.4 middleware1
+10.200.10.5 middleware2
+...
+10.200.10.10 k8s-master1
+10.200.10.11 k8s-master2
+...
+10.200.10.13 k8s-node1
+10.200.10.14 k8s-node2
+...
+10.200.10.101 k8s-node101
+10.200.10.102 k8s-node102
+...
 EOF
 ----
 
@@ -156,7 +173,7 @@ kubeadm init \
     --pod-network-cidr=10.244.0.0/16
 
 # 记录上述操作输出中的kubeadm join
-# e.g. kubeadm join 10.200.131.18:6443 --token i3i7qw.2gst6kayu1e8ezlg --discovery-token-ca-cert-hash sha256:cabc90823a8e0bcf6e3bf719abc569a47c186f6cfd0e156ed5a3cd5a8d85fab0
+# e.g. kubeadm join 10.200.10.10:6443 --token i3i7qw.2gst6kayu1e8ezlg --discovery-token-ca-cert-hash sha256:cabc90823a8e0bcf6e3bf719abc569a47c186f6cfd0e156ed5a3cd5a8d85fab0
 
 mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -194,6 +211,12 @@ test2.k8s   Ready   <none>   70s   v1.13.4
 test3.k8s   Ready   <none>   52s   v1.13.4
 test4.k8s   Ready   <none>   43s   v1.13.4
 test5.k8s   Ready   <none>   34s   v1.13.4
+----
+
+[source,bash]
+.Master HA配置
+----
+TBD
 ----
 
 ==== helm
@@ -238,18 +261,18 @@ kubectl get pod -n kube-system -l app=helm
 
 [source,bash]
 ----
-# 在middleware节点上执行安装
+# 在middlewarer的某个节点上执行安装
 yum install -y dnsmasq
 systemctl enable dnsmasq
 systemctl start dnsmasq
 
-# 编辑各节点，加上middleware节点的IP
+# 编辑各节点，加上dnsmasq节点的IP（示例为10.200.10.4）
 vi /etc/resolv.conf
 -
-nameserver 10.200.10.11
+nameserver 10.200.10.4
 -
 
-# 编辑Kubernetes的DNS，加上dew.ms的代理
+# 编辑Kubernetes的DNS，加上dew.ms的代理（示例为10.200.10.4）
 kubectl -n kube-system edit cm coredns
 -
 data:
@@ -258,34 +281,47 @@ data:
     dew.ms:53 {
         errors
         cache 30
-        proxy . 10.200.10.11
+        proxy . 10.200.10.4
     }
 -
 ----
 
-==== nfs
+==== minio
 
 [source,bash]
 ----
-yum install -y nfs-utils
-mkdir -p /data/nfs
-chmod 755 /data/nfs
+# 在middlewarer的某个节点上执行安装
+wget https://dl.minio.io/server/minio/release/linux-amd64/minio
+chmod +x minio
+nohup ./minio server /mnt/data &
 
-mkdir -p /data/nfs/gitlab
+# cat nohup.out，输出内容示例如下：
+# AccessKey: F1HR1NUAPVQVX3UPV73P
+# SecretKey: 0+vzU8IK+UjJTepBEiAt9x7QO5k+vYRW2KpISWVs
+#
+# Browser Access:
+#    http://10.200.10.5:9000  http://172.17.0.1:9000 ...
 
-vi /etc/exports
+# 访问 https://minio.dew.ms:9000
+# 修改访问AccessKey和SecretKey， e.g. dew / Dew123456
+# 创建名为 app-cache 的bucket用于缓存gitlab ci runner(或其它CICD服务）的构建缓存
+----
 
-    /data/nfs/gitlab     *(rw,sync,no_root_squash,no_all_squash)
+[source,bash]
+.MinIO HA配置
+----
+TBD https://docs.min.io/docs/distributed-minio-quickstart-guide.html
+----
 
-systemctl enable rpcbind
-systemctl enable nfs-server
-systemctl start rpcbind
-systemctl start nfs-server
-
-showmount -e localhost
+[source,bash]
+.MinIO 多用户配置
+----
+TBD https://docs.min.io/docs/minio-multi-user-quickstart-guide.html
 ----
 
 ==== postgreSql
+
+IMPORTANT: 生产环境需要HA部署。
 
 [source,bash]
 ----
@@ -318,6 +354,8 @@ ALTER USER postgres WITH PASSWORD 'Dew!123456';
 
 ==== redis
 
+IMPORTANT: 生产环境需要HA部署。
+
 [source,bash]
 ----
 yum install -y epel-release
@@ -331,138 +369,6 @@ requirepass Dew!123456
 -
 systemctl start redis
 ----
-
-
-[[podAssignment]]
-==== pod的调度
-TIP: 此处简单说明pod的调度配置，方便后文中各组件的安装配置时的参考。
-     更详细的配置细节请参考以下官方文档：
-     https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
-     https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-
-===== node亲和性和调度
-.nodeName
-nodeName是最简单的pod节点选择的方法，直接根据节点的名字来选择pod要调度的节点：
-[source,yaml]
-----
-apiVersion: v1
-kind: Pod
-metadata:
-  name: nginx
-spec:
-  containers:
-  - name: nginx
-    image: nginx
-  nodeName: devops
-----
-
-.nodeSelector
-使用此功能需要先给要被调度的node加上标签： +
-`kubectl label nodes <node-name> <label-key>=<label-value>` +
-eg: +
-`kubectl label nodes devops tag=devops`
-
-查看node的标签： +
-`kubectl get nodes --show-labels`
-
-给pod添加nodeSelector（推荐在controller部分加，eg:Deployment,StatefulSet等）
-[source,yaml]
-----
-spec:
-  containers:
-  - name: nginx
-    image: nginx
-    imagePullPolicy: IfNotPresent
-  nodeSelector:
-    tag: devops
-----
-移除标签：
-`kubectl label nodes devops tag-`
-
-
-.Tolerations
-给node添加污点： +
-`kubectl taint nodes devops key=value:NoSchedule`
-给pod添加tolerations： +
-[source,yaml]
-----
-tolerations:
-- key: "key"
-  operator: "Equal"
-  value: "value"
-  effect: "NoSchedule"
-----
-以上配置是指：当node满足pod的tolerations的条件 `key=value:NoSchedule` 时，pod才会被调度到该节点上。
-
-移除node的污点： +
-`kubectl taint nodes devops key:NoSchedule-`
-
-.node的亲和性和反亲和性
-eg:
-[source,bash]
-----
-kubectl label nodes k8s1 devops=1
-kubectl label nodes k8s2 devops=2
-kubectl label nodes k8s3 devops=3
-----
-
-[source,yaml]
-----
-spec:
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: devops
-            operator: In
-            values:
-            - 1
-            - 2
-      preferredDuringSchedulingIgnoredDuringExecution:
-      - weight: 1
-        preference:
-          matchExpressions:
-          - key: devops
-            operator: In
-            values:
-            - 3
-----
-以上例子说明，pod将会被调度到打有 `devops=1` 和 `devops=2` 标签的节点上去， `devops=3` 的节点为备选节点。 +
-operator的值可以为：`In, NotIn, Exists, DoesNotExist, Gt, Lt.` +
-此外，可以通过给 `operator` 设值 `NotIn` 或 `DoesNotExist`，来实现node的反亲和性功能。
-
-===== pod亲和性与反亲和性调度
-.Inter-pod affinity and anti-affinity
-[source,yaml]
-----
-spec:
-  affinity:
-    podAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-      - labelSelector:
-          matchExpressions:
-          - key: security
-            operator: In
-            values:
-            - S1
-        topologyKey: failure-domain.beta.kubernetes.io/zone
-    podAntiAffinity:
-      preferredDuringSchedulingIgnoredDuringExecution:
-      - weight: 100
-        podAffinityTerm:
-          labelSelector:
-            matchExpressions:
-            - key: security
-              operator: In
-              values:
-              - S2
-          topologyKey: kubernetes.io/hostname
-----
-
-pod的亲和性调度，主要是根据pod及node的标签来进行调度的。 +
-当一个节点上已有至少一个正在运行的，并带有满足该pod的podAffinity条件的标签的pod1、且该节点有 `failure-domain.beta.kubernetes.io/zone` 的标签，则该pod会被调度到pod1的节点上去。 +
-反亲和性与之相反，当某一节点上至少有一个正在运行的、具有满足podAntiAffinity条件的pod2，则该pod不会被调度到pod2的节点上去。
 
 ==== gitlab
 
@@ -479,12 +385,11 @@ vi /etc/gitlab/gitlab.rb
 external_url 'http://gitlab.dew.ms'
 ...
 -
-
 gitlab-ctl reconfigure
 
 # 浏览器访问并修改root密码
 
-# 安装 gitlab runner，Helm方式，在k8s0节点上执行
+# 安装 gitlab runner，Helm方式
 helm repo add gitlab https://charts.gitlab.io
 helm fetch --untar gitlab/gitlab-runner
 cd gitlab-runner
@@ -497,87 +402,59 @@ vi templates/role-binding.yaml
       namespace: "{{ .Release.Namespace }}"
 -
 
-# 添加PVC，使用DooD方式
-# 注意添加的位置在 “# Start the runner” 前
-# DooD方式由于直接使用宿主机的Docker，存在一定的安全风险，但DinD模式下Kubernetes无法很好地处理镜像缓存，导致每次都要全量拉取
-# 详见 https://docs.gitlab.com/runner/executors/kubernetes.html#using-docker-in-your-builds
-vi templates/configmap.yaml
--
-    cat >>/home/gitlab-runner/.gitlab-runner/config.toml <<EOF
-            [[runners.kubernetes.volumes.pvc]]
-              name = "gitlab-runner-cache"
-              mount_path = "{{ .Values.runners.cache.cachePath }}"
-            [[runners.kubernetes.volumes.host_path]]
-              name = "docker-socket"
-              mount_path = "/var/run/docker.sock"
-    EOF
-    # Start the runner
--
+# 添加Cache secret
+kubectl create secret generic minio-access -n devops \
+    --from-literal=accesskey="dew" \
+    --from-literal=secretkey="Dew123456"
 
-# 创建PV
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv_gitlab
-  labels:
-    pv: pv_gitlab
-spec:
-  capacity:
-    storage: 100Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
-  nfs:
-    path: /data/nfs/gitlab
-    server: nfs.dew.ms
-EOF
-
-# 创建PVC
-cat <<EOF | kubectl apply -f -
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: gitlab-runner-cache
-  namespace: devops
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 100Gi
-  selector:
-    matchLabels:
-      pv: pv_gitlab
-EOF
-
-# runnerRegistrationToken 需要从gitlab页面上获取
-# 特别说明的是这里定义了cachePath，使用PV
 helm install --name dew-gitlab-runner --namespace devops \
     --set gitlabUrl=http://gitlab.dew.ms/ \
     --set runnerRegistrationToken=<...> \
     --set concurrent=20 \
     --set rbac.create=true \
     --set rbacWideAccess=true \
+    --set runners.image=dewms/devops:latest \
     --set runners.tags=general \
-    --set runners.cache.cachePath=/opt/cache \
-    --set runners.privileged=true \
+    --set runners.cache.cacheType=s3 \
+    --set runners.cache.cacheShared=true \
+    --set runners.cache.s3ServerAddress=minio.dew.ms:9000 \
+    --set runners.cache.s3BucketName=app-cache \
+    --set runners.cache.s3CacheInsecure=true \
+    --set runners.cache.secretName=minio-access \
     .
-----
 
-==== nginx Ingress Controller
+# runnerRegistrationToken 需要从gitlab页面上获取
+# 测试测试环境的runner,其它环境类似
+helm install --name dew-gitlab-runner-test --namespace devops \
+    --set gitlabUrl=http://gitlab.dew.ms/ \
+    --set runnerRegistrationToken=<...> \
+    --set concurrent=20 \
+    --set rbac.create=true \
+    --set rbacWideAccess=true \
+    --set runners.tags=test \
+    --set runners.image=dewms/devops:latest \
+    --set runners.cache.cacheType=s3 \
+    --set runners.cache.cacheShared=true \
+    --set runners.cache.s3ServerAddress=minio.dew.ms:9000 \
+    --set runners.cache.s3BucketName=app-cache \
+    --set runners.cache.s3CacheInsecure=true \
+    --set runners.cache.secretName=minio-access \
+    --set runners.env.MAVEN_OPTS=-Dmaven.repo.local=.m2 \
+    --set runners.env.docker_host=<...> \
+    --set runners.env.docker_registry_url=https://harbor.dew.ms/v2 \
+    --set runners.env.kube_config=<...>
+   .
+----
 
 [source,bash]
+.Gitlab HA配置
 ----
-# 使用如下方式将80 443暴露出来
-helm install stable/nginx-ingress --name dew-nginx --namespace ingress-nginx \
-    --set controller.kind=DaemonSet \
-    --set controller.hostNetwork=true \
-    --set controller.stats.enabled=true \
-    --set controller.metrics.enabled=true
+TBD
 ----
 
-==== harbor
+==== harbor（TBD）
+
+TBD Harbor独立部署以确保各环境使用同一套
 
 TIP: https://github.com/goharbor/harbor-helm
 
@@ -594,48 +471,6 @@ CREATE DATABASE  clair;
 CREATE DATABASE  notary_server;
 CREATE DATABASE  notary_signer;
 -
-
-# 创建3个PV
-for i in {0..2}; do
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pv00${i}
-  namespace: devops
-spec:
-  capacity:
-    storage: 100Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
-  nfs:
-    path: /data/nfs/d${i}
-    server: nfs.dew.ms
-EOF
-done
-
-# TBD 使用PVC
-
-helm install --name dew-harbor --namespace devops \
-    --set externalURL=https://harbor.dew.ms \
-    --set harborAdminPassword=Dew\!12345 \
-    --set expose.ingress.hosts.core=harbor.dew.ms \
-    --set expose.ingress.hosts.notary=notary.dew.ms \
-    --set database.type=external \
-    --set database.external.host=postgre.dew.ms \
-    --set database.external.port=5432 \
-    --set database.external.username=postgres \
-    --set database.external.password=Dew\!123456 \
-    --set redis.type=external \
-    --set redis.external.host=redis.dew.ms \
-    --set redis.external.port=6379 \
-    --set redis.external.password=Dew\!123456 \
-    --set redis.external.coreDatabaseIndex=10 \
-    --set redis.external.jobserviceDatabaseIndex=11 \
-    --set redis.external.registryDatabaseIndex=12 \
-    --set redis.external.chartmuseumDatabaseIndex=13\
-    .
 
 # 初始用户名/密码 admin/Harbor12345
 
@@ -660,6 +495,18 @@ docker login harbor.dew.ms -u admin -p Dew!12345
 # 测试
 docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.1 harbor.dew.ms/test/pause:3.1
 docker push harbor.dew.ms/test/pause:3.1
+----
+
+==== nginx Ingress Controller
+
+[source,bash]
+----
+# 使用如下方式将80 443暴露出来
+helm install stable/nginx-ingress --name dew-nginx --namespace ingress-nginx \
+    --set controller.kind=DaemonSet \
+    --set controller.hostNetwork=true \
+    --set controller.stats.enabled=true \
+    --set controller.metrics.enabled=true
 ----
 
 ==== dashboard

@@ -17,6 +17,7 @@
 package ms.dew.devops.helper;
 
 import com.ecfront.dew.common.$;
+import com.ecfront.dew.common.Resp;
 import org.apache.maven.plugin.logging.Log;
 
 import java.util.List;
@@ -35,8 +36,20 @@ public class GitOpt {
         return changedFiles;
     }
 
+    /**
+     * 获取分支名称.
+     * <p>
+     * 警告：在HEAD detached状态无效
+     *
+     * @return 分支名称
+     */
     public String getCurrentBranch() {
-        return $.shell.execute("git symbolic-ref --short -q HEAD").getBody().get(0);
+        Resp<List<String>> result = $.shell.execute("git symbolic-ref --short -q HEAD");
+        if (result.ok()) {
+            return result.getBody().get(0);
+        } else {
+            return "";
+        }
     }
 
     public String getCurrentCommit() {

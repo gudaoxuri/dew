@@ -47,10 +47,12 @@ import java.util.stream.Collectors;
 
 public class DefaultReleaseFlow extends BasicFlow {
 
+    private String flowBasePath;
+
     public boolean process(String flowBasePath) throws ApiException, IOException, MojoExecutionException {
+        this.flowBasePath = flowBasePath;
         Dew.log.info("Building kubernetes resources");
-        Map<String, Object> deployResult = buildResources(flowBasePath);
-        release(deployResult, Dew.Config.getCurrentProject().getGitCommit(), false);
+        release(Dew.Config.getCurrentProject().getGitCommit());
         if (Dew.Config.getCurrentProject().getApp().getRevisionHistoryLimit() > 0) {
             Dew.log.debug("Delete old version from kubernetes resources and docker images");
             removeOldVersions(Dew.Config.getCurrentProject().getApp().getRevisionHistoryLimit());
@@ -58,7 +60,50 @@ public class DefaultReleaseFlow extends BasicFlow {
         return true;
     }
 
-    public void release(Map<String, Object> deployResult, String gitCommit, boolean reRelease) throws ApiException, IOException {
+    public void release(String gitCommit) throws ApiException, IOException {
+        Map<String, Object> deployResult;
+        V1ConfigMap oldVersion = getOldVersion(gitCommit);
+        if (oldVersion != null) {
+            deployResult = fetchOldVersionResources(oldVersion);
+            Dew.log.info("Rollback to " + gitCommit);
+            release(deployResult, gitCommit, true);
+        } else {
+            deployResult = buildNewVersionResources(flowBasePath);
+            release(deployResult, gitCommit, false);
+        }
+    }
+
+    private Map<String, Object> fetchOldVersionResources(V1ConfigMap oldVersion) throws IOException {
+        ExtensionsV1beta1Deployment rollbackDeployment = KubeHelper.inst(Dew.Config.getCurrentProject().getId()).toResource(
+                $.security.decodeBase64ToString(oldVersion.getData().get(KubeOpt.RES.DEPLOYMENT.getVal()), "UTF-8"),
+                ExtensionsV1beta1Deployment.class);
+        V1Service rollbackService = KubeHelper.inst(Dew.Config.getCurrentProject().getId()).toResource(
+                $.security.decodeBase64ToString(oldVersion.getData().get(KubeOpt.RES.SERVICE.getVal()), "UTF-8"),
+                V1Service.class);
+        return new HashMap<String, Object>() {
+            {
+                put(KubeOpt.RES.DEPLOYMENT.getVal(), rollbackDeployment);
+                put(KubeOpt.RES.SERVICE.getVal(), rollbackService);
+            }
+        };
+    }
+
+    private Map<String, Object> buildNewVersionResources(String flowBasePath) throws IOException {
+        ExtensionsV1beta1Deployment deployment = new KubeDeploymentBuilder().build(Dew.Config.getCurrentProject());
+        V1Service service = new KubeServiceBuilder().build(Dew.Config.getCurrentProject());
+        Files.write(Paths.get(flowBasePath + KubeOpt.RES.DEPLOYMENT.getVal() + ".yaml"),
+                KubeHelper.inst(Dew.Config.getCurrentProject().getId()).toString(deployment).getBytes(StandardCharsets.UTF_8));
+        Files.write(Paths.get(flowBasePath + KubeOpt.RES.SERVICE.getVal() + ".yaml"),
+                KubeHelper.inst(Dew.Config.getCurrentProject().getId()).toString(service).getBytes(StandardCharsets.UTF_8));
+        return new HashMap<String, Object>() {
+            {
+                put(KubeOpt.RES.DEPLOYMENT.getVal(), deployment);
+                put(KubeOpt.RES.SERVICE.getVal(), service);
+            }
+        };
+    }
+
+    private void release(Map<String, Object> deployResult, String gitCommit, boolean reRelease) throws ApiException, IOException {
         appendVersionInfo(deployResult, gitCommit, reRelease);
         Dew.log.debug("Add version to ConfigMap");
         Dew.log.info("Publishing kubernetes resources");
@@ -67,30 +112,10 @@ public class DefaultReleaseFlow extends BasicFlow {
         enabledVersionInfo(gitCommit);
     }
 
-    private Map<String, Object> buildResources(String flowBasePath) throws IOException {
-        ExtensionsV1beta1Deployment deployment = new KubeDeploymentBuilder().build(Dew.Config.getCurrentProject());
-        V1Service service = new KubeServiceBuilder().build(Dew.Config.getCurrentProject());
-        Files.write(Paths.get(flowBasePath + KubeOpt.RES.DEPLOYMENT.getVal() + ".yaml"),
-                KubeHelper.inst(Dew.Config.getCurrentProject().getId()).toString(deployment).getBytes(StandardCharsets.UTF_8));
-        Files.write(Paths.get(flowBasePath + KubeOpt.RES.SERVICE.getVal() + ".yaml"),
-                KubeHelper.inst(Dew.Config.getCurrentProject().getId()).toString(service).getBytes(StandardCharsets.UTF_8));
-        return new HashMap<String, Object>() {{
-            put(KubeOpt.RES.DEPLOYMENT.getVal(), deployment);
-            put(KubeOpt.RES.SERVICE.getVal(), service);
-        }};
-    }
-
     private void deployResources(Map<String, Object> kubeResources) throws ApiException, IOException {
         V1Service service = (V1Service) kubeResources.get(KubeOpt.RES.SERVICE.getVal());
         ExtensionsV1beta1Deployment deployment = (ExtensionsV1beta1Deployment) kubeResources.get(KubeOpt.RES.DEPLOYMENT.getVal());
         KubeHelper.inst(Dew.Config.getCurrentProject().getId()).apply(deployment);
-        // 等待一段时间以清除之前的状态
-        try {
-            // TODO 更优雅的处理
-            Thread.sleep(1000);
-        } catch (InterruptedException ignore) {
-            Thread.currentThread().interrupt();
-        }
         CountDownLatch cdl = new CountDownLatch(1);
         ExtensionsV1beta1Deployment deploymentRes = (ExtensionsV1beta1Deployment) kubeResources.get(KubeOpt.RES.DEPLOYMENT.getVal());
         String select = "app="
@@ -181,10 +206,6 @@ public class DefaultReleaseFlow extends BasicFlow {
                 DockerHelper.inst(Dew.Config.getCurrentProject().getId()).registry.remove(Dew.Config.getCurrentProject().getImageName(oldGitCommit));
             }
         }
-    }
-
-    protected String getVersionName(String gitCommit) {
-        return "ver." + Dew.Config.getCurrentProject().getAppName() + "." + gitCommit;
     }
 
 }

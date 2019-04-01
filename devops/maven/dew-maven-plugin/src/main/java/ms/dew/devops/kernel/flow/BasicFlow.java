@@ -87,4 +87,20 @@ public abstract class BasicFlow {
         }
     }
 
+    protected V1ConfigMap getOldVersion(String gitCommit) throws ApiException {
+        V1ConfigMap oldVersion = KubeHelper.inst(Dew.Config.getCurrentProject().getId())
+                .read(getVersionName(gitCommit),
+                        Dew.Config.getCurrentProject().getNamespace(),
+                        KubeOpt.RES.CONFIG_MAP, V1ConfigMap.class);
+        if (oldVersion != null && oldVersion.getMetadata().getLabels().get(FLAG_VERSION_ENABLED).equalsIgnoreCase("true")) {
+            return oldVersion;
+        } else {
+            return null;
+        }
+    }
+
+    protected String getVersionName(String gitCommit) {
+        return "ver." + Dew.Config.getCurrentProject().getAppName() + "." + gitCommit;
+    }
+
 }
