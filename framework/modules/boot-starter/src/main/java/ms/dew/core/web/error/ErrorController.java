@@ -83,6 +83,52 @@ public class ErrorController extends AbstractErrorController {
         super(errorAttributes);
     }
 
+    /**
+     * Error object.
+     *
+     * @param request the request
+     * @return the object
+     */
+    @RequestMapping()
+    @ResponseBody
+    public Object error(HttpServletRequest request) {
+        Object specialError = request.getAttribute(SPECIAL_ERROR_FLAG);
+        if (specialError instanceof Resp.FallbackException) {
+            return ResponseEntity
+                    .status(FALL_BACK_STATUS)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .body(((Resp.FallbackException) specialError).getMessage());
+        }
+        Map<String, Object> error = getErrorAttributes(request, true);
+        String path;
+        String exClass = "";
+        if (error.containsKey("path")) {
+            path = (String) error.getOrDefault("path", Dew.context().getRequestUri());
+        } else {
+            path = ((RequestFacade) ((ServletRequestWrapper) request).getRequest()).getRequestURI();
+        }
+        int httpCode = (int) error.getOrDefault("status", -1);
+        String message = error.getOrDefault("message", "").toString();
+        String exMsg = (String) error.getOrDefault("error", "");
+        List exDetail = null;
+        if (error.containsKey("errors") && !((List) error.get("errors")).isEmpty()) {
+            exDetail = (List) error.get("errors");
+        }
+        if (specialError == null) {
+            specialError = new Exception(message);
+        } else {
+            exClass = specialError.getClass().getName();
+        }
+        Object[] result = error(request, path, httpCode, message, exClass, exMsg, exDetail, (Throwable) specialError);
+        httpCode = (int) result[0];
+        if (httpCode > 499) {
+            // 服务错误才通知
+            Dew.notify.sendAsync(Dew.dewConfig.getBasic().getFormat().getErrorFlag(),
+                    (Throwable) specialError, ((Throwable) specialError).getMessage());
+        }
+        return ResponseEntity.status(httpCode).contentType(MediaType.APPLICATION_JSON_UTF8).body(result[1]);
+    }
+
     private static Object[] error(HttpServletRequest request,
                                   String path, int httpCode, String msg, String exClass, String exMsg,
                                   List exDetail, Throwable specialError) {
@@ -185,52 +231,6 @@ public class ErrorController extends AbstractErrorController {
     @Override
     public String getErrorPath() {
         return errorPath;
-    }
-
-    /**
-     * Error object.
-     *
-     * @param request the request
-     * @return the object
-     */
-    @RequestMapping()
-    @ResponseBody
-    public Object error(HttpServletRequest request) {
-        Object specialError = request.getAttribute(SPECIAL_ERROR_FLAG);
-        if (specialError instanceof Resp.FallbackException) {
-            return ResponseEntity
-                    .status(FALL_BACK_STATUS)
-                    .contentType(MediaType.APPLICATION_JSON_UTF8)
-                    .body(((Resp.FallbackException) specialError).getMessage());
-        }
-        Map<String, Object> error = getErrorAttributes(request, true);
-        String path;
-        String exClass = "";
-        if (error.containsKey("path")) {
-            path = (String) error.getOrDefault("path", Dew.context().getRequestUri());
-        } else {
-            path = ((RequestFacade) ((ServletRequestWrapper) request).getRequest()).getRequestURI();
-        }
-        int httpCode = (int) error.getOrDefault("status", -1);
-        String message = error.getOrDefault("message", "").toString();
-        String exMsg = (String) error.getOrDefault("error", "");
-        List exDetail = null;
-        if (error.containsKey("errors") && !((List) error.get("errors")).isEmpty()) {
-            exDetail = (List) error.get("errors");
-        }
-        if (specialError == null) {
-            specialError = new Exception(message);
-        } else {
-            exClass = specialError.getClass().getName();
-        }
-        Object[] result = error(request, path, httpCode, message, exClass, exMsg, exDetail, (Throwable) specialError);
-        httpCode = (int) result[0];
-        if (httpCode > 499) {
-            // 服务错误才通知
-            Dew.notify.sendAsync(Dew.dewConfig.getBasic().getFormat().getErrorFlag(),
-                    (Throwable) specialError, ((Throwable) specialError).getMessage());
-        }
-        return ResponseEntity.status(httpCode).contentType(MediaType.APPLICATION_JSON_UTF8).body(result[1]);
     }
 
 }
