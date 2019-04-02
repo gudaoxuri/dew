@@ -167,27 +167,27 @@ public abstract class BasicMojo extends AbstractMojo {
 
     private void formatParameters() {
         Dew.log.info("Parsing parameters with standard underline and short");
-        Map<String, Object> formattedProperties = formatProperties();
-        formatParameters(FLAG_DEW_DEVOPS_PROFILE, formattedProperties).ifPresent(obj -> profile = (String) obj);
-        formatParameters(FLAG_DEW_DEVOPS_KUBE_CONFIG, formattedProperties).ifPresent(obj -> kubeBase64Config = (String) obj);
-        formatParameters(FLAG_DEW_DEVOPS_DOCKER_HOST, formattedProperties).ifPresent(obj -> dockerHost = (String) obj);
-        formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL, formattedProperties).ifPresent(obj -> dockerRegistryUrl = (String) obj);
-        formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME, formattedProperties).ifPresent(obj -> dockerRegistryUserName = (String) obj);
-        formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD, formattedProperties).ifPresent(obj -> dockerRegistryPassword = (String) obj);
-        formatParameters(FLAG_DEW_DEVOPS_QUIET, formattedProperties).ifPresent(obj -> quiet = (Boolean) obj);
-        formatParameters(FLAG_DEW_DEVOPS_VERSION_CUST, formattedProperties).ifPresent(obj -> customVersion = (String) obj);
-        formatParameters(FLAG_DEW_DEVOPS_POD_NAME, formattedProperties).ifPresent(obj -> podName = (String) obj);
-        formatParameters(FLAG_DEW_DEVOPS_LOG_FOLLOW, formattedProperties).ifPresent(obj -> follow = (Boolean) obj);
-        formatParameters(FLAG_DEW_DEVOPS_SCALE_REPLICAS, formattedProperties).ifPresent(obj -> replicas = (Integer) obj);
-        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO, formattedProperties).ifPresent(obj -> autoScale = (Boolean) obj);
-        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN, formattedProperties).ifPresent(obj -> minReplicas = (Integer) obj);
-        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX, formattedProperties).ifPresent(obj -> maxReplicas = (Integer) obj);
-        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG, formattedProperties).ifPresent(obj -> cpuAvg = (Integer) obj);
-        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_TPS, formattedProperties).ifPresent(obj -> tps = (Long) obj);
-        formatParameters(FLAG_DEW_DEVOPS_MOCK_CLASS_PATH, formattedProperties).ifPresent(obj -> mockClasspath = (String) obj);
+        Map<String, String> formattedProperties = formatProperties();
+        formatParameters(FLAG_DEW_DEVOPS_PROFILE, formattedProperties).ifPresent(obj -> profile = obj);
+        formatParameters(FLAG_DEW_DEVOPS_KUBE_CONFIG, formattedProperties).ifPresent(obj -> kubeBase64Config = obj);
+        formatParameters(FLAG_DEW_DEVOPS_DOCKER_HOST, formattedProperties).ifPresent(obj -> dockerHost = obj);
+        formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL, formattedProperties).ifPresent(obj -> dockerRegistryUrl = obj);
+        formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME, formattedProperties).ifPresent(obj -> dockerRegistryUserName = obj);
+        formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD, formattedProperties).ifPresent(obj -> dockerRegistryPassword = obj);
+        formatParameters(FLAG_DEW_DEVOPS_QUIET, formattedProperties).ifPresent(obj -> quiet = Boolean.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_VERSION_CUST, formattedProperties).ifPresent(obj -> customVersion = obj);
+        formatParameters(FLAG_DEW_DEVOPS_POD_NAME, formattedProperties).ifPresent(obj -> podName = obj);
+        formatParameters(FLAG_DEW_DEVOPS_LOG_FOLLOW, formattedProperties).ifPresent(obj -> follow = Boolean.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_REPLICAS, formattedProperties).ifPresent(obj -> replicas = Integer.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO, formattedProperties).ifPresent(obj -> autoScale = Boolean.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN, formattedProperties).ifPresent(obj -> minReplicas = Integer.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX, formattedProperties).ifPresent(obj -> maxReplicas = Integer.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG, formattedProperties).ifPresent(obj -> cpuAvg = Integer.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_TPS, formattedProperties).ifPresent(obj -> tps = Long.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_MOCK_CLASS_PATH, formattedProperties).ifPresent(obj -> mockClasspath = obj);
     }
 
-    private Optional<Object> formatParameters(String standardFlag, Map<String, Object> formattedProperties) {
+    private Optional<String> formatParameters(String standardFlag, Map<String, String> formattedProperties) {
         standardFlag = standardFlag.toLowerCase();
         String underlineFlag = standardFlag.replaceAll("\\.", "_");
         String shortStandardFlag = standardFlag.substring("dew.devops.".length());
@@ -207,9 +207,10 @@ public abstract class BasicMojo extends AbstractMojo {
         return Optional.empty();
     }
 
-    private Map<String, Object> formatProperties() {
+    private Map<String, String> formatProperties() {
         return System.getProperties().entrySet().stream()
-                .collect(Collectors.toMap(prop -> prop.getKey().toString().toLowerCase(), Map.Entry::getValue));
+                .collect(Collectors.toMap(prop ->
+                        prop.getKey().toString().toLowerCase().trim(), prop -> prop.getValue().toString().trim()));
     }
 
     protected String getMojoName() {
