@@ -23,7 +23,9 @@ import ms.dew.core.auth.dto.OptInfo;
 import java.util.Optional;
 
 /**
- * Dew 上下文处理
+ * Dew 上下文处理.
+ *
+ * @author gudaoxuri
  */
 public class DewContext {
 
@@ -32,37 +34,50 @@ public class DewContext {
     private static Class optInfoClazz = OptInfo.class;
 
     /**
-     * 当次请求的ID
+     * 当次请求的ID.
      */
     private String id;
     /**
-     * 请求来源IP
+     * 请求来源IP.
      */
     private String sourceIP;
     /**
-     * 请求最初的URL
+     * 请求最初的URL.
      */
     private String requestUri;
     /**
-     * 请求对应的token
+     * 请求对应的token.
      */
     private String token;
 
     private Optional innerOptInfo = Optional.empty();
 
+    /**
+     * Gets opt info clazz.
+     *
+     * @param <E> the type parameter
+     * @return the opt info clazz
+     */
     public static <E extends OptInfo> Class<E> getOptInfoClazz() {
         return optInfoClazz;
     }
 
     /**
-     * 设置自定义的OptInfo
+     * 设置自定义的OptInfo.
      *
-     * @param optInfoClazz
+     * @param <E>          the type parameter
+     * @param optInfoClazz the opt info clazz
      */
     public static <E extends OptInfo> void setOptInfoClazz(Class<E> optInfoClazz) {
         DewContext.optInfoClazz = optInfoClazz;
     }
 
+    /**
+     * Opt info optional.
+     *
+     * @param <E> the type parameter
+     * @return the optional
+     */
     public <E extends OptInfo> Optional<E> optInfo() {
         if (innerOptInfo.isPresent()) {
             return innerOptInfo;
@@ -75,6 +90,11 @@ public class DewContext {
         return innerOptInfo;
     }
 
+    /**
+     * Gets context.
+     *
+     * @return the context
+     */
     public static DewContext getContext() {
         DewContext cxt = CONTEXT.get();
         if (cxt == null) {
@@ -88,49 +108,104 @@ public class DewContext {
         return cxt;
     }
 
+    /**
+     * Exist.
+     *
+     * @return the boolean
+     */
     public static boolean exist() {
         return CONTEXT.get() != null;
     }
 
-    public static void setContext(DewContext _context) {
-        if (_context.token == null) {
-            _context.token = "";
+    /**
+     * Sets context.
+     *
+     * @param context the context
+     */
+    public static void setContext(DewContext context) {
+        if (context.token == null) {
+            context.token = "";
         }
-        CONTEXT.set(_context);
+        CONTEXT.set(context);
     }
 
+    /**
+     * Gets id.
+     *
+     * @return the id
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Sets id.
+     *
+     * @param id the id
+     */
     public void setId(String id) {
         this.id = id;
     }
 
+    /**
+     * Gets source ip.
+     *
+     * @return the source ip
+     */
     public String getSourceIP() {
         return sourceIP;
     }
 
+    /**
+     * Sets source ip.
+     *
+     * @param sourceIP the source ip
+     */
     public void setSourceIP(String sourceIP) {
         this.sourceIP = sourceIP;
     }
 
+    /**
+     * Gets token.
+     *
+     * @return the token
+     */
     public String getToken() {
         return token;
     }
 
+    /**
+     * Sets token.
+     *
+     * @param token the token
+     */
     public void setToken(String token) {
         this.token = token;
     }
 
+    /**
+     * Gets request uri.
+     *
+     * @return the request uri
+     */
     public String getRequestUri() {
         return requestUri;
     }
 
+    /**
+     * Sets request uri.
+     *
+     * @param requestUri the request uri
+     */
     public void setRequestUri(String requestUri) {
         this.requestUri = requestUri;
     }
 
+    /**
+     * Sets inner opt info.
+     *
+     * @param innerOptInfo the inner opt info
+     */
     public void setInnerOptInfo(Optional innerOptInfo) {
         this.innerOptInfo = innerOptInfo;
     }

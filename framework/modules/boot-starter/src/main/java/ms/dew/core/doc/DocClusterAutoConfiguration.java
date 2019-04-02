@@ -26,6 +26,11 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.stream.Collectors;
 
+/**
+ * Doc cluster auto configuration.
+ *
+ * @author gudaoxuri
+ */
 @Configuration
 @ConditionalOnClass(DiscoveryClient.class)
 public class DocClusterAutoConfiguration {
@@ -33,12 +38,18 @@ public class DocClusterAutoConfiguration {
     @Autowired
     private DiscoveryClient discoveryClient;
 
+    /**
+     * Doc controller doc controller.
+     *
+     * @return the doc controller
+     */
     @Bean
     public DocController docController() {
-        return new DocController(() -> discoveryClient.getServices().stream().map(serviceId -> {
-            ServiceInstance instance = discoveryClient.getInstances(serviceId).get(0);
-            return instance.getUri() + "/v2/api-docs";
-        }).collect(Collectors.toList()));
+        return new DocController(() ->
+                discoveryClient.getServices().stream().map(serviceId -> {
+                    ServiceInstance instance = discoveryClient.getInstances(serviceId).get(0);
+                    return instance.getUri() + "/v2/api-docs";
+                }).collect(Collectors.toList()));
     }
 
 }

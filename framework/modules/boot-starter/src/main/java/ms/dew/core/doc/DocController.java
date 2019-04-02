@@ -32,11 +32,16 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.List;
 import java.util.function.Supplier;
 
+/**
+ * Doc controller.
+ *
+ * @author gudaoxuri
+ */
 @RestController
 @ApiIgnore
 @Validated
 @ConditionalOnWebApplication
-@RequestMapping("${management.context-path:/management-admin}/doc")
+@RequestMapping("${management.endpoints.web.base-path:/management}/doc")
 public class DocController {
 
     private static final Logger logger = LoggerFactory.getLogger(DocController.class);
@@ -46,15 +51,27 @@ public class DocController {
     @Autowired
     private DocService docService;
 
+    /**
+     * Instantiates a new Doc controller.
+     *
+     * @param fetchSwaggerJsonUrlsFun the fetch swagger json urls fun
+     */
     public DocController(Supplier<List<String>> fetchSwaggerJsonUrlsFun) {
         this.fetchSwaggerJsonUrlsFun = fetchSwaggerJsonUrlsFun;
     }
 
+    /**
+     * Generate offline doc to string.
+     *
+     * @param request the request
+     * @return the string
+     * @throws Exception the exception
+     */
     @PutMapping("offline")
     public String generateOfflineDoc(@Validated @RequestBody OfflineDocGenerateReq request) throws Exception {
         List<String> swaggerJsonUrls =
-                (request.getSwaggerJsonUrls() == null || request.getSwaggerJsonUrls().isEmpty()) ?
-                        fetchSwaggerJsonUrlsFun.get() : request.getSwaggerJsonUrls();
+                (request.getSwaggerJsonUrls() == null
+                        || request.getSwaggerJsonUrls().isEmpty()) ? fetchSwaggerJsonUrlsFun.get() : request.getSwaggerJsonUrls();
         Resp<String> result = docService.generateOfflineDoc(request.getDocName(), request.getDocDesc(), request.getVisitUrls(), swaggerJsonUrls);
         if (result.ok()) {
             return result.getBody();

@@ -24,7 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * The type Rabbit mq span decorator.
+ * Rabbit mq span decorator.
  *
  * @author gudaoxuri
  */

@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * The type Rabbit mq message properties extract adapter.
+ * Rabbit mq message properties extract adapter.
  *
  * @author gudaoxuri
  */

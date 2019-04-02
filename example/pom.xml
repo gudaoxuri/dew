@@ -31,7 +31,7 @@
         <maven.deploy.skip>true</maven.deploy.skip>
         <sonar.skip>true</sonar.skip>
 
-        <dew.devops.skip>true</dew.devops.skip>
+        <checkstyle.skip>true</checkstyle.skip>
     </properties>
 
     <modules>

@@ -25,6 +25,11 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
 
+/**
+ * Doc local auto configuration.
+ *
+ * @author gudaoxuri
+ */
 @Configuration
 @ConditionalOnMissingClass("org.springframework.cloud.client.discovery.DiscoveryClient")
 public class DocLocalAutoConfiguration {
@@ -34,12 +39,20 @@ public class DocLocalAutoConfiguration {
     @Value("${server.context-path:}")
     private String localContextPath;
 
+    /**
+     * Doc controller doc controller.
+     *
+     * @return the doc controller
+     */
     @Bean
     public DocController docController() {
         return new DocController(() ->
-                new ArrayList<String>() {{
-                    add((localSSLKeyStore == null || localSSLKeyStore.isEmpty() ? "http" : "https") + "://localhost:" + Dew.Info.webPort + localContextPath + "/v2/api-docs");
-                }}
+                new ArrayList<String>() {
+                    {
+                        add((localSSLKeyStore == null || localSSLKeyStore.isEmpty() ? "http" : "https")
+                                + "://localhost:" + Dew.Info.webPort + localContextPath + "/v2/api-docs");
+                    }
+                }
         );
     }
 

@@ -19,7 +19,7 @@ package ms.dew.core.cluster.spi.rabbit.tracing;
 import io.opentracing.tag.StringTag;
 
 /**
- * The type Rabbit mq tracing tags.
+ * Rabbit mq tracing tags.
  *
  * @author gudaoxuri
  */

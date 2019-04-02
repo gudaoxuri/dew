@@ -70,7 +70,7 @@ public class Notify {
                 channel = (Channel) Class.forName(Notify.class.getPackage().getName() + "." + value.getType() + "Channel").newInstance();
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                 logger.error("Not exist notify type:" + value.getType());
-                System.exit(1);
+                throw new RuntimeException(e);
             }
             channel.init(value);
             NOTIFY_CHANNELS.put(key, channel);
@@ -335,7 +335,7 @@ public class Notify {
     }
 
     /**
-     * The type Context.
+     * Context.
      */
     static class Context {
         /**
@@ -361,7 +361,7 @@ public class Notify {
     }
 
     /**
-     * The type Notify delayed.
+     * Notify delayed.
      */
     static class NotifyDelayed implements Delayed {
 

@@ -22,6 +22,11 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Local date converter.
+ *
+ * @author gudaoxuri
+ */
 public class LocalDateConverter implements Converter<String, LocalDate> {
 
     @Override

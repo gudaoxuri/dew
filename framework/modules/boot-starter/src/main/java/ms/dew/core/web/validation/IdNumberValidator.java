@@ -22,6 +22,11 @@ import org.springframework.util.StringUtils;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+/**
+ * Id number validator.
+ *
+ * @author gudaoxuri
+ */
 public class IdNumberValidator implements ConstraintValidator<IdNumber, String> {
 
     @Override

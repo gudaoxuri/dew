@@ -39,6 +39,7 @@
         <maven.deploy.skip>true</maven.deploy.skip>
         <sonar.skip>true</sonar.skip>
         <dew.it.skip>false</dew.it.skip>
+        <checkstyle.skip>true</checkstyle.skip>
     </properties>
 
     <dependencies>

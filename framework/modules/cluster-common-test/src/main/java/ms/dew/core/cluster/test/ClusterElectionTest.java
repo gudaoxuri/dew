@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The type Cluster election test.
+ * Cluster election test.
  *
  * @author gudaoxuri
  */

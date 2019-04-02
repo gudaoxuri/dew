@@ -35,6 +35,8 @@ public class DockerHelperTest extends BasicTest {
 
     @Test
     public void testAll() throws IOException {
+        DockerHelper.inst("").image.remove("harbor.dew.env/dew-test/test:1.0");
+
         DockerHelper.inst("").image.pull("alpine:3.6", false);
         List<Image> images = DockerHelper.inst("").image.list("alpine:3.6");
         Assert.assertEquals("alpine:3.6", images.get(0).getRepoTags()[0]);

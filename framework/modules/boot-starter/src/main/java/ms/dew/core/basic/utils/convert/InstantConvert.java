@@ -21,6 +21,11 @@ import org.springframework.util.StringUtils;
 
 import java.time.Instant;
 
+/**
+ * Instant convert.
+ *
+ * @author gudaoxuri
+ */
 public class InstantConvert implements Converter<String, Instant> {
     @Override
     public Instant convert(String str) {

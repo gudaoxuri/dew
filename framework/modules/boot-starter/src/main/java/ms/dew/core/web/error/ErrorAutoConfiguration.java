@@ -31,6 +31,11 @@ import org.springframework.web.servlet.DispatcherServlet;
 import javax.annotation.PostConstruct;
 import javax.servlet.Servlet;
 
+/**
+ * Error auto configuration.
+ *
+ * @author gudaoxuri
+ */
 @Configuration
 @ConditionalOnWebApplication
 @ConditionalOnClass({Servlet.class, DispatcherServlet.class})
@@ -40,11 +45,20 @@ public class ErrorAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(ErrorAutoConfiguration.class);
 
+    /**
+     * Init.
+     */
     @PostConstruct
     public void init() {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 
+    /**
+     * Error controller error controller.
+     *
+     * @param errorAttributes the error attributes
+     * @return the error controller
+     */
     @Bean
     @SuppressWarnings("SpringJavaAutowiringInspection")
     public ErrorController errorController(ErrorAttributes errorAttributes) {

@@ -24,6 +24,11 @@ import java.net.NetworkInterface;
 import java.util.Enumeration;
 import java.util.regex.Pattern;
 
+/**
+ * Net utils.
+ *
+ * @author gudaoxuri
+ */
 public class NetUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(NetUtils.class);
@@ -31,6 +36,11 @@ public class NetUtils {
     private static final String ANYHOST = "0.0.0.0";
     private static final Pattern IP_PATTERN = Pattern.compile("\\d{1,3}(\\.\\d{1,3}){3,5}$");
 
+    /**
+     * Gets local address.
+     *
+     * @return the local address
+     */
     public static InetAddress getLocalAddress() {
         InetAddress localAddress = null;
         try {
@@ -71,8 +81,9 @@ public class NetUtils {
     }
 
     private static boolean isValidAddress(InetAddress address) {
-        if (address == null || address.isLoopbackAddress())
+        if (address == null || address.isLoopbackAddress()) {
             return false;
+        }
         String name = address.getHostAddress();
         return (name != null
                 && !ANYHOST.equals(name)

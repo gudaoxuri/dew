@@ -30,8 +30,6 @@
         <maven.install.skip>true</maven.install.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
         <sonar.skip>true</sonar.skip>
-
-        <dew.devops.skip>true</dew.devops.skip>
     </properties>
 
     <modules>

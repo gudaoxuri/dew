@@ -36,7 +36,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * The type Open tracing auto configuration.
+ * Open tracing auto configuration.
  *
  * @author gudaoxuri
  */

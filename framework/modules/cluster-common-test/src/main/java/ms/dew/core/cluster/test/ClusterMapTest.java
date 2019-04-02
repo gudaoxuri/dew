@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 
 /**
- * The type Cluster map test.
+ * Cluster map test.
  *
  * @author gudaoxuri
  */
@@ -68,7 +68,7 @@ public class ClusterMapTest {
     }
 
     /**
-     * The type Test map obj.
+     * Test map obj.
      */
     public static class TestMapObj implements Serializable {
 

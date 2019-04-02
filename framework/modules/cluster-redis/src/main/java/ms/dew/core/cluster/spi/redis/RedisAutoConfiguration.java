@@ -28,7 +28,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import javax.annotation.PostConstruct;
 
 /**
- * The type Redis auto configuration.
+ * Redis auto configuration.
  *
  * @author gudaoxuri
  */

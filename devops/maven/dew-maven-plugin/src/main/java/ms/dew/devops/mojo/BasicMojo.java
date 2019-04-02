@@ -133,9 +133,10 @@ public abstract class BasicMojo extends AbstractMojo {
         if (Dew.stopped) {
             return;
         }
-        formatParameters();
         try {
             Dew.log = new DewLog(super.getLog(), "[DEW][" + getMojoName() + "]:");
+            formatParameters();
+            Dew.log.info("debug>>"+kubeBase64Config);
             Dew.log.info("Start...");
             Dew.Init.init(session, pluginManager, profile,
                     dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,
@@ -166,6 +167,7 @@ public abstract class BasicMojo extends AbstractMojo {
     }
 
     private void formatParameters() {
+        Dew.log.info("Parsing parameters with standard underline and short");
         Map<String, Object> formattedProperties = formatProperties();
         formatParameters(FLAG_DEW_DEVOPS_PROFILE, formattedProperties).ifPresent(obj -> profile = (String) obj);
         formatParameters(FLAG_DEW_DEVOPS_KUBE_CONFIG, formattedProperties).ifPresent(obj -> kubeBase64Config = (String) obj);

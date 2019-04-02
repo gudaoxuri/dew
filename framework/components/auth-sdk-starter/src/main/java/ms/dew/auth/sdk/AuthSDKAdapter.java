@@ -22,6 +22,11 @@ import ms.dew.core.auth.dto.OptInfo;
 
 import java.util.Optional;
 
+/**
+ * Auth sdk adapter.
+ *
+ * @author gudaoxuri
+ */
 public class AuthSDKAdapter implements AuthAdapter {
 
     @Override

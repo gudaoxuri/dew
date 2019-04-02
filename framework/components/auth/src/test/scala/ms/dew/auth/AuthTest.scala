@@ -24,14 +24,6 @@ import ms.dew.auth.dto.user.{LoginReq, RegisterReq, UserModifyReq}
 import ms.dew.auth.sdk.TokenInfo
 import ms.dew.auth.service.ManagementService
 import ms.dew.test.DewTestAutoConfiguration
-import ms.dew.Dew
-import ms.dew.auth.domain.{Ident, Resource}
-import ms.dew.auth.dto.basic.{AccessTokenReq, AccessTokenResp}
-import ms.dew.auth.dto.management.{AccountAddReq, AccountModifyReq, AccountResp, IdentAddReq, IdentModifyReq, IdentResp, ResourceAddReq, ResourceModifyReq, ResourceResp, RoleAddReq, RoleModifyReq, RoleResp, TenantAddReq, TenantModifyReq, TenantResp}
-import ms.dew.auth.dto.user.{LoginReq, RegisterReq, UserModifyReq}
-import ms.dew.auth.sdk.TokenInfo
-import ms.dew.auth.service.ManagementService
-import ms.dew.test.DewTestAutoConfiguration
 import org.junit.runner.RunWith
 import org.junit.{Before, Test}
 import org.springframework.beans.factory.annotation.Autowired
@@ -61,6 +53,7 @@ class AuthTest extends BasicTest {
     accessTokenReq.secret = managementService.getTenant("SYSTEM").getBody.secret
     val accessTokenResp = post("/basic/access-token", accessTokenReq, classOf[AccessTokenResp])
     accessToken = accessTokenResp.getBody.accessToken
+    logger.info("Access Token:" + accessToken)
   }
 
   @Test

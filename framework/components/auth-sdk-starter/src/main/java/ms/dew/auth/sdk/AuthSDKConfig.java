@@ -22,27 +22,57 @@ import org.springframework.stereotype.Component;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Auth sdk config.
+ *
+ * @author gudaoxuri
+ */
 @Component
 @ConfigurationProperties(prefix = "dew.component.auth.sdk")
 public class AuthSDKConfig {
 
+    /**
+     * The constant HTTP_ACCESS_TOKEN.
+     */
     public static final String HTTP_ACCESS_TOKEN = "X-Access-Token";
+    /**
+     * The constant HTTP_USER_TOKEN.
+     */
     public static final String HTTP_USER_TOKEN = "X-User-Token";
+    /**
+     * The constant HTTP_URI.
+     */
     public static final String HTTP_URI = "X-Uri";
 
     private String serverUrl = "";
 
     private Set<String> whiteList = new HashSet<>();
 
+    /**
+     * Gets server url.
+     *
+     * @return the server url
+     */
     public String getServerUrl() {
         return serverUrl;
     }
 
+    /**
+     * Sets server url.
+     *
+     * @param serverUrl the server url
+     * @return the server url
+     */
     public AuthSDKConfig setServerUrl(String serverUrl) {
         this.serverUrl = serverUrl;
         return this;
     }
 
+    /**
+     * Gets white list.
+     *
+     * @return the white list
+     */
     public Set<String> getWhiteList() {
         if (!whiteList.contains("POST@/dew-auth/basic/access-token")) {
             whiteList.add("POST@/dew-auth/basic/access-token");
@@ -53,6 +83,12 @@ public class AuthSDKConfig {
         return whiteList;
     }
 
+    /**
+     * Sets white list.
+     *
+     * @param whiteList the white list
+     * @return the white list
+     */
     public AuthSDKConfig setWhiteList(Set<String> whiteList) {
         this.whiteList = whiteList;
         return this;

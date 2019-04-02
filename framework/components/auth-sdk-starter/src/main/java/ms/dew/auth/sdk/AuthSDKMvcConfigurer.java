@@ -23,6 +23,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Auth sdk mvc configurer.
+ *
+ * @author gudaoxuri
+ */
 @Configuration
 @ConditionalOnWebApplication
 @Order(30000)

@@ -27,16 +27,31 @@ import javax.annotation.PostConstruct;
 import javax.servlet.*;
 import java.io.IOException;
 
+/**
+ * Dew startup.
+ * <p>
+ * 此类用于确保Dew对象最先被加载
+ *
+ * @author gudaoxuri
+ */
 @Configuration
 public class DewStartup {
 
     private static final Logger logger = LoggerFactory.getLogger(DewStartup.class);
 
+    /**
+     * Init.
+     */
     @PostConstruct
     public void init() {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 
+    /**
+     * Dew startup filter filter.
+     *
+     * @return the filter
+     */
     @Bean
     public Filter dewStartupFilter() {
         return new DewStartupFilter();
@@ -45,6 +60,9 @@ public class DewStartup {
     @Autowired
     private Dew dew;
 
+    /**
+     * Dew startup filter.
+     */
     @Order(Integer.MIN_VALUE)
     public class DewStartupFilter implements Filter {
 
@@ -54,7 +72,8 @@ public class DewStartup {
         }
 
         @Override
-        public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
+                throws IOException, ServletException {
             filterChain.doFilter(servletRequest, servletResponse);
         }
 

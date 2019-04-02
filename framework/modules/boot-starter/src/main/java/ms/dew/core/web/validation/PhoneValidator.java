@@ -22,6 +22,11 @@ import org.springframework.util.StringUtils;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+/**
+ * Phone validator.
+ *
+ * @author gudaoxuri
+ */
 public class PhoneValidator implements ConstraintValidator<Phone, String> {
     @Override
     public void initialize(Phone constraintAnnotation) {

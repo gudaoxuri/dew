@@ -19,6 +19,7 @@ package com.trc.test;
 
 import com.trc.test.auth.AuthTest;
 import com.trc.test.cluster.ClusterTest;
+import com.trc.test.doc.DocTest;
 import com.trc.test.notify.NotifyTest;
 import com.trc.test.web.WebTest;
 import org.junit.Test;
@@ -46,12 +47,16 @@ public class AllTest {
     @Resource
     private NotifyTest notifyTest;
 
+    @Resource
+    private DocTest docTest;
+
     @Test
     public void testAll() throws Exception {
         clusterTest.testAll();
         webTest.testAll();
         authTest.testAll();
         notifyTest.testAll();
+        docTest.testAll();
     }
 
 }

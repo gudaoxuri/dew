@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * The type Cluster cache test.
+ * Cluster cache test.
  *
  * @author gudaoxuri
  */

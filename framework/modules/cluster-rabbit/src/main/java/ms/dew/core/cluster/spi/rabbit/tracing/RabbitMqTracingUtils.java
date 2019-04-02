@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * The type Rabbit mq tracing utils.
+ * Rabbit mq tracing utils.
  *
  * @author gudaoxuri
  */

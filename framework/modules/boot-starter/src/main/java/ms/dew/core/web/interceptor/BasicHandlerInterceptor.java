@@ -28,7 +28,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
 
 /**
- * Dew Servlet拦截器
+ * Dew Servlet拦截器.
+ *
+ * @author gudaoxuri
  */
 public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
 
@@ -70,7 +72,10 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
         context.setToken(token);
         DewContext.setContext(context);
 
-        logger.trace("[{}] {}{} from {}", request.getMethod(), request.getRequestURI(), request.getQueryString() == null ? "" : "?" + request.getQueryString(), Dew.context().getSourceIP());
+        logger.trace("[{}] {}{} from {}",
+                request.getMethod(),
+                request.getRequestURI(),
+                request.getQueryString() == null ? "" : "?" + request.getQueryString(), Dew.context().getSourceIP());
         return super.preHandle(request, response, handler);
     }
 

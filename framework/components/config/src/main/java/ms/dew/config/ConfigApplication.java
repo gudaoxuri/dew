@@ -20,10 +20,20 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.config.server.EnableConfigServer;
 
+/**
+ * Config application.
+ *
+ * @author gudaoxuri
+ */
 @EnableConfigServer
 @SpringBootApplication
 public class ConfigApplication {
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         new SpringApplicationBuilder(ConfigApplication.class).run(args);
     }

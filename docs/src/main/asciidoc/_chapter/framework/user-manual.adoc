@@ -729,10 +729,11 @@ dew:
             url: # 联系人URL
             email: # 联系人邮箱
 
-management: # 文档生成地址前缀为 /management.context-path
-  security:
-    enabled: false # 建议关闭管理功能的安全认证
-  context-path: /management-admin # 建议修改此前缀以便在网关上统一过滤管理请求
+management: # 文档生成地址前缀为 /management.endpoints.web.base-path
+  endpoints:
+    web:
+      base-path: /management
+
 ----
 
 [source,txt]
@@ -740,7 +741,7 @@ management: # 文档生成地址前缀为 /management.context-path
 ----
 访问任意服务实例:
 
-PUT /{management.context-path}/doc/offline
+PUT /{management.endpoints.web.base-path}/doc/offline
 
 {
 	"docName":"", # 文档名称

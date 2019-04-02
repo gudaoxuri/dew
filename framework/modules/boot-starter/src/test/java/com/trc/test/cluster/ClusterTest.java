@@ -18,16 +18,25 @@ package com.trc.test.cluster;
 
 import ms.dew.Dew;
 import ms.dew.core.cluster.test.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ClusterTest {
 
+    private static final Logger logger = LoggerFactory.getLogger(ClusterTest.class);
+
     public void testAll() throws InterruptedException {
+        logger.info("Testing MQ");
         new ClusterMQTest().test(Dew.cluster.mq);
+        logger.info("Testing Cache");
         new ClusterCacheTest().test(Dew.cluster.cache);
+        logger.info("Testing Lock");
         new ClusterLockTest().test(Dew.cluster.lock.instance("test"));
+        logger.info("Testing Map");
         new ClusterMapTest().test(Dew.cluster.map.instance("test", ClusterMapTest.TestMapObj.class));
+        logger.info("Testing Election");
         new ClusterElectionTest().test(Dew.cluster.election.instance("test"));
     }
 

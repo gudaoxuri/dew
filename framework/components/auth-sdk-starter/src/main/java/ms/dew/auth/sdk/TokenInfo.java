@@ -20,34 +20,72 @@ import ms.dew.core.auth.dto.OptInfo;
 
 import java.util.Map;
 
+/**
+ * 操作用户信息，支持多租户.
+ *
+ * @author gudaoxuri
+ */
 public class TokenInfo extends OptInfo<TokenInfo> {
 
     private String name;
     private Map<String, String> roles;
     private String tenantId;
 
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets name.
+     *
+     * @param name the name
+     * @return the name
+     */
     public TokenInfo setName(String name) {
         this.name = name;
         return this;
     }
 
+    /**
+     * Gets roles.
+     *
+     * @return the roles
+     */
     public Map<String, String> getRoles() {
         return roles;
     }
 
+    /**
+     * Sets roles.
+     *
+     * @param roles the roles
+     * @return the roles
+     */
     public TokenInfo setRoles(Map<String, String> roles) {
         this.roles = roles;
         return this;
     }
 
+    /**
+     * Gets tenant id.
+     *
+     * @return the tenant id
+     */
     public String getTenantId() {
         return tenantId;
     }
 
+    /**
+     * Sets tenant id.
+     *
+     * @param tenantId the tenant id
+     * @return the tenant id
+     */
     public TokenInfo setTenantId(String tenantId) {
         this.tenantId = tenantId;
         return this;

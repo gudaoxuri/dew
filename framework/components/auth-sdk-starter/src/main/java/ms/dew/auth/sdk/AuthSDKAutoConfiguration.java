@@ -25,6 +25,11 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * Auth sdk auto configuration.
+ *
+ * @author gudaoxuri
+ */
 @Configuration
 @AutoConfigureAfter(Dew.class)
 public class AuthSDKAutoConfiguration {

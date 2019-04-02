@@ -28,7 +28,7 @@ import javax.annotation.PreDestroy;
 import java.io.IOException;
 
 /**
- * The type Dew test auto configuration.
+ * Dew test auto configuration.
  *
  * @author gudaoxuri
  */

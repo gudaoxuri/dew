@@ -17,9 +17,6 @@
 package ms.dew.auth.controller
 
 import com.ecfront.dew.common.Resp
-import ms.dew.auth.dto.basic.{AccessTokenReq, AccessTokenResp}
-import ms.dew.auth.sdk.{AuthSDKConfig, TokenInfo}
-import ms.dew.auth.service.BasicService
 import io.swagger.annotations.Api
 import ms.dew.auth.dto.basic.{AccessTokenReq, AccessTokenResp}
 import ms.dew.auth.sdk.{AuthSDKConfig, TokenInfo}
@@ -28,6 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation._
 
+/**
+  * Base controller.
+  *
+  * @param basicService basic service
+  * @author gudaoxuri
+  */
 @RestController
 @Api(value = "基础操作")
 @RequestMapping(value = Array("/basic"))

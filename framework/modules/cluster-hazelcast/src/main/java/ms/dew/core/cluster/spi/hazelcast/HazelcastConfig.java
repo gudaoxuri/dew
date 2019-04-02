@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The type Hazelcast config.
+ * Hazelcast config.
  *
  * @author gudaoxuri
  */

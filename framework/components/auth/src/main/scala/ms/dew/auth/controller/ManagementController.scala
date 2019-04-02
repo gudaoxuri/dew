@@ -17,15 +17,19 @@
 package ms.dew.auth.controller
 
 import com.ecfront.dew.common.{Page, Resp}
-import ms.dew.auth.dto.management._
-import ms.dew.auth.service.ManagementService
 import io.swagger.annotations.Api
-import ms.dew.auth.dto.management.{AccountAddReq, AccountModifyReq, AccountResp, IdentAddReq, IdentModifyReq, IdentResp, ResourceAddReq, ResourceModifyReq, ResourceResp, RoleAddReq, RoleModifyReq, RoleResp, TenantAddReq, TenantModifyReq, TenantResp}
+import ms.dew.auth.dto.management._
 import ms.dew.auth.service.ManagementService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation._
 
+/**
+  * Management controller.
+  *
+  * @param managementService management service
+  * @author gudaoxuri
+  */
 @RestController
 @Api(value = "后台管理")
 @RequestMapping(value = Array("/management"))

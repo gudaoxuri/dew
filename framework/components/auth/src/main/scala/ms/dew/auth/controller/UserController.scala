@@ -17,17 +17,20 @@
 package ms.dew.auth.controller
 
 import com.ecfront.dew.common.Resp
-import ms.dew.auth.dto.user._
-import ms.dew.auth.sdk.TokenInfo
-import ms.dew.auth.service.UserService
 import io.swagger.annotations.Api
-import ms.dew.auth.dto.user.{LoginReq, RegisterReq, SendVCReq, UserModifyReq, UserResp}
+import ms.dew.auth.dto.user._
 import ms.dew.auth.sdk.TokenInfo
 import ms.dew.auth.service.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation._
 
+/**
+  * User controller.
+  *
+  * @param userService user service
+  * @author gudaoxuri
+  */
 @RestController
 @Api(value = "用户操作")
 @RequestMapping(value = Array("/user"))

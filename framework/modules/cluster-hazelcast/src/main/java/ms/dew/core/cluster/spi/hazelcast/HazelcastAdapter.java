@@ -24,7 +24,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
 /**
- * The type Hazelcast adapter.
+ * Hazelcast adapter.
  *
  * @author gudaoxuri
  */
