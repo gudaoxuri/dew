@@ -50,3 +50,5 @@ mvnDebug ms.dew:dew-maven-plugin::build -P devops -Ddew.devops.kube.config=YXBpV
 
 kubectl run -i --tty load-generator --image=busybox /bin/sh
 curl http://example.dew.env/invoke1/ping?code=23435; done
+
+mvnDebug -P devops ms.dew:dew-maven-plugin:release -Dmaven.test.skip=true -Ddew.devops.profile=test -Ddew_devops_kube_config=ddddd

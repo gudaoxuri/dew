@@ -440,6 +440,8 @@ helm install --name dew-gitlab-runner-test --namespace devops \
     --set runners.cache.s3CacheInsecure=true \
     --set runners.cache.secretName=minio-access \
     --set runners.env.MAVEN_OPTS=-Dmaven.repo.local=.m2 \
+    --set runners.env.dew_devops_profile=test \
+    --set runners.env.dew_devops_quiet=true \
     --set runners.env.docker_host=<...> \
     --set runners.env.docker_registry_url=https://harbor.dew.ms/v2 \
     --set runners.env.kube_config=<...>
