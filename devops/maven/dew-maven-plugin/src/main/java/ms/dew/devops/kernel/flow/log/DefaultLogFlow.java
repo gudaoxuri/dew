@@ -51,7 +51,7 @@ public class DefaultLogFlow extends BasicFlow {
             AtomicInteger idx = new AtomicInteger(0);
             Map<Integer, V1Pod> pods = KubeHelper.inst(Dew.Config.getCurrentProject().getId())
                     .list("app=" + Dew.Config.getCurrentProject().getAppName() + ",group=" + Dew.Config.getCurrentProject().getAppGroup() + ",version=" + Dew.Config.getCurrentProject().getGitCommit(),
-                    Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.POD, V1Pod.class)
+                            Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.POD, V1Pod.class)
                     .stream()
                     .filter(pod -> pod.getStatus().getContainerStatuses().stream()
                             .anyMatch(container -> container.getName().equalsIgnoreCase(KubeDeploymentBuilder.FLAG_CONTAINER_NAME)))

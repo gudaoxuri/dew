@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package mock;import ms.dew.devops.helper.GitHelper;
+package mock;
+
+import ms.dew.devops.helper.GitHelper;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 
 /**

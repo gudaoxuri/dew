@@ -56,10 +56,10 @@
         </dependency>
     </dependencies>
 
-<!--    <modules>
-        <module>src/it/helloworld-backend</module>
-        <module>src/it/helloworld-frontend</module>
-    </modules>-->
+    <!--    <modules>
+            <module>src/it/helloworld-backend</module>
+            <module>src/it/helloworld-frontend</module>
+        </modules>-->
 
     <build>
         <plugins>

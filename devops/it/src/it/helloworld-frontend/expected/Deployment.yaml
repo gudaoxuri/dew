@@ -32,10 +32,10 @@ spec:
         group: ms.dew
     spec:
       containers:
-      - image: harbor.dew.env/dew-test/helloworld-frontend:0001
-        imagePullPolicy: IfNotPresent
-        name: dew-app
-        ports:
-        - containerPort: 80
-          name: http
-          protocol: TCP
+        - image: harbor.dew.env/dew-test/helloworld-frontend:0001
+          imagePullPolicy: IfNotPresent
+          name: dew-app
+          ports:
+            - containerPort: 80
+              name: http
+              protocol: TCP

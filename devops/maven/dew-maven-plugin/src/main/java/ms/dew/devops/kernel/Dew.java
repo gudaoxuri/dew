@@ -73,7 +73,7 @@ public class Dew {
             if (!initialized.getAndSet(true)) {
                 GitHelper.init(log);
                 YamlHelper.init(log);
-                initFinalConfig(profile, dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,customVersion);
+                initFinalConfig(profile, dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config, customVersion);
                 Config.getProjects().values().forEach(config -> {
                     DockerHelper.init(config.getId(), log, config.getDocker().getHost(),
                             config.getDocker().getRegistryUrl(), config.getDocker().getRegistryUserName(), config.getDocker().getRegistryPassword());
@@ -93,7 +93,7 @@ public class Dew {
         private static void initFinalConfig(String profile,
                                             String dockerHost, String dockerRegistryUrl,
                                             String dockerRegistryUserName, String dockerRegistryPassword,
-                                            String kubeBase64Config,String customVersion)
+                                            String kubeBase64Config, String customVersion)
                 throws IOException, InvocationTargetException, IllegalAccessException {
             String basicDirectory = mavenSession.getTopLevelProject().getBasedir().getPath() + File.separator;
             String basicConfig = "";
@@ -142,7 +142,7 @@ public class Dew {
                 }
                 Config.config.getProjects().put(project.getId(),
                         ConfigBuilder.buildProject(profile, dewConfig, project,
-                                dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,customVersion));
+                                dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config, customVersion));
                 log.debug("[" + project.getGroupId() + ":" + project.getArtifactId() + "] configured");
             }
         }

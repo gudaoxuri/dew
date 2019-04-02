@@ -18,7 +18,6 @@ package ms.dew.auth.dto.user
 
 import com.ecfront.dew.common.Page
 import ms.dew.auth.domain.Account
-import ms.dew.auth.domain.Account
 import ms.dew.auth.dto.common.SafeStatusDTO
 
 import scala.beans.BeanProperty

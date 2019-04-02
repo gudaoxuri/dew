@@ -13,8 +13,8 @@
   "basePath": "/",
   "tags": [
     {
-      "name":"applicationName",
-      "description":"swagger-test"
+      "name": "applicationName",
+      "description": "swagger-test"
     },
     {
       "name": "1.8.2版本",

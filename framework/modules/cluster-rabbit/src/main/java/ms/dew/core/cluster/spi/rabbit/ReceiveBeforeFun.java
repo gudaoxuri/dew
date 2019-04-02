@@ -35,6 +35,6 @@ public interface ReceiveBeforeFun {
      * @param messageProperties the message properties
      * @return the object
      */
-    Object invoke(String exchange, String routingKey,String queueName,AMQP.BasicProperties messageProperties);
+    Object invoke(String exchange, String routingKey, String queueName, AMQP.BasicProperties messageProperties);
 
 }

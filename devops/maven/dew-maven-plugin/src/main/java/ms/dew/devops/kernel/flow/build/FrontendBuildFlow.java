@@ -30,7 +30,7 @@ public class FrontendBuildFlow extends BasicBuildFlow {
 
     protected boolean preDockerBuild(String flowBasePath) throws IOException, MojoExecutionException {
         String preparePath = Dew.Config.getCurrentProject().getMvnTargetDirectory() + "dew_prepare" + File.separator;
-        Files.move(Paths.get(preparePath+ "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
+        Files.move(Paths.get(preparePath + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
         $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/frontend/Dockerfile"), flowBasePath + "Dockerfile");
         return true;
     }

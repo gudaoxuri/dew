@@ -17,12 +17,12 @@
 package ms.dew.example.web;
 
 import com.ecfront.dew.common.Resp;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import ms.dew.core.web.validation.CreateGroup;
 import ms.dew.core.web.validation.IdNumber;
 import ms.dew.core.web.validation.Phone;
 import ms.dew.core.web.validation.UpdateGroup;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
@@ -49,7 +49,7 @@ public class WebExampleController {
      */
     @GetMapping("example")
     @ApiOperation(value = "示例方法")
-    public Map<String,Integer> example() {
+    public Map<String, Integer> example() {
         for (int i = 0; i < 100; i++) {
             logger.info(atomicInteger.getAndIncrement() + " Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
         }
@@ -58,7 +58,7 @@ public class WebExampleController {
 
     @ApiOperation(value = "示例方法")
     @GetMapping("example2")
-    public Map<Integer,User> example2() {
+    public Map<Integer, User> example2() {
         for (int i = 0; i < 100; i++) {
             logger.info(atomicInteger.getAndIncrement() + " Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
         }
@@ -67,7 +67,7 @@ public class WebExampleController {
 
     @ApiOperation(value = "示例方法")
     @GetMapping("example3")
-    public Map<Integer,List<User>> example3() {
+    public Map<Integer, List<User>> example3() {
         for (int i = 0; i < 100; i++) {
             logger.info(atomicInteger.getAndIncrement() + " Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
         }
@@ -76,7 +76,7 @@ public class WebExampleController {
 
     @ApiOperation(value = "示例方法")
     @GetMapping("example4")
-    public Map<Integer,Map<String,String>> example4() {
+    public Map<Integer, Map<String, String>> example4() {
         for (int i = 0; i < 100; i++) {
             logger.info(atomicInteger.getAndIncrement() + " Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
         }
@@ -111,7 +111,7 @@ public class WebExampleController {
     }
 
     @PutMapping(value = "valid-update-u1")
-    public List<Map<String,User>> validUpdateWithUser1(@Validated(UpdateGroup.class) User user) {
+    public List<Map<String, User>> validUpdateWithUser1(@Validated(UpdateGroup.class) User user) {
         return new ArrayList<>();
     }
 

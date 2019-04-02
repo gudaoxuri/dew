@@ -43,7 +43,7 @@ public class DocTest {
                         "        \"测试环境\":\"http://test.dew.ecfront.com\"\n" +
                         "  }," +
                         "\"swaggerJsonUrls\":[\"http://localhost:8080/v2/api-docs\"]" +
-                        "}",headers);
+                        "}", headers);
         String docStr = testRestTemplate
                 .exchange("/management/doc/offline", HttpMethod.PUT, entity, String.class)
                 .getBody();

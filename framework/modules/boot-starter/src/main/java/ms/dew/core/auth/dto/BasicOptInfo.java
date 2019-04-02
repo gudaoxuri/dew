@@ -26,9 +26,8 @@ import java.util.List;
 /**
  * 基础操作用户信息.
  *
- * @author gudaoxuri
- *
  * @param <E> 扩展操作用户信息类型
+ * @author gudaoxuri
  */
 @ApiModel(value = "操作用户信息")
 public class BasicOptInfo<E> extends OptInfo<E> {

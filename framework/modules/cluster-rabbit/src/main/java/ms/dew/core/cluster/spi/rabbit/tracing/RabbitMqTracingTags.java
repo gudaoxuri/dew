@@ -25,33 +25,33 @@ import io.opentracing.tag.StringTag;
  */
 final class RabbitMqTracingTags {
 
-  /**
-   * The Rabbitmq.
-   */
-  static final StringTag RABBITMQ = new StringTag("rabbitmq");
-  /**
-   * The Message id.
-   */
-  static final StringTag MESSAGE_ID = new StringTag("messageid");
-  /**
-   * The Routing key.
-   */
-  static final StringTag ROUTING_KEY = new StringTag("routingkey");
-  /**
-   * The Consumer queue.
-   */
-  static final StringTag CONSUMER_QUEUE = new StringTag("consumerqueue");
-  /**
-   * The Exchange.
-   */
-  static final StringTag EXCHANGE = new StringTag("exchange");
-  /**
-   * The Span kind producer.
-   */
-  static final String SPAN_KIND_PRODUCER = RABBITMQ.getKey() + "-send";
-  /**
-   * The Span kind consumer.
-   */
-  static final String SPAN_KIND_CONSUMER = RABBITMQ.getKey() + "-receive";
+    /**
+     * The Rabbitmq.
+     */
+    static final StringTag RABBITMQ = new StringTag("rabbitmq");
+    /**
+     * The Message id.
+     */
+    static final StringTag MESSAGE_ID = new StringTag("messageid");
+    /**
+     * The Routing key.
+     */
+    static final StringTag ROUTING_KEY = new StringTag("routingkey");
+    /**
+     * The Consumer queue.
+     */
+    static final StringTag CONSUMER_QUEUE = new StringTag("consumerqueue");
+    /**
+     * The Exchange.
+     */
+    static final StringTag EXCHANGE = new StringTag("exchange");
+    /**
+     * The Span kind producer.
+     */
+    static final String SPAN_KIND_PRODUCER = RABBITMQ.getKey() + "-send";
+    /**
+     * The Span kind consumer.
+     */
+    static final String SPAN_KIND_CONSUMER = RABBITMQ.getKey() + "-receive";
 
 }

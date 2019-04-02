@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package mock;import ms.dew.devops.helper.GitOpt;
+package mock;
+
+import ms.dew.devops.helper.GitOpt;
 import org.apache.maven.plugin.logging.Log;
 
 import java.util.ArrayList;

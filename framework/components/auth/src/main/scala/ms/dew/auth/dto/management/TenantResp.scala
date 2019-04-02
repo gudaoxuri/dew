@@ -18,8 +18,6 @@ package ms.dew.auth.dto.management
 
 import com.ecfront.dew.common.Page
 import ms.dew.auth.domain.Tenant
-import ms.dew.auth.helper.CommonConverter
-import ms.dew.auth.domain.Tenant
 import ms.dew.auth.dto.common.SafeStatusDTO
 import ms.dew.auth.helper.CommonConverter
 

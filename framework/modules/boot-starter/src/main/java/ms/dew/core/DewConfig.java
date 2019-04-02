@@ -39,7 +39,7 @@ public class DewConfig {
     private Map<String, NotifyConfig> notifies = new HashMap<>();
 
     /**
-      * Basic.
+     * Basic.
      */
     public static class Basic {
 
@@ -125,7 +125,7 @@ public class DewConfig {
         }
 
         /**
-          * Doc.
+         * Doc.
          */
         public static class Doc {
 
@@ -190,7 +190,7 @@ public class DewConfig {
             }
 
             /**
-              * Contact.
+             * Contact.
              */
             public static class Contact {
                 private String name;
@@ -255,7 +255,7 @@ public class DewConfig {
         }
 
         /**
-          * Format.
+         * Format.
          */
         public static class Format {
 
@@ -301,7 +301,7 @@ public class DewConfig {
         }
 
         /**
-          * Error mapping.
+         * Error mapping.
          */
         public static class ErrorMapping {
 
@@ -420,7 +420,7 @@ public class DewConfig {
     }
 
     /**
-      * Cluster.
+     * Cluster.
      */
     public static class Cluster {
 
@@ -541,7 +541,7 @@ public class DewConfig {
         }
 
         /**
-          * Config.
+         * Config.
          */
         public static class Config {
 
@@ -608,7 +608,7 @@ public class DewConfig {
     }
 
     /**
-      * Security.
+     * Security.
      */
     public static class Security {
 
@@ -693,7 +693,7 @@ public class DewConfig {
         }
 
         /**
-          * Security cors.
+         * Security cors.
          */
         public static class SecurityCORS {
 
@@ -759,7 +759,7 @@ public class DewConfig {
     }
 
     /**
-      * Metric.
+     * Metric.
      */
     public static class Metric {
 

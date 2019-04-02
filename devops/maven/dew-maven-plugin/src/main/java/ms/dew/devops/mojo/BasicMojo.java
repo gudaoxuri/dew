@@ -136,7 +136,6 @@ public abstract class BasicMojo extends AbstractMojo {
         try {
             Dew.log = new DewLog(super.getLog(), "[DEW][" + getMojoName() + "]:");
             formatParameters();
-            Dew.log.info("debug>>"+kubeBase64Config);
             Dew.log.info("Start...");
             Dew.Init.init(session, pluginManager, profile,
                     dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,

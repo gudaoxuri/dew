@@ -18,7 +18,6 @@ package ms.dew.auth.dto.management
 
 import com.ecfront.dew.common.Page
 import ms.dew.auth.domain.Resource
-import ms.dew.auth.domain.Resource
 import ms.dew.auth.helper.CommonConverter
 
 import scala.beans.BeanProperty

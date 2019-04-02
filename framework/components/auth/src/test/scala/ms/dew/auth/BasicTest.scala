@@ -21,7 +21,6 @@ import java.util
 import com.ecfront.dew.common.{Page, Resp}
 import com.typesafe.scalalogging.LazyLogging
 import ms.dew.auth.sdk.AuthSDKConfig
-import ms.dew.auth.sdk.AuthSDKConfig
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.{HttpEntity, HttpHeaders, HttpMethod}
