@@ -32,8 +32,6 @@ import java.util.function.Consumer;
  */
 public class RabbitClusterMQ extends AbsClusterMQ {
 
-    private RabbitAdapter rabbitAdapter;
-
     private static SendBeforeFun sendBeforeFun = (exchange, routingKey, messageProperties) -> null;
     private static SendErrorFun sendErrorFun = (ex, beforeResult) -> {
     };
@@ -44,6 +42,16 @@ public class RabbitClusterMQ extends AbsClusterMQ {
     };
     private static ReceiveFinishFun receiveFinishFun = beforeResult -> {
     };
+    private RabbitAdapter rabbitAdapter;
+
+    /**
+     * Instantiates a new Rabbit cluster mq.
+     *
+     * @param rabbitAdapter the rabbit adapter
+     */
+    public RabbitClusterMQ(RabbitAdapter rabbitAdapter) {
+        this.rabbitAdapter = rabbitAdapter;
+    }
 
     /**
      * Sets send before fun.
@@ -97,15 +105,6 @@ public class RabbitClusterMQ extends AbsClusterMQ {
      */
     public static void setReceiveFinishFun(ReceiveFinishFun receiveFinishFun) {
         RabbitClusterMQ.receiveFinishFun = receiveFinishFun;
-    }
-
-    /**
-     * Instantiates a new Rabbit cluster mq.
-     *
-     * @param rabbitAdapter the rabbit adapter
-     */
-    public RabbitClusterMQ(RabbitAdapter rabbitAdapter) {
-        this.rabbitAdapter = rabbitAdapter;
     }
 
     /**

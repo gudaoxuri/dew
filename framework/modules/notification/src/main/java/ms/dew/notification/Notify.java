@@ -371,6 +371,20 @@ public class Notify {
         private long expireMs;
 
         /**
+         * Instantiates a new Notify delayed.
+         *
+         * @param flag             the flag
+         * @param specialReceivers the special receivers
+         * @param delayMs          the delay ms
+         */
+        public NotifyDelayed(String flag, Set<String> specialReceivers, int delayMs) {
+            this.flag = flag;
+            this.specialReceivers = specialReceivers;
+            this.delayMs = delayMs;
+            this.expireMs = delayMs + System.currentTimeMillis();
+        }
+
+        /**
          * Gets flag.
          *
          * @return the flag
@@ -395,20 +409,6 @@ public class Notify {
          */
         public int getDelayMs() {
             return delayMs;
-        }
-
-        /**
-         * Instantiates a new Notify delayed.
-         *
-         * @param flag             the flag
-         * @param specialReceivers the special receivers
-         * @param delayMs          the delay ms
-         */
-        public NotifyDelayed(String flag, Set<String> specialReceivers, int delayMs) {
-            this.flag = flag;
-            this.specialReceivers = specialReceivers;
-            this.delayMs = delayMs;
-            this.expireMs = delayMs + System.currentTimeMillis();
         }
 
         @Override

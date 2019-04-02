@@ -33,13 +33,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 @Ignore("Need start rabbit server")
 public class ClusterTest {
 
+    @Autowired
+    private RabbitClusterMQ rabbitClusterMQ;
+
     @BeforeClass
     public static void init() {
 
     }
-
-    @Autowired
-    private RabbitClusterMQ rabbitClusterMQ;
 
     @Test
     public void testMQ() throws InterruptedException {

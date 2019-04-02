@@ -59,79 +59,6 @@ public class BasicOptInfo<E> extends OptInfo<E> {
     protected LocalDateTime lastLoginTime;
 
     /**
-     * Role info.
-     */
-    @ApiModel(value = "角色信息")
-    public static class RoleInfo {
-        @ApiModelProperty(value = "角色编码", required = true)
-        private String code;
-        @ApiModelProperty(value = "角色显示名称", required = true)
-        private String name;
-        @ApiModelProperty(value = "租户编码", required = true)
-        private String tenantCode;
-
-        /**
-         * Gets code.
-         *
-         * @return the code
-         */
-        public String getCode() {
-            return code;
-        }
-
-        /**
-         * Sets code.
-         *
-         * @param code the code
-         * @return the code
-         */
-        public RoleInfo setCode(String code) {
-            this.code = code;
-            return this;
-        }
-
-        /**
-         * Gets name.
-         *
-         * @return the name
-         */
-        public String getName() {
-            return name;
-        }
-
-        /**
-         * Sets name.
-         *
-         * @param name the name
-         * @return the name
-         */
-        public RoleInfo setName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        /**
-         * Gets tenant code.
-         *
-         * @return the tenant code
-         */
-        public String getTenantCode() {
-            return tenantCode;
-        }
-
-        /**
-         * Sets tenant code.
-         *
-         * @param tenantCode the tenant code
-         * @return the tenant code
-         */
-        public RoleInfo setTenantCode(String tenantCode) {
-            this.tenantCode = tenantCode;
-            return this;
-        }
-    }
-
-    /**
      * Gets mobile.
      *
      * @return the mobile
@@ -229,6 +156,79 @@ public class BasicOptInfo<E> extends OptInfo<E> {
     public E setLastLoginTime(LocalDateTime lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
         return (E) this;
+    }
+
+    /**
+     * Role info.
+     */
+    @ApiModel(value = "角色信息")
+    public static class RoleInfo {
+        @ApiModelProperty(value = "角色编码", required = true)
+        private String code;
+        @ApiModelProperty(value = "角色显示名称", required = true)
+        private String name;
+        @ApiModelProperty(value = "租户编码", required = true)
+        private String tenantCode;
+
+        /**
+         * Gets code.
+         *
+         * @return the code
+         */
+        public String getCode() {
+            return code;
+        }
+
+        /**
+         * Sets code.
+         *
+         * @param code the code
+         * @return the code
+         */
+        public RoleInfo setCode(String code) {
+            this.code = code;
+            return this;
+        }
+
+        /**
+         * Gets name.
+         *
+         * @return the name
+         */
+        public String getName() {
+            return name;
+        }
+
+        /**
+         * Sets name.
+         *
+         * @param name the name
+         * @return the name
+         */
+        public RoleInfo setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        /**
+         * Gets tenant code.
+         *
+         * @return the tenant code
+         */
+        public String getTenantCode() {
+            return tenantCode;
+        }
+
+        /**
+         * Sets tenant code.
+         *
+         * @param tenantCode the tenant code
+         * @return the tenant code
+         */
+        public RoleInfo setTenantCode(String tenantCode) {
+            this.tenantCode = tenantCode;
+            return this;
+        }
     }
 
 }

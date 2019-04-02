@@ -45,6 +45,54 @@ public class NotifyTest {
 
     private static CountDownLatch cdl = new CountDownLatch(6);
 
+    private static void handleRequest(HttpExchange exchange) throws IOException {
+        String body = new BufferedReader(new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
+        JsonNode json = $.json.toJson(body);
+        int httpStatusCode = 200;
+        if (json.get("title").asText().equals("正常消息test")
+                && json.get("content").asText().equals("hi")
+                && json.get("receivers").get(0).asText().equals("jzy")) {
+            cdl.countDown();
+        } else if (json.get("title").asText().equals("异步消息test")
+                && json.get("content").asText().equals("hi")) {
+            cdl.countDown();
+        } else if (json.get("title").asText().equals("错误消息test")
+                && json.get("content").asText().contains("java.lang.ArithmeticException: / by zero")) {
+            cdl.countDown();
+        } else if (json.get("title").asText().equals("指定通知人test")
+                && json.get("receivers").get(0).asText().equals("jzy")
+                && json.get("receivers").get(1).asText().equals("sunisle")) {
+            cdl.countDown();
+        } else if (json.get("title").asText().equals("延时通知test")
+                && json.get("receivers").get(0).asText().equals("gudaoxuri")
+                && json.get("content").asText().equals("在最近的[4]秒内发生了[4]次通知请求。")) {
+            cdl.countDown();
+        } else if (json.get("title").asText().equals("策略消息test")
+                && json.get("receivers").get(0).asText().equals("gudaoxuri")) {
+            cdl.countDown();
+        } else {
+            httpStatusCode = 500;
+        }
+        System.out.println("[" + httpStatusCode + "]" + $.json.toJsonString(json));
+        String response = "ok";
+        exchange.sendResponseHeaders(httpStatusCode, response.getBytes().length);
+        OutputStream os = exchange.getResponseBody();
+        os.write(response.getBytes());
+        os.close();
+    }
+
+    private static void startHttpServer(int port, String path) throws InterruptedException {
+        HttpServer server = null;
+        try {
+            server = HttpServer.create(new InetSocketAddress(port), 0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        HttpContext context = server.createContext("/" + path);
+        context.setHandler(NotifyTest::handleRequest);
+        server.start();
+    }
+
     @Test
     public void testDD() {
         NotifyConfig ddConfig = new NotifyConfig();
@@ -260,54 +308,6 @@ public class NotifyTest {
         result = Notify.send("strategy", "免扰时间，达到4次(包含1次延迟通知)，发送", "策略消息");
         Assert.assertTrue(result.ok());
         cdl.await(10, TimeUnit.SECONDS);
-    }
-
-    private static void handleRequest(HttpExchange exchange) throws IOException {
-        String body = new BufferedReader(new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
-        JsonNode json = $.json.toJson(body);
-        int httpStatusCode = 200;
-        if (json.get("title").asText().equals("正常消息test")
-                && json.get("content").asText().equals("hi")
-                && json.get("receivers").get(0).asText().equals("jzy")) {
-            cdl.countDown();
-        } else if (json.get("title").asText().equals("异步消息test")
-                && json.get("content").asText().equals("hi")) {
-            cdl.countDown();
-        } else if (json.get("title").asText().equals("错误消息test")
-                && json.get("content").asText().contains("java.lang.ArithmeticException: / by zero")) {
-            cdl.countDown();
-        } else if (json.get("title").asText().equals("指定通知人test")
-                && json.get("receivers").get(0).asText().equals("jzy")
-                && json.get("receivers").get(1).asText().equals("sunisle")) {
-            cdl.countDown();
-        } else if (json.get("title").asText().equals("延时通知test")
-                && json.get("receivers").get(0).asText().equals("gudaoxuri")
-                && json.get("content").asText().equals("在最近的[4]秒内发生了[4]次通知请求。")) {
-            cdl.countDown();
-        } else if (json.get("title").asText().equals("策略消息test")
-                && json.get("receivers").get(0).asText().equals("gudaoxuri")) {
-            cdl.countDown();
-        } else {
-            httpStatusCode = 500;
-        }
-        System.out.println("[" + httpStatusCode + "]" + $.json.toJsonString(json));
-        String response = "ok";
-        exchange.sendResponseHeaders(httpStatusCode, response.getBytes().length);
-        OutputStream os = exchange.getResponseBody();
-        os.write(response.getBytes());
-        os.close();
-    }
-
-    private static void startHttpServer(int port, String path) throws InterruptedException {
-        HttpServer server = null;
-        try {
-            server = HttpServer.create(new InetSocketAddress(port), 0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        HttpContext context = server.createContext("/" + path);
-        context.setHandler(NotifyTest::handleRequest);
-        server.start();
     }
 
 

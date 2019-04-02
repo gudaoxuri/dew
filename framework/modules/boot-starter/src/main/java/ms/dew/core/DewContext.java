@@ -73,24 +73,6 @@ public class DewContext {
     }
 
     /**
-     * Opt info optional.
-     *
-     * @param <E> the type parameter
-     * @return the optional
-     */
-    public <E extends OptInfo> Optional<E> optInfo() {
-        if (innerOptInfo.isPresent()) {
-            return innerOptInfo;
-        }
-        if (token != null && !token.isEmpty()) {
-            innerOptInfo = Dew.auth.getOptInfo(token);
-        } else {
-            innerOptInfo = Optional.empty();
-        }
-        return innerOptInfo;
-    }
-
-    /**
      * Gets context.
      *
      * @return the context
@@ -109,15 +91,6 @@ public class DewContext {
     }
 
     /**
-     * Exist.
-     *
-     * @return the boolean
-     */
-    public static boolean exist() {
-        return CONTEXT.get() != null;
-    }
-
-    /**
      * Sets context.
      *
      * @param context the context
@@ -127,6 +100,33 @@ public class DewContext {
             context.token = "";
         }
         CONTEXT.set(context);
+    }
+
+    /**
+     * Exist.
+     *
+     * @return the boolean
+     */
+    public static boolean exist() {
+        return CONTEXT.get() != null;
+    }
+
+    /**
+     * Opt info optional.
+     *
+     * @param <E> the type parameter
+     * @return the optional
+     */
+    public <E extends OptInfo> Optional<E> optInfo() {
+        if (innerOptInfo.isPresent()) {
+            return innerOptInfo;
+        }
+        if (token != null && !token.isEmpty()) {
+            innerOptInfo = Dew.auth.getOptInfo(token);
+        } else {
+            innerOptInfo = Optional.empty();
+        }
+        return innerOptInfo;
     }
 
     /**

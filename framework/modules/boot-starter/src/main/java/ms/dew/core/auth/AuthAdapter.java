@@ -39,6 +39,14 @@ public interface AuthAdapter {
     }
 
     /**
+     * 设置操作用户信息类型.
+     *
+     * @param <E>     扩展操作用户信息类型
+     * @param optInfo 扩展操作用户信息
+     */
+    <E extends OptInfo> void setOptInfo(E optInfo);
+
+    /**
      * 根据Token获取操作用户信息.
      *
      * @param <E>   扩展操作用户信息类型
@@ -62,12 +70,4 @@ public interface AuthAdapter {
      * @param token 登录Token
      */
     void removeOptInfo(String token);
-
-    /**
-     * 设置操作用户信息类型.
-     *
-     * @param <E>     扩展操作用户信息类型
-     * @param optInfo 扩展操作用户信息
-     */
-    <E extends OptInfo> void setOptInfo(E optInfo);
 }

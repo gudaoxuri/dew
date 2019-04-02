@@ -49,15 +49,14 @@ import java.util.concurrent.TimeUnit;
  */
 public class DockerOpt {
 
+    public Image image = new Image();
+    public Registry registry = new Registry();
     protected Log log;
     protected DockerClient docker;
     protected AuthConfig defaultAuthConfig;
     protected String registryApiUrl;
     protected String registryPassword;
     protected String registryUsername;
-
-    public Image image = new Image();
-    public Registry registry = new Registry();
 
     /**
      * @param log              日志对象

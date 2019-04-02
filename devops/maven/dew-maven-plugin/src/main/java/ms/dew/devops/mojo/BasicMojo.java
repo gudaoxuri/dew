@@ -40,13 +40,6 @@ public abstract class BasicMojo extends AbstractMojo {
     // ============= 公共场景使用 =============
     private static final String FLAG_DEW_DEVOPS_PROFILE = "dew.devops.profile";
     private static final String FLAG_DEW_DEVOPS_KUBE_CONFIG = "dew.devops.kube.config";
-
-    @Parameter(property = FLAG_DEW_DEVOPS_PROFILE, defaultValue = FLAG_DEW_DEVOPS_DEFAULT_PROFILE)
-    private String profile;
-
-    @Parameter(property = FLAG_DEW_DEVOPS_KUBE_CONFIG)
-    private String kubeBase64Config;
-
     // ============= 发布与回滚使用 =============
     private static final String FLAG_DEW_DEVOPS_DOCKER_HOST = "dew.devops.docker.host";
     private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL = "dew.devops.docker.registry.url";
@@ -54,34 +47,9 @@ public abstract class BasicMojo extends AbstractMojo {
     private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD = "dew.devops.docker.registry.password";
     private static final String FLAG_DEW_DEVOPS_QUIET = "dew.devops.quiet";
     private static final String FLAG_DEW_DEVOPS_VERSION_CUST = "dew.devops.version.custom";
-
-    @Parameter(property = FLAG_DEW_DEVOPS_DOCKER_HOST)
-    private String dockerHost;
-
-    @Parameter(property = FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL)
-    private String dockerRegistryUrl;
-
-    @Parameter(property = FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME)
-    private String dockerRegistryUserName;
-
-    @Parameter(property = FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD)
-    private String dockerRegistryPassword;
-
-    @Parameter(property = FLAG_DEW_DEVOPS_QUIET)
-    protected boolean quiet;
-
-    @Parameter(property = FLAG_DEW_DEVOPS_VERSION_CUST)
-    private String customVersion;
-
     // ============= 日志场景使用 =============
     private static final String FLAG_DEW_DEVOPS_POD_NAME = "dew.devops.log.podName";
     private static final String FLAG_DEW_DEVOPS_LOG_FOLLOW = "dew.devops.log.follow";
-
-    @Parameter(property = FLAG_DEW_DEVOPS_POD_NAME)
-    protected String podName;
-    @Parameter(property = FLAG_DEW_DEVOPS_LOG_FOLLOW)
-    protected boolean follow;
-
     // ============= 伸缩场景使用 =============
     private static final String FLAG_DEW_DEVOPS_SCALE_REPLICAS = "dew.devops.scale.replicas";
     private static final String FLAG_DEW_DEVOPS_SCALE_AUTO = "dew.devops.scale.auto";
@@ -89,28 +57,40 @@ public abstract class BasicMojo extends AbstractMojo {
     private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX = "dew.devops.scale.auto.maxReplicas";
     private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG = "dew.devops.scale.auto.cpu.averageUtilization";
     private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_TPS = "dew.devops.scale.auto.cpu.tps";
-
-    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_REPLICAS)
-    protected int replicas;
-
-    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO)
-    protected boolean autoScale;
-
-    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN)
-    protected int minReplicas;
-
-    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX)
-    protected int maxReplicas;
-
-    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG)
-    protected int cpuAvg;
-
-    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_TPS)
-    protected long tps;
-
     // ============= 测试场景使用 =============
     private static final String FLAG_DEW_DEVOPS_MOCK_CLASS_PATH = "dew.devops.mock.classpath";
-
+    @Parameter(property = FLAG_DEW_DEVOPS_QUIET)
+    protected boolean quiet;
+    @Parameter(property = FLAG_DEW_DEVOPS_POD_NAME)
+    protected String podName;
+    @Parameter(property = FLAG_DEW_DEVOPS_LOG_FOLLOW)
+    protected boolean follow;
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_REPLICAS)
+    protected int replicas;
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO)
+    protected boolean autoScale;
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN)
+    protected int minReplicas;
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX)
+    protected int maxReplicas;
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG)
+    protected int cpuAvg;
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_TPS)
+    protected long tps;
+    @Parameter(property = FLAG_DEW_DEVOPS_PROFILE, defaultValue = FLAG_DEW_DEVOPS_DEFAULT_PROFILE)
+    private String profile;
+    @Parameter(property = FLAG_DEW_DEVOPS_KUBE_CONFIG)
+    private String kubeBase64Config;
+    @Parameter(property = FLAG_DEW_DEVOPS_DOCKER_HOST)
+    private String dockerHost;
+    @Parameter(property = FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL)
+    private String dockerRegistryUrl;
+    @Parameter(property = FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME)
+    private String dockerRegistryUserName;
+    @Parameter(property = FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD)
+    private String dockerRegistryPassword;
+    @Parameter(property = FLAG_DEW_DEVOPS_VERSION_CUST)
+    private String customVersion;
     @Parameter(property = FLAG_DEW_DEVOPS_MOCK_CLASS_PATH)
     private String mockClasspath;
 

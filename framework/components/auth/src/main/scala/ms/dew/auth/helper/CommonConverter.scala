@@ -22,12 +22,6 @@ import scala.collection.JavaConverters._
 
 object CommonConverter {
 
-  def convert[E](ori: AnyRef)(implicit m: Manifest[E]): E = {
-    val dest = m.runtimeClass.newInstance().asInstanceOf[E]
-    $.bean.copyProperties(dest, ori)
-    dest
-  }
-
   def convertPage[E, O <: AnyRef](ori: org.springframework.data.domain.Page[O])(implicit m: Manifest[E]): Page[E] = {
     if (ori.getContent.size() > 0) {
       Page.build(ori.getNumber(), ori.getSize(), ori.getTotalElements, ori.getContent.asScala.map(convert[E](_)).asJava)
@@ -40,5 +34,11 @@ object CommonConverter {
       dto.setObjects(null)
       dto
     }
+  }
+
+  def convert[E](ori: AnyRef)(implicit m: Manifest[E]): E = {
+    val dest = m.runtimeClass.newInstance().asInstanceOf[E]
+    $.bean.copyProperties(dest, ori)
+    dest
   }
 }

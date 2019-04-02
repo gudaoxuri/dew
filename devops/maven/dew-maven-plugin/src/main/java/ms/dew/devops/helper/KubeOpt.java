@@ -712,10 +712,6 @@ public class KubeOpt {
             this.val = val;
         }
 
-        public String getVal() {
-            return val;
-        }
-
         public static RES parse(String val) {
             for (RES res : RES.values()) {
                 if (res.val.equalsIgnoreCase(val)) {
@@ -723,6 +719,10 @@ public class KubeOpt {
                 }
             }
             return null;
+        }
+
+        public String getVal() {
+            return val;
         }
     }
 

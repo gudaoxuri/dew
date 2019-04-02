@@ -52,13 +52,11 @@ import javax.servlet.ServletContext;
 @ImportAutoConfiguration({DocClusterAutoConfiguration.class, DocLocalAutoConfiguration.class})
 public class DocAutoConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(DocAutoConfiguration.class);
-
     /**
      * The constant FLAG_APPLICATION_NAME.
      */
     public static final String FLAG_APPLICATION_NAME = "applicationName";
-
+    private static final Logger logger = LoggerFactory.getLogger(DocAutoConfiguration.class);
     @Autowired
     private DewConfig dewConfig;
 

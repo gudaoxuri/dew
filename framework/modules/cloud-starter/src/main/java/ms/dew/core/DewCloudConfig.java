@@ -33,6 +33,42 @@ public class DewCloudConfig {
     private Error error = new Error();
 
     /**
+     * Gets trace log.
+     *
+     * @return the trace log
+     */
+    public TraceLog getTraceLog() {
+        return traceLog;
+    }
+
+    /**
+     * Sets trace log.
+     *
+     * @param traceLog the trace log
+     */
+    public void setTraceLog(TraceLog traceLog) {
+        this.traceLog = traceLog;
+    }
+
+    /**
+     * Gets error.
+     *
+     * @return the error
+     */
+    public Error getError() {
+        return error;
+    }
+
+    /**
+     * Sets error.
+     *
+     * @param error the error
+     */
+    public void setError(Error error) {
+        this.error = error;
+    }
+
+    /**
      * Trace log config.
      */
     public static class TraceLog {
@@ -185,41 +221,5 @@ public class DewCloudConfig {
         public void setNotifyExcludeKeys(String[] notifyExcludeKeys) {
             this.notifyExcludeKeys = notifyExcludeKeys;
         }
-    }
-
-    /**
-     * Gets trace log.
-     *
-     * @return the trace log
-     */
-    public TraceLog getTraceLog() {
-        return traceLog;
-    }
-
-    /**
-     * Sets trace log.
-     *
-     * @param traceLog the trace log
-     */
-    public void setTraceLog(TraceLog traceLog) {
-        this.traceLog = traceLog;
-    }
-
-    /**
-     * Gets error.
-     *
-     * @return the error
-     */
-    public Error getError() {
-        return error;
-    }
-
-    /**
-     * Sets error.
-     *
-     * @param error the error
-     */
-    public void setError(Error error) {
-        this.error = error;
     }
 }

@@ -38,6 +38,8 @@ import java.io.IOException;
 public class DewStartup {
 
     private static final Logger logger = LoggerFactory.getLogger(DewStartup.class);
+    @Autowired
+    private Dew dew;
 
     /**
      * Init.
@@ -56,9 +58,6 @@ public class DewStartup {
     public Filter dewStartupFilter() {
         return new DewStartupFilter();
     }
-
-    @Autowired
-    private Dew dew;
 
     /**
      * Dew startup filter.

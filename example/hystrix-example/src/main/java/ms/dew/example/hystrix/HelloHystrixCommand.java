@@ -53,6 +53,14 @@ public class HelloHystrixCommand extends HystrixCommand<HelloHystrixCommand.Mode
         return new HelloHystrixCommand(HystrixCommandGroupKey.Factory.asKey(key));
     }
 
+    public static void main(String[] args) throws Exception {
+        HelloHystrixCommand helloHystrixCommand = HelloHystrixCommand.getInstance("dew");
+        helloHystrixCommand.model = helloHystrixCommand.new Model("run");
+        logger.info("main:      " + helloHystrixCommand.model + "thread id: " + Thread.currentThread().getId());
+        System.out.println(helloHystrixCommand.execute());
+
+    }
+
     @Override
     protected Model run() throws Exception {
         int i = 1 / 0;
@@ -65,22 +73,13 @@ public class HelloHystrixCommand extends HystrixCommand<HelloHystrixCommand.Mode
         return new Model("fallback");
     }
 
-    public static void main(String[] args) throws Exception {
-        HelloHystrixCommand helloHystrixCommand = HelloHystrixCommand.getInstance("dew");
-        helloHystrixCommand.model = helloHystrixCommand.new Model("run");
-        logger.info("main:      " + helloHystrixCommand.model + "thread id: " + Thread.currentThread().getId());
-        System.out.println(helloHystrixCommand.execute());
-
-    }
-
-
     class Model {
+
+        private String name;
 
         public Model(String name) {
             this.name = name;
         }
-
-        private String name;
 
         public String getName() {
             return name;

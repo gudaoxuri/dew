@@ -39,6 +39,96 @@ public class DewConfig {
     private Map<String, NotifyConfig> notifies = new HashMap<>();
 
     /**
+     * Gets basic.
+     *
+     * @return the basic
+     */
+    public Basic getBasic() {
+        return basic;
+    }
+
+    /**
+     * Sets basic.
+     *
+     * @param basic the basic
+     */
+    public void setBasic(Basic basic) {
+        this.basic = basic;
+    }
+
+    /**
+     * Gets cluster.
+     *
+     * @return the cluster
+     */
+    public Cluster getCluster() {
+        return cluster;
+    }
+
+    /**
+     * Sets cluster.
+     *
+     * @param cluster the cluster
+     */
+    public void setCluster(Cluster cluster) {
+        this.cluster = cluster;
+    }
+
+    /**
+     * Gets security.
+     *
+     * @return the security
+     */
+    public Security getSecurity() {
+        return security;
+    }
+
+    /**
+     * Sets security.
+     *
+     * @param security the security
+     */
+    public void setSecurity(Security security) {
+        this.security = security;
+    }
+
+    /**
+     * Gets metric.
+     *
+     * @return the metric
+     */
+    public Metric getMetric() {
+        return metric;
+    }
+
+    /**
+     * Sets metric.
+     *
+     * @param metric the metric
+     */
+    public void setMetric(Metric metric) {
+        this.metric = metric;
+    }
+
+    /**
+     * Gets notifies.
+     *
+     * @return the notifies
+     */
+    public Map<String, NotifyConfig> getNotifies() {
+        return notifies;
+    }
+
+    /**
+     * Sets notifies.
+     *
+     * @param notifies the notifies
+     */
+    public void setNotifies(Map<String, NotifyConfig> notifies) {
+        this.notifies = notifies;
+    }
+
+    /**
      * Basic.
      */
     public static class Basic {
@@ -122,6 +212,60 @@ public class DewConfig {
          */
         public void setWebSite(String webSite) {
             this.webSite = webSite;
+        }
+
+        /**
+         * Gets doc.
+         *
+         * @return the doc
+         */
+        public Doc getDoc() {
+            return doc;
+        }
+
+        /**
+         * Sets doc.
+         *
+         * @param doc the doc
+         */
+        public void setDoc(Doc doc) {
+            this.doc = doc;
+        }
+
+        /**
+         * Gets format.
+         *
+         * @return the format
+         */
+        public Format getFormat() {
+            return format;
+        }
+
+        /**
+         * Sets format.
+         *
+         * @param format the format
+         */
+        public void setFormat(Format format) {
+            this.format = format;
+        }
+
+        /**
+         * Gets error mapping.
+         *
+         * @return the error mapping
+         */
+        public Map<String, ErrorMapping> getErrorMapping() {
+            return errorMapping;
+        }
+
+        /**
+         * Sets error mapping.
+         *
+         * @param errorMapping the error mapping
+         */
+        public void setErrorMapping(Map<String, ErrorMapping> errorMapping) {
+            this.errorMapping = errorMapping;
         }
 
         /**
@@ -362,60 +506,6 @@ public class DewConfig {
             public void setMessage(String message) {
                 this.message = message;
             }
-        }
-
-        /**
-         * Gets doc.
-         *
-         * @return the doc
-         */
-        public Doc getDoc() {
-            return doc;
-        }
-
-        /**
-         * Sets doc.
-         *
-         * @param doc the doc
-         */
-        public void setDoc(Doc doc) {
-            this.doc = doc;
-        }
-
-        /**
-         * Gets format.
-         *
-         * @return the format
-         */
-        public Format getFormat() {
-            return format;
-        }
-
-        /**
-         * Sets format.
-         *
-         * @param format the format
-         */
-        public void setFormat(Format format) {
-            this.format = format;
-        }
-
-        /**
-         * Gets error mapping.
-         *
-         * @return the error mapping
-         */
-        public Map<String, ErrorMapping> getErrorMapping() {
-            return errorMapping;
-        }
-
-        /**
-         * Sets error mapping.
-         *
-         * @param errorMapping the error mapping
-         */
-        public void setErrorMapping(Map<String, ErrorMapping> errorMapping) {
-            this.errorMapping = errorMapping;
         }
     }
 
@@ -783,95 +873,5 @@ public class DewConfig {
             this.enabled = enabled;
         }
 
-    }
-
-    /**
-     * Gets basic.
-     *
-     * @return the basic
-     */
-    public Basic getBasic() {
-        return basic;
-    }
-
-    /**
-     * Sets basic.
-     *
-     * @param basic the basic
-     */
-    public void setBasic(Basic basic) {
-        this.basic = basic;
-    }
-
-    /**
-     * Gets cluster.
-     *
-     * @return the cluster
-     */
-    public Cluster getCluster() {
-        return cluster;
-    }
-
-    /**
-     * Sets cluster.
-     *
-     * @param cluster the cluster
-     */
-    public void setCluster(Cluster cluster) {
-        this.cluster = cluster;
-    }
-
-    /**
-     * Gets security.
-     *
-     * @return the security
-     */
-    public Security getSecurity() {
-        return security;
-    }
-
-    /**
-     * Sets security.
-     *
-     * @param security the security
-     */
-    public void setSecurity(Security security) {
-        this.security = security;
-    }
-
-    /**
-     * Gets metric.
-     *
-     * @return the metric
-     */
-    public Metric getMetric() {
-        return metric;
-    }
-
-    /**
-     * Sets metric.
-     *
-     * @param metric the metric
-     */
-    public void setMetric(Metric metric) {
-        this.metric = metric;
-    }
-
-    /**
-     * Gets notifies.
-     *
-     * @return the notifies
-     */
-    public Map<String, NotifyConfig> getNotifies() {
-        return notifies;
-    }
-
-    /**
-     * Sets notifies.
-     *
-     * @param notifies the notifies
-     */
-    public void setNotifies(Map<String, NotifyConfig> notifies) {
-        this.notifies = notifies;
     }
 }

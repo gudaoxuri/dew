@@ -95,6 +95,15 @@ public class Dew {
     private JacksonProperties jacksonProperties;
 
     /**
+     * 获取请求上下文信息.
+     *
+     * @return 请求上下文信息 dew context
+     */
+    public static DewContext context() {
+        return DewContext.getContext();
+    }
+
+    /**
      * Init.
      *
      * @throws IOException            the io exception
@@ -191,15 +200,6 @@ public class Dew {
             host = inetAddress.getHostName();
         }
 
-    }
-
-    /**
-     * 获取请求上下文信息.
-     *
-     * @return 请求上下文信息 dew context
-     */
-    public static DewContext context() {
-        return DewContext.getContext();
     }
 
     /**

@@ -76,6 +76,12 @@ class UserService @Autowired()(
     }
   }
 
+  private def generateVC(cacheKey: String): String = {
+    val vc = ((Math.random() * 9 + 1) * 1000).toInt + ""
+    Dew.cluster.cache.setex(cacheKey, vc, 600)
+    vc
+  }
+
   @Transactional
   def register(req: RegisterReq): Resp[TokenInfo] = {
     val tenantId = Dew.auth.getOptInfo.get().asInstanceOf[TokenInfo].getTenantId
@@ -89,6 +95,30 @@ class UserService @Autowired()(
       doRegister(req.name, req.identSecret, Ident.IDENT_CATEGORY_USERNAME, req.identKey, tenantId)
     } else {
       Resp.badRequest("注册类型[" + req.identCategory + "]不支持")
+    }
+  }
+
+  private def doRegister(name: String, password: String, identCategory: String, identKey: String, tenantId: String): Resp[TokenInfo] = {
+    if (identRepository.getByCategoryAndKeyAndTenantId(identCategory, identKey, tenantId) != null) {
+      Resp.conflict(identKey + " 已存在")
+    } else {
+      var account = new Account
+      account.id = $.field.createShortUUID()
+      account.name = if (name != null) name else ""
+      account.password = Account.generatePassword(
+        if (password != null) password else $.field.createShortUUID(), authConfig.passwordSalt)
+      account.tenantId = tenantId
+      account.enabled = true
+      account = accountRepository.save(account)
+      val ident = new Ident
+      ident.category = Ident.IDENT_CATEGORY_USERNAME
+      ident.key = identKey
+      ident.secret = ""
+      ident.accountId = account.id
+      ident.tenantId = tenantId
+      ident.enabled = true
+      identRepository.save(ident)
+      cacheLogin(identKey, account)
     }
   }
 
@@ -129,10 +159,22 @@ class UserService @Autowired()(
     }
   }
 
-  @Transactional
-  def logout(): Resp[Void] = {
-    Dew.cluster.cache.del(AuthConfig.CACHE_TOKEN + Dew.auth.getOptInfo.get().asInstanceOf[TokenInfo].getToken)
-    Resp.success(null)
+  private def loginError(loginKey: String): Resp[TokenInfo] = {
+    Dew.cluster.cache.incrBy(AuthConfig.CACHE_LOGIN_ERROR + loginKey, 1)
+    Dew.cluster.cache.expire(AuthConfig.CACHE_LOGIN_ERROR + loginKey, authConfig.cleanErrorTimeMin * 60)
+    Resp.unAuthorized("认证错误")
+  }
+
+  private def cacheLogin(loginKey: String, account: Account): Resp[TokenInfo] = {
+    val tokenInfo = new TokenInfo
+    tokenInfo.setAccountCode(account.id)
+    tokenInfo.setName(account.name)
+    tokenInfo.setTenantId(account.tenantId)
+    tokenInfo.setRoles(account.roles.asScala.map(role => role.id -> role.name).toMap.asJava)
+    tokenInfo.setToken($.field.createUUID())
+    Dew.cluster.cache.del(AuthConfig.CACHE_LOGIN_ERROR + loginKey)
+    Dew.cluster.cache.setex(AuthConfig.CACHE_TOKEN + tokenInfo.getToken, $.json.toJsonString(tokenInfo), authConfig.tokenExpireSec)
+    Resp.success(tokenInfo)
   }
 
   @Transactional(readOnly = true)
@@ -154,52 +196,10 @@ class UserService @Autowired()(
     Resp.success(null)
   }
 
-  private def doRegister(name: String, password: String, identCategory: String, identKey: String, tenantId: String): Resp[TokenInfo] = {
-    if (identRepository.getByCategoryAndKeyAndTenantId(identCategory, identKey, tenantId) != null) {
-      Resp.conflict(identKey + " 已存在")
-    } else {
-      var account = new Account
-      account.id = $.field.createShortUUID()
-      account.name = if (name != null) name else ""
-      account.password = Account.generatePassword(
-        if (password != null) password else $.field.createShortUUID(), authConfig.passwordSalt)
-      account.tenantId = tenantId
-      account.enabled = true
-      account = accountRepository.save(account)
-      val ident = new Ident
-      ident.category = Ident.IDENT_CATEGORY_USERNAME
-      ident.key = identKey
-      ident.secret = ""
-      ident.accountId = account.id
-      ident.tenantId = tenantId
-      ident.enabled = true
-      identRepository.save(ident)
-      cacheLogin(identKey, account)
-    }
-  }
-
-  private def loginError(loginKey: String): Resp[TokenInfo] = {
-    Dew.cluster.cache.incrBy(AuthConfig.CACHE_LOGIN_ERROR + loginKey, 1)
-    Dew.cluster.cache.expire(AuthConfig.CACHE_LOGIN_ERROR + loginKey, authConfig.cleanErrorTimeMin * 60)
-    Resp.unAuthorized("认证错误")
-  }
-
-  private def cacheLogin(loginKey: String, account: Account): Resp[TokenInfo] = {
-    val tokenInfo = new TokenInfo
-    tokenInfo.setAccountCode(account.id)
-    tokenInfo.setName(account.name)
-    tokenInfo.setTenantId(account.tenantId)
-    tokenInfo.setRoles(account.roles.asScala.map(role => role.id -> role.name).toMap.asJava)
-    tokenInfo.setToken($.field.createUUID())
-    Dew.cluster.cache.del(AuthConfig.CACHE_LOGIN_ERROR + loginKey)
-    Dew.cluster.cache.setex(AuthConfig.CACHE_TOKEN + tokenInfo.getToken, $.json.toJsonString(tokenInfo), authConfig.tokenExpireSec)
-    Resp.success(tokenInfo)
-  }
-
-  private def generateVC(cacheKey: String): String = {
-    val vc = ((Math.random() * 9 + 1) * 1000).toInt + ""
-    Dew.cluster.cache.setex(cacheKey, vc, 600)
-    vc
+  @Transactional
+  def logout(): Resp[Void] = {
+    Dew.cluster.cache.del(AuthConfig.CACHE_TOKEN + Dew.auth.getOptInfo.get().asInstanceOf[TokenInfo].getToken)
+    Resp.success(null)
   }
 
 }
