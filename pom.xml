@@ -39,7 +39,7 @@
     <modules>
         <module>framework</module>
         <module>devops</module>
-        <module>examples</module>
+        <module>example</module>
         <module>docs</module>
     </modules>
 
