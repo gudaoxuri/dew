@@ -29,6 +29,7 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -208,9 +209,18 @@ public abstract class BasicMojo extends AbstractMojo {
     }
 
     private Map<String, String> formatProperties() {
-        return System.getProperties().entrySet().stream()
+        Map<String, String> props = new HashMap<>();
+        props.putAll(session.getSystemProperties().entrySet().stream()
                 .collect(Collectors.toMap(prop ->
-                        prop.getKey().toString().toLowerCase().trim(), prop -> prop.getValue().toString().trim()));
+                        prop.getKey().toString().toLowerCase().trim(), prop -> prop.getValue().toString().trim())));
+        props.putAll(session.getUserProperties().entrySet().stream()
+                .collect(Collectors.toMap(prop ->
+                        prop.getKey().toString().toLowerCase().trim(), prop -> prop.getValue().toString().trim())));
+        // Support gitlab ci runner by chart.
+        props.putAll(props.entrySet().stream()
+                .filter(prop -> prop.getKey().startsWith("env."))
+                .collect(Collectors.toMap(prop -> prop.getKey().substring("env.".length()), Map.Entry::getValue)));
+        return props;
     }
 
     protected String getMojoName() {

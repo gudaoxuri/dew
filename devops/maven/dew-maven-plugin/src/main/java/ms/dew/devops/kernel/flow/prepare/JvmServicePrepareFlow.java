@@ -29,10 +29,12 @@ public class JvmServicePrepareFlow extends BasicPrepareFlow {
                 "spring-boot-maven-plugin",
                 null,
                 "repackage",
-                new HashMap<String, String>() {{
-                    put("outputDirectory", flowBasePath);
-                    put("finalName", "serv");
-                }});
+                new HashMap<String, String>() {
+                    {
+                        put("outputDirectory", flowBasePath);
+                        put("finalName", "serv");
+                    }
+                });
         return true;
     }
 

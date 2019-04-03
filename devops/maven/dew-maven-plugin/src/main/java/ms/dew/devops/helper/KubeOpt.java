@@ -157,7 +157,11 @@ public class KubeOpt {
     public void stopWatch(String watchId) throws IOException {
         Watch watch = WATCH_LIST.get(watchId);
         WATCH_LIST.remove(watchId);
-        watch.close();
+        try {
+            watch.close();
+        } catch (IOException ignore) {
+            log.warn("Stop watch error.", ignore);
+        }
     }
 
     public <T> T toResource(String body, Class<T> clazz) {

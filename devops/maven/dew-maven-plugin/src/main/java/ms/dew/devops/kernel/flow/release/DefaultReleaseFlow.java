@@ -51,7 +51,6 @@ public class DefaultReleaseFlow extends BasicFlow {
 
     public boolean process(String flowBasePath) throws ApiException, IOException, MojoExecutionException {
         this.flowBasePath = flowBasePath;
-        Dew.log.info("Building kubernetes resources");
         release(Dew.Config.getCurrentProject().getGitCommit());
         if (Dew.Config.getCurrentProject().getApp().getRevisionHistoryLimit() > 0) {
             Dew.log.debug("Delete old version from kubernetes resources and docker images");
@@ -65,9 +64,10 @@ public class DefaultReleaseFlow extends BasicFlow {
         V1ConfigMap oldVersion = getOldVersion(gitCommit);
         if (oldVersion != null) {
             deployResult = fetchOldVersionResources(oldVersion);
-            Dew.log.info("Rollback to " + gitCommit);
+            Dew.log.info("Rollback version to : " + getVersionName(gitCommit));
             release(deployResult, gitCommit, true);
         } else {
+            Dew.log.info("Deploy new version : " + getVersionName(gitCommit));
             deployResult = buildNewVersionResources(flowBasePath);
             release(deployResult, gitCommit, false);
         }
