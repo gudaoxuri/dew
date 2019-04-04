@@ -43,28 +43,55 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Docker操作函数类
+ * Docker操作函数类.
  *
- * @link https://github.com/docker-java/docker-java/wiki
+ * @author gudaoxuri
+ * @link https ://github.com/docker-java/docker-java/wiki
  */
 public class DockerOpt {
 
+    /**
+     * Image operation.
+     */
     public Image image = new Image();
+    /**
+     * Registry operation.
+     */
     public Registry registry = new Registry();
+    /**
+     * Log.
+     */
     protected Log log;
+    /**
+     * Docker native client.
+     */
     protected DockerClient docker;
+    /**
+     * The Default auth config.
+     */
     protected AuthConfig defaultAuthConfig;
+    /**
+     * The Registry api url.
+     */
     protected String registryApiUrl;
+    /**
+     * The Registry password.
+     */
     protected String registryPassword;
+    /**
+     * The Registry username.
+     */
     protected String registryUsername;
 
     /**
+     * Instantiates a new Docker opt.
+     *
      * @param log              日志对象
      * @param host             DOCKER_HOST, e.g. tcp://10.200.131.182:2375
      * @param registryUrl      registry地址， e.g. https://harbor.dew.env/v2
      * @param registryUsername registry用户名
      * @param registryPassword registry密码
-     * @link https://docs.docker.com/install/linux/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections
+     * @link https ://docs.docker.com/install/linux/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections
      */
     protected DockerOpt(Log log, String host, String registryUrl, String registryUsername, String registryPassword) {
         this.log = log;
@@ -85,12 +112,28 @@ public class DockerOpt {
         docker = DockerClientBuilder.getInstance(builder.build()).build();
     }
 
+    /**
+     * Image operation.
+     */
     public class Image {
 
+        /**
+         * Pull.
+         *
+         * @param imageName the image name
+         * @param auth      the auth
+         */
         public void pull(String imageName, boolean auth) {
             pull(imageName, auth, Long.MAX_VALUE);
         }
 
+        /**
+         * Pull.
+         *
+         * @param imageName the image name
+         * @param auth      the auth
+         * @param awaitSec  the await sec
+         */
         public void pull(String imageName, boolean auth, long awaitSec) {
             PullImageCmd pullImageCmd = docker.pullImageCmd(imageName);
             if (auth) {
@@ -110,26 +153,54 @@ public class DockerOpt {
             }
         }
 
+        /**
+         * List.
+         *
+         * @return image list
+         */
         public List<com.github.dockerjava.api.model.Image> list() {
             return docker.listImagesCmd().exec();
         }
 
+        /**
+         * List.
+         *
+         * @param imageName the image name
+         * @return image list
+         */
         public List<com.github.dockerjava.api.model.Image> list(String imageName) {
             return docker.listImagesCmd().withImageNameFilter(imageName).exec();
         }
 
+        /**
+         * Build.
+         *
+         * @param imageName      the image name
+         * @param dockerfilePath the dockerfile path
+         * @return image id
+         */
         public String build(String imageName, String dockerfilePath) {
             return build(imageName, dockerfilePath, null);
         }
 
+        /**
+         * Build string.
+         *
+         * @param imageName      the image name
+         * @param dockerfilePath the dockerfile path
+         * @param args           the args
+         * @return image id
+         */
         public String build(String imageName, String dockerfilePath, Map<String, String> args) {
             BuildImageCmd buildImageCmd = docker.buildImageCmd(new File(dockerfilePath));
             if (args != null && !args.isEmpty()) {
                 args.forEach(buildImageCmd::withBuildArg);
             }
-            buildImageCmd.withTags(new HashSet<String>() {{
-                add(imageName);
-            }});
+            buildImageCmd.withTags(new HashSet<String>() {
+                {
+                    add(imageName);
+                }
+            });
             return buildImageCmd.exec(new BuildImageResultCallback() {
                 @Override
                 public void onNext(BuildResponseItem item) {
@@ -139,10 +210,23 @@ public class DockerOpt {
             }).awaitImageId();
         }
 
+        /**
+         * Push.
+         *
+         * @param imageName the image name
+         * @param auth      the auth
+         */
         public void push(String imageName, boolean auth) {
             push(imageName, auth, Long.MAX_VALUE);
         }
 
+        /**
+         * Push.
+         *
+         * @param imageName the image name
+         * @param auth      the auth
+         * @param awaitSec  the await sec
+         */
         public void push(String imageName, boolean auth, long awaitSec) {
             PushImageCmd pushImageCmd = docker.pushImageCmd(imageName);
             if (auth) {
@@ -162,6 +246,11 @@ public class DockerOpt {
             }
         }
 
+        /**
+         * Remove.
+         *
+         * @param imageName the image name
+         */
         public void remove(String imageName) {
             List<com.github.dockerjava.api.model.Image> images = list(imageName);
             if (!images.isEmpty()) {
@@ -169,6 +258,11 @@ public class DockerOpt {
             }
         }
 
+        /**
+         * Remove by id.
+         *
+         * @param imageId the image id
+         */
         public void removeById(String imageId) {
             docker.removeImageCmd(imageId).withForce(true).exec();
         }
@@ -176,12 +270,19 @@ public class DockerOpt {
     }
 
     /**
-     * Harbor Registry API
+     * Harbor Registry API.
      *
-     * @link https://raw.githubusercontent.com/goharbor/harbor/master/docs/swagger.yaml
+     * @link https ://raw.githubusercontent.com/goharbor/harbor/master/docs/swagger.yaml
      */
     public class Registry {
 
+        /**
+         * Exist.
+         *
+         * @param imageName the image name
+         * @return exist
+         * @throws IOException the io exception
+         */
         public boolean exist(String imageName) throws IOException {
             String[] item = parseImageInfo(imageName);
             HttpHelper.ResponseWrap responseWrap = $.http.getWrap(registryApiUrl + "/repositories/" + item[0] + "/tags/" + item[1], wrapHeader());
@@ -189,6 +290,13 @@ public class DockerOpt {
             return responseWrap.statusCode == 200;
         }
 
+        /**
+         * Remove.
+         *
+         * @param imageName the image name
+         * @return <b>true</b> if success
+         * @throws IOException the io exception
+         */
         public boolean remove(String imageName) throws IOException {
             String[] item = parseImageInfo(imageName);
             HttpHelper.ResponseWrap responseWrap = $.http.deleteWrap(registryApiUrl + "/repositories/" + item[0] + "/tags/" + item[1], wrapHeader());
@@ -215,6 +323,7 @@ public class DockerOpt {
                 header.put("accept", "application/json");
                 header.put("authorization", "Basic " + $.security.encodeStringToBase64(registryUsername + ":" + registryPassword, "UTF-8"));
             } catch (UnsupportedEncodingException ignore) {
+                throw new RuntimeException(ignore);
             }
             return header;
         }

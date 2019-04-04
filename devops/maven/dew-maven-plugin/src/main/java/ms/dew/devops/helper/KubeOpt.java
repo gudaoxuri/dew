@@ -47,8 +47,9 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
- * Kubernetes操作函数类
+ * Kubernetes操作函数类.
  *
+ * @author gudaoxuri
  * @link https://github.com/kubernetes-client/java
  */
 public class KubeOpt {

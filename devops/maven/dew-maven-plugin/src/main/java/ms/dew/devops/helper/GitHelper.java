@@ -22,14 +22,26 @@ import org.apache.maven.plugin.logging.Log;
  * Git辅助类.
  * <p>
  * 使用多实例支持是为方便替换GitOpt为Mock对象以进行集成测试，详见测试实现
+ *
+ * @author gudaoxuri
  */
 public class GitHelper extends MultiInstProcessor {
 
+    /**
+     * Init.
+     *
+     * @param log the log
+     */
     public static void init(Log log) {
         multiInit("GIT", "",
                 () -> new GitOpt(log), "");
     }
 
+    /**
+     * Fetch GitOpt instance.
+     *
+     * @return GitOpt instance
+     */
     public static GitOpt inst() {
         return multiInst("GIT", "");
     }

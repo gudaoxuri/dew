@@ -19,20 +19,23 @@ package ms.dew.devops.helper;
 import org.apache.maven.plugin.logging.Log;
 
 /**
- * Docker操作函数类
+ * Docker操作函数类.
  *
- * @link https://github.com/docker-java/docker-java/wiki
+ * @author gudaoxuri
+ * @link https ://github.com/docker-java/docker-java/wiki
  */
 public class DockerHelper extends MultiInstProcessor {
 
     /**
+     * Init.
+     *
      * @param instanceId       实例Id
      * @param log              日志对象
      * @param host             DOCKER_HOST, e.g. tcp://10.200.131.182:2375
      * @param registryUrl      registry地址， e.g. https://harbor.dew.env/v2
      * @param registryUsername registry用户名
      * @param registryPassword registry密码
-     * @link https://docs.docker.com/install/linux/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections
+     * @link https ://docs.docker.com/install/linux/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections
      */
     public static void init(String instanceId, Log log, String host, String registryUrl, String registryUsername, String registryPassword) {
         multiInit("DOCKER", instanceId,
@@ -40,6 +43,12 @@ public class DockerHelper extends MultiInstProcessor {
                 host, registryUrl, registryUsername);
     }
 
+    /**
+     * Fetch DockerOpt instance.
+     *
+     * @param instanceId the instance id
+     * @return DockerOpt instance
+     */
     public static DockerOpt inst(String instanceId) {
         return multiInst("DOCKER", instanceId);
     }
