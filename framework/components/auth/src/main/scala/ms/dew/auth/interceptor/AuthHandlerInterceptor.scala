@@ -16,10 +16,7 @@
 
 package ms.dew.auth.interceptor
 
-import ms.dew.Dew
-import ms.dew.auth.sdk.AuthSDKConfig
-import ms.dew.auth.service.BasicService
-import ms.dew.core.web.error.ErrorController
+import com.typesafe.scalalogging.LazyLogging
 import javax.security.auth.message.AuthException
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 import ms.dew.Dew
@@ -31,7 +28,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter
 
 @Component
-class AuthHandlerInterceptor extends HandlerInterceptorAdapter {
+class AuthHandlerInterceptor extends HandlerInterceptorAdapter with LazyLogging {
 
   @Autowired
   var authSdkConfig: AuthSDKConfig = _
@@ -41,11 +38,13 @@ class AuthHandlerInterceptor extends HandlerInterceptorAdapter {
   @throws[Exception]
   override def preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean = {
     val uri = request.getMethod + "@" + "/" + Dew.Info.name + request.getRequestURI
+    logger.trace("Auth by " + uri)
     if (authSdkConfig.getWhiteList.stream.anyMatch(uri.startsWith(_))) {
       return super.preHandle(request, response, handler)
     }
     val accessToken = request.getHeader(AuthSDKConfig.HTTP_ACCESS_TOKEN)
     if (accessToken == null || accessToken.isEmpty) {
+      logger.error("Missing " + AuthSDKConfig.HTTP_ACCESS_TOKEN + " in Header")
       ErrorController.error(request, response, 401, "缺少AccessToken", classOf[AuthException].getName)
       return false
     }
@@ -55,6 +54,7 @@ class AuthHandlerInterceptor extends HandlerInterceptorAdapter {
       Dew.auth.setOptInfo(tokenInfoR.getBody)
       super.preHandle(request, response, handler)
     } else {
+      logger.error("Token " + token + " invalid")
       ErrorController.error(request, response, 401, tokenInfoR.getMessage, classOf[AuthException].getName)
       false
     }

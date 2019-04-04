@@ -16,8 +16,8 @@
 
 package ms.dew.devops.mojo;
 
-import ms.dew.devops.kernel.flow.rollback.DefaultRollbackFlow;
 import io.kubernetes.client.ApiException;
+import ms.dew.devops.kernel.flow.rollback.DefaultRollbackFlow;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -29,7 +29,7 @@ public class RollbackMojo extends BasicMojo {
 
     @Override
     protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
-        return new DefaultRollbackFlow().exec();
+        return new DefaultRollbackFlow().exec(getMojoName());
     }
 
 }

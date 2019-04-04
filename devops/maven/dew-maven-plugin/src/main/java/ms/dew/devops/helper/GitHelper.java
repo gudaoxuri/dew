@@ -16,35 +16,22 @@
 
 package ms.dew.devops.helper;
 
-import com.ecfront.dew.common.$;
 import org.apache.maven.plugin.logging.Log;
 
-import java.util.List;
-
-public class GitHelper {
-
-    private static Log log;
+/**
+ * Git辅助类.
+ * <p>
+ * 使用多实例支持是为方便替换GitOpt为Mock对象以进行集成测试，详见测试实现
+ */
+public class GitHelper extends MultiInstProcessor {
 
     public static void init(Log log) {
-        GitHelper.log = log;
+        multiInit("GIT", "",
+                () -> new GitOpt(log), "");
     }
 
-    public static List<String> diff(String startCommitHash, String endCommitHash, String gitRootDirectory) {
-        List<String> changedFiles = $.shell.execute("cd  " + gitRootDirectory + " && git diff --name-only " + startCommitHash + " " + endCommitHash).getBody();
-        log.info("Found " + changedFiles.size() + " changed files by git diff --name-only " + startCommitHash + " and " + endCommitHash);
-        return changedFiles;
-    }
-
-    public static String getCurrentBranch(String gitRootDirectory) {
-        return $.shell.execute("cd  " + gitRootDirectory + " && git symbolic-ref --short -q HEAD").getBody().get(0);
-    }
-
-    public static String getCurrentCommit(String gitRootDirectory) {
-        return $.shell.execute("cd  " + gitRootDirectory + " && git rev-parse HEAD").getBody().get(0);
-    }
-
-    public static String getScmUrl(String gitRootDirectory) {
-        return $.shell.execute("cd  " + gitRootDirectory + " && git config --get remote.origin.url").getBody().get(0);
+    public static GitOpt inst() {
+        return multiInst("GIT", "");
     }
 
 }

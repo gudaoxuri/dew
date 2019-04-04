@@ -26,6 +26,11 @@ import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+/**
+ * Idempotent web mvc configurer.
+ *
+ * @author gudaoxuri
+ */
 @Configuration
 @ConditionalOnWebApplication
 @EnableConfigurationProperties(DewIdempotentConfig.class)
@@ -37,6 +42,11 @@ public class IdempotentWebMvcConfigurer extends WebMvcConfigurerAdapter {
     private DewIdempotentConfig dewIdempotentConfig;
 
 
+    /**
+     * Instantiates a new Idempotent web mvc configurer.
+     *
+     * @param dewIdempotentConfig the dew idempotent config
+     */
     public IdempotentWebMvcConfigurer(DewIdempotentConfig dewIdempotentConfig) {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
         this.dewIdempotentConfig = dewIdempotentConfig;

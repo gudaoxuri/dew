@@ -17,32 +17,37 @@
 package ms.dew.devops.helper;
 
 import com.github.dockerjava.api.model.Image;
+import ms.dew.devops.BasicTest;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.List;
 
-public class DockerHelperTest {
+public class DockerHelperTest extends BasicTest {
 
     @Before
     public void before() {
-        DockerHelper.init("", new SystemStreamLog(),
-                "tcp://10.200.131.182:2375",
-                "https://harbor.dew.env/v2", "admin", "Harbor12345");
+        DockerHelper.init("", new SystemStreamLog(), defaultDockerHost, defaultDockerRegistryUrl, defaultDockerRegistryUserName, defaultDockerRegistryPassword);
     }
 
     @Test
-    public void testAll() {
-        DockerHelper.Image.pull("alpine:3.6", false, "");
-        List<Image> images = DockerHelper.Image.list("alpine:3.6", "");
+    public void testAll() throws IOException {
+        DockerHelper.inst("").image.remove("harbor.dew.env/dew-test/test:1.0");
+
+        DockerHelper.inst("").image.pull("alpine:3.6", false);
+        List<Image> images = DockerHelper.inst("").image.list("alpine:3.6");
         Assert.assertEquals("alpine:3.6", images.get(0).getRepoTags()[0]);
-        String imageId = DockerHelper.Image.build("harbor.dew.env/dew-test/test:1.0", this.getClass().getResource("/").getPath(), "");
-        Assert.assertEquals(1, DockerHelper.Image.list("harbor.dew.env/dew-test/test:1.0", "").size());
-        DockerHelper.Image.push("harbor.dew.env/dew-test/test:1.0", true, "");
-        DockerHelper.Image.remove(imageId, "");
-        Assert.assertEquals(0, DockerHelper.Image.list("harbor.dew.env/dew-test/test:1.0", "").size());
+        DockerHelper.inst("").image.build("harbor.dew.env/dew-test/test:1.0", this.getClass().getResource("/").getPath());
+        Assert.assertEquals(1, DockerHelper.inst("").image.list("harbor.dew.env/dew-test/test:1.0").size());
+        DockerHelper.inst("").image.push("harbor.dew.env/dew-test/test:1.0", true);
+        DockerHelper.inst("").image.remove("harbor.dew.env/dew-test/test:1.0");
+        Assert.assertEquals(0, DockerHelper.inst("").image.list("harbor.dew.env/dew-test/test:1.0").size());
+        Assert.assertTrue(DockerHelper.inst("").registry.exist("harbor.dew.env/dew-test/test:1.0"));
+        DockerHelper.inst("").registry.remove("harbor.dew.env/dew-test/test:1.0");
+        Assert.assertFalse(DockerHelper.inst("").registry.exist("harbor.dew.env/dew-test/test:1.0"));
     }
 
 }

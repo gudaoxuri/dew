@@ -44,6 +44,15 @@
     </module>
 
     <module name="TreeWalker">
+        <module name="IllegalImport"/>
+        <module name="RedundantImport"/>
+        <module name="UnusedImports"/>
+        <module name="JavadocType">
+            <property name="authorFormat" value="\S"/>
+            <property name="scope" value="protected"/>
+            <property name="tokens" value="CLASS_DEF,INTERFACE_DEF"/>
+        </module>
+
         <module name="OuterTypeFilename"/>
         <module name="IllegalTokenText">
             <property name="tokens" value="STRING_LITERAL, CHAR_LITERAL"/>
@@ -258,14 +267,14 @@
             <property name="allowMissingThrowsTags" value="true"/>
             <property name="allowMissingReturnTag" value="true"/>
             <property name="minLineCount" value="2"/>
-            <property name="allowedAnnotations" value="Override, Test"/>
+            <property name="allowedAnnotations" value="Override, InitTest"/>
             <property name="allowThrowsTagsForSubclasses" value="true"/>
         </module>
-        <module name="MethodName">
-            <property name="format" value="^[a-z][a-z0-9][a-zA-Z0-9_]*$"/>
-            <message key="name.invalidPattern"
-                     value="Method name ''{0}'' must match pattern ''{1}''."/>
-        </module>
+        <!-- <module name="MethodName">
+             <property name="format" value="^[a-z][a-z0-9][a-zA-Z0-9_]*$"/>
+             <message key="name.invalidPattern"
+                      value="Method name ''{0}'' must match pattern ''{1}''."/>
+         </module>-->
         <module name="SingleLineJavadoc">
             <property name="ignoreInlineTags" value="false"/>
         </module>
@@ -274,4 +283,5 @@
         </module>
         <module name="CommentsIndentation"/>
     </module>
+
 </module>

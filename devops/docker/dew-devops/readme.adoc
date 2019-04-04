@@ -8,11 +8,15 @@
 docker build -t dewms/devops .
 
 # 测试
-docker run -it -e MAVEN_OPTS=-Dmaven.repo.local=/opt/cache/.m2/repository dewms/devops
+docker run -it dewms/devops
 -
 # 正确显示Java版本
 java -version
 # 正确显示Maven版本
 mvn -version
+# 正确显示Node版本
+node -v
+# 正确显示NPM版本
+npm version
 -
 ----

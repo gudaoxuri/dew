@@ -17,18 +17,21 @@
 package ms.dew.devops.kernel.function;
 
 import com.ecfront.dew.common.$;
-import ms.dew.devops.helper.GitHelper;
-import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.kernel.Dew;
-import ms.dew.devops.kernel.config.FinalProjectConfig;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1Service;
+import ms.dew.devops.helper.GitHelper;
+import ms.dew.devops.helper.KubeHelper;
+import ms.dew.devops.helper.KubeOpt;
+import ms.dew.devops.kernel.Dew;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -41,15 +44,19 @@ public class NeedExecuteByGit {
         if (initialized.getAndSet(true)) {
             return;
         }
-        // TODO submodule
         Dew.log.info("Fetch need process projects");
         for (FinalProjectConfig config : Dew.Config.getProjects().values()) {
-            Dew.log.debug("Execute need checking for" + config.getAppName());
+            if (config.isCustomVersion()) {
+                // 自定义版本时不判断Git
+                return;
+            }
+            Dew.log.info("Execute need process checking for " + config.getAppName());
             String lastVersionDeployCommit = fetchLastVersionDeployCommit(config);
+
             Dew.log.debug("Latest commit is " + lastVersionDeployCommit);
             // 判断有没有发过版本
             if (lastVersionDeployCommit != null) {
-                List<String> changedFiles = fetchGitDiff(lastVersionDeployCommit, Dew.basicDirectory);
+                List<String> changedFiles = fetchGitDiff(lastVersionDeployCommit);
                 // 判断有没有代码变更
                 if (!hasUnDeployFiles(changedFiles, config)) {
                     config.setSkip(true);
@@ -60,15 +67,16 @@ public class NeedExecuteByGit {
                 .filter(config -> !config.isSkip())
                 .collect(Collectors.toList());
         if (processingProjects.isEmpty()) {
-            Dew.stopped=true;
+            Dew.stopped = true;
             Dew.log.info("No project found to be processed");
             return;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("\r\n==================== Processing Projects =====================\r\n");
+        sb.append("\r\n==================== Processing Projects =====================\r\n\r\n");
         sb.append(processingProjects.stream().map(config ->
                 "> " + config.getMvnGroupId() + ":" + config.getMvnArtifactId())
                 .collect(Collectors.joining("\r\n")));
+        sb.append("\r\n\r\n==============================================================\r\n");
         if (quiet) {
             Dew.log.info(sb.toString());
         } else {
@@ -76,14 +84,14 @@ public class NeedExecuteByGit {
             Dew.log.info(sb.toString());
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             if (reader.readLine().trim().equalsIgnoreCase("N")) {
-                Dew.stopped=true;
+                Dew.stopped = true;
                 Dew.log.info("Process canceled");
             }
         }
     }
 
     private static String fetchLastVersionDeployCommit(FinalProjectConfig config) throws ApiException {
-        V1Service lastVersionService = KubeHelper.read(config.getAppName(), config.getNamespace(), KubeHelper.RES.SERVICE, V1Service.class, config.getId());
+        V1Service lastVersionService = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(), KubeOpt.RES.SERVICE, V1Service.class);
         if (lastVersionService == null) {
             return null;
         } else {
@@ -91,8 +99,8 @@ public class NeedExecuteByGit {
         }
     }
 
-    private static List<String> fetchGitDiff(String lastVersionDeployCommit, String gitDirectory) {
-        List<String> changedFiles = GitHelper.diff(lastVersionDeployCommit, "HEAD", gitDirectory);
+    private static List<String> fetchGitDiff(String lastVersionDeployCommit) {
+        List<String> changedFiles = GitHelper.inst().diff(lastVersionDeployCommit, "HEAD");
         Dew.log.debug("Change files:");
         Dew.log.debug("-------------------");
         changedFiles.forEach(file -> Dew.log.debug(">>" + file));
@@ -101,16 +109,20 @@ public class NeedExecuteByGit {
     }
 
     private static boolean hasUnDeployFiles(List<String> changedFiles, FinalProjectConfig projectConfig) {
-        String projectPath = projectConfig.getMvnDirectory().substring(Dew.basicDirectory.length()).replaceAll("\\\\", "/");
+        File basePath = new File(projectConfig.getMvnDirectory());
+        while (!Arrays.asList(basePath.list()).contains(".git")) {
+            basePath = basePath.getParentFile();
+        }
+        String projectPath = projectConfig.getMvnDirectory().substring(basePath.getPath().length() + 1).replaceAll("\\\\", "/");
         changedFiles = changedFiles.stream()
                 .filter(file -> file.startsWith(projectPath))
                 .collect(Collectors.toList());
-        Dew.log.debug("Found " + changedFiles.size() + " changed files ");
+        Dew.log.info("Found " + changedFiles.size() + " changed files for " + projectConfig.getAppName());
         if (changedFiles.isEmpty()) {
             return false;
         } else if (!projectConfig.getApp().getIgnoreChangeFiles().isEmpty()) {
             if (!$.file.noneMath(changedFiles, new ArrayList<>(projectConfig.getApp().getIgnoreChangeFiles()))) {
-                Dew.log.debug("Found 0 changed files filter ignore files");
+                Dew.log.info("Found 0 changed files filtered ignore files for " + projectConfig.getAppName());
                 return false;
             }
         }

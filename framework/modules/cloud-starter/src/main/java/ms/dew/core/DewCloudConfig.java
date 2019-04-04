@@ -21,25 +21,82 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Dew cloud config.
+ *
+ * @author gudaoxuri
+ */
 @ConfigurationProperties(prefix = "dew.cloud")
 public class DewCloudConfig {
 
     private TraceLog traceLog = new TraceLog();
     private Error error = new Error();
 
+    /**
+     * Gets trace log.
+     *
+     * @return the trace log
+     */
+    public TraceLog getTraceLog() {
+        return traceLog;
+    }
+
+    /**
+     * Sets trace log.
+     *
+     * @param traceLog the trace log
+     */
+    public void setTraceLog(TraceLog traceLog) {
+        this.traceLog = traceLog;
+    }
+
+    /**
+     * Gets error.
+     *
+     * @return the error
+     */
+    public Error getError() {
+        return error;
+    }
+
+    /**
+     * Sets error.
+     *
+     * @param error the error
+     */
+    public void setError(Error error) {
+        this.error = error;
+    }
+
+    /**
+     * Trace log config.
+     */
     public static class TraceLog {
 
         private boolean enabled = true;
 
+        /**
+         * Is enabled.
+         *
+         * @return the boolean
+         */
         public boolean isEnabled() {
             return enabled;
         }
 
+        /**
+         * Sets enabled.
+         *
+         * @param enabled the enabled
+         */
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
         }
     }
 
+    /**
+     * Hystrix Error notify config.
+     */
     public static class Error {
 
         private boolean enabled = false;
@@ -47,76 +104,122 @@ public class DewCloudConfig {
         private String notifyTitle = "服务异常";
         private String[] notifyIncludeKeys = new String[]{};
         private String[] notifyExcludeKeys = new String[]{};
-        private Set<String> notifyEventTypes = new HashSet<String>() {{
-            add("FAILURE");
-            add("SHORT_CIRCUITED");
-            add("TIMEOUT");
-            add("THREAD_POOL_REJECTED");
-            add("SEMAPHORE_REJECTED");
-        }};
+        private Set<String> notifyEventTypes = new HashSet<String>() {
+            {
+                add("FAILURE");
+                add("SHORT_CIRCUITED");
+                add("TIMEOUT");
+                add("THREAD_POOL_REJECTED");
+                add("SEMAPHORE_REJECTED");
+            }
+        };
 
+        /**
+         * Is enabled.
+         *
+         * @return the boolean
+         */
         public boolean isEnabled() {
             return enabled;
         }
 
+        /**
+         * Sets enabled.
+         *
+         * @param enabled the enabled
+         */
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
         }
 
+        /**
+         * Gets notify flag.
+         *
+         * @return the notify flag
+         */
         public String getNotifyFlag() {
             return notifyFlag;
         }
 
+        /**
+         * Sets notify flag.
+         *
+         * @param notifyFlag the notify flag
+         */
         public void setNotifyFlag(String notifyFlag) {
             this.notifyFlag = notifyFlag;
         }
 
+        /**
+         * Gets notify title.
+         *
+         * @return the notify title
+         */
         public String getNotifyTitle() {
             return notifyTitle;
         }
 
+        /**
+         * Sets notify title.
+         *
+         * @param notifyTitle the notify title
+         */
         public void setNotifyTitle(String notifyTitle) {
             this.notifyTitle = notifyTitle;
         }
 
+        /**
+         * Gets notify event types.
+         *
+         * @return the notify event types
+         */
         public Set<String> getNotifyEventTypes() {
             return notifyEventTypes;
         }
 
+        /**
+         * Sets notify event types.
+         *
+         * @param notifyEventTypes the notify event types
+         */
         public void setNotifyEventTypes(Set<String> notifyEventTypes) {
             this.notifyEventTypes = notifyEventTypes;
         }
 
+        /**
+         * Get notify include keys.
+         *
+         * @return the string [ ]
+         */
         public String[] getNotifyIncludeKeys() {
             return notifyIncludeKeys;
         }
 
+        /**
+         * Sets notify include keys.
+         *
+         * @param notifyIncludeKeys the notify include keys
+         */
         public void setNotifyIncludeKeys(String[] notifyIncludeKeys) {
             this.notifyIncludeKeys = notifyIncludeKeys;
         }
 
+        /**
+         * Get notify exclude keys.
+         *
+         * @return the string [ ]
+         */
         public String[] getNotifyExcludeKeys() {
             return notifyExcludeKeys;
         }
 
+        /**
+         * Sets notify exclude keys.
+         *
+         * @param notifyExcludeKeys the notify exclude keys
+         */
         public void setNotifyExcludeKeys(String[] notifyExcludeKeys) {
             this.notifyExcludeKeys = notifyExcludeKeys;
         }
-    }
-
-    public TraceLog getTraceLog() {
-        return traceLog;
-    }
-
-    public void setTraceLog(TraceLog traceLog) {
-        this.traceLog = traceLog;
-    }
-
-    public Error getError() {
-        return error;
-    }
-
-    public void setError(Error error) {
-        this.error = error;
     }
 }

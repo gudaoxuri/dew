@@ -38,6 +38,48 @@ public class H2ClusterHA implements ClusterHA {
 
     private static JdbcConnectionPool jdbcConnectionPool;
 
+    private static boolean update(String sql, Object... params) throws SQLException {
+        try (Connection conn = jdbcConnectionPool.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            for (int i = 1; i <= params.length; i++) {
+                stmt.setObject(i, params[i - 1]);
+            }
+            return stmt.execute();
+        }
+    }
+
+    private static List<PrepareCommitMsg> queryList(String sql, Object... params) throws SQLException {
+        ResultSet rs = null;
+        try (Connection conn = jdbcConnectionPool.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            for (int i = 1; i <= params.length; i++) {
+                stmt.setObject(i, params[i - 1]);
+            }
+            rs = stmt.executeQuery();
+            return convertResultSetToJob(rs);
+        } finally {
+            if (rs != null && !rs.isClosed()) {
+                rs.close();
+            }
+        }
+    }
+
+    private static List<PrepareCommitMsg> convertResultSetToJob(ResultSet rs) throws SQLException {
+        if (rs == null) {
+            return null;
+        }
+        List<PrepareCommitMsg> jobs = new ArrayList<>();
+        while (rs.next()) {
+            PrepareCommitMsg prepareCommitMsg = new PrepareCommitMsg();
+            prepareCommitMsg.setAddr(rs.getString(1));
+            prepareCommitMsg.setMsgId(rs.getString(2));
+            prepareCommitMsg.setMsg(rs.getString(3));
+            prepareCommitMsg.setCreatedTime(rs.getDate(4));
+            jobs.add(prepareCommitMsg);
+        }
+        return jobs;
+    }
+
     @Override
     public void init(HAConfig haConfig) throws SQLException {
         String url = "jdbc:h2:" + haConfig.getStoragePath() + haConfig.getStorageName() + ";DB_CLOSE_ON_EXIT=FALSE";
@@ -89,48 +131,6 @@ public class H2ClusterHA implements ClusterHA {
             logger.error("Query HA job error.", e);
             return new ArrayList<>();
         }
-    }
-
-    private static boolean update(String sql, Object... params) throws SQLException {
-        try (Connection conn = jdbcConnectionPool.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            for (int i = 1; i <= params.length; i++) {
-                stmt.setObject(i, params[i - 1]);
-            }
-            return stmt.execute();
-        }
-    }
-
-    private static List<PrepareCommitMsg> queryList(String sql, Object... params) throws SQLException {
-        ResultSet rs = null;
-        try (Connection conn = jdbcConnectionPool.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            for (int i = 1; i <= params.length; i++) {
-                stmt.setObject(i, params[i - 1]);
-            }
-            rs = stmt.executeQuery();
-            return convertResultSetToJob(rs);
-        } finally {
-            if (rs != null && !rs.isClosed()) {
-                rs.close();
-            }
-        }
-    }
-
-    private static List<PrepareCommitMsg> convertResultSetToJob(ResultSet rs) throws SQLException {
-        if (rs == null) {
-            return null;
-        }
-        List<PrepareCommitMsg> jobs = new ArrayList<>();
-        while (rs.next()) {
-            PrepareCommitMsg prepareCommitMsg = new PrepareCommitMsg();
-            prepareCommitMsg.setAddr(rs.getString(1));
-            prepareCommitMsg.setMsgId(rs.getString(2));
-            prepareCommitMsg.setMsg(rs.getString(3));
-            prepareCommitMsg.setCreatedTime(rs.getDate(4));
-            jobs.add(prepareCommitMsg);
-        }
-        return jobs;
     }
 
 }

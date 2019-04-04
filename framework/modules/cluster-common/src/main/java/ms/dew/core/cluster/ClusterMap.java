@@ -55,14 +55,14 @@ public interface ClusterMap<M> {
      * 指定Key是否存在.
      *
      * @param key key
-     * @return 是否存在
+     * @return 是否存在 boolean
      */
     boolean containsKey(String key);
 
     /**
      * 获取所有Item.
      *
-     * @return 所有Item
+     * @return 所有Item all
      */
     Map<String, M> getAll();
 
@@ -70,7 +70,7 @@ public interface ClusterMap<M> {
      * 获取指定key的value.
      *
      * @param key key
-     * @return 对应的value
+     * @return 对应的value m
      */
     M get(String key);
 
@@ -99,6 +99,7 @@ public interface ClusterMap<M> {
      * 目前只支持Hazelcast实现
      *
      * @param fun 执行的函数
+     * @return the cluster map
      */
     default ClusterMap<M> regEntryAddedEvent(Consumer<EntryEvent<M>> fun) {
         return this;
@@ -110,6 +111,7 @@ public interface ClusterMap<M> {
      * 目前只支持Hazelcast实现
      *
      * @param fun 执行的函数
+     * @return the cluster map
      */
     default ClusterMap<M> regEntryRemovedEvent(Consumer<EntryEvent<M>> fun) {
         return this;
@@ -121,6 +123,7 @@ public interface ClusterMap<M> {
      * 目前只支持Hazelcast实现
      *
      * @param fun 执行的函数
+     * @return the cluster map
      */
     default ClusterMap<M> regEntryUpdatedEvent(Consumer<EntryEvent<M>> fun) {
         return this;
@@ -132,36 +135,72 @@ public interface ClusterMap<M> {
      * 目前只支持Hazelcast实现
      *
      * @param fun 执行的函数
+     * @return the cluster map
      */
     default ClusterMap<M> regMapClearedEvent(VoidProcessFun fun) {
         return this;
     }
 
+    /**
+     * Entry event.
+     *
+     * @param <V> the type parameter
+     */
     class EntryEvent<V> {
         private String key;
         private V oldValue;
         private V value;
 
+        /**
+         * Gets key.
+         *
+         * @return the key
+         */
         public String getKey() {
             return key;
         }
 
+        /**
+         * Sets key.
+         *
+         * @param key the key
+         */
         public void setKey(String key) {
             this.key = key;
         }
 
+        /**
+         * Gets old value.
+         *
+         * @return the old value
+         */
         public V getOldValue() {
             return oldValue;
         }
 
+        /**
+         * Sets old value.
+         *
+         * @param oldValue the old value
+         */
         public void setOldValue(V oldValue) {
             this.oldValue = oldValue;
         }
 
+        /**
+         * Gets value.
+         *
+         * @return the value
+         */
         public V getValue() {
             return value;
         }
 
+        /**
+         * Sets value.
+         *
+         * @param value the value
+         */
         public void setValue(V value) {
             this.value = value;
         }

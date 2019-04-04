@@ -23,16 +23,29 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * Auth auto configuration.
+ *
+ * @author gudaoxuri
+ */
 @Configuration
 public class AuthAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthAutoConfiguration.class);
 
+    /**
+     * Basic auth adapter.
+     *
+     * @return the basic auth adapter
+     */
     @Bean
     public BasicAuthAdapter basicAuthAdapter() {
         return new BasicAuthAdapter();
     }
 
+    /**
+     * Init.
+     */
     @PostConstruct
     public void init() {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());

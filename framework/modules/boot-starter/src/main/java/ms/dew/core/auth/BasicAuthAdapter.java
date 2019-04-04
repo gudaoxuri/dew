@@ -24,6 +24,11 @@ import ms.dew.core.auth.dto.OptInfo;
 import java.util.Optional;
 
 
+/**
+ * 基础登录鉴权适配器.
+ *
+ * @author gudaoxuri
+ */
 public class BasicAuthAdapter implements AuthAdapter {
 
     // token存储key

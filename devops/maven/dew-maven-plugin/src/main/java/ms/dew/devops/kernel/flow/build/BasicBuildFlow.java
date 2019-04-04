@@ -16,35 +16,30 @@
 
 package ms.dew.devops.kernel.flow.build;
 
+import io.kubernetes.client.ApiException;
 import ms.dew.devops.helper.DockerHelper;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.flow.BasicFlow;
-import io.kubernetes.client.ApiException;
 import org.apache.maven.plugin.MojoExecutionException;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public abstract class BasicBuildFlow extends BasicFlow {
 
-    protected boolean preDockerBuild(String buildBasePath) throws ApiException, IOException, MojoExecutionException {
+    protected boolean preDockerBuild(String flowBasePath) throws ApiException, IOException, MojoExecutionException {
         return true;
     }
 
     @Override
-    protected boolean process() throws ApiException, IOException, MojoExecutionException {
+    protected boolean process(String flowBasePath) throws ApiException, IOException, MojoExecutionException {
         // 先判断是否存在
-        if (!DockerHelper.Registry.exist(Dew.Config.getCurrentProject().getCurrImageName(), Dew.Config.getCurrentProject().getId())) {
-            String buildBasePath = Dew.Config.getCurrentProject().getMvnTargetDirectory() + "dew_build" + File.separator;
-            Files.createDirectories(Paths.get(buildBasePath));
+        if (!DockerHelper.inst(Dew.Config.getCurrentProject().getId()).registry.exist(Dew.Config.getCurrentProject().getCurrImageName())) {
             Dew.log.info("Building image : " + Dew.Config.getCurrentProject().getCurrImageName());
-            if (!preDockerBuild(buildBasePath)) {
+            if (!preDockerBuild(flowBasePath)) {
                 Dew.log.debug("Finished,because [preDockerBuild] is false");
                 return false;
             }
-            buildImage(buildBasePath);
+            buildImage(flowBasePath);
             if (Dew.Config.getCurrentProject().getDocker().getRegistryUrl() == null
                     || Dew.Config.getCurrentProject().getDocker().getRegistryUrl().isEmpty()) {
                 Dew.log.warn("Not found docker registry url and push is ignored, which is mostly used for stand-alone testing");
@@ -58,12 +53,12 @@ public abstract class BasicBuildFlow extends BasicFlow {
         return true;
     }
 
-    private void buildImage(String buildBasePath) {
-        DockerHelper.Image.build(Dew.Config.getCurrentProject().getCurrImageName(), buildBasePath, Dew.Config.getCurrentProject().getId());
+    private void buildImage(String flowBasePath) {
+        DockerHelper.inst(Dew.Config.getCurrentProject().getId()).image.build(Dew.Config.getCurrentProject().getCurrImageName(), flowBasePath);
     }
 
     private void pushImage() {
-        DockerHelper.Image.push(Dew.Config.getCurrentProject().getCurrImageName(), true, Dew.Config.getCurrentProject().getId());
+        DockerHelper.inst(Dew.Config.getCurrentProject().getId()).image.push(Dew.Config.getCurrentProject().getCurrImageName(), true);
     }
 
 }

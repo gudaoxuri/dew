@@ -20,27 +20,61 @@ package ms.dew.core.auth.dto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "登录信息")
+/**
+ * 操作用户信息.
+ *
+ * @param <E> 扩展操作用户信息类型
+ * @author gudaoxuri
+ */
+@ApiModel(value = "操作用户信息")
 public class OptInfo<E> {
 
+    /**
+     * The Token.
+     */
     @ApiModelProperty(value = "Token", required = true)
     protected String token;
+    /**
+     * The Account code.
+     */
     @ApiModelProperty(value = "账号编码", required = true)
     protected Object accountCode;
 
+    /**
+     * Gets token.
+     *
+     * @return the token
+     */
     public String getToken() {
         return token;
     }
 
+    /**
+     * Sets token.
+     *
+     * @param token the token
+     * @return the token
+     */
     public E setToken(String token) {
         this.token = token;
         return (E) this;
     }
 
+    /**
+     * Gets account code.
+     *
+     * @return the account code
+     */
     public Object getAccountCode() {
         return accountCode;
     }
 
+    /**
+     * Sets account code.
+     *
+     * @param accountCode the account code
+     * @return the account code
+     */
     public E setAccountCode(Object accountCode) {
         this.accountCode = accountCode;
         return (E) this;

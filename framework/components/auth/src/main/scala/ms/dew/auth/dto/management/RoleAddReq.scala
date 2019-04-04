@@ -16,8 +16,6 @@
 
 package ms.dew.auth.dto.management
 
-import ms.dew.auth.domain.{Resource, Role}
-import ms.dew.auth.helper.CommonConverter
 import javax.validation.constraints.NotNull
 import ms.dew.auth.domain.{Resource, Role}
 import ms.dew.auth.dto.common.StatusDTO

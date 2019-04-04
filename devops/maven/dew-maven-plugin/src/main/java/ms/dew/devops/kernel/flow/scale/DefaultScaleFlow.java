@@ -17,6 +17,7 @@
 package ms.dew.devops.kernel.flow.scale;
 
 import ms.dew.devops.helper.KubeHelper;
+import ms.dew.devops.helper.KubeOpt;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.resource.KubeHorizontalPodAutoscalerBuilder;
@@ -45,17 +46,16 @@ public class DefaultScaleFlow extends BasicFlow {
     }
 
     @Override
-    protected boolean process() throws ApiException, IOException, MojoExecutionException {
+    protected boolean process(String flowBasePath) throws ApiException, IOException, MojoExecutionException {
         if (!autoScale) {
             Dew.log.info("Change replicas number is " + replicas);
-            KubeHelper.patch(Dew.Config.getCurrentProject().getAppName(), new ArrayList<String>() {{
+            KubeHelper.inst(Dew.Config.getCurrentProject().getId()).patch(Dew.Config.getCurrentProject().getAppName(), new ArrayList<String>() {{
                 add("{\"op\":\"replace\",\"path\":\"/spec/replicas\",\"value\":" + replicas + "}");
-            }}, Dew.Config.getCurrentProject().getNamespace(), KubeHelper.RES.DEPLOYMENT, Dew.Config.getCurrentProject().getId());
+            }}, Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.DEPLOYMENT);
         } else {
             Dew.log.info("Enabled auto scale between " + minReplicas + " and " + maxReplicas);
-            KubeHelper.apply(
-                    new KubeHorizontalPodAutoscalerBuilder().build(Dew.Config.getCurrentProject(), minReplicas, maxReplicas, cpuAvg, tps),
-                    Dew.Config.getCurrentProject().getId());
+            KubeHelper.inst(Dew.Config.getCurrentProject().getId()).apply(
+                    new KubeHorizontalPodAutoscalerBuilder().build(Dew.Config.getCurrentProject(), minReplicas, maxReplicas, cpuAvg, tps));
         }
         return true;
     }

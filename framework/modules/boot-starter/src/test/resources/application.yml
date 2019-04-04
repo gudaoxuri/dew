@@ -6,6 +6,10 @@ dew:
     website: www.trc.com
     doc:
       base-package: com.trc.test
+      contact:
+        name: gudaoxuri
+        url: http://www.ecfront.com
+        email: i@sunisle.org
     error-mapping:
       "[com.trc.test.web.AuthException]":
         http-code: 401
@@ -54,6 +58,11 @@ spring:
         max-wait: -1
         max-idle: 1
         min-idle: 0
+
+management:
+  endpoints:
+    web:
+      base-path: /management
 
 logging:
   level:

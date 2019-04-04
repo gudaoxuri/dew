@@ -16,9 +16,9 @@
 
 package ms.dew.devops.mojo;
 
+import io.kubernetes.client.ApiException;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.util.DewLog;
-import io.kubernetes.client.ApiException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.BuildPluginManager;
@@ -29,24 +29,32 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public abstract class BasicMojo extends AbstractMojo {
 
     public static final String FLAG_DEW_DEVOPS_DEFAULT_PROFILE = "default";
 
+    // ============= 公共场景使用 =============
     private static final String FLAG_DEW_DEVOPS_PROFILE = "dew.devops.profile";
-    private static final String FLAG_DEW_DEVOPS_QUIET = "dew.devops.quiet";
-    private static final String FLAG_DEW_DEVOPS_DOCKER_HOST = "dew.devops.docker.host";
-    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL = "dew.devops.docker.registry.url";
-    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME = "dew.devops.docker.registry.username";
-    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD = "dew.devops.docker.registry.password";
     private static final String FLAG_DEW_DEVOPS_KUBE_CONFIG = "dew.devops.kube.config";
 
     @Parameter(property = FLAG_DEW_DEVOPS_PROFILE, defaultValue = FLAG_DEW_DEVOPS_DEFAULT_PROFILE)
     private String profile;
 
-    @Parameter(property = FLAG_DEW_DEVOPS_QUIET)
-    protected boolean quiet;
+    @Parameter(property = FLAG_DEW_DEVOPS_KUBE_CONFIG)
+    private String kubeBase64Config;
+
+    // ============= 发布与回滚使用 =============
+    private static final String FLAG_DEW_DEVOPS_DOCKER_HOST = "dew.devops.docker.host";
+    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL = "dew.devops.docker.registry.url";
+    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME = "dew.devops.docker.registry.username";
+    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD = "dew.devops.docker.registry.password";
+    private static final String FLAG_DEW_DEVOPS_QUIET = "dew.devops.quiet";
+    private static final String FLAG_DEW_DEVOPS_VERSION_CUST = "dew.devops.version.custom";
 
     @Parameter(property = FLAG_DEW_DEVOPS_DOCKER_HOST)
     private String dockerHost;
@@ -60,8 +68,54 @@ public abstract class BasicMojo extends AbstractMojo {
     @Parameter(property = FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD)
     private String dockerRegistryPassword;
 
-    @Parameter(property = FLAG_DEW_DEVOPS_KUBE_CONFIG)
-    private String kubeBase64Config;
+    @Parameter(property = FLAG_DEW_DEVOPS_QUIET)
+    protected boolean quiet;
+
+    @Parameter(property = FLAG_DEW_DEVOPS_VERSION_CUST)
+    private String customVersion;
+
+    // ============= 日志场景使用 =============
+    private static final String FLAG_DEW_DEVOPS_POD_NAME = "dew.devops.log.podName";
+    private static final String FLAG_DEW_DEVOPS_LOG_FOLLOW = "dew.devops.log.follow";
+
+    @Parameter(property = FLAG_DEW_DEVOPS_POD_NAME)
+    protected String podName;
+    @Parameter(property = FLAG_DEW_DEVOPS_LOG_FOLLOW)
+    protected boolean follow;
+
+    // ============= 伸缩场景使用 =============
+    private static final String FLAG_DEW_DEVOPS_SCALE_REPLICAS = "dew.devops.scale.replicas";
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO = "dew.devops.scale.auto";
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN = "dew.devops.scale.auto.minReplicas";
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX = "dew.devops.scale.auto.maxReplicas";
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG = "dew.devops.scale.auto.cpu.averageUtilization";
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_TPS = "dew.devops.scale.auto.cpu.tps";
+
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_REPLICAS)
+    protected int replicas;
+
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO)
+    protected boolean autoScale;
+
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN)
+    protected int minReplicas;
+
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX)
+    protected int maxReplicas;
+
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG)
+    protected int cpuAvg;
+
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_TPS)
+    protected long tps;
+
+    // ============= 测试场景使用 =============
+    private static final String FLAG_DEW_DEVOPS_MOCK_CLASS_PATH = "dew.devops.mock.classpath";
+
+    @Parameter(property = FLAG_DEW_DEVOPS_MOCK_CLASS_PATH)
+    private String mockClasspath;
+
+    // ============= 其它参数 =============
 
     @Component
     private MavenSession session;
@@ -69,10 +123,11 @@ public abstract class BasicMojo extends AbstractMojo {
     @Component
     private BuildPluginManager pluginManager;
 
-
     protected boolean preExecute() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
         return true;
     }
+
+    protected abstract boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -81,9 +136,11 @@ public abstract class BasicMojo extends AbstractMojo {
         }
         try {
             Dew.log = new DewLog(super.getLog(), "[DEW][" + getMojoName() + "]:");
+            formatParameters();
             Dew.log.info("Start...");
             Dew.Init.init(session, pluginManager, profile,
-                    dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config);
+                    dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,
+                    customVersion, mockClasspath);
             if (!preExecute() || Dew.Config.getCurrentProject() == null || Dew.Config.getCurrentProject().isSkip()) {
                 // 各项目 .dew 配置 skip=true || 不支持的app kind
                 Dew.log.info("Skipped");
@@ -109,10 +166,65 @@ public abstract class BasicMojo extends AbstractMojo {
         }
     }
 
-    protected abstract boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException;
+    private void formatParameters() {
+        Dew.log.info("Parsing parameters with standard underline and short");
+        Map<String, String> formattedProperties = formatProperties();
+        formatParameters(FLAG_DEW_DEVOPS_PROFILE, formattedProperties).ifPresent(obj -> profile = obj);
+        formatParameters(FLAG_DEW_DEVOPS_KUBE_CONFIG, formattedProperties).ifPresent(obj -> kubeBase64Config = obj);
+        formatParameters(FLAG_DEW_DEVOPS_DOCKER_HOST, formattedProperties).ifPresent(obj -> dockerHost = obj);
+        formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL, formattedProperties).ifPresent(obj -> dockerRegistryUrl = obj);
+        formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME, formattedProperties).ifPresent(obj -> dockerRegistryUserName = obj);
+        formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD, formattedProperties).ifPresent(obj -> dockerRegistryPassword = obj);
+        formatParameters(FLAG_DEW_DEVOPS_QUIET, formattedProperties).ifPresent(obj -> quiet = Boolean.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_VERSION_CUST, formattedProperties).ifPresent(obj -> customVersion = obj);
+        formatParameters(FLAG_DEW_DEVOPS_POD_NAME, formattedProperties).ifPresent(obj -> podName = obj);
+        formatParameters(FLAG_DEW_DEVOPS_LOG_FOLLOW, formattedProperties).ifPresent(obj -> follow = Boolean.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_REPLICAS, formattedProperties).ifPresent(obj -> replicas = Integer.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO, formattedProperties).ifPresent(obj -> autoScale = Boolean.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN, formattedProperties).ifPresent(obj -> minReplicas = Integer.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX, formattedProperties).ifPresent(obj -> maxReplicas = Integer.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG, formattedProperties).ifPresent(obj -> cpuAvg = Integer.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_TPS, formattedProperties).ifPresent(obj -> tps = Long.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_MOCK_CLASS_PATH, formattedProperties).ifPresent(obj -> mockClasspath = obj);
+    }
 
-    private String getMojoName() {
-        return this.getClass().getSimpleName().substring(0, this.getClass().getSimpleName().indexOf("Mojo"));
+    private Optional<String> formatParameters(String standardFlag, Map<String, String> formattedProperties) {
+        standardFlag = standardFlag.toLowerCase();
+        String underlineFlag = standardFlag.replaceAll("\\.", "_");
+        String shortStandardFlag = standardFlag.substring("dew.devops.".length());
+        String shortUnderlineFlag = underlineFlag.substring("dew_devops_".length());
+        if (formattedProperties.containsKey(standardFlag)) {
+            return Optional.of(formattedProperties.get(standardFlag));
+        }
+        if (formattedProperties.containsKey(underlineFlag)) {
+            return Optional.of(formattedProperties.get(underlineFlag));
+        }
+        if (formattedProperties.containsKey(shortStandardFlag)) {
+            return Optional.of(formattedProperties.get(shortStandardFlag));
+        }
+        if (formattedProperties.containsKey(shortUnderlineFlag)) {
+            return Optional.of(formattedProperties.get(shortUnderlineFlag));
+        }
+        return Optional.empty();
+    }
+
+    private Map<String, String> formatProperties() {
+        Map<String, String> props = new HashMap<>();
+        props.putAll(session.getSystemProperties().entrySet().stream()
+                .collect(Collectors.toMap(prop ->
+                        prop.getKey().toString().toLowerCase().trim(), prop -> prop.getValue().toString().trim())));
+        props.putAll(session.getUserProperties().entrySet().stream()
+                .collect(Collectors.toMap(prop ->
+                        prop.getKey().toString().toLowerCase().trim(), prop -> prop.getValue().toString().trim())));
+        // Support gitlab ci runner by chart.
+        props.putAll(props.entrySet().stream()
+                .filter(prop -> prop.getKey().startsWith("env."))
+                .collect(Collectors.toMap(prop -> prop.getKey().substring("env.".length()), Map.Entry::getValue)));
+        return props;
+    }
+
+    protected String getMojoName() {
+        return this.getClass().getSimpleName().substring(0, this.getClass().getSimpleName().indexOf("Mojo")).toLowerCase();
     }
 
     @Override

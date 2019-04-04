@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * The type Cluster lock test.
+ * Cluster lock test.
  *
  * @author gudaoxuri
  */
@@ -95,10 +95,11 @@ public class ClusterLockTest {
         }).start();
 
         waiting.await();
-        // test auto release instance
+        logger.info("test auto release instance");
+        assert !lock.isLocked();
         assert lock.tryLock(0, 300);
         assert lock.isLocked();
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         assert !lock.isLocked();
     }
 

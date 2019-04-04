@@ -1,0 +1,36 @@
+stages:
+  - deploy
+
+cache:
+  paths:
+    - node_modules/
+    - .m2/
+
+test deploy: # 测试环境部署
+  stage: deploy
+  only:
+    - test # branch 名称
+  tags:
+    - test # runner 名称
+  script:
+    - mvn -P devops dew:build dew:release
+    # 可在此处添加代理.e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.ms" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.ms"
+
+uat deploy: # 仿真/预发环境部署
+  stage: deploy
+  only:
+    - uat
+  tags:
+    - uat
+  script:
+    - mvn -P devops dew:build dew:release
+
+prod deploy: # 生产环境部署
+  stage: deploy
+  only:
+    - prod
+  tags:
+    - prod
+  script:
+    - # TBD 直接使用最后一次发布的uat image
+

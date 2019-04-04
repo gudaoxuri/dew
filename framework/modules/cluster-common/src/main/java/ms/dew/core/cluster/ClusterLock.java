@@ -75,7 +75,7 @@ public interface ClusterLock {
      * 尝试加锁.
      *
      * @param waitMillSec  等待毫秒数
-     * @param leaseMillSec 锁释放毫秒数
+     * @param leaseMillSec 锁释放毫秒数，估计值，实际释放时间视各中间件的配置及执行环境会有一定偏差
      */
     boolean tryLock(long waitMillSec, long leaseMillSec) throws InterruptedException;
 

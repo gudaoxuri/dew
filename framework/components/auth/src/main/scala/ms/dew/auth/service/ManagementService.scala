@@ -17,17 +17,12 @@
 package ms.dew.auth.service
 
 import com.ecfront.dew.common.{$, Page, Resp}
+import com.typesafe.scalalogging.LazyLogging
 import ms.dew.Dew
 import ms.dew.auth.AuthConfig
 import ms.dew.auth.domain._
 import ms.dew.auth.dto.management._
 import ms.dew.auth.repository._
-import com.typesafe.scalalogging.LazyLogging
-import ms.dew.Dew
-import ms.dew.auth.AuthConfig
-import ms.dew.auth.domain.{Account, Ident, Resource, Role, Tenant}
-import ms.dew.auth.dto.management.{AccountAddReq, AccountModifyReq, AccountResp, IdentAddReq, IdentModifyReq, IdentResp, ResourceAddReq, ResourceModifyReq, ResourceResp, RoleAddReq, RoleModifyReq, RoleResp, TenantAddReq, TenantModifyReq, TenantResp}
-import ms.dew.auth.repository.{AccountRepository, IdentRepository, ResourceRepository, RoleRepository, TenantRepository}
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service

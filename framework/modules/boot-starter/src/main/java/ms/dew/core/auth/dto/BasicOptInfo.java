@@ -23,20 +23,144 @@ import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@ApiModel(value = "登录信息")
+/**
+ * 基础操作用户信息.
+ *
+ * @param <E> 扩展操作用户信息类型
+ * @author gudaoxuri
+ */
+@ApiModel(value = "操作用户信息")
 public class BasicOptInfo<E> extends OptInfo<E> {
 
+    /**
+     * The Mobile.
+     */
     @ApiModelProperty(value = "手机号", required = true)
     protected String mobile;
+    /**
+     * The Email.
+     */
     @ApiModelProperty(value = "邮箱", required = true)
     protected String email;
+    /**
+     * The Name.
+     */
     @ApiModelProperty(value = "姓名", required = true)
     protected String name;
+    /**
+     * The Roles.
+     */
     @ApiModelProperty(value = "角色列表", required = true)
     protected List<RoleInfo> roles;
+    /**
+     * The Last login time.
+     */
     @ApiModelProperty(value = "最后一次登录时间", required = true)
     protected LocalDateTime lastLoginTime;
 
+    /**
+     * Gets mobile.
+     *
+     * @return the mobile
+     */
+    public String getMobile() {
+        return mobile;
+    }
+
+    /**
+     * Sets mobile.
+     *
+     * @param mobile the mobile
+     * @return the mobile
+     */
+    public E setMobile(String mobile) {
+        this.mobile = mobile;
+        return (E) this;
+    }
+
+    /**
+     * Gets email.
+     *
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+
+    /**
+     * Sets email.
+     *
+     * @param email the email
+     * @return the email
+     */
+    public E setEmail(String email) {
+        this.email = email;
+        return (E) this;
+    }
+
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets name.
+     *
+     * @param name the name
+     * @return the name
+     */
+    public E setName(String name) {
+        this.name = name;
+        return (E) this;
+    }
+
+    /**
+     * Gets roles.
+     *
+     * @return the roles
+     */
+    public List<RoleInfo> getRoles() {
+        return roles;
+    }
+
+    /**
+     * Sets roles.
+     *
+     * @param roles the roles
+     * @return the roles
+     */
+    public E setRoles(List<RoleInfo> roles) {
+        this.roles = roles;
+        return (E) this;
+    }
+
+    /**
+     * Gets last login time.
+     *
+     * @return the last login time
+     */
+    public LocalDateTime getLastLoginTime() {
+        return lastLoginTime;
+    }
+
+    /**
+     * Sets last login time.
+     *
+     * @param lastLoginTime the last login time
+     * @return the last login time
+     */
+    public E setLastLoginTime(LocalDateTime lastLoginTime) {
+        this.lastLoginTime = lastLoginTime;
+        return (E) this;
+    }
+
+    /**
+     * Role info.
+     */
     @ApiModel(value = "角色信息")
     public static class RoleInfo {
         @ApiModelProperty(value = "角色编码", required = true)
@@ -46,77 +170,65 @@ public class BasicOptInfo<E> extends OptInfo<E> {
         @ApiModelProperty(value = "租户编码", required = true)
         private String tenantCode;
 
+        /**
+         * Gets code.
+         *
+         * @return the code
+         */
         public String getCode() {
             return code;
         }
 
+        /**
+         * Sets code.
+         *
+         * @param code the code
+         * @return the code
+         */
         public RoleInfo setCode(String code) {
             this.code = code;
             return this;
         }
 
+        /**
+         * Gets name.
+         *
+         * @return the name
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Sets name.
+         *
+         * @param name the name
+         * @return the name
+         */
         public RoleInfo setName(String name) {
             this.name = name;
             return this;
         }
 
+        /**
+         * Gets tenant code.
+         *
+         * @return the tenant code
+         */
         public String getTenantCode() {
             return tenantCode;
         }
 
+        /**
+         * Sets tenant code.
+         *
+         * @param tenantCode the tenant code
+         * @return the tenant code
+         */
         public RoleInfo setTenantCode(String tenantCode) {
             this.tenantCode = tenantCode;
             return this;
         }
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public E setMobile(String mobile) {
-        this.mobile = mobile;
-        return (E) this;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public E setEmail(String email) {
-        this.email = email;
-        return (E) this;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public E setName(String name) {
-        this.name = name;
-        return (E) this;
-    }
-
-    public List<RoleInfo> getRoles() {
-        return roles;
-    }
-
-    public E setRoles(List<RoleInfo> roles) {
-        this.roles = roles;
-        return (E) this;
-    }
-
-    public LocalDateTime getLastLoginTime() {
-        return lastLoginTime;
-    }
-
-    public E setLastLoginTime(LocalDateTime lastLoginTime) {
-        this.lastLoginTime = lastLoginTime;
-        return (E) this;
     }
 
 }

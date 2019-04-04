@@ -19,6 +19,7 @@ package ms.dew.devops.helper;
 import com.ecfront.dew.common.$;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.*;
+import ms.dew.devops.BasicTest;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Assert;
 import org.junit.Before;
@@ -27,29 +28,28 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-public class KubeHelperTest {
+public class KubeHelperTest extends BasicTest {
 
     @Before
     public void before() throws IOException {
-        KubeHelper.init("", new SystemStreamLog(), $.file.readAllByClassPath("kube.config", "UTF-8"));
+        KubeHelper.init("", new SystemStreamLog(), defaultKubeConfig);
     }
 
     @Test
     public void testAll() throws IOException, ApiException, InterruptedException {
-        KubeHelper.delete("ns-test", KubeHelper.RES.NAME_SPACE, "");
+        KubeHelper.inst("").delete("ns-test", KubeOpt.RES.NAME_SPACE);
 
-        Assert.assertFalse(KubeHelper.exist("ns-test", KubeHelper.RES.NAME_SPACE, ""));
-        KubeHelper.create($.file.readAllByClassPath("ns-test.yaml", "UTF-8"), "");
-        Assert.assertTrue(KubeHelper.exist("ns-test", KubeHelper.RES.NAME_SPACE, ""));
+        Assert.assertFalse(KubeHelper.inst("").exist("ns-test", KubeOpt.RES.NAME_SPACE));
+        KubeHelper.inst("").create($.file.readAllByClassPath("ns-test.yaml", "UTF-8"));
+        Assert.assertTrue(KubeHelper.inst("").exist("ns-test", KubeOpt.RES.NAME_SPACE));
         Assert.assertEquals("Active",
-                KubeHelper.read("ns-test", KubeHelper.RES.NAME_SPACE, V1Namespace.class, "").getStatus().getPhase());
+                KubeHelper.inst("").read("ns-test", KubeOpt.RES.NAME_SPACE, V1Namespace.class).getStatus().getPhase());
 
         ExtensionsV1beta1Deployment deployment = buildDeployment();
         CountDownLatch cdl = new CountDownLatch(1);
-        String watchId = KubeHelper.watch((coreApi, extensionsApi, rbacAuthorizationApi,autoscalingApi)
+        String watchId = KubeHelper.inst("").watch((coreApi, extensionsApi, rbacAuthorizationApi, autoscalingApi)
                         -> extensionsApi.listNamespacedDeploymentCall(deployment.getMetadata().getNamespace(), null, null, null, null, "name=test-nginx", 1, null, null, Boolean.TRUE, null, null),
                 resp -> {
                     System.out.printf("%s : %s%n", resp.type, $.json.toJsonString(resp.object.getStatus()));
@@ -58,37 +58,35 @@ public class KubeHelperTest {
                         cdl.countDown();
                     }
                 },
-                ExtensionsV1beta1Deployment.class, "");
-        Assert.assertFalse(KubeHelper.exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(), KubeHelper.RES.DEPLOYMENT, ""));
-        KubeHelper.apply(deployment, "");
-        Assert.assertTrue(KubeHelper.exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(), KubeHelper.RES.DEPLOYMENT, ""));
+                ExtensionsV1beta1Deployment.class);
+        Assert.assertFalse(KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(), KubeOpt.RES.DEPLOYMENT));
+        KubeHelper.inst("").apply(deployment);
+        Assert.assertTrue(KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(), KubeOpt.RES.DEPLOYMENT));
 
-        Assert.assertEquals(1, KubeHelper.list(
+        Assert.assertEquals(1, KubeHelper.inst("").list(
                 "",
                 deployment.getMetadata().getNamespace(),
-                KubeHelper.RES.DEPLOYMENT,
-                ExtensionsV1beta1Deployment.class, "").size());
-        Assert.assertEquals(0, KubeHelper.list(
+                KubeOpt.RES.DEPLOYMENT,
+                ExtensionsV1beta1Deployment.class).size());
+        Assert.assertEquals(0, KubeHelper.inst("").list(
                 "name=nginx",
                 deployment.getMetadata().getNamespace(),
-                KubeHelper.RES.DEPLOYMENT,
-                ExtensionsV1beta1Deployment.class, "").size());
-        Assert.assertEquals(1, KubeHelper.list(
+                KubeOpt.RES.DEPLOYMENT,
+                ExtensionsV1beta1Deployment.class).size());
+        Assert.assertEquals(1, KubeHelper.inst("").list(
                 "name=test-nginx",
                 deployment.getMetadata().getNamespace(),
-                KubeHelper.RES.DEPLOYMENT,
-                ExtensionsV1beta1Deployment.class, "").size());
+                KubeOpt.RES.DEPLOYMENT,
+                ExtensionsV1beta1Deployment.class).size());
 
-
-        KubeHelper.patch("nginx-deployment", new ArrayList<String>() {{
+        KubeHelper.inst("").patch("nginx-deployment", new ArrayList<String>() {{
             add("{\"op\":\"replace\",\"path\":\"/spec/replicas\",\"value\":2}");
             add("{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/image\",\"value\":\"nginx:latest\"}");
-        }}, "ns-test", KubeHelper.RES.DEPLOYMENT, "");
-        ExtensionsV1beta1Deployment fetchedDeployment = KubeHelper.read(deployment.getMetadata().getName(),
+        }}, "ns-test", KubeOpt.RES.DEPLOYMENT);
+        ExtensionsV1beta1Deployment fetchedDeployment = KubeHelper.inst("").read(deployment.getMetadata().getName(),
                 deployment.getMetadata().getNamespace(),
-                KubeHelper.RES.DEPLOYMENT,
-                ExtensionsV1beta1Deployment.class
-                , "");
+                KubeOpt.RES.DEPLOYMENT,
+                ExtensionsV1beta1Deployment.class);
 
         Assert.assertEquals(2, fetchedDeployment.getSpec().getReplicas().intValue());
         Assert.assertEquals("nginx:latest", fetchedDeployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
@@ -96,23 +94,27 @@ public class KubeHelperTest {
 
         cdl.await();
 
-        String podName = KubeHelper.list(
+        String podName = KubeHelper.inst("").list(
                 "app=nginx",
                 deployment.getMetadata().getNamespace(),
-                KubeHelper.RES.POD,
-                V1Pod.class, "").get(0).getMetadata().getName();
+                KubeOpt.RES.POD,
+                V1Pod.class).get(0).getMetadata().getName();
 
-        List<String> logs = KubeHelper.log(podName, "ns-test", 2, "");
+        // TODO
+        /*
+        Ngnix没有日志输出，程序会一直等待
+        List<String> logs = KubeHelper.inst("").log(podName, "ns-test");
         logs.forEach(System.out::println);
+        */
 
-        KubeHelper.stopWatch(watchId, "");
-        KubeHelper.delete("ns-test", KubeHelper.RES.NAME_SPACE, "");
-        Assert.assertFalse(KubeHelper.exist("ns-test", KubeHelper.RES.NAME_SPACE, ""));
+        KubeHelper.inst("").stopWatch(watchId);
+        KubeHelper.inst("").delete("ns-test", KubeOpt.RES.NAME_SPACE);
+        Assert.assertFalse(KubeHelper.inst("").exist("ns-test", KubeOpt.RES.NAME_SPACE));
     }
 
     private ExtensionsV1beta1Deployment buildDeployment() {
         return new ExtensionsV1beta1DeploymentBuilder()
-                .withKind(KubeHelper.RES.DEPLOYMENT.getVal())
+                .withKind(KubeOpt.RES.DEPLOYMENT.getVal())
                 .withApiVersion("extensions/v1beta1")
                 .withMetadata(new V1ObjectMetaBuilder()
                         .withName("nginx-deployment")

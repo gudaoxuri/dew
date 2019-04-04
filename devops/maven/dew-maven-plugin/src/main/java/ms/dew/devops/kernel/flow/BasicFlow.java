@@ -16,13 +16,17 @@
 
 package ms.dew.devops.kernel.flow;
 
-import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.kernel.Dew;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1ConfigMap;
+import ms.dew.devops.helper.KubeHelper;
+import ms.dew.devops.helper.KubeOpt;
+import ms.dew.devops.kernel.Dew;
 import org.apache.maven.plugin.MojoExecutionException;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,39 +40,41 @@ public abstract class BasicFlow {
     protected static final String FLAG_VERSION_RE_RELEASE = "re-release";
     protected static final String FLAG_VERSION_ENABLED = "enabled";
 
-    public final boolean exec() throws ApiException, IOException, MojoExecutionException {
+    public final boolean exec(String mojoName) throws ApiException, IOException, MojoExecutionException {
         Dew.log.debug("Executing " + this.getClass().getSimpleName());
-        if (!preProcess()) {
+        String flowBasePath = Dew.Config.getCurrentProject().getMvnTargetDirectory() + "dew_" + mojoName + File.separator;
+        Files.createDirectories(Paths.get(flowBasePath));
+
+        if (!preProcess(flowBasePath)) {
             Dew.log.debug("Finished,because [preProcess] is false");
             return false;
         }
-        if (!process()) {
+        if (!process(flowBasePath)) {
             Dew.log.debug("Finished,because [process] is false");
             return false;
         }
-        if (!postProcess()) {
+        if (!postProcess(flowBasePath)) {
             Dew.log.debug("Finished,because [postProcess] is false");
             return false;
         }
         return true;
     }
 
-    abstract protected boolean process() throws ApiException, IOException, MojoExecutionException;
+    abstract protected boolean process(String flowBasePath) throws ApiException, IOException, MojoExecutionException;
 
-    protected boolean preProcess() throws ApiException, IOException, MojoExecutionException {
+    protected boolean preProcess(String flowBasePath) throws ApiException, IOException, MojoExecutionException {
         return true;
     }
 
-    protected boolean postProcess() throws ApiException, IOException, MojoExecutionException {
+    protected boolean postProcess(String flowBasePath) throws ApiException, IOException, MojoExecutionException {
         return true;
     }
 
     protected List<V1ConfigMap> getVersionHistory(boolean onlyEnabled) throws ApiException {
-        List<V1ConfigMap> versions = KubeHelper.list(
+        List<V1ConfigMap> versions = KubeHelper.inst(Dew.Config.getCurrentProject().getId()).list(
                 FLAG_VERSION_APP + "=" + Dew.Config.getCurrentProject().getAppName() + "," + FLAG_VERSION_KIND + "=version",
                 Dew.Config.getCurrentProject().getNamespace(),
-                KubeHelper.RES.CONFIG_MAP, V1ConfigMap.class,
-                Dew.Config.getCurrentProject().getId());
+                KubeOpt.RES.CONFIG_MAP, V1ConfigMap.class);
         versions.sort((m1, m2) ->
                 Long.valueOf(m2.getMetadata().getLabels().get(FLAG_VERSION_LAST_UPDATE_TIME))
                         .compareTo(Long.valueOf(m1.getMetadata().getLabels().get(FLAG_VERSION_LAST_UPDATE_TIME))));
@@ -79,6 +85,22 @@ public abstract class BasicFlow {
         } else {
             return versions;
         }
+    }
+
+    protected V1ConfigMap getOldVersion(String gitCommit) throws ApiException {
+        V1ConfigMap oldVersion = KubeHelper.inst(Dew.Config.getCurrentProject().getId())
+                .read(getVersionName(gitCommit),
+                        Dew.Config.getCurrentProject().getNamespace(),
+                        KubeOpt.RES.CONFIG_MAP, V1ConfigMap.class);
+        if (oldVersion != null && oldVersion.getMetadata().getLabels().get(FLAG_VERSION_ENABLED).equalsIgnoreCase("true")) {
+            return oldVersion;
+        } else {
+            return null;
+        }
+    }
+
+    protected String getVersionName(String gitCommit) {
+        return "ver." + Dew.Config.getCurrentProject().getAppName() + "." + gitCommit;
     }
 
 }

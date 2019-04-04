@@ -16,9 +16,13 @@
 
 package ms.dew.idempotent.strategy;
 
-
 import ms.dew.Dew;
 
+/**
+ * Item processor.
+ *
+ * @author gudaoxuri
+ */
 public class ItemProcessor implements IdempotentProcessor {
 
     private static final String CACHE_KEY = "dew:idempotent:item:";

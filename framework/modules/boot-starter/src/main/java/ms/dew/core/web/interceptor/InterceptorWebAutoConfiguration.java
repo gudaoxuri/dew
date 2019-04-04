@@ -27,6 +27,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import javax.annotation.PostConstruct;
 
+/**
+ * Interceptor web auto configuration.
+ *
+ * @author gudaoxuri
+ */
 @Configuration
 @ConditionalOnWebApplication
 @Order(20000)
@@ -34,6 +39,9 @@ public class InterceptorWebAutoConfiguration extends WebMvcConfigurerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(InterceptorWebAutoConfiguration.class);
 
+    /**
+     * Init.
+     */
     @PostConstruct
     public void init() {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());

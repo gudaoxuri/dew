@@ -17,29 +17,28 @@
 package ms.dew.devops.kernel.flow.rollback;
 
 import com.ecfront.dew.common.$;
+import io.kubernetes.client.ApiException;
+import io.kubernetes.client.models.V1ConfigMap;
+import io.kubernetes.client.models.V1Service;
 import ms.dew.devops.helper.KubeHelper;
+import ms.dew.devops.helper.KubeOpt;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.flow.release.DefaultReleaseFlow;
-import io.kubernetes.client.ApiException;
-import io.kubernetes.client.models.ExtensionsV1beta1Deployment;
-import io.kubernetes.client.models.V1ConfigMap;
-import io.kubernetes.client.models.V1Service;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class DefaultRollbackFlow extends BasicFlow {
 
-    protected boolean process() throws ApiException, IOException, MojoExecutionException {
-        V1Service service = KubeHelper.read(Dew.Config.getCurrentProject().getAppName(), Dew.Config.getCurrentProject().getNamespace(), KubeHelper.RES.SERVICE, V1Service.class, Dew.Config.getCurrentProject().getId());
+    protected boolean process(String flowBasePath) throws ApiException, IOException, MojoExecutionException {
+        V1Service service = KubeHelper.inst(Dew.Config.getCurrentProject().getId()).read(Dew.Config.getCurrentProject().getAppName(), Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.SERVICE, V1Service.class);
         String currentGitCommit = null;
         if (service != null) {
             currentGitCommit = service.getMetadata().getAnnotations().get(FLAG_KUBE_RESOURCE_GIT_COMMIT);
@@ -49,12 +48,13 @@ public class DefaultRollbackFlow extends BasicFlow {
                         .toMap(ver -> ver.getMetadata().getLabels().get(FLAG_KUBE_RESOURCE_GIT_COMMIT), ver -> ver,
                                 (v1, v2) -> v1, LinkedHashMap::new));
         String finalCurrentGitCommit = currentGitCommit;
-        String sb = "\r\n------------------ Please select rollback version : ------------------\r\n" +
-                versions.entrySet().stream()
-                        .map(ver -> " < " + ver.getKey() + " > Last update time : "
-                                + $.time().yyyy_MM_dd_HH_mm_ss_SSS.format(new Date(Long.valueOf(ver.getValue().getMetadata().getLabels().get(FLAG_VERSION_LAST_UPDATE_TIME))))
-                                + (finalCurrentGitCommit != null && finalCurrentGitCommit.equalsIgnoreCase(ver.getKey()) ? " [Online]" : ""))
-                        .collect(Collectors.joining("\r\n"));
+        String sb = "\r\n------------------ Please select rollback version : ------------------\r\n"
+                + versions.entrySet().stream()
+                .map(ver -> " < " + ver.getKey() + " > Last update time : "
+                        + $.time().yyyy_MM_dd_HH_mm_ss_SSS.format(new Date(Long.valueOf(ver.getValue().getMetadata().getLabels().get(FLAG_VERSION_LAST_UPDATE_TIME))))
+                        + (finalCurrentGitCommit != null && finalCurrentGitCommit.equalsIgnoreCase(ver.getKey()) ? " [Online]" : ""))
+                .collect(Collectors.joining("\r\n"))
+                + "\r\n---------------------------------------------------------------------\r\n";
         Dew.log.info(sb);
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String selected = reader.readLine().trim();
@@ -64,18 +64,7 @@ public class DefaultRollbackFlow extends BasicFlow {
             selected = reader.readLine().trim();
         }
         String rollbackGitCommit = versions.get(selected).getMetadata().getLabels().get(FLAG_KUBE_RESOURCE_GIT_COMMIT);
-        Dew.log.info("Rollback from " + currentGitCommit + " to " + rollbackGitCommit);
-        ExtensionsV1beta1Deployment rollbackDeployment = KubeHelper.toResource(
-                $.security.decodeBase64ToString(versions.get(selected).getData().get(KubeHelper.RES.DEPLOYMENT.getVal()), "UTF-8"),
-                ExtensionsV1beta1Deployment.class);
-        V1Service rollbackService = KubeHelper.toResource(
-                $.security.decodeBase64ToString(versions.get(selected).getData().get(KubeHelper.RES.SERVICE.getVal()), "UTF-8"),
-                V1Service.class);
-
-        new DefaultReleaseFlow().release(new HashMap<String, Object>() {{
-            put(KubeHelper.RES.DEPLOYMENT.getVal(), rollbackDeployment);
-            put(KubeHelper.RES.SERVICE.getVal(), rollbackService);
-        }}, rollbackGitCommit, true);
+        new DefaultReleaseFlow().release(rollbackGitCommit);
         return true;
     }
 

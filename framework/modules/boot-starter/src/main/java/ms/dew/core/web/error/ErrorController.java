@@ -50,6 +50,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * Error controller.
+ *
+ * @author gudaoxuri
+ */
 @RestController
 @ApiIgnore
 @ConditionalOnWebApplication
@@ -69,27 +74,30 @@ public class ErrorController extends AbstractErrorController {
     @Value("${error.path:/error}")
     private String errorPath;
 
+    /**
+     * Instantiates a new Error controller.
+     *
+     * @param errorAttributes the error attributes
+     */
     public ErrorController(ErrorAttributes errorAttributes) {
         super(errorAttributes);
     }
 
-    @Bean
-    public MethodValidationPostProcessor methodValidationPostProcessor() {
-        return new MethodValidationPostProcessor();
-    }
-
-    @Override
-    public String getErrorPath() {
-        return errorPath;
-    }
-
-
+    /**
+     * Error object.
+     *
+     * @param request the request
+     * @return the object
+     */
     @RequestMapping()
     @ResponseBody
     public Object error(HttpServletRequest request) {
         Object specialError = request.getAttribute(SPECIAL_ERROR_FLAG);
         if (specialError instanceof Resp.FallbackException) {
-            return ResponseEntity.status(FALL_BACK_STATUS).contentType(MediaType.APPLICATION_JSON_UTF8).body(((Resp.FallbackException) specialError).getMessage());
+            return ResponseEntity
+                    .status(FALL_BACK_STATUS)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .body(((Resp.FallbackException) specialError).getMessage());
         }
         Map<String, Object> error = getErrorAttributes(request, true);
         String path;
@@ -115,12 +123,15 @@ public class ErrorController extends AbstractErrorController {
         httpCode = (int) result[0];
         if (httpCode > 499) {
             // 服务错误才通知
-            Dew.notify.sendAsync(Dew.dewConfig.getBasic().getFormat().getErrorFlag(), (Throwable) specialError, ((Throwable) specialError).getMessage());
+            Dew.notify.sendAsync(Dew.dewConfig.getBasic().getFormat().getErrorFlag(),
+                    (Throwable) specialError, ((Throwable) specialError).getMessage());
         }
         return ResponseEntity.status(httpCode).contentType(MediaType.APPLICATION_JSON_UTF8).body(result[1]);
     }
 
-    private static Object[] error(HttpServletRequest request, String path, int httpCode, String msg, String exClass, String exMsg, List exDetail, Throwable specialError) {
+    private static Object[] error(HttpServletRequest request,
+                                  String path, int httpCode, String msg, String exClass, String exMsg,
+                                  List exDetail, Throwable specialError) {
         String message = msg;
         String busCode = String.valueOf(httpCode);
         int customHttpCode = -1;
@@ -186,13 +197,40 @@ public class ErrorController extends AbstractErrorController {
         return new Object[]{httpCode, body};
     }
 
-    public static void error(HttpServletRequest request, HttpServletResponse response, int statusCode, String message, String exClass) throws IOException {
+    /**
+     * Error.
+     *
+     * @param request    the request
+     * @param response   the response
+     * @param statusCode the status code
+     * @param message    the message
+     * @param exClass    the ex class
+     * @throws IOException the io exception
+     */
+    public static void error(HttpServletRequest request, HttpServletResponse response,
+                             int statusCode, String message, String exClass)
+            throws IOException {
         Object[] confirmedError = error(request, request.getRequestURI(), statusCode, message, exClass, "", null, null);
         response.setStatus((Integer) confirmedError[0]);
         response.setContentType(String.valueOf(MediaType.APPLICATION_JSON_UTF8));
         response.getWriter().write((String) confirmedError[1]);
         response.getWriter().flush();
         response.getWriter().close();
+    }
+
+    /**
+     * Method validation post processor method validation post processor.
+     *
+     * @return the method validation post processor
+     */
+    @Bean
+    public MethodValidationPostProcessor methodValidationPostProcessor() {
+        return new MethodValidationPostProcessor();
+    }
+
+    @Override
+    public String getErrorPath() {
+        return errorPath;
     }
 
 }

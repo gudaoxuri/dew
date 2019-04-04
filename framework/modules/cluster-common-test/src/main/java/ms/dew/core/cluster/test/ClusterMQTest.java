@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * The type Cluster mq test.
+ * Cluster mq test.
  *
  * @author gudaoxuri
  */
@@ -58,7 +58,7 @@ public class ClusterMQTest {
             logger.info("subscribe instance 2: pub_sub>>" + message);
             waiting.countDown();
         })).start();
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         for (int i = 0; i < 10; i++) {
             mq.publish("test_pub_sub", "msgA" + i);
             mq.publish("test_pub_sub", "msgB" + i);

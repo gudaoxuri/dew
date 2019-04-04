@@ -29,10 +29,20 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Idempotent handler interceptor.
+ *
+ * @author gudaoxuri
+ */
 public class IdempotentHandlerInterceptor extends HandlerInterceptorAdapter {
 
     private DewIdempotentConfig dewIdempotentConfig;
 
+    /**
+     * Instantiates a new Idempotent handler interceptor.
+     *
+     * @param dewIdempotentConfig the dew idempotent config
+     */
     public IdempotentHandlerInterceptor(DewIdempotentConfig dewIdempotentConfig) {
         this.dewIdempotentConfig = dewIdempotentConfig;
     }
@@ -64,10 +74,12 @@ public class IdempotentHandlerInterceptor extends HandlerInterceptorAdapter {
             case NOT_EXIST:
                 return super.preHandle(request, response, handler);
             case UN_CONFIRM:
-                ErrorController.error(request, response, 409, "The last operation was still going on, please wait.", IdempotentException.class.getName());
+                ErrorController.error(request, response, 409,
+                        "The last operation was still going on, please wait.", IdempotentException.class.getName());
                 return false;
             case CONFIRMED:
-                ErrorController.error(request, response, 423, "Resources have been processed, can't repeat the request.", IdempotentException.class.getName());
+                ErrorController.error(request, response, 423,
+                        "Resources have been processed, can't repeat the request.", IdempotentException.class.getName());
                 return false;
             default:
                 return false;

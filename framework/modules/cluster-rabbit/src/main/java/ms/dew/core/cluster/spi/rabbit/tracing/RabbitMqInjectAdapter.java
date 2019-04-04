@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * The type Rabbit mq inject adapter.
+ * Rabbit mq inject adapter.
  *
  * @author gudaoxuri
  */

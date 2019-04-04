@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: hystrix-example
+  #  mail:
+  #    host: smtp.alibaba.com
+  #    username:
+  #    password:
+  #    properties:
+  #      mail:
+  #        smtp:
+  #          auth: true
+  #          starttls:
+  #            enable: false
+  #            required: fasle
+  cloud:
+    config:
+      enabled: false
+
+dew:
+  cloud:
+    error:
+      enabled: true
+      notify-title: dew-test

@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 
 /**
- * The type Rabbit auto configuration.
+ * Rabbit auto configuration.
  *
  * @author gudaoxuri
  */

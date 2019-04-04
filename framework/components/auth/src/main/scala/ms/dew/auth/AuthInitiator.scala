@@ -17,10 +17,6 @@
 package ms.dew.auth
 
 import com.ecfront.dew.common.$
-import ms.dew.auth.domain._
-import ms.dew.auth.dto.management._
-import ms.dew.auth.repository.{RoleRepository, TenantRepository}
-import ms.dew.auth.service.{BasicService, ManagementService}
 import javax.annotation.PostConstruct
 import ms.dew.Dew
 import ms.dew.auth.domain.{Ident, Resource, Role, Tenant}

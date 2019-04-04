@@ -70,7 +70,7 @@ public class Notify {
                 channel = (Channel) Class.forName(Notify.class.getPackage().getName() + "." + value.getType() + "Channel").newInstance();
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                 logger.error("Not exist notify type:" + value.getType());
-                System.exit(1);
+                throw new RuntimeException(e);
             }
             channel.init(value);
             NOTIFY_CHANNELS.put(key, channel);
@@ -335,7 +335,7 @@ public class Notify {
     }
 
     /**
-     * The type Context.
+     * Context.
      */
     static class Context {
         /**
@@ -361,7 +361,7 @@ public class Notify {
     }
 
     /**
-     * The type Notify delayed.
+     * Notify delayed.
      */
     static class NotifyDelayed implements Delayed {
 
@@ -369,6 +369,20 @@ public class Notify {
         private Set<String> specialReceivers;
         private int delayMs;
         private long expireMs;
+
+        /**
+         * Instantiates a new Notify delayed.
+         *
+         * @param flag             the flag
+         * @param specialReceivers the special receivers
+         * @param delayMs          the delay ms
+         */
+        public NotifyDelayed(String flag, Set<String> specialReceivers, int delayMs) {
+            this.flag = flag;
+            this.specialReceivers = specialReceivers;
+            this.delayMs = delayMs;
+            this.expireMs = delayMs + System.currentTimeMillis();
+        }
 
         /**
          * Gets flag.
@@ -395,20 +409,6 @@ public class Notify {
          */
         public int getDelayMs() {
             return delayMs;
-        }
-
-        /**
-         * Instantiates a new Notify delayed.
-         *
-         * @param flag             the flag
-         * @param specialReceivers the special receivers
-         * @param delayMs          the delay ms
-         */
-        public NotifyDelayed(String flag, Set<String> specialReceivers, int delayMs) {
-            this.flag = flag;
-            this.specialReceivers = specialReceivers;
-            this.delayMs = delayMs;
-            this.expireMs = delayMs + System.currentTimeMillis();
         }
 
         @Override

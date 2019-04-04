@@ -23,13 +23,13 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * The type Rabbit mq message properties extract adapter.
+ * Rabbit mq message properties extract adapter.
  *
  * @author gudaoxuri
  */
 class RabbitMqMessagePropertiesExtractAdapter implements TextMap {
 
-  private final Map<String, String> map = new HashMap<>();
+    private final Map<String, String> map = new HashMap<>();
 
     /**
      * Instantiates a new Rabbit mq message properties extract adapter.
@@ -37,22 +37,22 @@ class RabbitMqMessagePropertiesExtractAdapter implements TextMap {
      * @param headers the headers
      */
     RabbitMqMessagePropertiesExtractAdapter(Map<String, Object> headers) {
-    headers.forEach(
-        (key, value) -> {
-          if (value == null) {
-            return;
-          }
-          map.put(key, value.toString());
-        });
-  }
+        headers.forEach(
+                (key, value) -> {
+                    if (value == null) {
+                        return;
+                    }
+                    map.put(key, value.toString());
+                });
+    }
 
-  @Override
-  public Iterator<Map.Entry<String, String>> iterator() {
-    return map.entrySet().iterator();
-  }
+    @Override
+    public Iterator<Map.Entry<String, String>> iterator() {
+        return map.entrySet().iterator();
+    }
 
-  @Override
-  public void put(String key, String value) {
-    throw new UnsupportedOperationException("Should be used only with tracer#extract()");
-  }
+    @Override
+    public void put(String key, String value) {
+        throw new UnsupportedOperationException("Should be used only with tracer#extract()");
+    }
 }

@@ -37,12 +37,31 @@ import java.util.function.Function;
  */
 public class Cluster {
     private static final Logger logger = LoggerFactory.getLogger(Cluster.class);
-
+    public static String instanceId = $.field.createUUID();
     private static Function<String, Map<String, Object>> _mqGetHeader;
     private static Consumer<Object[]> _mqSetHeader;
     private static ClusterHA clusterHA = null;
     private static String applicationName = "_default";
-    public static String instanceId = $.field.createUUID();
+    /**
+     * MQ服务.
+     */
+    public ClusterMQ mq;
+    /**
+     * 分布式锁服务.
+     */
+    public ClusterLockWrap lock;
+    /**
+     * 分布式Map服务.
+     */
+    public ClusterMapWrap map;
+    /**
+     * 缓存服务.
+     */
+    public ClusterCache cache;
+    /**
+     * 领导者选举服务.
+     */
+    public ClusterElectionWrap election;
 
     /**
      * 初始化.
@@ -127,29 +146,4 @@ public class Cluster {
             _mqSetHeader.accept(new Object[]{name, header});
         }
     }
-
-    /**
-     * MQ服务.
-     */
-    public ClusterMQ mq;
-
-    /**
-     * 分布式锁服务.
-     */
-    public ClusterLockWrap lock;
-
-    /**
-     * 分布式Map服务.
-     */
-    public ClusterMapWrap map;
-
-    /**
-     * 缓存服务.
-     */
-    public ClusterCache cache;
-
-    /**
-     * 领导者选举服务.
-     */
-    public ClusterElectionWrap election;
 }

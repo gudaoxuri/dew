@@ -17,8 +17,6 @@
 package ms.dew.auth.dto.management
 
 import com.ecfront.dew.common.$
-import ms.dew.auth.domain.Ident
-import ms.dew.auth.helper.CommonConverter
 import javax.validation.constraints.NotNull
 import ms.dew.auth.domain.Ident
 import ms.dew.auth.dto.common.StatusDTO

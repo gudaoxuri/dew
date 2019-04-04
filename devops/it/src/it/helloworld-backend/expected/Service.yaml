@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    dew.ms/git-commit: '0001'
+    dew.ms/scm-url: ''
+    prometheus.io/port: '9779'
+    inject-jaeger-agent: 'true'
+    prometheus.io/scrape: 'true'
+    sidecar.jaegertracing.io/inject: 'true'
+    dew.ms/git-branch: ''
+  labels:
+    app: helloworld-backend
+    provider: dew
+    version: '0001'
+    expose: 'true'
+    group: ms.dew
+  name: helloworld-backend
+  namespace: dew-test
+spec:
+  ports:
+    - name: http
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: helloworld-backend
+    group: ms.dew

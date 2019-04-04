@@ -29,6 +29,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 
+/**
+ * Auth sdk handler interceptor.
+ *
+ * @author gudaoxuri
+ */
 @Component
 public class AuthSDKHandlerInterceptor extends HandlerInterceptorAdapter {
 
@@ -47,11 +52,13 @@ public class AuthSDKHandlerInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
         String token = request.getHeader(AuthSDKConfig.HTTP_USER_TOKEN);
-        String authResult = $.http.get(authSdkConfig.getServerUrl() + "/basic/auth/validate", new HashMap<String, String>() {{
-            put(AuthSDKConfig.HTTP_URI, uri);
-            put(AuthSDKConfig.HTTP_ACCESS_TOKEN, accessToken);
-            put(AuthSDKConfig.HTTP_USER_TOKEN, token == null ? "" : token);
-        }});
+        String authResult = $.http.get(authSdkConfig.getServerUrl() + "/basic/auth/validate", new HashMap<String, String>() {
+            {
+                put(AuthSDKConfig.HTTP_URI, uri);
+                put(AuthSDKConfig.HTTP_ACCESS_TOKEN, accessToken);
+                put(AuthSDKConfig.HTTP_USER_TOKEN, token == null ? "" : token);
+            }
+        });
         Resp<TokenInfo> tokenInfoR = Resp.generic(authResult, TokenInfo.class);
         if (tokenInfoR.ok()) {
             Dew.auth.setOptInfo(tokenInfoR.getBody());

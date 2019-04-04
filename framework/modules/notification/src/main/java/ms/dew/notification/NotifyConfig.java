@@ -48,88 +48,6 @@ public class NotifyConfig {
     private Strategy strategy = new Strategy();
 
     /**
-     * 通知策略.
-     */
-    public static class Strategy {
-
-        private int minIntervalSec = 0;
-        // HH:mm-HH:mm，如果两个时间相等表示全天免扰，如果后者大于前者表示跨天免扰
-        private String dndTime = "";
-        private int forceSendTimes = 3;
-
-        /**
-         * 获取最少通知间隔时间.
-         *
-         * @return the min interval sec
-         */
-        public int getMinIntervalSec() {
-            return minIntervalSec;
-        }
-
-        /**
-         * 设置最少通知间隔时间.
-         * <p>
-         * 在此间隔内通知不会被发送而是转化成延时通知，延时发送
-         *
-         * @param minIntervalSec the min interval sec
-         */
-        public void setMinIntervalSec(int minIntervalSec) {
-            this.minIntervalSec = minIntervalSec;
-        }
-
-        /**
-         * 获取免扰时间.
-         * <p>
-         * 格式 HH:mm-HHmm
-         *
-         * @return the dnd time
-         */
-        public String getDndTime() {
-            return dndTime;
-        }
-
-        /**
-         * 设置免扰时间.
-         * <p>
-         * 格式 HH:mm-HHmm
-         * <p>
-         * e.g.
-         * <p>
-         * 00:00-00:00 全天免扰
-         * 20:30-06:00 夜间免扰
-         * 09:00-18:00 工作时间免扰
-         *
-         * @param dndTime the dnd time
-         */
-        public void setDndTime(String dndTime) {
-            this.dndTime = dndTime;
-        }
-
-        /**
-         * 获取在免扰时间强制通知要达到的通知次数.
-         * <p>
-         * 在达到此通知后即便在免扰时间也会发送通知
-         *
-         * @return the force send times
-         */
-        public int getForceSendTimes() {
-            return forceSendTimes;
-        }
-
-        /**
-         * 设置免扰时间强制通知要达到的通知次数.
-         * <p>
-         * 在达到此通知后即便在免扰时间也会发送通知
-         *
-         * @param forceSendTimes the force send times
-         */
-        public void setForceSendTimes(int forceSendTimes) {
-            this.forceSendTimes = forceSendTimes;
-        }
-
-    }
-
-    /**
      * 获取通知类型（通道）.
      *
      * @return the type
@@ -221,5 +139,87 @@ public class NotifyConfig {
      */
     public void setStrategy(Strategy strategy) {
         this.strategy = strategy;
+    }
+
+    /**
+     * 通知策略.
+     */
+    public static class Strategy {
+
+        private int minIntervalSec = 0;
+        // HH:mm-HH:mm，如果两个时间相等表示全天免扰，如果后者大于前者表示跨天免扰
+        private String dndTime = "";
+        private int forceSendTimes = 3;
+
+        /**
+         * 获取最少通知间隔时间.
+         *
+         * @return the min interval sec
+         */
+        public int getMinIntervalSec() {
+            return minIntervalSec;
+        }
+
+        /**
+         * 设置最少通知间隔时间.
+         * <p>
+         * 在此间隔内通知不会被发送而是转化成延时通知，延时发送
+         *
+         * @param minIntervalSec the min interval sec
+         */
+        public void setMinIntervalSec(int minIntervalSec) {
+            this.minIntervalSec = minIntervalSec;
+        }
+
+        /**
+         * 获取免扰时间.
+         * <p>
+         * 格式 HH:mm-HHmm
+         *
+         * @return the dnd time
+         */
+        public String getDndTime() {
+            return dndTime;
+        }
+
+        /**
+         * 设置免扰时间.
+         * <p>
+         * 格式 HH:mm-HHmm
+         * <p>
+         * e.g.
+         * <p>
+         * 00:00-00:00 全天免扰
+         * 20:30-06:00 夜间免扰
+         * 09:00-18:00 工作时间免扰
+         *
+         * @param dndTime the dnd time
+         */
+        public void setDndTime(String dndTime) {
+            this.dndTime = dndTime;
+        }
+
+        /**
+         * 获取在免扰时间强制通知要达到的通知次数.
+         * <p>
+         * 在达到此通知后即便在免扰时间也会发送通知
+         *
+         * @return the force send times
+         */
+        public int getForceSendTimes() {
+            return forceSendTimes;
+        }
+
+        /**
+         * 设置免扰时间强制通知要达到的通知次数.
+         * <p>
+         * 在达到此通知后即便在免扰时间也会发送通知
+         *
+         * @param forceSendTimes the force send times
+         */
+        public void setForceSendTimes(int forceSendTimes) {
+            this.forceSendTimes = forceSendTimes;
+        }
+
     }
 }

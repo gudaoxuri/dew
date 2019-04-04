@@ -36,17 +36,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class ClusterTest {
 
-    @BeforeClass
-    public static void init() {
-        Hazelcast.newHazelcastInstance();
-    }
-
     @Autowired
     private HazelcastClusterMQ hazelcastClusterMQ;
     @Autowired
     private HazelcastClusterLockWrap hazelcastClusterLockWrap;
     @Autowired
     private HazelcastClusterMapWrap hazelcastClusterMapWrap;
+
+    @BeforeClass
+    public static void init() {
+        Hazelcast.newHazelcastInstance();
+    }
 
     @Test
     public void testMQ() throws InterruptedException {

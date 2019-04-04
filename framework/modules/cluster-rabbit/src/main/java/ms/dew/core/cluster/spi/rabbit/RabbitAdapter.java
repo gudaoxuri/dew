@@ -20,7 +20,7 @@ import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 /**
- * The type Rabbit adapter.
+ * Rabbit adapter.
  *
  * @author gudaoxuri
  */

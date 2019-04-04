@@ -32,12 +32,30 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+/**
+ * Doc service.
+ * <p>
+ * 用于生成离线Asciidoc文档
+ *
+ * @author gudaoxuri
+ */
 @Service
 public class DocService {
 
     private static final Logger logger = LoggerFactory.getLogger(DocService.class);
 
-    public Resp<String> generateOfflineDoc(String docName, String docDesc, Map<String, String> visitUrls, List<String> swaggerJsonUrls) throws IOException {
+    /**
+     * Generate offline doc.
+     *
+     * @param docName         the doc name
+     * @param docDesc         the doc desc
+     * @param visitUrls       the visit urls
+     * @param swaggerJsonUrls the swagger json urls
+     * @return the resp
+     * @throws IOException the io exception
+     */
+    public Resp<String> generateOfflineDoc(String docName, String docDesc, Map<String, String> visitUrls, List<String> swaggerJsonUrls)
+            throws IOException {
         List<String> swaggerJsons = new ArrayList<>();
         for (String url : swaggerJsonUrls) {
             try {
@@ -55,53 +73,82 @@ public class DocService {
         return doGenerateOfflineDoc(docName, docDesc, visitUrls, swaggerJsons);
     }
 
+    /**
+     * Do generate offline doc.
+     *
+     * @param docName      the doc name
+     * @param docDesc      the doc desc
+     * @param visitUrls    the visit urls
+     * @param swaggerJsons the swagger jsons
+     * @return the resp
+     */
     public Resp<String> doGenerateOfflineDoc(String docName, String docDesc, Map<String, String> visitUrls, List<String> swaggerJsons) {
         List<JsonNode> swaggers = swaggerJsons.stream().map(json -> $.json.toJson(json)).collect(Collectors.toList());
         // 文档概要
-        StringBuilder asciidocContent = new StringBuilder("" +
-                "= " + docName + "\n" +
-                "" + $.time().yyyy_MM_dd_HH_mm_ss.format(new Date()) + "\n" +
-                ":doctype: book\n" +
-                ":encoding: utf-8\n" +
-                ":lang: zh-CN\n" +
-                ":toc: left\n" +
-                ":toclevels: 4\n" +
-                ":numbered:\n\n");
-        asciidocContent.append("=====\n" +
-                "[%hardbreaks]\n" +
-                docDesc + "\n" +
-                "=====\n" +
-                "\n" +
-                "[NOTE]\n" +
-                ".接入地址\n" +
-                "====\n" +
-                "[%hardbreaks]\n" +
-                visitUrls.entrySet().stream().map(entry -> entry.getKey() + ": " + entry.getValue()).collect(Collectors.joining("\n")) +
-                "\n" +
-                "====\n" +
-                "\n\n" +
-                "本系统包含如下服务：\n" +
-                "\n" +
-                "" + swaggers.stream().map(swagger ->
-                ". <<" + encode(getTag(DocAutoConfiguration.FLAG_APPLICATION_NAME, swagger))
-                        + "," + swagger.path("info").path("title").asText("") + ">>" + " 接口数:" + stream(swagger.path("paths")).mapToLong(JsonNode::size).sum()
-        ).collect(Collectors.joining("\n")) +
-                "\n\n");
+        StringBuilder asciidocContent = new StringBuilder(""
+                + "= " + docName + "\n"
+                + "" + $.time().yyyy_MM_dd_HH_mm_ss.format(new Date()) + "\n"
+                + ":doctype: book\n"
+                + ":encoding: utf-8\n"
+                + ":lang: zh-CN\n"
+                + ":toc: left\n"
+                + ":toclevels: 4\n"
+                + ":numbered:\n\n");
+        asciidocContent.append("=====\n" + "[%hardbreaks]\n")
+                .append(docDesc)
+                .append("\n")
+                .append("=====\n")
+                .append("\n")
+                .append("[NOTE]\n")
+                .append(".接入地址\n")
+                .append("====\n")
+                .append("[%hardbreaks]\n")
+                .append(visitUrls.entrySet().stream()
+                        .map(entry -> entry.getKey() + ": " + entry.getValue())
+                        .collect(Collectors.joining("\n")))
+                .append("\n")
+                .append("====\n")
+                .append("\n\n")
+                .append("本系统包含如下服务：\n")
+                .append("\n")
+                .append(swaggers.stream()
+                        .map(swagger ->
+                                ". <<"
+                                        + encode(getTag(DocAutoConfiguration.FLAG_APPLICATION_NAME, swagger))
+                                        + "," + swagger.path("info").path("title").asText("")
+                                        + ">>" + " 接口数:"
+                                        + stream(swagger.path("paths")).mapToLong(JsonNode::size).sum()
+                        ).collect(Collectors.joining("\n"))).append("\n\n");
         // 文档包含服务列表
         swaggers.forEach(swagger -> {
             // Basic info for per swagger
-            asciidocContent.append("<<<\n\n" +
-                    "[[" + encode(getTag(DocAutoConfiguration.FLAG_APPLICATION_NAME, swagger)) + "]]\n" +
-                    "== " + swagger.path("info").path("title").asText("") + "\n" +
-                    "\n" +
-                    "[%hardbreaks]\n" +
-                    "**服务简介**: " + swagger.path("info").path("description").asText("") + "\n" +
-                    "**当前版本**: " + swagger.path("info").path("version").asText("") + "\n");
+            asciidocContent
+                    .append("<<<\n\n" + "[[")
+                    .append(encode(getTag(DocAutoConfiguration.FLAG_APPLICATION_NAME, swagger)))
+                    .append("]]\n").append("== ")
+                    .append(swagger.path("info").path("title").asText(""))
+                    .append("\n")
+                    .append("\n")
+                    .append("[%hardbreaks]\n")
+                    .append("**服务简介**: ")
+                    .append(swagger.path("info").path("description").asText(""))
+                    .append("\n").append("**当前版本**: ")
+                    .append(swagger.path("info").path("version").asText(""))
+                    .append("\n");
             if (swagger.path("info").has("contact")) {
-                asciidocContent.append("**对接信息**: " + swagger.path("info").path("contact").path("name").asText("") + "[" + swagger.path("info").path("contact").path("email").asText("") + "]\n");
+                asciidocContent.append("**对接信息**: ")
+                        .append(swagger.path("info").path("contact").path("name").asText(""))
+                        .append(" ")
+                        .append("[")
+                        .append(swagger.path("info").path("contact").path("email").asText(""))
+                        .append("]\n");
             }
-            asciidocContent.append("**接口数量**: " + stream(swagger.path("paths")).mapToLong(JsonNode::size).sum() + "\n");
-            asciidocContent.append("**服务URI**: /" + getTag(DocAutoConfiguration.FLAG_APPLICATION_NAME, swagger) + swagger.path("basePath").asText("") + "\n");
+            asciidocContent.append("**接口数量**: ")
+                    .append(stream(swagger.path("paths")).mapToLong(JsonNode::size).sum() + "\n");
+            asciidocContent.append("**服务URI**: /")
+                    .append(getTag(DocAutoConfiguration.FLAG_APPLICATION_NAME, swagger))
+                    .append(swagger.path("basePath").asText(""))
+                    .append("\n");
 
             // 每个服务的API详细说明
             stream(swagger.path("tags"))
@@ -109,10 +156,10 @@ public class DocService {
                     .forEach(tag -> {
                         // 以Controller分组显示
                         String tagName = tag.path("name").asText();
-                        asciidocContent.append("\n" +
-                                "[[" + encode(tagName) + "]]\n" +
-                                "=== " + tag.path("description").asText() + "\n" +
-                                "'''\n");
+                        asciidocContent.append("\n")
+                                .append("[[" + encode(tagName) + "]]\n")
+                                .append("=== " + tag.path("description").asText() + "\n")
+                                .append("'''\n");
                         // 每个Controller下的API详细说明
                         stream(swagger.path("paths").fields())
                                 .forEach(path -> {
@@ -122,18 +169,23 @@ public class DocService {
                                         if (array(apiInfo.getValue().path("tags")).contains(tagName)) {
                                             String httpMethod = apiInfo.getKey();
                                             JsonNode api = apiInfo.getValue();
-                                            asciidocContent.append("\n" +
-                                                    "[[" + encode(httpMethod + " " + uri) + "]]\n" +
-                                                    "==== " + (api.has("deprecated") && api.path("deprecated").asBoolean() ? "[.line-through]#" + api.path("summary").asText() + "#" : api.path("summary").asText()) + "\n" +
-                                                    "'''\n" +
-                                                    "\n" +
-                                                    "----\n" +
-                                                    "" + api.path("description").asText("") + "\n" +
-                                                    "----\n" +
-                                                    "\n" +
-                                                    "请求URI: ``" + httpMethod.toUpperCase() + " " + uri +
-                                                    "``\n" +
-                                                    "[%hardbreaks]\n");
+                                            asciidocContent.append("\n")
+                                                    .append("[[" + encode(httpMethod + " " + uri) + "]]\n")
+                                                    .append("==== ")
+                                                    .append((api.has("deprecated")
+                                                            && api.path("deprecated").asBoolean()
+                                                            ? "[.line-through]#" + api.path("summary").asText() + "#" : api.path("summary").asText()))
+                                                    .append("\n")
+                                                    .append("'''\n")
+                                                    .append("\n")
+                                                    .append("----\n")
+                                                    .append("" + api.path("description").asText(""))
+                                                    .append("\n")
+                                                    .append("----\n")
+                                                    .append("\n")
+                                                    .append("请求URI: ``" + httpMethod.toUpperCase() + " " + uri)
+                                                    .append("``\n")
+                                                    .append("[%hardbreaks]\n");
                                             if (api.has("consumes")) {
                                                 asciidocContent.append("consumes: ``" + String.join(";", array(api.path("consumes"))) + "``\n");
                                             }
@@ -141,11 +193,11 @@ public class DocService {
                                                 asciidocContent.append("produces: ``" + String.join(";", array(api.path("produces"))) + "``\n");
                                             }
                                             if (api.has("parameters")) {
-                                                asciidocContent.append("\n" +
-                                                        "请求参数: \n" +
-                                                        "[options=\"header\", cols=\".^2a,.^10a,.^4a,.^1a,.^10a,.^5a\"]\n" +
-                                                        "|===\n" +
-                                                        "|位置 |名称 |类型 |必填 |说明 |示例 \n ");
+                                                asciidocContent.append("\n")
+                                                        .append("请求参数: \n")
+                                                        .append("[options=\"header\", cols=\".^2a,.^10a,.^4a,.^1a,.^10a,.^5a\"]\n")
+                                                        .append("|===\n")
+                                                        .append("|位置 |名称 |类型 |必填 |说明 |示例 \n ");
                                                 stream(api.path("parameters"))
                                                         .filter(p -> !p.path("in").asText().equals("body"))
                                                         .sorted(Comparator.comparing(p -> p.path("in").asText()))
@@ -156,7 +208,9 @@ public class DocService {
                                                                     // 不存在
                                                                     if (parameter.has("items")) {
                                                                         // MAP类型
-                                                                        String valueType = parameter.path("items").path("type").path("additionalProperties").asText("Object");
+                                                                        String valueType =
+                                                                                parameter.path("items").path("type").path("additionalProperties")
+                                                                                        .asText("Object");
                                                                         // TODO 引用类型
                                                                         //"additionalProperties": {
                                                                         //  "$ref": "#/components/schemas/ComplexModel"
@@ -193,7 +247,8 @@ public class DocService {
                                                             }
                                                             if (parameter.has("enum")) {
                                                                 // 枚举类型
-                                                                typeStr = stream(parameter.path("enum")).map(JsonNode::asText).collect(Collectors.joining("/", "enum:", ""));
+                                                                typeStr = stream(parameter.path("enum")).map(JsonNode::asText)
+                                                                        .collect(Collectors.joining("/", "enum:", ""));
                                                             }
                                                             if (typeStr.isEmpty()) {
                                                                 logger.warn("Parameter TYPE parse error in " + $.json.toJsonString(parameter));
@@ -217,7 +272,7 @@ public class DocService {
                                                         boolean isArray = false;
                                                         String bodyTypeOrStruct = "";
                                                         String type = parameter.path("schema").path("type").asText("");
-                                                        String $ref = parameter.path("schema").path("$ref").asText("");
+                                                        String ref = parameter.path("schema").path("$ref").asText("");
                                                         if (!type.isEmpty()) {
                                                             if (type.equals("array")) {
                                                                 isArray = true;
@@ -225,16 +280,16 @@ public class DocService {
                                                                 if (!type.isEmpty()) {
                                                                     bodyTypeOrStruct = "<" + type + ">";
                                                                 } else {
-                                                                    $ref = parameter.path("schema").path("items").path("$ref").asText("");
+                                                                    ref = parameter.path("schema").path("items").path("$ref").asText("");
                                                                 }
                                                             } else {
                                                                 bodyTypeOrStruct = "<" + type + ">";
                                                             }
                                                         }
-                                                        if (bodyTypeOrStruct.isEmpty() && !$ref.isEmpty()) {
+                                                        if (bodyTypeOrStruct.isEmpty() && !ref.isEmpty()) {
                                                             // 引用类型
-                                                            $ref = $ref.substring("#/definitions/".length());
-                                                            bodyTypeOrStruct = fillRelModel(swagger.path("definitions"), $ref, 2, new HashSet<>());
+                                                            ref = ref.substring("#/definitions/".length());
+                                                            bodyTypeOrStruct = fillRelModel(swagger.path("definitions"), ref, 2, new HashSet<>());
                                                         }
                                                         if (bodyTypeOrStruct.isEmpty()) {
                                                             logger.warn("Parameter TYPE parse error in " + $.json.toJsonString(parameter));
@@ -242,12 +297,17 @@ public class DocService {
                                                         if (isArray) {
                                                             bodyTypeOrStruct = "[" + bodyTypeOrStruct + level(1) + ",...]";
                                                         }
-                                                        return level(1) + "// " + (parameter.path("required").asBoolean() ? "[必填]" : "") +
-                                                                parameter.path("description").asText("") +
-                                                                (parameter.has("x-example") ? " e.g. " + parameter.path("x-example").asText() : "") +
-                                                                "\n" +
-                                                                level(1) + "\"" + parameter.path("name").asText() + "\":" + bodyTypeOrStruct + (bodyParameterSize.decrementAndGet() == 0 ? "" : ",") +
-                                                                "\n";
+                                                        return level(1)
+                                                                + "// " + (parameter.path("required").asBoolean() ? "[必填]" : "")
+                                                                + parameter.path("description").asText("")
+                                                                + (parameter.has("x-example") ? " e.g. "
+                                                                + parameter.path("x-example").asText() : "")
+                                                                + "\n"
+                                                                + level(1)
+                                                                + "\"" + parameter.path("name").asText()
+                                                                + "\":" + bodyTypeOrStruct
+                                                                + (bodyParameterSize.decrementAndGet() == 0 ? "" : ",")
+                                                                + "\n";
                                                     })
                                                             .collect(Collectors.joining("", "{\n", "}\n"));
                                                     asciidocContent.append("\n")
@@ -261,26 +321,27 @@ public class DocService {
                                                 }
                                                 asciidocContent.append("\n|===\n");
                                             }
-
                                             if (api.has("responses")) {
-                                                asciidocContent.append("\n" +
-                                                        "响应结果: \n");
-                                                String $ref = api.get("responses").path("200").path("schema").path("$ref").asText("");
-                                                if ($ref.indexOf("#/definitions/Resp") != -1) {
+                                                asciidocContent.append("\n")
+                                                        .append("响应结果: \n");
+                                                String ref = api.get("responses").path("200").path("schema").path("$ref").asText("");
+                                                if (ref.contains("#/definitions/Resp")) {
                                                     // Resp类型
                                                     asciidocContent.append("\n")
                                                             .append("[source]\n")
                                                             .append("----\n")
-                                                            .append("" + parseTypeOrStructBySchema(swagger.path("definitions"), api.get("responses").path("200").path("schema"), 0) + "\n")
+                                                            .append(parseTypeOrStructBySchema(swagger.path("definitions"),
+                                                                    api.get("responses").path("200").path("schema"), 0) + "\n")
                                                             .append("----\n")
                                                             .append("\n");
                                                 } else {
                                                     // Http state code 类型
-                                                    asciidocContent.append("[options=\"header\", cols=\".^2a,.^10a,.^20a,.^10a\"]\n" +
-                                                            "|===\n" +
-                                                            "|状态码 |说明 |类型 |示例 \n ");
+                                                    asciidocContent.append("[options=\"header\", cols=\".^2a,.^10a,.^20a,.^10a\"]\n")
+                                                            .append("|===\n")
+                                                            .append("|状态码 |说明 |类型 |示例 \n ");
                                                     stream(api.get("responses").fields()).forEach(response -> {
-                                                        String typeOrStruct = parseTypeOrStructBySchema(swagger.path("definitions"), response.getValue().get("schema"), 0);
+                                                        String typeOrStruct = parseTypeOrStructBySchema(swagger.path("definitions"),
+                                                                response.getValue().get("schema"), 0);
                                                         if (!typeOrStruct.trim().isEmpty()) {
                                                             typeOrStruct = "[source]\n----\n" + typeOrStruct + "\n----\n";
                                                         }
@@ -313,13 +374,22 @@ public class DocService {
                 if (schema.get("type").asText().equals("array")) {
                     // Array
                     if (schema.get("items").has("type")) {
-                        return "[" + schema.get("items").get("type").asText() + "]";
+                        return "["
+                                + schema.get("items").get("type").asText()
+                                + "]";
                     } else {
-                        return "[" + fillRelModel(definitions, schema.get("items").get("$ref").asText().substring("#/definitions/".length()), level + 1, new HashSet<>()) + "]";
+                        return "["
+                                + fillRelModel(definitions,
+                                schema.get("items").get("$ref").asText().substring("#/definitions/".length()),
+                                level + 1,
+                                new HashSet<>())
+                                + "]";
                     }
                 } else if (schema.get("type").asText().equals("object") && schema.has("additionalProperties")) {
                     // Map
-                    return "{\n" + level(level + 1) + "\"<some keys>\":" + parseTypeOrStructBySchema(definitions, schema.get("additionalProperties"), level + 2) + "\n" + level(level) + "}";
+                    return "{\n" + level(level + 1) + "\"<some keys>\":"
+                            + parseTypeOrStructBySchema(definitions, schema.get("additionalProperties"), level + 2)
+                            + "\n" + level(level) + "}";
                 } else {
                     return schema.get("type").asText();
                 }
@@ -346,13 +416,14 @@ public class DocService {
             if (modelName.startsWith("Map«")) {
                 return "\"<some keys>\":" + parseTypeOrStructBySchema(definitions, definitions.get(modelName).get("additionalProperties"), level + 1);
             }
-            List<Map.Entry<String, JsonNode>> properties = stream(definitions.get(modelName).path("properties").fields()).collect(Collectors.toList());
+            List<Map.Entry<String, JsonNode>> properties =
+                    stream(definitions.get(modelName).path("properties").fields()).collect(Collectors.toList());
             AtomicLong parameterSize = new AtomicLong(properties.size());
             return properties.stream().map(prop -> {
                 boolean isArray = false;
                 String bodySubJsonOrSimpleType = "";
                 String type = prop.getValue().path("type").asText("");
-                String $ref = prop.getValue().path("$ref").asText("");
+                String ref = prop.getValue().path("$ref").asText("");
                 if (!type.isEmpty()) {
                     if (type.equals("array")) {
                         isArray = true;
@@ -360,16 +431,16 @@ public class DocService {
                         if (!type.isEmpty()) {
                             bodySubJsonOrSimpleType = "<" + type + ">";
                         } else {
-                            $ref = prop.getValue().path("items").path("$ref").asText("");
+                            ref = prop.getValue().path("items").path("$ref").asText("");
                         }
                     } else {
                         bodySubJsonOrSimpleType = "<" + type + ">";
                     }
                 }
-                if (bodySubJsonOrSimpleType.isEmpty() && !$ref.isEmpty()) {
+                if (bodySubJsonOrSimpleType.isEmpty() && !ref.isEmpty()) {
                     // 引用类型
-                    $ref = $ref.substring("#/definitions/".length());
-                    bodySubJsonOrSimpleType = fillRelModel(definitions, $ref, level + 1, filledModels);
+                    ref = ref.substring("#/definitions/".length());
+                    bodySubJsonOrSimpleType = fillRelModel(definitions, ref, level + 1, filledModels);
                 }
                 if (bodySubJsonOrSimpleType.isEmpty()) {
                     logger.warn("Parameter TYPE parse error in " + $.json.toJsonString(prop));
@@ -377,10 +448,14 @@ public class DocService {
                 if (isArray) {
                     bodySubJsonOrSimpleType = "[" + bodySubJsonOrSimpleType + ",...]";
                 }
-                String desc = ($ref.isEmpty() ? "" : "[类型: " + $ref + "] ") + "" + prop.getValue().path("description").asText("");
+                String desc = (ref.isEmpty() ? "" : "[类型: " + ref + "] ") + "" + prop.getValue().path("description").asText("");
 
-                return (desc.trim().isEmpty() ? "" : level(level) + "// " + desc + "\n") +
-                        level(level) + "\"" + prop.getKey() + "\":" + bodySubJsonOrSimpleType + (parameterSize.decrementAndGet() == 0 ? "" : ",") + "\n";
+                return (desc.trim().isEmpty() ? "" : level(level) + "// " + desc + "\n")
+                        + level(level)
+                        + "\"" + prop.getKey()
+                        + "\":" + bodySubJsonOrSimpleType
+                        + (parameterSize.decrementAndGet() == 0 ? "" : ",")
+                        + "\n";
             }).collect(Collectors.joining("", "{\n", level(level - 1) + "}"));
         } catch (Exception e) {
             logger.warn("Fill rel model [" + modelName + "] error.", e);
@@ -411,14 +486,14 @@ public class DocService {
         return stream(json.elements());
     }
 
-    private List<String> array(JsonNode json) {
-        return stream(json.elements()).map(JsonNode::asText).collect(Collectors.toList());
-    }
-
     private <E> Stream<E> stream(Iterator<E> it) {
         return StreamSupport.stream(
                 Spliterators.spliteratorUnknownSize(it, Spliterator.ORDERED),
                 false);
+    }
+
+    private List<String> array(JsonNode json) {
+        return stream(json.elements()).map(JsonNode::asText).collect(Collectors.toList());
     }
 
     private String repeat(String s, int repeat) {

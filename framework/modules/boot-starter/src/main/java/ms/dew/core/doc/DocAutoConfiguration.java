@@ -41,9 +41,10 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import javax.servlet.ServletContext;
 
 /**
- * Swagger配置
+ * Swagger配置.
  *
- * @link https://springfox.github.io/springfox/docs/snapshot/#customizing-the-swagger-endpoints
+ * @author gudaoxuri
+ * @link https ://springfox.github.io/springfox/docs/snapshot/#customizing-the-swagger-endpoints
  */
 @Configuration
 @ConditionalOnProperty(prefix = "dew.basic.doc", name = "enabled", havingValue = "true", matchIfMissing = true)
@@ -51,21 +52,33 @@ import javax.servlet.ServletContext;
 @ImportAutoConfiguration({DocClusterAutoConfiguration.class, DocLocalAutoConfiguration.class})
 public class DocAutoConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(DocAutoConfiguration.class);
-
+    /**
+     * The constant FLAG_APPLICATION_NAME.
+     */
     public static final String FLAG_APPLICATION_NAME = "applicationName";
-
+    private static final Logger logger = LoggerFactory.getLogger(DocAutoConfiguration.class);
     @Autowired
     private DewConfig dewConfig;
 
     @Value("${server.context-path:}")
     private String contextPath;
 
+    /**
+     * Doc service doc service.
+     *
+     * @return the doc service
+     */
     @Bean
     public DocService docService() {
         return new DocService();
     }
 
+    /**
+     * Rest api docket.
+     *
+     * @param servletContext the servlet context
+     * @return the docket
+     */
     @Bean
     public Docket restApi(ServletContext servletContext) {
         return new Docket(DocumentationType.SWAGGER_2)

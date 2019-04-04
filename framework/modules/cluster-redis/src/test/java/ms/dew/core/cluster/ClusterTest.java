@@ -18,8 +18,6 @@ package ms.dew.core.cluster;
 
 import ms.dew.core.cluster.spi.redis.*;
 import ms.dew.core.cluster.test.*;
-import ms.dew.core.cluster.spi.redis.*;
-import ms.dew.core.cluster.test.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
