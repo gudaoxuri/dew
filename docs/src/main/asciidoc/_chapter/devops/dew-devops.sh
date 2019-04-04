@@ -28,7 +28,7 @@ init_env_check(){
 
     node_not_ready_check=`kubectl get node | grep -w NotReady | wc -l`
     node_x509_check=`kubectl get node | grep x509 | wc -l`
-    if [[ ${node_not_ready_check} -gt 0 || ${node_x509_check} -gt 0 ]] ; then
+    if [[ "${node_not_ready_check}" -gt 0 || "${node_x509_check}" -gt 0 ]] ; then
         echo "kubectl get node"
         echo "`kubectl get node`"
         echo
@@ -37,7 +37,7 @@ init_env_check(){
         exit;
     fi
 
-    if [[ ${node_not_ready_check} -eq 0  && ${node_ready_check} -gt 0 ]] ; then
+    if [[ "${node_not_ready_check}" -eq 0  && "${node_ready_check}" -gt 0 ]] ; then
         echo "Nodes are ready."
     fi
     echo "--------------------------------------"
@@ -50,7 +50,7 @@ init_cluster(){
     kubectl create clusterrole service-discovery-client \
     --verb=get,list,watch \
     --resource=pods,services,configmaps,endpoints
-    echo "Kubernetes Cluster has initialized."
+    echo "Kubernetes Cluster has been initialized."
     echo "--------------------------------------"
     echo "=================================="
     exit;
@@ -61,10 +61,10 @@ REGISTRY_HOST=harbor.dew.ms
 REGISTRY_ADMIN=admin
 REGISTRY_ADMIN_PASSWORD=Harbor12345
 
-DEW_NAMESPACE=devops-example
-DEW_DOCKER_USER_NAME=${DEW_NAMESPACE}
-DEW_DOCKER_USER_PASS=Dew\!123456
-DEW_DOCKER_USER_EMAIL=${DEW_DOCKER_USER_NAME}@dew.ms
+PROJECT_NAMESPACE=devops-example
+DEW_HARBOR_USER_NAME=${PROJECT_NAMESPACE}
+DEW_HARBOR_USER_PASS=Dew\!123456
+DEW_HARBOR_USER_EMAIL=${DEW_HARBOR_USER_NAME}@dew.ms
 
 # ------------------
 # Create a project
@@ -75,7 +75,7 @@ init_project_check(){
     echo "## Checking Harbor status..."
     echo
     read -e -p "Please input Harbor registry host： " registry_host
-    if [[ ${registry_host} != "" ]]; then
+    if [[ "${registry_host}" != "" ]]; then
         REGISTRY_HOST=${registry_host}
     else
         echo "* No Harbor registry host was entered, using the default Harbor registry host："
@@ -84,7 +84,7 @@ init_project_check(){
     echo "* The default scheme is https."
     harbor_registry_health_check="curl ${SCHEME}://${REGISTRY_HOST}/health -k"
     registry_status=`curl ${SCHEME}://${REGISTRY_HOST}/health -o /dev/nullrl -s -w %{http_code} -k`
-    if [[ registry_status -ne 200 ]]; then
+    if [[ "${registry_status}" -ne 200 ]]; then
         echo
         echo ${harbor_registry_health_check}
         echo "`${harbor_registry_health_check}`"
@@ -99,12 +99,12 @@ init_project_check(){
 }
 
 project_create_check(){
-    echo "Tips: Before creating your project, you need to XXX your Kubernetes cluster for service discovery."
+    echo "Tips: Before creating your project, you need to initialize your Kubernetes cluster for service discovery."
     echo "____________________________________"
     echo
-    echo "Please input your harbor registry admin"
+    echo "Please input your Harbor registry admin: "
     read -e registry_admin
-    if [[ ${registry_admin} = "" ]]; then
+    if [[ "${registry_admin}" = "" ]]; then
         echo "* No Harbor registry admin account was entered, using the default admin account: ${REGISTRY_ADMIN}"
     fi
 
@@ -117,13 +117,13 @@ project_create_check(){
     echo
 
     check_password=`echo "${registry_password}" | grep -P --color '(?=^.{8,20}$)(?=^[^\s]*$)(?=.*\d)(?=.*[A-Z])(?=.*[a-z])'| wc -l`
-    while [[ ${check_password} -eq 0 ]];do
+    while [[ "${check_password}" -eq 0 ]];do
         echo "The password format is not right, please retype: "
         read -e -s registry_password
         check_password=`echo "${registry_password}" | grep -P --color '(?=^.{8,20}$)(?=^[^\s]*$)(?=.*\d)(?=.*[A-Z])(?=.*[a-z])'| wc -l`
     done
 
-    if [[ ${registry_admin}=="" ]]; then
+    if [[ "${registry_admin}"=="" ]]; then
         registry_admin=${REGISTRY_ADMIN}
     fi
 
@@ -140,67 +140,71 @@ project_create_check(){
         check_admin_status=`curl "${SCHEME}://${REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -o /dev/nullrl -s -w %{http_code} -k`
     done
 
-    if [[ ${registry_admin} != "" ]]; then
+    if [[ "${registry_admin}" != "" ]]; then
         REGISTRY_ADMIN=${registry_admin}
     fi
-    if [[ ${registry_password} != "" ]]; then
+    if [[ "${registry_password}" != "" ]]; then
         REGISTRY_ADMIN_PASSWORD=${registry_password}
     fi
     echo
 
-    echo "# The name of project would be used for creating harbor project, harbor user account and Kubernetes namespaces."
+    echo "# The name of project would be used for creating Harbor project, Harbor user account and Kubernetes namespace."
     echo "# Project name must consist of lower case alphanumeric characters or '-' "
-    echo "# and must start and end with an alphanumeric characters,"
+    echo "# and must start and end with an alphanumeric character,"
     echo "# and the length must be greater than two."
     read -e -p "Please input project name: " project_name
 
-    while [[ ! ${project_name} =~ ^([a-z0-9]+-?[a-z0-9]+)+$ ]]; do
+    project_name_regex="^([a-z0-9]+-?[a-z0-9]+)+$"
+    while [[ ! "${project_name}" =~ ${project_name_regex} ]]; do
         read -e -p "Please input the right project name: " project_name
     done
 
     # Checking whether Kubernetes namespace exists.
     check_ns_exists=`kubectl get ns | grep -w ${project_name} | wc -l`
-    while [[ ${check_ns_exists} -gt 0 ]];do
-        echo "There is already existing the same namespace, please retype another project name."
+    while [[ "${check_ns_exists}" -gt 0 ]];do
+        echo "There is already existing the same namespace, please retype another project name: "
         read -e project_name
 
-        while [[ ! ${project_name} =~ ^([a-z0-9]+-?[a-z0-9]+)+$ ]]; do
-            read -p "The project name format is not right,please retype:" -e project_name
+        while [[ ! "${project_name}" =~ ${project_name_regex} ]]; do
+            read -p "The project name format is not right,please retype: " -e project_name
         done
 
         check_ns_exists=`kubectl get ns | grep -w ${project_name} | wc -l`
     done
     # Checking whether Harbor project name exists.
     check_project_exists=`curl "${SCHEME}://${REGISTRY_HOST}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
-    while [[ ${check_project_exists} -gt 0 ]];do
+    while [[ "${check_project_exists}" -gt 0 ]];do
         read -p "The project name already exists, please retype again: " -e project_name
 
-        while [[ ! ${project_name} =~ ^([a-z0-9]+-?[a-z0-9]+)+$ ]]; do
+        while [[ ! "${project_name}" =~ ${project_name_regex} ]]; do
             read -p "The project name format is not right,please retype again: " -e project_name
         done
 
         check_ns_exists=`kubectl get ns | grep -w ${project_name} | wc -l`
-        while [[ ${check_ns_exists} -gt 0 ]];do
-            echo "There is already existing the same namespace, please retype another project name."
+        while [[ "${check_ns_exists}" -gt 0 ]];do
+            echo "There is already existing the same namespace, please retype another project name: "
             read -e project_name
+            while [[ ! "${project_name}" =~ ${project_name_regex} ]]; do
+                read -p "The project name format is not right,please retype again: " -e project_name
+            done
             check_ns_exists=`kubectl get ns | grep -w ${project_name} | wc -l`
         done
 
         check_project_exists=`curl "${SCHEME}://${REGISTRY_HOST}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
     done
 
-    if [[ ${project_name} != "" ]]; then
-        DEW_NAMESPACE=${project_name}
-        DEW_DOCKER_USER_NAME=${DEW_NAMESPACE}
-        DEW_DOCKER_USER_EMAIL=${DEW_DOCKER_USER_NAME}@dew.ms
+    if [[ "${project_name}" != "" ]]; then
+        PROJECT_NAMESPACE=${project_name}
+        DEW_HARBOR_USER_NAME=${PROJECT_NAMESPACE}
+        DEW_HARBOR_USER_EMAIL=${DEW_HARBOR_USER_NAME}@dew.ms
     fi
 
     # Checking whether user account exists.
     check_user_exists=`curl "${SCHEME}://${REGISTRY_HOST}/api/users?username=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
-    while [[ ${check_user_exists} -gt 0 ]]; do
+    while [[ "${check_user_exists}" -gt 0 ]]; do
         read -p "There is already existing the same Harbor user account with project name.Please input another user name to bind with your project: " -e user_name
         check_user_exists=`curl "${SCHEME}://${REGISTRY_HOST}/api/users?username=${user_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_name} | wc -l`
-        DEW_DOCKER_USER_NAME=${user_name}
+        DEW_HARBOR_USER_NAME=${user_name}
     done
     echo
 
@@ -208,22 +212,22 @@ project_create_check(){
     echo "# E-mail is used for binding the Harbor user account that you created above."
     emailRegex="^([a-zA-Z0-9_\-\.\+]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$"
     read -e -p "Please input the e-mail for your Harbor project user account: " user_email
-    while [[ ! ${user_email} =~ ${emailRegex} ]]; do
+    while [[ ! "${user_email}" =~ ${emailRegex} ]]; do
     read -p "The e-mail format is not right, please retype again: " -e user_email
     done
 
     # Checking whether e-mail is registered.
     check_email_exists=`curl "${SCHEME}://${REGISTRY_HOST}/api/users?email=${user_email}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_email} | wc -l`
-    while [[ ${check_email_exists} -gt 0 ]];do
+    while [[ "${check_email_exists}" -gt 0 ]];do
         read -p "The e-mail is already registered, please retype another: " -e user_email
-        while [[ ! ${user_email} =~ ${emailRegex} ]]; do
+        while [[ ! "${user_email}" =~ ${emailRegex} ]]; do
             read -p "The e-mail format is not right, please retype again:" -e user_email
         done
         check_email_exists=`curl "${SCHEME}://${REGISTRY_HOST}/api/users?email=${user_email}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_email} | wc -l`
     done
 
-    if [[ ${user_email} != "" ]]; then
-        DEW_DOCKER_USER_EMAIL=${user_email}
+    if [[ "${user_email}" != "" ]]; then
+        DEW_HARBOR_USER_EMAIL=${user_email}
     fi
 }
 
@@ -233,40 +237,40 @@ project_create(){
     echo "# Starting to create the Harbor user account."
     ADMIN_AUTHORIZATION=`echo -n ${REGISTRY_ADMIN}:${REGISTRY_ADMIN_PASSWORD} | base64`
 
-    create_user_result=`curl -X POST "${SCHEME}://${REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"email\": \"${DEW_DOCKER_USER_EMAIL}\", \"username\": \"${DEW_DOCKER_USER_NAME}\", \"password\": \"${DEW_DOCKER_USER_PASS}\", \"realname\": \"${DEW_DOCKER_USER_NAME}\", \"comment\": \"init\"}" -o /dev/nullrl -s -w %{http_code} -k`
-    if [[ ${create_user_result} -ne 201 ]]; then
-        echo "Failed to create user account, the script to end, please retry."
+    create_user_result=`curl -X POST "${SCHEME}://${REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"email\": \"${DEW_HARBOR_USER_EMAIL}\", \"username\": \"${DEW_HARBOR_USER_NAME}\", \"password\": \"${DEW_HARBOR_USER_PASS}\", \"realname\": \"${DEW_HARBOR_USER_NAME}\", \"comment\": \"init\"}" -o /dev/nullrl -s -w %{http_code} -k`
+    if [[ "${create_user_result}" -ne 201 ]]; then
+        echo "Failed to create user account, the script to end, please retry it later."
         exit;
     fi
-    echo "Created Harbor user account [${DEW_DOCKER_USER_NAME}] successfully.The deafault password is ${DEW_DOCKER_USER_PASS}."
+    echo "Created Harbor user account [${DEW_HARBOR_USER_NAME}] successfully.The deafault password is ${DEW_HARBOR_USER_PASS}."
     echo
 
     echo "# Starting to create Harbor project."
-    USER_AUTHORIZATION=`echo -n ${DEW_DOCKER_USER_NAME}:${DEW_DOCKER_USER_PASS} | base64`
+    USER_AUTHORIZATION=`echo -n ${DEW_HARBOR_USER_NAME}:${DEW_HARBOR_USER_PASS} | base64`
 
-    create_project_result_code=`curl -X POST "${SCHEME}://${REGISTRY_HOST}/api/projects" -H "accept: application/json" -H "authorization: Basic ${USER_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"project_name\": \"${DEW_NAMESPACE}\"}" -o /dev/nullrl -s -w %{http_code} -k`
-    if [[ ${create_project_result_code} -ne 201 ]]; then
-        echo "Failed to create project, the script to end, please retry."
+    create_project_result_code=`curl -X POST "${SCHEME}://${REGISTRY_HOST}/api/projects" -H "accept: application/json" -H "authorization: Basic ${USER_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"project_name\": \"${PROJECT_NAMESPACE}\"}" -o /dev/nullrl -s -w %{http_code} -k`
+    if [[ "${create_project_result_code}" -ne 201 ]]; then
+        echo "Failed to create project, the script to end, please retry it later."
         exit;
     fi
-    echo "The project [${DEW_NAMESPACE}] is created successfully."
+    echo "The project [${PROJECT_NAMESPACE}] is created successfully."
     echo
 
     echo "# Starting to initialize the project in the Kubernetes Cluster."
-    kubectl create namespace ${DEW_NAMESPACE}
+    kubectl create namespace ${PROJECT_NAMESPACE}
 
     kubectl create rolebinding default:service-discovery-client \
-        -n ${DEW_NAMESPACE} \
+        -n ${PROJECT_NAMESPACE} \
         --clusterrole service-discovery-client \
-        --serviceaccount ${DEW_NAMESPACE}:default
+        --serviceaccount ${PROJECT_NAMESPACE}:default
 
-    kubectl -n ${DEW_NAMESPACE} create secret docker-registry dew-registry \
+    kubectl -n ${PROJECT_NAMESPACE} create secret docker-registry dew-registry \
         --docker-server=${REGISTRY_HOST} \
-        --docker-username=${DEW_DOCKER_USER_NAME} \
-        --docker-password=${DEW_DOCKER_USER_PASS} \
-        --docker-email=${DEW_DOCKER_USER_EMAIL}
+        --docker-username=${DEW_HARBOR_USER_NAME} \
+        --docker-password=${DEW_HARBOR_USER_PASS} \
+        --docker-email=${DEW_HARBOR_USER_EMAIL}
 
-    kubectl -n ${DEW_NAMESPACE} patch serviceaccount default \
+    kubectl -n ${PROJECT_NAMESPACE} patch serviceaccount default \
         -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
 
     # Creating Ingress
@@ -280,7 +284,7 @@ project_create(){
     #     # The example: https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/rewrite
     #     nginx.ingress.kubernetes.io/rewrite-target: /\$1
     #   name: dew-ingress
-    #   namespace: $DEW_NAMESPACE
+    #   namespace: $PROJECT_NAMESPACE
     # spec:
     #   rules:
     #     # Your custom rules.
@@ -293,12 +297,12 @@ project_create(){
     echo "# See example: https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/rewrite"
     echo "# All of the nginx ingress annotations: https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/"
     echo "# You can edit the ingress freely after the script to end."
-    echo "# kubectl edit ingress dew-ingress -n ${DEW_NAMESPACE}"
+    echo "# kubectl edit ingress dew-ingress -n ${PROJECT_NAMESPACE}"
     echo
     read -e -p "Please input nginx rewrite target:" nginx_rewrite_target
 
     read -e -p "Input the host of your backend: " backend_host
-    while [[ ! ${backend_host} =~ ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$ ]] ;do
+    while [[ ! "${backend_host}" =~ ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$ ]] ;do
         read -p "The host is not right,please retype: " -e backend_host
     done
 
@@ -308,26 +312,26 @@ project_create(){
     echo "# The service params should accord with the DNS label."
     echo "# Service name  must consist of lower case alphanumeric characters or '-', "
     echo "# start with an alphabetic character, and end with an alphanumeric character."
-    echo "# e.g. services 8080 api serviceb 8081 rest servicec 8090 manage"
+    echo "# e.g. servicea 8080 api serviceb 8081 rest servicec 8090 manage"
     echo
     read -e -p "Please input your backend services: " backend_service
     backend_services=(${backend_service})
     
-    while [[ ${#backend_services[@]}%3 -eq 1 ]]; do
-        read -p "Service port is indispensable, please retype your service params: " -e backend_service
+    while [[ "${#backend_services[@]}"%3 -eq 1  || "${#backend_services[@]}" -eq 0 ]]; do
+        read -p "Service port or name is indispensable, please retype your service params: " -e backend_service
         backend_services=(${backend_service})
     done
 
     b=0
     backend_yaml_values=""
-    while [[ ${b} -lt ${#backend_services[@]} ]]; do
-        while [[ ! ${backend_services[b]} =~ ^[a-z]([a-z0-9]*)(-[a-z0-9]+)*$ ]]; do
+    while [[ "${b}" -lt "${#backend_services[@]}" ]]; do
+        while [[ ! "${backend_services[b]}" =~ ^[a-z]([a-z0-9]*)(-[a-z0-9]+)*$ ]]; do
             echo "The service name ["${backend_services[b]}"] format is not right，please retype another: "
             read -e service_name
             backend_services[b]=${service_name}
         done
 
-        while [[ ! ${backend_services[${b}+1]} =~ ^[a-z0-9]*$ ]]; do
+        while [[ ! "${backend_services[${b}+1]}" =~ ^[a-z0-9]*$ ]]; do
             echo "The service port ["${backend_services[${b}+1]}"] format is not right，please retype another: "
             read -e service_port
             backend_services[${b}+1]=${service_port}
@@ -344,36 +348,36 @@ project_create(){
 
     echo
     read -e -p "Please input your frontend host: " frontend_host
-    while [[ ! ${frontend_host} =~ ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$ ]] ;do
+    while [[ ! "${frontend_host}" =~ ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$ ]] ;do
         read -p "The host is not right, please retype again: " -e frontend_host
     done
 
     echo
     echo "# Please input your frontend service name,service port and path in order."
-    echo "# If you have one more service group, please user the space to separate."
+    echo "# If you have one more service groups, please user the space to separate."
     echo "# The service params should accord with the DNS label."
-    echo "# Service name  must consist of lower case alphanumeric characters or '-', "
+    echo "# Service name must consist of lower case alphanumeric characters or '-', "
     echo "# start with an alphabetic character, and end with an alphanumeric character."
-    echo "# e.g. services 8080 api serviceb 8081 rest servicec 8090 manage"
+    echo "# e.g. servicea 8080 api serviceb 8081 rest servicec 8090 manage"
     echo
     read -e -p "Please input your services: " frontend_service
     frontend_services=(${frontend_service})
 
-    while [[ ${#frontend_services[@]}%3 -eq 1 ]]; do
-        read -p "Service port is indispensable, please retype your service params: " -e frontend_service
+    while [[ "${#frontend_services[@]}"%3 -eq 1  || "${#frontend_services[@]}" -eq 0 ]]; do
+        read -p "The service port or name is indispensable, please retype your service params: " -e frontend_service
         frontend_services=(${frontend_service})
     done
 
     f=0
     frontend_yaml_values=""
-    while [[ ${f} -lt ${#frontend_services[@]} ]]; do
+    while [[ "${f}" -lt "${#frontend_services[@]}" ]]; do
         while [[ ! ${frontend_services[f]} =~ ^[a-z]([a-z0-9]*)(-[a-z0-9]+)*$ ]]; do
             echo "The service name ["${frontend_services[f]}"] format is not right, please retype another: "
             read -e service_name
             frontend_services[f]=${service_name}
         done
-        while [[ ! ${frontend_services[${f}+1]} =~ ^[a-z0-9]*$ ]]; do
-            echo "Service Port ["${frontend_services[${f}+1]}"] format is not right, please retype another:"
+        while [[ ! "${frontend_services[${f}+1]}" =~ ^[a-z0-9]*$ ]]; do
+            echo "Service Port ["${frontend_services[${f}+1]}"] format is not right, please retype another: "
             read -e service_port
             frontend_services[${f}+1]=${service_port}
         done
@@ -387,7 +391,7 @@ project_create(){
     done
 
     # Creating Ingress
-    cat <<EOF | kubectl -n ${DEW_NAMESPACE} apply -f -
+    cat <<EOF | kubectl -n ${PROJECT_NAMESPACE} apply -f -
     apiVersion: extensions/v1beta1
     kind: Ingress
     metadata:
@@ -407,12 +411,12 @@ ${frontend_yaml_values}
 EOF
 
     echo
-    check_ingress_exist=`kubectl get ing dew-ingress -n ${DEW_NAMESPACE} | wc -l`
-    if [[ ${check_ingress_exist} -eq 0 ]]; then
+    check_ingress_exist=`kubectl get ing dew-ingress -n ${PROJECT_NAMESPACE} | wc -l`
+    if [[ "${check_ingress_exist}" -eq 0 ]]; then
         echo -e "\033[31m * Failed to created Ingress, the script to end. Please the Ingress yourself. \033[1;m"
         exit;
     else
-        echo "The creating of project [${DEW_NAMESPACE}] is completed."
+        echo "The creating of project [${PROJECT_NAMESPACE}] is completed."
         echo "The script to end."
         exit;
     fi
