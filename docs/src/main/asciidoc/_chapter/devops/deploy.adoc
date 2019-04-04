@@ -23,7 +23,7 @@ kubectl create clusterrole service-discovery-client \
 ----
 # 协议类型与host
 SCHEME=https
-HARBOR_HOST=harbor.dew.env
+HARBOR_HOST=harbor.dew.ms
 # 若使用https，需要在每个curl命令后加 -k
 ## 或使用service name作为host:
 #  SCHEME=http
@@ -41,8 +41,7 @@ DEW_DOCKER_USER_PASS=Dew\!123456
 DEW_DOCKER_USER_EMAIL=${DEW_DOCKER_USER_NAME}@dew.ms
 
 # 创建用户(创建成功的状态码为201)
-curl -X POST "${SCHEME}://${HARBOR_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"email\": \"${DEW_DOCKER_USER_EMAIL}\", \"username\": \"${DEW_DOCKER_USER_NAME}\", \"password\": \"${DEW_DOCKER_USER_PASS}\", \"realname\": \"${DEW_DOCKER_USER_NAME}\", \"comment\": \"init\"}" curl -X POST "${SCHEME}://${HARBOR_HOST}/api/projects" -H "accept: application/json" -H "authorization: Basic ${USER_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"project_name\": \"${DEW_NAMESPACE}\"}" -o /dev/nullrl -s -w %{http_code} -k
-
+curl -X POST "${SCHEME}://${HARBOR_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"email\": \"${DEW_DOCKER_USER_EMAIL}\", \"username\": \"${DEW_DOCKER_USER_NAME}\", \"password\": \"${DEW_DOCKER_USER_PASS}\", \"realname\": \"${DEW_DOCKER_USER_NAME}\", \"comment\": \"init\"}"
 # 使用上面创建的用户登录
 USER_AUTHORIZATION=`echo -n $DEW_DOCKER_USER_NAME:$DEW_DOCKER_USER_PASS | base64`
 
