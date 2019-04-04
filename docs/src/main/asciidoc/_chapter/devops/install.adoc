@@ -403,6 +403,43 @@ kubectl create secret generic minio-access -n devops \
     --from-literal=secretkey="Dew123456"
 
 
+# 自定义Maven settings.xml(可选)
+cat <<EOF | kubectl apply -f -
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: dew-maven-settings
+  namespace: devops
+data:
+  settings.xml: |-
+     <?xml version="1.0" encoding="UTF-8"?>
+     <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+         <servers>
+             <!--示例，添加一个私有库认证-->
+             <server>
+                 <id>trc-repo</id>
+                 <username>dew</username>
+                 <password>Dew123456</password>
+             </server>
+         </servers>
+     </settings>
+EOF
+
+
+
+# 注意添加的位置在 “# Start the runner” 前
+vi templates/configmap.yaml
+-
+    cat >>/home/gitlab-runner/.gitlab-runner/config.toml <<EOF
+            [[runners.kubernetes.volumes.config_map]]
+              name = "dew-maven-settings"
+              mount_path = "/opt/maven"
+    EOF
+    # Start the runner
+-
+
 # 为每个项目的每个集群环境添加Runner
 helm install --name <projectName> --namespace devops \
     --set gitlabUrl=http://gitlab.dew.ms/ \
@@ -417,14 +454,14 @@ helm install --name <projectName> --namespace devops \
     --set runners.cache.s3BucketName=app-cache \
     --set runners.cache.s3CacheInsecure=true \
     --set runners.cache.secretName=minio-access \
-    --set runners.env.MAVEN_OPTS=-Dmaven.repo.local=.m2 \
+    --set runners.env.MAVEN_OPTS="-Dmaven.repo.local=.m2 -Dorg.apache.maven.user-settings=/opt/maven/settings.xml" \
     --set runners.env.dew_devops_profile=test \
     --set runners.env.dew_devops_quiet=true \
     --set runners.env.dew_devops_docker_host=<...> \
     --set runners.env.dew_devops_docker_registry_url=https://harbor.dew.ms/v2 \
     --set runners.env.dew_devops_docker_registry_username=<...> \
     --set runners.env.dew_devops_docker_registry_password=<...> \
-    --set runners.env.dew_devops_kube_config=<...>
+    --set runners.env.dew_devops_kube_config=<...> \
    .
 
 ----

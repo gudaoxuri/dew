@@ -182,6 +182,15 @@ public class Dew {
             return config.getProjects().get(mavenSession.getCurrentProject().getId());
         }
 
+        public static MavenProject getCurrentMavenProject() {
+            return Dew.mavenSession.getCurrentProject();
+        }
+
+        public static Properties getCurrentMavenProperties() {
+            return Dew.mavenSession.getUserProperties();
+        }
+
+
         public static Map<String, FinalProjectConfig> getProjects() {
             return config.getProjects();
         }
@@ -296,15 +305,14 @@ public class Dew {
                 // 排除 插件类型
             } else if (new File(mavenProject.getBasedir().getPath() + File.separator + "package.json").exists()) {
                 appKind = AppKind.FRONTEND;
-            } else if (
-                    new File(mavenProject.getBasedir().getPath() + File.separator + "src" + File.separator + "main" + File.separator + "resources").exists()
-                            && Arrays.stream(Objects.requireNonNull(new File(mavenProject.getBasedir().getPath() + File.separator + "src" + File.separator + "main" + File.separator + "resources").listFiles()))
-                            .anyMatch((res -> res.getName().toLowerCase().contains("application")
-                                    || res.getName().toLowerCase().contains("bootstrap")))
-                            // 包含DependencyManagement内容，不精确
-                            && mavenProject.getManagedVersionMap().containsKey("org.springframework.boot:spring-boot-starter-web:jar")
-                // TODO 以判断无效
-
+            } else if (mavenProject.getPackaging().equalsIgnoreCase("jar")
+                    && new File(mavenProject.getBasedir().getPath() + File.separator + "src" + File.separator + "main" + File.separator + "resources").exists()
+                    && Arrays.stream(Objects.requireNonNull(new File(mavenProject.getBasedir().getPath() + File.separator + "src" + File.separator + "main" + File.separator + "resources").listFiles()))
+                    .anyMatch((res -> res.getName().toLowerCase().contains("application")
+                            || res.getName().toLowerCase().contains("bootstrap")))
+                    // 包含DependencyManagement内容，不精确
+                    && mavenProject.getManagedVersionMap().containsKey("org.springframework.boot:spring-boot-starter-web:jar")
+                // TODO 以下判断无效
                 /* mavenProject.getResources() != null && mavenProject.getResources().stream()
                     .filter(res -> res.getDirectory().contains("src\\main\\resources")
                             && res.getIncludes() != null)
@@ -317,9 +325,12 @@ public class Dew {
                             && artifact.getArtifactId().equalsIgnoreCase("spring-boot-starter-web")*/
             ) {
                 appKind = AppKind.JVM_SERVICE;
-            } else {
-                // TODO
+            } else if (mavenProject.getPackaging().equalsIgnoreCase("jar")) {
+                appKind = AppKind.JVM_LIB;
+            }else if (mavenProject.getPackaging().equalsIgnoreCase("pom")) {
+                appKind = AppKind.POM;
             }
+
             Dew.log.debug("Current app [" + mavenProject.getArtifactId() + "] kind is " + appKind);
             return appKind;
         }

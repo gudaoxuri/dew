@@ -25,12 +25,14 @@ public class BuildFlowFactory {
         switch (Dew.Config.getCurrentProject().getKind()) {
             case JVM_SERVICE:
                 return new JvmServiceBuildFlow();
+            case JVM_LIB:
+                return new JvmLibBuildFlow();
+            case POM:
+                return new PomBuildFlow();
             case FRONTEND:
                 return new FrontendBuildFlow();
         }
-        return new BasicBuildFlow() {
-
-        };
+        throw new RuntimeException("Not found flow instance by " + Dew.Config.getCurrentProject().getKind());
     }
 
 }

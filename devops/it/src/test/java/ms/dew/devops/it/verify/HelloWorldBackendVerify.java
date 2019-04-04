@@ -17,6 +17,7 @@
 package ms.dew.devops.it.verify;
 
 import com.ecfront.dew.common.$;
+import ms.dew.devops.it.BasicProcessor;
 import org.junit.Assert;
 
 import java.io.File;
@@ -24,7 +25,7 @@ import java.io.File;
 /**
  * @author gudaoxuri
  */
-public class HelloWorldBackendVerify implements Verify {
+public class HelloWorldBackendVerify extends BasicProcessor implements Verify {
 
     @Override
     public void doVerify(String buildPath, String expectedResPath) throws Exception {

@@ -14,8 +14,14 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.config;
+package ms.dew.devops.it;
 
-public enum AppKind {
-    JVM_SERVICE, JVM_LIB, FRONTEND,POM
+/**
+ * @author gudaoxuri
+ */
+public class SomeHelper {
+
+    public static String echo(String req) {
+        return "resp:" + req;
+    }
 }

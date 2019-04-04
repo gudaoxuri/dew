@@ -17,21 +17,22 @@
 package ms.dew.devops.mojo;
 
 import io.kubernetes.client.ApiException;
-import ms.dew.devops.kernel.flow.release.DefaultReleaseFlow;
+import ms.dew.devops.kernel.flow.release.ReleaseFlowFactory;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import java.io.IOException;
 
-@Mojo(name = "release")
-@Execute(phase = LifecyclePhase.PACKAGE, goal = "build")
+@Mojo(name = "release", requiresDependencyResolution = ResolutionScope.COMPILE)
+@Execute(phase = LifecyclePhase.DEPLOY, goal = "build")
 public class ReleaseMojo extends BasicMojo {
 
     @Override
     protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
-        return new DefaultReleaseFlow().exec(getMojoName());
+        return ReleaseFlowFactory.choose().exec(getMojoName());
     }
 }

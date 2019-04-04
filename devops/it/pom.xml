@@ -56,10 +56,11 @@
         </dependency>
     </dependencies>
 
-    <!--    <modules>
-            <module>src/it/helloworld-backend</module>
-            <module>src/it/helloworld-frontend</module>
-        </modules>-->
+<!--    <modules>
+        <module>src/it/helloworld-backend</module>
+        <module>src/it/helloworld-frontend</module>
+        <module>src/it/helloworld-library</module>
+    </modules>-->
 
     <build>
         <plugins>
@@ -132,6 +133,10 @@
                         <dew.devops.docker.registry.password>${dew.devops.docker.registry.password}
                         </dew.devops.docker.registry.password>
                         <dew.devops.kube.config>${dew.devops.kube.config}</dew.devops.kube.config>
+                        <dew.devops.it.snapshotRepository.id>${dew.devops.it.snapshotRepository.id}
+                        </dew.devops.it.snapshotRepository.id>
+                        <dew.devops.it.snapshotRepository.url>${dew.devops.it.snapshotRepository.url}
+                        </dew.devops.it.snapshotRepository.url>
                     </properties>
                 </configuration>
                 <executions>

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.config;
+import ms.dew.devops.it.verify.HelloWorldLibraryVerify
 
-public enum AppKind {
-    JVM_SERVICE, JVM_LIB, FRONTEND,POM
-}
+new HelloWorldLibraryVerify().verify(basedir)

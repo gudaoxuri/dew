@@ -14,8 +14,21 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.config;
+package ms.dew.devops.kernel.flow.release;
 
-public enum AppKind {
-    JVM_SERVICE, JVM_LIB, FRONTEND,POM
+import ms.dew.devops.kernel.Dew;
+import ms.dew.devops.kernel.flow.BasicFlow;
+
+public class ReleaseFlowFactory {
+
+    public static BasicFlow choose() {
+        switch (Dew.Config.getCurrentProject().getKind()) {
+            case JVM_LIB:
+            case POM:
+                return new MavenReleaseFlow();
+            default:
+                return new KubeReleaseFlow();
+        }
+    }
+
 }

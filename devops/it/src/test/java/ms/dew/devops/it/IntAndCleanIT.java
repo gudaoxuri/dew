@@ -24,32 +24,27 @@ import ms.dew.devops.helper.KubeOpt;
 import ms.dew.devops.helper.YamlHelper;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Paths;
-import java.util.Properties;
 
 /**
  * @author gudaoxuri
  */
-public class IntAndCleanIT {
+public class IntAndCleanIT extends BasicProcessor {
 
     @Test
     public void initAndClean() throws IOException, ApiException {
-        Properties properties = new Properties();
-        properties.load(new FileInputStream(Paths.get("").toFile().getAbsolutePath() + File.separator + "devops.properties"));
         YamlHelper.init(new SystemStreamLog());
-        KubeHelper.init("", new SystemStreamLog(), properties.getProperty("dew.devops.kube.config"));
+        KubeHelper.init("", new SystemStreamLog(), kubeConfig);
         DockerHelper.init("", new SystemStreamLog(),
-                properties.getProperty("dew.devops.docker.host"),
-                properties.getProperty("dew.devops.docker.registry.url"),
-                properties.getProperty("dew.devops.docker.registry.username"),
-                properties.getProperty("dew.devops.docker.registry.password"));
+                dockerHost,
+                dockerRegistryUrl,
+                dockerRegistryUserName,
+                dockerRegistryPassword);
         String namespaces = "dew-test";
-        String registryHost = new URL(properties.getProperty("dew.devops.docker.registry.url")).getHost();
+        String registryHost = new URL(dockerRegistryUrl).getHost();
         KubeHelper.inst("").list("", namespaces, KubeOpt.RES.SERVICE, V1Service.class)
                 .forEach(res -> {
                     try {
@@ -78,6 +73,14 @@ public class IntAndCleanIT {
                 .forEach(res -> {
                     try {
                         KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeOpt.RES.POD);
+                    } catch (ApiException e) {
+                        e.printStackTrace();
+                    }
+                });
+        KubeHelper.inst("").list("kind=version", namespaces, KubeOpt.RES.CONFIG_MAP, V1ConfigMap.class)
+                .forEach(res -> {
+                    try {
+                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeOpt.RES.CONFIG_MAP);
                     } catch (ApiException e) {
                         e.printStackTrace();
                     }

@@ -24,7 +24,7 @@ import ms.dew.devops.helper.KubeHelper;
 import ms.dew.devops.helper.KubeOpt;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.flow.BasicFlow;
-import ms.dew.devops.kernel.flow.release.DefaultReleaseFlow;
+import ms.dew.devops.kernel.flow.release.KubeReleaseFlow;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.BufferedReader;
@@ -64,7 +64,7 @@ public class DefaultRollbackFlow extends BasicFlow {
             selected = reader.readLine().trim();
         }
         String rollbackGitCommit = versions.get(selected).getMetadata().getLabels().get(FLAG_KUBE_RESOURCE_GIT_COMMIT);
-        new DefaultReleaseFlow().release(rollbackGitCommit);
+        new KubeReleaseFlow().release(rollbackGitCommit);
         return true;
     }
 

@@ -18,7 +18,7 @@ package ms.dew.devops.mojo;
 
 import io.kubernetes.client.ApiException;
 import ms.dew.devops.kernel.flow.prepare.PrepareFlowFactory;
-import ms.dew.devops.kernel.function.NeedExecuteByGit;
+import ms.dew.devops.kernel.function.NeedProcessChecker;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
@@ -34,7 +34,7 @@ public class PrepareMojo extends BasicMojo {
 
     @Override
     protected boolean preExecute() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
-        NeedExecuteByGit.setNeedExecuteProjects(quiet);
+        NeedProcessChecker.checkNeedProcessProjects(quiet);
         return true;
     }
 

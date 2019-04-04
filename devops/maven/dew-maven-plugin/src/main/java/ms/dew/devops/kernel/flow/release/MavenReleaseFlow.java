@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.mojo;
+package ms.dew.devops.kernel.flow.release;
 
 import io.kubernetes.client.ApiException;
-import ms.dew.devops.kernel.flow.build.BuildFlowFactory;
+import ms.dew.devops.kernel.flow.BasicFlow;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Execute;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import java.io.IOException;
 
-@Mojo(name = "build", requiresDependencyResolution = ResolutionScope.COMPILE)
-@Execute(phase = LifecyclePhase.PACKAGE, goal = "prepare")
-public class BuildMojo extends BasicMojo {
+public class MavenReleaseFlow extends BasicFlow {
 
-    @Override
-    protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
-        return BuildFlowFactory.choose().exec(getMojoName());
+    public boolean process(String flowBasePath) throws ApiException, IOException, MojoExecutionException {
+        return true;
     }
+
 }
