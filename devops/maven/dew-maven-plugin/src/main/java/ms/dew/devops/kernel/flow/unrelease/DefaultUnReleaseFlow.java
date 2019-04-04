@@ -20,7 +20,7 @@ import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1beta1ReplicaSet;
 import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.helper.KubeOpt;
+import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -31,20 +31,20 @@ import java.util.List;
 public class DefaultUnReleaseFlow extends BasicFlow {
 
     protected boolean process(String flowBasePath) throws ApiException, IOException, MojoExecutionException {
-        KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(Dew.Config.getCurrentProject().getAppName(), Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.SERVICE);
-        KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(Dew.Config.getCurrentProject().getAppName(), Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.DEPLOYMENT);
+        KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(Dew.Config.getCurrentProject().getAppName(), Dew.Config.getCurrentProject().getNamespace(), KubeRES.SERVICE);
+        KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(Dew.Config.getCurrentProject().getAppName(), Dew.Config.getCurrentProject().getNamespace(), KubeRES.DEPLOYMENT);
         List<V1beta1ReplicaSet> rsList = KubeHelper.inst(
                 Dew.Config.getCurrentProject().getId()).list("app=" + Dew.Config.getCurrentProject().getAppName() + ",group=" + Dew.Config.getCurrentProject().getAppGroup() + ",version=" + Dew.Config.getCurrentProject().getGitCommit(),
-                Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.REPLICA_SET, V1beta1ReplicaSet.class);
+                Dew.Config.getCurrentProject().getNamespace(), KubeRES.REPLICA_SET, V1beta1ReplicaSet.class);
         for (V1beta1ReplicaSet rs : rsList) {
-            KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(rs.getMetadata().getName(), rs.getMetadata().getNamespace(), KubeOpt.RES.REPLICA_SET);
+            KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(rs.getMetadata().getName(), rs.getMetadata().getNamespace(), KubeRES.REPLICA_SET);
         }
         List<V1Pod> pods = KubeHelper.inst(
                 Dew.Config.getCurrentProject().getId()).list(
                 "app=" + Dew.Config.getCurrentProject().getAppName() + ",group=" + Dew.Config.getCurrentProject().getAppGroup() + ",version=" + Dew.Config.getCurrentProject().getGitCommit(),
-                Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.POD, V1Pod.class);
+                Dew.Config.getCurrentProject().getNamespace(), KubeRES.POD, V1Pod.class);
         for (V1Pod rs : pods) {
-            KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(rs.getMetadata().getName(), rs.getMetadata().getNamespace(), KubeOpt.RES.POD);
+            KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(rs.getMetadata().getName(), rs.getMetadata().getNamespace(), KubeRES.POD);
         }
         return true;
     }

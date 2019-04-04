@@ -21,7 +21,7 @@ import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1ConfigMap;
 import io.kubernetes.client.models.V1Service;
 import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.helper.KubeOpt;
+import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.flow.release.KubeReleaseFlow;
@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
 public class DefaultRollbackFlow extends BasicFlow {
 
     protected boolean process(String flowBasePath) throws ApiException, IOException, MojoExecutionException {
-        V1Service service = KubeHelper.inst(Dew.Config.getCurrentProject().getId()).read(Dew.Config.getCurrentProject().getAppName(), Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.SERVICE, V1Service.class);
+        V1Service service = KubeHelper.inst(Dew.Config.getCurrentProject().getId()).read(Dew.Config.getCurrentProject().getAppName(), Dew.Config.getCurrentProject().getNamespace(), KubeRES.SERVICE, V1Service.class);
         String currentGitCommit = null;
         if (service != null) {
             currentGitCommit = service.getMetadata().getAnnotations().get(FLAG_KUBE_RESOURCE_GIT_COMMIT);

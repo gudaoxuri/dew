@@ -21,7 +21,7 @@ import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1Service;
 import ms.dew.devops.helper.GitHelper;
 import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.helper.KubeOpt;
+import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
@@ -135,7 +135,7 @@ public class NeedProcessChecker {
     }
 
     private static String fetchLastVersionDeployCommit(FinalProjectConfig config) throws ApiException {
-        V1Service lastVersionService = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(), KubeOpt.RES.SERVICE, V1Service.class);
+        V1Service lastVersionService = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(), KubeRES.SERVICE, V1Service.class);
         if (lastVersionService == null) {
             return null;
         } else {

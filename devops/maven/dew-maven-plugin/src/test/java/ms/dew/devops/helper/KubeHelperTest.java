@@ -39,13 +39,13 @@ public class KubeHelperTest extends BasicTest {
 
     @Test
     public void testAll() throws IOException, ApiException, InterruptedException {
-        KubeHelper.inst("").delete("ns-test", KubeOpt.RES.NAME_SPACE);
+        KubeHelper.inst("").delete("ns-test", KubeRES.NAME_SPACE);
 
-        Assert.assertFalse(KubeHelper.inst("").exist("ns-test", KubeOpt.RES.NAME_SPACE));
+        Assert.assertFalse(KubeHelper.inst("").exist("ns-test", KubeRES.NAME_SPACE));
         KubeHelper.inst("").create($.file.readAllByClassPath("ns-test.yaml", "UTF-8"));
-        Assert.assertTrue(KubeHelper.inst("").exist("ns-test", KubeOpt.RES.NAME_SPACE));
+        Assert.assertTrue(KubeHelper.inst("").exist("ns-test", KubeRES.NAME_SPACE));
         Assert.assertEquals("Active",
-                KubeHelper.inst("").read("ns-test", KubeOpt.RES.NAME_SPACE, V1Namespace.class).getStatus().getPhase());
+                KubeHelper.inst("").read("ns-test", KubeRES.NAME_SPACE, V1Namespace.class).getStatus().getPhase());
 
         ExtensionsV1beta1Deployment deployment = buildDeployment();
         CountDownLatch cdl = new CountDownLatch(1);
@@ -59,33 +59,33 @@ public class KubeHelperTest extends BasicTest {
                     }
                 },
                 ExtensionsV1beta1Deployment.class);
-        Assert.assertFalse(KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(), KubeOpt.RES.DEPLOYMENT));
+        Assert.assertFalse(KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(), KubeRES.DEPLOYMENT));
         KubeHelper.inst("").apply(deployment);
-        Assert.assertTrue(KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(), KubeOpt.RES.DEPLOYMENT));
+        Assert.assertTrue(KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(), KubeRES.DEPLOYMENT));
 
         Assert.assertEquals(1, KubeHelper.inst("").list(
                 "",
                 deployment.getMetadata().getNamespace(),
-                KubeOpt.RES.DEPLOYMENT,
+                KubeRES.DEPLOYMENT,
                 ExtensionsV1beta1Deployment.class).size());
         Assert.assertEquals(0, KubeHelper.inst("").list(
                 "name=nginx",
                 deployment.getMetadata().getNamespace(),
-                KubeOpt.RES.DEPLOYMENT,
+                KubeRES.DEPLOYMENT,
                 ExtensionsV1beta1Deployment.class).size());
         Assert.assertEquals(1, KubeHelper.inst("").list(
                 "name=test-nginx",
                 deployment.getMetadata().getNamespace(),
-                KubeOpt.RES.DEPLOYMENT,
+                KubeRES.DEPLOYMENT,
                 ExtensionsV1beta1Deployment.class).size());
 
         KubeHelper.inst("").patch("nginx-deployment", new ArrayList<String>() {{
             add("{\"op\":\"replace\",\"path\":\"/spec/replicas\",\"value\":2}");
             add("{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/image\",\"value\":\"nginx:latest\"}");
-        }}, "ns-test", KubeOpt.RES.DEPLOYMENT);
+        }}, "ns-test", KubeRES.DEPLOYMENT);
         ExtensionsV1beta1Deployment fetchedDeployment = KubeHelper.inst("").read(deployment.getMetadata().getName(),
                 deployment.getMetadata().getNamespace(),
-                KubeOpt.RES.DEPLOYMENT,
+                KubeRES.DEPLOYMENT,
                 ExtensionsV1beta1Deployment.class);
 
         Assert.assertEquals(2, fetchedDeployment.getSpec().getReplicas().intValue());
@@ -97,7 +97,7 @@ public class KubeHelperTest extends BasicTest {
         String podName = KubeHelper.inst("").list(
                 "app=nginx",
                 deployment.getMetadata().getNamespace(),
-                KubeOpt.RES.POD,
+                KubeRES.POD,
                 V1Pod.class).get(0).getMetadata().getName();
 
         // TODO
@@ -108,13 +108,13 @@ public class KubeHelperTest extends BasicTest {
         */
 
         KubeHelper.inst("").stopWatch(watchId);
-        KubeHelper.inst("").delete("ns-test", KubeOpt.RES.NAME_SPACE);
-        Assert.assertFalse(KubeHelper.inst("").exist("ns-test", KubeOpt.RES.NAME_SPACE));
+        KubeHelper.inst("").delete("ns-test", KubeRES.NAME_SPACE);
+        Assert.assertFalse(KubeHelper.inst("").exist("ns-test", KubeRES.NAME_SPACE));
     }
 
     private ExtensionsV1beta1Deployment buildDeployment() {
         return new ExtensionsV1beta1DeploymentBuilder()
-                .withKind(KubeOpt.RES.DEPLOYMENT.getVal())
+                .withKind(KubeRES.DEPLOYMENT.getVal())
                 .withApiVersion("extensions/v1beta1")
                 .withMetadata(new V1ObjectMetaBuilder()
                         .withName("nginx-deployment")

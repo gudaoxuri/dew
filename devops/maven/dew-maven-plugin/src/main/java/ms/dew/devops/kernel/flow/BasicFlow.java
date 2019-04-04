@@ -19,7 +19,7 @@ package ms.dew.devops.kernel.flow;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1ConfigMap;
 import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.helper.KubeOpt;
+import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.Dew;
 import org.apache.maven.plugin.MojoExecutionException;
 
@@ -74,7 +74,7 @@ public abstract class BasicFlow {
         List<V1ConfigMap> versions = KubeHelper.inst(Dew.Config.getCurrentProject().getId()).list(
                 FLAG_VERSION_APP + "=" + Dew.Config.getCurrentProject().getAppName() + "," + FLAG_VERSION_KIND + "=version",
                 Dew.Config.getCurrentProject().getNamespace(),
-                KubeOpt.RES.CONFIG_MAP, V1ConfigMap.class);
+                KubeRES.CONFIG_MAP, V1ConfigMap.class);
         versions.sort((m1, m2) ->
                 Long.valueOf(m2.getMetadata().getLabels().get(FLAG_VERSION_LAST_UPDATE_TIME))
                         .compareTo(Long.valueOf(m1.getMetadata().getLabels().get(FLAG_VERSION_LAST_UPDATE_TIME))));
@@ -91,7 +91,7 @@ public abstract class BasicFlow {
         V1ConfigMap oldVersion = KubeHelper.inst(Dew.Config.getCurrentProject().getId())
                 .read(getVersionName(gitCommit),
                         Dew.Config.getCurrentProject().getNamespace(),
-                        KubeOpt.RES.CONFIG_MAP, V1ConfigMap.class);
+                        KubeRES.CONFIG_MAP, V1ConfigMap.class);
         if (oldVersion != null && oldVersion.getMetadata().getLabels().get(FLAG_VERSION_ENABLED).equalsIgnoreCase("true")) {
             return oldVersion;
         } else {

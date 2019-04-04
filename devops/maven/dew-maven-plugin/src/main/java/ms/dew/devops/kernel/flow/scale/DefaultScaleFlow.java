@@ -17,7 +17,7 @@
 package ms.dew.devops.kernel.flow.scale;
 
 import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.helper.KubeOpt;
+import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.resource.KubeHorizontalPodAutoscalerBuilder;
@@ -51,7 +51,7 @@ public class DefaultScaleFlow extends BasicFlow {
             Dew.log.info("Change replicas number is " + replicas);
             KubeHelper.inst(Dew.Config.getCurrentProject().getId()).patch(Dew.Config.getCurrentProject().getAppName(), new ArrayList<String>() {{
                 add("{\"op\":\"replace\",\"path\":\"/spec/replicas\",\"value\":" + replicas + "}");
-            }}, Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.DEPLOYMENT);
+            }}, Dew.Config.getCurrentProject().getNamespace(), KubeRES.DEPLOYMENT);
         } else {
             Dew.log.info("Enabled auto scale between " + minReplicas + " and " + maxReplicas);
             KubeHelper.inst(Dew.Config.getCurrentProject().getId()).apply(

@@ -18,7 +18,7 @@ package ms.dew.devops.kernel.resource;
 
 import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.models.*;
-import ms.dew.devops.helper.KubeOpt;
+import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
 
@@ -56,7 +56,7 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
         selectorLabels.remove("provider");
 
         V1ServiceBuilder builder = new V1ServiceBuilder();
-        builder.withKind(KubeOpt.RES.SERVICE.getVal())
+        builder.withKind(KubeRES.SERVICE.getVal())
                 .withApiVersion("v1")
                 .withMetadata(new V1ObjectMetaBuilder()
                         .withAnnotations(annotations)

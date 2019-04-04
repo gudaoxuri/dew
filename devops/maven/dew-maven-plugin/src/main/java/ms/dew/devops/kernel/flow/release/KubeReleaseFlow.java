@@ -24,7 +24,7 @@ import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1Service;
 import ms.dew.devops.helper.DockerHelper;
 import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.helper.KubeOpt;
+import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.resource.KubeConfigMapBuilder;
@@ -75,15 +75,15 @@ public class KubeReleaseFlow extends BasicFlow {
 
     private Map<String, Object> fetchOldVersionResources(V1ConfigMap oldVersion) throws IOException {
         ExtensionsV1beta1Deployment rollbackDeployment = KubeHelper.inst(Dew.Config.getCurrentProject().getId()).toResource(
-                $.security.decodeBase64ToString(oldVersion.getData().get(KubeOpt.RES.DEPLOYMENT.getVal()), "UTF-8"),
+                $.security.decodeBase64ToString(oldVersion.getData().get(KubeRES.DEPLOYMENT.getVal()), "UTF-8"),
                 ExtensionsV1beta1Deployment.class);
         V1Service rollbackService = KubeHelper.inst(Dew.Config.getCurrentProject().getId()).toResource(
-                $.security.decodeBase64ToString(oldVersion.getData().get(KubeOpt.RES.SERVICE.getVal()), "UTF-8"),
+                $.security.decodeBase64ToString(oldVersion.getData().get(KubeRES.SERVICE.getVal()), "UTF-8"),
                 V1Service.class);
         return new HashMap<String, Object>() {
             {
-                put(KubeOpt.RES.DEPLOYMENT.getVal(), rollbackDeployment);
-                put(KubeOpt.RES.SERVICE.getVal(), rollbackService);
+                put(KubeRES.DEPLOYMENT.getVal(), rollbackDeployment);
+                put(KubeRES.SERVICE.getVal(), rollbackService);
             }
         };
     }
@@ -91,14 +91,14 @@ public class KubeReleaseFlow extends BasicFlow {
     private Map<String, Object> buildNewVersionResources(String flowBasePath) throws IOException {
         ExtensionsV1beta1Deployment deployment = new KubeDeploymentBuilder().build(Dew.Config.getCurrentProject());
         V1Service service = new KubeServiceBuilder().build(Dew.Config.getCurrentProject());
-        Files.write(Paths.get(flowBasePath + KubeOpt.RES.DEPLOYMENT.getVal() + ".yaml"),
+        Files.write(Paths.get(flowBasePath + KubeRES.DEPLOYMENT.getVal() + ".yaml"),
                 KubeHelper.inst(Dew.Config.getCurrentProject().getId()).toString(deployment).getBytes(StandardCharsets.UTF_8));
-        Files.write(Paths.get(flowBasePath + KubeOpt.RES.SERVICE.getVal() + ".yaml"),
+        Files.write(Paths.get(flowBasePath + KubeRES.SERVICE.getVal() + ".yaml"),
                 KubeHelper.inst(Dew.Config.getCurrentProject().getId()).toString(service).getBytes(StandardCharsets.UTF_8));
         return new HashMap<String, Object>() {
             {
-                put(KubeOpt.RES.DEPLOYMENT.getVal(), deployment);
-                put(KubeOpt.RES.SERVICE.getVal(), service);
+                put(KubeRES.DEPLOYMENT.getVal(), deployment);
+                put(KubeRES.SERVICE.getVal(), service);
             }
         };
     }
@@ -113,11 +113,11 @@ public class KubeReleaseFlow extends BasicFlow {
     }
 
     private void deployResources(Map<String, Object> kubeResources) throws ApiException, IOException {
-        V1Service service = (V1Service) kubeResources.get(KubeOpt.RES.SERVICE.getVal());
-        ExtensionsV1beta1Deployment deployment = (ExtensionsV1beta1Deployment) kubeResources.get(KubeOpt.RES.DEPLOYMENT.getVal());
+        V1Service service = (V1Service) kubeResources.get(KubeRES.SERVICE.getVal());
+        ExtensionsV1beta1Deployment deployment = (ExtensionsV1beta1Deployment) kubeResources.get(KubeRES.DEPLOYMENT.getVal());
         KubeHelper.inst(Dew.Config.getCurrentProject().getId()).apply(deployment);
         CountDownLatch cdl = new CountDownLatch(1);
-        ExtensionsV1beta1Deployment deploymentRes = (ExtensionsV1beta1Deployment) kubeResources.get(KubeOpt.RES.DEPLOYMENT.getVal());
+        ExtensionsV1beta1Deployment deploymentRes = (ExtensionsV1beta1Deployment) kubeResources.get(KubeRES.DEPLOYMENT.getVal());
         String select = "app="
                 + deploymentRes.getMetadata().getName()
                 + ",group=" + deploymentRes.getMetadata().getLabels().get("group")
@@ -133,7 +133,7 @@ public class KubeReleaseFlow extends BasicFlow {
                             && resp.object.getStatus().getReadyReplicas().intValue() == resp.object.getSpec().getReplicas()) {
                         try {
                             long runningPodSize = KubeHelper.inst(Dew.Config.getCurrentProject().getId())
-                                    .list(select, deploymentRes.getMetadata().getNamespace(), KubeOpt.RES.POD, V1Pod.class)
+                                    .list(select, deploymentRes.getMetadata().getNamespace(), KubeRES.POD, V1Pod.class)
                                     .stream().filter(pod -> pod.getStatus().getPhase().equalsIgnoreCase("Running"))
                                     .count();
                             if (resp.object.getSpec().getReplicas() != runningPodSize) {
@@ -150,10 +150,10 @@ public class KubeReleaseFlow extends BasicFlow {
         try {
             cdl.await(30, TimeUnit.MINUTES);
             KubeHelper.inst(Dew.Config.getCurrentProject().getId()).stopWatch(watchId);
-            if (!KubeHelper.inst(Dew.Config.getCurrentProject().getId()).exist(service.getMetadata().getName(), service.getMetadata().getNamespace(), KubeOpt.RES.SERVICE)) {
+            if (!KubeHelper.inst(Dew.Config.getCurrentProject().getId()).exist(service.getMetadata().getName(), service.getMetadata().getNamespace(), KubeRES.SERVICE)) {
                 KubeHelper.inst(Dew.Config.getCurrentProject().getId()).create(service);
             } else {
-                KubeHelper.inst(Dew.Config.getCurrentProject().getId()).patch(service.getMetadata().getName(), new KubeServiceBuilder().buildPatch(service), service.getMetadata().getNamespace(), KubeOpt.RES.SERVICE);
+                KubeHelper.inst(Dew.Config.getCurrentProject().getId()).patch(service.getMetadata().getName(), new KubeServiceBuilder().buildPatch(service), service.getMetadata().getNamespace(), KubeRES.SERVICE);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -187,7 +187,7 @@ public class KubeReleaseFlow extends BasicFlow {
     private void enabledVersionInfo(String gitCommit) throws ApiException {
         KubeHelper.inst(Dew.Config.getCurrentProject().getId()).patch(getVersionName(gitCommit), new ArrayList<String>() {{
             add("{\"op\":\"replace\",\"path\":\"/metadata/labels/enabled\",\"value\":\"true\"}");
-        }}, Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.CONFIG_MAP);
+        }}, Dew.Config.getCurrentProject().getNamespace(), KubeRES.CONFIG_MAP);
     }
 
     private void removeOldVersions(int revisionHistoryLimit) throws ApiException, IOException {
@@ -201,7 +201,7 @@ public class KubeReleaseFlow extends BasicFlow {
             if (!enabled || offset <= 0) {
                 String oldGitCommit = configMap.getMetadata().getLabels().get(FLAG_KUBE_RESOURCE_GIT_COMMIT);
                 Dew.log.debug("Remove old version : " + configMap.getMetadata().getName());
-                KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(configMap.getMetadata().getName(), Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.CONFIG_MAP);
+                KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(configMap.getMetadata().getName(), Dew.Config.getCurrentProject().getNamespace(), KubeRES.CONFIG_MAP);
                 DockerHelper.inst(Dew.Config.getCurrentProject().getId()).image.remove(Dew.Config.getCurrentProject().getImageName(oldGitCommit));
                 DockerHelper.inst(Dew.Config.getCurrentProject().getId()).registry.remove(Dew.Config.getCurrentProject().getImageName(oldGitCommit));
             }

@@ -19,7 +19,7 @@ package ms.dew.devops.kernel.flow.log;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1Pod;
 import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.helper.KubeOpt;
+import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.resource.KubeDeploymentBuilder;
@@ -51,7 +51,7 @@ public class DefaultLogFlow extends BasicFlow {
             AtomicInteger idx = new AtomicInteger(0);
             Map<Integer, V1Pod> pods = KubeHelper.inst(Dew.Config.getCurrentProject().getId())
                     .list("app=" + Dew.Config.getCurrentProject().getAppName() + ",group=" + Dew.Config.getCurrentProject().getAppGroup() + ",version=" + Dew.Config.getCurrentProject().getGitCommit(),
-                            Dew.Config.getCurrentProject().getNamespace(), KubeOpt.RES.POD, V1Pod.class)
+                            Dew.Config.getCurrentProject().getNamespace(), KubeRES.POD, V1Pod.class)
                     .stream()
                     .filter(pod -> pod.getStatus().getContainerStatuses().stream()
                             .anyMatch(container -> container.getName().equalsIgnoreCase(KubeDeploymentBuilder.FLAG_CONTAINER_NAME)))

@@ -280,7 +280,7 @@ public class DockerOpt {
          * Exist.
          *
          * @param imageName the image name
-         * @return exist
+         * @return <b>true</b> if exist
          * @throws IOException the io exception
          */
         public boolean exist(String imageName) throws IOException {

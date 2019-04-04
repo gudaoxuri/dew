@@ -18,13 +18,9 @@ package ms.dew.devops.it;
 
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.*;
-import ms.dew.devops.helper.DockerHelper;
-import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.helper.KubeOpt;
-import ms.dew.devops.helper.YamlHelper;
+import ms.dew.devops.helper.*;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.net.URL;
@@ -45,50 +41,50 @@ public class IntAndCleanIT extends BasicProcessor {
                 dockerRegistryPassword);
         String namespaces = "dew-test";
         String registryHost = new URL(dockerRegistryUrl).getHost();
-        KubeHelper.inst("").list("", namespaces, KubeOpt.RES.SERVICE, V1Service.class)
+        KubeHelper.inst("").list("", namespaces, KubeRES.SERVICE, V1Service.class)
                 .forEach(res -> {
                     try {
-                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeOpt.RES.SERVICE);
+                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeRES.SERVICE);
                     } catch (ApiException e) {
                         e.printStackTrace();
                     }
                 });
-        KubeHelper.inst("").list("", namespaces, KubeOpt.RES.DEPLOYMENT, ExtensionsV1beta1Deployment.class)
+        KubeHelper.inst("").list("", namespaces, KubeRES.DEPLOYMENT, ExtensionsV1beta1Deployment.class)
                 .forEach(res -> {
                     try {
-                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeOpt.RES.DEPLOYMENT);
+                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeRES.DEPLOYMENT);
                     } catch (ApiException e) {
                         e.printStackTrace();
                     }
                 });
-        KubeHelper.inst("").list("", namespaces, KubeOpt.RES.REPLICA_SET, V1beta1ReplicaSet.class)
+        KubeHelper.inst("").list("", namespaces, KubeRES.REPLICA_SET, V1beta1ReplicaSet.class)
                 .forEach(res -> {
                     try {
-                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeOpt.RES.REPLICA_SET);
+                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeRES.REPLICA_SET);
                     } catch (ApiException e) {
                         e.printStackTrace();
                     }
                 });
-        KubeHelper.inst("").list("", namespaces, KubeOpt.RES.POD, V1Pod.class)
+        KubeHelper.inst("").list("", namespaces, KubeRES.POD, V1Pod.class)
                 .forEach(res -> {
                     try {
-                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeOpt.RES.POD);
+                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeRES.POD);
                     } catch (ApiException e) {
                         e.printStackTrace();
                     }
                 });
-        KubeHelper.inst("").list("kind=version", namespaces, KubeOpt.RES.CONFIG_MAP, V1ConfigMap.class)
+        KubeHelper.inst("").list("kind=version", namespaces, KubeRES.CONFIG_MAP, V1ConfigMap.class)
                 .forEach(res -> {
                     try {
-                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeOpt.RES.CONFIG_MAP);
+                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeRES.CONFIG_MAP);
                     } catch (ApiException e) {
                         e.printStackTrace();
                     }
                 });
-        KubeHelper.inst("").list("", namespaces, KubeOpt.RES.HORIZONTAL_POD_AUTOSCALER, V2beta2HorizontalPodAutoscaler.class)
+        KubeHelper.inst("").list("", namespaces, KubeRES.HORIZONTAL_POD_AUTOSCALER, V2beta2HorizontalPodAutoscaler.class)
                 .forEach(res -> {
                     try {
-                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeOpt.RES.HORIZONTAL_POD_AUTOSCALER);
+                        KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeRES.HORIZONTAL_POD_AUTOSCALER);
                     } catch (ApiException e) {
                         e.printStackTrace();
                     }
