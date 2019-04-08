@@ -38,8 +38,8 @@
     <modules>
         <module>framework</module>
         <module>devops</module>
-        <module>example</module>
-        <module>doc</module>
+        <module>examples</module>
+        <module>docs</module>
     </modules>
 
 </project>
