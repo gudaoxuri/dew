@@ -1,0 +1,21 @@
+spring:
+  cloud:
+    config:
+      enabled: false
+    kubernetes:
+      ribbon:
+        enabled: false
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+
+server:
+  port: 8080
+
+todo-compute:
+  ribbon:
+    listOfServers: localhost:8082

@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    config:
+      enabled: false
+    kubernetes:
+      ribbon:
+        enabled: false
+
+server:
+  port: 8082

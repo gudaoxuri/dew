@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: todo-notifier
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+
+dew:
+  cluster:
+    mq: redis
+
