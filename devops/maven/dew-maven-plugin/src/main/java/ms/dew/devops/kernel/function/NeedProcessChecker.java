@@ -42,6 +42,16 @@ public class NeedProcessChecker {
 
     public static void checkNeedProcessProjects(boolean quiet) throws ApiException, IOException {
         if (initialized.getAndSet(true)) {
+            switch (Dew.Config.getCurrentProject().getKind()) {
+                case POM:
+                case JVM_LIB:
+                    Dew.Config.getCurrentMavenProperties().setProperty("maven.install.skip", "false");
+                    Dew.Config.getCurrentMavenProperties().setProperty("maven.deploy.skip", "false");
+                    break;
+                default:
+                    Dew.Config.getCurrentMavenProperties().setProperty("maven.install.skip", "true");
+                    Dew.Config.getCurrentMavenProperties().setProperty("maven.deploy.skip", "true");
+            }
             return;
         }
         Dew.log.info("Fetch need process projects");
@@ -67,7 +77,7 @@ public class NeedProcessChecker {
         StringBuilder sb = new StringBuilder();
         sb.append("\r\n==================== Processing Projects =====================\r\n\r\n");
         sb.append(processingProjects.stream().map(config ->
-                "> " + config.getMvnGroupId() + ":" + config.getMvnArtifactId())
+                "> [" + config.getKind().name() + "] " + config.getMvnGroupId() + ":" + config.getMvnArtifactId())
                 .collect(Collectors.joining("\r\n")));
         sb.append("\r\n\r\n==============================================================\r\n");
         if (quiet) {
@@ -86,14 +96,23 @@ public class NeedProcessChecker {
     private static void checkNeedProcessByMavenRepo(FinalProjectConfig config) throws ApiException, IOException {
         String version = Dew.Config.getCurrentMavenProject().getVersion();
         if (version.trim().toLowerCase().endsWith("snapshot")) {
-            // 快照版本每次都部署
+            // 如果快照仓库存在，则快照版本每次都部署
+            if (Dew.Config.getCurrentMavenProject().getDistributionManagement() == null
+                    || Dew.Config.getCurrentMavenProject().getDistributionManagement().getSnapshotRepository() == null
+                    || Dew.Config.getCurrentMavenProject().getDistributionManagement().getSnapshotRepository().getUrl() == null
+                    || Dew.Config.getCurrentMavenProject().getDistributionManagement().getSnapshotRepository().getUrl().trim().isEmpty()) {
+                Dew.log.warn("Maven distribution snapshot repository not found");
+                config.setSkip(true);
+            }
             return;
         }
+        // 处理非快照版
         if (Dew.Config.getCurrentMavenProject().getDistributionManagement() == null
                 || Dew.Config.getCurrentMavenProject().getDistributionManagement().getRepository() == null
                 || Dew.Config.getCurrentMavenProject().getDistributionManagement().getRepository().getUrl() == null
                 || Dew.Config.getCurrentMavenProject().getDistributionManagement().getRepository().getUrl().trim().isEmpty()) {
             Dew.log.warn("Maven distribution repository not found");
+            config.setSkip(true);
             return;
         }
         String repoUrl = Dew.Config.getCurrentMavenProject().getDistributionManagement().getRepository().getUrl().trim();
@@ -109,15 +128,10 @@ public class NeedProcessChecker {
         }
         // 已存在
         Dew.log.warn("Maven repository exist this version :" + Dew.Config.getCurrentMavenProject().getArtifactId());
-        Dew.Config.getCurrentMavenProperties().setProperty("maven.install.skip", "true");
-        Dew.Config.getCurrentMavenProperties().setProperty("maven.deploy.skip", "true");
         config.setSkip(true);
     }
 
     private static void checkNeedProcessByGit(FinalProjectConfig config) throws ApiException {
-        // 此类型不需要maven deploy
-        Dew.Config.getCurrentMavenProperties().setProperty("maven.install.skip", "true");
-        Dew.Config.getCurrentMavenProperties().setProperty("maven.deploy.skip", "true");
         if (config.isCustomVersion()) {
             // 自定义版本时不判断Git
             return;

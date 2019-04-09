@@ -25,7 +25,7 @@ public interface Verify {
 
     default void verify(File basedir) throws Exception {
         String expectedResPath = new File(basedir, File.separator + "expected").getPath() + File.separator;
-        String buildPath = new File(basedir, File.separator + "target").toPath() + File.separator;
+        String buildPath = new File(basedir, File.separator + "target").getPath() + File.separator;
         doVerify(buildPath, expectedResPath);
     }
 

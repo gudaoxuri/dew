@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: todo-kernel
+
+dew:
+  cluster:
+    mq: redis
+
+management:
+  endpoint:
+    health:
+      show-details: always

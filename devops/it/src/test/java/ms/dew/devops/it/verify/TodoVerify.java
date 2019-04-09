@@ -16,7 +16,16 @@
 
 package ms.dew.devops.it.verify;
 
+import com.ecfront.dew.common.$;
 import ms.dew.devops.it.BasicProcessor;
+import org.joox.JOOX;
+import org.junit.Assert;
+import org.w3c.dom.Document;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 /**
  * @author gudaoxuri
@@ -27,5 +36,74 @@ public class TodoVerify extends BasicProcessor implements Verify {
     public void doVerify(String buildPath, String expectedResPath) throws Exception {
         loadConfig();
 
+        // verify parent
+        String metaData = $.http.get(itSnapshotRepositoryUrl + "ms/dew/devops/it/todo-parent/2.0.0-SNAPSHOT/maven-metadata.xml");
+        Document doc = JOOX.builder().parse(new ByteArrayInputStream(metaData.getBytes()));
+        String lastUpdateTime = JOOX.$(doc).find("lastUpdated").get(0).getTextContent();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        long offsetMinutes = (System.currentTimeMillis() - sdf.parse(lastUpdateTime).getTime()) / 1000 / 60 / 60;
+        Assert.assertTrue("parent | last deploy time check", offsetMinutes < 5);
+
+        // verify common
+        metaData = $.http.get(itSnapshotRepositoryUrl + "ms/dew/devops/it/todo-common/2.0.0-SNAPSHOT/maven-metadata.xml");
+        doc = JOOX.builder().parse(new ByteArrayInputStream(metaData.getBytes()));
+        lastUpdateTime = JOOX.$(doc).find("lastUpdated").get(0).getTextContent();
+        sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        offsetMinutes = (System.currentTimeMillis() - sdf.parse(lastUpdateTime).getTime()) / 1000 / 60 / 60;
+        Assert.assertTrue("common | last deploy time check", offsetMinutes < 5);
+
+        String basePath = new File(buildPath).getParentFile().getPath() + File.separator;
+        // verify kernel
+        expectedResPath = basePath + "backend" + File.separator + "services" + File.separator + "kernel" + File.separator + "expected" + File.separator;
+        buildPath = basePath + "backend" + File.separator + "services" + File.separator + "kernel" + File.separator + "target" + File.separator;
+        Assert.assertTrue("kernel | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
+        Assert.assertTrue("kernel | exist run-java.sh", new File(buildPath + "dew_build" + File.separator + "run-java.sh").exists());
+        Assert.assertTrue("kernel | exist serv.jar", new File(buildPath + "dew_build" + File.separator + "serv.jar").exists());
+        Assert.assertTrue("kernel | serv.jar length > 30MB", new File(buildPath + "dew_build" + File.separator + "serv.jar").length() / 1024 / 1024 > 30);
+        Assert.assertTrue("kernel | exist Deployment.yaml", new File(buildPath + "dew_release" + File.separator + "Deployment.yaml").exists());
+        Assert.assertTrue("kernel | exist Service.yaml", new File(buildPath + "dew_release" + File.separator + "Service.yaml").exists());
+        Assert.assertEquals("kernel | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),
+                $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Deployment.yaml", "UTF-8"));
+        Assert.assertEquals("kernel | match Service.yaml", $.file.readAllByPathName(expectedResPath + "Service.yaml", "UTF-8"),
+                $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Service.yaml", "UTF-8"));
+        // verify compute
+        expectedResPath = basePath + "backend" + File.separator + "services" + File.separator + "compute" + File.separator + "expected" + File.separator;
+        buildPath = basePath + "backend" + File.separator + "services" + File.separator + "compute" + File.separator + "target" + File.separator;
+        Assert.assertTrue("compute | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
+        Assert.assertTrue("compute | exist run-java.sh", new File(buildPath + "dew_build" + File.separator + "run-java.sh").exists());
+        Assert.assertTrue("compute | exist serv.jar", new File(buildPath + "dew_build" + File.separator + "serv.jar").exists());
+        Assert.assertTrue("compute | serv.jar length > 30MB", new File(buildPath + "dew_build" + File.separator + "serv.jar").length() / 1024 / 1024 > 30);
+        Assert.assertTrue("compute | exist Deployment.yaml", new File(buildPath + "dew_release" + File.separator + "Deployment.yaml").exists());
+        Assert.assertTrue("compute | exist Service.yaml", new File(buildPath + "dew_release" + File.separator + "Service.yaml").exists());
+        Assert.assertEquals("compute | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),
+                $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Deployment.yaml", "UTF-8"));
+        Assert.assertEquals("compute | match Service.yaml", $.file.readAllByPathName(expectedResPath + "Service.yaml", "UTF-8"),
+                $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Service.yaml", "UTF-8"));
+        // verify notifier
+        expectedResPath = basePath + "backend" + File.separator + "services" + File.separator + "notifier" + File.separator + "expected" + File.separator;
+        buildPath = basePath + "backend" + File.separator + "services" + File.separator + "notifier" + File.separator + "target" + File.separator;
+        Assert.assertTrue("notifier | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
+        Assert.assertTrue("notifier | exist run-java.sh", new File(buildPath + "dew_build" + File.separator + "run-java.sh").exists());
+        Assert.assertTrue("notifier | exist serv.jar", new File(buildPath + "dew_build" + File.separator + "serv.jar").exists());
+        Assert.assertTrue("notifier | serv.jar length > 30MB", new File(buildPath + "dew_build" + File.separator + "serv.jar").length() / 1024 / 1024 > 30);
+        Assert.assertTrue("notifier | exist Deployment.yaml", new File(buildPath + "dew_release" + File.separator + "Deployment.yaml").exists());
+        Assert.assertTrue("notifier | exist Service.yaml", new File(buildPath + "dew_release" + File.separator + "Service.yaml").exists());
+        Assert.assertEquals("notifier | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),
+                $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Deployment.yaml", "UTF-8"));
+        Assert.assertEquals("notifier | match Service.yaml", $.file.readAllByPathName(expectedResPath + "Service.yaml", "UTF-8"),
+                $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Service.yaml", "UTF-8"));
+        // verify frontend
+        expectedResPath = basePath + "frontend" + File.separator + "expected" + File.separator;
+        buildPath = basePath + "frontend" + File.separator + "target" + File.separator;
+        Assert.assertTrue("frontend | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
+        Assert.assertTrue("frontend | exist dist", new File(buildPath + "dew_build" + File.separator + "dist").exists());
+        Assert.assertTrue("frontend | exist Deployment.yaml", new File(buildPath + "dew_release" + File.separator + "Deployment.yaml").exists());
+        Assert.assertTrue("frontend | exist Service.yaml", new File(buildPath + "dew_release" + File.separator + "Service.yaml").exists());
+        Assert.assertEquals("frontend | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),
+                $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Deployment.yaml", "UTF-8"));
+        Assert.assertEquals("frontend | match Service.yaml", $.file.readAllByPathName(expectedResPath + "Service.yaml", "UTF-8"),
+                $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Service.yaml", "UTF-8"));
     }
 }

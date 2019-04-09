@@ -31,17 +31,18 @@
     <packaging>pom</packaging>
 
     <properties>
-        <maven.install.skip>false</maven.install.skip>
-        <maven.deploy.skip>false</maven.deploy.skip>
         <sonar.skip>true</sonar.skip>
         <checkstyle.skip>true</checkstyle.skip>
+        <dew.devops.it.snapshotRepository.id>trc-snapshots</dew.devops.it.snapshotRepository.id>
+        <dew.devops.it.snapshotRepository.url>http://121.41.17.205:18081/nexus/content/repositories/snapshots/</dew.devops.it.snapshotRepository.url>
     </properties>
 
     <modules>
-        <module>backend/library/common</module>
-        <module>backend/service/kernel</module>
-        <module>backend/service/notifier</module>
-        <module>backend/service/compute</module>
+        <module>backend/libraries/common</module>
+        <module>backend/services/kernel</module>
+        <module>backend/services/notifier</module>
+        <module>backend/services/compute</module>
+        <module>frontend</module>
     </modules>
 
     <dependencyManagement>
@@ -54,7 +55,22 @@
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+
+    </dependencies>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>${dew.devops.it.snapshotRepository.id}</id>
+            <url>${dew.devops.it.snapshotRepository.url}</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <repositories>
+        <repository>
+            <id>${dew.devops.it.snapshotRepository.id}</id>
+            <url>${dew.devops.it.snapshotRepository.url}</url>
+        </repository>
         <repository>
             <id>central</id>
             <url>https://repo.maven.apache.org/maven2</url>

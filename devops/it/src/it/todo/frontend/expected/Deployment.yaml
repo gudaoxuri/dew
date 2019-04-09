@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    dew.ms/git-commit: '0001'
+    dew.ms/scm-url: ''
+    dew.ms/git-branch: ''
+  labels:
+    app: todo-frontend
+    provider: dew
+    version: '0001'
+    group: ms.dew.devops.it
+  name: todo-frontend
+  namespace: dew-test
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: todo-frontend
+      group: ms.dew.devops.it
+  template:
+    metadata:
+      annotations:
+        dew.ms/git-commit: '0001'
+        dew.ms/scm-url: ''
+        dew.ms/git-branch: ''
+      labels:
+        app: todo-frontend
+        provider: dew
+        version: '0001'
+        group: ms.dew.devops.it
+    spec:
+      containers:
+      - image: harbor.dew.env/dew-test/todo-frontend:0001
+        imagePullPolicy: IfNotPresent
+        name: dew-app
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP

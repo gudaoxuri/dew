@@ -1,4 +1,4 @@
-FROM java:8-jdk-alpine
+FROM openjdk:8-alpine
 
 COPY ./run-java.sh ./
 COPY ./serv.jar ./

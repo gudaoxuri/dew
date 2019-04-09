@@ -14,7 +14,7 @@ metadata:
     provider: dew
     version: '0001'
     expose: 'true'
-    group: ms.dew
+    group: ms.dew.devops.it
   name: helloworld-backend
   namespace: dew-test
 spec:
@@ -25,4 +25,4 @@ spec:
     targetPort: 8080
   selector:
     app: helloworld-backend
-    group: ms.dew
+    group: ms.dew.devops.it

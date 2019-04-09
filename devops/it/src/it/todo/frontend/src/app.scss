@@ -1,0 +1,51 @@
+@import "./assets/css/theme.scss";
+@import "~taro-ui/dist/style/index.scss";
+@import "./assets/font-awesome/font-awesome.scss";
+@import "./assets/font/iconfont.scss";
+
+.page {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-height: 100vh;
+}
+
+view {
+  box-sizing: border-box;
+}
+
+.dew-body {
+  padding-bottom: 60px;
+  padding-bottom: calc(constant(safe-area-inset-bottom) + 60px);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 60px);
+
+  .panel {
+    margin: 80px 0 56px;
+
+    &:first-child {
+      margin-top: 40px;
+    }
+
+    &__title {
+      position: relative;
+      margin-bottom: 40px;
+      padding-left: 60px;
+      color: #7F7F7F;
+      font-size: 32px;
+      font-weight: bold;
+      line-height: 1.5;
+    }
+
+    &__content {
+      padding: 0 60px;
+
+      &.no-padding {
+        padding: 0;
+
+        .example-item__desc {
+          padding: 0 60px;
+        }
+      }
+    }
+  }
+}

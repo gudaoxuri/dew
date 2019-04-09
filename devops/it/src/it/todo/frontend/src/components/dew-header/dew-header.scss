@@ -1,0 +1,33 @@
+@import "../../assets/css/theme.scss";
+
+.dew-header {
+  position: relative;
+  padding: 100px 60px 30px;
+
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 60px;
+    right: 60px;
+    width: 60px;
+    height: 10px;
+    border-radius: 5px;
+    background: $color-brand-light;
+    box-shadow: 2px 2px 4px 0 rgba($color: $color-brand-light, $alpha: 0.5);
+  }
+
+  &__title {
+    color: #040404;
+    font-size: 42px;
+    font-weight: bold;
+    line-height: 1.5;
+  }
+
+  &__desc {
+    margin-top: 12px;
+    color: #A09EAE;
+    font-size: 30px;
+    line-height: 1.5;
+  }
+}

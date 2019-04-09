@@ -36,12 +36,14 @@ public class FrontendPrepareFlow extends BasicPrepareFlow {
         if (buildCmd == null || buildCmd.trim().isEmpty()) {
             buildCmd = "npm install && npm run build:" + Dew.Config.getCurrentProject().getProfile();
         }
+        buildCmd = "cd " + Dew.Config.getCurrentMavenProject().getBasedir() + " && " + buildCmd;
         Dew.log.debug("Build frontend, cmd : " + buildCmd);
-        AtomicBoolean isSuccess = new AtomicBoolean(false);
-        Future<Void> execF = $.shell.execute(buildCmd, "build complete", null, false, false, new ReportHandler() {
+        AtomicBoolean isSuccess = new AtomicBoolean(true);
+        Future<Void> execF = $.shell.execute(buildCmd, null, null, false, false, new ReportHandler() {
             @Override
             public void errorlog(String line) {
                 Dew.log.error(line);
+                isSuccess.set(false);
             }
 
             @Override
@@ -50,8 +52,9 @@ public class FrontendPrepareFlow extends BasicPrepareFlow {
             }
 
             @Override
-            public void success() {
-                isSuccess.set(true);
+            public void fail(String message) {
+                Dew.log.error(message);
+                isSuccess.set(false);
             }
         });
         try {

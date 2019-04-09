@@ -1,0 +1,4 @@
+profiles:
+  test:
+    app:
+      buildCmd: "npm install && npm run build:h5"

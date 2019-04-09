@@ -44,12 +44,12 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-kubernetes-discovery</artifactId>
+            <artifactId>spring-cloud-starter-kubernetes</artifactId>
             <version>${spring-cloud-kube.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-kubernetes-ribbon</artifactId>
+            <artifactId>spring-cloud-starter-kubernetes-ribbon</artifactId>
             <version>${spring-cloud-kube.version}</version>
         </dependency>
         <dependency>
@@ -71,6 +71,30 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
             <version>${spring-cloud.version}</version>
+        </dependency>
+        <!--Fixed version conflicts-->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>20.0</version>
+        </dependency>
+        <!--Fixed ClassNotFoundException-->
+        <dependency>
+            <groupId>com.netflix.servo</groupId>
+            <artifactId>servo-core</artifactId>
+            <version>0.10.1</version>
+        </dependency>
+        <!--Fixed ClassNotFoundException-->
+        <dependency>
+            <groupId>com.netflix.netflix-commons</groupId>
+            <artifactId>netflix-commons-util</artifactId>
+            <version>0.1.1</version>
+        </dependency>
+        <!--Fixed ClassNotFoundException-->
+        <dependency>
+            <groupId>com.netflix.netflix-commons</groupId>
+            <artifactId>netflix-statistics</artifactId>
+            <version>0.1.1</version>
         </dependency>
     </dependencies>
 

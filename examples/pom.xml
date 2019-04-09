@@ -41,7 +41,6 @@
         <module>idempotent-example</module>
         <module>auth-example</module>
         <module>cloud-example</module>
-        <module>hystrix-example</module>
         <module>tracing-invoke1-example</module>
         <module>tracing-invoke2-example</module>
     </modules>

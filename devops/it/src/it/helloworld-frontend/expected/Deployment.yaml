@@ -9,7 +9,7 @@ metadata:
     app: helloworld-frontend
     provider: dew
     version: '0001'
-    group: ms.dew
+    group: ms.dew.devops.it
   name: helloworld-frontend
   namespace: dew-test
 spec:
@@ -18,7 +18,7 @@ spec:
   selector:
     matchLabels:
       app: helloworld-frontend
-      group: ms.dew
+      group: ms.dew.devops.it
   template:
     metadata:
       annotations:
@@ -29,7 +29,7 @@ spec:
         app: helloworld-frontend
         provider: dew
         version: '0001'
-        group: ms.dew
+        group: ms.dew.devops.it
     spec:
       containers:
       - image: harbor.dew.env/dew-test/helloworld-frontend:0001

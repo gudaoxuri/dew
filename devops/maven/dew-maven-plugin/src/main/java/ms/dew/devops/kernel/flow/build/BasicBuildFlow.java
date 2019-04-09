@@ -16,13 +16,17 @@
 
 package ms.dew.devops.kernel.flow.build;
 
+import com.ecfront.dew.common.$;
 import io.kubernetes.client.ApiException;
 import ms.dew.devops.helper.DockerHelper;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import org.apache.maven.plugin.MojoExecutionException;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public abstract class BasicBuildFlow extends BasicFlow {
 
@@ -38,6 +42,13 @@ public abstract class BasicBuildFlow extends BasicFlow {
             if (!preDockerBuild(flowBasePath)) {
                 Dew.log.debug("Finished,because [preDockerBuild] is false");
                 return false;
+            }
+            if (Dew.Config.getCurrentProject().getDocker().getImage() != null
+                    && !Dew.Config.getCurrentProject().getDocker().getImage().trim().isEmpty()) {
+                Dew.log.debug("Using custom image : " + Dew.Config.getCurrentProject().getDocker().getImage().trim());
+                String dockerFileContent = $.file.readAllByFile(new File(flowBasePath + "Dockerfile"), "UTF-8");
+                dockerFileContent = dockerFileContent.replaceAll("FROM .*", "FROM " + Dew.Config.getCurrentProject().getDocker().getImage().trim());
+                Files.write(Paths.get(flowBasePath + "Dockerfile"), dockerFileContent.getBytes());
             }
             buildImage(flowBasePath);
             if (Dew.Config.getCurrentProject().getDocker().getRegistryUrl() == null

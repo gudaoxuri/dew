@@ -25,6 +25,7 @@ public class DewDocker {
     private String registryUrl = "";
     private String registryUserName = "";
     private String registryPassword = "";
+    private String image = "";
 
     public String getRegistryHost() {
         try {
@@ -64,5 +65,13 @@ public class DewDocker {
 
     public void setRegistryPassword(String registryPassword) {
         this.registryPassword = registryPassword;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

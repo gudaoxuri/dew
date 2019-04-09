@@ -1,8 +1,0 @@
-spring:
-  application:
-    name: todo-kernel
-
-dew:
-  cluster:
-    mq: redis
-
