@@ -34,7 +34,7 @@
 
     <modules>
         <module>maven/dew-maven-plugin</module>
-        <module>it/</module>
+        <module>it</module>
     </modules>
 
 </project>

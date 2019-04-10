@@ -1,1 +1,1 @@
-language: javascript: mvn clean compile -Ddew.it.skip=true -Dmaven.test.skip=true -Dinvoker.skip=true -P qajdk:  - oraclejdk8notifications:  email:    - i@sunisle.org
+language: javascript: mvn -pl "!devops/it" -P qa clean compilejdk:  - oraclejdk8notifications:  email:    - i@sunisle.org
