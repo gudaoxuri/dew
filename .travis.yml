@@ -1,1 +1,1 @@
-language: javainstall: mvn clean compile -Ddew.it.skip=true -Dmaven.test.skip=true -P qajdk:  - oraclejdk8notifications:  email:    - i@sunisle.org
+language: javainstall: mvn install -DskipTests=true -Ddew.it.skip=true -Dmaven.javadoc.skip=true -B -Vscript: mvn compile -DskipTests=true -Ddew.it.skip=true -Dmaven.javadoc.skip=true -B -V -P qajdk:  - oraclejdk8notifications:  email:    - i@sunisle.org
