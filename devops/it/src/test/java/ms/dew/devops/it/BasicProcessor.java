@@ -18,6 +18,8 @@ package ms.dew.devops.it;
 
 import io.kubernetes.client.ApiException;
 import org.junit.Before;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +30,9 @@ import java.util.Properties;
 /**
  * @author gudaoxuri
  */
-public class BasicProcessor {
+public abstract class BasicProcessor {
+
+    protected static final Logger logger = LoggerFactory.getLogger(BasicProcessor.class);
 
     protected String kubeConfig;
     protected String dockerHost;
@@ -40,8 +44,10 @@ public class BasicProcessor {
 
     @Before
     public void loadConfig() throws IOException, ApiException {
+        String configPath = Paths.get("").toFile().getAbsoluteFile().getParentFile().getAbsolutePath() + File.separator + "devops-test.properties";
+        logger.info("Load config from " + configPath);
         Properties properties = new Properties();
-        properties.load(new FileInputStream(Paths.get("").toFile().getAbsolutePath() + File.separator + "devops.properties"));
+        properties.load(new FileInputStream(configPath));
         kubeConfig = properties.getProperty("dew.devops.kube.config");
         dockerHost = properties.getProperty("dew.devops.docker.host");
         dockerRegistryUrl = properties.getProperty("dew.devops.docker.registry.url");

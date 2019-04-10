@@ -16,14 +16,29 @@
 
 package ms.dew.devops.kernel.config;
 
+/**
+ * Dew kubernetes.
+ *
+ * @author gudaoxuri
+ */
 public class DewKube {
 
     private String base64Config = "";
 
+    /**
+     * Gets base 64 config.
+     *
+     * @return the base 64 config
+     */
     public String getBase64Config() {
         return base64Config;
     }
 
+    /**
+     * Sets base 64 config.
+     *
+     * @param base64Config the base 64 config
+     */
     public void setBase64Config(String base64Config) {
         this.base64Config = base64Config;
     }

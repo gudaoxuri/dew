@@ -18,17 +18,20 @@ package ms.dew.devops.mojo;
 
 import io.kubernetes.client.ApiException;
 import ms.dew.devops.kernel.flow.log.DefaultLogFlow;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import java.io.IOException;
 
+/**
+ * Log view mojo.
+ *
+ * @author gudaoxuri
+ */
 @Mojo(name = "log")
 public class LogMojo extends BasicMojo {
 
     @Override
-    protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
+    protected boolean executeInternal() throws IOException, ApiException {
         return new DefaultLogFlow(podName, follow).exec(getMojoName());
     }
 

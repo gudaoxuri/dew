@@ -22,7 +22,10 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
- * @link https://stackoverflow.com/questions/18552005/is-there-a-concise-way-to-iterate-over-a-stream-with-indices-in-java-8
+ * Functions.
+ *
+ * @author gudaoxuri
+ * @link https ://stackoverflow.com/questions/18552005/is-there-a-concise-way-to-iterate-over-a-stream-with-indices-in-java-8
  */
 public class Functions {
 
@@ -31,6 +34,10 @@ public class Functions {
 
     /**
      * Converts an {@link java.util.Iterator} to {@link java.util.stream.Stream}.
+     *
+     * @param <T>      the type parameter
+     * @param iterator the iterator
+     * @return the stream
      */
     public static <T> Stream<T> iterate(Iterator<? extends T> iterator) {
         int characteristics = Spliterator.ORDERED | Spliterator.IMMUTABLE;
@@ -39,6 +46,10 @@ public class Functions {
 
     /**
      * Zips the specified stream with its indices.
+     *
+     * @param <T>    the type parameter
+     * @param stream the stream
+     * @return the stream
      */
     public static <T> Stream<Map.Entry<Integer, T>> zipWithIndex(Stream<? extends T> stream) {
         return iterate(new Iterator<Map.Entry<Integer, T>>() {
@@ -60,6 +71,12 @@ public class Functions {
     /**
      * Returns a stream consisting of the results of applying the given two-arguments function to the elements of this stream.
      * The first argument of the function is the element index and the second one - the element value.
+     *
+     * @param <T>    the type parameter
+     * @param <R>    the type parameter
+     * @param stream the stream
+     * @param mapper the mapper
+     * @return the stream
      */
     public static <T, R> Stream<R> mapWithIndex(Stream<? extends T> stream, BiFunction<Integer, ? super T, ? extends R> mapper) {
         return zipWithIndex(stream).map(entry -> mapper.apply(entry.getKey(), entry.getValue()));

@@ -58,10 +58,9 @@ public class TodoVerify extends BasicProcessor implements Verify {
         // verify kernel
         expectedResPath = basePath + "backend" + File.separator + "services" + File.separator + "kernel" + File.separator + "expected" + File.separator;
         buildPath = basePath + "backend" + File.separator + "services" + File.separator + "kernel" + File.separator + "target" + File.separator;
-        Assert.assertTrue("kernel | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
-        Assert.assertTrue("kernel | exist run-java.sh", new File(buildPath + "dew_build" + File.separator + "run-java.sh").exists());
-        Assert.assertTrue("kernel | exist serv.jar", new File(buildPath + "dew_build" + File.separator + "serv.jar").exists());
-        Assert.assertTrue("kernel | serv.jar length > 30MB", new File(buildPath + "dew_build" + File.separator + "serv.jar").length() / 1024 / 1024 > 30);
+        Assert.assertFalse("kernel | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
+        Assert.assertFalse("kernel | exist run-java.sh", new File(buildPath + "dew_build" + File.separator + "run-java.sh").exists());
+        Assert.assertFalse("kernel | exist serv.jar", new File(buildPath + "dew_build" + File.separator + "serv.jar").exists());
         Assert.assertTrue("kernel | exist Deployment.yaml", new File(buildPath + "dew_release" + File.separator + "Deployment.yaml").exists());
         Assert.assertTrue("kernel | exist Service.yaml", new File(buildPath + "dew_release" + File.separator + "Service.yaml").exists());
         Assert.assertEquals("kernel | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),
@@ -71,10 +70,9 @@ public class TodoVerify extends BasicProcessor implements Verify {
         // verify compute
         expectedResPath = basePath + "backend" + File.separator + "services" + File.separator + "compute" + File.separator + "expected" + File.separator;
         buildPath = basePath + "backend" + File.separator + "services" + File.separator + "compute" + File.separator + "target" + File.separator;
-        Assert.assertTrue("compute | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
-        Assert.assertTrue("compute | exist run-java.sh", new File(buildPath + "dew_build" + File.separator + "run-java.sh").exists());
-        Assert.assertTrue("compute | exist serv.jar", new File(buildPath + "dew_build" + File.separator + "serv.jar").exists());
-        Assert.assertTrue("compute | serv.jar length > 30MB", new File(buildPath + "dew_build" + File.separator + "serv.jar").length() / 1024 / 1024 > 30);
+        Assert.assertFalse("compute | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
+        Assert.assertFalse("compute | exist run-java.sh", new File(buildPath + "dew_build" + File.separator + "run-java.sh").exists());
+        Assert.assertFalse("compute | exist serv.jar", new File(buildPath + "dew_build" + File.separator + "serv.jar").exists());
         Assert.assertTrue("compute | exist Deployment.yaml", new File(buildPath + "dew_release" + File.separator + "Deployment.yaml").exists());
         Assert.assertTrue("compute | exist Service.yaml", new File(buildPath + "dew_release" + File.separator + "Service.yaml").exists());
         Assert.assertEquals("compute | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),
@@ -84,10 +82,9 @@ public class TodoVerify extends BasicProcessor implements Verify {
         // verify notifier
         expectedResPath = basePath + "backend" + File.separator + "services" + File.separator + "notifier" + File.separator + "expected" + File.separator;
         buildPath = basePath + "backend" + File.separator + "services" + File.separator + "notifier" + File.separator + "target" + File.separator;
-        Assert.assertTrue("notifier | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
-        Assert.assertTrue("notifier | exist run-java.sh", new File(buildPath + "dew_build" + File.separator + "run-java.sh").exists());
-        Assert.assertTrue("notifier | exist serv.jar", new File(buildPath + "dew_build" + File.separator + "serv.jar").exists());
-        Assert.assertTrue("notifier | serv.jar length > 30MB", new File(buildPath + "dew_build" + File.separator + "serv.jar").length() / 1024 / 1024 > 30);
+        Assert.assertFalse("notifier | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
+        Assert.assertFalse("notifier | exist run-java.sh", new File(buildPath + "dew_build" + File.separator + "run-java.sh").exists());
+        Assert.assertFalse("notifier | exist serv.jar", new File(buildPath + "dew_build" + File.separator + "serv.jar").exists());
         Assert.assertTrue("notifier | exist Deployment.yaml", new File(buildPath + "dew_release" + File.separator + "Deployment.yaml").exists());
         Assert.assertTrue("notifier | exist Service.yaml", new File(buildPath + "dew_release" + File.separator + "Service.yaml").exists());
         Assert.assertEquals("notifier | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),
@@ -97,8 +94,8 @@ public class TodoVerify extends BasicProcessor implements Verify {
         // verify frontend
         expectedResPath = basePath + "frontend" + File.separator + "expected" + File.separator;
         buildPath = basePath + "frontend" + File.separator + "target" + File.separator;
-        Assert.assertTrue("frontend | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
-        Assert.assertTrue("frontend | exist dist", new File(buildPath + "dew_build" + File.separator + "dist").exists());
+        Assert.assertFalse("frontend | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
+        Assert.assertFalse("frontend | exist dist", new File(buildPath + "dew_build" + File.separator + "dist").exists());
         Assert.assertTrue("frontend | exist Deployment.yaml", new File(buildPath + "dew_release" + File.separator + "Deployment.yaml").exists());
         Assert.assertTrue("frontend | exist Service.yaml", new File(buildPath + "dew_release" + File.separator + "Service.yaml").exists());
         Assert.assertEquals("frontend | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),

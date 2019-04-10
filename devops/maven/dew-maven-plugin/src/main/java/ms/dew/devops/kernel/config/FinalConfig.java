@@ -19,14 +19,31 @@ package ms.dew.devops.kernel.config;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Final config.
+ *
+ * 最终生成的配置
+ *
+ * @author gudaoxuri
+ */
 public class FinalConfig {
 
     private Map<String, FinalProjectConfig> projects = new HashMap<>();
 
+    /**
+     * Gets projects.
+     *
+     * @return the projects
+     */
     public Map<String, FinalProjectConfig> getProjects() {
         return projects;
     }
 
+    /**
+     * Sets projects.
+     *
+     * @param projects the projects
+     */
     public void setProjects(Map<String, FinalProjectConfig> projects) {
         this.projects = projects;
     }

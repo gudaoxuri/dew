@@ -19,7 +19,8 @@ package ms.dew.devops.kernel.flow.prepare;
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.ReportHandler;
 import ms.dew.devops.kernel.Dew;
-import org.apache.maven.plugin.MojoExecutionException;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
+import ms.dew.devops.kernel.exception.ProcessException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,12 +30,18 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * Frontend prepare flow.
+ *
+ * @author gudaoxuri
+ */
 public class FrontendPrepareFlow extends BasicPrepareFlow {
 
-    protected boolean prePrepareBuild(String flowBasePath) throws IOException, MojoExecutionException {
-        String buildCmd = Dew.Config.getCurrentProject().getApp().getBuildCmd();
+    protected boolean prePrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
+        String buildCmd = config.getApp().getBuildCmd();
         if (buildCmd == null || buildCmd.trim().isEmpty()) {
-            buildCmd = "npm install && npm run build:" + Dew.Config.getCurrentProject().getProfile();
+            // 使用默认命令
+            buildCmd = "npm install && npm run build:" + config.getProfile();
         }
         buildCmd = "cd " + Dew.Config.getCurrentMavenProject().getBasedir() + " && " + buildCmd;
         Dew.log.debug("Build frontend, cmd : " + buildCmd);
@@ -61,14 +68,14 @@ public class FrontendPrepareFlow extends BasicPrepareFlow {
             execF.get();
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException(ex);
+            throw new ProcessException("Frontend prepare flow error", ex);
         } catch (ExecutionException ex) {
-            throw new RuntimeException(ex);
+            throw new ProcessException("Frontend prepare flow error", ex);
         }
         if (!isSuccess.get()) {
-            throw new MojoExecutionException("Build frontend error, cmd : " + buildCmd);
+            throw new ProcessException("Build frontend error, cmd : " + buildCmd);
         }
-        Files.move(Paths.get(Dew.Config.getCurrentProject().getMvnDirectory() + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
+        Files.move(Paths.get(config.getMvnDirectory() + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
         return true;
     }
 

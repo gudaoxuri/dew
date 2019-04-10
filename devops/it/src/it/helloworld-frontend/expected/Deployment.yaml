@@ -4,7 +4,6 @@ metadata:
   annotations:
     dew.ms/git-commit: '0001'
     dew.ms/scm-url: ''
-    dew.ms/git-branch: ''
   labels:
     app: helloworld-frontend
     provider: dew
@@ -24,7 +23,6 @@ spec:
       annotations:
         dew.ms/git-commit: '0001'
         dew.ms/scm-url: ''
-        dew.ms/git-branch: ''
       labels:
         app: helloworld-frontend
         provider: dew

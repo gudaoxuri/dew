@@ -3,10 +3,9 @@ kind: Service
 metadata:
   annotations:
     dew.ms/git-commit: '0001'
-    dew.ms/scm-url: ''
+    dew.ms/scm-url: https://github.com/gudaoxuri/dew.git
     prometheus.io/port: '9779'
     prometheus.io/scrape: 'true'
-    dew.ms/git-branch: ''
   labels:
     app: todo-frontend
     provider: dew
@@ -14,7 +13,7 @@ metadata:
     expose: 'true'
     group: ms.dew.devops.it
   name: todo-frontend
-  namespace: dew-test
+  namespace: dew-prod
 spec:
   ports:
   - name: http

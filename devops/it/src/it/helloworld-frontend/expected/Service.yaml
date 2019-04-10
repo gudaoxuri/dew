@@ -6,7 +6,6 @@ metadata:
     dew.ms/scm-url: ''
     prometheus.io/port: '9779'
     prometheus.io/scrape: 'true'
-    dew.ms/git-branch: ''
   labels:
     app: helloworld-frontend
     provider: dew

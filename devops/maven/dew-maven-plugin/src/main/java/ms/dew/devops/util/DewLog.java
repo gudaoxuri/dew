@@ -18,11 +18,22 @@ package ms.dew.devops.util;
 
 import org.apache.maven.plugin.logging.Log;
 
+/**
+ * Dew log.
+ *
+ * @author gudaoxuri
+ */
 public class DewLog implements Log {
 
     private Log log;
     private String prefix;
 
+    /**
+     * Instantiates a new Dew log.
+     *
+     * @param log    the log
+     * @param prefix the prefix
+     */
     public DewLog(Log log, String prefix) {
         this.log = log;
         this.prefix = prefix;

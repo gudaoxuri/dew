@@ -16,25 +16,41 @@
 
 package ms.dew.devops.kernel.flow.prepare;
 
-import io.kubernetes.client.ApiException;
 import ms.dew.devops.helper.DockerHelper;
 import ms.dew.devops.kernel.Dew;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
-import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.IOException;
 
+/**
+ * Basic prepare flow.
+ *
+ * @author gudaoxuri
+ */
 public abstract class BasicPrepareFlow extends BasicFlow {
 
-    protected boolean prePrepareBuild(String flowBasePath) throws ApiException, IOException, MojoExecutionException {
+    /**
+     * Pre prepare build.
+     *
+     * @param config       the project config
+     * @param flowBasePath the flow base path
+     * @return build result
+     * @throws IOException the io exception
+     */
+    protected boolean prePrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
         return true;
     }
 
     @Override
-    protected boolean process(String flowBasePath) throws ApiException, IOException, MojoExecutionException {
+    protected boolean process(FinalProjectConfig config, String flowBasePath) throws IOException {
+        if (!config.getReuseLastVersionFromProfile().isEmpty()) {
+            // 重用模式下不用再执行准备操作
+            return true;
+        }
         // 先判断是否存在
-        if (!DockerHelper.inst(Dew.Config.getCurrentProject().getId()).registry.exist(Dew.Config.getCurrentProject().getCurrImageName())) {
-            if (!prePrepareBuild(flowBasePath)) {
+        if (!DockerHelper.inst(config.getId()).registry.exist(config.getCurrImageName())) {
+            if (!prePrepareBuild(config, flowBasePath)) {
                 Dew.log.debug("Finished,because [prePrepareBuild] is false");
                 return false;
             }

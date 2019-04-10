@@ -17,14 +17,19 @@
 package ms.dew.devops.kernel.flow.prepare;
 
 import ms.dew.devops.kernel.Dew;
-import org.apache.maven.plugin.MojoExecutionException;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * Jvm service prepare flow.
+ *
+ * @author gudaoxuri
+ */
 public class JvmServicePrepareFlow extends BasicPrepareFlow {
 
-    protected boolean prePrepareBuild(String flowBasePath) throws IOException, MojoExecutionException {
+    protected boolean prePrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
         Dew.Invoke.invoke("org.springframework.boot",
                 "spring-boot-maven-plugin",
                 null,

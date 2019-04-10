@@ -17,14 +17,21 @@
 package ms.dew.devops.kernel.flow.release;
 
 import io.kubernetes.client.ApiException;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
-import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.IOException;
 
+/**
+ * Maven release flow.
+ * <p>
+ * Maven的部署由Maven自身实现，pom.xml中需要配置 distributionManagement
+ *
+ * @author gudaoxuri
+ */
 public class MavenReleaseFlow extends BasicFlow {
 
-    public boolean process(String flowBasePath) throws ApiException, IOException, MojoExecutionException {
+    public boolean process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
         return true;
     }
 

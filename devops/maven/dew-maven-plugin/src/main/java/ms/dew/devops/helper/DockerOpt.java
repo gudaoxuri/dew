@@ -154,6 +154,22 @@ public class DockerOpt {
         }
 
         /**
+         * Copy.
+         *
+         * @param originImageName origin image name
+         * @param newImageName    new image name
+         */
+        public void copy(String originImageName, String newImageName) {
+            String[] newImageFragment = newImageName.split(":");
+            if (!originImageName.contains(":")) {
+                originImageName += ":latest";
+            }
+            newImageName = newImageFragment[0];
+            String newTag = newImageFragment.length == 2 ? newImageFragment[1] : "latest";
+            docker.tagImageCmd(originImageName, newImageName, newTag).exec();
+        }
+
+        /**
          * List.
          *
          * @return image list
@@ -310,9 +326,9 @@ public class DockerOpt {
         }
 
         private String[] parseImageInfo(String imageName) {
-            String[] item = imageName.split(":");
-            String tag = item[1];
-            String imageNameWithoutHost = item[0].substring(item[0].indexOf("/") + 1);
+            String[] imageFragment = imageName.split(":");
+            String tag = imageFragment.length == 2 ? imageFragment[1] : "latest";
+            String imageNameWithoutHost = imageFragment[0].substring(imageFragment[0].indexOf("/") + 1);
             return new String[]{imageNameWithoutHost, tag};
         }
 

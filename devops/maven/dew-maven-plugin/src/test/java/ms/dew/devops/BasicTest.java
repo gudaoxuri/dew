@@ -21,6 +21,7 @@ import org.junit.BeforeClass;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
@@ -37,7 +38,7 @@ public abstract class BasicTest {
     @BeforeClass
     public static void initTest() throws IOException {
         Properties properties = new Properties();
-        properties.load(new FileInputStream(new File(BasicTest.class.getResource("/").getPath() + "devops.properties")));
+        properties.load(new FileInputStream(Paths.get("").toFile().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + File.separator + "devops-test.properties"));
         defaultKubeConfig = properties.getProperty("dew.devops.kube.config");
         defaultDockerHost = properties.getProperty("dew.devops.docker.host");
         defaultDockerRegistryUrl = properties.getProperty("dew.devops.docker.registry.url");

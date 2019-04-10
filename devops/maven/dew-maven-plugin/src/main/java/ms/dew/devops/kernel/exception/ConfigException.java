@@ -14,17 +14,32 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.flow.build;
+package ms.dew.devops.kernel.exception;
 
-import io.kubernetes.client.ApiException;
-import org.apache.maven.plugin.MojoExecutionException;
 
-import java.io.IOException;
+/**
+ * Config exception.
+ *
+ * @author gudaoxuri
+ */
+public class ConfigException extends RuntimeException {
 
-public class PomBuildFlow extends BasicBuildFlow {
+    /**
+     * Instantiates a new Config exception.
+     *
+     * @param message the message
+     */
+    public ConfigException(String message) {
+        super(message);
+    }
 
-    @Override
-    protected boolean process(String flowBasePath) throws ApiException, IOException, MojoExecutionException {
-        return true;
+    /**
+     * Instantiates a new Config exception.
+     *
+     * @param message the message
+     * @param cause   the cause
+     */
+    public ConfigException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

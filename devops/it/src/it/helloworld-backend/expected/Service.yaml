@@ -8,7 +8,6 @@ metadata:
     inject-jaeger-agent: 'true'
     prometheus.io/scrape: 'true'
     sidecar.jaegertracing.io/inject: 'true'
-    dew.ms/git-branch: ''
   labels:
     app: helloworld-backend
     provider: dew

@@ -21,8 +21,11 @@ import ms.dew.devops.helper.DockerHelper;
 import ms.dew.devops.helper.GitHelper;
 import ms.dew.devops.helper.KubeHelper;
 import ms.dew.devops.helper.YamlHelper;
-import ms.dew.devops.kernel.config.*;
-import ms.dew.devops.mojo.BasicMojo;
+import ms.dew.devops.kernel.config.ConfigBuilder;
+import ms.dew.devops.kernel.config.DewConfig;
+import ms.dew.devops.kernel.config.FinalConfig;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
+import ms.dew.devops.kernel.exception.ProcessException;
 import ms.dew.notification.NotifyConfig;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
@@ -45,67 +48,289 @@ import java.util.stream.Stream;
 
 import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
 
+/**
+ * DevOps Kernel class.
+ *
+ * @author gudaoxuri
+ */
 public class Dew {
 
+    /**
+     * 全局停止标识，如果为true则表示停止后续各项目的所有操作.
+     */
     public static boolean stopped = false;
+    /**
+     * 日志类.
+     *
+     * @see ms.dew.devops.util.DewLog
+     */
     public static Log log;
 
     private static MavenSession mavenSession;
     private static BuildPluginManager mavenPluginManager;
 
+    /**
+     * 命令行参数常量定义.
+     */
+    public static class Constants {
+        /**
+         * 默认环境值.
+         */
+        public static final String FLAG_DEW_DEVOPS_DEFAULT_PROFILE = "default";
+
+
+        // ============= 公共场景使用 =============
+        /**
+         * 环境标识.
+         */
+        public static final String FLAG_DEW_DEVOPS_PROFILE = "dew.devops.profile";
+        /**
+         * Kubernetes Base64 配置标识.
+         */
+        public static final String FLAG_DEW_DEVOPS_KUBE_CONFIG = "dew.devops.kube.config";
+
+        // ============= 发布与回滚使用 =============
+
+        /**
+         * Docker Host标识.
+         * <p>
+         * e.g. tcp://10.200.131.182:2375.
+         */
+        public static final String FLAG_DEW_DEVOPS_DOCKER_HOST = "dew.devops.docker.host";
+        /**
+         * Docker registry url标识.
+         * <p>
+         * e.g. https://harbor.dew.env/v2
+         */
+        public static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL = "dew.devops.docker.registry.url";
+        /**
+         * Docker registry 用户名标识.
+         */
+        public static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME = "dew.devops.docker.registry.username";
+        /**
+         * Docker registry 密码标识.
+         */
+        public static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD = "dew.devops.docker.registry.password";
+        /**
+         * 是否静默标识.
+         * <p>
+         * 仅对发布/回滚有效
+         */
+        public static final String FLAG_DEW_DEVOPS_QUIET = "dew.devops.quiet";
+        /**
+         * 自定义版本标识.
+         * <p>
+         * NOTE: 仅用于集成测试，实际场景中慎用！
+         */
+        public static final String FLAG_DEW_DEVOPS_VERSION_CUST = "dew.devops.version.custom";
+
+        // ============= 日志场景使用 =============
+        /**
+         * 要查看日志的Pod名称标识.
+         */
+        public static final String FLAG_DEW_DEVOPS_POD_NAME = "dew.devops.log.podName";
+        /**
+         * 滚动查看日志标识.
+         */
+        public static final String FLAG_DEW_DEVOPS_LOG_FOLLOW = "dew.devops.log.follow";
+
+        // ============= 伸缩场景使用 =============
+
+        /**
+         * 伸缩Pod数量标识.
+         */
+        public static final String FLAG_DEW_DEVOPS_SCALE_REPLICAS = "dew.devops.scale.replicas";
+        /**
+         * 是否启用自动伸缩标识.
+         */
+        public static final String FLAG_DEW_DEVOPS_SCALE_AUTO = "dew.devops.scale.auto";
+        /**
+         * 自动伸缩Pod数下限标识.
+         */
+        public static final String FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN = "dew.devops.scale.auto.minReplicas";
+        /**
+         * 自动伸缩Pod数上限标识.
+         */
+        public static final String FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX = "dew.devops.scale.auto.maxReplicas";
+        /**
+         * 自动伸缩条件：CPU平均使用率标识.
+         */
+        public static final String FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG = "dew.devops.scale.auto.cpu.averageUtilization";
+        /**
+         * 自动伸缩条件：TPS标识.
+         */
+        public static final String FLAG_DEW_DEVOPS_SCALE_AUTO_TPS = "dew.devops.scale.auto.tps";
+
+        // ============= 测试场景使用 =============
+        /**
+         * Mock场景下加载外部class的路径标识.
+         */
+        public static final String FLAG_DEW_DEVOPS_MOCK_CLASS_PATH = "dew.devops.mock.classpath";
+
+        /**
+         * 获取Maven属性.
+         *
+         * @param session maven session
+         * @return properties maven properties
+         */
+        public static Map<String, String> getMavenProperties(MavenSession session) {
+            if (session == null && mavenSession != null) {
+                session = mavenSession;
+            }
+            Map<String, String> props = new HashMap<>();
+            props.putAll(session.getSystemProperties().entrySet().stream()
+                    .collect(Collectors.toMap(prop ->
+                            prop.getKey().toString().toLowerCase().trim(), prop -> prop.getValue().toString().trim())));
+            props.putAll(session.getUserProperties().entrySet().stream()
+                    .collect(Collectors.toMap(prop ->
+                            prop.getKey().toString().toLowerCase().trim(), prop -> prop.getValue().toString().trim())));
+            // Support gitlab ci runner by chart.
+            props.putAll(props.entrySet().stream()
+                    .filter(prop -> prop.getKey().startsWith("env."))
+                    .collect(Collectors.toMap(prop -> prop.getKey().substring("env.".length()), Map.Entry::getValue)));
+            return props;
+        }
+
+        /**
+         * 获取格式化后的Maven属性值.
+         * <p>
+         * 此方法从Maven属性获取对应标标识的值，标识会被解析成
+         * 标准标识
+         * 替换 '.'为 '_' 的标识
+         * 去掉 'dew.devops.' 前缀的标识
+         * 替换 '.'为 '_' 并去掉 'dew_devops_' 前缀的标识
+         *
+         * @param standardFlag        标准标识
+         * @param formattedProperties Maven属性
+         * @return 格式化后的Maven属性值 optional
+         */
+        public static Optional<String> formatParameters(String standardFlag, Map<String, String> formattedProperties) {
+            standardFlag = standardFlag.toLowerCase();
+            if (formattedProperties.containsKey(standardFlag)) {
+                return Optional.of(formattedProperties.get(standardFlag));
+            }
+            String underlineFlag = standardFlag.replaceAll("\\.", "_");
+            if (formattedProperties.containsKey(underlineFlag)) {
+                return Optional.of(formattedProperties.get(underlineFlag));
+            }
+            String shortStandardFlag = standardFlag.substring("dew.devops.".length());
+            if (formattedProperties.containsKey(shortStandardFlag)) {
+                return Optional.of(formattedProperties.get(shortStandardFlag));
+            }
+            String shortUnderlineFlag = underlineFlag.substring("dew_devops_".length());
+            if (formattedProperties.containsKey(shortUnderlineFlag)) {
+                return Optional.of(formattedProperties.get(shortUnderlineFlag));
+            }
+            return Optional.empty();
+        }
+
+    }
+
+    /**
+     * 初始化.
+     */
     public static class Init {
 
         private static final AtomicBoolean initialized = new AtomicBoolean(false);
 
+        /**
+         * Init.
+         *
+         * @param session                     the maven session
+         * @param pluginManager               the plugin manager
+         * @param inputProfile                the input input profile
+         * @param inputDockerHost             the input docker host
+         * @param inputDockerRegistryUrl      the input docker registry url
+         * @param inputDockerRegistryUserName the input docker registry user name
+         * @param inputDockerRegistryPassword the input docker registry password
+         * @param inputKubeBase64Config       the input kube base 64 config
+         * @param customVersion               the input custom version, 实际场景慎用
+         * @param mockClasspath               the input mock classpath， 仅用于Mock
+         * @throws IllegalAccessException    the illegal access exception
+         * @throws IOException               the io exception
+         * @throws InvocationTargetException the invocation target exception
+         */
         public static void init(MavenSession session, BuildPluginManager pluginManager,
-                                String profile,
-                                String dockerHost, String dockerRegistryUrl,
-                                String dockerRegistryUserName, String dockerRegistryPassword,
-                                String kubeBase64Config,
+                                String inputProfile,
+                                String inputDockerHost, String inputDockerRegistryUrl,
+                                String inputDockerRegistryUserName, String inputDockerRegistryPassword,
+                                String inputKubeBase64Config,
                                 String customVersion, String mockClasspath)
                 throws IllegalAccessException, IOException, InvocationTargetException {
             Dew.mavenSession = session;
             Dew.mavenPluginManager = pluginManager;
-            if (profile == null) {
-                profile = BasicMojo.FLAG_DEW_DEVOPS_DEFAULT_PROFILE;
+            if (inputProfile == null) {
+                inputProfile = Constants.FLAG_DEW_DEVOPS_DEFAULT_PROFILE;
             }
-            log.info("Active profile : " + profile);
+            inputProfile = inputProfile.toLowerCase();
+            log.info("Active profile : " + inputProfile);
+            // 全局只初始化一次
             if (!initialized.getAndSet(true)) {
                 GitHelper.init(log);
                 YamlHelper.init(log);
-                initFinalConfig(profile, dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config, customVersion);
+                initFinalConfig(inputProfile,
+                        inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
+                        inputKubeBase64Config, customVersion);
                 Config.getProjects().values().forEach(config -> {
-                    DockerHelper.init(config.getId(), log, config.getDocker().getHost(),
-                            config.getDocker().getRegistryUrl(), config.getDocker().getRegistryUserName(), config.getDocker().getRegistryPassword());
-                    KubeHelper.init(config.getId(), log, config.getKube().getBase64Config());
+                    DockerHelper.init(config.getId(), log,
+                            config.getDocker().getHost(),
+                            config.getDocker().getRegistryUrl(),
+                            config.getDocker().getRegistryUserName(),
+                            config.getDocker().getRegistryPassword());
+                    KubeHelper.init(config.getId(), log,
+                            config.getKube().getBase64Config());
+                    if (config.getAppendProfile() != null) {
+                        // 初始化附加环境，多用于版本重用模式
+                        DockerHelper.init(config.getId() + "-append", log,
+                                config.getAppendProfile().getDocker().getHost(),
+                                config.getAppendProfile().getDocker().getRegistryUrl(),
+                                config.getAppendProfile().getDocker().getRegistryUserName(),
+                                config.getAppendProfile().getDocker().getRegistryPassword());
+                        KubeHelper.init(config.getId() + "-append", log,
+                                config.getAppendProfile().getKube().getBase64Config());
+                    }
                 });
                 initNotify();
                 initMock(mockClasspath);
             }
-            if (Config.getCurrentProject() != null) {
-                if (Config.getCurrentProject().getKube().getBase64Config() == null
-                        || Config.getCurrentProject().getKube().getBase64Config().isEmpty()) {
-                    throw new RuntimeException("Kubernetes config can't be empty");
-                }
-            }
         }
 
-        private static void initFinalConfig(String profile,
-                                            String dockerHost, String dockerRegistryUrl,
-                                            String dockerRegistryUserName, String dockerRegistryPassword,
-                                            String kubeBase64Config, String customVersion)
+
+        /**
+         * Init final config.
+         *
+         * @param inputProfile                the input profile
+         * @param inputDockerHost             the input docker host
+         * @param inputDockerRegistryUrl      the input docker registry url
+         * @param inputDockerRegistryUserName the input docker registry user name
+         * @param inputDockerRegistryPassword the input docker registry password
+         * @param inputKubeBase64Config       the input kube base 64 config
+         * @param customVersion               the custom version
+         * @throws IOException               the io exception
+         * @throws InvocationTargetException the invocation target exception
+         * @throws IllegalAccessException    the illegal access exception
+         */
+        private static void initFinalConfig(String inputProfile,
+                                            String inputDockerHost, String inputDockerRegistryUrl,
+                                            String inputDockerRegistryUserName, String inputDockerRegistryPassword,
+                                            String inputKubeBase64Config, String customVersion)
                 throws IOException, InvocationTargetException, IllegalAccessException {
             String basicDirectory = mavenSession.getTopLevelProject().getBasedir().getPath() + File.separator;
+            // 基础配置
             String basicConfig = "";
             if (new File(basicDirectory + ".dew").exists()) {
                 basicConfig = ConfigBuilder.mergeProfiles($.file.readAllByPathName(basicDirectory + ".dew", "UTF-8")) + "\r\n";
             }
             for (MavenProject project : mavenSession.getProjects()) {
                 String projectDirectory = project.getBasedir().getPath() + File.separator;
+                // 每个项目自定义的配置
                 String projectConfig;
                 if (!basicDirectory.equals(projectDirectory) && new File(projectDirectory + ".dew").exists()) {
-                    projectConfig = ConfigBuilder.mergeProject(basicConfig,
-                            ConfigBuilder.mergeProfiles($.file.readAllByPathName(projectDirectory + ".dew", "UTF-8")));
+                    // 合并基础配置与项目自定义配置
+                    projectConfig = ConfigBuilder.mergeProject(basicConfig, $.file.readAllByPathName(projectDirectory + ".dew", "UTF-8"));
+                    // basicConfig 有 Profile(s) 而 projectConfig 没有配置的情况
+                    // 通过上一步合并后需要再次执行 default profile merge 到各 profile操作
+                    projectConfig = ConfigBuilder.mergeProfiles(projectConfig);
                 } else {
                     projectConfig = basicConfig;
                 }
@@ -115,38 +340,21 @@ public class Dew {
                 } else {
                     dewConfig = new DewConfig();
                 }
-                if (!profile.equalsIgnoreCase(BasicMojo.FLAG_DEW_DEVOPS_DEFAULT_PROFILE) && !dewConfig.getProfiles().containsKey(profile)) {
-                    throw new IOException("Can't be found [" + profile + "] profile at " + project.getArtifactId());
-                }
-                if (profile.equalsIgnoreCase(BasicMojo.FLAG_DEW_DEVOPS_DEFAULT_PROFILE) && dewConfig.isSkip()
-                        || !profile.equalsIgnoreCase(BasicMojo.FLAG_DEW_DEVOPS_DEFAULT_PROFILE) && dewConfig.getProfiles().get(profile).isSkip()) {
-                    // 配置为跳过
-                    continue;
-                }
-                if (profile.equalsIgnoreCase(BasicMojo.FLAG_DEW_DEVOPS_DEFAULT_PROFILE)) {
-                    if (dewConfig.getKind() == null) {
-                        dewConfig.setKind(Dew.Utils.checkAppKind(project));
-                    }
-                    if (dewConfig.getKind() == null) {
-                        // 不支持的类型
-                        continue;
-                    }
+                Optional<FinalProjectConfig> finalProjectConfigOpt = ConfigBuilder.buildProject(dewConfig, project, inputProfile,
+                        inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
+                        inputKubeBase64Config, customVersion);
+                if (finalProjectConfigOpt.isPresent()) {
+                    Config.config.getProjects().put(project.getId(), finalProjectConfigOpt.get());
+                    log.debug("[" + project.getGroupId() + ":" + project.getArtifactId() + "] configured");
                 } else {
-                    if (dewConfig.getProfiles().get(profile).getKind() == null) {
-                        dewConfig.getProfiles().get(profile).setKind(Dew.Utils.checkAppKind(project));
-                    }
-                    if (dewConfig.getProfiles().get(profile).getKind() == null) {
-                        // 不支持的类型
-                        continue;
-                    }
+                    log.debug("[" + project.getGroupId() + ":" + project.getArtifactId() + "] skipped");
                 }
-                Config.config.getProjects().put(project.getId(),
-                        ConfigBuilder.buildProject(profile, dewConfig, project,
-                                dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config, customVersion));
-                log.debug("[" + project.getGroupId() + ":" + project.getArtifactId() + "] configured");
             }
         }
 
+        /**
+         * Init notify.
+         */
         private static void initNotify() {
             Map<String, NotifyConfig> configMap = Dew.Config.getProjects().entrySet().stream()
                     .filter(config -> config.getValue().getNotify() != null)
@@ -154,6 +362,11 @@ public class Dew {
             ms.dew.notification.Notify.init(configMap, flag -> "");
         }
 
+        /**
+         * Init mock.
+         *
+         * @param mockClasspath the mock classpath
+         */
         private static void initMock(String mockClasspath) {
             if (mockClasspath == null || mockClasspath.trim().isEmpty()) {
                 return;
@@ -168,38 +381,74 @@ public class Dew {
                     | ClassNotFoundException
                     | IllegalAccessException
                     | InstantiationException e) {
-                throw new RuntimeException(e);
+                throw new ProcessException("Mock invoke error", e);
             }
         }
 
     }
 
+    /**
+     * 配置输出.
+     */
     public static class Config {
 
+        // 最终的配置
         private static FinalConfig config = new FinalConfig();
 
+        /**
+         * 获取当前项目配置.
+         *
+         * @return the current project
+         */
         public static FinalProjectConfig getCurrentProject() {
             return config.getProjects().get(mavenSession.getCurrentProject().getId());
         }
 
+        /**
+         * 获取当前Maven项目对象.
+         *
+         * @return the current maven project
+         */
         public static MavenProject getCurrentMavenProject() {
             return Dew.mavenSession.getCurrentProject();
         }
 
-        public static Properties getCurrentMavenProperties() {
+        /**
+         * 获取Maven属性.
+         *
+         * @return the maven properties
+         */
+        public static Properties getMavenProperties() {
             return Dew.mavenSession.getUserProperties();
         }
 
 
+        /**
+         * 获取所有项目配置.
+         *
+         * @return the project configs
+         */
         public static Map<String, FinalProjectConfig> getProjects() {
             return config.getProjects();
         }
 
     }
 
+    /**
+     * Maven Mojo调用.
+     */
     public static class Invoke {
 
-        public static void invoke(String groupId, String artifactId, String version, String goal, Map<String, String> configuration) throws MojoExecutionException {
+        /**
+         * 调用指定的Maven mojo.
+         *
+         * @param groupId       the group id
+         * @param artifactId    the artifact id
+         * @param version       the version
+         * @param goal          the goal
+         * @param configuration the configuration
+         */
+        public static void invoke(String groupId, String artifactId, String version, String goal, Map<String, String> configuration) {
             log.debug("invoke groupId = " + groupId + " ,artifactId = " + artifactId + " ,version = " + version);
             List<Element> config = configuration.entrySet().stream()
                     .map(item -> element(item.getKey(), item.getValue()))
@@ -210,26 +459,47 @@ public class Dew {
             } else {
                 plugin = plugin(groupId, artifactId, version);
             }
-            MojoExecutor.executeMojo(
-                    plugin,
-                    goal(goal),
-                    configuration(config.toArray(new Element[]{})),
-                    executionEnvironment(
-                            mavenSession.getCurrentProject(),
-                            mavenSession,
-                            mavenPluginManager
-                    )
-            );
+            try {
+                MojoExecutor.executeMojo(
+                        plugin,
+                        goal(goal),
+                        configuration(config.toArray(new Element[]{})),
+                        executionEnvironment(
+                                mavenSession.getCurrentProject(),
+                                mavenSession,
+                                mavenPluginManager
+                        )
+                );
+            } catch (MojoExecutionException e) {
+                throw new ProcessException("Invoke maven mojo error", e);
+            }
         }
 
     }
 
+    /**
+     * 通知.
+     * <p>
+     * 支持 dew notification 模块的通知功能
+     */
     public static class Notify {
 
+        /**
+         * Success.
+         *
+         * @param content  the content
+         * @param mojoName the mojo name
+         */
         public static void success(String content, String mojoName) {
             send(null, content, mojoName);
         }
 
+        /**
+         * Fail.
+         *
+         * @param content  the content
+         * @param mojoName the mojo name
+         */
         public static void fail(Throwable content, String mojoName) {
             send(content, null, mojoName);
         }
@@ -255,9 +525,30 @@ public class Dew {
 
     }
 
+    /**
+     * Mock.
+     */
     public static class Mock {
 
-        public static void loadClass(String classPath) throws NoSuchMethodException, MalformedURLException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
+        /**
+         * Load external class.
+         * <p>
+         * 要求：
+         * <p>
+         * classPath // 根文件路径
+         * -- mock // 存在名为 mock 的路径
+         * -- some.class // 仅加载 mock 路径下的 class 文件，不支持子路径
+         * -- Mock.class // 存在 Mock 类作为调用入口
+         *
+         * @param classPath the class path
+         * @throws NoSuchMethodException     the no such method exception
+         * @throws MalformedURLException     the malformed url exception
+         * @throws InvocationTargetException the invocation target exception
+         * @throws IllegalAccessException    the illegal access exception
+         * @throws ClassNotFoundException    the class not found exception
+         */
+        public static void loadClass(String classPath)
+                throws NoSuchMethodException, MalformedURLException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
             File clazzPath = new File(classPath);
             if (!clazzPath.exists() || clazzPath.isFile()) {
                 log.debug("Not found mock class path in " + classPath);
@@ -286,56 +577,18 @@ public class Dew {
             }
         }
 
+        /**
+         * Invoke mock.
+         * <p>
+         * 调用Mock类执行 mock 逻辑，Mock类要求构造方法为空
+         *
+         * @throws ClassNotFoundException the class not found exception
+         * @throws IllegalAccessException the illegal access exception
+         * @throws InstantiationException the instantiation exception
+         */
         public static void invokeMock() throws ClassNotFoundException, IllegalAccessException, InstantiationException {
             Class.forName("mock.Mock").newInstance();
         }
     }
-
-    public static class Utils {
-
-        /**
-         * 注意，此方法调用时未必执行了对应项目的phase,所以有些参数拿不到.
-         *
-         * @param mavenProject
-         * @return
-         */
-        public static AppKind checkAppKind(MavenProject mavenProject) {
-            AppKind appKind = null;
-            if (mavenProject.getPackaging().equalsIgnoreCase("maven-plugin")) {
-                // 排除 插件类型
-            } else if (new File(mavenProject.getBasedir().getPath() + File.separator + "package.json").exists()) {
-                appKind = AppKind.FRONTEND;
-            } else if (mavenProject.getPackaging().equalsIgnoreCase("jar")
-                    && new File(mavenProject.getBasedir().getPath() + File.separator + "src" + File.separator + "main" + File.separator + "resources").exists()
-                    && Arrays.stream(Objects.requireNonNull(new File(mavenProject.getBasedir().getPath() + File.separator + "src" + File.separator + "main" + File.separator + "resources").listFiles()))
-                    .anyMatch((res -> res.getName().toLowerCase().contains("application")
-                            || res.getName().toLowerCase().contains("bootstrap")))
-                    // 包含DependencyManagement内容，不精确
-                    && mavenProject.getManagedVersionMap().containsKey("org.springframework.boot:spring-boot-starter-web:jar")
-                // TODO 以下判断无效
-                /* mavenProject.getResources() != null && mavenProject.getResources().stream()
-                    .filter(res -> res.getDirectory().contains("src\\main\\resources")
-                            && res.getIncludes() != null)
-                    .anyMatch(res -> res.getIncludes().stream()
-                            .anyMatch(file -> file.toLowerCase().contains("application")
-                                    || file.toLowerCase().contains("bootstrap")))
-                   && mavenProject.getArtifacts()
-                    .stream().anyMatch(artifact ->
-                    artifact.getScope().equals(Artifact.SCOPE_RUNTIME)
-                            && artifact.getArtifactId().equalsIgnoreCase("spring-boot-starter-web")*/
-            ) {
-                appKind = AppKind.JVM_SERVICE;
-            } else if (mavenProject.getPackaging().equalsIgnoreCase("jar")) {
-                appKind = AppKind.JVM_LIB;
-            }else if (mavenProject.getPackaging().equalsIgnoreCase("pom")) {
-                appKind = AppKind.POM;
-            }
-
-            Dew.log.debug("Current app [" + mavenProject.getArtifactId() + "] kind is " + appKind);
-            return appKind;
-        }
-
-    }
-
 
 }

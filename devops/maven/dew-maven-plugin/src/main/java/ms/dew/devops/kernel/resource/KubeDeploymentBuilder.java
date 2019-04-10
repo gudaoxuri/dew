@@ -20,11 +20,17 @@ import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.models.*;
 import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
+import ms.dew.devops.kernel.exception.ProcessException;
 import ms.dew.devops.kernel.flow.BasicFlow;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Kubernetes deployment builder.
+ *
+ * @author gudaoxuri
+ */
 public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1beta1Deployment> {
 
     public static final String FLAG_CONTAINER_NAME = "dew-app";
@@ -35,7 +41,6 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         Map<String, String> annotations = new HashMap<>();
         annotations.put(BasicFlow.FLAG_KUBE_RESOURCE_GIT_COMMIT, config.getGitCommit());
         annotations.put("dew.ms/scm-url", config.getScmUrl());
-        annotations.put("dew.ms/git-branch", config.getGitBranch());
         if (config.getApp().isTraceLogEnabled()) {
             annotations.put("inject-jaeger-agent", "true");
             annotations.put("sidecar.jaegertracing.io/inject", "true");
@@ -70,6 +75,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                                         .build())
                         .withEnv(new V1EnvVarBuilder()
                                 .withName("JAVA_OPTIONS")
+                                // 附加spring boot的环境信息
                                 .withValue(config.getApp().getRunOptions() + " -Dspring.profiles.active=" + config.getProfile())
                                 .build())
                         .withLivenessProbe(new V1ProbeBuilder()
@@ -104,7 +110,8 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                                 .withProtocol("TCP")
                                 .build());
                 break;
-            // TODO
+            default:
+                throw new ProcessException("Kind " + config.getKind().name() + " does not require deployment");
         }
 
         ExtensionsV1beta1DeploymentBuilder builder = new ExtensionsV1beta1DeploymentBuilder();

@@ -1,4 +1,2 @@
-profiles:
-  test:
-    docker:
-      image: openjdk:8
+docker:
+  image: openjdk:8

@@ -21,6 +21,8 @@ dew:
     map: redis
     mq: redis
     election: redis
+    config:
+      ha-enabled: true
   notifies:
     __DEW_ERROR__:
       type: DD

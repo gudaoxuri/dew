@@ -20,11 +20,16 @@ import io.kubernetes.client.models.V1ConfigMap;
 import io.kubernetes.client.models.V1ConfigMapBuilder;
 import io.kubernetes.client.models.V1ObjectMetaBuilder;
 import ms.dew.devops.helper.KubeRES;
-import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 
 import java.util.Map;
 
+
+/**
+ * Kubernetes config map builder.
+ *
+ * @author gudaoxuri
+ */
 public class KubeConfigMapBuilder implements KubeResourceBuilder<V1ConfigMap> {
 
     @Override
@@ -32,14 +37,23 @@ public class KubeConfigMapBuilder implements KubeResourceBuilder<V1ConfigMap> {
         return null;
     }
 
-    public V1ConfigMap build(String name, Map<String, String> labels, Map<String, String> data) {
+    /**
+     * Build config map.
+     *
+     * @param name      the name
+     * @param namespace the namespace
+     * @param labels    the labels
+     * @param data      the data
+     * @return the config map
+     */
+    public V1ConfigMap build(String name, String namespace, Map<String, String> labels, Map<String, String> data) {
         V1ConfigMapBuilder builder = new V1ConfigMapBuilder();
         builder.withKind(KubeRES.CONFIG_MAP.getVal())
                 .withApiVersion("v1")
                 .withData(data)
                 .withMetadata(new V1ObjectMetaBuilder()
                         .withName(name)
-                        .withNamespace(Dew.Config.getCurrentProject().getNamespace())
+                        .withNamespace(namespace)
                         .withLabels(labels)
                         .build())
                 .build();

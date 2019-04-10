@@ -35,12 +35,14 @@ public class DockerHelperTest extends BasicTest {
 
     @Test
     public void testAll() throws IOException {
+        DockerHelper.inst("").image.remove("harbor.dew.ms/dew-test/test:1.0");
         DockerHelper.inst("").image.remove("harbor.dew.env/dew-test/test:1.0");
 
         DockerHelper.inst("").image.pull("alpine:3.6", false);
         List<Image> images = DockerHelper.inst("").image.list("alpine:3.6");
         Assert.assertEquals("alpine:3.6", images.get(0).getRepoTags()[0]);
-        DockerHelper.inst("").image.build("harbor.dew.env/dew-test/test:1.0", this.getClass().getResource("/").getPath());
+        DockerHelper.inst("").image.build("harbor.dew.ms/dew-test/test:1.0", this.getClass().getResource("/").getPath());
+        DockerHelper.inst("").image.copy("harbor.dew.ms/dew-test/test:1.0","harbor.dew.env/dew-test/test:1.0");
         Assert.assertEquals(1, DockerHelper.inst("").image.list("harbor.dew.env/dew-test/test:1.0").size());
         DockerHelper.inst("").image.push("harbor.dew.env/dew-test/test:1.0", true);
         DockerHelper.inst("").image.remove("harbor.dew.env/dew-test/test:1.0");

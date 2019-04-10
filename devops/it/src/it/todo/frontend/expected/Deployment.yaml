@@ -3,15 +3,14 @@ kind: Deployment
 metadata:
   annotations:
     dew.ms/git-commit: '0001'
-    dew.ms/scm-url: ''
-    dew.ms/git-branch: ''
+    dew.ms/scm-url: https://github.com/gudaoxuri/dew.git
   labels:
     app: todo-frontend
     provider: dew
     version: '0001'
     group: ms.dew.devops.it
   name: todo-frontend
-  namespace: dew-test
+  namespace: dew-prod
 spec:
   replicas: 1
   revisionHistoryLimit: 3
@@ -23,8 +22,7 @@ spec:
     metadata:
       annotations:
         dew.ms/git-commit: '0001'
-        dew.ms/scm-url: ''
-        dew.ms/git-branch: ''
+        dew.ms/scm-url: https://github.com/gudaoxuri/dew.git
       labels:
         app: todo-frontend
         provider: dew
@@ -32,7 +30,7 @@ spec:
         group: ms.dew.devops.it
     spec:
       containers:
-      - image: harbor.dew.env/dew-test/todo-frontend:0001
+      - image: harbor.dew.env/dew-prod/todo-frontend:0001
         imagePullPolicy: IfNotPresent
         name: dew-app
         ports:

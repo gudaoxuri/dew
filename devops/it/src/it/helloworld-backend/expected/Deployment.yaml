@@ -6,7 +6,6 @@ metadata:
     dew.ms/scm-url: ''
     inject-jaeger-agent: 'true'
     sidecar.jaegertracing.io/inject: 'true'
-    dew.ms/git-branch: ''
   labels:
     app: helloworld-backend
     provider: dew
@@ -28,7 +27,6 @@ spec:
         dew.ms/scm-url: ''
         inject-jaeger-agent: 'true'
         sidecar.jaegertracing.io/inject: 'true'
-        dew.ms/git-branch: ''
       labels:
         app: helloworld-backend
         provider: dew

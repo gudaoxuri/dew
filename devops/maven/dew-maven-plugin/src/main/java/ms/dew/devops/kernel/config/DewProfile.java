@@ -18,78 +18,187 @@ package ms.dew.devops.kernel.config;
 
 import ms.dew.notification.NotifyConfig;
 
+/**
+ * Dew profile.
+ *
+ * @author gudaoxuri
+ */
 public class DewProfile {
 
+    // 环境名称
     private String profile;
+    // 是否跳过
     private boolean skip = false;
+    // 项目类型
     private AppKind kind;
+    // 命名空间
     private String namespace = "dew-default-ns";
+    // 是否重用最后一个版本，值为重用的目标环境名称
+    private String reuseLastVersionFromProfile = "";
 
     private DewApp app = new DewApp();
     private DewDocker docker = new DewDocker();
     private DewKube kube = new DewKube();
     private NotifyConfig notify = null;
 
+    /**
+     * Gets profile.
+     *
+     * @return the profile
+     */
     public String getProfile() {
         return profile;
     }
 
+    /**
+     * Sets profile.
+     *
+     * @param profile the profile
+     */
     public void setProfile(String profile) {
         this.profile = profile;
     }
 
+    /**
+     * Is skip boolean.
+     *
+     * @return the boolean
+     */
     public boolean isSkip() {
         return skip;
     }
 
+    /**
+     * Sets skip.
+     *
+     * @param skip the skip
+     */
     public void setSkip(boolean skip) {
         this.skip = skip;
     }
 
+    /**
+     * Gets kind.
+     *
+     * @return the kind
+     */
     public AppKind getKind() {
         return kind;
     }
 
+    /**
+     * Sets kind.
+     *
+     * @param kind the kind
+     */
     public void setKind(AppKind kind) {
         this.kind = kind;
     }
 
+    /**
+     * Gets namespace.
+     *
+     * @return the namespace
+     */
     public String getNamespace() {
         return namespace;
     }
 
+    /**
+     * Sets namespace.
+     *
+     * @param namespace the namespace
+     */
     public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
 
+    /**
+     * Gets reuse last version from profile.
+     *
+     * @return the reuse last version from profile
+     */
+    public String getReuseLastVersionFromProfile() {
+        return reuseLastVersionFromProfile;
+    }
+
+    /**
+     * Sets reuse last version from profile.
+     *
+     * @param reuseLastVersionFromProfile the reuse last version from profile
+     */
+    public void setReuseLastVersionFromProfile(String reuseLastVersionFromProfile) {
+        this.reuseLastVersionFromProfile = reuseLastVersionFromProfile;
+    }
+
+    /**
+     * Gets app.
+     *
+     * @return the app
+     */
     public DewApp getApp() {
         return app;
     }
 
+    /**
+     * Sets app.
+     *
+     * @param app the app
+     */
     public void setApp(DewApp app) {
         this.app = app;
     }
 
+    /**
+     * Gets docker.
+     *
+     * @return the docker
+     */
     public DewDocker getDocker() {
         return docker;
     }
 
+    /**
+     * Sets docker.
+     *
+     * @param docker the docker
+     */
     public void setDocker(DewDocker docker) {
         this.docker = docker;
     }
 
+    /**
+     * Gets kube.
+     *
+     * @return the kube
+     */
     public DewKube getKube() {
         return kube;
     }
 
+    /**
+     * Sets kube.
+     *
+     * @param kube the kube
+     */
     public void setKube(DewKube kube) {
         this.kube = kube;
     }
 
+    /**
+     * Gets notify.
+     *
+     * @return the notify
+     */
     public NotifyConfig getNotify() {
         return notify;
     }
 
+    /**
+     * Sets notify.
+     *
+     * @param notify the notify
+     */
     public void setNotify(NotifyConfig notify) {
         this.notify = notify;
     }

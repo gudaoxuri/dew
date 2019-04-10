@@ -18,7 +18,7 @@ package ms.dew.devops.kernel.flow.build;
 
 import com.ecfront.dew.common.$;
 import ms.dew.devops.kernel.Dew;
-import org.apache.maven.plugin.MojoExecutionException;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,10 +26,15 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-public class FrontendBuildFlow extends BasicBuildFlow {
+/**
+ * Frontend build flow.
+ *
+ * @author gudaoxuri
+ */
+public class FrontendBuildFlow extends DockerBuildFlow {
 
-    protected boolean preDockerBuild(String flowBasePath) throws IOException, MojoExecutionException {
-        String preparePath = Dew.Config.getCurrentProject().getMvnTargetDirectory() + "dew_prepare" + File.separator;
+    protected boolean preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
+        String preparePath = config.getMvnTargetDirectory() + "dew_prepare" + File.separator;
         Files.move(Paths.get(preparePath + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
         $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/frontend/Dockerfile"), flowBasePath + "Dockerfile");
         return true;

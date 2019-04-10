@@ -21,30 +21,38 @@ import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1beta1ReplicaSet;
 import ms.dew.devops.helper.KubeHelper;
 import ms.dew.devops.helper.KubeRES;
-import ms.dew.devops.kernel.Dew;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
-import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Default un-release flow.
+ *
+ * @author gudaoxuri
+ */
 public class DefaultUnReleaseFlow extends BasicFlow {
 
-    protected boolean process(String flowBasePath) throws ApiException, IOException, MojoExecutionException {
-        KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(Dew.Config.getCurrentProject().getAppName(), Dew.Config.getCurrentProject().getNamespace(), KubeRES.SERVICE);
-        KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(Dew.Config.getCurrentProject().getAppName(), Dew.Config.getCurrentProject().getNamespace(), KubeRES.DEPLOYMENT);
+    protected boolean process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
+        // 删除 service
+        KubeHelper.inst(config.getId()).delete(config.getAppName(), config.getNamespace(), KubeRES.SERVICE);
+        // 删除 deployment
+        KubeHelper.inst(config.getId()).delete(config.getAppName(), config.getNamespace(), KubeRES.DEPLOYMENT);
+        // 删除 ReplicaSet
         List<V1beta1ReplicaSet> rsList = KubeHelper.inst(
-                Dew.Config.getCurrentProject().getId()).list("app=" + Dew.Config.getCurrentProject().getAppName() + ",group=" + Dew.Config.getCurrentProject().getAppGroup() + ",version=" + Dew.Config.getCurrentProject().getGitCommit(),
-                Dew.Config.getCurrentProject().getNamespace(), KubeRES.REPLICA_SET, V1beta1ReplicaSet.class);
+                config.getId()).list("app=" + config.getAppName() + ",group=" + config.getAppGroup() + ",version=" + config.getGitCommit(),
+                config.getNamespace(), KubeRES.REPLICA_SET, V1beta1ReplicaSet.class);
         for (V1beta1ReplicaSet rs : rsList) {
-            KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(rs.getMetadata().getName(), rs.getMetadata().getNamespace(), KubeRES.REPLICA_SET);
+            KubeHelper.inst(config.getId()).delete(rs.getMetadata().getName(), rs.getMetadata().getNamespace(), KubeRES.REPLICA_SET);
         }
+        // 删除 pod
         List<V1Pod> pods = KubeHelper.inst(
-                Dew.Config.getCurrentProject().getId()).list(
-                "app=" + Dew.Config.getCurrentProject().getAppName() + ",group=" + Dew.Config.getCurrentProject().getAppGroup() + ",version=" + Dew.Config.getCurrentProject().getGitCommit(),
-                Dew.Config.getCurrentProject().getNamespace(), KubeRES.POD, V1Pod.class);
+                config.getId()).list(
+                "app=" + config.getAppName() + ",group=" + config.getAppGroup() + ",version=" + config.getGitCommit(),
+                config.getNamespace(), KubeRES.POD, V1Pod.class);
         for (V1Pod rs : pods) {
-            KubeHelper.inst(Dew.Config.getCurrentProject().getId()).delete(rs.getMetadata().getName(), rs.getMetadata().getNamespace(), KubeRES.POD);
+            KubeHelper.inst(config.getId()).delete(rs.getMetadata().getName(), rs.getMetadata().getNamespace(), KubeRES.POD);
         }
         return true;
     }

@@ -636,7 +636,7 @@ public class DewConfig {
         public static class Config {
 
             private int electionPeriodSec = 60;
-            private boolean haEnabled = true;
+            private boolean haEnabled = false;
             private HAConfig ha = new HAConfig();
 
             /**

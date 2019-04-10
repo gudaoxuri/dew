@@ -16,23 +16,39 @@
 
 package ms.dew.devops.kernel.flow.build;
 
+import io.kubernetes.client.ApiException;
 import ms.dew.devops.kernel.Dew;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
 
+import java.io.IOException;
+
+/**
+ * Build flow factory.
+ *
+ * @author gudaoxuri
+ */
 public class BuildFlowFactory {
 
+    /**
+     * Choose basic flow.
+     *
+     * @return the basic flow
+     */
     public static BasicFlow choose() {
         switch (Dew.Config.getCurrentProject().getKind()) {
             case JVM_SERVICE:
                 return new JvmServiceBuildFlow();
-            case JVM_LIB:
-                return new JvmLibBuildFlow();
-            case POM:
-                return new PomBuildFlow();
             case FRONTEND:
                 return new FrontendBuildFlow();
+            default:
+                return new BasicFlow() {
+                    @Override
+                    protected boolean process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
+                        return true;
+                    }
+                };
         }
-        throw new RuntimeException("Not found flow instance by " + Dew.Config.getCurrentProject().getKind());
     }
 
 }

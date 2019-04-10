@@ -36,24 +36,42 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
+/**
+ * Need process checker.
+ * <p>
+ * 仅用于部署/回滚流程
+ *
+ * @author gudaoxuri
+ */
 public class NeedProcessChecker {
 
     private static final AtomicBoolean initialized = new AtomicBoolean(false);
 
+    /**
+     * Check need process projects.
+     *
+     * @param quiet the quiet
+     * @throws ApiException the api exception
+     * @throws IOException  the io exception
+     */
     public static void checkNeedProcessProjects(boolean quiet) throws ApiException, IOException {
         if (initialized.getAndSet(true)) {
+            // 初始化后每次都会调用
             switch (Dew.Config.getCurrentProject().getKind()) {
                 case POM:
                 case JVM_LIB:
-                    Dew.Config.getCurrentMavenProperties().setProperty("maven.install.skip", "false");
-                    Dew.Config.getCurrentMavenProperties().setProperty("maven.deploy.skip", "false");
+                    // 启用 install 与 deploy 由 Maven 自行执行部署
+                    Dew.Config.getMavenProperties().setProperty("maven.install.skip", "false");
+                    Dew.Config.getMavenProperties().setProperty("maven.deploy.skip", "false");
                     break;
                 default:
-                    Dew.Config.getCurrentMavenProperties().setProperty("maven.install.skip", "true");
-                    Dew.Config.getCurrentMavenProperties().setProperty("maven.deploy.skip", "true");
+                    // 禁用 install 与 deploy
+                    Dew.Config.getMavenProperties().setProperty("maven.install.skip", "true");
+                    Dew.Config.getMavenProperties().setProperty("maven.deploy.skip", "true");
             }
             return;
         }
+        // 初始化，全局只调用一次
         Dew.log.info("Fetch need process projects");
         for (FinalProjectConfig config : Dew.Config.getProjects().values()) {
             Dew.log.info("Need process checking for " + config.getAppName());
@@ -70,10 +88,12 @@ public class NeedProcessChecker {
                 .filter(config -> !config.isSkip())
                 .collect(Collectors.toList());
         if (processingProjects.isEmpty()) {
+            // 不存在需要处理的项目
             Dew.stopped = true;
             Dew.log.info("No project found to be processed");
             return;
         }
+        // 提示将要处理的项目
         StringBuilder sb = new StringBuilder();
         sb.append("\r\n==================== Processing Projects =====================\r\n\r\n");
         sb.append(processingProjects.stream().map(config ->
@@ -83,6 +103,7 @@ public class NeedProcessChecker {
         if (quiet) {
             Dew.log.info(sb.toString());
         } else {
+            // 非静默模式，用户选择是否继续
             sb.append("\r\n< Y > or < N >");
             Dew.log.info(sb.toString());
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -93,6 +114,16 @@ public class NeedProcessChecker {
         }
     }
 
+
+    /**
+     * Check need process by maven repo.
+     * <p>
+     * 通过Maven仓库判断是否需要处理，多用于处理 类库 和 pom 类型的项目
+     *
+     * @param config the config
+     * @throws ApiException the api exception
+     * @throws IOException  the io exception
+     */
     private static void checkNeedProcessByMavenRepo(FinalProjectConfig config) throws ApiException, IOException {
         String version = Dew.Config.getCurrentMavenProject().getVersion();
         if (version.trim().toLowerCase().endsWith("snapshot")) {
@@ -126,30 +157,58 @@ public class NeedProcessChecker {
         if ($.http.getWrap(repoUrl).statusCode == 404) {
             return;
         }
-        // 已存在
+        // 已存在不需要部署
         Dew.log.warn("Maven repository exist this version :" + Dew.Config.getCurrentMavenProject().getArtifactId());
         config.setSkip(true);
     }
 
+    /**
+     * Check need process by git.
+     * <p>
+     * 通过当前Git commit版本与kubernetes上部署的最新的commit版本判断是否需要处理
+     *
+     * @param config the config
+     * @throws ApiException the api exception
+     */
     private static void checkNeedProcessByGit(FinalProjectConfig config) throws ApiException {
-        if (config.isCustomVersion()) {
-            // 自定义版本时不判断Git
-            return;
-        }
-        String lastVersionDeployCommit = fetchLastVersionDeployCommit(config);
-        Dew.log.debug("Latest commit is " + lastVersionDeployCommit);
-        // 判断有没有发过版本
-        if (lastVersionDeployCommit != null) {
-            List<String> changedFiles = fetchGitDiff(lastVersionDeployCommit);
-            // 判断有没有代码变更
-            if (!hasUnDeployFiles(changedFiles, config)) {
+        // kubernetes上部署的最新的commit版本
+        String lastVersionDeployCommit = fetchLastVersionDeployCommit(config.getId(), config.getAppName(), config.getNamespace());
+        if (!config.getReuseLastVersionFromProfile().isEmpty()) {
+            // 重用版本
+            String lastVersionDeployCommitFromProfile =
+                    fetchLastVersionDeployCommit(config.getId() + "-append", config.getAppName(), config.getAppendProfile().getNamespace());
+            if (lastVersionDeployCommit != null && lastVersionDeployCommit.equals(lastVersionDeployCommitFromProfile)) {
+                Dew.log.warn("Reuse last version " + lastVersionDeployCommit + " has been deployed");
                 config.setSkip(true);
+            } else {
+                Dew.log.info("Reuse last version " + lastVersionDeployCommitFromProfile + " from " + config.getReuseLastVersionFromProfile());
+                config.setGitCommit(lastVersionDeployCommitFromProfile);
+            }
+        } else if (!config.isCustomVersion()) {
+            Dew.log.debug("Latest version is " + lastVersionDeployCommit);
+            // 判断有没有发过版本
+            if (lastVersionDeployCommit != null) {
+                List<String> changedFiles = fetchGitDiff(lastVersionDeployCommit);
+                // 判断有没有代码变更
+                if (!hasUnDeployFiles(changedFiles, config)) {
+                    config.setSkip(true);
+                }
             }
         }
+        // 自定义版本时不判断Git
     }
 
-    private static String fetchLastVersionDeployCommit(FinalProjectConfig config) throws ApiException {
-        V1Service lastVersionService = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(), KubeRES.SERVICE, V1Service.class);
+    /**
+     * 获取kubernetes上部署的最新的commit版本.
+     *
+     * @param configId  the config id
+     * @param appName   the app name
+     * @param namespace the namespace
+     * @return 最新的commit版本
+     * @throws ApiException the api exception
+     */
+    private static String fetchLastVersionDeployCommit(String configId, String appName, String namespace) throws ApiException {
+        V1Service lastVersionService = KubeHelper.inst(configId).read(appName, namespace, KubeRES.SERVICE, V1Service.class);
         if (lastVersionService == null) {
             return null;
         } else {
@@ -157,6 +216,12 @@ public class NeedProcessChecker {
         }
     }
 
+    /**
+     * 获取当前Git commit版本与kubernetes上部署的最新的commit版本的差异文件列表.
+     *
+     * @param lastVersionDeployCommit kubernetes上部署的最新的commit版本
+     * @return 变更的文件列表
+     */
     private static List<String> fetchGitDiff(String lastVersionDeployCommit) {
         List<String> changedFiles = GitHelper.inst().diff(lastVersionDeployCommit, "HEAD");
         Dew.log.debug("Change files:");
@@ -166,12 +231,25 @@ public class NeedProcessChecker {
         return changedFiles;
     }
 
+    /**
+     * 是否存在未部署的文件.
+     * <p>
+     * 即是否存在有变更的文件，为true时表示需要处理
+     * <p>
+     * NOTE: changedFiles 可能是多个maven模块的集合，需要过滤掉非当前模块的文件
+     *
+     * @param changedFiles  the changed files
+     * @param projectConfig the project config
+     * @return 是否存在未部署的文件
+     */
     private static boolean hasUnDeployFiles(List<String> changedFiles, FinalProjectConfig projectConfig) {
         File basePath = new File(projectConfig.getMvnDirectory());
+        // 找到git根目录
         while (!Arrays.asList(basePath.list()).contains(".git")) {
             basePath = basePath.getParentFile();
         }
         String projectPath = projectConfig.getMvnDirectory().substring(basePath.getPath().length() + 1).replaceAll("\\\\", "/");
+        // 找到当前项目变更的文件列表
         changedFiles = changedFiles.stream()
                 .filter(file -> file.startsWith(projectPath))
                 .collect(Collectors.toList());
@@ -179,6 +257,7 @@ public class NeedProcessChecker {
         if (changedFiles.isEmpty()) {
             return false;
         } else if (!projectConfig.getApp().getIgnoreChangeFiles().isEmpty()) {
+            // 排除忽略的文件后是否存在未部署的文件
             if (!$.file.noneMath(changedFiles, new ArrayList<>(projectConfig.getApp().getIgnoreChangeFiles()))) {
                 Dew.log.info("Found 0 changed files filtered ignore files for " + projectConfig.getAppName());
                 return false;

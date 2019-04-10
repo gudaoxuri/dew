@@ -16,6 +16,26 @@
 
 package ms.dew.devops.kernel.config;
 
+/**
+ * App kind.
+ *
+ * @author gudaoxuri
+ */
 public enum AppKind {
-    JVM_SERVICE, JVM_LIB, FRONTEND,POM
+    /**
+     * Jvm service app kind.
+     */
+    JVM_SERVICE,
+    /**
+     * Jvm lib app kind.
+     */
+    JVM_LIB,
+    /**
+     * Frontend app kind.
+     */
+    FRONTEND,
+    /**
+     * Pom app kind.
+     */
+    POM
 }

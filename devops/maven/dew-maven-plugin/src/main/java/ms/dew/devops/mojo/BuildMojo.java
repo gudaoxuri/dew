@@ -18,8 +18,6 @@ package ms.dew.devops.mojo;
 
 import io.kubernetes.client.ApiException;
 import ms.dew.devops.kernel.flow.build.BuildFlowFactory;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -27,12 +25,19 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 
 import java.io.IOException;
 
+/**
+ * Build mojo.
+ * <p>
+ * 前置调用 prepare mojo 完成初始化
+ *
+ * @author gudaoxuri
+ */
 @Mojo(name = "build", requiresDependencyResolution = ResolutionScope.COMPILE)
 @Execute(phase = LifecyclePhase.PACKAGE, goal = "prepare")
 public class BuildMojo extends BasicMojo {
 
     @Override
-    protected boolean executeInternal() throws MojoExecutionException, MojoFailureException, IOException, ApiException {
+    protected boolean executeInternal() throws IOException, ApiException {
         return BuildFlowFactory.choose().exec(getMojoName());
     }
 }

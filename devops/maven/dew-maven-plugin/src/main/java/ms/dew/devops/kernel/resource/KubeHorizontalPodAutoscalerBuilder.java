@@ -19,13 +19,17 @@ package ms.dew.devops.kernel.resource;
 import io.kubernetes.client.custom.Quantity;
 import io.kubernetes.client.models.*;
 import ms.dew.devops.helper.KubeRES;
-import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Kubernetes horizontal pod auto scaler builder.
+ *
+ * @author gudaoxuri
+ */
 public class KubeHorizontalPodAutoscalerBuilder implements KubeResourceBuilder<V2beta2HorizontalPodAutoscaler> {
 
     @Override
@@ -33,6 +37,16 @@ public class KubeHorizontalPodAutoscalerBuilder implements KubeResourceBuilder<V
         return null;
     }
 
+    /**
+     * Build horizontal pod auto scaler.
+     *
+     * @param config      the project config
+     * @param minReplicas the min replicas
+     * @param maxReplicas the max replicas
+     * @param cpuAvg      the cpu avg
+     * @param tps         the tps
+     * @return the horizontal pod auto scaler
+     */
     public V2beta2HorizontalPodAutoscaler build(FinalProjectConfig config, int minReplicas, int maxReplicas, int cpuAvg, long tps) {
         List<V2beta2MetricSpec> metrics = new ArrayList<>();
         if (cpuAvg != 0) {
@@ -65,11 +79,13 @@ public class KubeHorizontalPodAutoscalerBuilder implements KubeResourceBuilder<V
         builder.withKind(KubeRES.HORIZONTAL_POD_AUTOSCALER.getVal())
                 .withApiVersion("autoscaling/v2beta2")
                 .withMetadata(new V1ObjectMetaBuilder()
-                        .withLabels(new HashMap<String, String>() {{
-                            put("app", config.getAppName());
-                            put("group", config.getAppGroup());
-                            put("provider", "dew");
-                        }})
+                        .withLabels(new HashMap<String, String>() {
+                            {
+                                put("app", config.getAppName());
+                                put("group", config.getAppGroup());
+                                put("provider", "dew");
+                            }
+                        })
                         .withName(config.getAppName())
                         .withNamespace(config.getNamespace())
                         .build())
@@ -77,7 +93,7 @@ public class KubeHorizontalPodAutoscalerBuilder implements KubeResourceBuilder<V
                         .withScaleTargetRef(new V2beta2CrossVersionObjectReferenceBuilder()
                                 .withApiVersion("apps/v1")
                                 .withKind("Deployment")
-                                .withName(Dew.Config.getCurrentProject().getAppName())
+                                .withName(config.getAppName())
                                 .build())
                         .withMinReplicas(minReplicas)
                         .withMaxReplicas(maxReplicas)

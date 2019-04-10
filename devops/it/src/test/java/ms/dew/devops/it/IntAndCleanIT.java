@@ -18,7 +18,10 @@ package ms.dew.devops.it;
 
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.*;
-import ms.dew.devops.helper.*;
+import ms.dew.devops.helper.DockerHelper;
+import ms.dew.devops.helper.KubeHelper;
+import ms.dew.devops.helper.KubeRES;
+import ms.dew.devops.helper.YamlHelper;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
 
@@ -32,15 +35,39 @@ public class IntAndCleanIT extends BasicProcessor {
 
     @Test
     public void initAndClean() throws IOException, ApiException {
+        logger.info("Init YamlHelper");
         YamlHelper.init(new SystemStreamLog());
+        logger.info("Init KubeHelper");
         KubeHelper.init("", new SystemStreamLog(), kubeConfig);
+        logger.info("Init DockerHelper");
         DockerHelper.init("", new SystemStreamLog(),
                 dockerHost,
                 dockerRegistryUrl,
                 dockerRegistryUserName,
                 dockerRegistryPassword);
-        String namespaces = "dew-test";
         String registryHost = new URL(dockerRegistryUrl).getHost();
+        logger.info("Clean kubernetes ns by dew-test");
+        cleanResources("dew-test", registryHost);
+        logger.info("Clean kubernetes ns by dew-uat");
+        cleanResources("dew-uat", registryHost);
+        logger.info("Clean kubernetes ns by dew-prod");
+        cleanResources("dew-prod", registryHost);
+        logger.info("Clean docker images");
+        DockerHelper.inst("").image.list().stream()
+                .filter(image -> image.getRepoTags() != null
+                        && image.getRepoTags().length > 0
+                        && image.getRepoTags()[0].startsWith(registryHost))
+                .forEach(image -> {
+                    DockerHelper.inst("").image.remove(image.getRepoTags()[0]);
+                    try {
+                        DockerHelper.inst("").registry.remove(image.getRepoTags()[0]);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+    }
+
+    private void cleanResources(String namespaces, String registryHost) throws ApiException {
         KubeHelper.inst("").list("", namespaces, KubeRES.SERVICE, V1Service.class)
                 .forEach(res -> {
                     try {
@@ -86,18 +113,6 @@ public class IntAndCleanIT extends BasicProcessor {
                     try {
                         KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeRES.HORIZONTAL_POD_AUTOSCALER);
                     } catch (ApiException e) {
-                        e.printStackTrace();
-                    }
-                });
-        DockerHelper.inst("").image.list().stream()
-                .filter(image -> image.getRepoTags() != null
-                        && image.getRepoTags().length > 0
-                        && image.getRepoTags()[0].startsWith(registryHost))
-                .forEach(image -> {
-                    DockerHelper.inst("").image.remove(image.getRepoTags()[0]);
-                    try {
-                        DockerHelper.inst("").registry.remove(image.getRepoTags()[0]);
-                    } catch (IOException e) {
                         e.printStackTrace();
                     }
                 });

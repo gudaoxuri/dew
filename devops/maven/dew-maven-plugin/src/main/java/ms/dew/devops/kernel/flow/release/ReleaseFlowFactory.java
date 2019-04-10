@@ -19,8 +19,18 @@ package ms.dew.devops.kernel.flow.release;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.flow.BasicFlow;
 
+/**
+ * Release flow factory.
+ *
+ * @author gudaoxuri
+ */
 public class ReleaseFlowFactory {
 
+    /**
+     * Choose basic flow.
+     *
+     * @return the basic flow
+     */
     public static BasicFlow choose() {
         switch (Dew.Config.getCurrentProject().getKind()) {
             case JVM_LIB:

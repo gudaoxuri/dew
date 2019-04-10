@@ -3,17 +3,16 @@ kind: Deployment
 metadata:
   annotations:
     dew.ms/git-commit: '0001'
-    dew.ms/scm-url: ''
+    dew.ms/scm-url: https://github.com/gudaoxuri/dew.git
     inject-jaeger-agent: 'true'
     sidecar.jaegertracing.io/inject: 'true'
-    dew.ms/git-branch: ''
   labels:
     app: todo-kernel
     provider: dew
     version: '0001'
     group: ms.dew.devops.it
   name: todo-kernel
-  namespace: dew-test
+  namespace: dew-prod
 spec:
   replicas: 1
   revisionHistoryLimit: 3
@@ -25,10 +24,9 @@ spec:
     metadata:
       annotations:
         dew.ms/git-commit: '0001'
-        dew.ms/scm-url: ''
+        dew.ms/scm-url: https://github.com/gudaoxuri/dew.git
         inject-jaeger-agent: 'true'
         sidecar.jaegertracing.io/inject: 'true'
-        dew.ms/git-branch: ''
       labels:
         app: todo-kernel
         provider: dew
@@ -42,8 +40,8 @@ spec:
             -XX:+UseConcMarkSweepGC -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70
             -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:+CMSClassUnloadingEnabled
             -XX:+ParallelRefProcEnabled -XX:+CMSScavengeBeforeRemark -XX:+HeapDumpOnOutOfMemoryError
-            -Dspring.profiles.active=test
-        image: harbor.dew.env/dew-test/todo-kernel:0001
+            -Dspring.profiles.active=prod
+        image: harbor.dew.env/dew-prod/todo-kernel:0001
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 6

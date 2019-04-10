@@ -19,18 +19,28 @@ package ms.dew.devops.kernel.flow.prepare;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.flow.BasicFlow;
 
+/**
+ * Prepare flow factory.
+ *
+ * @author gudaoxuri
+ */
 public class PrepareFlowFactory {
 
+    /**
+     * Choose basic flow.
+     *
+     * @return the basic flow
+     */
     public static BasicFlow choose() {
         switch (Dew.Config.getCurrentProject().getKind()) {
             case JVM_SERVICE:
                 return new JvmServicePrepareFlow();
             case FRONTEND:
                 return new FrontendPrepareFlow();
+            default:
+                return new BasicPrepareFlow() {
+                };
         }
-        return new BasicPrepareFlow() {
-
-        };
     }
 
 }

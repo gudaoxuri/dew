@@ -27,6 +27,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Kubernetes service builder.
+ *
+ * @author gudaoxuri
+ */
 public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
 
     @Override
@@ -35,7 +40,6 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
         Map<String, String> annotations = new HashMap<>();
         annotations.put(BasicFlow.FLAG_KUBE_RESOURCE_GIT_COMMIT, config.getGitCommit());
         annotations.put("dew.ms/scm-url", config.getScmUrl());
-        annotations.put("dew.ms/git-branch", config.getGitBranch());
         annotations.put("prometheus.io/port", config.getApp().getMetricPort() + "");
         annotations.put("prometheus.io/scrape", "true");
         if (config.getApp().isTraceLogEnabled()) {
@@ -77,10 +81,26 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
         return builder.build();
     }
 
+    /**
+     * Build patch list.
+     * <p>
+     * 用于更新Service,Service对象由于持有IP信息，故无法使用replace做整体替换
+     *
+     * @param service the service
+     * @return the list
+     */
     public List<String> buildPatch(V1Service service) {
         List<String> patcher = new ArrayList<>();
-        service.getMetadata().getAnnotations().forEach((key, value) -> patcher.add("{\"op\":\"replace\",\"path\":\"/metadata/annotations/" + key.replaceAll("\\/", "~1") + "\",\"value\":\"" + value + "\"}"));
-        service.getMetadata().getLabels().forEach((key, value) -> patcher.add("{\"op\":\"replace\",\"path\":\"/metadata/labels/" + key.replaceAll("\\/", "~1") + "\",\"value\":\"" + value + "\"}"));
+        service.getMetadata().getAnnotations().forEach((key, value) ->
+                patcher.add(
+                        "{\"op\":\"replace\",\"path\":\"/metadata/annotations/"
+                                + key.replaceAll("\\/", "~1")
+                                + "\",\"value\":\"" + value + "\"}"));
+        service.getMetadata().getLabels().forEach((key, value) ->
+                patcher.add(
+                        "{\"op\":\"replace\",\"path\":\"/metadata/labels/"
+                                + key.replaceAll("\\/", "~1")
+                                + "\",\"value\":\"" + value + "\"}"));
         return patcher;
     }
 }
