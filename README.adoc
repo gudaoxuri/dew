@@ -12,7 +12,7 @@ Master分支正在构建如下功能：
 == Dew微服务体系
 
 image::https://img.shields.io/travis/gudaoxuri/dew.svg[link="https://travis-ci.org/gudaoxuri/dew"]
-image::https://api.codacy.com/project/badge/Grade/b27405dea94b4b4085324ae6107945ba["Codacy code quality", link="https://www.codacy.com/app/gudaoxuri/dew?utm_source=github.com&utm_medium=referral&utm_content=gudaoxuri/dew&utm_campaign=Badge_Grade"]
+image::https://codebeat.co/badges/93bffc1c-b95b-4e11-8334-fd6adc2a45e5["codebeat badge",link="https://codebeat.co/projects/github-com-gudaoxuri-dew-master"]
 image::https://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2",link="https://www.apache.org/licenses/LICENSE-2.0.txt"]
 
 微服务一站式解决方案，提供：架构指南、容器优先/兼容Spring Cloud与Istio的框架、最佳实践及Devops标准化流程。
