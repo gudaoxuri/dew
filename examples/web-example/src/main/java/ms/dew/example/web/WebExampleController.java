@@ -36,8 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@RestController
-@Api(description = "示例应用")
+@RestController("/")
+@Api("示例应用")
 @Validated // URL 类型的验证需要使用此注解
 public class WebExampleController {
     private static final Logger logger = LoggerFactory.getLogger(WebExampleController.class);
