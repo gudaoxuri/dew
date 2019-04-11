@@ -1,5 +1,7 @@
 [NOTE]
 ====
+
+image:https://api.codacy.com/project/badge/Grade/aacfdad1579043f0a2c1928b53096b7b[link="https://app.codacy.com/app/gudaoxuri/dew?utm_source=github.com&utm_medium=referral&utm_content=gudaoxuri/dew&utm_campaign=Badge_Grade_Dashboard"]
 Master分支正在构建如下功能：
 
 . 升级到 Spring Boot 2.x
