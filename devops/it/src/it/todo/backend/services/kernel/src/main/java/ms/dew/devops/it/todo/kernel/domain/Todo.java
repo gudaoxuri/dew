@@ -27,7 +27,7 @@ import javax.persistence.TemporalType;
 import java.util.Date;
 
 /**
- * To-do entity
+ * To-do entity.
  *
  * @author gudaoxuri
  */

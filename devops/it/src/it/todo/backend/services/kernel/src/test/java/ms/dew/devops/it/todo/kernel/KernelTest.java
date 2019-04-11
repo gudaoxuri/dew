@@ -29,6 +29,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 
+/**
+ * Kernel test.
+ *
+ * @author gudaoxuri
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TodoKernelApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class KernelTest {
@@ -36,6 +41,12 @@ public class KernelTest {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
+    /**
+     * Test all.
+     *
+     * @throws IOException          the io exception
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testAll() throws IOException, InterruptedException {
         for (int i = 0; i < 20; i++) {

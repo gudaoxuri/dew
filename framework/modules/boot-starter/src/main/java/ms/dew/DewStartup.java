@@ -38,6 +38,7 @@ import java.io.IOException;
 public class DewStartup {
 
     private static final Logger logger = LoggerFactory.getLogger(DewStartup.class);
+
     @Autowired
     private Dew dew;
 

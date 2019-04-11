@@ -28,6 +28,8 @@ import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 /**
+ * To-do verify.
+ *
  * @author gudaoxuri
  */
 public class TodoVerify extends BasicProcessor implements Verify {
@@ -56,7 +58,11 @@ public class TodoVerify extends BasicProcessor implements Verify {
 
         String basePath = new File(buildPath).getParentFile().getPath() + File.separator;
         // verify kernel
-        expectedResPath = basePath + "backend" + File.separator + "services" + File.separator + "kernel" + File.separator + "expected" + File.separator;
+        expectedResPath = basePath
+                + "backend" + File.separator
+                + "services" + File.separator
+                + "kernel" + File.separator
+                + "expected" + File.separator;
         buildPath = basePath + "backend" + File.separator + "services" + File.separator + "kernel" + File.separator + "target" + File.separator;
         Assert.assertFalse("kernel | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
         Assert.assertFalse("kernel | exist run-java.sh", new File(buildPath + "dew_build" + File.separator + "run-java.sh").exists());
@@ -68,7 +74,11 @@ public class TodoVerify extends BasicProcessor implements Verify {
         Assert.assertEquals("kernel | match Service.yaml", $.file.readAllByPathName(expectedResPath + "Service.yaml", "UTF-8"),
                 $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Service.yaml", "UTF-8"));
         // verify compute
-        expectedResPath = basePath + "backend" + File.separator + "services" + File.separator + "compute" + File.separator + "expected" + File.separator;
+        expectedResPath = basePath
+                + "backend" + File.separator
+                + "services" + File.separator
+                + "compute" + File.separator
+                + "expected" + File.separator;
         buildPath = basePath + "backend" + File.separator + "services" + File.separator + "compute" + File.separator + "target" + File.separator;
         Assert.assertFalse("compute | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
         Assert.assertFalse("compute | exist run-java.sh", new File(buildPath + "dew_build" + File.separator + "run-java.sh").exists());
@@ -80,7 +90,11 @@ public class TodoVerify extends BasicProcessor implements Verify {
         Assert.assertEquals("compute | match Service.yaml", $.file.readAllByPathName(expectedResPath + "Service.yaml", "UTF-8"),
                 $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Service.yaml", "UTF-8"));
         // verify notifier
-        expectedResPath = basePath + "backend" + File.separator + "services" + File.separator + "notifier" + File.separator + "expected" + File.separator;
+        expectedResPath = basePath
+                + "backend" + File.separator
+                + "services" + File.separator
+                + "notifier" + File.separator
+                + "expected" + File.separator;
         buildPath = basePath + "backend" + File.separator + "services" + File.separator + "notifier" + File.separator + "target" + File.separator;
         Assert.assertFalse("notifier | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
         Assert.assertFalse("notifier | exist run-java.sh", new File(buildPath + "dew_build" + File.separator + "run-java.sh").exists());
@@ -92,7 +106,9 @@ public class TodoVerify extends BasicProcessor implements Verify {
         Assert.assertEquals("notifier | match Service.yaml", $.file.readAllByPathName(expectedResPath + "Service.yaml", "UTF-8"),
                 $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Service.yaml", "UTF-8"));
         // verify frontend
-        expectedResPath = basePath + "frontend" + File.separator + "expected" + File.separator;
+        expectedResPath = basePath
+                + "frontend" + File.separator
+                + "expected" + File.separator;
         buildPath = basePath + "frontend" + File.separator + "target" + File.separator;
         Assert.assertFalse("frontend | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
         Assert.assertFalse("frontend | exist dist", new File(buildPath + "dew_build" + File.separator + "dist").exists());

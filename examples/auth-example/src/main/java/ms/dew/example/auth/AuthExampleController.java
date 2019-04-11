@@ -28,19 +28,30 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Auth example controller.
+ *
+ * @author gudaoxuri
+ */
 @RestController
 @RequestMapping("/")
 public class AuthExampleController {
 
     private static Map<String, User> MOCK_USER_CONTAINER = new HashMap<>();
 
+    /**
+     * Init.
+     */
     @PostConstruct
     public void init() {
         DewContext.setOptInfoClazz(OptInfoExt.class);
     }
 
     /**
-     * 模拟用户注册
+     * 模拟用户注册.
+     *
+     * @param user the user
+     * @return the resp
      */
     @PostMapping(value = "user/register")
     public Resp<Void> register(@RequestBody User user) {
@@ -51,7 +62,10 @@ public class AuthExampleController {
     }
 
     /**
-     * 模拟用户登录
+     * 模拟用户登录.
+     *
+     * @param loginDTO the login dto
+     * @return the resp
      */
     @PostMapping(value = "auth/login")
     public Resp<String> login(@RequestBody LoginDTO loginDTO) {
@@ -68,7 +82,9 @@ public class AuthExampleController {
     }
 
     /**
-     * 模拟业务操作
+     * 模拟业务操作.
+     *
+     * @return the resp
      */
     @GetMapping(value = "business/someopt")
     public Resp<Void> someOpt() {
@@ -83,7 +99,9 @@ public class AuthExampleController {
     }
 
     /**
-     * 模拟用户注销
+     * 模拟用户注销.
+     *
+     * @return the resp
      */
     @DeleteMapping(value = "auth/logout")
     public Resp<Void> logout() {
@@ -92,29 +110,55 @@ public class AuthExampleController {
         return Resp.success(null);
     }
 
+    /**
+     * Login dto.
+     */
     public static class LoginDTO {
 
         private String idCard;
 
         private String password;
 
+        /**
+         * Gets id card.
+         *
+         * @return the id card
+         */
         public String getIdCard() {
             return idCard;
         }
 
+        /**
+         * Sets id card.
+         *
+         * @param idCard the id card
+         */
         public void setIdCard(String idCard) {
             this.idCard = idCard;
         }
 
+        /**
+         * Gets password.
+         *
+         * @return the password
+         */
         public String getPassword() {
             return password;
         }
 
+        /**
+         * Sets password.
+         *
+         * @param password the password
+         */
         public void setPassword(String password) {
             this.password = password;
         }
     }
 
+    /**
+     * User.
+     */
     public static class User {
 
         private String id;
@@ -127,42 +171,92 @@ public class AuthExampleController {
 
         private String password;
 
+        /**
+         * Gets id.
+         *
+         * @return the id
+         */
         public String getId() {
             return id;
         }
 
+        /**
+         * Sets id.
+         *
+         * @param id the id
+         */
         public void setId(String id) {
             this.id = id;
         }
 
+        /**
+         * Gets name.
+         *
+         * @return the name
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Sets name.
+         *
+         * @param name the name
+         */
         public void setName(String name) {
             this.name = name;
         }
 
+        /**
+         * Gets phone.
+         *
+         * @return the phone
+         */
         public String getPhone() {
             return phone;
         }
 
+        /**
+         * Sets phone.
+         *
+         * @param phone the phone
+         */
         public void setPhone(String phone) {
             this.phone = phone;
         }
 
+        /**
+         * Gets password.
+         *
+         * @return the password
+         */
         public String getPassword() {
             return password;
         }
 
+        /**
+         * Sets password.
+         *
+         * @param password the password
+         */
         public void setPassword(String password) {
             this.password = password;
         }
 
+        /**
+         * Gets id card.
+         *
+         * @return the id card
+         */
         public String getIdCard() {
             return idCard;
         }
 
+        /**
+         * Sets id card.
+         *
+         * @param idCard the id card
+         */
         public void setIdCard(String idCard) {
             this.idCard = idCard;
         }

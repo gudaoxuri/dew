@@ -36,6 +36,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Web example controller.
+ *
+ * @author gudaoxuri
+ */
 @RestController("/")
 @Api("示例应用")
 @Validated // URL 类型的验证需要使用此注解
@@ -45,46 +50,21 @@ public class WebExampleController {
     private AtomicInteger atomicInteger = new AtomicInteger();
 
     /**
-     * 最基础的Controller示例
+     * 最基础的Controller示例.
+     *
+     * @return result
      */
     @GetMapping("example")
     @ApiOperation(value = "示例方法")
     public Map<String, Integer> example() {
-        for (int i = 0; i < 100; i++) {
-            logger.info(atomicInteger.getAndIncrement() + " Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
-        }
-        return new HashMap<>();
-    }
-
-    @ApiOperation(value = "示例方法")
-    @GetMapping("example2")
-    public Map<Integer, User> example2() {
-        for (int i = 0; i < 100; i++) {
-            logger.info(atomicInteger.getAndIncrement() + " Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
-        }
-        return new HashMap<>();
-    }
-
-    @ApiOperation(value = "示例方法")
-    @GetMapping("example3")
-    public Map<Integer, List<User>> example3() {
-        for (int i = 0; i < 100; i++) {
-            logger.info(atomicInteger.getAndIncrement() + " Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
-        }
-        return new HashMap<>();
-    }
-
-    @ApiOperation(value = "示例方法")
-    @GetMapping("example4")
-    public Map<Integer, Map<String, String>> example4() {
-        for (int i = 0; i < 100; i++) {
-            logger.info(atomicInteger.getAndIncrement() + " Mapped \"{[/autoconfig || /autoconfig.json],methods=[GET],produces=[application/vnd.spring-boot.actuator.v1+json || application/json]}\" onto public java.lang.Object org.springframework.boot.actuate.endpoint.mv");
-        }
         return new HashMap<>();
     }
 
     /**
-     * 数据验证示例，针对 CreateGroup 这一标识组的 bean认证
+     * 数据验证示例，针对 CreateGroup 这一标识组的 bean认证.
+     *
+     * @param user the user
+     * @return the user
      */
     @PostMapping(value = "valid-create")
     public User validCreate(@Validated(CreateGroup.class) @RequestBody User user) {
@@ -92,7 +72,10 @@ public class WebExampleController {
     }
 
     /**
-     * 数据验证示例，针对 UpdateGroup 这一标识组的 bean认证，传入的是表单形式
+     * 数据验证示例，针对 UpdateGroup 这一标识组的 bean认证，传入的是表单形式.
+     *
+     * @param user the user
+     * @return the string
      */
     @Deprecated
     @PutMapping(value = "valid-update-dep")
@@ -100,29 +83,53 @@ public class WebExampleController {
         return "";
     }
 
+    /**
+     * Valid update list.
+     *
+     * @param user the user
+     * @return the list
+     */
     @PutMapping(value = "valid-update")
     public List<String> validUpdate(@Validated(UpdateGroup.class) User user) {
         return new ArrayList<>();
     }
 
-    @PutMapping(value = "valid-update-u")
-    public List<User> validUpdateWithUser(@Validated(UpdateGroup.class) User user) {
-        return new ArrayList<>();
-    }
-
-    @PutMapping(value = "valid-update-u1")
-    public List<Map<String, User>> validUpdateWithUser1(@Validated(UpdateGroup.class) User user) {
+    /**
+     * Valid update return user list.
+     *
+     * @param user the user
+     * @return the list
+     */
+    @PutMapping(value = "valid-update-return-user-list")
+    public List<User> validUpdateReturnUserList(@Validated(UpdateGroup.class) User user) {
         return new ArrayList<>();
     }
 
     /**
-     * 数据验证示例，URL认证
+     * Valid update return user map.
+     *
+     * @param user the user
+     * @return the list
+     */
+    @PutMapping(value = "valid-update-return-user-map")
+    public List<Map<String, User>> validUpdateReturnUserMap(@Validated(UpdateGroup.class) User user) {
+        return new ArrayList<>();
+    }
+
+    /**
+     * 数据验证示例，URL认证.
+     *
+     * @param age the age
+     * @return the resp
      */
     @GetMapping(value = "valid-method/{age}")
     public Resp<User> validInMethod(@Min(value = 2, message = "age必须大于2") @PathVariable("age") int age) {
         return Resp.success(null);
     }
 
+    /**
+     * User.
+     */
     public static class User {
 
         // 仅在CreateGroup组下才校验
@@ -138,26 +145,56 @@ public class WebExampleController {
         @Phone(groups = {CreateGroup.class, UpdateGroup.class})
         private String phone;
 
+        /**
+         * Gets id card.
+         *
+         * @return the id card
+         */
         public String getIdCard() {
             return idCard;
         }
 
+        /**
+         * Sets id card.
+         *
+         * @param idCard the id card
+         */
         public void setIdCard(String idCard) {
             this.idCard = idCard;
         }
 
+        /**
+         * Gets age.
+         *
+         * @return the age
+         */
         public int getAge() {
             return age;
         }
 
+        /**
+         * Sets age.
+         *
+         * @param age the age
+         */
         public void setAge(int age) {
             this.age = age;
         }
 
+        /**
+         * Gets phone.
+         *
+         * @return the phone
+         */
         public String getPhone() {
             return phone;
         }
 
+        /**
+         * Sets phone.
+         *
+         * @param phone the phone
+         */
         public void setPhone(String phone) {
             this.phone = phone;
         }

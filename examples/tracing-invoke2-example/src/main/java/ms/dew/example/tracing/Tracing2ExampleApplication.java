@@ -26,16 +26,29 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * Tracing 2 example application.
+ *
+ * @author gudaoxuri
+ */
 @SpringCloudApplication
 @Configuration
 public class Tracing2ExampleApplication {
 
     private Logger logger = LoggerFactory.getLogger(Tracing2ExampleApplication.class);
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         new SpringApplicationBuilder(Tracing2ExampleApplication.class).run(args);
     }
 
+    /**
+     * Init.
+     */
     @PostConstruct
     public void init() {
         logger.info("开始监听..");

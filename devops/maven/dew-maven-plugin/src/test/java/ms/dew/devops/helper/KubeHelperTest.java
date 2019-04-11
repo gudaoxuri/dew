@@ -30,13 +30,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 
+/**
+ * Kube helper test.
+ *
+ * @author gudaoxuri
+ */
 public class KubeHelperTest extends BasicTest {
 
+    /**
+     * Before.
+     *
+     * @throws IOException the io exception
+     */
     @Before
     public void before() throws IOException {
         KubeHelper.init("", new SystemStreamLog(), defaultKubeConfig);
     }
 
+    /**
+     * Test all.
+     *
+     * @throws IOException          the io exception
+     * @throws ApiException         the api exception
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testAll() throws IOException, ApiException, InterruptedException {
         KubeHelper.inst("").delete("ns-test", KubeRES.NAME_SPACE);
@@ -49,8 +66,11 @@ public class KubeHelperTest extends BasicTest {
 
         ExtensionsV1beta1Deployment deployment = buildDeployment();
         CountDownLatch cdl = new CountDownLatch(1);
-        String watchId = KubeHelper.inst("").watch((coreApi, extensionsApi, rbacAuthorizationApi, autoscalingApi)
-                        -> extensionsApi.listNamespacedDeploymentCall(deployment.getMetadata().getNamespace(), null, null, null, null, "name=test-nginx", 1, null, null, Boolean.TRUE, null, null),
+        final String watchId = KubeHelper.inst("").watch((coreApi, extensionsApi, rbacAuthorizationApi, autoscalingApi)
+                        -> extensionsApi
+                        .listNamespacedDeploymentCall(
+                                deployment.getMetadata().getNamespace(),
+                                null, null, null, null, "name=test-nginx", 1, null, null, Boolean.TRUE, null, null),
                 resp -> {
                     System.out.printf("%s : %s%n", resp.type, $.json.toJsonString(resp.object.getStatus()));
                     if (resp.object.getStatus().getReadyReplicas() != null
@@ -59,9 +79,11 @@ public class KubeHelperTest extends BasicTest {
                     }
                 },
                 ExtensionsV1beta1Deployment.class);
-        Assert.assertFalse(KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(), KubeRES.DEPLOYMENT));
+        Assert.assertFalse(
+                KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(), KubeRES.DEPLOYMENT));
         KubeHelper.inst("").apply(deployment);
-        Assert.assertTrue(KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(), KubeRES.DEPLOYMENT));
+        Assert.assertTrue(
+                KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(), KubeRES.DEPLOYMENT));
 
         Assert.assertEquals(1, KubeHelper.inst("").list(
                 "",
@@ -79,10 +101,12 @@ public class KubeHelperTest extends BasicTest {
                 KubeRES.DEPLOYMENT,
                 ExtensionsV1beta1Deployment.class).size());
 
-        KubeHelper.inst("").patch("nginx-deployment", new ArrayList<String>() {{
-            add("{\"op\":\"replace\",\"path\":\"/spec/replicas\",\"value\":2}");
-            add("{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/image\",\"value\":\"nginx:latest\"}");
-        }}, "ns-test", KubeRES.DEPLOYMENT);
+        KubeHelper.inst("").patch("nginx-deployment", new ArrayList<String>() {
+            {
+                add("{\"op\":\"replace\",\"path\":\"/spec/replicas\",\"value\":2}");
+                add("{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/image\",\"value\":\"nginx:latest\"}");
+            }
+        }, "ns-test", KubeRES.DEPLOYMENT);
         ExtensionsV1beta1Deployment fetchedDeployment = KubeHelper.inst("").read(deployment.getMetadata().getName(),
                 deployment.getMetadata().getNamespace(),
                 KubeRES.DEPLOYMENT,
@@ -94,14 +118,14 @@ public class KubeHelperTest extends BasicTest {
 
         cdl.await();
 
+        // TODO
+        /*
         String podName = KubeHelper.inst("").list(
                 "app=nginx",
                 deployment.getMetadata().getNamespace(),
                 KubeRES.POD,
                 V1Pod.class).get(0).getMetadata().getName();
 
-        // TODO
-        /*
         Ngnix没有日志输出，程序会一直等待
         List<String> logs = KubeHelper.inst("").log(podName, "ns-test");
         logs.forEach(System.out::println);
@@ -119,17 +143,21 @@ public class KubeHelperTest extends BasicTest {
                 .withMetadata(new V1ObjectMetaBuilder()
                         .withName("nginx-deployment")
                         .withNamespace("ns-test")
-                        .withLabels(new HashMap<String, String>() {{
-                            put("name", "test-nginx");
-                        }})
+                        .withLabels(new HashMap<String, String>() {
+                            {
+                                put("name", "test-nginx");
+                            }
+                        })
                         .build())
                 .withSpec(new ExtensionsV1beta1DeploymentSpecBuilder()
                         .withReplicas(1)
                         .withTemplate(new V1PodTemplateSpecBuilder()
                                 .withMetadata(new V1ObjectMetaBuilder()
-                                        .withLabels(new HashMap<String, String>() {{
-                                            put("app", "nginx");
-                                        }})
+                                        .withLabels(new HashMap<String, String>() {
+                                            {
+                                                put("app", "nginx");
+                                            }
+                                        })
                                         .build())
                                 .withSpec(new V1PodSpecBuilder()
                                         .withContainers(new V1ContainerBuilder()

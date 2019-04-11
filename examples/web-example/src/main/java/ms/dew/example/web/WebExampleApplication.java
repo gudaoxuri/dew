@@ -20,9 +20,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 /**
- * 工程启动类
+ * 工程启动类.
  * <p>
  * visit : http://127.0.0.1/doc.html
+ *
+ * @author gudaoxuri
  */
 @SpringBootApplication
 public class WebExampleApplication {

@@ -30,7 +30,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 
-
+/**
+ * All test.
+ *
+ * @author gudaoxuri
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = BootTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class AllTest {
@@ -50,6 +54,11 @@ public class AllTest {
     @Resource
     private DocTest docTest;
 
+    /**
+     * Test all.
+     *
+     * @throws Exception the exception
+     */
     @Test
     public void testAll() throws Exception {
         clusterTest.testAll();

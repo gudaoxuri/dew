@@ -26,24 +26,34 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
+/**
+ * Doc test.
+ *
+ * @author gudaoxuri
+ */
 @Component
 public class DocTest {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
 
+    /**
+     * Test all.
+     *
+     * @throws Exception the exception
+     */
     public void testAll() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> entity = new HttpEntity<>(
-                "{\"docName\":\"Dew API 文档\",\n" +
-                        "\"docDesc\":\"此为Dew的接口文档\\n描述可以换行\",\n" +
-                        "\"visitUrls\":{\n" +
-                        "        \"开发环境\":\"http://dev.dew.ecfront.com\",\n" +
-                        "        \"测试环境\":\"http://test.dew.ecfront.com\"\n" +
-                        "  }," +
-                        "\"swaggerJsonUrls\":[\"http://localhost:8080/v2/api-docs\"]" +
-                        "}", headers);
+                "{\"docName\":\"Dew API 文档\",\n"
+                        + "\"docDesc\":\"此为Dew的接口文档\\n描述可以换行\",\n"
+                        + "\"visitUrls\":{\n"
+                        + "        \"开发环境\":\"http://dev.dew.ecfront.com\",\n"
+                        + "        \"测试环境\":\"http://test.dew.ecfront.com\"\n"
+                        + "  },"
+                        + "\"swaggerJsonUrls\":[\"http://localhost:8080/v2/api-docs\"]"
+                        + "}", headers);
         String docStr = testRestTemplate
                 .exchange("/management/doc/offline", HttpMethod.PUT, entity, String.class)
                 .getBody();

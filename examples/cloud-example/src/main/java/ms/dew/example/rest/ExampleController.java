@@ -22,11 +22,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Example controller.
+ *
+ * @author gudaoxuri
+ */
 @RestController
 @Api(description = "示例应用")
 @RequestMapping("/")
 public class ExampleController {
 
+    /**
+     * Example 100.
+     *
+     * @return the string
+     * @throws InterruptedException the interrupted exception
+     */
     @GetMapping("/example/100")
     @ApiOperation(value = "示例，延时100")
     public String example100() throws InterruptedException {
@@ -34,6 +45,12 @@ public class ExampleController {
         return "ok";
     }
 
+    /**
+     * Example 1000.
+     *
+     * @return the string
+     * @throws InterruptedException the interrupted exception
+     */
     @GetMapping("/example/1000")
     @ApiOperation(value = "示例，延时1000")
     public String example1000() throws InterruptedException {
@@ -41,6 +58,12 @@ public class ExampleController {
         return "ok";
     }
 
+    /**
+     * Example 10000.
+     *
+     * @return the string
+     * @throws InterruptedException the interrupted exception
+     */
     @GetMapping("/example/10000")
     @ApiOperation(value = "示例，延时10000")
     public String example10000() throws InterruptedException {

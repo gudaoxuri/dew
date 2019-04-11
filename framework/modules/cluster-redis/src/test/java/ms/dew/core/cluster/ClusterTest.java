@@ -25,6 +25,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+/**
+ *  Cluster test.
+ *
+ *  @author gudaoxuri
+ */
 @RunWith(SpringRunner.class)
 @SpringBootApplication
 @SpringBootTest
@@ -41,26 +46,51 @@ public class ClusterTest {
     @Autowired
     private RedisClusterElectionWrap redisClusterElectionWrap;
 
+    /**
+     * Test mq.
+     *
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testMQ() throws InterruptedException {
         new ClusterMQTest().test(redisClusterMQ);
     }
 
+    /**
+     * Test cache.
+     *
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testCache() throws InterruptedException {
         new ClusterCacheTest().test(redisClusterCache);
     }
 
+    /**
+     * Test lock.
+     *
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testLock() throws InterruptedException {
         new ClusterLockTest().test(redisClusterLockWrap.instance("test"));
     }
 
+    /**
+     * Test map.
+     *
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testMap() throws InterruptedException {
         new ClusterMapTest().test(redisClusterMapWrap.instance("test", ClusterMapTest.TestMapObj.class));
     }
 
+    /**
+     * Test election.
+     *
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testElection() throws InterruptedException {
         new ClusterElectionTest().test(redisClusterElectionWrap.instance("test"));

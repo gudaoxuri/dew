@@ -27,6 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
 /**
+ * Hello world library verify.
+ *
  * @author gudaoxuri
  */
 public class HelloWorldLibraryVerify extends BasicProcessor implements Verify {

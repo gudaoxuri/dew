@@ -17,8 +17,6 @@
 package ms.dew.core.cluster.test;
 
 import ms.dew.core.cluster.ClusterMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
@@ -28,8 +26,6 @@ import java.io.Serializable;
  * @author gudaoxuri
  */
 public class ClusterMapTest {
-
-    private static final Logger logger = LoggerFactory.getLogger(ClusterMapTest.class);
 
     /**
      * Test.

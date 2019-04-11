@@ -29,10 +29,18 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
+ * Int and clean it.
+ *
  * @author gudaoxuri
  */
 public class IntAndCleanIT extends BasicProcessor {
 
+    /**
+     * Init and clean.
+     *
+     * @throws IOException  the io exception
+     * @throws ApiException the api exception
+     */
     @Test
     public void initAndClean() throws IOException, ApiException {
         logger.info("Init YamlHelper");

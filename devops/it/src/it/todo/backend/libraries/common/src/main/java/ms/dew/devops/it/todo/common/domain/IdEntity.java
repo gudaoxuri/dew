@@ -22,7 +22,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 /**
- * The type Id entity.
+ * Id entity.
  *
  * @author gudaoxuri
  */

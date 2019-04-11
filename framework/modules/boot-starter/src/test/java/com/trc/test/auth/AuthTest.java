@@ -20,8 +20,6 @@ package com.trc.test.auth;
 import com.ecfront.dew.common.Resp;
 import ms.dew.Dew;
 import org.junit.Assert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -29,14 +27,22 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
+/**
+ * Auth test.
+ *
+ * @author gudaoxuri
+ */
 @Component
 public class AuthTest {
-
-    private Logger logger = LoggerFactory.getLogger(AuthTest.class);
 
     @Autowired
     private TestRestTemplate testRestTemplate;
 
+    /**
+     * Test all.
+     *
+     * @throws Exception the exception
+     */
     public void testAll() throws Exception {
         AuthController.UserDTO userDTO = new AuthController.UserDTO();
         userDTO.setIdCard("331023395739483150");
@@ -61,15 +67,22 @@ public class AuthTest {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(Dew.dewConfig.getSecurity().getTokenFlag(), token1);
-        Resp<OptInfoExt> bussinessResult = Resp.generic(testRestTemplate.exchange("/auth/business/someopt", HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody(), OptInfoExt.class);
+        Resp<OptInfoExt> bussinessResult = Resp.generic(
+                testRestTemplate.exchange("/auth/business/someopt",
+                        HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody(),
+                OptInfoExt.class);
         Assert.assertEquals("401", bussinessResult.getCode());
         headers.set(Dew.dewConfig.getSecurity().getTokenFlag(), token2);
-        bussinessResult = Resp.generic(testRestTemplate.exchange("/auth/business/someopt", HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody(), OptInfoExt.class);
+        bussinessResult = Resp.generic(
+                testRestTemplate.exchange("/auth/business/someopt",
+                        HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody(), OptInfoExt.class);
         Assert.assertEquals("200", bussinessResult.getCode());
         Assert.assertEquals("331023395739483150", bussinessResult.getBody().getIdCard());
 
         testRestTemplate.exchange("/auth/logout", HttpMethod.DELETE, new HttpEntity<>(null, headers), Resp.class);
-        bussinessResult = Resp.generic(testRestTemplate.exchange("/auth/business/someopt", HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody(), OptInfoExt.class);
+        bussinessResult = Resp.generic(
+                testRestTemplate.exchange("/auth/business/someopt",
+                        HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody(), OptInfoExt.class);
         Assert.assertEquals("401", bussinessResult.getCode());
     }
 

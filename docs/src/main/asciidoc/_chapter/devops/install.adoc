@@ -11,7 +11,7 @@
 ----
 systemctl stop firewalld.service
 systemctl disable firewalld.service
-swapoff -a
+swapoff -someField
 sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config
 ----

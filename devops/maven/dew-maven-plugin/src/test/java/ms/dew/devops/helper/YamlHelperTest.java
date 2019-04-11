@@ -21,31 +21,42 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Yaml helper test.
+ *
+ * @author gudaoxuri
+ */
 public class YamlHelperTest {
 
+    /**
+     * Before.
+     */
     @Before
     public void before() {
         YamlHelper.init(new SystemStreamLog());
     }
 
+    /**
+     * Test all.
+     */
     @Test
     public void testAll() {
         TestYaml o = YamlHelper.toObject(TestYaml.class,
                 "# common.yaml\n"
-                        + "a: vala\n"
-                        + "b: valb\n"
-                        + "c: \n"
+                        + "fa: vala\n"
+                        + "fb: valb\n"
+                        + "fc: \n"
                         + "  c1: valc1 \n"
                         + "\n"
                         + "# spec.yaml\n"
-                        + "c: \n"
+                        + "fc: \n"
                         + "  c1: valc1_new\n"
                         + "  c2: valc2\n"
-                        + "d: vald");
-        Assert.assertEquals("valc1_new", o.getC().getC1());
-        Assert.assertEquals("valc2", o.getC().getC2());
-        Assert.assertEquals("vala", o.getA());
-        Assert.assertEquals("valb", o.getB());
+                        + "fd: vald");
+        Assert.assertEquals("valc1_new", o.getFc().getC1());
+        Assert.assertEquals("valc2", o.getFc().getC2());
+        Assert.assertEquals("vala", o.getFa());
+        Assert.assertEquals("valb", o.getFb());
     }
 
 }

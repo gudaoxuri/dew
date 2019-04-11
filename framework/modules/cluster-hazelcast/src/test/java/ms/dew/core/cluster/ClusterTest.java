@@ -31,6 +31,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+/**
+ * Cluster test.
+ *
+ * @author gudaoxuri
+ */
 @RunWith(SpringRunner.class)
 @SpringBootApplication
 @SpringBootTest
@@ -43,21 +48,39 @@ public class ClusterTest {
     @Autowired
     private HazelcastClusterMapWrap hazelcastClusterMapWrap;
 
+    /**
+     * Init.
+     */
     @BeforeClass
     public static void init() {
         Hazelcast.newHazelcastInstance();
     }
 
+    /**
+     * Test mq.
+     *
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testMQ() throws InterruptedException {
         new ClusterMQTest().test(hazelcastClusterMQ);
     }
 
+    /**
+     * Test lock.
+     *
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testLock() throws InterruptedException {
         new ClusterLockTest().test(hazelcastClusterLockWrap.instance("test"));
     }
 
+    /**
+     * Test map.
+     *
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testMap() throws InterruptedException {
         new ClusterMapTest().test(hazelcastClusterMapWrap.instance("test", ClusterMapTest.TestMapObj.class));

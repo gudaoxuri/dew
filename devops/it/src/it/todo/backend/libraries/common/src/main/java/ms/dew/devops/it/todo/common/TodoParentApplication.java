@@ -16,9 +16,7 @@
 
 package ms.dew.devops.it.todo.common;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
  * To-do parent application.

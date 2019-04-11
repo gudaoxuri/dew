@@ -38,6 +38,7 @@ public class YamlHelper {
      */
     public static void init(Log log) {
         if (yaml == null) {
+            log.info("Init yamlHelper");
             YamlHelper.log = log;
             DumperOptions options = new DumperOptions();
             options.setCanonical(false);

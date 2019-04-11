@@ -20,29 +20,36 @@ import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
 import ms.dew.Dew;
 import ms.dew.core.DewContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Auth controller.
+ *
+ * @author gudaoxuri
+ */
 @RestController
 @RequestMapping("/auth/")
 public class AuthController {
 
     private static Map<String, UserDTO> MOCK_USER_CONTAINER = new HashMap<>();
 
-    private Logger logger = LoggerFactory.getLogger(AuthController.class);
-
+    /**
+     * Init.
+     */
     @PostConstruct
     public void init() {
         DewContext.setOptInfoClazz(OptInfoExt.class);
     }
 
     /**
-     * 模拟用户注册
+     * 模拟用户注册.
+     *
+     * @param userDTO the user dto
+     * @return the resp
      */
     @PostMapping(value = "register")
     public Resp<Void> register(@RequestBody UserDTO userDTO) {
@@ -53,7 +60,11 @@ public class AuthController {
     }
 
     /**
-     * 模拟用户登录
+     * 模拟用户登录.
+     *
+     * @param loginDTO the login dto
+     * @return the resp
+     * @throws Exception the exception
      */
     @PostMapping(value = "login")
     public Resp<String> login(@RequestBody LoginDTO loginDTO) throws Exception {
@@ -73,7 +84,9 @@ public class AuthController {
     }
 
     /**
-     * 模拟业务操作
+     * 模拟业务操作.
+     *
+     * @return the resp
      */
     @GetMapping(value = "business/someopt")
     public Resp<OptInfoExt> someOpt() {
@@ -82,7 +95,9 @@ public class AuthController {
     }
 
     /**
-     * 模拟用户注销
+     * 模拟用户注销.
+     *
+     * @return the resp
      */
     @DeleteMapping(value = "logout")
     public Resp<Void> logout() {
@@ -91,29 +106,55 @@ public class AuthController {
         return Resp.success(null);
     }
 
+    /**
+     * Login dto.
+     */
     public static class LoginDTO {
 
         private String idCard;
 
         private String password;
 
+        /**
+         * Gets id card.
+         *
+         * @return the id card
+         */
         public String getIdCard() {
             return idCard;
         }
 
+        /**
+         * Sets id card.
+         *
+         * @param idCard the id card
+         */
         public void setIdCard(String idCard) {
             this.idCard = idCard;
         }
 
+        /**
+         * Gets password.
+         *
+         * @return the password
+         */
         public String getPassword() {
             return password;
         }
 
+        /**
+         * Sets password.
+         *
+         * @param password the password
+         */
         public void setPassword(String password) {
             this.password = password;
         }
     }
 
+    /**
+     * User dto.
+     */
     public static class UserDTO {
 
         private String id;
@@ -126,42 +167,92 @@ public class AuthController {
 
         private String password;
 
+        /**
+         * Gets id.
+         *
+         * @return the id
+         */
         public String getId() {
             return id;
         }
 
+        /**
+         * Sets id.
+         *
+         * @param id the id
+         */
         public void setId(String id) {
             this.id = id;
         }
 
+        /**
+         * Gets name.
+         *
+         * @return the name
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Sets name.
+         *
+         * @param name the name
+         */
         public void setName(String name) {
             this.name = name;
         }
 
+        /**
+         * Gets phone.
+         *
+         * @return the phone
+         */
         public String getPhone() {
             return phone;
         }
 
+        /**
+         * Sets phone.
+         *
+         * @param phone the phone
+         */
         public void setPhone(String phone) {
             this.phone = phone;
         }
 
+        /**
+         * Gets password.
+         *
+         * @return the password
+         */
         public String getPassword() {
             return password;
         }
 
+        /**
+         * Sets password.
+         *
+         * @param password the password
+         */
         public void setPassword(String password) {
             this.password = password;
         }
 
+        /**
+         * Gets id card.
+         *
+         * @return the id card
+         */
         public String getIdCard() {
             return idCard;
         }
 
+        /**
+         * Sets id card.
+         *
+         * @param idCard the id card
+         */
         public void setIdCard(String idCard) {
             this.idCard = idCard;
         }

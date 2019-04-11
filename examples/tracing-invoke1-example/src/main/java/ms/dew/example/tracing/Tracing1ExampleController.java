@@ -24,6 +24,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Tracing 1 example controller.
+ *
+ * @author gudaoxuri
+ */
 @RestController
 @RequestMapping("/")
 public class Tracing1ExampleController {
@@ -31,6 +36,12 @@ public class Tracing1ExampleController {
     @Autowired
     private RestTemplate restTemplate;
 
+    /**
+     * Ping.
+     *
+     * @param code the code
+     * @return the result
+     */
     @GetMapping("ping")
     public String ping(@RequestParam("code") String code) {
         Dew.cluster.mq.publish("test", code);

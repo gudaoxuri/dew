@@ -26,13 +26,27 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Docker helper test.
+ *
+ * @author gudaoxuri
+ */
 public class DockerHelperTest extends BasicTest {
 
+    /**
+     * Before.
+     */
     @Before
     public void before() {
-        DockerHelper.init("", new SystemStreamLog(), defaultDockerHost, defaultDockerRegistryUrl, defaultDockerRegistryUserName, defaultDockerRegistryPassword);
+        DockerHelper.init("", new SystemStreamLog(),
+                defaultDockerHost, defaultDockerRegistryUrl, defaultDockerRegistryUserName, defaultDockerRegistryPassword);
     }
 
+    /**
+     * Test all.
+     *
+     * @throws IOException the io exception
+     */
     @Test
     public void testAll() throws IOException {
         DockerHelper.inst("").image.remove("harbor.dew.ms/dew-test/test:1.0");

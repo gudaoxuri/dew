@@ -22,11 +22,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+/**
+ * Cluster test.
+ *
+ * @author gudaoxuri
+ */
 @Component
 public class ClusterTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterTest.class);
 
+    /**
+     * Test all.
+     *
+     * @throws InterruptedException the interrupted exception
+     */
     public void testAll() throws InterruptedException {
         logger.info("Testing MQ");
         new ClusterMQTest().test(Dew.cluster.mq);

@@ -21,8 +21,6 @@ import com.netflix.hystrix.HystrixEventType;
 import com.netflix.hystrix.strategy.eventnotifier.HystrixEventNotifier;
 import ms.dew.Dew;
 import ms.dew.core.DewCloudConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.ConcurrentReferenceHashMap;
 
 import javax.annotation.PostConstruct;
@@ -36,8 +34,6 @@ import java.util.*;
  * @author gudaoxuri
  */
 public class FailureEventNotifier extends HystrixEventNotifier {
-
-    private static final Logger logger = LoggerFactory.getLogger(FailureEventNotifier.class);
 
     private DewCloudConfig dewCloudConfig;
 

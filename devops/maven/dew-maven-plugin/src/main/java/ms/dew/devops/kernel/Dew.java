@@ -32,7 +32,6 @@ import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
-import org.twdata.maven.mojoexecutor.MojoExecutor;
 
 import java.io.File;
 import java.io.IOException;
@@ -460,7 +459,7 @@ public class Dew {
                 plugin = plugin(groupId, artifactId, version);
             }
             try {
-                MojoExecutor.executeMojo(
+                executeMojo(
                         plugin,
                         goal(goal),
                         configuration(config.toArray(new Element[]{})),

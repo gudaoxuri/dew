@@ -18,17 +18,33 @@ package ms.dew.devops.it.verify;
 
 import java.io.File;
 
+
 /**
+ * The interface Verify.
+ *
  * @author gudaoxuri
  */
 public interface Verify {
 
+    /**
+     * Verify.
+     *
+     * @param basedir the basedir
+     * @throws Exception the exception
+     */
     default void verify(File basedir) throws Exception {
         String expectedResPath = new File(basedir, File.separator + "expected").getPath() + File.separator;
         String buildPath = new File(basedir, File.separator + "target").getPath() + File.separator;
         doVerify(buildPath, expectedResPath);
     }
 
+    /**
+     * Do verify.
+     *
+     * @param buildPath       the build path
+     * @param expectedResPath the expected res path
+     * @throws Exception the exception
+     */
     void doVerify(String buildPath, String expectedResPath) throws Exception;
 
 }

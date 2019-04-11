@@ -22,9 +22,19 @@ import ms.dew.Dew;
 import org.junit.Assert;
 import org.springframework.stereotype.Component;
 
+/**
+ * Notify test.
+ *
+ * @author gudaoxuri
+ */
 @Component
 public class NotifyTest {
 
+    /**
+     * Test all.
+     *
+     * @throws Exception the exception
+     */
     public void testAll() throws Exception {
         Resp<Void> result = Dew.notify.send("flag1", "测试消息，默认通知人", "测试");
         Assert.assertTrue(result.ok());

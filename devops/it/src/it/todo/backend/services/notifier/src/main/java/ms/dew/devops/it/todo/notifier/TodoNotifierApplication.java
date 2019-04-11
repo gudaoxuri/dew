@@ -20,7 +20,7 @@ import ms.dew.devops.it.todo.common.TodoParentApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 /**
- * The type To-do notifier application.
+ * To-do notifier application.
  *
  * @author gudaoxuri
  */

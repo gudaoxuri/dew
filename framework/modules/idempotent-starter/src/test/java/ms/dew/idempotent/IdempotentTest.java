@@ -30,17 +30,30 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.IOException;
 import java.util.HashMap;
 
+/**
+ * Idempotent test.
+ *
+ * @author gudaoxuri
+ */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = IdempotentApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class IdempotentTest {
 
     private String urlPre = "http://localhost:8080/idempotent/";
 
+    /**
+     * Test manual confirm.
+     *
+     * @throws IOException          the io exception
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testManualConfirm() throws IOException, InterruptedException {
-        HashMap<String, String> header = new HashMap<String, String>() {{
-            put(DewIdempotentConfig.DEFAULT_OPT_ID_FLAG, "0001");
-        }};
+        HashMap<String, String> header = new HashMap<String, String>() {
+            {
+                put(DewIdempotentConfig.DEFAULT_OPT_ID_FLAG, "0001");
+            }
+        };
         Thread thread = new Thread(() -> {
             // 第一次请求，正常
             Resp<String> result = null;
@@ -69,11 +82,19 @@ public class IdempotentTest {
         Assert.assertTrue(result.ok());
     }
 
+    /**
+     * Test auto confirmed.
+     *
+     * @throws IOException          the io exception
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testAutoConfirmed() throws IOException, InterruptedException {
-        HashMap<String, String> header = new HashMap<String, String>() {{
-            put(DewIdempotentConfig.DEFAULT_OPT_ID_FLAG, "0001");
-        }};
+        HashMap<String, String> header = new HashMap<String, String>() {
+            {
+                put(DewIdempotentConfig.DEFAULT_OPT_ID_FLAG, "0001");
+            }
+        };
         // 第一次请求，正常
         Resp<String> result = Resp.generic($.http.get(urlPre + "auto-confirm?str=dew-test1", header), String.class);
         Assert.assertTrue(result.ok());
@@ -89,6 +110,12 @@ public class IdempotentTest {
         Assert.assertTrue(result.ok());
     }
 
+    /**
+     * Test without http.
+     *
+     * @throws IOException          the io exception
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testWithoutHttp() throws IOException, InterruptedException {
         // 初始化类型为transfer_a的幂等操作，需要手工确认，过期时间为1秒
@@ -108,6 +135,12 @@ public class IdempotentTest {
         Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "xxxxxxx"));
     }
 
+    /**
+     * Test normal.
+     *
+     * @throws IOException          the io exception
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testNormal() throws IOException, InterruptedException {
         Resp<String> result = Resp.generic($.http.get(urlPre + "normal?str=dew-test"), String.class);

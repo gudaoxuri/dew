@@ -17,8 +17,6 @@
 package ms.dew.core.cluster.test;
 
 import ms.dew.core.cluster.ClusterCache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,8 +27,6 @@ import java.util.HashMap;
  * @author gudaoxuri
  */
 public class ClusterCacheTest {
-
-    private static final Logger logger = LoggerFactory.getLogger(ClusterCacheTest.class);
 
     /**
      * Test.

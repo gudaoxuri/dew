@@ -41,12 +41,19 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+/**
+ * Notify test.
+ *
+ * @author gudaoxuri
+ */
 public class NotifyTest {
 
     private static CountDownLatch cdl = new CountDownLatch(6);
 
     private static void handleRequest(HttpExchange exchange) throws IOException {
-        String body = new BufferedReader(new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8)).lines().collect(Collectors.joining("\n"));
+        String body = new BufferedReader(new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8))
+                .lines()
+                .collect(Collectors.joining("\n"));
         JsonNode json = $.json.toJson(body);
         int httpStatusCode = 200;
         if (json.get("title").asText().equals("正常消息test")
@@ -93,6 +100,9 @@ public class NotifyTest {
         server.start();
     }
 
+    /**
+     * Test dingding.
+     */
     @Test
     public void testDD() {
         NotifyConfig ddConfig = new NotifyConfig();
@@ -126,33 +136,6 @@ public class NotifyTest {
                 + "sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n"
                 + "sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n"
                 + "java.lang.reflect.Method.invoke(Method.java:497)\n"
-                + "org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)\n"
-                + "org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:133)\n"
-                + "org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:97)\n"
-                + "org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:827)\n"
-                + "org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:738)\n"
-                + "org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:85)\n"
-                + "org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:967)\n"
-                + "org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:901)\n"
-                + "org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:970)\n"
-                + "org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:861)\n"
-                + "javax.servlet.http.HttpServlet.service(HttpServlet.java:635)\n"
-                + "org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:846)\n"
-                + "javax.servlet.http.HttpServlet.service(HttpServlet.java:742)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:231)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)\n"
-                + "org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:52)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)\n"
-                + "org.springframework.boot.web.filter.ApplicationContextHeaderFilter.doFilterInternal(ApplicationContextHeaderFilter.java:55)\n"
-                + "org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)\n"
-                + "org.springframework.boot.actuate.trace.WebRequestTraceFilter.doFilterInternal(WebRequestTraceFilter.java:111)\n"
-                + "org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)\n"
-                + "org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:99)\n"
                 + "org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)\n"
                 + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)\n"
                 + "org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)\n"
@@ -167,28 +150,6 @@ public class NotifyTest {
                 + "org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:197)\n"
                 + "org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)\n"
                 + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)\n"
-                + "org.springframework.boot.actuate.autoconfigure.MetricsFilter.doFilterInternal(MetricsFilter.java:106)\n"
-                + "org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)\n"
-                + "io.micrometer.spring.web.servlet.WebMvcMetricsFilter.doFilterInternal(WebMvcMetricsFilter.java:106)\n"
-                + "org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)\n"
-                + "ms.dew.DewStartup$DewStartupFilter.doFilter(DewStartup.java:42)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)\n"
-                + "org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:198)\n"
-                + "org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:96)\n"
-                + "org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:496)\n"
-                + "org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:140)\n"
-                + "org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:81)\n"
-                + "org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:87)\n"
-                + "org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342)\n"
-                + "org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:803)\n"
-                + "org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)\n"
-                + "org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:790)\n"
                 + "org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1468)\n"
                 + "org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)\n"
                 + "java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)\n"
@@ -198,6 +159,9 @@ public class NotifyTest {
         Assert.assertTrue(result.ok());
     }
 
+    /**
+     * Test mail.
+     */
     // @Test
     public void testMail() {
         NotifyConfig mailConfig = new NotifyConfig();
@@ -227,6 +191,12 @@ public class NotifyTest {
         Assert.assertTrue(result.ok());
     }
 
+    /**
+     * Test http.
+     *
+     * @throws IOException          the io exception
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testHttp() throws IOException, InterruptedException {
         startHttpServer(9000, "notify");
@@ -284,6 +254,7 @@ public class NotifyTest {
         Notify.sendAsync("http", "hi", "异步消息");
         try {
             int i = 1 / 0;
+            System.out.println(i);
         } catch (Exception e) {
             result = Notify.send("http", e, "错误消息");
             Assert.assertTrue(result.ok());

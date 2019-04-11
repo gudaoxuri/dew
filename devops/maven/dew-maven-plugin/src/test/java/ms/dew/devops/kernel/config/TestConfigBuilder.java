@@ -29,6 +29,9 @@ import org.junit.Test;
  */
 public class TestConfigBuilder extends BasicTest {
 
+    /**
+     * Test all.
+     */
     @Test
     public void testAll() {
         YamlHelper.init(new SystemStreamLog());

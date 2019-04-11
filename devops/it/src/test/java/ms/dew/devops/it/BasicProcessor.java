@@ -28,20 +28,52 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
+ * Basic processor.
+ *
  * @author gudaoxuri
  */
 public abstract class BasicProcessor {
 
+    /**
+     * The constant logger.
+     */
     protected static final Logger logger = LoggerFactory.getLogger(BasicProcessor.class);
 
+    /**
+     * The Kube config.
+     */
     protected String kubeConfig;
+    /**
+     * The Docker host.
+     */
     protected String dockerHost;
+    /**
+     * The Docker registry url.
+     */
     protected String dockerRegistryUrl;
+    /**
+     * The Docker registry user name.
+     */
     protected String dockerRegistryUserName;
+    /**
+     * The Docker registry password.
+     */
     protected String dockerRegistryPassword;
+    /**
+     * The It snapshot repository id.
+     */
     protected String itSnapshotRepositoryId;
+    /**
+     * The It snapshot repository url.
+     */
     protected String itSnapshotRepositoryUrl;
 
+    /**
+     * Load config.
+     *
+     * @throws IOException  the io exception
+     * @throws ApiException the api exception
+     */
     @Before
     public void loadConfig() throws IOException, ApiException {
         String configPath = Paths.get("").toFile().getAbsoluteFile().getParentFile().getAbsolutePath() + File.separator + "devops-test.properties";

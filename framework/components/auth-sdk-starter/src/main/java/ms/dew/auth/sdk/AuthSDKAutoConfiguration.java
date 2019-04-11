@@ -36,8 +36,11 @@ public class AuthSDKAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthSDKAutoConfiguration.class);
 
+    /**
+     * Init.
+     */
     @PostConstruct
-    private void init() {
+    public void init() {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
         logger.info("Enabled Dew Auth SDK");
         Dew.auth = new AuthSDKAdapter();

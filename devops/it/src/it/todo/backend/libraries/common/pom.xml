@@ -32,7 +32,6 @@
 
     <properties>
         <sonar.skip>true</sonar.skip>
-        <checkstyle.skip>true</checkstyle.skip>
     </properties>
 
     <dependencies>

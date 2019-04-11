@@ -32,7 +32,6 @@
 
     <properties>
         <sonar.skip>true</sonar.skip>
-        <checkstyle.skip>true</checkstyle.skip>
         <dew.devops.it.snapshotRepository.id>trc-snapshots</dew.devops.it.snapshotRepository.id>
         <dew.devops.it.snapshotRepository.url>http://121.41.17.205:18081/nexus/content/repositories/snapshots/</dew.devops.it.snapshotRepository.url>
     </properties>

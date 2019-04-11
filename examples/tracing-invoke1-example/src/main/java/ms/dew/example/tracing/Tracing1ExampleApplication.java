@@ -19,9 +19,19 @@ package ms.dew.example.tracing;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.SpringCloudApplication;
 
+/**
+ * Tracing 1 example application.
+ *
+ * @author gudaoxuri
+ */
 @SpringCloudApplication
 public class Tracing1ExampleApplication {
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         new SpringApplicationBuilder(Tracing1ExampleApplication.class).run(args);
     }

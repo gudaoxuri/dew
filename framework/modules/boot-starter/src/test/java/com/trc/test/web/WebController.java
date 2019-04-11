@@ -41,12 +41,23 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+/**
+ * Web controller.
+ *
+ * @author gudaoxuri
+ */
 @RestController
-@Api(value = "测试", description = "test")
+@Api(value = "测试")
 @RequestMapping(value = "/test/")
 @Validated
 public class WebController {
 
+    /**
+     * Success resp.
+     *
+     * @param q the q
+     * @return the resp
+     */
     @GetMapping(value = "success")
     @ApiOperation(value = "success")
     @ApiImplicitParams({
@@ -56,6 +67,12 @@ public class WebController {
         return Resp.success("successful");
     }
 
+    /**
+     * Bad request resp.
+     *
+     * @param q the q
+     * @return the resp
+     */
     @GetMapping(value = "badRequest")
     @ApiOperation(value = "badRequest")
     @ApiImplicitParams({
@@ -65,6 +82,13 @@ public class WebController {
         return Resp.badRequest("badrequest");
     }
 
+    /**
+     * Custom error resp.
+     *
+     * @param q the q
+     * @return the resp
+     * @throws Exception the exception
+     */
     @GetMapping(value = "customError")
     @ApiOperation(value = "customError")
     @ApiImplicitParams({
@@ -74,12 +98,26 @@ public class WebController {
         throw Dew.E.e("A000", new Exception("io error"));
     }
 
+    /**
+     * Throws e resp.
+     *
+     * @param q the q
+     * @return the resp
+     * @throws Exception the exception
+     */
     @GetMapping(value = "throws")
     public Resp<String> throwsE(@RequestParam String q) throws Exception {
         int i = 1 / 0;
-        return Resp.success(null);
+        return Resp.success(i + "");
     }
 
+    /**
+     * Custom http state resp.
+     *
+     * @param q the q
+     * @return the resp
+     * @throws IOException the io exception
+     */
     @GetMapping(value = "customHttpState")
     @ApiOperation(value = "customHttpState")
     @ApiImplicitParams({
@@ -89,43 +127,94 @@ public class WebController {
         throw Dew.E.e("A000", new IOException("io error"), StandardCode.UNAUTHORIZED);
     }
 
+    /**
+     * Valid create user dto.
+     *
+     * @param userDTO the user dto
+     * @return the user dto
+     */
     @PostMapping(value = "valid-create")
     public UserDTO validCreate(@Validated(CreateGroup.class) @RequestBody UserDTO userDTO) {
         return userDTO;
     }
 
+    /**
+     * Valid update user dto.
+     *
+     * @param userDTO the user dto
+     * @return the user dto
+     */
     @PostMapping(value = "valid-update")
     public UserDTO validUpdate(@Validated(UpdateGroup.class) @RequestBody UserDTO userDTO) {
         return userDTO;
     }
 
+    /**
+     * Valid in method string.
+     *
+     * @param age the age
+     * @return the string
+     */
     @GetMapping(value = "valid-method-spring/{age}")
     public String validInMethod(@Min(value = 2, message = "age必须大于2") @PathVariable("age") int age) {
         return String.valueOf(age);
     }
 
+    /**
+     * Valid in method string.
+     *
+     * @param phone the phone
+     * @return the string
+     */
     @GetMapping(value = "valid-method-own/{phone}")
     public String validInMethod(@Phone @PathVariable("phone") String phone) {
         return phone;
     }
 
+    /**
+     * Error mapping string.
+     *
+     * @return the string
+     */
     @GetMapping(value = "error-mapping")
     public String errorMapping() {
         throw new AuthException();
     }
 
+    /**
+     * Fallback test 1 resp.
+     *
+     * @return the resp
+     */
     @GetMapping(value = "fallback1")
     public Resp<String> fallbackTest1() {
         return Resp.serverError("ssss").fallback();
     }
 
+    /**
+     * Fallback test 2 resp.
+     *
+     * @return the resp
+     */
     @GetMapping(value = "fallback2")
     public Resp<String> fallbackTest2() {
         throw new EmptyResultDataAccessException(1);
     }
 
+    /**
+     * Time convert param resp.
+     *
+     * @param localDateTime the local date time
+     * @param localDate     the local date
+     * @param localTime     the local time
+     * @param instant       the instant
+     * @return the resp
+     */
     @GetMapping("time/param")
-    public Resp<String> timeConvertParam(@RequestParam("date-time") LocalDateTime localDateTime, @RequestParam("date") LocalDate localDate, @RequestParam("time") LocalTime localTime, @RequestParam("instant") Instant instant) {
+    public Resp<String> timeConvertParam(@RequestParam("date-time") LocalDateTime localDateTime,
+                                         @RequestParam("date") LocalDate localDate,
+                                         @RequestParam("time") LocalTime localTime,
+                                         @RequestParam("instant") Instant instant) {
         Assert.assertNotNull(localDate);
         Assert.assertNotNull(localDateTime);
         Assert.assertNotNull(localTime);
@@ -133,12 +222,21 @@ public class WebController {
         return Resp.success(null);
     }
 
+    /**
+     * Time convert body resp.
+     *
+     * @param timeDTO the time dto
+     * @return the resp
+     */
     @PostMapping("time/body")
     public Resp<String> timeConvertBody(@RequestBody TimeDTO timeDTO) {
         Assert.assertNotNull(timeDTO);
         return Resp.success(null);
     }
 
+    /**
+     * Time dto.
+     */
     public static class TimeDTO {
 
         private LocalTime localTime;
@@ -150,39 +248,82 @@ public class WebController {
 
         private Instant instant;
 
+        /**
+         * Gets local time.
+         *
+         * @return the local time
+         */
         public LocalTime getLocalTime() {
             return localTime;
         }
 
+        /**
+         * Sets local time.
+         *
+         * @param localTime the local time
+         */
         public void setLocalTime(LocalTime localTime) {
             this.localTime = localTime;
         }
 
+        /**
+         * Gets local date.
+         *
+         * @return the local date
+         */
         public LocalDate getLocalDate() {
             return localDate;
         }
 
+        /**
+         * Sets local date.
+         *
+         * @param localDate the local date
+         */
         public void setLocalDate(LocalDate localDate) {
             this.localDate = localDate;
         }
 
+        /**
+         * Gets local date time.
+         *
+         * @return the local date time
+         */
         public LocalDateTime getLocalDateTime() {
             return localDateTime;
         }
 
+        /**
+         * Sets local date time.
+         *
+         * @param localDateTime the local date time
+         */
         public void setLocalDateTime(LocalDateTime localDateTime) {
             this.localDateTime = localDateTime;
         }
 
+        /**
+         * Gets instant.
+         *
+         * @return the instant
+         */
         public Instant getInstant() {
             return instant;
         }
 
+        /**
+         * Sets instant.
+         *
+         * @param instant the instant
+         */
         public void setInstant(Instant instant) {
             this.instant = instant;
         }
     }
 
+    /**
+     * User dto.
+     */
     public static class UserDTO {
 
         @NotNull(groups = CreateGroup.class)
@@ -197,26 +338,56 @@ public class WebController {
         private String phone;
 
 
+        /**
+         * Gets id card.
+         *
+         * @return the id card
+         */
         public String getIdCard() {
             return idCard;
         }
 
+        /**
+         * Sets id card.
+         *
+         * @param idCard the id card
+         */
         public void setIdCard(String idCard) {
             this.idCard = idCard;
         }
 
+        /**
+         * Gets age.
+         *
+         * @return the age
+         */
         public Integer getAge() {
             return age;
         }
 
+        /**
+         * Sets age.
+         *
+         * @param age the age
+         */
         public void setAge(Integer age) {
             this.age = age;
         }
 
+        /**
+         * Gets phone.
+         *
+         * @return the phone
+         */
         public String getPhone() {
             return phone;
         }
 
+        /**
+         * Sets phone.
+         *
+         * @param phone the phone
+         */
         public void setPhone(String phone) {
             this.phone = phone;
         }

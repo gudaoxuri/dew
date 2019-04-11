@@ -16,32 +16,67 @@
 
 package ms.dew.devops.helper;
 
+/**
+ * Test yaml.
+ *
+ * @author gudaoxuri
+ */
 public class TestYaml {
-    private String a;
-    private String b;
-    private TestYamlSub c;
+    private String fa;
+    private String fb;
+    private TestYamlSub fc;
 
-    public String getA() {
-        return a;
+    /**
+     * Gets fa.
+     *
+     * @return the fa
+     */
+    public String getFa() {
+        return fa;
     }
 
-    public void setA(String a) {
-        this.a = a;
+    /**
+     * Sets fa.
+     *
+     * @param fa the fa
+     */
+    public void setFa(String fa) {
+        this.fa = fa;
     }
 
-    public String getB() {
-        return b;
+    /**
+     * Gets fb.
+     *
+     * @return the fb
+     */
+    public String getFb() {
+        return fb;
     }
 
-    public void setB(String b) {
-        this.b = b;
+    /**
+     * Sets fb.
+     *
+     * @param fb the fb
+     */
+    public void setFb(String fb) {
+        this.fb = fb;
     }
 
-    public TestYamlSub getC() {
-        return c;
+    /**
+     * Gets fc.
+     *
+     * @return the fc
+     */
+    public TestYamlSub getFc() {
+        return fc;
     }
 
-    public void setC(TestYamlSub c) {
-        this.c = c;
+    /**
+     * Sets fc.
+     *
+     * @param fc the fc
+     */
+    public void setFc(TestYamlSub fc) {
+        this.fc = fc;
     }
 }

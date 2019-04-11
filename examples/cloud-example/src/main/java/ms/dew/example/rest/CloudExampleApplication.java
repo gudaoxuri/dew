@@ -19,9 +19,19 @@ package ms.dew.example.rest;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.client.SpringCloudApplication;
 
+/**
+ * Cloud example application.
+ *
+ * @author gudaoxuri
+ */
 @SpringCloudApplication
 public class CloudExampleApplication {
 
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
     public static void main(String[] args) {
         new SpringApplicationBuilder(CloudExampleApplication.class).run(args);
     }

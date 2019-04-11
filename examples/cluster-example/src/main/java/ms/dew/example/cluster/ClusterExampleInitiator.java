@@ -27,11 +27,21 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.Serializable;
 
+/**
+ * Cluster example initiator.
+ *
+ * @author gudaoxuri
+ */
 @Component
 public class ClusterExampleInitiator {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterExampleInitiator.class);
 
+    /**
+     * Init.
+     *
+     * @throws Exception the exception
+     */
     @PostConstruct
     public void init() throws Exception {
         // cache
@@ -50,9 +60,9 @@ public class ClusterExampleInitiator {
         ClusterMap<TestMapObj> mapObj = Dew.cluster.map.instance("test_obj_map", TestMapObj.class);
         mapObj.clear();
         TestMapObj obj = new TestMapObj();
-        obj.a = "测试";
+        obj.someField = "测试";
         mapObj.put("test", obj);
-        assert "测试".equals(mapObj.get("test").a);
+        assert "测试".equals(mapObj.get("test").someField);
         // ...
 
         // lock
@@ -84,15 +94,28 @@ public class ClusterExampleInitiator {
         Dew.cluster.mq.request("test_rep_resp", "msg2");
     }
 
+    /**
+     * Test map obj.
+     */
     static class TestMapObj implements Serializable {
-        private String a;
+        private String someField;
 
-        public String getA() {
-            return a;
+        /**
+         * Gets someField.
+         *
+         * @return the someField
+         */
+        public String getSomeField() {
+            return someField;
         }
 
-        public void setA(String a) {
-            this.a = a;
+        /**
+         * Sets someField.
+         *
+         * @param someField the someField
+         */
+        public void setSomeField(String someField) {
+            this.someField = someField;
         }
     }
 

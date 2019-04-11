@@ -33,6 +33,11 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Web test.
+ *
+ * @author gudaoxuri
+ */
 @Component
 public class WebTest {
 
@@ -41,6 +46,11 @@ public class WebTest {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
+    /**
+     * Test all.
+     *
+     * @throws Exception the exception
+     */
     public void testAll() throws Exception {
         testResponseFormat();
         testValidation();
@@ -75,7 +85,8 @@ public class WebTest {
         Assert.assertEquals("400", createResult.getBody().getCode());
         Assert.assertTrue(createResult.getBody().getMessage().contains("Detail"));
         userDTO.setPhone("15971997041");
-        ResponseEntity<WebController.UserDTO> createSuccessResult = testRestTemplate.postForEntity("/test/valid-create", userDTO, WebController.UserDTO.class);
+        ResponseEntity<WebController.UserDTO> createSuccessResult = testRestTemplate.postForEntity(
+                "/test/valid-create", userDTO, WebController.UserDTO.class);
         Assert.assertEquals(200, createSuccessResult.getStatusCodeValue());
         Assert.assertEquals("15971997041", createSuccessResult.getBody().getPhone());
 
@@ -87,7 +98,8 @@ public class WebTest {
         Assert.assertEquals("400", updateResult.getBody().getCode());
         Assert.assertTrue(updateResult.getBody().getMessage().contains("Detail"));
         map.put("idCard", "110101201709013174");
-        ResponseEntity<WebController.UserDTO> updateSuccessResult = testRestTemplate.postForEntity("/test/valid-update", map, WebController.UserDTO.class);
+        ResponseEntity<WebController.UserDTO> updateSuccessResult = testRestTemplate.postForEntity(
+                "/test/valid-update", map, WebController.UserDTO.class);
         Assert.assertEquals(200, updateSuccessResult.getStatusCodeValue());
         Assert.assertEquals("110101201709013174", updateSuccessResult.getBody().getIdCard());
 
@@ -110,7 +122,9 @@ public class WebTest {
     }
 
     private void testTimeConvert() throws IOException {
-        Resp timeResult = testRestTemplate.getForObject("/test/time/param?date-time=2013-07-02 17:39:00&date=2013-07-02&time=17:39:12&instant=1509430693548", Resp.class);
+        Resp timeResult = testRestTemplate.getForObject(
+                "/test/time/param?date-time=2013-07-02 17:39:00&date=2013-07-02&time=17:39:12&instant=1509430693548",
+                Resp.class);
         Assert.assertTrue(timeResult.ok());
         WebController.TimeDTO timeDTO = new WebController.TimeDTO();
         timeDTO.setLocalDate(LocalDate.now());

@@ -27,6 +27,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+/**
+ * Cluster test.
+ *
+ * @author gudaoxuri
+ */
 @RunWith(SpringRunner.class)
 @SpringBootApplication
 @SpringBootTest
@@ -36,11 +41,19 @@ public class ClusterTest {
     @Autowired
     private RabbitClusterMQ rabbitClusterMQ;
 
+    /**
+     * Init.
+     */
     @BeforeClass
     public static void init() {
 
     }
 
+    /**
+     * Test mq.
+     *
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testMQ() throws InterruptedException {
         new ClusterMQTest().test(rabbitClusterMQ);

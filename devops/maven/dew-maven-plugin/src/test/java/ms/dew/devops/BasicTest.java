@@ -25,20 +25,45 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 /**
+ * Basic test.
+ *
  * @author gudaoxuri
  */
 public abstract class BasicTest {
 
+    /**
+     * The constant defaultKubeConfig.
+     */
     protected static String defaultKubeConfig;
+    /**
+     * The constant defaultDockerHost.
+     */
     protected static String defaultDockerHost;
+    /**
+     * The constant defaultDockerRegistryUrl.
+     */
     protected static String defaultDockerRegistryUrl;
+    /**
+     * The constant defaultDockerRegistryUserName.
+     */
     protected static String defaultDockerRegistryUserName;
+    /**
+     * The constant defaultDockerRegistryPassword.
+     */
     protected static String defaultDockerRegistryPassword;
 
+    /**
+     * Init test.
+     *
+     * @throws IOException the io exception
+     */
     @BeforeClass
     public static void initTest() throws IOException {
         Properties properties = new Properties();
-        properties.load(new FileInputStream(Paths.get("").toFile().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + File.separator + "devops-test.properties"));
+        properties.load(
+                new FileInputStream(
+                        Paths.get("").toFile().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + File.separator
+                                + "devops-test.properties"));
         defaultKubeConfig = properties.getProperty("dew.devops.kube.config");
         defaultDockerHost = properties.getProperty("dew.devops.docker.host");
         defaultDockerRegistryUrl = properties.getProperty("dew.devops.docker.registry.url");

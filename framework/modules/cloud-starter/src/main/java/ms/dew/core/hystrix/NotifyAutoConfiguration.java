@@ -46,8 +46,11 @@ public class NotifyAutoConfiguration {
     @Autowired
     private DewCloudConfig dewCloudConfig;
 
+    /**
+     * Init.
+     */
     @PostConstruct
-    private void init() {
+    public void init() {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
         if (dewCloudConfig.getError().isEnabled()) {
             logger.info("Enabled Failure Event Notifier");

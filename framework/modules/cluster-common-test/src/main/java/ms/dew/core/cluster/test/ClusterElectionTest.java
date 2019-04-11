@@ -17,8 +17,6 @@
 package ms.dew.core.cluster.test;
 
 import ms.dew.core.cluster.ClusterElection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Cluster election test.
@@ -26,8 +24,6 @@ import org.slf4j.LoggerFactory;
  * @author gudaoxuri
  */
 public class ClusterElectionTest {
-
-    private static final Logger logger = LoggerFactory.getLogger(ClusterElectionTest.class);
 
     /**
      * Test.

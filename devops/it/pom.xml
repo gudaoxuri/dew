@@ -39,7 +39,6 @@
         <maven.deploy.skip>true</maven.deploy.skip>
         <sonar.skip>true</sonar.skip>
         <dew.it.skip>false</dew.it.skip>
-        <checkstyle.skip>true</checkstyle.skip>
     </properties>
 
     <dependencies>
@@ -56,12 +55,12 @@
         </dependency>
     </dependencies>
 
-    <!--<modules>
+    <modules>
         <module>src/it/helloworld-backend</module>
         <module>src/it/helloworld-frontend</module>
         <module>src/it/helloworld-library</module>
         <module>src/it/todo</module>
-    </modules>-->
+    </modules>
 
     <build>
         <plugins>

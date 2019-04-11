@@ -25,13 +25,18 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 
 /**
- * 演示通过MQ等非HTTP调用的幂等处理
+ * 演示通过MQ等非HTTP调用的幂等处理.
+ *
+ * @author gudaoxuri
  */
 @Service
 public class IdempotentService {
 
     private static final Logger logger = LoggerFactory.getLogger(IdempotentService.class);
 
+    /**
+     * Init.
+     */
     @PostConstruct
     public void init() {
         // 初始化用到的操作类型
@@ -41,6 +46,9 @@ public class IdempotentService {
         send();
     }
 
+    /**
+     * Send.
+     */
     public void send() {
         // 第一次调用
         int result = transferAReceive("xxxx");
@@ -53,6 +61,12 @@ public class IdempotentService {
         logger.info("request 3 : {}", result);
     }
 
+    /**
+     * Transfer a receive int.
+     *
+     * @param id the id
+     * @return the int
+     */
     public int transferAReceive(String id) {
         // 收到请求后先调用process
         switch (DewIdempotent.process("transfer_a", id)) {

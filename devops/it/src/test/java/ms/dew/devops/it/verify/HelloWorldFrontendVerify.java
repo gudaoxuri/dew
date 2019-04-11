@@ -23,6 +23,8 @@ import org.junit.Assert;
 import java.io.File;
 
 /**
+ * Hello world frontend verify.
+ *
  * @author gudaoxuri
  */
 public class HelloWorldFrontendVerify extends BasicProcessor implements Verify {

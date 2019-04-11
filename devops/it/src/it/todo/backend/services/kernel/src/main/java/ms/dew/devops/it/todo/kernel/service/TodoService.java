@@ -22,8 +22,6 @@ import ms.dew.Dew;
 import ms.dew.devops.it.todo.common.Constants;
 import ms.dew.devops.it.todo.kernel.domain.Todo;
 import ms.dew.devops.it.todo.kernel.repository.TodoRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -42,8 +40,6 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class TodoService {
 
-    private static final Logger logger = LoggerFactory.getLogger(TodoService.class);
-
     @Autowired
     private RestTemplate restTemplate;
 
@@ -58,8 +54,12 @@ public class TodoService {
      * @return the page
      */
     public Page<Todo> list(int pageNumber, int pageSize) {
-        org.springframework.data.domain.Page<Todo> springPage = todoRepository.findAll(PageRequest.of(pageNumber - 1, pageSize, Sort.by("sort").ascending()));
-        return Page.build(springPage.getNumber() + 1, springPage.getSize(), springPage.getTotalElements(), springPage.getContent());
+        org.springframework.data.domain.Page<Todo> springPage =
+                todoRepository.findAll(PageRequest.of(pageNumber - 1, pageSize, Sort.by("sort").ascending()));
+        return Page.build(springPage.getNumber() + 1,
+                springPage.getSize(),
+                springPage.getTotalElements(),
+                springPage.getContent());
     }
 
     /**
@@ -78,7 +78,7 @@ public class TodoService {
             headers.setContentType(MediaType.TEXT_PLAIN);
             HttpEntity<String> entity = new HttpEntity<>(content, headers);
             content = restTemplate
-                    .exchange("http://"+Constants.REST_COMPUTE_SERVICE + "/compute", HttpMethod.PUT, entity, String.class)
+                    .exchange("http://" + Constants.REST_COMPUTE_SERVICE + "/compute", HttpMethod.PUT, entity, String.class)
                     .getBody();
         }
         Todo todo = new Todo();

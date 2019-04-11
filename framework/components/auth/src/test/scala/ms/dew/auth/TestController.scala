@@ -23,6 +23,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation._
 
+/**
+  * Test controller.
+  *
+  * @author gudaoxuri
+  * @param basicService basic service
+  */
 @RestController
 @Api(value = "测试")
 @RequestMapping(value = Array("/test"))

@@ -21,10 +21,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Tracing 2 example controller.
+ *
+ * @author gudaoxuri
+ */
 @RestController
 @RequestMapping("/")
 public class Tracing2ExampleController {
 
+    /**
+     * Ping.
+     *
+     * @param code the code
+     * @return the result
+     */
     @GetMapping("ping")
     public String ping(@RequestParam("code") String code) {
         return code + "_reply";

@@ -47,7 +47,7 @@ public class RedisAutoConfiguration {
     private int electionPeriodSec;
 
     @PostConstruct
-    private void init() {
+    public void init() {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 

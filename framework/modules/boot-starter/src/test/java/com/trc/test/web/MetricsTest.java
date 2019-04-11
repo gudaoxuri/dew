@@ -22,11 +22,18 @@ import org.junit.Test;
 import java.io.IOException;
 
 /**
- * desription:
- * Created by ding on 2018/1/15.
+ * Metrics test.
+ *
+ * @author gudaoxuri
  */
 public class MetricsTest {
 
+    /**
+     * Test metric.
+     *
+     * @throws IOException          the io exception
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void testMetric() throws IOException, InterruptedException {
         for (int i = 0; i < 100; i++) {

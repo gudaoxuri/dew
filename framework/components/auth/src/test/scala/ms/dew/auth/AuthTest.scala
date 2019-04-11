@@ -33,6 +33,11 @@ import org.springframework.transaction.annotation.Transactional
 
 import scala.collection.JavaConverters._
 
+/**
+  * Auth test.
+  *
+  * @author gudaoxuri
+  */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[DewTestAutoConfiguration], classOf[AuthApplication]), webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
