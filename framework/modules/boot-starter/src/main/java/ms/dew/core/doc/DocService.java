@@ -274,7 +274,7 @@ public class DocService {
                                                         String type = parameter.path("schema").path("type").asText("");
                                                         String ref = parameter.path("schema").path("$ref").asText("");
                                                         if (!type.isEmpty()) {
-                                                            if (type.equals("array")) {
+                                                            if ("array".equals(type)) {
                                                                 isArray = true;
                                                                 type = parameter.path("schema").path("items").path("type").asText("");
                                                                 if (!type.isEmpty()) {

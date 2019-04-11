@@ -71,14 +71,12 @@ public class ConfigBuilder {
 
     private static LinkedHashMap mergeItems(LinkedHashMap source, LinkedHashMap target) {
         target.forEach((k, v) -> {
-            if (source.containsKey(k)) {
-                // 如果源map和目标map都存在
-                if (v instanceof LinkedHashMap) {
-                    // 并且存在子项目，递归合并
-                    target.put(k, mergeItems((LinkedHashMap) source.get(k), (LinkedHashMap) v));
-                }
-                // 否则不合并，即使用target的原始值
+            if (source.containsKey(k) && v instanceof LinkedHashMap) {
+                // 如果源map和目标map都存在，并且存在子项目，递归合并
+                // 并且存在子项目，递归合并
+                target.put(k, mergeItems((LinkedHashMap) source.get(k), (LinkedHashMap) v));
             }
+            // 否则不合并，即使用target的原始值
         });
         source.forEach((k, v) -> {
             if (!target.containsKey(k)) {
@@ -302,22 +300,21 @@ public class ConfigBuilder {
          */
         static void fillReuseVersionInfo(FinalProjectConfig finalProjectConfig, DewConfig dewConfig) {
             finalProjectConfig.setReuseLastVersionFromProfile(finalProjectConfig.getReuseLastVersionFromProfile().trim());
-            if (finalProjectConfig.getReuseLastVersionFromProfile().isEmpty()) {
-                if (finalProjectConfig.getProfile().equals("production")
-                        || finalProjectConfig.getProfile().equals("prod")) {
-                    // 如果当前是生产环境则自动填充
-                    // 猜测填充的来源环境
-                    String guessFromProfile = null;
-                    if (dewConfig.getProfiles().containsKey("pre-prod")) {
-                        guessFromProfile = "pre-prod";
-                    } else if (dewConfig.getProfiles().containsKey("pre-production")) {
-                        guessFromProfile = "pre-production";
-                    } else if (dewConfig.getProfiles().containsKey("uat")) {
-                        guessFromProfile = "uat";
-                    }
-                    if (guessFromProfile != null) {
-                        finalProjectConfig.setReuseLastVersionFromProfile(guessFromProfile);
-                    }
+            if (finalProjectConfig.getReuseLastVersionFromProfile().isEmpty()
+                    && (finalProjectConfig.getProfile().equals("production")
+                    || finalProjectConfig.getProfile().equals("prod"))) {
+                // 如果当前是生产环境则自动填充
+                // 猜测填充的来源环境
+                String guessFromProfile = null;
+                if (dewConfig.getProfiles().containsKey("pre-prod")) {
+                    guessFromProfile = "pre-prod";
+                } else if (dewConfig.getProfiles().containsKey("pre-production")) {
+                    guessFromProfile = "pre-production";
+                } else if (dewConfig.getProfiles().containsKey("uat")) {
+                    guessFromProfile = "uat";
+                }
+                if (guessFromProfile != null) {
+                    finalProjectConfig.setReuseLastVersionFromProfile(guessFromProfile);
                 }
             }
             if (!finalProjectConfig.getReuseLastVersionFromProfile().isEmpty()) {

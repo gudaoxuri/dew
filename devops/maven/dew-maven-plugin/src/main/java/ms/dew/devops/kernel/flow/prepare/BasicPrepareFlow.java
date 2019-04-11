@@ -49,11 +49,10 @@ public abstract class BasicPrepareFlow extends BasicFlow {
             return true;
         }
         // 先判断是否存在
-        if (!DockerHelper.inst(config.getId()).registry.exist(config.getCurrImageName())) {
-            if (!prePrepareBuild(config, flowBasePath)) {
-                Dew.log.debug("Finished,because [prePrepareBuild] is false");
-                return false;
-            }
+        if (!DockerHelper.inst(config.getId()).registry.exist(config.getCurrImageName())
+                && !prePrepareBuild(config, flowBasePath)) {
+            Dew.log.debug("Finished,because [prePrepareBuild] is false");
+            return false;
         }
         return true;
     }

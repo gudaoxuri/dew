@@ -68,7 +68,7 @@ public class DewStartup {
 
         @Override
         public void init(FilterConfig filterConfig) throws ServletException {
-
+            // Do nothing.
         }
 
         @Override
@@ -79,7 +79,7 @@ public class DewStartup {
 
         @Override
         public void destroy() {
-
+            // Do nothing.
         }
     }
 }

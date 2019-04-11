@@ -45,7 +45,7 @@ public class DDChannel extends AbsChannel {
 
     @Override
     protected void innerDestroy(NotifyConfig notifyConfig) {
-
+        // Do nothing.
     }
 
     @Override

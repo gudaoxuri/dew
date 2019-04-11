@@ -1,5 +1,4 @@
 FROM docker:18
-MAINTAINER gudaoxuri <i@sunisle.org>
 
 ARG HOME=/root
 

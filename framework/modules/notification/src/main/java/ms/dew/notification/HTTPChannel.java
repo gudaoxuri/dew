@@ -45,7 +45,7 @@ public class HTTPChannel extends AbsChannel {
 
     @Override
     protected void innerDestroy(NotifyConfig notifyConfig) {
-
+        // Do nothing.
     }
 
     @Override

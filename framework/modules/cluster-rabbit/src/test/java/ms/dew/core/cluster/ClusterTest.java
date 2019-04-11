@@ -18,7 +18,6 @@ package ms.dew.core.cluster;
 
 import ms.dew.core.cluster.spi.rabbit.RabbitClusterMQ;
 import ms.dew.core.cluster.test.ClusterMQTest;
-import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,14 +39,6 @@ public class ClusterTest {
 
     @Autowired
     private RabbitClusterMQ rabbitClusterMQ;
-
-    /**
-     * Init.
-     */
-    @BeforeClass
-    public static void init() {
-
-    }
 
     /**
      * Test mq.

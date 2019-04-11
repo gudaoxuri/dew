@@ -67,7 +67,7 @@ public class MAILChannel extends AbsChannel {
 
     @Override
     protected void innerDestroy(NotifyConfig notifyConfig) {
-
+        // Do nothing.
     }
 
     @Override

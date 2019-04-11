@@ -23,10 +23,4 @@ package com.trc.test.web;
  */
 public class AuthException extends RuntimeException {
 
-    /**
-     * Instantiates a new Auth exception.
-     */
-    public AuthException() {
-    }
-
 }

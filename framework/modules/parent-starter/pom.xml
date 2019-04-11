@@ -350,6 +350,7 @@
                                     <encoding>UTF-8</encoding>
                                     <consoleOutput>true</consoleOutput>
                                     <failsOnError>true</failsOnError>
+                                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
                                     <configLocation>${checkstyle.config.path}</configLocation>
                                 </configuration>
                                 <goals>
