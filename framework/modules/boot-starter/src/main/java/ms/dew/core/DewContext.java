@@ -105,7 +105,7 @@ public class DewContext {
     /**
      * Exist.
      *
-     * @return the boolean
+     * @return <b>true</b> if existed
      */
     public static boolean exist() {
         return CONTEXT.get() != null;

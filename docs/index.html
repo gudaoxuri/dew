@@ -604,7 +604,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="https://codebeat.co/projects/github-com-gudaoxuri-dew-master"><img src="https://codebeat.co/badges/93bffc1c-b95b-4e11-8334-fd6adc2a45e5" alt="codebeat badge"></a>
+<a class="image" href="https://www.codacy.com/app/gudaoxuri/dew?utm_source=github.com&utm_medium=referral&utm_content=gudaoxuri/dew&utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/b27405dea94b4b4085324ae6107945ba" alt="Codacy code quality"></a>
 </div>
 </div>
 <div class="imageblock">
@@ -1287,9 +1287,9 @@ Dew的缓存默认只实现了String、List、Set、Hash等结构常用的，时
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">ClusterMap&lt;TestMapObj&gt; mapObj = Dew.cluster.map.instance("test_obj_map", TestMapObj.class);
 mapObj.clear();
 TestMapObj obj = new TestMapObj();
-obj.someField = "测试";
+obj.a = "测试";
 mapObj.put("test", obj);
-assert "测试".equals(mapObj.get("test").someField);</code></pre>
+assert "测试".equals(mapObj.get("test").a);</code></pre>
 </div>
 </div>
 </div>
@@ -2361,7 +2361,7 @@ helm list</code></pre>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">systemctl stop firewalld.service
 systemctl disable firewalld.service
-swapoff -someField
+swapoff -a
 sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config</code></pre>
 </div>
@@ -4844,8 +4844,8 @@ grub2-set-default 0
 reboot
 
 sudo -i
-echo 'net.core.default_qdisc=fq' | tee -someField /etc/sysctl.conf
-echo 'net.ipv4.tcp_congestion_control=bbr' | tee -someField /etc/sysctl.conf
+echo 'net.core.default_qdisc=fq' | tee -a /etc/sysctl.conf
+echo 'net.ipv4.tcp_congestion_control=bbr' | tee -a /etc/sysctl.conf
 sysctl -p
 sysctl net.ipv4.tcp_available_congestion_control
 sysctl -n net.ipv4.tcp_congestion_control

@@ -246,9 +246,9 @@ TIP: 接口见：ClusterMap
 ClusterMap<TestMapObj> mapObj = Dew.cluster.map.instance("test_obj_map", TestMapObj.class);
 mapObj.clear();
 TestMapObj obj = new TestMapObj();
-obj.someField = "测试";
+obj.a = "测试";
 mapObj.put("test", obj);
-assert "测试".equals(mapObj.get("test").someField);
+assert "测试".equals(mapObj.get("test").a);
 ----
 
 ====== 分布式锁

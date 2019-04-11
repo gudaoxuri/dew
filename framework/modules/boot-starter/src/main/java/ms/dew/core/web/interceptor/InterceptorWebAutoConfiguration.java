@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.PostConstruct;
 
@@ -35,7 +35,7 @@ import javax.annotation.PostConstruct;
 @Configuration
 @ConditionalOnWebApplication
 @Order(20000)
-public class InterceptorWebAutoConfiguration extends WebMvcConfigurerAdapter {
+public class InterceptorWebAutoConfiguration implements WebMvcConfigurer {
 
     private static final Logger logger = LoggerFactory.getLogger(InterceptorWebAutoConfiguration.class);
 
@@ -51,7 +51,6 @@ public class InterceptorWebAutoConfiguration extends WebMvcConfigurerAdapter {
     public void addInterceptors(InterceptorRegistry registry) {
         BasicHandlerInterceptor basicHandlerInterceptor = new BasicHandlerInterceptor();
         registry.addInterceptor(basicHandlerInterceptor).excludePathPatterns("/error/**");
-        super.addInterceptors(registry);
     }
 
     @Override

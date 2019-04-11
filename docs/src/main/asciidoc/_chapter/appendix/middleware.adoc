@@ -1,6 +1,65 @@
 [[middleware]]
 === 常用中间件安装配置
 
+==== PostgreSql
+
+[source,bash]
+----
+wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm
+
+rpm -Uvh pgdg-redhat96-9.6-3.noarch.rpm
+yum install -y postgresql96-server
+
+/usr/pgsql-9.6/bin/postgresql96-setup initdb
+
+vi /var/lib/pgsql/9.6/data/postgresql.conf
+-
+listen_addresses='*'
+-
+
+vi /var/lib/pgsql/9.6/data/pg_hba.conf
+-
+host  all  all 0.0.0.0/0 md5
+-
+
+systemctl enable postgresql-9.6.service
+systemctl start postgresql-9.6.service
+
+su - postgres
+psql -U postgres
+-
+ALTER USER postgres WITH PASSWORD 'Dew!123456';
+-
+----
+
+[source,bash]
+.PostgreSql HA配置
+----
+# @see https://www.postgresql.org/docs/9.6/high-availability.html
+----
+
+==== Redis
+
+[source,bash]
+----
+yum install -y epel-release
+yum -y install redis
+vi /etc/redis.conf
+-
+# 注释
+# bind 127.0.0.1
+# 开启密码
+requirepass Dew!123456
+-
+systemctl start redis
+----
+
+[source,bash]
+.Redis HA配置
+----
+# @see https://redislabs.com/redis-features/high-availability
+----
+
 ==== MySQL
 
 [source,bash]
@@ -33,6 +92,12 @@ ALTER USER 'root'@'localhost' IDENTIFIED BY 'Dew!123456';
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'Dew!123456' WITH GRANT OPTION;
 exit;
 -
+----
+
+[source,bash]
+.MySQL HA配置
+----
+# @see https://dev.mysql.com/doc/mysql-ha-scalability/en/
 ----
 
 ==== Mongo
@@ -77,35 +142,112 @@ mongod --auth --port 27017 \
     --fork
 ----
 
-==== jenkins
+[source,bash]
+.Mongo HA配置
+----
+# @see https://docs.mongodb.com/manual/core/replica-set-high-availability/
+----
+
+==== Gitlab
+
+TIP: https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package
 
 [source,bash]
 ----
-# 创建PV示例（如果没有的话）
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pvXXX
-  namespace: devops
-spec:
-  capacity:
-    storage: 100Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
-  nfs:
-    path: /data/nfs/dXXX
-    server: nfs.dew.ms
-EOF
+curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+yum install -y gitlab-ce
 
-# 如已创建PVC使用 --set Persistence.ExistingClaim=PVC_NAME
-helm install stable/jenkins --name dew-jenkins --namespace devops \
-    --set Master.AdminUser=dew \
-    --set Master.AdminPassword=Dew\!12345 \
-    --set Master.JenkinsAdminEmail=i@sunisle.org \
-    --set Master.HostName=jenkins.dew.ms
+# 按需修改，可修改说明见: https://docs.gitlab.com/omnibus/settings/
+vi /etc/gitlab/gitlab.rb
+-
+external_url 'http://gitlab.dew.ms'
+...
+-
+gitlab-ctl reconfigure
+
+# 浏览器访问并修改root密码
 ----
+
+[source,bash]
+.Gitlab HA配置
+----
+# @see https://about.gitlab.com/solutions/high-availability/
+----
+
+==== Harbor
+
+TIP: https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md
+
+==== Dnsmasq
+
+TIP: dnsmasq为轻量级的DNS解析工具，也可用类似的工具替代。
+
+[source,bash]
+----
+yum install -y dnsmasq
+systemctl enable dnsmasq
+systemctl start dnsmasq
+
+# 编辑本机的 /etc/hosts 添加映射
+-
+x.x.x.x gitlab.dew.ms
+x.x.x.x harbor.dew.ms
+x.x.x.x maven.dew.ms
+x.x.x.x minio.dew.ms
+...
+-
+
+# 编辑所有容器服务节点，加上dnsmasq节点的IP
+vi /etc/resolv.conf
+-
+nameserver x.x.x.x
+-
+
+# TIP: 以上设置在节点重启后可能被重置，更好的做法见：
+# @see https://unix.stackexchange.com/questions/163831/nameservers-erased-after-systemctl-restart-network-service
+----
+
+==== Minio
+
+[source,bash]
+----
+mkdir -p /opt/minio && cd /opt/minio
+wget https://dl.minio.io/server/minio/release/linux-amd64/minio
+chmod +x minio
+./minio server /mnt/data
+
+# 输出内容示例如下：
+# AccessKey: F1HR1NUAPVQVX3UPV73P
+# SecretKey: 0+vzU8IK+UjJTepBEiAt9x7QO5k+vYRW2KpISWVs
+#
+# Browser Access:
+#    http://10.200.10.5:9000  http://172.17.0.1:9000 ...
+
+# 再执行
+nohup ./minio server /mnt/data &
+
+# 添加域名到客户机hosts并访问 http://minio.dew.ms:9000
+# 修改访问AccessKey和SecretKey， e.g. dew / Dew123456
+# 创建名为 app-cache 的bucket用于缓存gitlab ci runner(或其它CICD服务）的构建缓存
+----
+
+[source,bash]
+.MinIO HA配置
+----
+# @see https://docs.min.io/docs/distributed-minio-quickstart-guide.html
+----
+
+[source,bash]
+.MinIO 多用户配置
+----
+# @see https://docs.min.io/docs/minio-multi-user-quickstart-guide.html
+----
+
+
+
+
+
+
 
 
 
