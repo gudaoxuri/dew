@@ -1,4 +1,4 @@
-= Dew（轻量微服务体系）
+= Dew（轻量微服务体系）[2.x Building...]
 v2.0.0-SNAPSHOT
 :doctype: book
 :encoding: utf-8
@@ -21,9 +21,19 @@ https://gudaoxuri.gitbook.io/microservices-architecture/
 
 include::_chapter/framework/user-manual.adoc[]
 
+include::_chapter/framework/configuration.adoc[]
+
+include::_chapter/framework/best-practices.adoc[]
+
 == 部署运维 DevOps Chapter
 
 include::_chapter/devops/install.adoc[]
+
+include::_chapter/devops/user-manual.adoc[]
+
+include::_chapter/devops/configuration.adoc[]
+
+include::_chapter/devops/best-practices.adoc[]
 
 === DevOps示例
 

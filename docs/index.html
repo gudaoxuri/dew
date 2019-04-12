@@ -1,0 +1,5865 @@
+<!--
+  ~ Copyright 2019. the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.6.1">
+<meta name="author" content="v2.0.0-SNAPSHOT">
+<title>Dew（轻量微服务体系）[2.x Building&#8230;&#8203;]</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+<style>
+/* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
+/* Remove comment around @import statement below when using as a custom stylesheet */
+/*@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700";*/
+article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block}
+audio,canvas,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+[hidden],template{display:none}
+script{display:none!important}
+html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}
+a{background:transparent}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+abbr[title]{border-bottom:1px dotted}
+b,strong{font-weight:bold}
+dfn{font-style:italic}
+hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}
+input[type="search"]{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box}
+input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance:none}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,*:before,*:after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto;tab-size:4;-moz-osx-font-smoothing:grayscale;-webkit-font-smoothing:antialiased}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+img,object,svg{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+.center{margin-left:auto;margin-right:auto}
+.spread{width:100%}
+p.lead,.paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{font-size:1.21875em;line-height:1.6}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0;direction:ltr}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:none}
+p{font-family:inherit;font-weight:400;font-size:1em;line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #ddddd8;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em;height:0}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{font-size:1em;line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0;font-size:1em}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+abbr,acronym{text-transform:uppercase;font-size:90%;color:rgba(0,0,0,.8);border-bottom:1px dotted #ddd;cursor:help}
+abbr{text-transform:none}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote cite{display:block;font-size:.9375em;color:rgba(0,0,0,.6)}
+blockquote cite:before{content:"\2014 \0020"}
+blockquote cite a,blockquote cite a:visited{color:rgba(0,0,0,.6)}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media only screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}
+table{background:#fff;margin-bottom:1.25em;border:solid 1px #dedede}
+table thead,table tfoot{background:#f7f8f7;font-weight:bold}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt,table tr:nth-of-type(even){background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{display:table-cell;line-height:1.6}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.clearfix:before,.clearfix:after,.float-group:before,.float-group:after{content:" ";display:table}
+.clearfix:after,.float-group:after{clear:both}
+*:not(pre)>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background-color:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed;word-wrap:break-word}
+*:not(pre)>code.nobreak{word-wrap:normal}
+*:not(pre)>code.nowrap{white-space:nowrap}
+pre,pre>code{line-height:1.45;color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;text-rendering:optimizeSpeed}
+em em{font-style:normal}
+strong strong{font-weight:400}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;display:inline-block;color:rgba(0,0,0,.8);font-size:.65em;line-height:1.45;background-color:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:0 .15em;padding:.2em .5em;vertical-align:middle;position:relative;top:-.1em;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menuref{color:#000}
+.menuseq b:not(.caret),.menuref{font-weight:inherit}
+.menuseq{word-spacing:-.02em}
+.menuseq b.caret{font-size:1.25em;line-height:.8}
+.menuseq i.caret{font-weight:bold;text-align:center;width:.45em}
+b.button:before,b.button:after{position:relative;top:-1px;font-weight:400}
+b.button:before{content:"[";padding:0 3px 0 2px}
+b.button:after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:0;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header:before,#header:after,#content:before,#content:after,#footnotes:before,#footnotes:after,#footer:before,#footer:after{content:" ";display:table}
+#header:after,#content:after,#footnotes:after,#footer:after{clear:both}
+#content{margin-top:1.25em}
+#content:before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #ddddd8}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #ddddd8;padding-bottom:8px}
+#header .details{border-bottom:1px solid #ddddd8;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:-ms-flexbox;display:-webkit-flex;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span:before{content:"\00a0\2013\00a0"}
+#header .details br+span.author:before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark:before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber:after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #ddddd8;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #efefed;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc li{line-height:1.3334;margin-top:.3334em}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media only screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+#toc.toc2{margin-top:0!important;background-color:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #efefed;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;margin-bottom:.8rem;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #efefed;left:auto;right:0}}
+@media only screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}
+#content #toc{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:100%;background-color:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:rgba(255,255,255,.8);line-height:1.44}
+.sect1{padding-bottom:.625em}
+@media only screen and (min-width:768px){.sect1{padding-bottom:1.25em}}
+.sect1+.sect1{border-top:1px solid #efefed}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor:before,h2>a.anchor:before,h3>a.anchor:before,#toctitle>a.anchor:before,.sidebarblock>.content>.title>a.anchor:before,h4>a.anchor:before,h5>a.anchor:before,h6>a.anchor:before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock>caption.title{white-space:nowrap;overflow:visible;max-width:0}
+.paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{color:rgba(0,0,0,.85)}
+table.tableblock #preamble>.sectionbody>.paragraph:first-of-type p{font-size:inherit}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:initial}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #ddddd8;color:rgba(0,0,0,.6)}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border-style:solid;border-width:1px;border-color:#e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;-webkit-border-radius:4px;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
+.sidebarblock{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock pre:not(.highlight),.listingblock pre[class="highlight"],.listingblock pre[class^="highlight "],.listingblock pre.CodeRay,.listingblock pre.prettyprint{background:#f7f7f8}
+.sidebarblock .literalblock pre,.sidebarblock .listingblock pre:not(.highlight),.sidebarblock .listingblock pre[class="highlight"],.sidebarblock .listingblock pre[class^="highlight "],.sidebarblock .listingblock pre.CodeRay,.sidebarblock .listingblock pre.prettyprint{background:#f2f1f1}
+.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{-webkit-border-radius:4px;border-radius:4px;word-wrap:break-word;padding:1em;font-size:.8125em}
+.literalblock pre.nowrap,.literalblock pre[class].nowrap,.listingblock pre.nowrap,.listingblock pre[class].nowrap{overflow-x:auto;white-space:pre;word-wrap:normal}
+@media only screen and (min-width:768px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:.90625em}}
+@media only screen and (min-width:1280px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:1em}}
+.literalblock.output pre{color:#f7f7f8;background-color:rgba(0,0,0,.9)}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;-webkit-border-radius:4px;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.listingblock>.content{position:relative}
+.listingblock code[data-lang]:before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:#999}
+.listingblock:hover code[data-lang]:before{display:block}
+.listingblock.terminal pre .command:before{content:attr(data-prompt);padding-right:.5em;color:#999}
+.listingblock.terminal pre .command:not([data-prompt]):before{content:"$"}
+table.pyhltable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.pyhltable td{vertical-align:top;padding-top:0;padding-bottom:0;line-height:1.45}
+table.pyhltable td.code{padding-left:.75em;padding-right:0}
+pre.pygments .lineno,table.pyhltable td:not(.code){color:#999;padding-left:0;padding-right:.5em;border-right:1px solid #ddddd8}
+pre.pygments .lineno{display:inline-block;margin-right:.25em}
+table.pyhltable .linenodiv{background:none!important;padding-right:0!important}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock blockquote p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote:before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.5em;margin-right:.5ex;text-align:right}
+.quoteblock .quoteblock{margin-left:0;margin-right:0;padding:.5em 0;border-left:3px solid rgba(0,0,0,.6)}
+.quoteblock .quoteblock blockquote{padding:0 0 0 .75em}
+.quoteblock .quoteblock blockquote:before{display:none}
+.verseblock{margin:0 1em 1.25em 1em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.025em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract{margin:0 0 1.25em 0;display:block}
+.quoteblock.abstract blockquote,.quoteblock.abstract blockquote p{text-align:left;word-spacing:0}
+.quoteblock.abstract blockquote:before,.quoteblock.abstract blockquote p:first-of-type:before{display:none}
+table.tableblock{max-width:100%;border-collapse:separate}
+table.tableblock td>.paragraph:last-child p>p:last-child,table.tableblock th>p:last-child,table.tableblock td>p:last-child{margin-bottom:0}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all>thead>tr>.tableblock,table.grid-all>tbody>tr>.tableblock{border-width:0 1px 1px 0}
+table.grid-all>tfoot>tr>.tableblock{border-width:1px 1px 0 0}
+table.grid-cols>*>tr>.tableblock{border-width:0 1px 0 0}
+table.grid-rows>thead>tr>.tableblock,table.grid-rows>tbody>tr>.tableblock{border-width:0 0 1px 0}
+table.grid-rows>tfoot>tr>.tableblock{border-width:1px 0 0 0}
+table.grid-all>*>tr>.tableblock:last-child,table.grid-cols>*>tr>.tableblock:last-child{border-right-width:0}
+table.grid-all>tbody>tr:last-child>.tableblock,table.grid-all>thead:last-child>tr>.tableblock,table.grid-rows>tbody>tr:last-child>.tableblock,table.grid-rows>thead:last-child>tr>.tableblock{border-bottom-width:0}
+table.frame-all{border-width:1px}
+table.frame-sides{border-width:0 1px}
+table.frame-topbot{border-width:1px 0}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{display:table-cell;line-height:1.6;background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+td>div.verse{white-space:pre}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.checklist,ul.none,ol.none,ul.no-bullet,ol.no-bullet,ol.unnumbered,ul.unstyled,ol.unstyled{list-style-type:none}
+ul.no-bullet,ol.no-bullet,ol.unnumbered{margin-left:.625em}
+ul.unstyled,ol.unstyled{margin-left:0}
+ul.checklist{margin-left:.625em}
+ul.checklist li>p:first-child>.fa-square-o:first-child,ul.checklist li>p:first-child>.fa-check-square-o:first-child{width:1.25em;font-size:.8em;position:relative;bottom:.125em}
+ul.checklist li>p:first-child>input[type="checkbox"]:first-child{margin-right:.25em}
+ul.inline{margin:0 auto .625em auto;margin-left:-1.375em;margin-right:0;padding:0;list-style:none;overflow:hidden}
+ul.inline>li{list-style:none;float:left;margin-left:1.375em;display:block}
+ul.inline>li>*{display:block}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1,td.hdlist2{vertical-align:top;padding:0 .625em}
+td.hdlist1{font-weight:bold;padding-bottom:1.25em}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist>table tr>td:first-of-type{padding:.4em .75em 0 .75em;line-height:1;vertical-align:top}
+.colist>table tr>td:first-of-type img{max-width:initial}
+.colist>table tr>td:last-of-type{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:solid 4px #fff;-webkit-box-shadow:0 0 0 1px #ddd;box-shadow:0 0 0 1px #ddd}
+.imageblock.left,.imageblock[style*="float: left"]{margin:.25em .625em 1.25em 0}
+.imageblock.right,.imageblock[style*="float: right"]{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none;display:inline-block}
+a.image object{pointer-events:none}
+sup.footnote,sup.footnoteref{font-size:.875em;position:static;vertical-align:super}
+sup.footnote a,sup.footnoteref a{text-decoration:none}
+sup.footnote a:active,sup.footnoteref a:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em 0;border-width:1px 0 0 0}
+#footnotes .footnote{padding:0 .375em 0 .225em;line-height:1.3334;font-size:.875em;margin-left:1.2em;text-indent:-1.05em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+.gist .file-data>table{border:0;background:#fff;width:100%;margin-bottom:0}
+.gist .file-data>table td.line-data{width:99%}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background-color:#00fafa}
+.black{color:#000}
+.black-background{background-color:#000}
+.blue{color:#0000bf}
+.blue-background{background-color:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background-color:#fa00fa}
+.gray{color:#606060}
+.gray-background{background-color:#7d7d7d}
+.green{color:#006000}
+.green-background{background-color:#007d00}
+.lime{color:#00bf00}
+.lime-background{background-color:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background-color:#7d0000}
+.navy{color:#000060}
+.navy-background{background-color:#00007d}
+.olive{color:#606000}
+.olive-background{background-color:#7d7d00}
+.purple{color:#600060}
+.purple-background{background-color:#7d007d}
+.red{color:#bf0000}
+.red-background{background-color:#fa0000}
+.silver{color:#909090}
+.silver-background{background-color:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background-color:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background-color:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background-color:#fafa00}
+span.icon>.fa{cursor:default}
+a span.icon>.fa{cursor:inherit}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note:before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip:before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning:before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution:before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important:before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background-color:rgba(0,0,0,.8);-webkit-border-radius:100px;border-radius:100px;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]:after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+dt,th.tableblock,td.content,div.footnote{text-rendering:optimizeLegibility}
+h1,h2,p,td.content,span.alt{letter-spacing:-.01em}
+p strong,td.content strong,div.footnote strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content,span.alt{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background-color:#fffef7;border-color:#e0e0dc;-webkit-box-shadow:0 1px 4px #e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@media print{@page{margin:1.25cm .75cm}
+*{-webkit-box-shadow:none!important;box-shadow:none!important;text-shadow:none!important}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare):after,a[href^="https:"]:not(.bare):after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]:after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img,object,svg{page-break-inside:avoid}
+thead{display:table-header-group}
+svg{max-width:100%}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #ddddd8!important;padding-bottom:0!important}
+.sect1{padding-bottom:0!important}
+.sect1+.sect1{border:0!important}
+#header>h1:first-child{margin-top:1.25rem}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em 0}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span:before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]:before{display:block}
+#footer{background:none!important;padding:0 .9375em}
+#footer-text{color:rgba(0,0,0,.6)!important;font-size:.9em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
+</head>
+<body class="book toc2 toc-left">
+<div id="header">
+<h1>Dew（轻量微服务体系）[2.x Building&#8230;&#8203;]</h1>
+<div class="details">
+<span id="author" class="author">v2.0.0-SNAPSHOT</span><br>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#dew微服务体系_dew_microservice_system">1. Dew微服务体系 Dew Microservice System</a>
+<ul class="sectlevel2">
+<li><a href="#设计理念">1.1. 设计理念</a>
+<ul class="sectlevel3">
+<li><a href="#微服务架构的尴尬">1.1.1. 微服务架构的尴尬</a></li>
+<li><a href="#dew架构思想">1.1.2. Dew架构思想</a></li>
+</ul>
+</li>
+<li><a href="#项目结构">1.2. 项目结构</a></li>
+</ul>
+</li>
+<li><a href="#架构设计_architecture_chapter">2. 架构设计 Architecture Chapter</a></li>
+<li><a href="#编码开发_framework_chapter">3. 编码开发 Framework Chapter</a>
+<ul class="sectlevel2">
+<li><a href="#framework-user-manual">3.1. 框架使用手册[TBD]</a>
+<ul class="sectlevel3">
+<li><a href="#结构说明">3.1.1. 结构说明</a></li>
+<li><a href="#功能模块">3.1.2. 功能模块</a></li>
+<li><a href="#核心功能">3.1.3. 核心功能</a></li>
+<li><a href="#工程化">3.1.4. 工程化</a></li>
+</ul>
+</li>
+<li><a href="#framework-configuration">3.2. 框架配置速查[TBD]</a>
+<ul class="sectlevel3">
+<li><a href="#code_dew_code_参数">3.2.1. <code>Dew</code> 参数</a></li>
+<li><a href="#code_spring_boot_code_核心参数">3.2.2. <code>Spring boot</code> 核心参数</a></li>
+<li><a href="#code_spring_cloud_code_核心参数">3.2.3. <code>Spring cloud</code> 核心参数</a></li>
+</ul>
+</li>
+<li><a href="#framework-best-practices">3.3. 框架最佳实践[TBD]</a>
+<ul class="sectlevel3">
+<li><a href="#服务调用开发期使用">3.3.1. 服务调用开发期使用</a></li>
+<li><a href="#code_validated_code_注解">3.3.2. <code>@Validated</code> 注解</a></li>
+<li><a href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据">3.3.3. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</a></li>
+<li><a href="#断路保护">3.3.4. 断路保护</a></li>
+<li><a href="#定时任务">3.3.5. 定时任务</a></li>
+<li><a href="#主要性能影响参数">3.3.6. 主要性能影响参数</a></li>
+<li><a href="#缓存处理">3.3.7. 缓存处理</a></li>
+<li><a href="#jdbc_批量插入性能问题">3.3.8. jdbc 批量插入性能问题</a></li>
+<li><a href="#http请求并发数性能瓶颈">3.3.9. http请求并发数性能瓶颈</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#部署运维_devops_chapter">4. 部署运维 DevOps Chapter</a>
+<ul class="sectlevel2">
+<li><a href="#devops-env-install">4.1. 测试、生产环境安装配置</a>
+<ul class="sectlevel3">
+<li><a href="#服务规划">4.1.1. 服务规划</a></li>
+<li><a href="#基础配置">4.1.2. 基础配置</a></li>
+<li><a href="#docker">4.1.3. Docker</a></li>
+<li><a href="#kubernetes">4.1.4. Kubernetes</a></li>
+<li><a href="#helm">4.1.5. Helm</a></li>
+<li><a href="#nginx_ingress_controller">4.1.6. Nginx Ingress Controller</a></li>
+<li><a href="#dashboard">4.1.7. Dashboard</a></li>
+<li><a href="#elasticsearch">4.1.8. Elasticsearch</a></li>
+<li><a href="#kibana">4.1.9. Kibana</a></li>
+<li><a href="#prometheus_grafana">4.1.10. Prometheus &amp;&amp; Grafana</a></li>
+<li><a href="#fluentd">4.1.11. Fluentd</a></li>
+<li><a href="#jaeger">4.1.12. Jaeger</a></li>
+</ul>
+</li>
+<li><a href="#devops-user-manual">4.2. DevOps使用手册[TBD]</a></li>
+<li><a href="#devops-configuration">4.3. DevOps配置速查[TBD]</a></li>
+<li><a href="#devops-best-practices">4.4. DevOps最佳实践[TBD]</a></li>
+<li><a href="#devops示例">4.5. DevOps示例</a>
+<ul class="sectlevel3">
+<li><a href="#devops示例_helloworld后端服务">4.5.1. DevOps示例 : Helloworld后端服务</a></li>
+<li><a href="#devops示例_helloworld类库">4.5.2. DevOps示例 : Helloworld类库</a></li>
+<li><a href="#devops示例_helloworld前端">4.5.3. DevOps示例 : Helloworld前端</a></li>
+<li><a href="#devops示例_to_do">4.5.4. DevOps示例 : To-Do</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#dew项目信息_dew_project_info">5. Dew项目信息 Dew Project Info</a>
+<ul class="sectlevel2">
+<li><a href="#开发指南">5.1. 开发指南</a>
+<ul class="sectlevel3">
+<li><a href="#代码要求">5.1.1. 代码要求</a></li>
+<li><a href="#环境要求">5.1.2. 环境要求</a></li>
+</ul>
+</li>
+<li><a href="#版本">5.2. 版本</a>
+<ul class="sectlevel3">
+<li><a href="#通道说明">5.2.1. 通道说明</a></li>
+<li><a href="#发行记录">5.2.2. 发行记录</a></li>
+</ul>
+</li>
+<li><a href="#路线图">5.3. 路线图</a></li>
+</ul>
+</li>
+<li><a href="#附录_appendix">6. 附录 Appendix</a>
+<ul class="sectlevel2">
+<li><a href="#proxies">6.1. 代理选择与设置</a>
+<ul class="sectlevel3">
+<li><a href="#安装配置">6.1.1. 安装配置</a></li>
+</ul>
+</li>
+<li><a href="#middleware">6.2. 常用中间件安装配置</a>
+<ul class="sectlevel3">
+<li><a href="#postgresql">6.2.1. PostgreSql</a></li>
+<li><a href="#redis">6.2.2. Redis</a></li>
+<li><a href="#mysql">6.2.3. MySQL</a></li>
+<li><a href="#mongo">6.2.4. Mongo</a></li>
+<li><a href="#gitlab">6.2.5. Gitlab</a></li>
+<li><a href="#harbor">6.2.6. Harbor</a></li>
+<li><a href="#dnsmasq">6.2.7. Dnsmasq</a></li>
+<li><a href="#minio">6.2.8. Minio</a></li>
+<li><a href="#nfs">6.2.9. NFS</a></li>
+</ul>
+</li>
+<li><a href="#内置image与chart">6.3. 内置Image与Chart</a>
+<ul class="sectlevel3">
+<li><a href="#dew_docker_image_集成kubectl与helm">6.3.1. Dew Docker Image : 集成Kubectl与Helm</a></li>
+<li><a href="#dew_docker_image_集成ci_cd能力">6.3.2. Dew Docker Image : 集成CI/CD能力</a></li>
+<li><a href="#dew_docker_image_spring_cloud_config">6.3.3. Dew Docker Image : Spring Cloud Config</a></li>
+<li><a href="#dew_helm_chart_spring_cloud_config">6.3.4. Dew Helm Chart : Spring Cloud Config</a></li>
+</ul>
+</li>
+<li><a href="#支持的ci_cd服务">6.4. 支持的CI/CD服务</a>
+<ul class="sectlevel3">
+<li><a href="#dew_ci_cd_gitlab_ci_实现">6.4.1. Dew CI/CD : Gitlab CI 实现</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Master分支正在构建如下功能：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>升级到 Spring Boot 2.x</p>
+</li>
+<li>
+<p>全面容器化，以K8s为容器平台，兼容Spring Cloud与Service Mesh两类微服务体系</p>
+</li>
+<li>
+<p>支撑中间件优先使用CNCF下的产品，如使用 jaeger 代替 zipkin</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>如需要稳定、纯粹的Spring Cloud扩展请切换到 <a href="https://github.com/gudaoxuri/dew/tree/1.5.1-RC">1.5.1-RC</a> tag.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="dew微服务体系_dew_microservice_system"><a class="anchor" href="#dew微服务体系_dew_microservice_system"></a>1. Dew微服务体系 Dew Microservice System</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<a class="image" href="https://travis-ci.org/gudaoxuri/dew"><img src="https://img.shields.io/travis/gudaoxuri/dew.svg" alt="dew"></a>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="https://app.codacy.com/app/gudaoxuri/dew?utm_source=github.com&utm_medium=referral&utm_content=gudaoxuri/dew&utm_campaign=Badge_Grade_Dashboard"><img src="https://api.codacy.com/project/badge/Grade/aacfdad1579043f0a2c1928b53096b7b" alt="aacfdad1579043f0a2c1928b53096b7b"></a>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<a class="image" href="https://www.apache.org/licenses/LICENSE-2.0.txt"><img src="https://img.shields.io/badge/license-ASF2-blue.svg" alt="Apache License 2"></a>
+</div>
+</div>
+<div class="paragraph">
+<p>微服务一站式解决方案( <a href="http://dew.ms" class="bare">http://dew.ms</a> )，提供：架构指南、容器优先/兼容Spring Cloud与Istio的框架、最佳实践及DevOps标准化流程。</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Dew [du:] 意为`露水`，希望此体系可以像晨间的露水一样透明、静谧、丰盈。让使用者尽量不要感知Dew的存在，专注业务实现。</p>
+</div>
+</blockquote>
+</div>
+<div class="sect2">
+<h3 id="设计理念"><a class="anchor" href="#设计理念"></a>1.1. 设计理念</h3>
+<div class="sect3">
+<h4 id="微服务架构的尴尬"><a class="anchor" href="#微服务架构的尴尬"></a>1.1.1. 微服务架构的尴尬</h4>
+<div class="paragraph">
+<p>几乎人人都在谈微服务，每个IT企业都在做微服务架构，但大部分项目都会存在这样的尴尬：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>什么是微服务？怎么做微服务架构？为什么这么乱？</p>
+</li>
+</ul>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p><strong>缺乏微服务架构设计思想</strong> 导致成功的微服务项目屈指可数，只听说微服务的好，却不知微服务的坑</p>
+</div>
+</blockquote>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>架构好了，框架怎么选择？ dubbo、Spring Boot/Cloud、Istio、Vert.x、还是自研？大一点的企业都会选择自研，但自研又会遇到如下问题：</p>
+<div class="ulist">
+<ul>
+<li>
+<p>无法传承，框架的研发人员离职后没有可以接手</p>
+</li>
+<li>
+<p>上手难度大，很多框架喜欢重复造轮子，做出来的与业界主流思想/标准格格不入，导致学习培训成本很高</p>
+</li>
+<li>
+<p>功能片面，不通用，服务框架讲求通用性，尽量让整个公司使用同一套规范以方便维护，但很多框架只实现了某些特定场景的功能，无法通用化</p>
+</li>
+<li>
+<p>维护成本高，尤其是对于完全自研的框架，往往需要专职人员维护</p>
+</li>
+<li>
+<p>与主流脱节，无法分享微服务化、容器化、服务网格化的红利</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p><strong>没有合适的微服务框架</strong> 导致人员技能要求高、项目研发成本高企</p>
+</div>
+</blockquote>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>框架选型也有了，但怎么测试、发布与运维？都在说容器化，要怎么做？</p>
+</li>
+</ul>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p><strong>缺少一体化的研发流程支撑</strong> 导致各项目规范不统一、发布效率低、容器化问题频出</p>
+</div>
+</blockquote>
+</div>
+</div>
+<div class="sect3">
+<h4 id="dew架构思想"><a class="anchor" href="#dew架构思想"></a>1.1.2. Dew架构思想</h4>
+<div class="paragraph">
+<p>上述问题是Dew必须面对的，应对的设计核心理念是：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>提供微服务架构指南 + 扩展主流微服务框架 + 标准化DevOps流程</pre>
+</div>
+</div>
+<div class="paragraph">
+<div class="title"><strong>提供微服务架构指南</strong></div>
+<p>项目要上微服务，其架构思想是前提，《微服务架构设计》(<a href="https://github.com/gudaoxuri/Microservices-Architecture" class="bare">https://github.com/gudaoxuri/Microservices-Architecture</a>) 做为入门书籍非常合适。</p>
+</div>
+<div class="olist arabic">
+<div class="title"><strong>扩展主流微服务框架</strong></div>
+<ol class="arabic">
+<li>
+<p>简单，用最通用的、标准的、开发人员都熟悉的开发模型</p>
+</li>
+<li>
+<p>全面，尽量重用市场已有能力实现，减少框架自身的维护成本</p>
+</li>
+<li>
+<p>轻量，原则上不引入高侵入性的三方框架/类库</p>
+</li>
+<li>
+<p>可替换，只做扩展，尽量不修改基础框架代码，开发人员完全可以直接基于基础框架开发</p>
+</li>
+<li>
+<p>主流，整合流行的微服务框架</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>实现上我们选择 <code>Spring Boot</code> 这一业界主流框架，对上兼容`Spring Cloud` 与 <code>Istio</code>。</p>
+</div>
+<div class="olist arabic">
+<div class="title"><strong>标准化DevOps流程</strong></div>
+<ol class="arabic">
+<li>
+<p>CI/CD流程支持，自动化依赖管理、测试、质检、打包与发布</p>
+</li>
+<li>
+<p>全面容器化，所有环境均为容器方案</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>实现上我们提供一体化的Maven插件与 <code>Gitlab CI</code> 或其它 CI/CD服务整合，实现针对JVM服务、类库、前端等项目的DevOps支持。</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>一言蔽之， <code>Dew</code> 致力于成为微服务一站式解决方案。</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="项目结构"><a class="anchor" href="#项目结构"></a>1.2. 项目结构</h3>
+<div class="listingblock">
+<div class="content">
+<pre>|- framework
+|-  |- modules
+|-  |-  |- parent-starter                  // 父Pom模块
+|-  |-  |- boot-starter                    // 核心模块，包含Spring Boot Web相关依赖
+|-  |-  |- cloud-starter                   // Cloud模块，包含Spring Cloud Kuberenetes相关依赖
+|-  |-  |- cluster-common                  // 集群能力接口
+|-  |-  |- cluster-common-test             // 集群测试模块
+|-  |-  |- cluster-hazelcast               // Hazelcast集群能力实现
+|-  |-  |- cluster-rabbit                  // RabbitMQ集群能力实现
+|-  |-  |- cluster-redis                   // Redis集群能力实现
+|-  |-  |- idempotent-starter              // 幂等处理模块
+|-  |-  |- notification                    // 通知处理模块
+|-  |-  |- test-starter                    // 单元测试模块
+|-  |- components                          // 集成的服务
+|-  |-  |- auth                            // 认证服务
+|-  |-  |- auth-sdk-starter                // 认证服务SDK
+|-  |-  |- config                          // Spring Cloud服务
+|-  |- checkstyle                          // 项目CheckStyle
+|- devops                                  // DevOps部分
+|-  |- maven                               // DevOps使用到的Maven插件
+|-  |-  |- dew-maven-plugin                // DevOps核心插件
+|-  |- sh                                  // DevOps执行脚本
+|-  |- chart                               // DevOps使用到的Helm Chart
+|-  |-  |- dew-spring-cloud-config         //  Spring Cloud Config Chart
+|-  |- cicd                                // 各CI服务的 CI/CD 配置
+|-  |-  |- gitlabci                        // Gitlab CI CI/CD配置
+|-  |- docker                              // DevOps使用到的镜像
+|-  |-  |- dew-devops                      // 集成 Java Maven Node Git 的镜像
+|-  |-  |- dew-k8s-native-client           // 集成 Kuberenetes 及 Docker 的镜像
+|-  |-  |- dew-spring-cloud-config         // Spring Cloud Config 镜像
+|-  |- it                                  // 集成测试
+|- docs                                    // 文档</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="架构设计_architecture_chapter"><a class="anchor" href="#架构设计_architecture_chapter"></a>2. 架构设计 Architecture Chapter</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>参见本书：</p>
+</div>
+<div class="paragraph">
+<p><a href="https://gudaoxuri.gitbook.io/microservices-architecture/" class="bare">https://gudaoxuri.gitbook.io/microservices-architecture/</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="编码开发_framework_chapter"><a class="anchor" href="#编码开发_framework_chapter"></a>3. 编码开发 Framework Chapter</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="framework-user-manual"><a class="anchor" href="#framework-user-manual"></a>3.1. 框架使用手册[TBD]</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>Dew</code> 框架部分是对 <code>Spring Boot/Cloud</code> 的扩展，使用之前务必了解相关框架的基础知识。
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+本手册只介绍<code>Dew</code>框架部分的扩展功能！
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="结构说明"><a class="anchor" href="#结构说明"></a>3.1.1. 结构说明</h4>
+<div class="listingblock">
+<div class="content">
+<pre>此章节关联示例:bone-example</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>Dew</code> 所有模块均为Maven结构，使用如下：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;!--引入Dew父依赖，也可以使用import方式--&gt;
+&lt;parent&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
+    &lt;!--生产环境请选择合适的版本!!!!!!!!--&gt;
+    &lt;version&gt;${dew.version}&lt;/version&gt;
+&lt;/parent&gt;
+...
+&lt;dependencies&gt;
+    &lt;!--引入需要的模块--&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+        &lt;artifactId&gt;&lt;模块名&gt;&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+...
+&lt;!--开发者--&gt;
+&lt;developers&gt;
+    &lt;developer&gt;
+        &lt;name&gt;&lt;/name&gt;
+        &lt;email&gt;&lt;/email&gt;
+    &lt;/developer&gt;
+&lt;/developers&gt;
+&lt;!--SCM信息--&gt;
+&lt;scm&gt;
+    &lt;connection&gt;&lt;/connection&gt;
+    &lt;developerConnection&gt;&lt;/developerConnection&gt;
+    &lt;url&gt;&lt;/url&gt;
+&lt;/scm&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<code>parent-starter</code> 中已包含各模块的版本，引用模块依赖时可省略版本号。
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><code>Dew</code>推荐的代码结构为：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>|- common-service
+|   |- src
+|   |   |- main
+|   |   |   |- java
+|   |   |   |   |- src
+|   |   |   |   |   |- x.y.z
+|   |   |   |   |   |   |- XApplication <i class="conum" data-value="1"></i><b>(1)</b>
+|   |   |   |   |   |   |- XConfig <i class="conum" data-value="2"></i><b>(2)</b>
+|   |   |   |   |   |   |- XInitiator <i class="conum" data-value="3"></i><b>(3)</b></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>XApplication : 服务启动类</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>XConfig：当前服务的配置文件（Spring Cloud格式）</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>XInitiator：当前服务启动初始化器，原则上所有初始化操作都应该从此类发起，如初始化脚本、定时任务等，以方便排错</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="功能模块"><a class="anchor" href="#功能模块"></a>3.1.2. 功能模块</h4>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">模块名</th>
+<th class="tableblock halign-left valign-top">核心功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>parent-starter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dew的工程父依赖</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boot-starter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">基于Spring Boot的扩展，Dew的核心模块</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cloud-starter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">基于Spring Cloud的扩展</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>idempotent-starter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">幂性处理模块</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cluster-common</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">集群能力接口</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cluster-redis</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">集群能力-Redis实现</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cluster-hazelcast</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">集群能力-Hazelcast实现</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cluster-rabbit</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">集群能力-Rabbit实现</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>test-starter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dew的单元测试封装</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>config</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">统一配置中心组件</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>auth</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">多租户的权限组件（Scala语言编写）</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;x&gt;-example</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">各类示例</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="核心功能"><a class="anchor" href="#核心功能"></a>3.1.3. 核心功能</h4>
+<div class="sect4">
+<h5 id="常用工具集"><a class="anchor" href="#常用工具集"></a>常用工具集</h5>
+<div class="paragraph">
+<p><code>Dew</code> 框架的常用工具由 <code>Dew-Common</code> 包提供（ <a href="https://github.com/gudaoxuri/dew-common" class="bare">https://github.com/gudaoxuri/dew-common</a> ），功能如下：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Json与Java对象互转，支持泛型</p>
+</li>
+<li>
+<p>Java Bean操作，Bean复制、反射获取/设置注解、字段、方法等</p>
+</li>
+<li>
+<p>Java Class扫描操作，根据注解或名称过滤</p>
+</li>
+<li>
+<p>Shell脚本操作，Shell内容获取、成功捕获及进度报告等</p>
+</li>
+<li>
+<p>加解密操作，Base64、MD5/BCrypt/SHA等对称算法和RSA等非对称算法</p>
+</li>
+<li>
+<p>Http操作，包含Get/Post/Put/Delete/Head/Options操作</p>
+</li>
+<li>
+<p>金额操作，金额转大写操作</p>
+</li>
+<li>
+<p>通用拦截器栈，前/后置、错误处理等</p>
+</li>
+<li>
+<p>定时器操作，定时和周期性任务</p>
+</li>
+<li>
+<p>常用文件操作，根据不同情况获取文件内容</p>
+</li>
+<li>
+<p>常用字段操作，各类字段验证、身份证提取、UUID创建等</p>
+</li>
+<li>
+<p>常用时间处理，常规时间格式化模板</p>
+</li>
+<li>
+<p>主流文件MIME整理，MIME分类</p>
+</li>
+<li>
+<p>响应处理及分页模型</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title"><code>Dew Common</code> 的使用</div>
+<div class="paragraph">
+<p><code>Dew Common</code> 功能均以<code>$</code>开始，比如:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Json转成Java对象: <code>$.json.toObject(json,JavaModel.class)</code></p>
+</li>
+<li>
+<p>Json字符串转成List对象: <code>$.json.toList(jsonArray, JavaModel.class)</code></p>
+</li>
+<li>
+<p>Bean复制：<code>$.bean.copyProperties(ori, dist)</code></p>
+</li>
+<li>
+<p>获取Class的注解信息: <code>$.bean.getClassAnnotation(IdxController.class, TestAnnotation.RPC.class)</code></p>
+</li>
+<li>
+<p>非对称加密: <code>$.encrypt.Asymmetric.encrypt(d.getBytes("UTF-8"), publicKey, 1024, "RSA")</code></p>
+</li>
+<li>
+<p>Http Get: <code>$.http.get("https://httpbin.org/get")</code></p>
+</li>
+<li>
+<p>验证手机号格式是否合法: <code>$.field.validateMobile("18657120000")</code></p>
+</li>
+<li>
+<p>&#8230;&#8203;</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+完整使用手册见 <a href="https://gudaoxuri.github.io/dew-common/" class="bare">https://gudaoxuri.github.io/dew-common/</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="集群功能"><a class="anchor" href="#集群功能"></a>集群功能</h5>
+<div class="listingblock">
+<div class="content">
+<pre>此章节关联示例:cluster-example</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>Dew</code> 的集群支持 <code>分布式缓存</code> <code>分布式Map</code> <code>分布式锁</code> <code>MQ</code> <code>领导者选举</code>，
+并且做了接口抽象以适配不同的实现，目前支持 <code>Redis</code> <code>Hazelcast</code> <code>Rabbit</code> <code>Eureka</code> 。</p>
+</div>
+<div class="paragraph">
+<p>各实现对应的支持如下：</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">功能</th>
+<th class="tableblock halign-left valign-top">Redis</th>
+<th class="tableblock halign-left valign-top">Hazelcast</th>
+<th class="tableblock halign-left valign-top">Rabbit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">分布式缓存</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">分布式Map</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">分布式锁</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MQ</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">领导者选举</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">各实现的差异</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Redis实现了所有功能，但其MQ上不适用于高可靠场景</p>
+</li>
+<li>
+<p>只有Rabbit的MQ支持跟踪日志（见跟踪日志章节）</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect5">
+<h6 id="使用"><a class="anchor" href="#使用"></a>使用</h6>
+<div class="listingblock">
+<div class="title">依赖</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;artifactId&gt;boot-starter&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;!--引入集群依赖，可选redis/hazelcast/rabbit/eureka--&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;artifactId&gt;cluster-spi-redis&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;artifactId&gt;cluster-spi-hazelcast&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;artifactId&gt;cluster-spi-rabbit&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">增加配置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">dew:
+    cluster: # 集群功能
+        cache: # 分布式缓存实现，默认为 redis
+        map: # 分布式Map实现，默认为 redis
+        lock: # 分布式锁实现，默认为 redis
+        mq: # MQ实现，默认为 redis
+        election: # 领导者选举实现，默认为 redis
+
+spring:
+    redis:
+        host: # redis主机
+        port: # redis端口
+        database: # redis数据库
+        password: # redis密码
+        pool: # 连接池配置
+    rabbitmq:
+      host: # rabbit主机
+      port: # rabbit端口
+      username: # rabbit用户名
+      password: # rabbit密码
+      virtual-host: # rabbit VH
+    hazelcast:
+        addresses: [] # hazelcast地址，端口可选</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>集群服务的使用入口统一为： <code>Dew.cluster.XX</code></p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="分布式缓存"><a class="anchor" href="#分布式缓存"></a>分布式缓存</h6>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+接口见：ClusterCache
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">Dew.cluster.cache.flushdb();
+Dew.cluster.cache.del("n_test");
+assert !Dew.cluster.cache.exists("n_test");
+Dew.cluster.cache.set("n_test", "{\"name\":\"jzy\"}", 1);
+assert Dew.cluster.cache.exists("n_test");
+assert "jzy".equals($.json.toJson(Dew.cluster.cache.get("n_test")).get("name").asText());
+Thread.sleep(1000);
+assert !Dew.cluster.cache.exists("n_test");
+assert null == Dew.cluster.cache.get("n_test");</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Dew的缓存默认只实现了String、List、Set、Hash等结构常用的，时间复杂度低的操作，
+如需要的操作Dew没有提供可使用Spring Boot Data Redis原生的<code>RedisTemplate&lt;String,String&gt;</code>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect5">
+<h6 id="分布式map"><a class="anchor" href="#分布式map"></a>分布式Map</h6>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+接口见：ClusterMap
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">ClusterMap&lt;TestMapObj&gt; mapObj = Dew.cluster.map.instance("test_obj_map", TestMapObj.class);
+mapObj.clear();
+TestMapObj obj = new TestMapObj();
+obj.a = "测试";
+mapObj.put("test", obj);
+assert "测试".equals(mapObj.get("test").a);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="分布式锁"><a class="anchor" href="#分布式锁"></a>分布式锁</h6>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+接口见：ClusterLock
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// dist lock
+ClusterLock lock = Dew.cluster.lock.instance("test_lock");
+// tryLock 示例，等待0ms，忘了手工unLock或出异常时1s后自动解锁
+if (lock.tryLock(0, 1000)) {
+    try {
+        // 已加锁，执行业务方法
+    } finally {
+        // 必须手工解锁
+        lock.unLock();
+    }
+}
+// tryLockWithFun 示例
+lock.tryLockWithFun(0, 1000, () -&gt; {
+    // 已加锁，执行业务方法，tryLockWithFun会将业务方法包裹在try-cache中，无需手工解锁
+});</code></pre>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="mq"><a class="anchor" href="#mq"></a>MQ</h6>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+接口见：ClusterMQ
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// pub-sub
+Dew.cluster.mq.subscribe("test_pub_sub", message -&gt;
+        logger.info("pub_sub&gt;&gt;" + message));
+Thread.sleep(1000);
+Dew.cluster.mq.publish("test_pub_sub", "msgA");
+Dew.cluster.mq.publish("test_pub_sub", "msgB");
+// req-resp
+Dew.cluster.mq.response("test_rep_resp", message -&gt;
+        logger.info("req_resp&gt;&gt;" + message));
+Dew.cluster.mq.request("test_rep_resp", "msg1");
+Dew.cluster.mq.request("test_rep_resp", "msg2");
+// rabbit confirm
+if (Dew.cluster.mq instanceof RabbitClusterMQ) {
+    boolean success = ((RabbitClusterMQ) Dew.cluster.mq).publish("test_pub_sub", "confirm message", true);
+    success = ((RabbitClusterMQ) Dew.cluster.mq).request("test_rep_resp", "confirm message", true);
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+发布订阅模式时，发布前 <code>topic</code> 必须已经存在，可先使用 <code>subscribe</code> 订阅，此操作会自动创建 <code>topic</code> 。
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<code>Rabbit</code> 实现支持单条 <code>confirm</code> 模式。
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<div class="title">MQ的HA功能</div>
+<p>MQ的HA（高可用）支持，默认MQ启用HA（可通过<code>dew.cluster.config.ha-enabled=false</code>关闭）。
+可实现。</p>
+</div>
+<div class="paragraph">
+<p>Dew的MQ仅在数据处理完成后才做commit，这限制了对同一个队列只能串行处理，
+MQ的HA开启后，您可以以多线程的方式消费消息，处理过程中如发生服务宕机重启后仍可从未处理完成的消息开始消费。</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="领导者选举"><a class="anchor" href="#领导者选举"></a>领导者选举</h6>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+接口见：ClusterElection
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// 实例化fun1类型的领导者选举，Redis的实现支持多类型领导者
+ClusterElection electionFun1 = Dew.cluster.election.instance("fun1");
+// ...
+if (electionFun1.isLeader()) {
+   // 当前节点是fun1类型的领导者
+   // ...
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="统一响应"><a class="anchor" href="#统一响应"></a>统一响应</h5>
+<div class="paragraph">
+<p><code>Dew</code> 推荐使用 <code>协议无关的响应格式</code>，此格式在 <code>方法间调用</code> <code>非HTTP协议RPC</code> <code>MQ</code> 等数据交互场景做到真正的 <code>统一响应格式</code>。
+要求返回的格式为<code>Resp</code>对象，格式为：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+    code: "", // 响应编码，与http状态码类似，200表示成功
+    message:"", // 响应附加消息，多有于错误描述
+    body: // 响应正文
+}</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public Resp&lt;String&gt; test(){
+    return Resp.success("enjoy!");
+    // or return Resp.notFound("…")/conflict("…")/badRequest("…")/…
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>Resp</code>类提供了常用操作：详见 <a href="https://gudaoxuri.github.io/dew-common/#true-resp">https://gudaoxuri.github.io/dew-common/#true-resp</a></p>
+</div>
+<div class="paragraph">
+<p><code>Dew</code>使用返回格式中的code表示操作状态码，此状态码与HTTP状态码无关，一般情况下HTTP状态码均为200，如需要降级处理时返回500。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">500 Http状态码说明</div>
+<div class="paragraph">
+<p><code>500</code> 状态码仅用于告诉 <code>Hystrix</code> 这次请求是需要降级的错误，对于 <code>Resp</code> 中的 <code>code</code> 没有影响。</p>
+</div>
+<div class="paragraph">
+<p><code>dew</code> 框架会把所有 <code>5xx</code>（服务端错误，需要降级） 的异常统一转换成 <code>500</code> 的Http状态码返回给调用方。</p>
+</div>
+<div class="paragraph">
+<p><code>Resp.xxx.fallback()</code> 用于显示声明当前返回需要降级，
+比如 <code>Resp.serverError("some message")</code> 不会降级，返回http状态码为200，body为 <code>{"code":"500","message":"some message","body":null}</code>，
+但 <code>Resp.serverError("some message").fallback()</code> 会降级，返回http状态码为500，body为 同上。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="消息通知"><a class="anchor" href="#消息通知"></a>消息通知</h5>
+<div class="paragraph">
+<p><code>Dew</code> 支持发送消息到钉钉或邮件，默认支持对未捕获异常及Hystrix错误的通知。</p>
+</div>
+<div class="listingblock">
+<div class="title">通知配置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml"># 格式
+dew:
+    notifies:
+        "": # 通知的标识
+            type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
+            defaultReceivers: # 默认接收人列表，钉钉为手机号，邮件为邮箱
+            dndTimeReceivers: # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
+            args: # 不同类型的参数，邮件不需要设置
+                url: # 钉钉及自定义HTTP的推送地址，钉钉URL说明详见：https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.karFPe&amp;treeId=257&amp;articleId=105735&amp;docType=1
+            strategy: # 通知策略
+                minIntervalSec: 0 # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
+                dndTime: # 开启免扰时间，HH:mm-HH:mm 如，18:00-06:00
+                forceSendTimes: 3 # 同一免扰周期间通知调用达到几次后强制发送
+
+# 示例
+dew:
+  notifies:
+    __DEW_ERROR__:
+      type: DD
+      defaultReceivers: xxxx
+      args:
+        url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d3269
+      strategy:
+        minIntervalSec: 5
+    sendMail:
+      type: MAIL
+      defaultReceivers: x@y.z
+    custom:
+      type: HTTP
+      defaultReceivers: x@y.z
+      args:
+        url: https://...</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">通知使用</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java"># 最简单的调用
+Resp&lt;Void&gt; result = Dew.notify.send("&lt;通知的标识&gt;", "&lt;通知的内容或Throwable&gt;");
+# 带通知标题，标题会加上``Dew.Info.instance``
+Resp&lt;Void&gt; result = Dew.notify.send("&lt;通知的标识&gt;", "&lt;通知的内容或Throwable&gt;", "&lt;通知标题&gt;");
+# 加上特殊接收人列表，非免扰时间内的接收人=配置默认接收人列表+特殊接收人列表，免扰时间内的接收人=配置的免扰时间内的接收人列表
+Resp&lt;Void&gt; result = Dew.notify.send("&lt;通知的标识&gt;", "&lt;通知的内容或Throwable&gt;", "&lt;通知标题&gt;", "&lt;特殊接收人列表&gt;");
+# 上述三个方法都有异步的重载方法，如
+Dew.notify.sendAsync("&lt;通知的标识&gt;", "&lt;通知的内容或Throwable&gt;");</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">默认通知标识</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>非捕获异常: <code><em>DEW_ERROR</em></code>，所有非捕获异常（ErrorController）调用此标识发送错误，可通过<code>dew.basic.format.error-flag</code> 修改</p>
+</li>
+<li>
+<p>Hystrix错误: <code><em>HYSTRIX</em></code>，所有Hystrix错误调用此标识发送错误，可通过<code>dew.cloud.error.notify-flag</code> 修改</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>要启用以上两个通知请确保<code>dew.notifies</code>有相应的配置。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">HTTP自定义通知格式</div>
+<div class="paragraph">
+<p>POST请求，Body格式为:</p>
+</div>
+<div class="paragraph">
+<p>{
+    "title": "", // 标题
+    "content": "", // 内容
+    "receivers": [] // 接收人列表
+}</p>
+</div>
+<div class="paragraph">
+<p>调用正常需要返回200状态码</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="异常处理"><a class="anchor" href="#异常处理"></a>异常处理</h5>
+<div class="paragraph">
+<p><code>Dew</code> 会把程序没有捕获的异常统一上抛，同时框架提供了常用的异常检查：</p>
+</div>
+<div class="listingblock">
+<div class="title">异常检查，异常类型要求为RuntimeException及其子类</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">Dew.E.check(VoidPredicate notExpected, E ex)
+Dew.E.check(boolean notExpected, E ex)
+Dew.E.checkNotEmpty(Map&lt;?, ?&gt; objects, E ex)
+Dew.E.checkNotEmpty(Iterable&lt;?&gt; objects, E ex)
+Dew.E.checkNotNull(Object obj, E ex)</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">自定义异常配置，启用后此类异常均使用此模块</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">dew:
+  basic:
+    error-mapping:
+      "[&lt;异常类名&gt;]":
+        http-code: # http状态码，不存在时使用实例级http状态码
+        business-code: # 业务编码，不存在时使用实例级业务编码
+        message: # 错误描述，不存在时使用实例级错误描述</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="数据验证"><a class="anchor" href="#数据验证"></a>数据验证</h5>
+<div class="paragraph">
+<p><code>Dew</code>集成了<code>Spring validate</code> 机制，支持针对 <code>URL</code> 及 <code>Bean</code> 的验证。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>在 java bean 中添加各项validation，支持标准`javax.validation.constraints`包下的诸如：<code>NotNull</code> ，同时框架扩展了几个检查，如：
+IdNumber、Phone</p>
+</li>
+<li>
+<p>在Controller中添加 <code>@Validated</code> 注解 ( Spring还支持@Vaild，但这一注解不支持分组 )</p>
+</li>
+<li>
+<p>支持Spring原生分组校验</p>
+</li>
+<li>
+<p><code>URL</code> 类型的验证必须在类头添加 <code>@Validated</code> 注解</p>
+</li>
+<li>
+<p><code>Dew</code> 框架内置了 <code>CreateGroup</code> <code>UpdateGroup</code> 两个验证组，验证组仅是一个标识，可为任何java对象</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="cors支持"><a class="anchor" href="#cors支持"></a>CORS支持</h5>
+<div class="listingblock">
+<div class="title">配置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">dew:
+  security:
+    cors:
+      allow-origin: # 允许来源，默认 *
+      allow-methods: # 允许方法，默认 POST,GET,OPTIONS,PUT,DELETE,HEAD
+      allow-headers: # 允许头信息 x-requested-with,content-type</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="权限认证"><a class="anchor" href="#权限认证"></a>权限认证</h5>
+<div class="listingblock">
+<div class="content">
+<pre>此章节关联示例:auth-example</pre>
+</div>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>支持`认证缓存`，即支持将鉴权系统生成的登录信息缓存到业务系统中方便即时调用，并提供三方适配。</p>
+</div>
+</blockquote>
+</div>
+<div class="listingblock">
+<div class="title">配置认证缓存</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">dew:
+    security:
+        token-flag: # token key的名称
+        token-in-header: # token key是否在http header中，为false是会从url query中获取
+        token-hash: # token 值是否做hash（MD5）处理</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+认证缓存需要 <code>集群缓存</code> 服务支持，请引入相关的依赖并配置对应的连接信息等。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">basic 认证缓存接口</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// 添加登录信息，optInfo封装自鉴权系统过来的登录信息
+// 一般在登录认证后操作
+Dew.auth.setOptInfo(OptInfo optInfo);
+// 获取登录信息，要求在http请求加上token信息
+Dew.context().optInfo();
+// 删除登录信息
+// 一般在注销登录后操作
+Dew.auth.removeOptInfo();
+
+// 登录信息
+public class OptInfo {
+    // Token
+    String token;
+    // 账号编码
+    String accountCode;
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<code>OptInfo</code> 为认证缓存信息的基类，使用时可以继承并扩展自己的属性。
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+使用 <code>OptInfo</code> 扩展类型时需要在工程启动时指定扩展类： <code>DewContext.setOptInfoClazz(&lt;扩展类型&gt;)</code> 。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">basic 认证缓存示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">/**
+ * 模拟用户注册
+ */
+@PostMapping(value = "user/register")
+public Resp&lt;Void&gt; register(@RequestBody User user) {
+    // 实际注册处理
+    user.setId($.field.createUUID());
+    MOCK_USER_CONTAINER.put(user.getId(), user);
+    return Resp.success(null);
+}
+
+/**
+ * 模拟用户登录
+ */
+@PostMapping(value = "auth/login")
+public Resp&lt;String&gt; login(@RequestBody LoginDTO loginDTO) {
+    // 实际登录处理
+    User user = MOCK_USER_CONTAINER.values().stream().filter(u -&gt; u.getIdCard().equals(loginDTO.getIdCard())).findFirst().get();
+    String token = $.field.createUUID();
+    Dew.auth.setOptInfo(new OptInfoExt()
+            .setIdCard(user.getIdCard())
+            .setAccountCode($.field.createShortUUID())
+            .setToken(token)
+            .setName(user.getName())
+            .setMobile(user.getPhone()));
+    return Resp.success(token);
+}
+
+/**
+ * 模拟业务操作
+ */
+@GetMapping(value = "business/someopt")
+public Resp&lt;Void&gt; someOpt() {
+    // 获取登录用户信息
+    Optional&lt;OptInfoExt&gt; optInfoExtOpt = Dew.auth.getOptInfo();
+    if (!optInfoExtOpt.isPresent()) {
+        return Resp.unAuthorized("用户认证错误");
+    }
+    // 登录用户的信息
+    optInfoExtOpt.get();
+    return Resp.success(null);
+}
+
+/**
+ * 模拟用户注销
+ */
+@DeleteMapping(value = "auth/logout")
+public Resp&lt;Void&gt; logout() {
+    // 实际注册处理
+    Dew.auth.removeOptInfo();
+    return Resp.success(null);
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="测试支持"><a class="anchor" href="#测试支持"></a>测试支持</h5>
+<div class="paragraph">
+<p>良好的单元测试可以保证代码的高质量，单测的重要原则是内聚、无依赖，好的单测应该是"函数化"的——结果的变化只与传入参数有关。
+但实际上我们会的代码往往会与数据库、缓存、MQ等外部工具交互，这会使单测的结果不可控，通常的解决方案是使用Mock，但这无行中引入了单测撰写的成本，
+<code>Dew</code>使用"内嵌式"工具解决，数据库使用 <code>H2</code> ，Redis使用 <code>embedded redis</code> ，由于 <code>Dew</code> 集群的 <code>Cache</code> <code>Map</code> <code>Lock</code> <code>MQ</code> 都支持 <code>Redis</code> 实现，所以可以做到对主流操作的全覆盖。</p>
+</div>
+<div class="listingblock">
+<div class="title">依赖</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;artifactId&gt;test-starter&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">配置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">dew:
+  cluster: #所有集群操作都使用reids模拟
+    cache: redis
+    lock: redis
+    map: redis
+    mq: redis
+
+spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="幂等处理"><a class="anchor" href="#幂等处理"></a>幂等处理</h5>
+<div class="listingblock">
+<div class="content">
+<pre>此章节关联示例:idempotent-example</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>支持HTTP和非HTTP幂等操作，对于HTTP操作，要求请求方在请求头或URL参数中加上操作ID标识，非HTTP操作由可自由指定操作类型和操作ID标识的来源。</p>
+</div>
+<div class="listingblock">
+<div class="title">依赖</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;!--引入幂等支持--&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;artifactId&gt;idempotent-starter&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">配置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">dew:
+  cluster:
+    cache: redis # 启用Redis支持
+  idempotent:
+    default-expire-ms: 3600000 # 设置默认过期时间，1小时
+    default-strategy: item # 设置默认策略，支持 bloom(Bloom Filter)和item(逐条记录)，目前只支持item
+    default-opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">HTTP操作</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@GetMapping(xxx)
+// 启用幂等支持
+// 请求头部或参数加上__IDEMPOTENT_OPT_ID__ = xx
+@Idempotent
+public void test(xxx) {
+    // 业务操作
+    // ...
+    // 业务失败，在保证业务操作的原子性的情况下，在catch中取消幂等，并抛出异常
+    DewIdempotent.cancel();
+    // 手工确认
+    DewIdempotent.confirm();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>Idempotent</code>注解说明：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>optIdFlag：指定幂等操作ID标识，可以位于HTTP Header或请求参数中</p>
+</li>
+<li>
+<p>expireMs：设置过期时间，单位毫秒</p>
+</li>
+<li>
+<p>strategy：设置默认策略</p>
+</li>
+<li>
+<p>needConfirm：设置是否需要显式确认，true时，需要进行显式确认操作: <code>DewIdempotent.confirm() 或 DewIdempotent.confirm(String optType, String optId)</code> 前者要求与请求入口在同一线程中</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">非HTTP操作</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// 初始化类型为transfer_a的幂等操作，需要手工确认，过期时间为1秒
+DewIdempotent.initOptTypeInfo("transfer_a", true, 1000, StrategyEnum.ITEM);
+// 第一次请求transfer_a类型下的xxxxxxx这个ID，返回不存在，表示可以下一步操作
+Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "xxxxxxx"));
+// 第二次请求transfer_a类型下的xxxxxxx这个ID，返回未确认，表示上次操作还在进行中
+Assert.assertEquals(StatusEnum.UN_CONFIRM, DewIdempotent.process("transfer_a", "xxxxxxx"));
+// 确认操作完成
+DewIdempotent.confirm("transfer_a", "xxxxxxx");
+// 第三次请求transfer_a类型下的xxxxxxx这个ID，返回已确认，但未过期，仍不能操作
+Assert.assertEquals(StatusEnum.CONFIRMED, DewIdempotent.process("transfer_a", "xxxxxxx"));
+// 延时1秒
+Thread.sleep(1000);
+// 再次请求transfer_a类型下的xxxxxxx这个ID，返回不存在（上次请求已过期），表示可以下一步操作
+Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "xxxxxxx"));</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="工程化"><a class="anchor" href="#工程化"></a>3.1.4. 工程化</h4>
+<div class="sect4">
+<h5 id="api文档"><a class="anchor" href="#api文档"></a>API文档</h5>
+<div class="paragraph">
+<p>用于生成Asciidoc格式的离线API文档，可通过软件转换成HTML及PDF版本。</p>
+</div>
+<div class="listingblock">
+<div class="title">配置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">dew:
+  basic:
+    name: # 文档名称
+    version: 1.0 # 文档版本
+    desc: # 文档说明
+    web-site: # 文档站点
+    doc:
+        base-package: # API文档要扫描的根包，多指定到 Controller 包中
+        contact: # 联系人信息，可为空
+            name: # 联系人姓名
+            url: # 联系人URL
+            email: # 联系人邮箱
+
+management: # 文档生成地址前缀为 /management.endpoints.web.base-path
+  endpoints:
+    web:
+      base-path: /management</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">使用</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-txt" data-lang="txt">访问任意服务实例:
+
+PUT /{management.endpoints.web.base-path}/doc/offline
+
+{
+	"docName":"", # 文档名称
+	"docDesc":"", # 文档说明
+	"visitUrls":{ # 不同环境的访问地址
+		"":""
+	},
+	"swaggerJsonUrls":[] # swagger.json的URL列表(http://.../v2/api-docs)，可选
+}
+
+swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，为空时分两种情况：
+
+1. 如果是非集群模式（没有注册中心）则只生成本服务的接口文档
+2. 如果是集群模式（注册到注册中心）则会合成此集群下所有的接口文档
+
+示例：
+
+{
+	"docName":"Dew API 文档",
+	"docDesc":"此为Dew的接口文档\n描述可以换行",
+	"visitUrls":{
+		"开发环境":"http://dev.dew.ecfront.com",
+		"测试环境":"http://test.dew.ecfront.com"
+	}
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>调用此接口后返回Asciidoc格式的文档内容，复制此内容到相应的转换工具中即可生成对应的HTTP或PDF文档。</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="代码质量检查"><a class="anchor" href="#代码质量检查"></a>代码质量检查</h5>
+<div class="paragraph">
+<p><code>Dew</code> 已集成 <code>Sonar</code> 插件，只需要在maven中配置 <code>sonar.host.url</code> 为目标地址，
+然后执行 <code>mvn clean verify sonar:sonar -P qa -Dsonar.login=&lt;用户名&gt; -Dsonar.password=&lt;密码&gt;</code> 即可。</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+也可以设置 <code>sonar.forceAuthentication=false</code> ，但要注意安全管控。
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+使用 <code>&lt;maven.test.skip&gt;true&lt;/maven.test.skip&gt;</code> 可跳过特定模块的测试，<code>&lt;sonar.skip&gt;true&lt;/sonar.skip&gt;</code> 可跳过特定模块的Sonar检查。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="降级通知"><a class="anchor" href="#降级通知"></a>降级通知</h5>
+<div class="listingblock">
+<div class="content">
+<pre>此章节关联 `hystrix-example` 示例</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+为能更及时的对服务异常做出处理， <code>dew</code> 增加邮件通知功能。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 通知条件配置示例
+dew:
+  cloud:
+    error:
+      enabled: true
+      notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED
+      notify-include-keys: ["ExampleClient#deleteExe(int,String)","ExampleClient#postExe(int,String)"]
+
+# 邮箱配置示例
+spring:
+  mail:
+    host: smtp.163.com
+    username: &lt;邮件地址&gt;
+    password: &lt;password为smtp授权码，非邮箱密码&gt;
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="跟踪日志"><a class="anchor" href="#跟踪日志"></a>跟踪日志</h5>
+<div class="listingblock">
+<div class="content">
+<pre>此章节关联 `tracing-invokeX-example` 示例</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>用于记录 <code>服务API调用</code> （追踪）日志到 <code>Jaeger</code>。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+此功能由DevOps流程涉及的Kubernetes环境自动完成。
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="framework-configuration"><a class="anchor" href="#framework-configuration"></a>3.2. 框架配置速查[TBD]</h3>
+<div class="sect3">
+<h4 id="code_dew_code_参数"><a class="anchor" href="#code_dew_code_参数"></a>3.2.1. <code>Dew</code> 参数</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">dew: # Dew 参数key前缀
+    basic: # 基础信息
+        name: # 服务名称，用于API文档显示等
+        version: 1.0 # 服务版本号，用于API文档显示等
+        desc: # 服务描述，用于API文档显示等
+        webSite: # 官网，用于API文档显示等
+        doc:
+            enabled: true # 是否启用默认文档配置，关闭后可自定义文档管理，默认为true
+            base-package: # API文档要扫描的根包，多指定到 Controller 包中
+            contact: # 联系人信息
+                name: # 联系人姓名
+                url: # 联系人URL
+                email: # 联系人邮箱
+        format:
+            use-unity-error: true # 是否启用统一响应
+            error-flag: __DEW_ERROR__ # 默认的通知标识
+        error-mapping: # 自定义错误映射
+            "[&lt;异常类名&gt;]":
+                http-code: # http状态码，不存在时使用实例级http状态码
+                business-code: # 业务编码，不存在时使用实例级业务编码
+                message: # 错误描述，不存在时使用实例级错误描述
+    cluster: # 集群功能
+        cache: redis # 缓存实现
+        lock: redis # 分布式锁实现，可选 redis/hazelcast，默认redis
+        map: redis # 分布式Map实现，可选 redis/hazelcast，默认redis
+        mq: redis # MQ实现，可选 redis/hazelcast/rabbit，默认redis
+        election: redis # 领导者选举实现，可选 redis/eureka，默认redis
+        config: #集群相关配置
+            election-period-sec: 60 #领导者选举时间区间，默认60秒
+            ha-enabled: true #是否启用HA，默认为true
+    notifies:
+        "": # 通知的标识
+            type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
+            defaultReceivers: # 默认接收人列表，钉钉为手机号，邮件为邮箱
+            dndTimeReceivers: # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
+            args: # 不同类型的参数，邮件不需要设置
+                url: # 钉钉的推送地址，说明详见：https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.karFPe&amp;treeId=257&amp;articleId=105735&amp;docType=1
+            strategy: # 通知策略
+                minIntervalSec: 0 # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
+                dndTime: # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
+                forceSendTimes: 3 # 同一免扰周期间通知调用达到几次后强制发送
+    security: # 安全功能
+        cors:
+            allow-origin: * # 允许的来源，建议修改
+            allow-methods: POST,GET,OPTIONS,PUT,DELETE,HEAD # 允许的方法
+            allow-headers: x-requested-with,content-type # 允许的头信息
+        token-flag: __dew_token__ # token 标识
+        token-in-header: true # true：token标识在 header 中，反之在url参数中
+        token-hash: false # token值是否需要hash，用于解决token值有特殊字符的情况
+        include-services: [""] # 服务白名单，要求源服务头部带上 Request-From
+        exclude-services: [""] # 服务黑名单，要求源服务头部带上 Request-From
+    component:
+        auth:
+          token-expire-sec: 60 * 60 * 24 * 30 # token有效期，默认为30天
+          max-login-error-times: 3 # 最大登录错误次数，默认3次
+          clean-error-time-min: 10 # 登录错误限制登录时间，默认为10分钟
+          password-salt: # 密码加盐
+          email-account: # 发通知邮件的邮箱账号，比如用来发送用户注册成功邮件
+          sdk:
+              server-url: # 服务器地址
+              white-list: # 白名单，逗号分隔
+    cloud:
+        trace-log:
+            enabled: true # 是否启用服务API调用（追踪）日志，默认为true
+        error:
+             enabled: true # 启用降级邮件通知，默认为false
+             notify-flag: __HYSTRIX__ # 默认的通知标识
+             notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED # 通知的事件类型
+             notify-include-keys: # 需监控的方法key值，与notify-exclude-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
+             notify-exclude-keys: # 不需要监控的方法key值，与notify-include-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
+    idempotent:
+        default-expire-ms: 3600000 # 设置默认过期时间，1小时
+        default-strategy: item # 设置默认策略，目前支持item(逐条记录)
+        default-opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
+
+spring:
+    application:
+         name:  # 项目名称,若使用Dew，请配置
+    mail: #mail配置，需要hystrix降级通知需加以下配置
+         host: smtp.163.com
+         username:
+         password:
+         properties:
+           mail:
+             smtp:
+               auth: true
+                 starttls:
+                   enable: true
+                   required: true
+    hazelcast: # hazelcast相关配置
+         username:
+         password:
+         addresses: ["127.0.0.1"]
+         connection-timeout: #默认5000
+         connection-attempt-limit: #默认2
+         connection-attempt-period: #默认3000</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code_spring_boot_code_核心参数"><a class="anchor" href="#code_spring_boot_code_核心参数"></a>3.2.2. <code>Spring boot</code> 核心参数</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html" class="bare">https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code_spring_cloud_code_核心参数"><a class="anchor" href="#code_spring_cloud_code_核心参数"></a>3.2.3. <code>Spring cloud</code> 核心参数</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="http://cloud.spring.io/spring-cloud-static/Edgware.SR4/single/spring-cloud.html" class="bare">http://cloud.spring.io/spring-cloud-static/Edgware.SR4/single/spring-cloud.html</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="framework-best-practices"><a class="anchor" href="#framework-best-practices"></a>3.3. 框架最佳实践[TBD]</h3>
+<div class="sect3">
+<h4 id="服务调用开发期使用"><a class="anchor" href="#服务调用开发期使用"></a>3.3.1. 服务调用开发期使用</h4>
+<div class="paragraph">
+<p>在 <code>Spring Cloud</code> 体系下，服务调用需要启动 <code>Eureka</code> 服务（对于 <code>Dew</code> 中的 <code>Registry</code> 组件），这对开发阶段并不友好：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>开发期间会不断启停服务，<code>Eureka</code> 保护机制会影响服务注册（当然这是可以关闭的）</p>
+</li>
+<li>
+<p>多人协作时可能会出现调用到他人服务的情况（同一服务多个实例）</p>
+</li>
+<li>
+<p>需要启动 <code>Eureka</code> 服务，多了一个依赖</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>为解决上述问题,在使用 <code>Spring Cloud</code> 的 <code>RestTemplate</code> 时,增加 <code>Ribbon</code> 的服务配置.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre># &lt;client&gt;为service-id
+&lt;client&gt;.ribbon.listOfServers: &lt;直接访问的IPs&gt;
+# 如
+x-service.ribbon.listOfServers: 127.0.0.1:8812</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code_validated_code_注解"><a class="anchor" href="#code_validated_code_注解"></a>3.3.2. <code>@Validated</code> 注解</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>在Spring Controller类里，<code>@Validated</code> 注解初使用会比较不易上手，在此做下总结</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>对于基本数据类型和String类型，要使校验的注解生效，需在该类上方加 <code>@Validated</code> 注解</p>
+</li>
+<li>
+<p>对于抽象数据类型，需在形式参数前加<code>@Validated</code>注解</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Spring对抽象数据类型校验抛出异常为<code>MethodArgumentNotValidException</code>，http状态码为400，对基本数据类型校验抛出异常为<code>ConstraintViolationException</code>，http状态码为500，dew对这两种异常做了统一处理，http状态码均返回200，code为400
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据"><a class="anchor" href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据"></a>3.3.3. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>对于 <code>LocalDateTime</code> 类型，需在参数上加 <code>@JsonFormat</code> 注解，如下：<code>@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")</code></p>
+</li>
+<li>
+<p><code>LocalDate,LocalTime,Instant</code> 等，无需配置可自行转换</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<code>jackson</code> 对于 <code>LocalDateTime</code> 类型的支持与其他三种类型不具有一致性，这是 <code>jackson</code> 需要优化的一个点
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="断路保护"><a class="anchor" href="#断路保护"></a>3.3.4. 断路保护</h4>
+<div class="listingblock">
+<div class="title">Hystrix配置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-properties" data-lang="properties"># 执行的隔离策略 THREAD, SEMAPHORE 默认THREAD
+hystrix.command.default.execution.isolation.strategy=THREAD
+# 执行hystrix command的超时时间,超时后会进入fallback方法 默认1000
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=1000
+# 执行hystrix command是否限制超时,默认是true
+hystrix.command.default.execution.timeout.enabled=true
+# hystrix command 执行超时后是否中断 默认true
+hystrix.command.default.execution.isolation.thread.interruptOnTimeout=true
+# 使用信号量隔离时,信号量大小,默认10
+hystrix.command.default.execution.isolation.semaphore.maxConcurrentRequests=10
+# fallback方法最大并发请求数 默认是10
+hystrix.command.default.fallback.isolation.semaphore.maxConcurrentRequests=10
+# 服务降级是否开启,默认为true
+hystrix.command.default.fallback.enabled=true
+# 是否使用断路器来跟踪健康指标和熔断请求
+hystrix.command.default.circuitBreaker.enabled=true
+# 熔断器的最小请求数,默认20. (这个不是很理解,欢迎补充)
+hystrix.command.default.circuitBreaker.requestVolumeThreshold=20
+# 断路器打开后的休眠时间,默认5000
+hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds=5000
+# 断路器打开的容错比,默认50
+hystrix.command.default.circuitBreaker.errorThresholdPercentage=50
+# 强制打开断路器,拒绝所有请求. 默认false, 优先级高于forceClosed
+hystrix.command.default.circuitBreaker.forceOpen=false
+# 强制关闭断路器,接收所有请求,默认false,优先级低于forceOpen
+hystrix.command.default.circuitBreaker.forceClosed=false
+
+# hystrix command 命令执行核心线程数,最大并发 默认10
+hystrix.threadpool.default.coreSize=10</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>信息参见:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/Netflix/Hystrix/wiki/Configuration" class="bare">https://github.com/Netflix/Hystrix/wiki/Configuration</a></p>
+</li>
+<li>
+<p><a href="http://hwood.lofter.com/post/1cc7fbdc_e8c5c96" class="bare">http://hwood.lofter.com/post/1cc7fbdc_e8c5c96</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>使用断路保护可有效果的防止系统雪崩，<code>Spring Cloud</code> 对 <code>Hystrix</code> 做了封装，详见： <a href="http://cloud.spring.io/spring-cloud-netflix/single/spring-cloud-netflix.html#_circuit_breaker_hystrix_clients" class="bare">http://cloud.spring.io/spring-cloud-netflix/single/spring-cloud-netflix.html#_circuit_breaker_hystrix_clients</a></p>
+</div>
+<div class="paragraph">
+<p>需要说明的是 <code>Hystrix</code> 使用新线程执行代码，导致 <code>Threadlocal</code> 数据不能同步，使用时需要将用到的数据做为参数传入，如果需要使用 <code>Dew</code> 框架的上下文（请求链路/用户等获取）需要先传入再设值，e.g.</p>
+</div>
+<div class="listingblock">
+<div class="title">Hystrix Command 示例,及Context处理</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public class HystrixExampleService {
+    @HystrixCommand(fallbackMethod = "defaultFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000")
+    })
+    public String someMethod(Map&lt;String, Object&gt; parameters, DewContext context) {
+        // ！！！ Hystrix使用新线程执行代码，导致Threadlocal数据不能同步，
+        // 使用时需要将用到的数据做为参数传入，如果需要使用Dew框架的上下文需要先传入再设值
+        DewContext.setContext(context);
+        try {
+            Thread.sleep(new Random().nextInt(3000));
+            logger.info("Normal Service Token:" + Dew.context().getToken());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return "ok";
+    }
+
+    // 降级处理方法定义
+    public String defaultFallback(Map&lt;String, Object&gt; parameters, DewContext context, Throwable e) {
+        DewContext.setContext(context);
+        logger.info("Error Service Token:" + Dew.context().getToken());
+        return "fail";
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="定时任务"><a class="anchor" href="#定时任务"></a>3.3.5. 定时任务</h4>
+<div class="paragraph">
+<p>使用 <code>Spring Config</code>  配置中心 <code>refresh</code> 时,在 <code>@RefreshScope</code> 注解的类中, <code>@Scheduled</code> 注解的自动任务会失效。
+建议使用实现 <code>SchedulingConfigurer</code> 接口的方式添加自动任务。</p>
+</div>
+<div class="listingblock">
+<div class="title">自动任务添加</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Configuration
+@EnableScheduling
+public class SchedulingConfiguration implements SchedulingConfigurer {
+
+    private Logger logger = LoggerFactory.getLogger(SchedulingConfiguration.class);
+
+    @Autowired
+    private ConfigExampleConfig config;
+
+    @Override
+    public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+        taskRegistrar.addTriggerTask(() -&gt; logger.info("task1: " + config.getVersion()), triggerContext -&gt; {
+            Instant instant = Instant.now().plus(5, SECONDS);
+            return Date.from(instant);
+        });
+
+        taskRegistrar.addTriggerTask(() -&gt; logger.info("task2: " + config.getVersion()), new CronTrigger("1/3 * * * * ?"));
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="主要性能影响参数"><a class="anchor" href="#主要性能影响参数"></a>3.3.6. 主要性能影响参数</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>内置 <code>Tomcat</code> 参数调整效果并不大,如果需要调整,建议适当调大 <code>max-treads</code> 和 <code>accept-count</code></p>
+<div class="literalblock">
+<div class="content">
+<pre># 最大等待请求数 默认100
+server.tomcat.accept-count=1000
+# 最大并发数 默认200
+server.tomcat.max-threads=1000
+# 最大连接数 默认BIO:200 NIO:10000 APR:8192
+server.tomcat.max-connections=2000</pre>
+</div>
+</div>
+</li>
+<li>
+<p><code>Ribbon</code> 性能参数说明调整 <code>MaxTotalConnections</code> 和 <code>MaxConnectionsPerHost</code> 时建议同比调整 <code>Pool</code> 相关的参数</p>
+<div class="literalblock">
+<div class="content">
+<pre># ribbon 单主机最大连接数,默认50
+ribbon.MaxConnectionsPerHost=500
+# ribbon 总连接数,默认 200
+ribbon.MaxTotalConnections=1000
+# 默认200
+ribbon.PoolMaxThreads=1000
+# 默认1
+ribbon.PoolMinThreads=500</pre>
+</div>
+</div>
+</li>
+<li>
+<p><code>Hystrix</code> 性能参数说明</p>
+<div class="literalblock">
+<div class="content">
+<pre># 并发执行的最大线程数,默认10
+hystrix.threadpool.default.coreSize=100</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+普通 <code>Service</code> 使用 <code>Hystrix</code> 时,最大并发主要调整 <code>hystrix.threadpool.default.coreSize</code>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<code>Hystrix</code> 的默认超时时间为1s,在高并发下容易出现超时,建议将默认超时时间适当调长,
+特殊接口需要将时间调短或更长的,使用特定配置。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="缓存处理"><a class="anchor" href="#缓存处理"></a>3.3.7. 缓存处理</h4>
+<div class="paragraph">
+<p><code>Spring Cache</code> 提供了很好的注解式缓存，但默认没有超时，需要根据使用的缓存容器特殊配置</p>
+</div>
+<div class="listingblock">
+<div class="title">Redis缓存过期时间设置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Bean
+RedisCacheManager cacheManager() {
+    final RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate);
+    redisCacheManager.setUsePrefix(true);
+    redisCacheManager.setDefaultExpiration(&lt;过期秒数&gt;);
+    return redisCacheManager;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="jdbc_批量插入性能问题"><a class="anchor" href="#jdbc_批量插入性能问题"></a>3.3.8. jdbc 批量插入性能问题</h4>
+<div class="paragraph">
+<p>如果不开启rewriteBatchedStatements=true，那么jdbc会把批量插入当做一行行的单条处理，也就没有达到批量插入的效果</p>
+</div>
+<div class="listingblock">
+<div class="title">jdbc配置示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/dew?useUnicode=true&amp;characterEncoding=utf-8&amp;rewriteBatchedStatements=true
+    username: root
+    password: 123456</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="http请求并发数性能瓶颈"><a class="anchor" href="#http请求并发数性能瓶颈"></a>3.3.9. http请求并发数性能瓶颈</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>当策略为Thread时（默认是Thread)，hystrix.threadpool.default.maximumSize为第一个性能瓶颈，默认值为10.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+修改值时，需要先设置hystrix.threadpool.default.allowMaximumSizeToDivergeFromCoreSize为true，默认为false
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<div class="title">hystrix详细配置参见https://github.com/Netflix/Hystrix/wiki/configuration#allowMaximumSizeToDivergeFromCoreSize</div>
+<ul>
+<li>
+<p>第二个瓶颈为springboot内置的tomcat的最大连接数，参数为server.tomcat.maxThreads，默认值为200</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="部署运维_devops_chapter"><a class="anchor" href="#部署运维_devops_chapter"></a>4. 部署运维 DevOps Chapter</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="devops-env-install"><a class="anchor" href="#devops-env-install"></a>4.1. 测试、生产环境安装配置</h3>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>本文会给出使用代理与不使用代理的安装、配置方式，但强烈推荐使用代理方式，详见 <a href="#proxies">代理选择与设置</a> 。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>本文各服务使用 <code>x.dew.ms</code> 做为访问的域名，可根据实际情况替换。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="服务规划"><a class="anchor" href="#服务规划"></a>4.1.1. 服务规划</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+常规的项目研发多会分 <code>开发(dev)、测试(test)、预发(pre-prod)/仿真(uat)、生产(prod)</code> 等多个环境。
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>服务整体上三类：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>公共支撑服务，如 Gitlab 、 Harbor 等，这些服务要求所有环境共用、互通</p>
+</li>
+<li>
+<p>每个环境独立部署的支撑服务， 如 RabbitMQ、PostgreSql、Redis、dnsmasq、Minio 等，出于数据、资源隔离的要求这些服务各个环境分别部署</p>
+</li>
+<li>
+<p>每个环境的Docker与Kubernetes集群，原则上各环境使用独立的集群，如果共用集群时需要使用<code>namespace</code>加以区分</p>
+</li>
+</ol>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. 推荐的服务列表</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">分类</th>
+<th class="tableblock halign-left valign-top">域名/主机名</th>
+<th class="tableblock halign-left valign-top">服务</th>
+<th class="tableblock halign-left valign-top">备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">公共支撑服务</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">domain:gitlab.dew.ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gitlab</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gitlab及其CI/CD服务</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">公共支撑服务</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">domain:harbor.dew.ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Harbor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Docker私有库服务</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">公共支撑服务</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">domain:maven.dew.ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maven</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maven私有库服务</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">环境相关的支撑服务</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dnsmasq</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">轻量级DNS解析服务</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">环境相关的支撑服务</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">domain:minio.dew.ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Minio</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">分布式对象存储服务，用于CI/CD时做为分布式缓存</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">环境相关的支撑服务</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">domain:nfs.dew.ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NFS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用于Kuernetes persistent volumes的文件存储服务，生产环境建议使用云厂商的分布式文件存储或 CephFS，支持的类型见
+                                                                   <a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes" class="bare">https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">容器集群</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">hostname:k8s-X</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Docker</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Docker容器服务，部署到所有Kubernetes所在的节点</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">容器集群</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">hostname:k8s-X</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;CNI&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes CNI服务，部署到所有Kubernetes所在的节点，本文使用 Flannel</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">容器集群</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">hostname:k8s-masterX</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes Master</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes Master服务，可做HA</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">容器集群</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">hostname:k8s-masterX</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Helm tiller</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Helm服务，部署到Kubernetes Master所在节点</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">容器集群</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">hostname:k8s-nodeX</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes Node</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes Node服务，至少3个节点</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>容器集群各节点主机名与IP的映射配置到 /etc/hosts 中</p>
+</li>
+<li>
+<p>kubernetes Node 应至少分两个组: <code>group=app</code> 用于运行应用， <code>group=devops</code> 用于运行运维管理工具。</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+各支撑服务（中间件）的安装见  <a href="#middleware">常用中间件安装配置</a> ，下文介绍容器服务的安装配置。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="基础配置"><a class="anchor" href="#基础配置"></a>4.1.2. 基础配置</h4>
+<div class="paragraph">
+<p><strong>以 Centos7 为例，各节点做好ssh免密互访、关闭防火墙、关闭swap、禁用SELINUX</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 关闭防火墙
+systemctl stop firewalld.service
+systemctl disable firewalld.service
+# 关闭swap
+swapoff -a
+sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+# 禁用SELINUX
+sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config
+# 创建key
+ssh-keygen -t rsa</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 每个节点执行完上述命令后再执行ssh复制，每个节点都要执行N次（N为节点数-1）
+ssh-copy-id -i ~/.ssh/id_rsa.pub root@k8s-X</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="docker"><a class="anchor" href="#docker"></a>4.1.3. Docker</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://kubernetes.io/docs/setup/cri/#docker" class="bare">https://kubernetes.io/docs/setup/cri/#docker</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>yum install -y yum-utils \
+  device-mapper-persistent-data \
+  lvm2
+
+yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+
+yum update -y &amp;&amp; yum install -y docker-ce-18.06.2.ce
+
+mkdir /etc/docker
+
+cat &gt; /etc/docker/daemon.json &lt;&lt;EOF
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2",
+  "storage-opts": [
+    "overlay2.override_kernel_check=true"
+  ]
+}
+EOF
+
+
+# 添加代理（可选）
+mkdir -p /etc/systemd/system/docker.service.d/
+cat &gt;&gt;/etc/systemd/system/docker.service.d/http-proxy.conf &lt;&lt;EOF
+[Service]
+Environment="HTTP_PROXY=http://&lt;代理host&gt;:&lt;代理端口&gt;" "HTTPS_PROXY=http://&lt;代理host&gt;:&lt;代理端口&gt;" "NO_PROXY=localhost,127.0.0.1,dew.ms"
+EOF
+
+systemctl daemon-reload
+systemctl restart docker
+systemctl enable docker</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="kubernetes"><a class="anchor" href="#kubernetes"></a>4.1.4. Kubernetes</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://kubernetes.io/docs/setup/independent/install-kubeadm/" class="bare">https://kubernetes.io/docs/setup/independent/install-kubeadm/</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre># 使用阿里云镜像加速下载
+cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=http://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=0
+repo_gpgcheck=0
+gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
+        http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+EOF
+
+setenforce 0
+sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
+cat &lt;&lt;EOF &gt;  /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+
+sysctl --system
+
+yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+systemctl enable --now kubelet
+
+# 查看安装的Kubernetes版本
+yum list installed | grep kube</pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/" class="bare">https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Master安装配置</div>
+<div class="content">
+<pre># 安装Git，后续会用到
+yum install -y git
+
+# 初始化Kubernetes，二选一，使用代理方式
+kubeadm init \
+    --pod-network-cidr=10.244.0.0/16
+
+# 初始化Kubernetes，二选一，不使用代理方式，通过image-repository 及 --kubernetes-version 避免被墙，注意版本与yum安装的版本对应
+kubeadm init \
+    --image-repository registry.aliyuncs.com/google_containers \
+    --kubernetes-version v1.14.1 \
+    --pod-network-cidr=10.244.0.0/16
+
+# 记录上述操作输出中的kubeadm join
+# e.g.
+# kubeadm join 10.200.10.10:6443 --token i3i7qw.2gst6kayu1e8ezlg --discovery-token-ca-cert-hash sha256:cabc90823a8e0bcf6e3bf719abc569a47c186f6cfd0e156ed5a3cd5a8d85fab0
+
+mkdir -p $HOME/.kube
+cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+chown $(id -u):$(id -g) $HOME/.kube/config
+
+# 查看集群状态
+kubectl get cs
+
+# 安装flannel
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
+
+# 都为Running后表示完成
+kubectl get pods --all-namespaces
+
+# 创建命名空间，方便后文使用
+kubectl create ns devops</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Master做为Node</div>
+<div class="paragraph">
+<p>默认情况下 master 不会做为 node 节点，可通过此命令强制启用（不推荐）</p>
+</div>
+<div class="paragraph">
+<p><code>kubectl taint nodes --all node-role.kubernetes.io/master-</code></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/" class="bare">https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Node安装配置</div>
+<div class="content">
+<pre># 执行上一步输出的 kubeadm join ...
+
+# 完成后在master上执行情况如下（以1.14.1版本为例）
+kubectl get no
+-
+k8s-master1   Ready    master   22m     v1.14.1
+k8s-node1     Ready    &lt;none&gt;   11m     v1.14.1
+k8s-node2     Ready    &lt;none&gt;   8m54s   v1.14.1
+k8s-node3     Ready    &lt;none&gt;   8m51s   v1.14.1
+k8s-node4     Ready    &lt;none&gt;   8m49s   v1.14.1
+-</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Master HA配置</div>
+<div class="content">
+<pre># @see https://kubernetes.io/docs/setup/independent/high-availability/</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Node功能划分（打label）</div>
+<div class="content">
+<pre>kubectl label nodes k8s-nodeX k8s-nodeX ...  group=app
+kubectl label nodes k8s-nodeX k8s-nodeX ...  group=devops</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">添加外部DNS服务，如dnsmasq</div>
+<div class="content">
+<pre># 编辑Kubernetes的DNS，加上dew.ms的代理
+kubectl -n kube-system edit cm coredns
+-
+data:
+  Corefile: |
+    ...
+    dew.ms:53 {
+        errors
+        cache 30
+        proxy . x.x.x.x
+    }
+-</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="helm"><a class="anchor" href="#helm"></a>4.1.5. Helm</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://docs.helm.sh/using_helm/#installing-helm" class="bare">https://docs.helm.sh/using_helm/#installing-helm</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
+
+cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tiller
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tiller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: tiller
+    namespace: kube-system
+EOF
+
+# 初始化服务，二选一，使用代理方式
+helm init --service-account tiller
+
+# 初始化服务，二选一，不使用代理方式，需要指定镜像，注意tiller版本和helm版本对应
+helm init --service-account tiller -i registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.13.1
+# 或者初始化之后更换镜像
+kubectl set image deployment/tiller-deploy tiller=registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.13.1 -n kube-system
+
+# 查看helm版本
+helm version
+
+kubectl get pod -n kube-system -l app=helm</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="nginx_ingress_controller"><a class="anchor" href="#nginx_ingress_controller"></a>4.1.6. Nginx Ingress Controller</h4>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre># 使用如下方式将80 443暴露出来
+helm install stable/nginx-ingress --name dew-nginx --namespace ingress-nginx --version=1.4.0 \
+    --set controller.kind=DaemonSet \
+    --set controller.hostNetwork=true \
+    --set controller.stats.enabled=true \
+    --set controller.metrics.enabled=true \
+    --set nodeSelector.group=devops</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="dashboard"><a class="anchor" href="#dashboard"></a>4.1.7. Dashboard</h4>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard-certs
+  namespace: kube-system
+type: Opaque
+EOF
+
+# 安装，不使用代理方式需要加上 --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kubernetes-dashboard-amd64
+helm install stable/kubernetes-dashboard --name dew-dashboard --namespace kube-system --version=1.4.0 \
+    --set rbac.clusterAdminRole=true \
+    --set serviceAccount.create=true \
+    --set ingress.enabled=true \
+    --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/backend-protocol"="HTTPS" \
+    --set ingress.hosts={dashboard.dew.ms} \
+    --set ingress.tls[0].hosts={dashboard.dew.ms},ingress.tls[0].secretName=kubernetes-dashboard-certs \
+    --set nodeSelector.group=devops
+
+# 获取Token
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep dew-dashboard-kubernetes-dashboard | awk '{print $1}')
+
+# 添加域名到客户机hosts并访问 https://dashboard.dew.ms</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="elasticsearch"><a class="anchor" href="#elasticsearch"></a>4.1.8. Elasticsearch</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://github.com/elastic/helm-charts/blob/master/elasticsearch" class="bare">https://github.com/elastic/helm-charts/blob/master/elasticsearch</a> 注意仔细查看各参数设值的说明。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>app=dew-elasticsearch
+size=200Gi
+
+# 创建PV
+
+# 根据replicas的个数来决定下面PV的创建个数
+# 在NFS节点中创建NFS目录
+for i in {0..1}; do
+mkdir -p /data/nfs/elasticsearch/${i}
+chmod 775 /data/nfs/elasticsearch/${i}
+done
+
+# 在Kubernetes Master节点中创建PV
+for i in {0..1}; do
+cat &lt;&lt;EOF | kubectl -n devops apply -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    app: ${app}
+  name: ${app}-${i}
+spec:
+  capacity:
+    storage: ${size}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /data/nfs/elasticsearch/${i}
+    server: nfs.dew.ms
+EOF
+done
+
+# 使用helm安装
+helm repo add elastic https://helm.elastic.co
+
+helm install --name dew-elasticsearch elastic/elasticsearch --namespace devops --version=6.5.0 \
+    --set imageTag=6.6.1 \
+    --set clusterName=dew-elasticsearch \
+    --set nodeGroup=master \
+    --set masterService=dew-elasticsearch-master \
+    --set replicas=2 \
+    --set minimumMasterNodes=2 \
+    --set volumeClaimTemplate.storageClassName="" \
+    --set volumeClaimTemplate.resources.requests.storage=200Gi \
+    --set fsGroup=0 \
+    --set clusterHealthCheckParams="" \
+    --set ingress.enabled=true \
+    --set ingress.hosts={es.dew.ms} \
+    --set nodeSelector.group=devops</pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+其他Elasticsearch的helm chart : <a href="https://github.com/helm/charts/tree/master/stable/elasticsearch" class="bare">https://github.com/helm/charts/tree/master/stable/elasticsearch</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="kibana"><a class="anchor" href="#kibana"></a>4.1.9. Kibana</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://github.com/helm/charts/tree/master/stable/kibana" class="bare">https://github.com/helm/charts/tree/master/stable/kibana</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre># 创建PV &amp; PVC
+
+# 在NFS节点中创建NFS目录
+mkdir -p /data/nfs/kibana
+
+# 在Kubernetes Master节点中创建PV &amp; PVC
+cat &lt;&lt;EOF | kubectl -n devops apply -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    app: kibana
+  name: kibana
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /data/nfs/kibana
+    server: nfs.dew.ms
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: kibana
+  name: kibana
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  selector:
+    matchLabels:
+      app: kibana
+EOF
+
+helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 \
+    --set image.tag="6.6.1" \
+    --set env."ELASTICSEARCH_URL"="http://dew-elasticsearch-master:9200" \
+    --set service.internalPort=5601 \
+    --set ingress.enabled=true,ingress.hosts={kibana.dew.ms} \
+    --set-string ingress.annotations."kubernetes\.io/ingress\.class"=nginx \
+    --set-string ingress.annotations."kubernetes\.io/tls-acme"="true" \
+    --set ingress.tls[0].hosts={kibana.dew.ms},ingress.tls[0].secretName=kibana-certs \
+    --set dashboardImport.enabled=true \
+    --set dashboardImport.dashboards."k8s"="https://raw.githubusercontent.com/monotek/kibana-dashboards/master/k8s-fluentd-elasticsearch.json" \
+    --set serviceAccount.create=true,serviceAccountName=kibana \
+    --set plugins.enabled=true \
+    --set persistentVolumeClaim.enabled=true \
+    --set persistentVolumeClaim.existingClaim=true \
+    --set securityContext.enabled=true \
+    --set securityContext.allowPrivilegeEscalation=true \
+    --set securityContext.runAsUser=0 \
+    --set securityContext.fsGroup=0 \
+    --set nodeSelector.group=devops</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="prometheus_grafana"><a class="anchor" href="#prometheus_grafana"></a>4.1.10. Prometheus &amp;&amp; Grafana</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://github.com/helm/charts/tree/master/stable/prometheus-operator" class="bare">https://github.com/helm/charts/tree/master/stable/prometheus-operator</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">prometheus-operator结构</div>
+<div class="content">
+<pre> |--- prometheus-operator
+ |--- prometheus
+ |--- alertmanager
+ |--- node-exporter
+ |--- kube-state-metrics
+ |--- service monitors to scrape internal kubernetes components
+ |     |---kube-apiserver
+ |     |---kube-scheduler
+ |     |---kube-controller-manager
+ |     |---etcd
+ |     |---kube-dns/coredns
+ |--- grafana</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">创建prometheus 的 PV</div>
+<div class="content">
+<pre>app=prometheus
+components=("alertmanager" "prometheus")
+size=100Gi
+
+# 在NFS节点中创建NFS目录
+for i in ${components[@]};do
+mkdir -p /data/nfs/${app}/${i}
+done
+
+# 在Kubernetes Master节点中创建PV
+for i in ${components[@]};do
+cat &lt;&lt;EOF | kubectl -n devops apply -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    component: ${i}
+  name: ${app}-${i}
+spec:
+  capacity:
+    storage: ${size}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /data/nfs/${app}/${i}
+    server: nfs.dew.ms
+EOF
+done</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">创建grafana 的 PV &amp; PVC</div>
+<div class="content">
+<pre># 在NFS节点中创建NFS目录
+mkdir -p /data/nfs/grafana
+
+# 在Kubernetes Master节点中创建PV &amp; PVC
+cat &lt;&lt;EOF | kubectl -n devops apply -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    app: grafana
+  name: grafana
+spec:
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /data/nfs/grafana
+    server: nfs.dew.ms
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: grafana
+  name: grafana
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+  selector:
+    matchLabels:
+      app: grafana
+EOF</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">使用helm安装</div>
+<div class="content">
+<pre># 若需要对etcd进行监控，则需要先创建secret
+kubectl -n devops create secret generic dew-prometheus-operator-etcd \
+  --from-file=/etc/kubernetes/pki/etcd/ca.crt \
+  --from-file=/etc/kubernetes/pki/etcd/peer.crt \
+  --from-file=/etc/kubernetes/pki/etcd/peer.key
+
+# 安装，不使用代理要加上 --set kube-state-metrics.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kube-state-metrics
+# 若要启用对etcd监控，需设置kubeEtcd相关参数。
+# grafana.'grafana\.ini'为Grafana的配置参数,请安装时自行修改。
+helm install stable/prometheus-operator --name dew-prometheus-operator --namespace devops --version=5.0.10 \
+    --set kubelet.serviceMonitor.https=true \
+    --set prometheus.ingress.enabled=true \
+    --set prometheus.ingress.hosts={prometheus.dew.ms} \
+    --set alertmanager.ingress.enabled=true \
+    --set alertmanager.ingress.hosts={alertmanager.dew.ms} \
+    --set prometheusOperator.securityContext.runAsNonRoot=false \
+    --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
+    --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
+    --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.selector.matchLabels."component"="alertmanager" \
+    --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.selector.matchLabels."component"="prometheus" \
+    --set prometheus.prometheusSpec.secrets[0]=dew-prometheus-operator-etcd \
+    --set kubeEtcd.serviceMonitor.scheme=https \
+    --set kubeEtcd.serviceMonitor.insecureSkipVerify=true \
+    --set kubeEtcd.serviceMonitor.caFile="/etc/prometheus/secrets/dew-prometheus-operator-etcd/ca.crt" \
+    --set kubeEtcd.serviceMonitor.certFile="/etc/prometheus/secrets/dew-prometheus-operator-etcd/peer.crt" \
+    --set kubeEtcd.serviceMonitor.keyFile="/etc/prometheus/secrets/dew-prometheus-operator-etcd/peer.key" \
+    --set grafana.enabled=true \
+    --set grafana.adminPassword=Dew123456 \
+    --set grafana.defaultDashboardsEnabled=true \
+    --set grafana.ingress.enabled=true \
+    --set grafana.ingress.hosts={grafana.dew.ms} \
+    --set grafana.ingress.tls[0].host={grafana.dew.ms},ingress.tls[0].secretName=dew-grafana \
+    --set grafana.sidecar.dashboards.enabled=true \
+    --set grafana.sidecar.dashboards.searchNamespace="devops"\
+    --set grafana.sidecar.dashboards.label=grafana_dashboard \
+    --set grafana.sidecar.datasources.enabled=true \
+    --set grafana.sidecar.datasources.searchNamespace="devops" \
+    --set grafana.sidecar.datasources.label=grafana_datasource \
+    --set grafana.'grafana\.ini'.smtp.enabled="true" \
+    --set grafana.'grafana\.ini'.smtp.host="smtp.163.com:25" \
+    --set grafana.'grafana\.ini'.smtp.user=XXXXX@163.com \
+    --set grafana.'grafana\.ini'.smtp.password=XXXXX \
+    --set grafana.'grafana\.ini'.smtp.from_address="XXXXX@163.com" \
+    --set grafana.'grafana\.ini'.smtp.skip_verify=true \
+    --set grafana.'grafana\.ini'.server.root_url="https://grafana.dew.ms" \
+    --set grafana.persistence.enabled=true \
+    --set grafana.persistence.existingClaim=grafana \
+    --set prometheusOperator.nodeSelector.group=devops \
+    --set alertmanager.alertmanagerSpec.nodeSelector.group=devops \
+    --set prometheus.prometheusSpec.nodeSelector.group=devops \
+    --set kube-state-metrics.nodeSelector.group=devops \
+    --set nodeExporter.nodeSelector.group=devops \
+    --set grafana.nodeSelector.group=devops
+
+
+# grafana默认用户名：admin
+# 访问 http://prometheus.dew.ms
+# 访问 http://alertmanager.dew.ms
+# 访问 https://grafana.dew.ms</pre>
+</div>
+</div>
+<div class="quoteblock">
+<div class="title">常见问题</div>
+<blockquote>
+<div class="paragraph">
+<p>如何查看设置的密码</p>
+</div>
+</blockquote>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>kubectl get secret --namespace devops dew-prometheus-operator-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo</pre>
+</div>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>如何重置grafana密码</p>
+</div>
+</blockquote>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>进入grafana的容器内部后执行 ``grafana-cli admin reset-admin-password passwordvalue``</pre>
+</div>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>有pod启动失败,报文件权限拒绝相关问题，如 "opening storage failed: create dir: mkdir /prometheus/wal: permission denied"</p>
+</div>
+</blockquote>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>很可能和PV的文件目录的权限有关，检查下权限是否一致，设置对应的securityContext进行排查。例：
+``kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops``
+设置securityContext为以下内容
+-
+ securityContext:
+   fsGroup: 0
+   runAsNonRoot: false
+   runAsUser: 0
+-</pre>
+</div>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>通过UI查看prometheus的target中，kube-scheduler、kube-controller处于down状态</p>
+</div>
+</blockquote>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>因为它们只能在宿主机上通过127.0.0.1访问，可使用以下操作：
+. 如果使用kubeadm启动的集群，初始化时的config.yml里可以加入如下参数
+    controllerManagerExtraArgs:
+      address: 0.0.0.0
+    schedulerExtraArgs:
+      address: 0.0.0.0
+. 已经启动后的使用下面命令更改就会滚动更新
+    sed -e "s/- --address=127.0.0.1/- --address=0.0.0.0/" -i /etc/kubernetes/manifests/kube-controller-manager.yaml
+    sed -e "s/- --address=127.0.0.1/- --address=0.0.0.0/" -i /etc/kubernetes/manifests/kube-scheduler.yaml
+  或者全部替换：
+    sed -ri '/--address/s#=.+#=0.0.0.0#' /etc/kubernetes/manifests/kube-*
+. 参考文章：
+  http://www.servicemesher.com/blog/prometheus-operator-manual/
+  https://github.com/coreos/prometheus-operator/blob/master/Documentation/troubleshooting.md</pre>
+</div>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>如何监控APP</p>
+</div>
+</blockquote>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>1.首先需要将项目instrument
+  参考文章：https://prometheus.io/docs/instrumenting/clientlibs/
+2.部署项目及创建进行监控的ServiceMonitor
+  注意ServiceMonitor的labels要含有Prometheus-operator创建的Prometheus的serviceMonitorSelector的label。
+  详细文章：https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="fluentd"><a class="anchor" href="#fluentd"></a>4.1.11. Fluentd</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://github.com/kiwigrid/helm-charts/tree/master/charts/fluentd-elasticsearch" class="bare">https://github.com/kiwigrid/helm-charts/tree/master/charts/fluentd-elasticsearch</a><br>
+     <a href="https://kiwigrid.github.io/" class="bare">https://kiwigrid.github.io/</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>helm repo add kiwigrid https://kiwigrid.github.io
+
+# 安装，不使用代理要加上 --set image.tag=v2.4.0 --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/fluentd-elasticsearch
+# 若要启用Prometheus进行监控Fluentd，
+# 需要先将Fluentd通过设置service暴露出来，然后设置prometheusRule和serviceMonitor。
+# 此配置需结合Prometheus-operator使用。
+helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace devops --version=2.8.3 \
+    --set elasticsearch.host=dew-elasticsearch-master \
+    --set elasticsearch.logstash_prefix=logstash \
+    --set service.type=ClusterIP \
+    --set service.ports[0].name="monitor-agent" \
+    --set service.ports[0].port=24231 \
+    --set prometheusRule.enabled=true \
+    --set prometheusRule.prometheusNamespace=devops \
+    --set prometheusRule.labels.app=prometheus-operator \
+    --set prometheusRule.labels.release=dew-prometheus-operator \
+    --set serviceMonitor.enabled=true \
+    --set serviceMonitor.labels.release=dew-prometheus-operator \
+    --set nodeSelector.group=devops</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="jaeger"><a class="anchor" href="#jaeger"></a>4.1.12. Jaeger</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://github.com/jaegertracing/jaeger-operator" class="bare">https://github.com/jaegertracing/jaeger-operator</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/crds/jaegertracing_v1_jaeger_crd.yaml
+curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/service_account.yaml \
+    | sed "s/namespace: observability/namespace: devops/g" \
+    | kubectl create -f -
+curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/service_account.yaml \
+    | sed "s/namespace: observability/namespace: devops/g" \
+    | kubectl create -f -
+curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/role.yaml \
+    | sed "s/namespace: observability/namespace: devops/g" \
+    | kubectl create -f -
+curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/role_binding.yaml \
+    | sed "s/namespace: observability/namespace: devops/g" \
+    | kubectl create -f -
+curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/operator.yaml \
+    | sed "s/namespace: observability/namespace: devops/g" \
+    | kubectl create -f -
+
+# 创建Jaeger实例
+cat &lt;&lt;EOF | kubectl apply -n devops -f -
+apiVersion: jaegertracing.io/v1
+kind: Jaeger
+metadata:
+  name: jaeger
+spec:
+  strategy: production
+  storage:
+    type: elasticsearch
+    options:
+      es:
+        server-urls: http://dew-elasticsearch-master:9200
+EOF
+
+# Jaeger实例可在不同namespace下创建使用，使用中请注意namespace的问题。
+# 使用sidecar的方式部署项目：https://github.com/jaegertracing/jaeger-operator#auto-injection-of-jaeger-agent-sidecars
+# 使用daemonset的方式部署项目：https://github.com/jaegertracing/jaeger-operator#agent-as-daemonset
+
+# 添加Host，修改Jaeger实例的Ingress
+kubectl patch ingress jaeger-query -n devops -p "spec:
+ rules:
+   - host: jaeger.dew.ms
+     http:
+       paths:
+         - backend:
+             serviceName: jaeger-query
+             servicePort: 16686
+           path: /"
+
+# Pod的调度
+# 目前jaeger-operator暂不支持直接设置，请关注该项目的更新情况。
+# 可以自行给需要调度的pod的deployment添加限制条件。
+# e.g.
+ kubectl patch deploy jaeger-operator jaeger-collector jaeger-query -n devops -p '{"spec": {"template": {"spec": {"nodeSelector": {"group": "devops"}}}}}'</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">使用</div>
+<div class="content">
+<pre># 在Deployment 和 Service 中添加annotations : sidecar.jaegertracing.io/inject: "true" 即可。
+# 使用Dew的 devops-maven-plugin 部署会自动添加此注解。
+
+# 手工添加示例如下：
+cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    # 添加 Jaeger的注解
+    sidecar.jaegertracing.io/inject: "true"
+  name: jaeger-demo
+spec:
+  template:
+    metadata:
+      labels:
+        app: jaeger-demo
+        version: v1
+    spec:
+      containers:
+      - name: jaeger-demo
+        image: jaegertracing/example-hotrod:1.10
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+   # 添加 Jaeger的注解
+    sidecar.jaegertracing.io/inject: "true"
+  name: jaeger-demo
+  labels:
+    app: jaeger-demo
+spec:
+  ports:
+   - name: jaeger-demo
+     port: 8080
+     targetPort: 8080
+  selector:
+   app: jaeger-demo
+EOF</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="devops-user-manual"><a class="anchor" href="#devops-user-manual"></a>4.2. DevOps使用手册[TBD]</h3>
+<div class="paragraph">
+<p>CI/CD</p>
+</div>
+<div class="paragraph">
+<p>通过分支变更触发</p>
+</div>
+<div class="paragraph">
+<p>初始化</p>
+</div>
+<div class="paragraph">
+<p>发布</p>
+</div>
+<div class="paragraph">
+<p>回滚</p>
+</div>
+<div class="paragraph">
+<p>删除</p>
+</div>
+<div class="paragraph">
+<p>日志查看</p>
+</div>
+<div class="paragraph">
+<p>伸缩扩展</p>
+</div>
+<div class="paragraph">
+<p>Maven配置</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="devops-configuration"><a class="anchor" href="#devops-configuration"></a>4.3. DevOps配置速查[TBD]</h3>
+
+</div>
+<div class="sect2">
+<h3 id="devops-best-practices"><a class="anchor" href="#devops-best-practices"></a>4.4. DevOps最佳实践[TBD]</h3>
+
+</div>
+<div class="sect2">
+<h3 id="devops示例"><a class="anchor" href="#devops示例"></a>4.5. DevOps示例</h3>
+<div class="sect3">
+<h4 id="devops示例_helloworld后端服务"><a class="anchor" href="#devops示例_helloworld后端服务"></a>4.5.1. DevOps示例 : Helloworld后端服务</h4>
+<div class="paragraph">
+<p>本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/</p>
+</div>
+<div class="paragraph">
+<div class="title">说明</div>
+<p>此示例用于演示后端服务的自动化部署到Kubernetes，完成后推送钉钉通知。</p>
+</div>
+<div class="listingblock">
+<div class="title">/.dew配置说明</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
+notify:
+  # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
+  args:
+    # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+profiles:
+  # 添加测试环境
+  test:
+    # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
+    namespace: dew-test</code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<div class="title">前置准备</div>
+<ol class="arabic">
+<li>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的test环境（详见 <a href="#devops-user-manual">DevOps使用手册[TBD]</a>）</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">手工执行</div>
+<div class="content">
+<pre># 执行如下maven命令(发布到test环境)
+mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Gitlab CI执行</div>
+<div class="content">
+<pre># Merge或Push代码到test分支</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="devops示例_helloworld类库"><a class="anchor" href="#devops示例_helloworld类库"></a>4.5.2. DevOps示例 : Helloworld类库</h4>
+<div class="paragraph">
+<p>本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/</p>
+</div>
+<div class="paragraph">
+<div class="title">说明</div>
+<p>此示例用于演示类库的自动化部署到Maven。</p>
+</div>
+<div class="listingblock">
+<div class="title">/.dew配置说明</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">profiles:
+  # 添加测试环境
+  test:
+    # 指定测试环境的namespace
+    namespace: dew-test</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">手工执行</div>
+<div class="content">
+<pre># 执行如下maven命令(发布到test环境)
+mvn -P devops dew:build dew:release -Ddew.devops.profile=test \
+    -Ddew.devops.it.snapshotRepository.id=&lt;私库Id，如私库需要认证则此Id对应的认证信息要添加到 setting.xml中&gt; \
+    -Ddew.devops.it.snapshotRepository.url=&lt;私库Url&gt; \</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Gitlab CI执行</div>
+<div class="content">
+<pre># Merge或Push代码到test分支</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="devops示例_helloworld前端"><a class="anchor" href="#devops示例_helloworld前端"></a>4.5.3. DevOps示例 : Helloworld前端</h4>
+<div class="paragraph">
+<p>本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/</p>
+</div>
+<div class="paragraph">
+<div class="title">说明</div>
+<p>此示例用于演示前端服务的自动化部署到Kubernetes。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>前端需要添加一个pom.xml，指定为pom类型 <code>&lt;packaging&gt;pom&lt;/packaging&gt;</code> 即可。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">/.dew配置说明</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">profiles:
+  # 添加测试环境
+  test:
+    # 指定测试环境的namespace
+    namespace: dew-test</code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<div class="title">前置准备</div>
+<ol class="arabic">
+<li>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的test环境（详见 <a href="#devops-user-manual">DevOps使用手册[TBD]</a>）</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">手工执行</div>
+<div class="content">
+<pre># 执行如下maven命令(发布到test环境)
+mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Gitlab CI执行</div>
+<div class="content">
+<pre># Merge或Push代码到test分支</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="devops示例_to_do"><a class="anchor" href="#devops示例_to_do"></a>4.5.4. DevOps示例 : To-Do</h4>
+<div class="paragraph">
+<p>本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/</p>
+</div>
+<div class="paragraph">
+<div class="title">说明</div>
+<p>此示例用于演示以下功能：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>包含modules</p>
+</li>
+<li>
+<p>有类库、JVM服务、前端等多种类型</p>
+</li>
+<li>
+<p>生产环境版本重用</p>
+</li>
+<li>
+<p>自定义.dew文件</p>
+</li>
+<li>
+<p>自动化部署到Kubernetes</p>
+</li>
+<li>
+<p>完成后推送钉钉通知</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>默认情况下Dew会视 <code>prod</code> 标识为生产环境，<code>uat</code> 为仿真环境，生产环境会重用（Docker Image重用）仿真或预发环境的最后一个版本。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">/.dew配置说明</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
+notify:
+  # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
+  args:
+    # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+profiles:
+  # 添加uat环境
+  uat:
+    # 指定仿真环境的namespace
+    namespace: dew-uat
+  # 添加prod环境
+  prod:
+    # 指定生产环境的namespace
+    namespace: dew-prod</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">/kernel/.dew配置说明</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">docker:
+  # 使用自定义的Image，默认JVM类型项目的Image为openjdk:8-alpine
+  image: openjdk:8</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">/notifier/.dew配置说明</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">docker:
+  # 使用自定义的Image，默认JVM类型项目的Image为openjdk:8-alpine
+  image: openjdk:8</code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<div class="title">前置准备</div>
+<ol class="arabic">
+<li>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的uat和prod环境（详见 <a href="#devops-user-manual">DevOps使用手册[TBD]</a>）</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">手工执行</div>
+<div class="content">
+<pre># 执行如下maven命令(发布到uat环境)
+mvn -P devops dew:build dew:release -Ddew.devops.profile=uat
+# 执行如下maven命令(发布到prod环境)
+mvn -P devops dew:build dew:release -Ddew.devops.profile=prod</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Gitlab CI执行</div>
+<div class="content">
+<pre># Merge或Push代码到uat分支
+# Merge或Push代码到prod分支</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="dew项目信息_dew_project_info"><a class="anchor" href="#dew项目信息_dew_project_info"></a>5. Dew项目信息 Dew Project Info</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="开发指南"><a class="anchor" href="#开发指南"></a>5.1. 开发指南</h3>
+<div class="paragraph">
+<p><code>Dew</code> 基于 Apache 2.0 license 分发，如果您要向 <code>Dew</code> 贡献代码或 Fork 为自己的分支项目请遵循许可证要求。</p>
+</div>
+<div class="paragraph">
+<p>SCM： <a href="https://github.com/gudaoxuri/dew">https://github.com/gudaoxuri/dew</a></p>
+</div>
+<div class="paragraph">
+<p>Issues： <a href="https://github.com/gudaoxuri/dew/issues" class="bare">https://github.com/gudaoxuri/dew/issues</a></p>
+</div>
+<div class="sect3">
+<h4 id="代码要求"><a class="anchor" href="#代码要求"></a>5.1.1. 代码要求</h4>
+<div class="paragraph">
+<p>本项目使用修改版的Google CheckStyle做为代码规范，规则文件见 <code>framework/checkstyle/checkstyle.xml</code>。</p>
+</div>
+<div class="paragraph">
+<p>代码的变更需要有有对应的单元/集成测试。</p>
+</div>
+<div class="paragraph">
+<p>目前项目中只有<code>DevOps</code>部分用到集成测试，对应的需要修改 <code>devops/devops-test.properties</code> 为自己的支撑环境，但请不要提交此文件。</p>
+</div>
+<div class="listingblock">
+<div class="title">/devops/devops-test.properties示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-properties" data-lang="properties">#
+# Copyright 2019. the original author or authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+dew.devops.docker.host=tcp://10.200.131.182:2375
+# Docker registry url, nullable
+dew.devops.docker.registry.url=https://harbor.dew.env/v2
+# Docker registry user name, nullable
+dew.devops.docker.registry.username=admin
+# Docker registry password, nullable
+dew.devops.docker.registry.password=Harbor12345
+# Kubernetes base64 configuration
+dew.devops.kube.config=YXBpVmVyc2lvbjogdjEKY2x1c3RlcnM6Ci0gY2x1c3RlcjoKICAgIGNlcnRpZmljYXRlLWF1dGhvcml0eS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VONVJFTkRRV0pEWjBGM1NVSkJaMGxDUVVSQlRrSm5hM0ZvYTJsSE9YY3dRa0ZSYzBaQlJFRldUVkpOZDBWUldVUldVVkZFUlhkd2NtUlhTbXdLWTIwMWJHUkhWbnBOUWpSWVJGUkZOVTFFU1hsTlJFRTFUa1JqTVU0eGIxaEVWRWsxVFVSSmVFNTZRVFZPUkdNeFRqRnZkMFpVUlZSTlFrVkhRVEZWUlFwQmVFMUxZVE5XYVZwWVNuVmFXRkpzWTNwRFEwRlRTWGRFVVZsS1MyOWFTV2gyWTA1QlVVVkNRbEZCUkdkblJWQkJSRU5EUVZGdlEyZG5SVUpCVDFwTENuQkRVMDFKTUhGSFJFVjNaSFpZWkVGdGFuVjBVSGxVWmpGQlZrWTFkRll6Y0VRMFdXTkdXRzloYzNWMVNFdHdSVzlVZEVKVVFrdFVSazFNTWpSc01GRUtWRVphVERSWmNITkdURUo2YTJzek5YcHdZMWxvTDJGRFlVMDJaVTVHZFV4NU9ISlVja3RtSzNwV2NsRk1OeXQzY25CSlVHOTVORWRSUm5GbGNUQmliZ3BPVVhOUVR5dGpRMkZoV0VWVFRrOWhlRVF3WTB4clJGWnJabkpFVldkcGFYUjVVRVl2V1dGT2JUTm9hVk5vTkhNcmNXUmtORkZoUkZOTVlXeHhNRE5TQ2pkdU5uWk5hbnBZVTNSRlpsRkJaMWg1UlROWE5IaDJjV1U1U2xBcmVUWlNhM05KVVc5NlNuQktiWEkwUW5aTE0wRnVTVFF6TjNGTWR5OW5lR0ZDVFVnS1pWcGpSakZ3UjJsV1JpOW5TbkpYV0dWTk1EUnFTMFZsT0UxdmMyeEZlRWd6VmtkSVpGUlJWRUZRV1U1NmFHRm1NMlprY0N0cGFuUTNSRWhRTTI0NVRBcElaSHBZVmtoa1FuRkdaMDFqUlVjcll6QmpRMEYzUlVGQllVMXFUVU5GZDBSbldVUldVakJRUVZGSUwwSkJVVVJCWjB0clRVRTRSMEV4VldSRmQwVkNDaTkzVVVaTlFVMUNRV1k0ZDBSUldVcExiMXBKYUhaalRrRlJSVXhDVVVGRVoyZEZRa0ZGZFdjd0swOXdPVTlQT0VkbVoyNVFjR05MYUhGMlEwcHFOakVLUW1OUVZEQkpWREZNTWxGV1FVeDBOa0ZxWlRVM1ZYRXphR1JXUTJsMFdrNU5VRmsxZFUxSmJWcDNhRnBhWWtOUk5HbERiRmdyVGtoWGNsWjVTRkZ6ZEFvNFZXSkxLemRFYkVWTlVqSllZVWsxU0ZaUFdVVnJWaXRhT0RKeGFXeFNWSEJpY0NzeVFXTjRaVTFZY2pFeE5GSnFORElyUlRkaWNYY3hRMnRGTDNJNENtbEhhVlE0Tkhod2RXbzViRzFDYTBaaFkwSnJSblZYUmpoV1ZWZG1iV1ZFTDJwdGNUZEpjbmRNYUVSQ0wyNDJVWFpDVDA1UWEzcDJRV0ZTTjBkSlowd0tWblZyTUZkQ04zaDNVa05qUzJKRE5HZ3JlbmREVHpGamIzUk9Wamh3ZVRKVVltSnVjMGQ0VWpGWFNHOWhVekpJTUVjNWRYSlpSaXRZU0dKWWRrMVZUUXBVYmtkVlpqRklNVEE1YUVOUE9UaDVSRU5pWkM5dE5WYzFPRnBqYUVsdU1qUkRjM1l2UkZkelVUbHphak5ISzJsc2NFeG9iMkpHYW1kWll6MEtMUzB0TFMxRlRrUWdRMFZTVkVsR1NVTkJWRVV0TFMwdExRbz0KICAgIHNlcnZlcjogaHR0cHM6Ly8xMC4yMDAuMTMxLjE4OjY0NDMKICBuYW1lOiBrdWJlcm5ldGVzCmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBrdWJlcm5ldGVzCiAgICB1c2VyOiBrdWJlcm5ldGVzLWFkbWluCiAgbmFtZToga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmN1cnJlbnQtY29udGV4dDoga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmtpbmQ6IENvbmZpZwpwcmVmZXJlbmNlczoge30KdXNlcnM6Ci0gbmFtZToga3ViZXJuZXRlcy1hZG1pbgogIHVzZXI6CiAgICBjbGllbnQtY2VydGlmaWNhdGUtZGF0YTogTFMwdExTMUNSVWRKVGlCRFJWSlVTVVpKUTBGVVJTMHRMUzB0Q2sxSlNVTTRha05EUVdSeFowRjNTVUpCWjBsSlFVMUljR2RpU1RCNlVVMTNSRkZaU2t0dldrbG9kbU5PUVZGRlRFSlJRWGRHVkVWVVRVSkZSMEV4VlVVS1FYaE5TMkV6Vm1sYVdFcDFXbGhTYkdONlFXVkdkekI0VDFSQmVVMXFRWGRQVkZFelRsUmtZVVozTUhsTlJFRjVUV3BCZDA5VVVUTk9WR3hoVFVSUmVBcEdla0ZXUW1kT1ZrSkJiMVJFYms0MVl6TlNiR0pVY0hSWldFNHdXbGhLZWsxU2EzZEdkMWxFVmxGUlJFVjRRbkprVjBwc1kyMDFiR1JIVm5wTVYwWnJDbUpYYkhWTlNVbENTV3BCVGtKbmEzRm9hMmxIT1hjd1FrRlJSVVpCUVU5RFFWRTRRVTFKU1VKRFowdERRVkZGUVRSaFMwVmFhSFJVYlZScVdtVkVSMDhLZDFrNGMxaFRkVGhwWm1nd2Vta3JkSFpHUlU1U1FVWlRhMk14V0ROSE1HcGFka3RLVkZobE1VTkNielJKU21jM1pFUXZlVU5ZVmtwcWVuZEJWbFJhYUFwTmN6WjNXSGhITms1Q2RWaDZaV1E0VVhrNFpIWktiWFo2UjBreFNGbzNibTkwUTNsSE9URlliM1J6Y25aSlMwaEhWR3BCTlM4eWQyOVJiMlJ6VVU5U0NtSmpSRUZRY0dOb2NTOTZhRUo0WVhSSVRrZHlXbk5XY20xSFdEVlVaRTA0VVZOVGRtdHdiSE14WkhkUFlWWnZRWFpwYVRoUGNUWkhTR2wzY21wQlQwZ0tLMkYyVEhCTE1XZ3Zia05CUm1adWRrTTJOUzh2TWpaemRrTkVRMHRIYlRjdlNIY3ZWM2RGYWpWMk5FSXlMMk5oYVRWb1RUbFBZVmhRTTI0dmExbDZjQXBpYlRGMmJGRklhVGxMYkU1MlpYZGtXbk01VkdwVlZVbzVOR3R6YTJkWk1ub3dRWEowYUU5M1MzVlNNRTl3TWtWRlEzSXpTblZ6VVhWQlMzVkRUMUJIQ2l0R1VVSkVVVWxFUVZGQlFtOTVZM2RLVkVGUFFtZE9Wa2hST0VKQlpqaEZRa0ZOUTBKaFFYZEZkMWxFVmxJd2JFSkJkM2REWjFsSlMzZFpRa0pSVlVnS1FYZEpkMFJSV1VwTGIxcEphSFpqVGtGUlJVeENVVUZFWjJkRlFrRkRXbEE1TURKTGNsVTBOazgxTjFaRUsxZDBURGhKUlhKT1JHbHhXa0pPU3pRMVl3cDJZMnhXVWpodVNtWm1lREpVTUdOc0t6WTBMMmg0Y25CVE9WYzFZWHA2VEZOdGJYWk5RbXhOU0VJMldGcEZVR2h6TWtaV1VIVnlhek5pYVhGMk9XdFJDbFYwYURsUlZtUkhhMlEyUTAxMVpHNXBlRXRUTm5wbFppOTVLMHBsYW01VU0zRnVjazVsTVhWaGVqTm1RMjFLT0N0elNtOXllRWRoVTA1NmQwSm1WRmNLYXpkT2JEQnlObkZpV0ZKd1lsVjZWVXBrTVZkTk5EbFdia1JOVDJwMWRUYzFjVVl6WTJvek1FdFFhV2xsWkRaa1pIRkVhbkZ1V1ZaU1MxbGxORmhZZHdwTFUxTkZXREZ3VGxFeWJreDBVbFJXYUhCelVHTmFPSEYyV2xNNUx6RmpiVEp5YlhrdmNIaFBTMmhJZEVsckszVXlhQzlEVDJaaGQwOXFSSEZWWW01WkNtWk5jbTUyZUZadlNXaFlRM1pYTlVSamRFTktPSFl5VTJ0VGVuQXJNVkJaVFdkWVN6UTFOMjFMTTNWb1QzUlBRM2N5TUQwS0xTMHRMUzFGVGtRZ1EwVlNWRWxHU1VOQlZFVXRMUzB0TFFvPQogICAgY2xpZW50LWtleS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJTVTBFZ1VGSkpWa0ZVUlNCTFJWa3RMUzB0TFFwTlNVbEZiM2RKUWtGQlMwTkJVVVZCTkdGTFJWcG9kRlJ0VkdwYVpVUkhUM2RaT0hOWVUzVTRhV1pvTUhwcEszUjJSa1ZPVWtGR1UydGpNVmd6UnpCcUNscDJTMHBVV0dVeFEwSnZORWxLWnpka1JDOTVRMWhXU21wNmQwRldWRnBvVFhNMmQxaDRSelpPUW5WWWVtVmtPRkY1T0dSMlNtMTJla2RKTVVoYU4yNEtiM1JEZVVjNU1WaHZkSE55ZGtsTFNFZFVha0UxTHpKM2IxRnZaSE5SVDFKaVkwUkJVSEJqYUhFdmVtaENlR0YwU0U1SGNscHpWbkp0UjFnMVZHUk5PQXBSVTFOMmEzQnNjekZrZDA5aFZtOUJkbWxwT0U5eE5rZElhWGR5YWtGUFNDdGhka3h3U3pGb0wyNURRVVptYm5aRE5qVXZMekkyYzNaRFJFTkxSMjAzQ2k5SWR5OVhkMFZxTlhZMFFqSXZZMkZwTldoTk9VOWhXRkF6Ymk5cldYcHdZbTB4ZG14UlNHazVTMnhPZG1WM1pGcHpPVlJxVlZWS09UUnJjMnRuV1RJS2VqQkJjblJvVDNkTGRWSXdUM0F5UlVWRGNqTktkWE5SZFVGTGRVTlBVRWNyUmxGQ1JGRkpSRUZSUVVKQmIwbENRVVZ3YVRjNE9WSXhkaXNyZEVWT2FBbzBlbE5CTlZKc1lWZ3ZRVVZxTURKcFptdzJSbEZwUWxoYU1HUlhUVlU0YTFVdlYwOXdRMFk0UVRWNlIwOUNZbGN5Vmt3M0syVnRVVll3TXpOa1FYbHFDbloxZFc1S1NrcFVTRGxaY0N0eFVWSlhka0Y2VTJ4U2VGQnVibVJNY2tkNlVEVTFNM1Y1UW1kdGNFaEJUeXN3VFVFd2IxaFpaRWRhTWpJNVkwUkhibVFLVTFWaGNuTjZWblpWWkZOSWNrSkNVVTAwV1RaM1dURkRURXhUZVRJd1RIazBaRWxESzBzMGEzWXphR2Q0UzA1Nk9GWndZazl2S3l0Q2JXRjVVR1pKVVFwTlJWTlhXRzVGV25wR01sQnFOMWh5Um1jMlN6ZG9jbmhaYUZGbVVtUndSemR0ZUVabVRtMXFXRWxyVlM5UlZURnNUVTluZG5jclIwWTNkMmQzU1VWaENuRTFSVFpYYVVwdGMyOXdhV2RNTVdGRVoxUklMMnh0UlZnNVprSklWbkpRVTNwYUwyMDNNek5vV0haTVNWVk1WVWRQUjNCU05VcDNXSE5NV1ZFNU1uTUtMMWxMVEhVMmEwTm5XVVZCTjNVeVVWUnJZM2cwYlV0aVJqRnpXbUowVldaNU5qWXhiVEpKUnprNWF6RllSRGcyTmxFd2RsbE1jM2RqVjBwRlJqZG5RZ3ByWm1wb2JYRklNR1JIVTNWalpUSlROalZIZFVweGVVUk1aWEEwVG1KYU0xQmhWblZZVUZKSE5FaDFSa1J3VDBoME9IUndSa2h3Wmxsc2NWcHRabTU1Q21KR1dWcGpTeXRtV2tGTlZGTlZjRFpMTDNWRk1ITTJhMk54WW1kSlZtNDRUbkZGVVc4eGJXYzJUbGRVZUU5UVp6UklPV0paZFUxRFoxbEZRVGhqU0UwS1JHdFFWRzlpUTIwMVYyTkxiVzFyVW1GcWRYWmpNR0oyUjBoNE1HY3ZRMEpoUkV0eVYxaFJaRUpUTDA5elltUkJXVk5HUzJzcmRIUTBjVFoxTjJ4SFZRcFFXbXh5UjJGdVpWYzVWRlkyYjNkelFtUldXVTg0YUdGaWNUQmlXbEJIY0VGUk9GUnhMMnQzVFhwSE1UVnZZa2h5UzNab1JFbG1OVTFETWk5elVFdGlDak41Wm1Vell6RjVhMGg2U1UxUkwzQXhPRWhJZFcwdkszRnZPVXR3VlhwdlQyaHlkRWd3T0VObldVVkJOMkZxUjI5MVdqQmxNVUpGU0hRMVUwWlJibEFLTXpoWVFVSllhR3B2UVU5b04xVnNSRFoxT1dacmFVOUJhM3BuUVhKWGMzUjJTM0JKYkc5NlJWbFZZVWx6ZGtKNU9WQnNjWFJxVG1oS1RHOVhjWEUzS3dwUGQyRnJSMkpuZFVSRWMzaGFaMlJtZEROWFVUVXpjVEpEUm5CQlkxbFlURWQyU1d4NVp6UllVMDQ0TmxCMWRtcFVTRFpoV25sd0wwd3dRa2x5TUZGWUNpdGhjMHR3YzBkUWNXbHdVVWN3Wm10MGMzQllPVFp6UTJkWlFsaDNkMFl2YjBSSVFXWmhPVzlyWTNCM2JWaHRMemxsUkZGWFZYcE5kRGhzV1dGRlQyZ0tMM1J5YWxFeGNWSnRibEpRV1ZoWVYycE5OVlVyYkRsUGNtaHNSVE5KY1ZNdmFFYzJTa1ZrWWxWT01VUkplRmROU0VwSVIxTm5jRU5MVldSTWEzTnlSd3BZY1VoSGFWWlNkRVZVZFRKaWRrVnVhSFJJVVhsaUt6Rk9URnByTVhZeWMzVm1NbGQ1VmtWM2EwbDJaaXMyV0hCT1EyZzRWSFJJUms5MlZtWkpjR05tQ2tkTk1VSXdkMHRDWjBOaGNrOVFlbXhrT0U5U01HeG1UVFE1UlhCR1NtTjJia054YjNWVllXTmlNa1JJWlRCb1dYQkNTM0YyUlVWcVdtaDRWSGxZSzI4S1FtdFpNbWhxUkVwTVkyUkhSWEZMUzBwQk5XNU9XbXBuY21saWFrcHFObHBRUm5aaVVHdE5SRWQ0VVhGd0wyTnlOMjB3VUc5NFQxVjBkM2xITWpFMFJncGpSV2cxTkZSWUszUXlUMUpxU2tkVFZVcFhjRzFHWTJoMFRrSTNTVU5UWkU1SGVYbDFibHBSV1hoTFVIbHlRMmd6VWs1SENpMHRMUzB0UlU1RUlGSlRRU0JRVWtsV1FWUkZJRXRGV1MwdExTMHRDZz09Cg==
+# Snapshot repository id, must be filled out in version replacement mode
+# If the repository needs authentication, the authentication information corresponding to this Id should be added to setting.xml
+dew.devops.it.snapshotRepository.id=trc-snapshots
+# Snapshot  repository url, must be filled out in version replacement mode
+dew.devops.it.snapshotRepository.url=http://121.41.17.205:18081/nexus/content/repositories/snapshots/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>提交前请运行 <code>mvn clean test -P qa</code>，确认代码通过CheckStyle检查和测试。</p>
+</div>
+<div class="paragraph">
+<p>发起 <code>Pull Request</code> 后会调用 <code>travis-ci</code> 和 <code>codacy</code> 进行自动化代码检查，如有问题不会执行 <code>Merge</code> 。</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="环境要求"><a class="anchor" href="#环境要求"></a>5.1.2. 环境要求</h4>
+<div class="paragraph">
+<p><code>开发</code> 环境没有特别要求，如果需要服务间调用可使用 <code>&lt;服务名&gt;.ribbon.listOfServers=&lt;host:port&gt;</code> 的方式，详见 <code>examples/tracing-invokeX-example</code> 。</p>
+</div>
+<div class="paragraph">
+<p><code>调试</code> 环境部分模块需要Kubernetes、Docker等服务的支持。</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">环境</th>
+<th class="tableblock halign-left valign-top">模块</th>
+<th class="tableblock halign-left valign-top">备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RabbitMQ</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cluster-rabbit</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">测试RabbitMQ</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes Docker</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">tracing-invokeX-example</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">测试服务间调用</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes Docker</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dew-maven-plugin</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DevOps插件</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes Docker</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">helloworld-backend
+                     helloworld-frontend
+                     helloworld-library
+                     todo</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">测试自动化部署</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Opentracing Jaeger</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">todo</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">测试追踪日志</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fluentd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">todo</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">测试日志采集</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Prometheus Grafana</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">todo</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">测试Metrics</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>如果已按 <a href="#devops-env-install">测试、生产环境安装配置</a> 完成了测试环境的安装配置，
+那么可部分使用这一环境进行调试，
+否则请按以下流程完成调试环境的安装配置。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect4">
+<h5 id="调试环境安装配置"><a class="anchor" href="#调试环境安装配置"></a>调试环境安装配置</h5>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Kubernetes、Docker环境要求使用代理。</p>
+</div>
+<div class="paragraph">
+<p>详见 <a href="#proxies">代理选择与设置</a></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Kubernetes安装</div>
+<div class="content">
+<pre># 使用minikube
+
+# 各版本的安装见此
+# https://kubernetes.io/docs/tasks/tools/install-minikube/
+
+# 代理设置见此
+# https://github.com/kubernetes/minikube/blob/master/docs/http_proxy.md
+# !!!特别说明!!!
+# 以上说明有问题，export HTTP_PROXY或set HTTP_PROXY只会设置到宿主环境，但在vm环境不会带入，
+# 故代理的地址要直接写到 minikube start 的启动参数中
+# 代理地址不能写成127.0.0.1，vm中无法解析
+# windows 10 示例
+minikube start \
+    --registry-mirror=https://registry.docker-cn.com \
+    --vm-driver=hyperv --hyperv-virtual-switch=public --memory=4096 \
+    --docker-env=HTTP_PROXY=http://10.200.20.147:1080 \
+    --docker-env=HTTPS_PROXY=http://10.200.20.147:1080 \
+    --docker-env=NO_PROXY=localhost,127.0.0.1,10.96.0.0/12,192.168.99.1/24
+# 查询kubernetes IP
+minikube ip
+# 安装 dashboard
+minikube dashboard</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">RabbitMQ安装</div>
+<div class="content">
+<pre>minikube ssh
+docker run -d --hostname rabbit --name rabbit \
+    --restart=always \
+    -e RABBITMQ_DEFAULT_USER=dew \
+    -e RABBITMQ_DEFAULT_PASS=dew123456 \
+    -p 15672:15672 \
+    -p 25672:25672\
+    -p 5671:5671 \
+    -p 5672:5672 \
+    -p 4369:4369 \
+    rabbitmq:management
+
+# 访问页面
+# Visit: http://&lt;minikube ip&gt;:15672</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Opentracing Jaeger安装</div>
+<div class="content">
+<pre>minikube ssh
+docker run -d --name jaegertracing \
+    --restart=always \
+    -p 5775:5775/udp \
+    -p 6831:6831/udp \
+    -p 6832:6832/udp \
+    -p 5778:5778 \
+    -p 16686:16686 \
+    -p 14268:14268 \
+    -p 9411:9411 \
+    jaegertracing/all-in-one:latest
+
+# 访问页面
+# Visit: http://&lt;minikube ip&gt;:16686</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Prometheus、Grafana安装</div>
+<div class="content">
+<pre>minikube ssh
+
+# 参考 https://prometheus.io/docs/prometheus/latest/getting_started/#configuring-prometheus-to-monitor-itself
+# 示例监控的是 web-example 工程，对应的配置: framework/examples/web-example/src/main/resources/application.yml
+# prometheus使用pull的方式，需要配置应用运行服务器的IP
+cat &gt;&gt;./prometheus.yml &lt;&lt;EOF
+scrape_configs:
+  - job_name: 'dew-web-example-actuator'
+    metrics_path: '/management/prometheus'
+    scrape_interval: 5s
+    static_configs:
+    - targets: ['10.200.20.147:80']
+EOF
+docker run -d --name prometheus \
+    --restart=always \
+    -p 9090:9090 \
+    -v $PWD/prometheus.yml:/etc/prometheus/prometheus.yml \
+    prom/prometheus
+
+# 访问页面
+# Visit: http://&lt;minikube ip&gt;:9090
+
+docker run -d --name=grafana \
+    --restart=always \
+    -p 3000:3000 \
+    -e GF_SECURITY_ADMIN_USER=dew \
+    -e GF_SECURITY_ADMIN_PASSWORD=dew123456 \
+    grafana/grafana
+
+# 访问页面
+# Visit: http://&lt;minikube ip&gt;:3000</pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="扩展尝试_可选"><a class="anchor" href="#扩展尝试_可选"></a>扩展尝试（可选）</h5>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Windows10请开启 <code>WSL</code>，不支持WSL的Windows请安装 <code>cygwin</code>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Windows10 WSL设置</div>
+<div class="content">
+<pre># 开启WSL，使用linux环境操作kubernetes，以WSL ubuntu为例
+
+# windows下的用户名
+export WIN_USERNAME=i
+# 为kubernetes IP，使用 ``minikube ip`` 查询
+export KUBE_IP=10.200.20.220
+# 为linux添加代理
+export HTTP_PROXY=http://127.0.0.1:1080
+export HTTPS_PROXY=http://127.0.0.1:1080
+export NO_PROXY=localhost,127.0.0.1,10.96.0.0/12,192.168.99.1/24,$KUBE_IP
+
+# 安装kubectl
+curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl \
+&amp;&amp; chmod +x ./kubectl \
+&amp;&amp; sudo mv ./kubectl /usr/local/bin/kubectl
+
+# 配置kubernetes集群信息
+kubectl config set-cluster minikube \
+    --server=https://$KUBE_IP:8443 \
+    --certificate-authority=/mnt/c/Users/$WIN_USERNAME/.minikube/ca.crt
+kubectl config set-credentials minikube \
+    --client-certificate=/mnt/c/Users/$WIN_USERNAME/.minikube/client.crt \
+    --client-key=/mnt/c/Users/$WIN_USERNAME/.minikube/client.key
+kubectl config set-context minikube \
+    --cluster=minikube \
+    --user=minikube
+
+kubectl config use-context minikube
+kubectl get node</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Helm安装</div>
+<div class="content">
+<pre>curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
+helm init
+# 查询tiller是否部署完成
+kubectl -n kube-system get po | grep tiller
+helm list</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="版本"><a class="anchor" href="#版本"></a>5.2. 版本</h3>
+<div class="sect3">
+<h4 id="通道说明"><a class="anchor" href="#通道说明"></a>5.2.1. 通道说明</h4>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><code>Dew</code>有多个版本通道，使用时请谨慎选择：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>GA</code> General Availability，正式版本，通过内部测试没有已知错误并且经过生产验证，生产环境首选！</p>
+</li>
+<li>
+<p><code>RC</code> Release Candidate，发行候选版本，通过内部测试没有已知错误，可用于生产环境。</p>
+</li>
+<li>
+<p><code>Beta</code> 公开测试版本，没有已知的Major类型Bug，但允许存在个别minor类型Bugs，生产环境使用需要谨慎评估！</p>
+</li>
+<li>
+<p><code>Alpha</code> 内部测试版本，很早期的测试版本，未经过内部测试，可能存在较多Bugs，此版本类似技术预览版（Technical Preview），切 <strong>不可</strong> 用于生产环境！</p>
+</li>
+<li>
+<p><code>SNAPSHOT</code> 快照版本，类似Nightly版本，更新频繁此不保证质量，切 <strong>不可</strong> 用于生产环境！</p>
+</li>
+</ol>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="发行记录"><a class="anchor" href="#发行记录"></a>5.2.2. 发行记录</h4>
+<div class="sect4">
+<h5 id="2_0_0_rc_准备中"><a class="anchor" href="#2_0_0_rc_准备中"></a>2.0.0-RC(准备中)</h5>
+<div class="ulist">
+<div class="title">Features</div>
+<ul>
+<li>
+<p>升级到Spring Boot 2.x</p>
+</li>
+<li>
+<p>实现兼容Spring Cloud与Istio的部署、监控架构</p>
+</li>
+<li>
+<p>引入DevOps流程</p>
+</li>
+<li>
+<p>独立通知功能到<code>notification</code></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Improvement</div>
+<ul>
+<li>
+<p>核心模块通过<code>checkstyle</code>检查</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">迁移指南（从1.5.1-RC到此版本）</div>
+<ul>
+<li>
+<p>Spring Boot升级：Spring boot 1.x 迁移到 Spring boot 2.x 见 <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide" class="bare">https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide</a></p>
+</li>
+<li>
+<p>功能变更：包名由 <code>com.tairanchina.csp.dew</code> 变更为 <code>ms.dew</code></p>
+</li>
+<li>
+<p>功能变更：移除了 <code>dew-jdbc</code> 模块</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_5_1_rc"><a class="anchor" href="#1_5_1_rc"></a>1.5.1-RC</h5>
+<div class="ulist">
+<div class="title">Improvement</div>
+<ul>
+<li>
+<p>升级 <code>dew-common</code> 允许请求与响应编码不同</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Fixed</div>
+<ul>
+<li>
+<p>修复 <code>Dew.Util.getRealIP</code> 错误</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_5_0_rc"><a class="anchor" href="#1_5_0_rc"></a>1.5.0-RC</h5>
+<div class="ulist">
+<div class="title">Features</div>
+<ul>
+<li>
+<p>使用小泰科技Fork版本做为开源版本</p>
+</li>
+<li>
+<p>添加领导者选举的Redis实现</p>
+</li>
+<li>
+<p>添加消息通知（钉钉或邮件）</p>
+</li>
+<li>
+<p>添加生成系统级（多服务）统一离线文档功能</p>
+</li>
+<li>
+<p>添加MQ消费的HA功能</p>
+</li>
+<li>
+<p>默认使用micrometer做为指标采集工具</p>
+</li>
+<li>
+<p>添加对Scala的支持</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Improvement</div>
+<ul>
+<li>
+<p>分布式锁中删除lock、lockWithFun操作</p>
+</li>
+<li>
+<p>分布式锁由可重入改为不可重入</p>
+</li>
+<li>
+<p>redis增加hash incr操作 和 hash decr操作</p>
+</li>
+<li>
+<p>增加swagger-bootstrap-ui，优化swaggerUI的显示</p>
+</li>
+<li>
+<p>spring-boot升级至1.5.13.RELEASE版本</p>
+</li>
+<li>
+<p>spring-cloud升级到Edgware.SR4版本</p>
+</li>
+<li>
+<p>dew-common升级到1.4.7版本</p>
+</li>
+<li>
+<p>boot-starter默认启用HTTP服务</p>
+</li>
+<li>
+<p>移除ShardingJDBC的内容</p>
+</li>
+<li>
+<p>移除服务脚手架功能</p>
+</li>
+<li>
+<p>移除mybatis-starter模块</p>
+</li>
+<li>
+<p>暂时移除Dew JDBC模块</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Fixed</div>
+<ul>
+<li>
+<p>修复指标采集内存溢出问题</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">迁移指南（从1.3.4-RC到此版本）</div>
+<ul>
+<li>
+<p>配置变更： 拆分<code>dew.cluster.dist</code> 为 <code>dew.cluster.lock</code>和<code>dew.cluster.map</code></p>
+</li>
+<li>
+<p>配置变更： <code>dew.cluster.election.config.election-period-sec</code> to <code>dew.cluster.config.election-period-sec</code></p>
+</li>
+<li>
+<p>功能变更： 领导者选举、分布式锁、分布式Map的实例化方式由 <code>dew.cluster.election/lock/map</code> 修改成 <code>dew.cluster.election/lock/map.instance(&#8230;&#8203;)</code></p>
+</li>
+<li>
+<p>功能变更： 领导者选举<code>isLeader</code>接口需要等待选举产生后再返回（之前逻辑是每次启动时会设置成false再执行选举）</p>
+</li>
+<li>
+<p>功能变更： 相同<code>Dew.Info.instance</code>的实例在选举过期周期内重启任能保持原先状态</p>
+</li>
+<li>
+<p>功能变更： 移除服务脚手架，需要手工添加需要的接口服务</p>
+</li>
+<li>
+<p>功能变更： 移除mybatis-starter模块，请使用mybatis官方方案</p>
+</li>
+<li>
+<p>功能变更： swagger-ui.html 变更成 doc.html</p>
+</li>
+<li>
+<p>功能变更： <code>Dew.Info.instance</code>由<code>UUID</code>修改成<code>服务名@Profile@IP:端口</code></p>
+</li>
+<li>
+<p>功能变更： 升级后的Tomcat版本不支持Host中带有'_'这种非规范符号</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_3_4_rc"><a class="anchor" href="#1_3_4_rc"></a>1.3.4-RC</h5>
+<div class="ulist">
+<div class="title">Features</div>
+<ul>
+<li>
+<p>rabbitmq 增加topic exchange</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_3_2_rc"><a class="anchor" href="#1_3_2_rc"></a>1.3.2-RC</h5>
+<div class="ulist">
+<div class="title">Features</div>
+<ul>
+<li>
+<p>去掉logback-es依赖，使用logstash从日志文件进行采集</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_3_1_rc"><a class="anchor" href="#1_3_1_rc"></a>1.3.1-RC</h5>
+<div class="ulist">
+<div class="title">Fixed</div>
+<ul>
+<li>
+<p>#93 修复mybatis-starter对于sharding-jdbc数据源的强制加载</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_3_0_rc"><a class="anchor" href="#1_3_0_rc"></a>1.3.0-RC</h5>
+<div class="ulist">
+<div class="title">Features</div>
+<ul>
+<li>
+<p>#87 局部使用sharding-jdbc，mybatis实现，增加mybatis-starter模块</p>
+</li>
+<li>
+<p>#89 支持配置提示</p>
+</li>
+<li>
+<p>#91 Dew实例加载机制优化</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Improvement</div>
+<ul>
+<li>
+<p>#82 metrics指标增加线程、内存、cpu、磁盘等统计</p>
+</li>
+<li>
+<p>#86 ErrorController增加zuul日志追踪支持</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Fixed</div>
+<ul>
+<li>
+<p>#92 修复logback-elasticsearch日志压力过大时导致的内存泄漏</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">升级指南</div>
+<ol class="arabic">
+<li>
+<p>修改pom.xml中dew版本号为1.3.0-RC</p>
+</li>
+<li>
+<p>1.3.0-RC版本中已移除启动类配置，直接用<code>@SpringBootApplication</code>或<code>@SpringCloudApplication</code></p>
+</li>
+<li>
+<p>启动类需要的注解不要忘记自行添加，如<code>@EnableTransactionManagement</code>、<code>@EnableScheduling</code></p>
+</li>
+<li>
+<p>新增的mybatis-starter模块，详见使用说明</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_2_2_rc"><a class="anchor" href="#1_2_2_rc"></a>1.2.2-RC</h5>
+<div class="ulist">
+<div class="title">Fixed</div>
+<ul>
+<li>
+<p>#45 邮件通知修正</p>
+</li>
+<li>
+<p>#85 日志配置优化</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_2_1_rc"><a class="anchor" href="#1_2_1_rc"></a>1.2.1-RC</h5>
+<div class="ulist">
+<div class="title">Fixed</div>
+<ul>
+<li>
+<p>#38 RabbitMQ消息未设置持久化</p>
+</li>
+<li>
+<p>使用 统一响应——协议无关 类型时，降级HTTP状态码改为500</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_2_0_rc"><a class="anchor" href="#1_2_0_rc"></a>1.2.0-RC</h5>
+<div class="ulist">
+<div class="title">Features</div>
+<ul>
+<li>
+<p>#75 添加幂等处理功能， #77 可选策略类型Bloom Filter尚在开发中</p>
+</li>
+<li>
+<p>#72 实现针对服务整体及每个接口的TPS、最大/平均/90%响应时间Metrics统计</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Improvement</div>
+<ul>
+<li>
+<p>#68 支持自定义离线文档文件名</p>
+</li>
+<li>
+<p>#70 更友好地获取本机Host</p>
+</li>
+<li>
+<p>#76 cluster.cache 支持更多类型的操作</p>
+</li>
+<li>
+<p>#53 统一响应——协议无关 降级由 <code>1000</code> 改成 <code>555</code> 以提升兼容性</p>
+</li>
+<li>
+<p>#79 增加是否启用默认文档配置</p>
+</li>
+<li>
+<p>#80 增加注解启用Dew功能</p>
+</li>
+<li>
+<p>Swagger文档去除全局token参数</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Fixed</div>
+<ul>
+<li>
+<p>#43 swagger2markup-maven-plugin 在使用 spring.content-path 无效</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">从 <code>1.1.0-RC</code> 迁移到 <code>1.2.0-RC</code></div>
+<ol class="arabic">
+<li>
+<p>使用 <code>统一响应——协议无关</code> 类型时，UI端由原来只需要获取200状态下的数据改成需要获取 200 和 555 状态下的数据，两者对UI端没有区别。( @See <a href="https://rep.360taihe.com/csp/dew-framework/issues/53" class="bare">https://rep.360taihe.com/csp/dew-framework/issues/53</a> )</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_1_0_rc"><a class="anchor" href="#1_1_0_rc"></a>1.1.0-RC</h5>
+<div class="ulist">
+<div class="title">Features</div>
+<ul>
+<li>
+<p>[功能] #45 支持服务调用（ <code>Hystrix</code> ）异常邮件通知</p>
+</li>
+<li>
+<p>[功能] #51 适配新版 <code>用户权限中心</code> SDK</p>
+</li>
+<li>
+<p>[功能] #59 #49 #15 统一日志规范，适配 <code>sleuth</code> 日志到 <code>ES</code></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Improvement</div>
+<ul>
+<li>
+<p>[优化] #53 统一响应——协议无关 类型的http返回码由统一的200改成 <code>200</code> 或 <code>1000</code> ，前者表示操作成功或不需要降级的错误，后者表示需要做降级（Hystrix fallback）的错误</p>
+</li>
+<li>
+<p>[优化] #50 <code>Dew JDBC</code> 更好地支持没有 <code>Entity</code> 注解的对象</p>
+</li>
+<li>
+<p>[优化] #52 对于java8时间，url参数转换支持String转LocalDateTime,LocalDate、LocalTime,long转LocalDateTime(但json数据不支持)，long转Instant</p>
+</li>
+<li>
+<p>[优化] #55 #58 其它一些优化</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">从 <code>1.1.0-beta1</code> 迁移到 <code>1.1.0-RC</code></div>
+<ol class="arabic">
+<li>
+<p>使用 <code>统一响应——协议无关</code> 类型时，UI端由原来只需要获取200状态下的数据改成需要获取 200 和 1000 状态下的数据，两者对UI端没有区别。( @See <a href="https://rep.360taihe.com/csp/dew-framework/issues/53" class="bare">https://rep.360taihe.com/csp/dew-framework/issues/53</a> )</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_1_0_beta1"><a class="anchor" href="#1_1_0_beta1"></a>1.1.0-beta1</h5>
+<div class="ulist">
+<div class="title">Features</div>
+<ul>
+<li>
+<p>[功能] #19 支持局部 <code>ShardingJDBC</code>(由于ShardingJDBC 2.0还未RC，测试发现存在较多问题，此功能需要等待官方RC)</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Improvement</div>
+<ul>
+<li>
+<p>[优化] 支持Java8时间处理</p>
+</li>
+<li>
+<p>[优化] #34 模块Spring化，<code>boot-core</code> 更名为 <code>boot-starter</code> , <code>cloud-core</code> 更名为 <code>cloud-starter</code></p>
+</li>
+<li>
+<p>[优化] #40 <code>Dew JDBC</code> 独立成 <code>jdbc-starter</code> , 确保核心模块 <code>boot-starter</code> 更轻量</p>
+</li>
+<li>
+<p>[优化] <code>Dew JDBC</code> 性能优化</p>
+</li>
+<li>
+<p>[文档] #47 添加性能调优章节</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Fixed</div>
+<ul>
+<li>
+<p>[修正] 统一错误拦截返回指定为 <code>MediaType=APPLICATION_JSON_UTF8</code> 以解决 <code>Feign</code> 调用解码错误</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">从 <code>1.0.0-RC/betaX</code> 迁移到 <code>1.1.0</code></div>
+<p><code>1.1.0</code> 修正了 <code>1.0.0</code> 版本的几个设计缺陷，需要做如下的迁移操作：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Maven: <code>Dew</code> 框架的版本修正成 <code>1.1.0-X</code>，目前是 <code>1.1.0-beta1</code></p>
+</li>
+<li>
+<p>Maven: <code>boot-core</code> 更名为 <code>boot-starter</code> , <code>cloud-core</code> 更名为 <code>cloud-starter</code></p>
+</li>
+<li>
+<p>核心代码: <code>com.tairanchina.csp.dew.Dew</code> 包路径改成 <code>com.tairanchina.csp.dew.Dew</code></p>
+</li>
+<li>
+<p><code>Dew JDBC</code> 模块（使用MyBatis等其它持久化框架的项目可以忽略）</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>SafeEntity</code> 的创建/更新时间 由 <code>Date</code> 换成了 <code>LocalDateTime</code></p>
+</li>
+<li>
+<p>所有 <code>entity</code> 包 迁移到 <code>com.tairanchina.csp.dew.jdbc.entity</code></p>
+</li>
+<li>
+<p>使用 <code>JdbcTemplate</code> 原生方法时 原来是： <code>Dew.ds().jdbc.xx</code> ，需要修改成 <code>((DewDS)Dew.ds).jdbc.xx</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_0_0_rc"><a class="anchor" href="#1_0_0_rc"></a>1.0.0-RC</h5>
+<div class="ulist">
+<div class="title">Features</div>
+<ul>
+<li>
+<p>[功能]支持新版用户权限中心认证适配(* 新版用户权限中心Release后，此功能代码会有一定变更)</p>
+</li>
+<li>
+<p>[功能]新增SqlBuilder用于快速构建SQL语句</p>
+</li>
+<li>
+<p>[移除]由于 Spring Cloud Thrift RPC 测试不够充分，此版本中暂时移除</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Improvement</div>
+<ul>
+<li>
+<p>[功能]支持rabbit confirm(单条)模式</p>
+<div class="literalblock">
+<div class="content">
+<pre>((RabbitClusterMQ)Dew.cluster.mq).publish(String topic, String message, boolean confirm)
+((RabbitClusterMQ)Dew.cluster.mq).request(String address, String message, boolean confirm)</pre>
+</div>
+</div>
+</li>
+<li>
+<p>[功能]支持 <code>EnabledColumn</code> 结果反转，EnabledColumn用于标识是否启用状态的注解，默认是true是否用，false是禁用，但有些情况下状态字段会使用`del_flag`表示是否删除，这时需要设置结果反转</p>
+</li>
+<li>
+<p>[功能]统一Body及Url Path/Query的异常捕获</p>
+</li>
+<li>
+<p>[功能] <code>tryLock</code> 支持重入</p>
+</li>
+<li>
+<p>[测试]引入 <code>embedded redis</code> 以支持单元测试</p>
+</li>
+<li>
+<p>[文档]添加 以宠物商店为例的 <code>新手入门</code> 章节</p>
+</li>
+<li>
+<p>[修改]原 <code>dew.dao.base-package</code> 改成 <code>dew.jdbc.base-packages</code> 支持多个路径</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Fixed</div>
+<ul>
+<li>
+<p>修正Redis锁 <code>Unlock</code> 处理的线程问题</p>
+</li>
+<li>
+<p>修正jacoco单元测试覆盖率偏少的问题</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_0_0_beta5"><a class="anchor" href="#1_0_0_beta5"></a>1.0.0-beta5</h5>
+<div class="ulist">
+<div class="title">Features</div>
+<ul>
+<li>
+<p>添加服务调用限制（可定义A服务不允许B服务调用，防止服务双向依赖） e.g.</p>
+<div class="literalblock">
+<div class="content">
+<pre>dew.security.exclude-services:
+ - serviceB
+ - serviceC</pre>
+</div>
+</div>
+</li>
+<li>
+<p>添加对Thrift的支持</p>
+</li>
+<li>
+<p>支持集群Leader Election（非严格模式）</p>
+</li>
+<li>
+<p>整合Spring Boot Cache</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Improvement</div>
+<ul>
+<li>
+<p>优化CURD脚手架</p>
+</li>
+<li>
+<p>支持UUID形式的主键</p>
+</li>
+<li>
+<p>优化注解自定义查询（ <code>@Select</code> ），通过测试</p>
+</li>
+<li>
+<p>支持自定义异常配置，见 <code>异常处理</code> 章节</p>
+</li>
+<li>
+<p>添加Bean分组校验说明，见 <code>异常处理</code> 章节</p>
+</li>
+<li>
+<p>添加 <code>Sonar</code> 代码质量检查，配置 <code>sonar.host.url</code> 执行 <code>mvn clean verify sonar:sonar</code></p>
+</li>
+<li>
+<p>【需要迁移】使用Druid数据库连接池（注意数据库连接配置变更）</p>
+</li>
+<li>
+<p>【需要迁移】删除 <code>DaoImpl</code> 兼容性类</p>
+</li>
+<li>
+<p>【需要迁移】将 <code>Dew.e</code> 移到 <code>Dew.E.e</code>，添加 <code>Dew.E.checkXX`异常检查方法，见 `异常处理</code> 章节</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Fixed</div>
+<ul>
+<li>
+<p>修正事务失败，重试成功后还是被回滚的问题</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_0_0_beta4"><a class="anchor" href="#1_0_0_beta4"></a>1.0.0-beta4</h5>
+<div class="ulist">
+<div class="title">Features</div>
+<ul>
+<li>
+<p>整合 <code>Spring boot admin</code> 与 <code>Turbine</code>，可直观的监控各个性能及访问指标</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/spring-boot-admin.png" alt="spring boot admin">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>添加实验功能：使用注解自定义查询（ <code>@Select</code> ）</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Improvement</div>
+<ul>
+<li>
+<p>添加了几个自定义验证方式</p>
+</li>
+<li>
+<p>添加性能测试报告</p>
+</li>
+<li>
+<p>移除 <code>DaoImpl</code> ，改用接口 <code>DewDao</code></p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+为确保兼容， <code>DaoImpl</code> 在这一版本中未物理移除，如有条件请迁移至 <code>DewDao</code>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_0_0_beta3"><a class="anchor" href="#1_0_0_beta3"></a>1.0.0-beta3</h5>
+<div class="olist arabic">
+<div class="title">Features</div>
+<ol class="arabic">
+<li>
+<p>Cluster的MQ添加RabbitMQ SPI</p>
+</li>
+</ol>
+</div>
+<div class="olist arabic">
+<div class="title">Improvement</div>
+<ol class="arabic">
+<li>
+<p>支持自定义http错误码( <code>Dew.e(String code, E ex, StandardCode customHttpCode)</code> )</p>
+</li>
+<li>
+<p>对加了字段校验(@Valid)的对象，如果检验失败会返回错误详细</p>
+</li>
+<li>
+<p>开放将ResultSet转成对象的方法( <code>ds.convertRsToObj(Map&lt;String, Object&gt; rs, Class&lt;E&gt; entityClazz)</code> )</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_0_0_beta2"><a class="anchor" href="#1_0_0_beta2"></a>1.0.0-Beta2</h5>
+<div class="olist arabic">
+<div class="title">Features</div>
+<ol class="arabic">
+<li>
+<p>支持生成Html及PDF版本的离线文档</p>
+</li>
+</ol>
+</div>
+<div class="olist arabic">
+<div class="title">Improvement</div>
+<ol class="arabic">
+<li>
+<p>添加Dubbo整合示例，提供Dubbo服务提供无法处理`声明式事务`的方案</p>
+</li>
+<li>
+<p>完善文档并改用asciidoc格式</p>
+</li>
+<li>
+<p>统一依赖管理</p>
+</li>
+<li>
+<p><code>parent</code> 中添加公司maven库</p>
+</li>
+<li>
+<p>Hazelcast Client升级到3.8.2</p>
+</li>
+<li>
+<p>Dew-Common升级到1.3.7</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="1_0_0_beta1"><a class="anchor" href="#1_0_0_beta1"></a>1.0.0-beta1</h5>
+<div class="olist arabic">
+<div class="title">Features</div>
+<ol class="arabic">
+<li>
+<p>多数据源支持，详见说明文档`多数据源支持`章节</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+原`Dew.ds.xx`接口弃用，改为`Dew.ds().xx`，如需要使用其它数据源请使用`Dew.ds(&lt;DS Name&gt;).xx`
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<div class="title">Improvement</div>
+<ol class="arabic">
+<li>
+<p>新增`mybatisplus-example`</p>
+</li>
+<li>
+<p>改善`Swagger`文档支持</p>
+</li>
+<li>
+<p>新增销毁时间支持：<code>boolean tryLock(long waitMillSec, long leaseMillSec)</code></p>
+</li>
+<li>
+<p>锁的等待、销毁时间单位由原来的`秒`改成`毫秒`</p>
+</li>
+</ol>
+</div>
+<div class="olist arabic">
+<div class="title">Fixed</div>
+<ol class="arabic">
+<li>
+<p>修正`tryLock`锁（`Redis`实现），锁被其它线程或JVM占用时等待时间的计算错误</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="路线图"><a class="anchor" href="#路线图"></a>5.3. 路线图</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>2.3.0</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>支持Java 11</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>2.2.0</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>支持Istio体系</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>2.1.0</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>支持Webflux响应式编程</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>2.0.0</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>升级到Spring Boot 2.x</p>
+</li>
+<li>
+<p>实现兼容Spring Cloud与Istio的部署、监控架构</p>
+</li>
+<li>
+<p>引入DevOps流程</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>1.5.0</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>迁移小泰科技Fork版本到开源版本</p>
+</li>
+<li>
+<p>Review及优化代码去除不常用功能</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>1.x</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>实现核心功能，为公司各项目的研发提供能力支撑</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="附录_appendix"><a class="anchor" href="#附录_appendix"></a>6. 附录 Appendix</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="proxies"><a class="anchor" href="#proxies"></a>6.1. 代理选择与设置</h3>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>Kubernetes自身及周边生态对大陆网络的支持不好（当然不是他们的原因），主流的解决方案有两个：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>使用国内镜像仓库替换，比如 <code>registry.cn-hangzhou.aliyuncs.com/google_containers</code> 下有很多替代的镜像，但不全</p>
+</li>
+<li>
+<p>使用代理，比如 shadowsocks</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>镜像替换的方案一方面非官方镜像会存在安全隐患，另一方面并不是所有镜像都有替换版本，所以我们推荐使用代理的方式。</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>市场上有很多提供方案实现网络代理，这里不一一赘述，做为一名国内的程序员拥有自己的代理是标配。</p>
+</div>
+<div class="paragraph">
+<p>下面推荐一个免费稳定的代理方案，一个稳定的方案要求IP随时可切换、机房众多、线路质量高、服务商不会跑路，以此为前提免费的方案只能选择AWS或GCP，只要一张双币信用卡就可以免费使用一年，开通的方式请自行google。</p>
+</div>
+<div class="paragraph">
+<p>代理的技术自然是选择 <code>shadowsocks</code> , 下面以 <code>centos 7.x</code> 为例进行安装设置</p>
+</div>
+<div class="sect3">
+<h4 id="安装配置"><a class="anchor" href="#安装配置"></a>6.1.1. 安装配置</h4>
+<div class="listingblock">
+<div class="content">
+<pre># ---------- Shadowsocks 安装（Centos 7）----------
+
+# 切换到root
+sudo -i
+
+curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
+python get-pip.py
+# 使用官方最新版本
+pip install https://github.com/shadowsocks/shadowsocks/archive/master.zip -U
+# 可以开多个端口，密码请修改
+# method，加密算法选择参见 https://shadowsocks.org/en/spec/AEAD-Ciphers.html
+# 不要使用80 8080 808等Web服务常用端口
+cat &gt;&gt;/etc/shadowsocks.json &lt;&lt;EOF
+{
+    "server":"0.0.0.0",
+    "port_password": {
+        "4456": "123456",
+        "6788": "123456"
+    },
+    "local_port":1080,
+    "timeout":600,
+    "method":"aes-256-gcm"
+}
+EOF
+cat &gt;&gt;/etc/systemd/system/shadowsocks.service &lt;&lt;EOF
+[Unit]
+Description=Shadowsocks
+
+[Service]
+TimeoutStartSec=0
+ExecStart=/usr/bin/ssserver -c /etc/shadowsocks.json
+
+[Install]
+WantedBy=multi-user.target
+EOF
+systemctl enable shadowsocks
+systemctl start shadowsocks
+systemctl status shadowsocks -l
+
+# ---------- BBR 优化 ----------
+# 参考 https://www.vultr.com/docs/how-to-deploy-google-bbr-on-centos-7
+
+sudo -i
+rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
+yum --enablerepo=elrepo-kernel install kernel-ml -y
+egrep ^menuentry /etc/grub2.cfg | cut -f 2 -d \'
+# 选择上一步输出的kernel所在行号，从0开始
+grub2-set-default 0
+# 重启
+reboot
+
+sudo -i
+echo 'net.core.default_qdisc=fq' | tee -a /etc/sysctl.conf
+echo 'net.ipv4.tcp_congestion_control=bbr' | tee -a /etc/sysctl.conf
+sysctl -p
+sysctl net.ipv4.tcp_available_congestion_control
+sysctl -n net.ipv4.tcp_congestion_control
+# 看到显示 bbr 即为完成</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="middleware"><a class="anchor" href="#middleware"></a>6.2. 常用中间件安装配置</h3>
+<div class="sect3">
+<h4 id="postgresql"><a class="anchor" href="#postgresql"></a>6.2.1. PostgreSql</h4>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm
+
+rpm -Uvh pgdg-redhat96-9.6-3.noarch.rpm
+yum install -y postgresql96-server
+
+/usr/pgsql-9.6/bin/postgresql96-setup initdb
+
+vi /var/lib/pgsql/9.6/data/postgresql.conf
+-
+listen_addresses='*'
+-
+
+vi /var/lib/pgsql/9.6/data/pg_hba.conf
+-
+host  all  all 0.0.0.0/0 md5
+-
+
+systemctl enable postgresql-9.6.service
+systemctl start postgresql-9.6.service
+
+su - postgres
+psql -U postgres
+-
+ALTER USER postgres WITH PASSWORD 'Dew!123456';
+-</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">HA配置</div>
+<div class="content">
+<pre># @see https://www.postgresql.org/docs/9.6/high-availability.html</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="redis"><a class="anchor" href="#redis"></a>6.2.2. Redis</h4>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>yum install -y epel-release
+yum -y install redis
+vi /etc/redis.conf
+-
+# 注释
+# bind 127.0.0.1
+# 开启密码
+requirepass Dew!123456
+-
+systemctl start redis</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">HA配置</div>
+<div class="content">
+<pre># @see https://redislabs.com/redis-features/high-availability</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="mysql"><a class="anchor" href="#mysql"></a>6.2.3. MySQL</h4>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>wget https://repo.mysql.com//mysql57-community-release-el7-11.noarch.rpm
+rpm -Uvh mysql57-community-release-el7-11.noarch.rpm
+yum install -y mysql-community-server
+
+# 修改编码
+vi /etc/my.cnf
+-
+[client]
+default-character-set = utf8
+
+[mysqld]
+default-storage-engine = INNODB
+character-set-server = utf8
+collation-server = utf8_general_ci
+-
+
+systemctl start mysqld
+
+# 获取初始密码
+grep 'temporary password' /var/log/mysqld.log
+mysql -uroot -p &lt;获取到的密码&gt;
+-
+# 修改密码
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'Dew!123456';
+# 远程访问(仅测试用)
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'Dew!123456' WITH GRANT OPTION;
+exit;
+-</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">HA配置</div>
+<div class="content">
+<pre># @see https://dev.mysql.com/doc/mysql-ha-scalability/en/</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="mongo"><a class="anchor" href="#mongo"></a>6.2.4. Mongo</h4>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>cat &gt;&gt;/etc/yum.repos.d/mongodb-org-4.0.repo &lt;&lt;EOF
+[mongodb-org-4.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/4.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc
+EOF
+
+yum install -y mongodb-org
+
+mkdir -p /data/mongo
+chown -R mongod:mongod  /data/mongo
+
+mongod --port 27017 --dbpath /data/mongo
+
+# 在另一个终端中执行
+mongo --port 27017
+-
+use admin
+# 修改密码
+db.createUser(
+  {
+    user: "dew",
+    pwd: "Dew!123456",
+    roles: [ { role: "userAdminAnyDatabase", db: "admin" }, "readWriteAnyDatabase" ]
+  }
+)
+-
+
+# 支持远程访问
+mongod --auth --port 27017 \
+    --dbpath /data/mongo \
+    --logpath /var/log/mongo \
+    --bind_ip 0.0.0.0 \
+    --fork</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">HA配置</div>
+<div class="content">
+<pre># @see https://docs.mongodb.com/manual/core/replica-set-high-availability/</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="gitlab"><a class="anchor" href="#gitlab"></a>6.2.5. Gitlab</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package" class="bare">https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+yum install -y gitlab-ce
+
+# 按需修改，可修改说明见: https://docs.gitlab.com/omnibus/settings/
+vi /etc/gitlab/gitlab.rb
+-
+external_url 'http://gitlab.dew.ms'
+...
+-
+gitlab-ctl reconfigure
+
+# 浏览器访问并修改root密码</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">HA配置</div>
+<div class="content">
+<pre># @see https://about.gitlab.com/solutions/high-availability/</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="harbor"><a class="anchor" href="#harbor"></a>6.2.6. Harbor</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md" class="bare">https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="dnsmasq"><a class="anchor" href="#dnsmasq"></a>6.2.7. Dnsmasq</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+dnsmasq为轻量级的DNS解析工具，也可用类似的工具替代。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>yum install -y dnsmasq
+systemctl enable dnsmasq
+systemctl start dnsmasq
+
+# 编辑本机的 /etc/hosts 添加映射
+-
+x.x.x.x gitlab.dew.ms
+x.x.x.x harbor.dew.ms
+x.x.x.x maven.dew.ms
+x.x.x.x minio.dew.ms
+x.x.x.x nfs.dew.ms
+x.x.x.x es.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x kibana.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x prometheus.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x alertmanager.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x grafana.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x jaeger.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
+...
+-
+
+# 编辑所有容器服务节点，加上dnsmasq节点的IP
+vi /etc/resolv.conf
+-
+nameserver x.x.x.x # IP当前节点
+-
+
+# TIP: 以上设置在节点重启后可能被重置，更好的做法见：
+# @see https://unix.stackexchange.com/questions/163831/nameservers-erased-after-systemctl-restart-network-service</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="minio"><a class="anchor" href="#minio"></a>6.2.8. Minio</h4>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>mkdir -p /opt/minio &amp;&amp; cd /opt/minio
+wget https://dl.minio.io/server/minio/release/linux-amd64/minio
+chmod +x minio
+./minio server /mnt/data
+
+# 输出内容示例如下：
+# AccessKey: F1HR1NUAPVQVX3UPV73P
+# SecretKey: 0+vzU8IK+UjJTepBEiAt9x7QO5k+vYRW2KpISWVs
+#
+# Browser Access:
+#    http://10.200.10.5:9000  http://172.17.0.1:9000 ...
+
+# 再执行
+nohup ./minio server /mnt/data &amp;
+
+# 添加域名到客户机hosts并访问 http://minio.dew.ms:9000
+# 修改访问AccessKey和SecretKey， e.g. dew / Dew123456
+# 创建名为 app-cache 的bucket用于缓存gitlab ci runner(或其它CI/CD服务）的构建缓存</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">HA配置</div>
+<div class="content">
+<pre># @see https://docs.min.io/docs/distributed-minio-quickstart-guide.html</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">多用户配置</div>
+<div class="content">
+<pre># @see https://docs.min.io/docs/minio-multi-user-quickstart-guide.html</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="nfs"><a class="anchor" href="#nfs"></a>6.2.9. NFS</h4>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>yum install -y nfs-utils
+mkdir -p /data/nfs
+chmod 755 /data/nfs
+
+mkdir -p /data/nfs/
+
+vi /etc/exports
+-
+/data/nfs     *(rw,sync,no_root_squash,no_all_squash)
+-
+
+systemctl enable rpcbind
+systemctl enable nfs-server
+systemctl start rpcbind
+systemctl start nfs-server
+
+showmount -e localhost</pre>
+</div>
+</div>
+<div class="quoteblock">
+<div class="title">常见问题</div>
+<blockquote>
+<div class="paragraph">
+<p>Kubernetes使用NFS做为PV时报 <code>kubernetes mount: wrong fs type, bad option, bad superblock</code></p>
+</div>
+</blockquote>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>各节点执行 yum install -y nfs-utils</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="内置image与chart"><a class="anchor" href="#内置image与chart"></a>6.3. 内置Image与Chart</h3>
+<div class="sect3">
+<h4 id="dew_docker_image_集成kubectl与helm"><a class="anchor" href="#dew_docker_image_集成kubectl与helm"></a>6.3.1. Dew Docker Image : 集成Kubectl与Helm</h4>
+<div class="paragraph">
+<p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># 直接使用docker hub镜像或手工打包：
+docker build -t dewms/k8s-native-client .
+
+# 测试
+
+# 获取当前的kube config
+KUBE_CONFIG=`echo $(cat ~/.kube/config | base64) | tr -d " "`
+# 进入容器
+docker run -it -e KUBE_CONFIG=$KUBE_CONFIG dewms/k8s-native-client
+-
+# 添加kube config
+echo -n $KUBE_CONFIG | base64 -d &gt; $HOME/.kube/config
+# 正确显示kubrenetes信息
+kubectl version
+# 正确显示helm信息（如果存在的话）
+helm list
+-</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="dew_docker_image_集成ci_cd能力"><a class="anchor" href="#dew_docker_image_集成ci_cd能力"></a>6.3.2. Dew Docker Image : 集成CI/CD能力</h4>
+<div class="paragraph">
+<p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># 直接使用docker hub镜像或手工打包：
+docker build -t dewms/devops .
+
+# 测试
+docker run -it dewms/devops
+-
+# 正确显示Java版本
+java -version
+# 正确显示Maven版本
+mvn -version
+# 正确显示Node版本
+node -v
+# 正确显示NPM版本
+npm version
+-</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="dew_docker_image_spring_cloud_config"><a class="anchor" href="#dew_docker_image_spring_cloud_config"></a>6.3.3. Dew Docker Image : Spring Cloud Config</h4>
+<div class="paragraph">
+<p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># 直接使用docker hub镜像或手工打包：
+docker build -t dewms/spring-cloud-config .
+
+# 运行示例
+docker run -d --name dew-spring-cloud-config \
+    -p 8080:8080 \
+    -e spring.profiles.active=prod \
+    -v /opt/config:/config \
+    dewms/spring-cloud-config</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="dew_helm_chart_spring_cloud_config"><a class="anchor" href="#dew_helm_chart_spring_cloud_config"></a>6.3.4. Dew Helm Chart : Spring Cloud Config</h4>
+<div class="paragraph">
+<p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+</div>
+<div class="listingblock">
+<div class="title">使用</div>
+<div class="content">
+<pre># 0. 添加库
+helm repo add helm-dew-spring-cloud-config https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/chart/dew-spring-cloud-config/
+
+# 1. 安装
+helm install helm-dew-spring-cloud-config/dew-spring-cloud-config --name dew-spring-cloud-config --namespace devops \
+    --set ingress.hosts={config.dew.ms}
+
+# 2. 测试（Kubernetes集群已安装Ingress controller并暴露80端口）
+curl http://dew:override@config.dew.ms/encrypt -d abc
+
+# 3. 修改配置，比如加入git设置
+kubectl -n devops edit cm custom-config</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">发布</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">helm package .
+helm repo index .
+git add --all</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="支持的ci_cd服务"><a class="anchor" href="#支持的ci_cd服务"></a>6.4. 支持的CI/CD服务</h3>
+<div class="sect3">
+<h4 id="dew_ci_cd_gitlab_ci_实现"><a class="anchor" href="#dew_ci_cd_gitlab_ci_实现"></a>6.4.1. Dew CI/CD : Gitlab CI 实现</h4>
+<div class="paragraph">
+<p>此为Gitlab CI上的 CI/CD 处理，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+</div>
+<div class="olist arabic">
+<div class="title">前置准备</div>
+<ol class="arabic">
+<li>
+<p>创建Gitlab项目</p>
+</li>
+<li>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的各个环境（详见 <a href="#devops-user-manual">DevOps使用手册[TBD]</a>）</p>
+</li>
+<li>
+<p>在项目代码中添加并配置 <code>.dew</code> 文件（详见 <a href="#devops-user-manual">DevOps使用手册[TBD]</a>）</p>
+</li>
+</ol>
+</div>
+<div class="olist arabic">
+<div class="title">核心流程</div>
+<ol class="arabic">
+<li>
+<p>确认Gitlab中的项目已启用CI
+（勾选 <a href="https://&lt;Gitlab" class="bare">https://&lt;Gitlab</a> Host&gt;/&lt;Group&gt;/&lt;Project&gt;/settings/ci_cd 中的 <code>Default to Auto DevOps pipeline</code>），</p>
+</li>
+<li>
+<p>配置 <code>.gitlab-ci.yml</code>，配置参见 <code>devops/cicd/gilabci/.gitlab-ci-template.yml</code></p>
+</li>
+<li>
+<p>添加 <code>.gitlab-ci.yml</code> 到项目代码根目录</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">gitlab-ci-template.yml</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">#
+# Copyright 2019. the original author or authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# ======================================================
+
+# 此为 Gitlab CI的模板文件
+# 各配置说明见 https://docs.gitlab.com/ee/ci/yaml/
+
+# ======================================================
+
+# 要执行的Stages
+# Dew 推荐只创建一个名为deploy的Stages，因为Dew的 devops-maven-plugin 已高度集成了CI/CD流程
+stages:
+  - deploy
+
+# 缓存目录，必须添加
+cache:
+  paths:
+    # node项目必须添加
+    - node_modules/
+    # 所有项目必须添加（因为dew将所有类型的工程都视为maven项目，包含前端工程）
+    - .m2/
+
+# 不同环境的部署配置，各环境执行的操作一致，但触发的 branch 及 调用的 Runner 不同
+
+# 测试环境部署
+test deploy:
+  stage: deploy
+  only:
+    # 触发构建的 branch 名称
+    - test
+  tags:
+    # 调用的 runner 名称，需要与 Gitlab CI Runner的Tag匹配
+    - test
+  script:
+    # 执行的操作，可以扩展，但要保留以下代码
+    - mvn -P devops dew:build dew:release
+    # 可在此处添加代理
+    # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.ms" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.ms"
+
+# 仿真/预发环境部署
+uat deploy:
+  stage: deploy
+  only:
+    - uat
+  tags:
+    - uat
+  script:
+    - mvn -P devops dew:build dew:release
+
+prod deploy: # 生产环境部署
+  stage: deploy
+  only:
+    # 触发构建的 branch 名称
+    - prod
+  tags:
+    # 调用的 runner 名称，需要与 Gitlab CI Runner的Tag匹配
+    - prod
+  script:
+    # 执行的操作，可以扩展，但要保留以下代码
+    - mvn -P devops dew:build dew:release
+    # 可在此处添加代理
+    # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.ms" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.ms"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2019-04-12 17:34:13 CST
+</div>
+</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+<script>prettyPrint()</script>
+</body>
+</html>

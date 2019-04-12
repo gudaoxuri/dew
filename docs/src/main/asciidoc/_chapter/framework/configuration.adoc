@@ -1,6 +1,7 @@
-== 配置速查
+[[framework-configuration]]
+=== 框架配置速查[TBD]
 
-=== `Dew` 参数
+==== `Dew` 参数
 
 [source,yml]
 ----
@@ -102,11 +103,11 @@ spring:
          connection-attempt-period: #默认3000
 ----
 
-=== `Spring boot` 核心参数
+==== `Spring boot` 核心参数
 
 TIP: https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 
-=== `Spring cloud` 核心参数
+==== `Spring cloud` 核心参数
 
 TIP: http://cloud.spring.io/spring-cloud-static/Edgware.SR4/single/spring-cloud.html
 

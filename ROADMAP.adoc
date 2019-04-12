@@ -16,7 +16,7 @@
 
 . 升级到Spring Boot 2.x
 . 实现兼容Spring Cloud与Istio的部署、监控架构
-. 引入Devops流程
+. 引入DevOps流程
 
 * 1.5.0
 

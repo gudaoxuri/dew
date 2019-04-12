@@ -1,6 +1,7 @@
-== 最佳实践
+[[framework-best-practices]]
+=== 框架最佳实践[TBD]
 
-=== 服务调用开发期使用
+==== 服务调用开发期使用
 
 在 `Spring Cloud` 体系下，服务调用需要启动 `Eureka` 服务（对于 `Dew` 中的 `Registry` 组件），这对开发阶段并不友好：
 
@@ -15,7 +16,7 @@
     # 如
     x-service.ribbon.listOfServers: 127.0.0.1:8812
 
-=== `@Validated` 注解
+==== `@Validated` 注解
 
 * 在Spring Controller类里，`@Validated` 注解初使用会比较不易上手，在此做下总结
 
@@ -24,14 +25,14 @@
 
 TIP: Spring对抽象数据类型校验抛出异常为``MethodArgumentNotValidException``，http状态码为400，对基本数据类型校验抛出异常为``ConstraintViolationException``，http状态码为500，dew对这两种异常做了统一处理，http状态码均返回200，code为400
 
-===  `jackson` 对于 `Java8` 时间转换（ `SpringMVC` 以 `jackson` 接收 `json` 数据）
+====  `jackson` 对于 `Java8` 时间转换（ `SpringMVC` 以 `jackson` 接收 `json` 数据）
 
 . 对于 `LocalDateTime` 类型，需在参数上加 `@JsonFormat` 注解，如下：`@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")`
 .  `LocalDate,LocalTime,Instant` 等，无需配置可自行转换
 
 TIP: `jackson` 对于 `LocalDateTime` 类型的支持与其他三种类型不具有一致性，这是 `jackson` 需要优化的一个点
 
-=== 断路保护
+==== 断路保护
 
 [source,properties]
 .Hystrix配置
@@ -104,7 +105,7 @@ public class HystrixExampleService {
 }
 ----
 
-=== 定时任务
+==== 定时任务
 
 使用 `Spring Config`  配置中心 `refresh` 时,在 `@RefreshScope` 注解的类中, `@Scheduled` 注解的自动任务会失效。
 建议使用实现 `SchedulingConfigurer` 接口的方式添加自动任务。
@@ -133,7 +134,7 @@ public class SchedulingConfiguration implements SchedulingConfigurer {
 }
 ----
 
-=== 主要性能影响参数
+==== 主要性能影响参数
 
 * 内置 `Tomcat` 参数调整效果并不大,如果需要调整,建议适当调大 `max-treads` 和 `accept-count`
 
@@ -165,7 +166,7 @@ NOTE: 普通 `Service` 使用 `Hystrix` 时,最大并发主要调整 `hystrix.th
 WARNING: `Hystrix` 的默认超时时间为1s,在高并发下容易出现超时,建议将默认超时时间适当调长,
 特殊接口需要将时间调短或更长的,使用特定配置。
 
-=== 缓存处理
+==== 缓存处理
 
 `Spring Cache` 提供了很好的注解式缓存，但默认没有超时，需要根据使用的缓存容器特殊配置
 
@@ -181,7 +182,7 @@ RedisCacheManager cacheManager() {
 }
 ----
 
-=== jdbc 批量插入性能问题
+==== jdbc 批量插入性能问题
 
 如果不开启rewriteBatchedStatements=true，那么jdbc会把批量插入当做一行行的单条处理，也就没有达到批量插入的效果
 
@@ -196,7 +197,7 @@ spring:
     password: 123456
 ----
 
-=== http请求并发数性能瓶颈
+==== http请求并发数性能瓶颈
 
 * 当策略为Thread时（默认是Thread)，hystrix.threadpool.default.maximumSize为第一个性能瓶颈，默认值为10.
 

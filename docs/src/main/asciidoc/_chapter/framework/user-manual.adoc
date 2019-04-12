@@ -1,4 +1,5 @@
-=== 使用手册
+[[framework-user-manual]]
+=== 框架使用手册[TBD]
 
 NOTE: `Dew` 框架部分是对 ``Spring Boot/Cloud`` 的扩展，使用之前务必了解相关框架的基础知识。
 
@@ -809,7 +810,7 @@ spring:
 
 用于记录 `服务API调用` （追踪）日志到 `Jaeger`。
 
-NOTE: 此功能由Devops流程涉及的Kubernetes环境自动完成。
+NOTE: 此功能由DevOps流程涉及的Kubernetes环境自动完成。
 
 
 
