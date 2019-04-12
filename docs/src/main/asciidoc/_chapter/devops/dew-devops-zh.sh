@@ -16,6 +16,61 @@
 #
 # ======================================================
 
+HARBOR_SCHEME=https
+HARBOR_REGISTRY_HOST=harbor.dew.ms
+HARBOR_REGISTRY_ADMIN=admin
+HARBOR_REGISTRY_ADMIN_PASSWORD=Harbor12345
+HARBOR_REGISTRY_PASSWORD_REGEX="(?=^.{8,20}$)(?=^[^\s]*$)(?=.*\d)(?=.*[A-Z])(?=.*[a-z])"
+PROJECT_NAMESPACE=devops-example
+DEW_HARBOR_USER_NAME=${PROJECT_NAMESPACE}
+DEW_HARBOR_USER_PASS=Dew\!123456
+DEW_HARBOR_USER_EMAIL=${DEW_HARBOR_USER_NAME}@dew.ms
+
+MINIO_HOST="10.200.131.182:9000"
+MINIO_ACCESS_KEY="dew"
+MINIO_SECRET_KEY="Dew123456"
+MINIO_BUCKET_NAME="dew"
+
+GITLAB_URL="http://gitlab.dew.ms"
+GITLAB_RUNNER_NAMESPACE="default"
+GITLAB_RUNNER_IMAGE="ubuntu:16.04"
+GITLAB_PROJECT_NAME="dew-project-name"
+GITLAB_RUNNER_REG_TOKEN=3mezus8cX9qAjkrNY4B
+GITLAB_RUNNER_PROJECT_PROFILE=test
+
+# ------------------
+# Params dealing
+# ------------------
+
+answer_check(){
+    case $2 in
+    Y | y)
+          echo "\"Yes\"，继续执行。";;
+    N | n)
+          echo "\"No\"，跳过此步骤。";;
+    *)
+          echo "* 输入为其他内容，使用默认回答\"$1\"。";;
+    esac
+}
+
+get_json_value(){
+    json=$1
+    key=$2
+    re="\"($key)\":\"([^\"]*)\""
+    if [[ ${json} =~ $re ]]; then
+        #name="${BASH_REMATCH[1]}"
+        value="${BASH_REMATCH[2]}"
+        echo "${value}"
+    fi
+}
+
+press_enter_continue(){
+    echo
+    read -s -p "* 请按回车键[Enter]继续。" enter
+    echo
+}
+
+
 # ------------------
 # Init
 # ------------------
@@ -45,36 +100,135 @@ init_env_check(){
 }
 
 
+add_helm_gitlab_repo(){
+    echo "--------------------------------------"
+    echo "# 添加gitlab的Helm仓库。"
+    check_gitlab_repo_exists=`helm repo list | grep -P 'gitlab\s*https://charts.gitlab.io'| wc -l`
+    if [[ "${check_gitlab_repo_exists}" == 1 ]]; then
+        echo "* \"gitlab\"仓库已存在。"
+        read -e -n1 -p "是否需要更新Helm仓库？ [Y/N]" answer_update_helm_repo
+        while [[ "${answer_update_helm_repo}" == "" ]]; do
+            read -e -n1 -p "请回答 [Y/N]:" answer_update_helm_repo
+        done
+        answer_check N ${answer_update_helm_repo}
+        if [[ "${answer_update_helm_repo}" != "Y" && "${answer_update_helm_repo}" != "y" ]]; then
+            answer_update_helm_repo="N"
+        fi
+        if [[ "${answer_update_helm_repo}" == "Y" || "${answer_update_helm_repo}" == "y" ]]; then
+            echo
+            echo "更新仓库中..."
+            echo "可能需要一段时间，请等待..."
+            stty igncr
+            helm repo update
+            stty -igncr
+            echo "Helm仓库更新完成。"
+            press_enter_continue
+        fi
+    else
+        check_gitlab_repo_add=`helm repo add gitlab https://charts.gitlab.io | grep '"gitlab" has been added to your repositories' | wc -l`
+        if [[ "${check_gitlab_repo_add}" -ne 1 ]]; then
+            echo "* 添加gitlab的Helm仓库失败，请检查Helm状态。脚本中断。"
+            exit;
+        fi
+        echo "\"gitlab\" 仓库添加完毕。"
+    fi
+    echo "--------------------------------------"
+}
+
+
+minIO_status_check(){
+    echo "--------------------------------------"
+    echo "# 检查MinIO状态。"
+
+    echo "# MinIO地址，例：${MINIO_HOST} "
+    read -e -p "请输入MinIO地址： " minIO_host
+    if [[ "${minIO_host}" == "" ]]; then
+        echo "* 没有输入值，使用默认的MinIO地址："
+        echo "${MINIO_HOST}"
+        minIO_host=${MINIO_HOST}
+    fi
+    MINIO_HOST=${minIO_host}
+
+    check_minIo_status=`curl ${MINIO_HOST} -o /dev/nullrl -s -w %{http_code} `
+    if [[ "${check_minIo_status}" != 403 ]]; then
+        echo
+        echo "MinIO不可访问，请检查MInIO环境状态。"
+        echo "脚本中断。"
+        exit;
+    fi
+    echo
+    echo "MinIO状态正常。"
+    echo
+
+    echo "# 检查 access key 和 secret key 是否正确。"
+    read -e -p "请输入 MinIO access key: " minio_access_key
+    if [[ "${minio_access_key}" == "" ]]; then
+        echo "* 没有 access key 输入，使用默认值\"${MINIO_ACCESS_KEY}\"。"
+        minio_access_key=${MINIO_ACCESS_KEY}
+    fi
+    read -e -s -p "请输入 MinIO secret key: " nimio_secret_key
+    if [[ "${nimio_secret_key}" == "" ]]; then
+        echo
+        echo "* 没有 secret key 输入，使用默认值\"${MINIO_SECRET_KEY}\"。"
+        nimio_secret_key=${MINIO_SECRET_KEY}
+    fi
+    echo
+
+    MINIO_ACCESS_KEY=${minio_access_key}
+    MINIO_SECRET_KEY=${nimio_secret_key}
+
+    minio_key_check=`curl -X POST "${MINIO_HOST}/minio/webrpc" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"id\":1,\"jsonrpc\":\"2.0\",\"params\":{\"username\":\"${MINIO_ACCESS_KEY}\",\"password\":\"${MINIO_SECRET_KEY}\"},\"method\":\"Web.Login\"}}" -s -k`
+
+    while [[ "${minio_key_check}" =~ error ]]; do
+        echo
+        echo "* "`get_json_value "${minio_key_check}" message`
+        read -e -p "请输入正确的 access key: " minio_access_key
+        read -e -s -p "请输入正确的 secret key: " nimio_secret_key
+        MINIO_ACCESS_KEY=${minio_access_key}
+        MINIO_SECRET_KEY=${nimio_secret_key}
+
+        minio_key_check=`curl -X POST "${MINIO_HOST}/minio/webrpc" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"id\":1,\"jsonrpc\":\"2.0\",\"params\":{\"username\":\"${MINIO_ACCESS_KEY}\",\"password\":\"${MINIO_SECRET_KEY}\"},\"method\":\"Web.Login\"}}" -s -k`
+    done
+    echo "校验 access key 和 secret key 通过。"
+
+    echo
+    read -e -p "# 请输入用来存储 gitlab runner 数据的 MinIO bucket 名字： " minio_bucket_name
+    if [[ "${minio_bucket_name}" == "" ]]; then
+        echo "* 没有值被输入，使用默认值 \"${MINIO_BUCKET_NAME}\"。"
+        minio_bucket_name=${MINIO_BUCKET_NAME}
+    fi
+       MINIO_BUCKET_NAME=${minio_bucket_name}
+
+    echo
+    echo "--------------------------------------"
+}
+
 init_cluster(){
     echo "--------------------------------------"
     echo "# 初始化集群，创建集群角色，用于服务发现。"
-    kubectl create clusterrole service-discovery-client \
-    --verb=get,list,watch \
-    --resource=pods,services,configmaps,endpoints
+    check_cluster_role_exist=`kubectl get clusterrole | grep -w service-discovery-client | wc -l`
+    if [[ "${check_cluster_role_exist}" == 0 ]]; then
+        kubectl create clusterrole service-discovery-client \
+        --verb=get,list,watch \
+        --resource=pods,services,configmaps,endpoints
+    fi
+    echo
     echo "集群初始化完成。"
     echo "--------------------------------------"
     echo "=================================="
     exit;
 }
 
-SCHEME=https
-REGISTRY_HOST=harbor.dew.ms
-REGISTRY_ADMIN=admin
-REGISTRY_ADMIN_PASSWORD=Harbor12345
-
-PROJECT_NAMESPACE=devops-example
-DEW_HARBOR_USER_NAME=${PROJECT_NAMESPACE}
-DEW_HARBOR_USER_PASS=Dew\!123456
-DEW_HARBOR_USER_EMAIL=${DEW_HARBOR_USER_NAME}@dew.ms
 
 # ------------------
 # Create a project
 # ------------------
 
-init_project_check(){
+harbor_status_check(){
     echo "------------------------------------"
     echo "## 检查 Harbor 仓库是否正常..."
     echo
+    echo "# e.g. ${HARBOR_REGISTRY_HOST}"
     read -e -p "请输入 Harbor 仓库地址： " registry_host
     if [[ "${registry_host}" != "" ]]; then
         REGISTRY_HOST=${registry_host}
@@ -104,8 +258,7 @@ project_create_check(){
     echo "____________________________________"
     echo
     # 校验harbor相关参数
-    echo "输入Harbor仓库管理员账号"
-    read -e registry_admin
+    read -e -p "输入Harbor仓库管理员账号" registry_admin
     if [[ "${registry_admin}" = "" ]]; then
         echo "* 未输入Harbor仓库管理员账号，使用默认账号：${REGISTRY_ADMIN}"
     fi
@@ -113,14 +266,14 @@ project_create_check(){
     echo
 
     echo "# 密码长度在8-20之间，且需包含一个大写字母，一个小写字母和一个数字。"
-    read -p "请输入管理员密码：" -e -s registry_password
+    read -e -s -p "请输入管理员密码：" registry_password
     echo
 
-    check_password=`echo "${registry_password}" | grep -P --color '(?=^.{8,20}$)(?=^[^\s]*$)(?=.*\d)(?=.*[A-Z])(?=.*[a-z])'| wc -l`
+    regex_password="(?=^.{8,20}$)(?=^[^\s]*$)(?=.*\d)(?=.*[A-Z])(?=.*[a-z])"
+    check_password=`echo "${registry_password}" | grep -P ${regex_password}| wc -l`
     while [[ "${check_password}" -eq 0 ]];do
-        echo "密码格式不正确，请重新输入： "
-        read -e -s registry_password
-        check_password=`echo "${registry_password}" | grep -P --color '(?=^.{8,20}$)(?=^[^\s]*$)(?=.*\d)(?=.*[A-Z])(?=.*[a-z])'| wc -l`
+        read -e -s -p "密码格式不正确，请重新输入： " registry_password
+        check_password=`echo "${registry_password}" | grep -P ${regex_password}| wc -l`
     done
 
     if [[ "${registry_admin}"=="" ]]; then
@@ -133,10 +286,8 @@ project_create_check(){
     check_admin_status=`curl "${SCHEME}://${REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -o /dev/nullrl -s -w %{http_code} -k`
     while [[ "${check_admin_status}" -eq 401 || "${check_admin_status}" -eq 403 ]];do
         echo "* 用户名或密码错误，或该账号不是管理员，请重新输入管理员用户名和密码："
-        echo "请输入管理员用户名："
-        read -e registry_admin
-        echo "请输入密码"
-        read -e -s registry_password
+        read -e -p "请输入管理员用户名：" registry_admin
+        read -e -s -p "请输入密码" registry_password
         ADMIN_AUTHORIZATION=`echo -n ${registry_admin}:${registry_password} | base64`
         check_admin_status=`curl "${SCHEME}://${REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -o /dev/nullrl -s -w %{http_code} -k`
     done
@@ -184,7 +335,7 @@ project_create_check(){
         while [[ "${check_ns_exists}" -gt 0 ]];do
             read -e -p "已有同名命名空间（namespace），请重新输入项目名：" project_name
             while [[ ! "${project_name}" =~ ${project_name_regex} ]]; do
-                read -p "项目名格式不正确，请重新输入：" -e project_name
+                read -e -p "项目名格式不正确，请重新输入：" project_name
             done
             check_ns_exists=`kubectl get ns | grep -w ${project_name} | wc -l`
         done
@@ -207,20 +358,39 @@ project_create_check(){
     done
     echo
 
+    read -e -n1 -p "是否要修改项目管理者用户初始密码？ [Y/N]" answer_custom_user_password
+    answer_check ${answer_custom_user_password} N
+    if [[ "${answer_custom_user_password}" != "Y" && "${answer_custom_user_password}" != "y" ]]; then
+        answer_custom_user_password="N"
+    fi
+    if [[ "${answer_custom_user_password}" == "Y" || "${answer_custom_user_password}" == "y" ]]; then
+        read -e -s -p "请输入密码: " user_account_password
+        check_user_password=`echo "${user_account_password}" | grep -P ${regex_password}| wc -l`
+        while [[ "${check_user_password}" -eq 0 ]];do
+            echo
+            read -e -s -p "密码格式不正确，请重新输入： " user_account_password
+            check_user_password=`echo "${user_account_password}" | grep -P ${regex_password}| wc -l`
+        done
+        DEW_HARBOR_USER_PASS=${user_account_password}
+    else
+        echo "* 使用默认密码\"${DEW_HARBOR_USER_PASS}\"。"
+    fi
+    echo
+
     # 校验邮箱
     echo "# 邮箱是用来和项目创建的用户进行绑定。"
     emailRegex="^([a-zA-Z0-9_\-\.\+]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$"
     read -e -p "请为该项目输入要绑定的邮箱： " user_email
     while [[ ! "${user_email}" =~ ${emailRegex} ]]; do
-    read -p "邮箱格式不正确，请重新输入：" -e user_email
+    read -e -p "邮箱格式不正确，请重新输入：" user_email
     done
 
     # 校验邮箱是否存在，以及邮箱格式的正确性
     check_email_exists=`curl "${SCHEME}://${REGISTRY_HOST}/api/users?email=${user_email}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_email} | wc -l`
     while [[ ${check_email_exists} -gt 0 ]];do
-        read -p "邮箱已存在，请重新输入：" -e user_email
+        read -e -p "邮箱已存在，请重新输入：" user_email
         while [[ ! "${user_email}" =~ ${emailRegex} ]]; do
-            read -p "邮箱格式不正确，请重新输入：" -e user_email
+            read -e -p "邮箱格式不正确，请重新输入：" user_email
         done
         check_email_exists=`curl "${SCHEME}://${REGISTRY_HOST}/api/users?email=${user_email}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_email} | wc -l`
     done
@@ -306,7 +476,7 @@ project_create(){
 
     read -e -p "请输入后端host：" backend_host
     while [[ ! ${backend_host} =~ ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$ ]] ;do
-        read -p "后端host不符合规范，请重新输入：" -e backend_host
+        read -e -p "后端host不符合规范，请重新输入：" backend_host
     done
 
     echo
@@ -349,7 +519,7 @@ project_create(){
     echo
     read -e -p "请输入前端host： " frontend_host
     while [[ ! "${frontend_host}" =~ ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$ ]] ;do
-        read -p "前端host不符合规范，请重新输入： " -e frontend_host
+        read -e -p "前端host不符合规范，请重新输入： " frontend_host
     done
 
     echo
@@ -361,7 +531,7 @@ project_create(){
     frontend_services=(${frontend_service})
 
     while [[ "${#frontend_services[@]}"%3 -eq 1 || "${#frontend_services[@]}" -eq 0 ]]; do
-        read -p "服务名称和服务端口不可缺少，请重新输入服务名、端口号、接口前缀： " -e frontend_service
+        read -e -p "服务名称和服务端口不可缺少，请重新输入服务名、端口号、接口前缀： " frontend_service
         frontend_services=(${frontend_service})
     done
 
@@ -422,6 +592,265 @@ EOF
     echo "=================================="
 }
 
+install_gitlab_runner_project(){
+
+    echo
+    read -e -p "# 请输入用来安装 gitlab runner 的命名空间（namespace）：" gitlab_runner_namespace
+
+    if [[ "${gitlab_runner_namespace}" == "" ]]; then
+        echo "* 没有值输入，使用默认的命名空间\"${GITLAB_RUNNER_NAMESPACE}\"。"
+        gitlab_runner_namespace="${GITLAB_RUNNER_NAMESPACE}"
+    fi
+
+    check_ns_exists=`kubectl get ns | grep -w ${gitlab_runner_namespace} | wc -l`
+    while [[ "${check_ns_exists}" == 0 ]]; do
+        read -e -n1 -p "* 命名空间[${gitlab_runner_namespace}] 不存在，是否需要创建此命名空间？ [Y/N]： " answer_create_namespace
+        while [[ "${answer_create_namespace}" == "" ]]; do
+            read -e -n1 -p "请回答 [Y/N]: " answer_create_namespace
+        done
+        answer_check Y ${answer_create_namespace}
+        if [[ "${answer_create_namespace}" != "N" && "${answer_create_namespace}" != "n" ]]; then
+            answer_create_namespace="Y"
+        fi
+        if [[ "${answer_create_namespace}" == "Y" || "${answer_create_namespace}" == "y" ]]; then
+            kubectl create ns ${gitlab_runner_namespace}
+        fi
+        if [[ "${answer_create_namespace}" == "N" || "${answer_create_namespace}" == "n" ]]; then
+            read -e -p "请输入用来安装 gitlab runner 的命名空间（namespace）：" gitlab_runner_namespace
+            while [[ "${gitlab_runner_namespace}" == "" ]]; do
+                read -e -p "请输入命名空间： " gitlab_runner_namespace
+            done
+        fi
+        check_ns_exists=`kubectl get ns | grep -w ${gitlab_runner_namespace} | wc -l`
+    done
+    GITLAB_RUNNER_NAMESPACE=${gitlab_runner_namespace}
+
+    echo
+    read -e -n1 -p "# 是否使用 MinIO 来存储 gitlab runner 数据？ [Y/N]" answer_using_minio
+    while [[ "${answer_using_minio}" == "" ]]; do
+        read -e -n1 -p "请回答 [Y/N]: " answer_using_minio
+    done
+    answer_check Y ${answer_using_minio}
+    if [[ ${answer_using_minio} != "N" &&  ${answer_using_minio} != "n" ]]; then
+        answer_using_minio="Y"
+    fi
+
+    if [[ "${answer_using_minio}" == "Y" || "${answer_using_minio}" == "y" ]]; then
+        minIO_status_check
+        echo "# 创建为MinIO创建密钥（secret）。"
+        check_minio_secret_exists=`kubectl get secret -n ${GITLAB_RUNNER_NAMESPACE} | grep -w minio-access | wc -l`
+        if [[ "${check_minio_secret_exists}" == 1 ]]; then
+            echo "密钥\"minio-access\"已存在，直接使用已创建的。"
+        else
+            kubectl create secret generic minio-access -n ${GITLAB_RUNNER_NAMESPACE} \
+                --from-literal=accesskey=${MINIO_ACCESS_KEY} \
+                --from-literal=secretkey=${MINIO_SECRET_KEY}
+        fi
+    else
+        echo "* 您应该在最后的gitlab runner Helm 安装步骤中配置自己的存储工具。"
+    fi
+
+    echo
+    echo "## 开始安装 gitlab-runner chart."
+    echo "下载 gitlab-runner chart ..."
+    stty igncr
+    helm fetch --untar gitlab/gitlab-runner
+    stty -igncr
+    echo "Chart下载完毕。"
+    press_enter_continue
+
+    echo
+    read -n1 -e -p "# 是否需要配置 Maven setting.xml? [Y/N] " answer_maven_setting
+    while [[ "${answer_maven_setting}" == "" ]]; do
+        read -e -n1 -p "请回答 [Y/N]: " answer_maven_setting
+    done
+    answer_check N ${answer_maven_setting}
+    if [[ "${answer_maven_setting}" == "Y" || "${answer_maven_setting}" == "y" ]]; then
+        answer_maven_setting="N"
+    fi
+
+    if [[ "${answer_maven_setting}" == "Y" || "${answer_maven_setting}" == "y" ]]; then
+cat > dew-maven-settings.yaml <<EOF
+# 请根据需要来修改此文件。
+
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: dew-maven-settings
+  namespace: ${GITLAB_RUNNER_NAMESPACE}
+data:
+  settings.xml: |-
+     <?xml version="1.0" encoding="UTF-8"?>
+     <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+         <servers>
+             <!-- 示例，添加一个私有库认证 -->
+             <server>
+                 <id>please-change-repo</id>
+                 <username>please-change-username</username>
+                 <password>please-change-password</password>
+             </server>
+         </servers>
+     </settings>
+EOF
+        echo
+        echo "* 请根据需要来配置Maven的ConfigMap。"
+        vi dew-maven-settings.yaml <EOF  < /dev/tty
+        echo
+        kubectl apply -f dew-maven-settings.yaml
+    fi
+
+    echo
+    if [[ "${answer_maven_setting}" == "N" || "${answer_maven_setting}" == "n" ]]; then
+        read -n1 -e -p "# 是否需要编辑 gitlab-runner chart的\"configmap.yaml\" ？ [Y/N]" answer_edit_chart
+        while [[ "${answer_edit_chart}" == "" ]]; do
+            read -e -n1 -p "请回答 [Y/N]: " answer_edit_chart
+        done
+        answer_check N ${answer_edit_chart}
+        if [[ "${answer_edit_chart}" != "Y" && "${answer_edit_chart}" != "y" ]]; then
+            answer_edit_chart="N"
+        fi
+    fi
+
+   if [[ "${answer_maven_setting}" == "Y" || "${answer_maven_setting}" == "y" || "${answer_edit_chart}" == "Y"|| "${answer_edit_chart}" == "y" ]]; then
+        echo
+        echo "# 编辑 gitlab-runner chart的\"configmap.yaml\"。"
+        echo "# Tips: 请在\"# Start the runner\"之前添加配置。"
+        echo "# 例："
+        echo "  -----------"
+        echo -e "    cat >>/home/gitlab-runner/.gitlab-runner/config.toml <<EOF
+        [[runners.kubernetes.volumes.config_map]]
+          name = \"dew-maven-settings\"
+          mount_path = \"/opt/maven\"
+    EOF
+    # Start the runner"
+        echo "  -----------"
+        press_enter_continue
+        vi gitlab-runner/templates/configmap.yaml +/"# Start the runner" <EOF  < /dev/tty
+    fi
+
+    echo
+    read -e -p "# 请输入gitlab地址，例：\"http://gitlab.dew.ms\" : " gitlab_url
+    if [[ "${gitlab_url}" == "" ]]; then
+        echo "* 没有值被输入，使用默认值\"http://gitlab.dew.ms\"。"
+        gitlab_url=${GITLAB_URL}
+    fi
+    GITLAB_URL=${gitlab_url}
+
+    echo
+    echo "# 项目名是被用来作为项目的gitlab runner的名称。"
+    read -e -p "# 请输入项目名： " project_name
+    while [[ "${project_name}" == "" ]]; do
+        read -e -p "请输入项目名： " project_name
+    done
+
+    check_helm_runner_exists=`helm list | grep -w ${project_name} | wc -l`
+    while [[ "${check_helm_runner_exists}" == 1 ]]; do
+        echo "* 项目名 ${project_name} 已存在。"
+        read -e -p "请输入新的项目名： " project_name
+        while [[ "${project_name}" == "" ]]; do
+            read -e -p "请输入新的项目名： " project_name
+        done
+        check_helm_runner_exists=`helm list | grep -w ${project_name} | wc -l`
+    done
+    GITLAB_PROJECT_NAME=${project_name}
+
+    echo
+    echo "## The registration token for adding new Runners to the GitLab server."
+    echo "# This must be retrieved from your GitLab instance."
+    echo "# ref: https://docs.gitlab.com/ee/ci/runners/"
+    echo "# e.g. ${GITLAB_RUNNER_REG_TOKEN}"
+    read -e -p "# 请输入项目对应的 runner registration token： " runner_registration_token
+    while [[ "${runner_registration_token}" == "" ]]; do
+        read -e -p "# 请输入 runner registration token： " runner_registration_token
+    done
+    GITLAB_RUNNER_REG_TOKEN=${runner_registration_token}
+
+    echo
+    echo "# 例： 使用\"test\"来标识项目的运行环境。"
+    read -e -p "# 请输入项目的运行环境标识： " project_profile
+    while [[ "${project_profile}" == "" ]]; do
+        read -e -p " 请输入项目的运行环境标识： " project_profile
+    done
+    GITLAB_RUNNER_PROJECT_PROFILE=${project_profile}
+
+    echo
+    echo "# Default container image to use for builds when none is specified."
+    echo "# 默认值是\"${GITLAB_RUNNER_IMAGE}\"."
+    read -e -p "# 请输入 runner镜像： " gitlab_runner_image
+    if [[ "${gitlab_runner_image}" == "" ]]; then
+        echo "* 没有值输入，使用默认值\"${GITLAB_RUNNER_IMAGE}\"。"
+        gitlab_runner_image=${GITLAB_RUNNER_IMAGE}
+    fi
+    GITLAB_RUNNER_IMAGE=${gitlab_runner_image}
+
+    # gitlab runner 的 Helm 安装参数。
+    gitlab_runner_helm_install_settings="helm install --name ${GITLAB_PROJECT_NAME} --namespace ${GITLAB_RUNNER_NAMESPACE} gitlab-runner \\
+    --set gitlabUrl=${GITLAB_URL}\\
+    --set runnerRegistrationToken=${GITLAB_RUNNER_REG_TOKEN} \\
+    --set rbac.create=true \\
+    --set rbacWideAccess=true \\
+    --set runners.tags=${GITLAB_RUNNER_PROJECT_PROFILE} \\
+    --set runners.image=${GITLAB_RUNNER_IMAGE} \\
+    --set runners.cache.cacheType=s3 \\
+    --set runners.cache.cacheShared=true \\
+    --set runners.cache.s3ServerAddress=${MINIO_HOST} \\
+    --set runners.cache.s3BucketName=${MINIO_BUCKET_NAME} \\
+    --set runners.cache.s3CacheInsecure=true \\
+    --set runners.cache.secretName=minio-access \\"
+
+cat > gitlab-runner/gitlab-runner-helm-installation.sh <<EOF
+#!/bin/bash
+
+#  * 如果不使用MinIO进行存储，请修改"runners.cache"的值。
+#
+# 可以根据需要添加相关配置。
+
+${gitlab_runner_helm_install_settings}
+EOF
+
+    echo
+    if [[ "${answer_maven_setting}" == "Y" || "${answer_maven_setting}" == "y" ]]; then
+    echo '    --set runners.env.MAVEN_OPTS="-Dmaven.repo.local=.m2 -Dorg.apache.maven.user-settings=/opt/maven/settings.xml" \' >> gitlab-runner/gitlab-runner-helm-installation.sh
+    fi
+
+    read -n1 -e -p "# 是否想要修改gitlab runner的Helm 安装参数？ [Y/N] " answer_helm
+    while [[ "${answer_helm}" == "" ]]; do
+        read -e -n1 -p "请回答 [Y/N]: " answer_helm
+    done
+    answer_check N ${answer_helm}
+    if [[ "${answer_helm}" != "Y" && "${answer_helm}" != "y"  ]]; then
+        answer_helm="N"
+    fi
+
+    if [[ "${answer_helm}" == "Y" || "${answer_helm}" == "y" ||  "${answer_using_minio}" == "N" || "${answer_using_minio}" == "n" ]]; then
+        vi gitlab-runner/gitlab-runner-helm-installation.sh <EOF  < /dev/tty
+        sh gitlab-runner/gitlab-runner-helm-installation.sh
+    elif [[ "${answer_helm}" == "N" || "${answer_helm}" == "n" ]]; then
+        echo "使用默认值安装 gitlab runner。"
+        echo
+        sh gitlab-runner/gitlab-runner-helm-installation.sh
+    fi
+
+   check_helm_runner_exists=`helm list | grep -w ${GITLAB_PROJECT_NAME} | wc -l`
+   if [[ "${check_helm_runner_exists}" == 0 ]]; then
+       echo
+       echo -e "\033[31m * ERROR: \033[1;m"" gitlab runner 安装失败！ 请检查相关配置，然后自行安装。"
+       echo
+       cat gitlab-runner/gitlab-runner-helm-installation.sh
+       echo
+       echo "脚本终止。"
+   else
+       echo
+       echo "* [${GITLAB_PROJECT_NAME}] gitlab-runner 安装完成。脚本运行结束。"
+   fi
+   echo
+   exit;
+
+}
+
+
 
 # ------------------
 # Select an option
@@ -433,7 +862,7 @@ echo ""
 
 PS3='Choose your option: '
 
-select option in "Init cluster" "Create a project"
+select option in "Init cluster" "Create a project" "Install a gitlab runner project"
 
 do
     case ${option} in
@@ -445,9 +874,15 @@ do
      'Create a project')
       echo "========== Create a Project =========="
       init_env_check
-      init_project_check
+      harbor_status_check
       project_create_check
       project_create
+      break;;
+     'Install a gitlab runner project')
+      echo "========== Install a gitlab runner for project =========="
+      init_env_check
+      add_helm_gitlab_repo
+      install_gitlab_runner_project
       break;;
     esac
 done
