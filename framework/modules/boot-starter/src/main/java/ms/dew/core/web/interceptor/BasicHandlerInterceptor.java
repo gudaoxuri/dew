@@ -19,13 +19,19 @@ package ms.dew.core.web.interceptor;
 import com.ecfront.dew.common.$;
 import ms.dew.Dew;
 import ms.dew.core.DewContext;
+import ms.dew.core.web.error.ErrorController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpMethod;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import javax.security.auth.message.AuthException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Dew Servlet拦截器.
@@ -35,6 +41,7 @@ import java.net.URLDecoder;
 public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(BasicHandlerInterceptor.class);
+    private AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -65,6 +72,12 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
                 token = $.security.digest.digest(token, "MD5");
             }
         }
+        // 请求黑名单拦截
+        if (Dew.dewConfig.getSecurity().getRouter().isEnabled()
+                && blackRequest(request.getMethod(), request.getRequestURI())) {
+            ErrorController.error(request, response, 403, String.format("The current[%S][%s] request is not allowed", request.getRequestURI(), request.getMethod()), AuthException.class.getName());
+            return false;
+        }
         DewContext context = new DewContext();
         context.setId($.field.createUUID());
         context.setSourceIP(Dew.Util.getRealIP(request));
@@ -79,4 +92,28 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
         return super.preHandle(request, response, handler);
     }
 
+
+    /**
+     * 黑名单
+     *
+     * @param method     Request method
+     * @param requestUri URL
+     */
+    public boolean blackRequest(String method, String requestUri) {
+        /**
+         * 兼容requestUri末尾包含/的情况
+         */
+        String reqUri = requestUri.replaceAll("/+$", "");
+        method = method.toLowerCase();
+        if (method.equalsIgnoreCase(HttpMethod.OPTIONS.name())) {
+            return false;
+        }
+        final String MATCHER = "*";
+        final List<String> blacks = Dew.dewConfig.getSecurity().getRouter().getBlack().getOrDefault(method, new ArrayList<>());
+        if (logger.isDebugEnabled()) {
+            logger.debug("the black apis are {}", $.json.toJsonString(blacks));
+        }
+        return blacks.stream().anyMatch(uri -> uri.indexOf(MATCHER) > 0)
+                && (blacks.stream().anyMatch(uri -> pathMatcher.match(uri, reqUri)) || blacks.stream().anyMatch(reqUri::startsWith));
+    }
 }

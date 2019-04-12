@@ -22,6 +22,8 @@ import ms.dew.notification.NotifyConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -710,6 +712,8 @@ public class DewConfig {
 
         private boolean tokenHash = false;
 
+        private Router router = new Router();
+
         /**
          * Gets cors.
          *
@@ -782,6 +786,25 @@ public class DewConfig {
             this.tokenHash = tokenHash;
         }
 
+
+        /**
+         * Get route urls.
+         *
+         * @return the Router
+         */
+        public Router getRouter() {
+            return router;
+        }
+
+        /**
+         * Sets route urls.
+         *
+         * @param router the router info
+         */
+        public void setRouter(Router router) {
+            this.router = router;
+        }
+
         /**
          * Security cors.
          */
@@ -843,6 +866,47 @@ public class DewConfig {
              */
             public void setAllowHeaders(String allowHeaders) {
                 this.allowHeaders = allowHeaders;
+            }
+        }
+
+        public static class Router {
+
+            private boolean enabled = false;
+            private Map<String, List<String>> black = new LinkedHashMap<>();
+
+            /**
+             * Is enabled boolean.
+             *
+             * @return the boolean
+             */
+            public boolean isEnabled() {
+                return enabled;
+            }
+
+            /**
+             * Sets enabled.
+             *
+             * @param enabled the enabled
+             */
+            public void setEnabled(boolean enabled) {
+                this.enabled = enabled;
+            }
+            /**
+             * Get black url list
+             *
+             * @return Map The request url method with black urls
+             */
+            public Map<String, List<String>> getBlack() {
+                return black;
+            }
+
+            /**
+             * Sets black urls.
+             *
+             * @param black black url list
+             */
+            public void setBlack(Map<String, List<String>> black) {
+                this.black = black;
             }
         }
 
