@@ -1,4 +1,5 @@
-namespace: dew
 profiles:
+  # 添加测试环境
   test:
+    # 指定测试环境的namespace
     namespace: dew-test

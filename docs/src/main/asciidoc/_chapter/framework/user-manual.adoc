@@ -1,20 +1,8 @@
 === 使用手册
 
-[IMPORTANT]
-.使用申明
-====
-``Dew``有多个版本通道，使用时请谨慎选择：
+NOTE: `Dew` 框架部分是对 ``Spring Boot/Cloud`` 的扩展，使用之前务必了解相关框架的基础知识。
 
-. `GA` General Availability，正式版本，通过内部测试没有已知错误并且经过生产验证，生产环境首选！
-. `RC` Release Candidate，发行候选版本，通过内部测试没有已知错误，可用于生产环境。
-. `Beta` 公开测试版本，没有已知的Major类型Bug，但允许存在个别minor类型Bugs，生产环境使用需要谨慎评估！
-. `Alpha` 内部测试版本，很早期的测试版本，未经过内部测试，可能存在较多Bugs，此版本类似技术预览版（Technical Preview），切 *不可* 用于生产环境！
-. `SNAPSHOT` 快照版本，类似Nightly版本，更新频繁此不保证质量，切 *不可* 用于生产环境！
-====
-
-NOTE: `Dew` 框架是对 ``Spring Boot/Cloud`` 的扩展，使用之前务必了解相关框架的基础知识。
-
-IMPORTANT: 本手册只介绍``Dew``扩展的功能！
+IMPORTANT: 本手册只介绍``Dew``框架部分的扩展功能！
 
 ==== 结构说明
 

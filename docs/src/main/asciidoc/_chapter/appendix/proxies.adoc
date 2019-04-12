@@ -16,7 +16,8 @@ Kubernetes自身及周边生态对大陆网络的支持不好（当然不是他�
 
 代理的技术自然是选择 ``shadowsocks`` , 下面以 ``centos 7.x`` 为例进行安装设置
 
-[source,bash]
+==== 安装配置
+
 ----
 # ---------- Shadowsocks 安装（Centos 7）----------
 

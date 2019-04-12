@@ -42,7 +42,6 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         annotations.put(BasicFlow.FLAG_KUBE_RESOURCE_GIT_COMMIT, config.getGitCommit());
         annotations.put("dew.ms/scm-url", config.getScmUrl());
         if (config.getApp().isTraceLogEnabled()) {
-            annotations.put("inject-jaeger-agent", "true");
             annotations.put("sidecar.jaegertracing.io/inject", "true");
         }
 

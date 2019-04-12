@@ -1,0 +1,22 @@
+==== Dew CI/CD : Gitlab CI 实现
+
+此为Gitlab CI上的 CI/CD 处理，集成说明参见：https://gudaoxuri.github.io/dew/
+
+.前置准备
+
+. 创建Gitlab项目
+. 执行 ``dew-devops.sh`` 初始化项目对应的各个环境（详见 <<devops-user-manual>>）
+. 在项目代码中添加并配置 ``.dew`` 文件（详见 <<devops-user-manual>>）
+
+.核心流程
+
+. 确认Gitlab中的项目已启用CI
+  （勾选 https://<Gitlab Host>/<Group>/<Project>/settings/ci_cd 中的 ``Default to Auto DevOps pipeline``），
+. 配置 ``.gitlab-ci.yml``，配置参见 ``devops/cicd/gilabci/.gitlab-ci-template.yml``
+. 添加 ``.gitlab-ci.yml`` 到项目代码根目录
+
+[source,yml]
+.gitlab-ci-template.yml
+----
+include::.gitlab-ci-template.yml[]
+----

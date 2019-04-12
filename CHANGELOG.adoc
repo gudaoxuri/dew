@@ -1,24 +1,42 @@
 ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 
-== 版本说明
+=== 版本
 
-=== 2.0.0-RC(准备中)
+==== 通道说明
+
+[IMPORTANT]
+====
+``Dew``有多个版本通道，使用时请谨慎选择：
+
+. `GA` General Availability，正式版本，通过内部测试没有已知错误并且经过生产验证，生产环境首选！
+. `RC` Release Candidate，发行候选版本，通过内部测试没有已知错误，可用于生产环境。
+. `Beta` 公开测试版本，没有已知的Major类型Bug，但允许存在个别minor类型Bugs，生产环境使用需要谨慎评估！
+. `Alpha` 内部测试版本，很早期的测试版本，未经过内部测试，可能存在较多Bugs，此版本类似技术预览版（Technical Preview），切 *不可* 用于生产环境！
+. `SNAPSHOT` 快照版本，类似Nightly版本，更新频繁此不保证质量，切 *不可* 用于生产环境！
+====
+
+==== 发行记录
+
+===== 2.0.0-RC(准备中)
 
 .Features
+
 * 升级到Spring Boot 2.x
 * 实现兼容Spring Cloud与Istio的部署、监控架构
 * 引入Devops流程
 * 独立通知功能到``notification``
 
 .Improvement
+
 * 核心模块通过``checkstyle``检查
 
 .迁移指南（从1.5.1-RC到此版本）
+
 * Spring Boot升级：Spring boot 1.x 迁移到 Spring boot 2.x 见 https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide
 * 功能变更：包名由 ``com.tairanchina.csp.dew`` 变更为 ``ms.dew``
 * 功能变更：移除了 ``dew-jdbc`` 模块
 
-=== 1.5.1-RC
+===== 1.5.1-RC
 
 .Improvement
 
@@ -28,9 +46,10 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 
 * 修复 ``Dew.Util.getRealIP`` 错误
 
-=== 1.5.0-RC
+===== 1.5.0-RC
 
 .Features
+
 * 使用小泰科技Fork版本做为开源版本
 * 添加领导者选举的Redis实现
 * 添加消息通知（钉钉或邮件）
@@ -40,6 +59,7 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 * 添加对Scala的支持
 
 .Improvement
+
 * 分布式锁中删除lock、lockWithFun操作
 * 分布式锁由可重入改为不可重入
 * redis增加hash incr操作 和 hash decr操作
@@ -70,29 +90,34 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 * 功能变更： ``Dew.Info.instance``由``UUID``修改成``服务名@Profile@IP:端口``
 * 功能变更： 升级后的Tomcat版本不支持Host中带有'_'这种非规范符号
 
-=== 1.3.4-RC
+===== 1.3.4-RC
 
 .Features
+
 * rabbitmq 增加topic exchange
 
-=== 1.3.2-RC
+===== 1.3.2-RC
 
 .Features
+
 * 去掉logback-es依赖，使用logstash从日志文件进行采集
 
-=== 1.3.1-RC
+===== 1.3.1-RC
 
 .Fixed
+
 * #93 修复mybatis-starter对于sharding-jdbc数据源的强制加载
 
-=== 1.3.0-RC
+===== 1.3.0-RC
 
 .Features
+
 * #87 局部使用sharding-jdbc，mybatis实现，增加mybatis-starter模块
 * #89 支持配置提示
 * #91 Dew实例加载机制优化
 
 .Improvement
+
 * #82 metrics指标增加线程、内存、cpu、磁盘等统计
 * #86 ErrorController增加zuul日志追踪支持
 
@@ -106,23 +131,23 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 . 启动类需要的注解不要忘记自行添加，如``@EnableTransactionManagement``、`@EnableScheduling`
 . 新增的mybatis-starter模块，详见使用说明
 
-=== 1.2.2-RC
+===== 1.2.2-RC
 
 .Fixed
 
 * #45 邮件通知修正
 * #85 日志配置优化
 
-=== 1.2.1-RC
+===== 1.2.1-RC
 
 .Fixed
 
 * #38 RabbitMQ消息未设置持久化
 * 使用 统一响应——协议无关 类型时，降级HTTP状态码改为500
 
-=== 1.2.0-RC
+===== 1.2.0-RC
 
-.Feature
+.Features
 
 * #75 添加幂等处理功能， #77 可选策略类型Bloom Filter尚在开发中
 * #72 实现针对服务整体及每个接口的TPS、最大/平均/90%响应时间Metrics统计
@@ -145,9 +170,9 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 
 . 使用 `统一响应——协议无关` 类型时，UI端由原来只需要获取200状态下的数据改成需要获取 200 和 555 状态下的数据，两者对UI端没有区别。( @See https://rep.360taihe.com/csp/dew-framework/issues/53 )
 
-=== 1.1.0-RC
+===== 1.1.0-RC
 
-.Feature
+.Features
 
 * [功能] #45 支持服务调用（ `Hystrix` ）异常邮件通知
 * [功能] #51 适配新版 `用户权限中心` SDK
@@ -166,9 +191,9 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 
 . 使用 `统一响应——协议无关` 类型时，UI端由原来只需要获取200状态下的数据改成需要获取 200 和 1000 状态下的数据，两者对UI端没有区别。( @See https://rep.360taihe.com/csp/dew-framework/issues/53 )
 
-=== 1.1.0-beta1
+===== 1.1.0-beta1
 
-.Feature
+.Features
 
 * [功能] #19 支持局部 `ShardingJDBC`(由于ShardingJDBC 2.0还未RC，测试发现存在较多问题，此功能需要等待官方RC)
 
@@ -196,9 +221,9 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 **  所有 `entity` 包 迁移到 `com.tairanchina.csp.dew.jdbc.entity`
 **  使用 `JdbcTemplate` 原生方法时 原来是： `Dew.ds().jdbc.xx` ，需要修改成 `((DewDS)Dew.ds).jdbc.xx`
 
-=== 1.0.0-RC
+===== 1.0.0-RC
 
-.Feature
+.Features
 
 * [功能]支持新版用户权限中心认证适配(* 新版用户权限中心Release后，此功能代码会有一定变更)
 * [功能]新增SqlBuilder用于快速构建SQL语句
@@ -223,9 +248,9 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 * 修正Redis锁 `Unlock` 处理的线程问题
 * 修正jacoco单元测试覆盖率偏少的问题
 
-=== 1.0.0-beta5
+===== 1.0.0-beta5
 
-.Feature
+.Features
 
 * 添加服务调用限制（可定义A服务不允许B服务调用，防止服务双向依赖） e.g.
 
@@ -253,9 +278,9 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 
 * 修正事务失败，重试成功后还是被回滚的问题
 
-=== 1.0.0-beta4
+===== 1.0.0-beta4
 
-.Feature
+.Features
 
 * 整合 `Spring boot admin` 与 `Turbine`，可直观的监控各个性能及访问指标
 
@@ -267,15 +292,15 @@ image::./images/spring-boot-admin.png[]
 
 * 添加了几个自定义验证方式
 * 添加性能测试报告
-* 移除 `DaoImpl` ，改用接口 `DewDao` 
+* 移除 `DaoImpl` ，改用接口 `DewDao`
 
-WARNING: 为确保兼容， `DaoImpl` 在这一版本中未物理移除，如有条件请迁移至 `DewDao` 
+WARNING: 为确保兼容， `DaoImpl` 在这一版本中未物理移除，如有条件请迁移至 `DewDao`
 
 .Fixed
 
-=== 1.0.0-beta3
+===== 1.0.0-beta3
 
-.Feature
+.Features
 
 . Cluster的MQ添加RabbitMQ SPI
 
@@ -287,9 +312,9 @@ WARNING: 为确保兼容， `DaoImpl` 在这一版本中未物理移除，如有
 
 .Fixed
 
-=== 1.0.0-Beta2
+===== 1.0.0-Beta2
 
-.Feature
+.Features
 
 . 支持生成Html及PDF版本的离线文档
 
@@ -304,9 +329,9 @@ WARNING: 为确保兼容， `DaoImpl` 在这一版本中未物理移除，如有
 
 .Fixed
 
-=== 1.0.0-beta1
+===== 1.0.0-beta1
 
-.Feature
+.Features
 
 . 多数据源支持，详见说明文档`多数据源支持`章节
 

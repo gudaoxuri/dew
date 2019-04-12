@@ -1,0 +1,28 @@
+==== DevOps示例 : Helloworld后端服务
+
+本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/
+
+.说明
+此示例用于演示后端服务的自动化部署到Kubernetes，完成后推送钉钉通知。
+
+[source,yml]
+./.dew配置说明
+----
+include::.dew[]
+----
+
+.前置准备
+
+. 执行 ``dew-devops.sh`` 初始化项目对应的test环境（详见 <<devops-user-manual>>）
+
+.手工执行
+----
+# 执行如下maven命令(发布到test环境)
+mvn -P devops dew:build dew:release -Ddew.devops.profile=test
+----
+
+.Gitlab CI执行
+----
+# Merge或Push代码到test分支
+----
+

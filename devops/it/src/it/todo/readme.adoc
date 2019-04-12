@@ -1,0 +1,55 @@
+==== DevOps示例 : To-Do
+
+本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/
+
+.说明
+此示例用于演示以下功能：
+
+* 包含modules
+* 有类库、JVM服务、前端等多种类型
+* 生产环境版本重用
+* 自定义.dew文件
+* 自动化部署到Kubernetes
+* 完成后推送钉钉通知
+
+[NOTE]
+====
+默认情况下Dew会视 ``prod`` 标识为生产环境，``uat`` 为仿真环境，生产环境会重用（Docker Image重用）仿真或预发环境的最后一个版本。
+====
+
+[source,yml]
+./.dew配置说明
+----
+include::.dew[]
+----
+
+[source,yml]
+./kernel/.dew配置说明
+----
+include::./backend/services/kernel/.dew[]
+----
+
+[source,yml]
+./notifier/.dew配置说明
+----
+include::./backend/services/notifier/.dew[]
+----
+
+.前置准备
+
+. 执行 ``dew-devops.sh`` 初始化项目对应的uat和prod环境（详见 <<devops-user-manual>>）
+
+.手工执行
+----
+# 执行如下maven命令(发布到uat环境)
+mvn -P devops dew:build dew:release -Ddew.devops.profile=uat
+# 执行如下maven命令(发布到prod环境)
+mvn -P devops dew:build dew:release -Ddew.devops.profile=prod
+----
+
+.Gitlab CI执行
+----
+# Merge或Push代码到uat分支
+# Merge或Push代码到prod分支
+----
+

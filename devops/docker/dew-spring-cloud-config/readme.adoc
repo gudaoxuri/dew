@@ -2,7 +2,6 @@
 
 本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/
 
-[source,bash]
 ----
 # 直接使用docker hub镜像或手工打包：
 docker build -t dewms/spring-cloud-config .

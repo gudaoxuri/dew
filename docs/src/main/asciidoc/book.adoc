@@ -11,33 +11,40 @@ ifndef::imagesdir[:imagesdir: ./images]
 
 include::../../../../README.adoc[]
 
-== 架构 Architecture
+== 架构设计 Architecture Chapter
 
 参见本书：
 
 https://gudaoxuri.gitbook.io/microservices-architecture/
 
-== 架构 Framework
+== 编码开发 Framework Chapter
 
 include::_chapter/framework/user-manual.adoc[]
 
-include::_chapter/framework/develop.adoc[]
-
-include::_chapter/best-practices.adoc[]
-
-include::_chapter/configuration.adoc[]
-
-== 流程 Devops
+== 部署运维 DevOps Chapter
 
 include::_chapter/devops/install.adoc[]
 
-include::_chapter/devops/deploy.adoc[]
+=== DevOps示例
+
+include::../../../../devops/it/src/it/helloworld-backend/readme.adoc[]
+
+include::../../../../devops/it/src/it/helloworld-library/readme.adoc[]
+
+include::../../../../devops/it/src/it/helloworld-frontend/readme.adoc[]
+
+include::../../../../devops/it/src/it/todo/readme.adoc[]
+
+
+== Dew项目信息 Dew Project Info
+
+include::../../../../CONTRIBUTING.adoc[]
 
 include::../../../../CHANGELOG.adoc[]
 
 include::../../../../ROADMAP.adoc[]
 
-== 附录
+== 附录 Appendix
 
 include::_chapter/appendix/proxies.adoc[]
 
@@ -53,4 +60,7 @@ include::../../../../devops/docker/dew-spring-cloud-config/readme.adoc[]
 
 include::../../../../devops/chart/dew-spring-cloud-config/readme.adoc[]
 
+=== 支持的CI/CD服务
+
+include::../../../../devops/cicd/gitlabci/readme.adoc[]
 
