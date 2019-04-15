@@ -897,7 +897,7 @@ public class DewConfig {
         public static class Router {
 
             private boolean enabled = false;
-            private Map<String, List<String>> black = new LinkedHashMap<>();
+            private Map<String, List<String>> blackUri = new LinkedHashMap<>();
 
             /**
              * Is enabled boolean.
@@ -918,21 +918,21 @@ public class DewConfig {
             }
 
             /**
-             * Get black url list.
+             * Get black uri list.
              *
-             * @return Map The request url method with black urls
+             * @return Map The request url method with black urs
              */
-            public Map<String, List<String>> getBlack() {
-                return black;
+            public Map<String, List<String>> getBlackUri() {
+                return blackUri;
             }
 
             /**
-             * Sets black urls.
+             * Sets black uris.
              *
-             * @param black black url list
+             * @param blackUri black uri list
              */
-            public void setBlack(Map<String, List<String>> black) {
-                this.black = black;
+            public void setBlackUri(Map<String, List<String>> blackUri) {
+                this.blackUri = blackUri;
             }
         }
 
