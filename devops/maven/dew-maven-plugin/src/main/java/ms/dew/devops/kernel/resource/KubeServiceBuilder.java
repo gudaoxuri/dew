@@ -43,7 +43,6 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
         annotations.put("prometheus.io/port", config.getApp().getMetricPort() + "");
         annotations.put("prometheus.io/scrape", "true");
         if (config.getApp().isTraceLogEnabled()) {
-            annotations.put("inject-jaeger-agent", "true");
             annotations.put("sidecar.jaegertracing.io/inject", "true");
         }
 

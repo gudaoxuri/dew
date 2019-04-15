@@ -1,40 +1,66 @@
 === 开发指南
 
-==== SCM
+``Dew`` 基于 Apache 2.0 license 分发，如果您要向 ``Dew`` 贡献代码或 Fork 为自己的分支项目请遵循许可证要求。
 
-https://github.com/gudaoxuri/dew[https://github.com/gudaoxuri/dew]
+SCM： https://github.com/gudaoxuri/dew[https://github.com/gudaoxuri/dew]
 
-==== CheckStyle
+Issues： https://github.com/gudaoxuri/dew/issues
 
-TBD
+==== 代码要求
+
+本项目使用修改版的Google CheckStyle做为代码规范，规则文件见 ``framework/checkstyle/checkstyle.xml``。
+
+代码的变更需要有有对应的单元/集成测试。
+
+目前项目中只有``DevOps``部分用到集成测试，对应的需要修改 ``devops/devops-test.properties`` 为自己的支撑环境，但请不要提交此文件。
+
+[source,properties]
+./devops/devops-test.properties示例
+----
+include::./devops/devops-test.properties[]
+----
+
+提交前请运行 ``mvn clean test -P qa``，确认代码通过CheckStyle检查和测试。
+
+发起 ``Pull Request`` 后会调用 ``travis-ci`` 和 ``codacy`` 进行自动化代码检查，如有问题不会执行 ``Merge`` 。
 
 ==== 环境要求
 
-开发环境没有特别要求，如果需要服务间调用可使用 ``<服务名>.ribbon.listOfServers=<host:port>`` 的方式，详见 ``tracing-invoke1-example`` 。
+``开发`` 环境没有特别要求，如果需要服务间调用可使用 ``<服务名>.ribbon.listOfServers=<host:port>`` 的方式，详见 ``examples/tracing-invokeX-example`` 。
 
-调试环境需要Kubernetes支持。
+``调试`` 环境部分模块需要Kubernetes、Docker等服务的支持。
+
+|===
+|环境                |模块                     |备注
+
+|RabbitMQ           |cluster-rabbit          |测试RabbitMQ
+|Kubernetes Docker  |tracing-invokeX-example |测试服务间调用
+|Kubernetes Docker  |dew-maven-plugin        |DevOps插件
+|Kubernetes Docker  |helloworld-backend
+                     helloworld-frontend
+                     helloworld-library
+                     todo                    |测试自动化部署
+|Opentracing Jaeger |todo                    |测试追踪日志
+|Fluentd            |todo                    |测试日志采集
+|Prometheus Grafana |todo                    |测试Metrics
+|===
+
+[NOTE]
+====
+如果已按 <<devops-env-install>> 完成了测试环境的安装配置，
+那么可部分使用这一环境进行调试，
+否则请按以下流程完成调试环境的安装配置。
+====
+
+===== 调试环境安装配置
 
 [IMPORTANT]
 ====
-Kubernetes环境要求使用代理。
+Kubernetes、Docker环境要求使用代理。
 
 详见 <<proxies>>
 ====
 
-===== 依赖组件列表
-
-|===
-|环境 |组件 |备注
-
-|RabbitMQ |cluster-rabbit |测试RabbitMQ
-|Kubernetes |tracing-invokeX-example |测试服务间调用
-|Opentracing Jaeger |tracing-invokeX-example |测试追踪日志
-|Prometheus、Grafana |web-example |测试Metrics
-|===
-
-===== 环境部署
-
-[source,bash]
 .Kubernetes安装
 ----
 # 使用minikube
@@ -61,7 +87,6 @@ minikube ip
 minikube dashboard
 ----
 
-[source,bash]
 .RabbitMQ安装
 ----
 minikube ssh
@@ -80,7 +105,6 @@ docker run -d --hostname rabbit --name rabbit \
 # Visit: http://<minikube ip>:15672
 ----
 
-[source,bash]
 .Opentracing Jaeger安装
 ----
 minikube ssh
@@ -99,7 +123,6 @@ docker run -d --name jaegertracing \
 # Visit: http://<minikube ip>:16686
 ----
 
-[source,bash]
 .Prometheus、Grafana安装
 ----
 minikube ssh
@@ -139,7 +162,6 @@ docker run -d --name=grafana \
 
 NOTE: Windows10请开启 ``WSL``，不支持WSL的Windows请安装 ``cygwin``
 
-[source,bash]
 .Windows10 WSL设置
 ----
 # 开启WSL，使用linux环境操作kubernetes，以WSL ubuntu为例
@@ -173,7 +195,6 @@ kubectl config use-context minikube
 kubectl get node
 ----
 
-[source,bash]
 .Helm安装
 ----
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash

@@ -2,7 +2,6 @@
 
 本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/
 
-[source,bash]
 .使用
 ----
 # 0. 添加库

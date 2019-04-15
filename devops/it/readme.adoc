@@ -1,0 +1,7 @@
+==== DevOps Integration Tests
+
+----
+# 修改 devops/devops-test.properties
+# 执行测试
+mvn verify
+----

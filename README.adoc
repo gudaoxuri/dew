@@ -9,13 +9,13 @@ Master分支正在构建如下功能：
 如需要稳定、纯粹的Spring Cloud扩展请切换到 https://github.com/gudaoxuri/dew/tree/1.5.1-RC[1.5.1-RC] tag.
 ====
 
-== Dew微服务体系
+== Dew微服务体系 Dew Microservice System
 
 image::https://img.shields.io/travis/gudaoxuri/dew.svg[link="https://travis-ci.org/gudaoxuri/dew"]
 image::https://api.codacy.com/project/badge/Grade/aacfdad1579043f0a2c1928b53096b7b[link="https://app.codacy.com/app/gudaoxuri/dew?utm_source=github.com&utm_medium=referral&utm_content=gudaoxuri/dew&utm_campaign=Badge_Grade_Dashboard"]
 image::https://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2",link="https://www.apache.org/licenses/LICENSE-2.0.txt"]
 
-微服务一站式解决方案，提供：架构指南、容器优先/兼容Spring Cloud与Istio的框架、最佳实践及Devops标准化流程。
+微服务一站式解决方案( http://dew.ms )，提供：架构指南、容器优先/兼容Spring Cloud与Istio的框架、最佳实践及DevOps标准化流程。
 
 [quote,]
 ____
@@ -49,7 +49,9 @@ ____
 
 上述问题是Dew必须面对的，应对的设计核心理念是：
 
-``提供微服务架构指南 + 扩展主流微服务框架 + 标准化DevOps流程``
+----
+提供微服务架构指南 + 扩展主流微服务框架 + 标准化DevOps流程
+----
 
 .**提供微服务架构指南**
 
@@ -67,11 +69,48 @@ ____
 
 .**标准化DevOps流程**
 
-. CICD流程支持，自动化依赖管理、测试、质检、打包与发布
+. CI/CD流程支持，自动化依赖管理、测试、质检、打包与发布
 . 全面容器化，所有环境均为容器方案
 
-实现上我们提供一体化的Maven插件与 `Gitlab CI` 整合，实现针对JVM服务、类库、前端等项目DevOps支持。
+实现上我们提供一体化的Maven插件与 `Gitlab CI` 或其它 CI/CD服务整合，实现针对JVM服务、类库、前端等项目的DevOps支持。
+
+====
+一言蔽之， ``Dew`` 致力于成为微服务一站式解决方案。
+====
+
+=== 项目结构
 
 ----
-一言蔽之， ``Dew`` 致力于成为微服务一站式解决方案。
+|- framework
+|-  |- modules
+|-  |-  |- parent-starter                  // 父Pom模块
+|-  |-  |- boot-starter                    // 核心模块，包含Spring Boot Web相关依赖
+|-  |-  |- cloud-starter                   // Cloud模块，包含Spring Cloud Kuberenetes相关依赖
+|-  |-  |- cluster-common                  // 集群能力接口
+|-  |-  |- cluster-common-test             // 集群测试模块
+|-  |-  |- cluster-hazelcast               // Hazelcast集群能力实现
+|-  |-  |- cluster-rabbit                  // RabbitMQ集群能力实现
+|-  |-  |- cluster-redis                   // Redis集群能力实现
+|-  |-  |- idempotent-starter              // 幂等处理模块
+|-  |-  |- notification                    // 通知处理模块
+|-  |-  |- test-starter                    // 单元测试模块
+|-  |- components                          // 集成的服务
+|-  |-  |- auth                            // 认证服务
+|-  |-  |- auth-sdk-starter                // 认证服务SDK
+|-  |-  |- config                          // Spring Cloud服务
+|-  |- checkstyle                          // 项目CheckStyle
+|- devops                                  // DevOps部分
+|-  |- maven                               // DevOps使用到的Maven插件
+|-  |-  |- dew-maven-plugin                // DevOps核心插件
+|-  |- sh                                  // DevOps执行脚本
+|-  |- chart                               // DevOps使用到的Helm Chart
+|-  |-  |- dew-spring-cloud-config         //  Spring Cloud Config Chart
+|-  |- cicd                                // 各CI服务的 CI/CD 配置
+|-  |-  |- gitlabci                        // Gitlab CI CI/CD配置
+|-  |- docker                              // DevOps使用到的镜像
+|-  |-  |- dew-devops                      // 集成 Java Maven Node Git 的镜像
+|-  |-  |- dew-k8s-native-client           // 集成 Kuberenetes 及 Docker 的镜像
+|-  |-  |- dew-spring-cloud-config         // Spring Cloud Config 镜像
+|-  |- it                                  // 集成测试
+|- docs                                    // 文档
 ----

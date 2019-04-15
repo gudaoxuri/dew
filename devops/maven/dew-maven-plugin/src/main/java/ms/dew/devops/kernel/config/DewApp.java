@@ -16,7 +16,9 @@
 
 package ms.dew.devops.kernel.config;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -39,6 +41,11 @@ public class DewApp {
     private int readinessPeriodSeconds = 60;
     private int readinessFailureThreshold = 3;
     private boolean traceLogEnabled = true;
+    private Map<String, String> nodeSelector = new HashMap<String, String>() {
+        {
+            put("group", "app");
+        }
+    };
     private String buildCmd = "";
     private String runOptions = "-Xmx2688M -Xms2688M -Xmn960M -XX:MaxMetaspaceSize=512M "
             + "-XX:MetaspaceSize=512M -XX:+UseConcMarkSweepGC -XX:+UseCMSInitiatingOccupancyOnly "
@@ -279,6 +286,25 @@ public class DewApp {
      */
     public void setTraceLogEnabled(boolean traceLogEnabled) {
         this.traceLogEnabled = traceLogEnabled;
+    }
+
+
+    /**
+     * Gets node selector.
+     *
+     * @return the node selector
+     */
+    public Map<String, String> getNodeSelector() {
+        return nodeSelector;
+    }
+
+    /**
+     * Sets node selector.
+     *
+     * @param nodeSelector the node selector
+     */
+    public void setNodeSelector(Map<String, String> nodeSelector) {
+        this.nodeSelector = nodeSelector;
     }
 
     /**

@@ -42,7 +42,6 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         annotations.put(BasicFlow.FLAG_KUBE_RESOURCE_GIT_COMMIT, config.getGitCommit());
         annotations.put("dew.ms/scm-url", config.getScmUrl());
         if (config.getApp().isTraceLogEnabled()) {
-            annotations.put("inject-jaeger-agent", "true");
             annotations.put("sidecar.jaegertracing.io/inject", "true");
         }
 
@@ -56,7 +55,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         selectorLabels.remove("version");
         selectorLabels.remove("provider");
 
-        V1ContainerBuilder containerBuilder = null;
+        V1ContainerBuilder containerBuilder;
         switch (config.getKind()) {
             case JVM_SERVICE:
                 containerBuilder = new V1ContainerBuilder()
@@ -136,6 +135,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                                         .build())
                                 .withSpec(new V1PodSpecBuilder()
                                         .withContainers(containerBuilder.build())
+                                        .withNodeSelector(config.getApp().getNodeSelector())
                                         .build())
                                 .build())
                         .build())

@@ -22,7 +22,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.6.1">
 <meta name="author" content="v2.0.0-SNAPSHOT">
-<title>Dew（轻量微服务体系）</title>
+<title>Dew（轻量微服务体系）[2.x Building&#8230;&#8203;]</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -445,14 +445,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
-<h1>Dew（轻量微服务体系）</h1>
+<h1>Dew（轻量微服务体系）[2.x Building&#8230;&#8203;]</h1>
 <div class="details">
 <span id="author" class="author">v2.0.0-SNAPSHOT</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#dew微服务体系">1. Dew微服务体系</a>
+<li><a href="#dew微服务体系_dew_microservice_system">1. Dew微服务体系 Dew Microservice System</a>
 <ul class="sectlevel2">
 <li><a href="#设计理念">1.1. 设计理念</a>
 <ul class="sectlevel3">
@@ -460,12 +460,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#dew架构思想">1.1.2. Dew架构思想</a></li>
 </ul>
 </li>
+<li><a href="#项目结构">1.2. 项目结构</a></li>
 </ul>
 </li>
-<li><a href="#架构_architecture">2. 架构 Architecture</a></li>
-<li><a href="#架构_framework">3. 架构 Framework</a>
+<li><a href="#架构设计_architecture_chapter">2. 架构设计 Architecture Chapter</a></li>
+<li><a href="#编码开发_framework_chapter">3. 编码开发 Framework Chapter</a>
 <ul class="sectlevel2">
-<li><a href="#使用手册">3.1. 使用手册</a>
+<li><a href="#framework-user-manual">3.1. 框架使用手册[TBD]</a>
 <ul class="sectlevel3">
 <li><a href="#结构说明">3.1.1. 结构说明</a></li>
 <li><a href="#功能模块">3.1.2. 功能模块</a></li>
@@ -473,85 +474,107 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#工程化">3.1.4. 工程化</a></li>
 </ul>
 </li>
-<li><a href="#开发指南">3.2. 开发指南</a>
+<li><a href="#framework-configuration">3.2. 框架配置速查[TBD]</a>
 <ul class="sectlevel3">
-<li><a href="#scm">3.2.1. SCM</a></li>
-<li><a href="#checkstyle">3.2.2. CheckStyle</a></li>
-<li><a href="#环境要求">3.2.3. 环境要求</a></li>
+<li><a href="#code_dew_code_参数">3.2.1. <code>Dew</code> 参数</a></li>
+<li><a href="#code_spring_boot_code_核心参数">3.2.2. <code>Spring boot</code> 核心参数</a></li>
+<li><a href="#code_spring_cloud_code_核心参数">3.2.3. <code>Spring cloud</code> 核心参数</a></li>
+</ul>
+</li>
+<li><a href="#framework-best-practices">3.3. 框架最佳实践[TBD]</a>
+<ul class="sectlevel3">
+<li><a href="#服务调用开发期使用">3.3.1. 服务调用开发期使用</a></li>
+<li><a href="#code_validated_code_注解">3.3.2. <code>@Validated</code> 注解</a></li>
+<li><a href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据">3.3.3. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</a></li>
+<li><a href="#断路保护">3.3.4. 断路保护</a></li>
+<li><a href="#定时任务">3.3.5. 定时任务</a></li>
+<li><a href="#主要性能影响参数">3.3.6. 主要性能影响参数</a></li>
+<li><a href="#缓存处理">3.3.7. 缓存处理</a></li>
+<li><a href="#jdbc_批量插入性能问题">3.3.8. jdbc 批量插入性能问题</a></li>
+<li><a href="#http请求并发数性能瓶颈">3.3.9. http请求并发数性能瓶颈</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#流程_devops">4. 流程 Devops</a>
+<li><a href="#部署运维_devops_chapter">4. 部署运维 DevOps Chapter</a>
 <ul class="sectlevel2">
-<li><a href="#测试_生产环境安装配置">4.1. 测试、生产环境安装配置</a>
+<li><a href="#devops-env-install">4.1. 测试、生产环境安装配置</a>
 <ul class="sectlevel3">
-<li><a href="#docker">4.1.1. docker</a></li>
-<li><a href="#kubernetes">4.1.2. kubernetes</a></li>
-<li><a href="#helm">4.1.3. helm</a></li>
-<li><a href="#dns">4.1.4. dns</a></li>
-<li><a href="#minio">4.1.5. minio</a></li>
-<li><a href="#postgresql">4.1.6. postgreSql</a></li>
-<li><a href="#redis">4.1.7. redis</a></li>
-<li><a href="#gitlab">4.1.8. gitlab</a></li>
-<li><a href="#harbor_tbd">4.1.9. harbor（TBD）</a></li>
-<li><a href="#nginx_ingress_controller">4.1.10. nginx Ingress Controller</a></li>
-<li><a href="#dashboard">4.1.11. dashboard</a></li>
-<li><a href="#elasticsearch">4.1.12. elasticsearch</a></li>
-<li><a href="#fluentd">4.1.13. fluentd</a></li>
-<li><a href="#kibana">4.1.14. kibana</a></li>
-<li><a href="#jaeger">4.1.15. jaeger</a></li>
-<li><a href="#prometheus_operator_和_grafana">4.1.16. prometheus-operator 和 grafana</a></li>
+<li><a href="#服务规划">4.1.1. 服务规划</a></li>
+<li><a href="#基础配置">4.1.2. 基础配置</a></li>
+<li><a href="#docker">4.1.3. Docker</a></li>
+<li><a href="#kubernetes">4.1.4. Kubernetes</a></li>
+<li><a href="#helm">4.1.5. Helm</a></li>
+<li><a href="#nginx_ingress_controller">4.1.6. Nginx Ingress Controller</a></li>
+<li><a href="#dashboard">4.1.7. Dashboard</a></li>
+<li><a href="#elasticsearch">4.1.8. Elasticsearch</a></li>
+<li><a href="#kibana">4.1.9. Kibana</a></li>
+<li><a href="#prometheus_grafana">4.1.10. Prometheus &amp;&amp; Grafana</a></li>
+<li><a href="#fluentd">4.1.11. Fluentd</a></li>
+<li><a href="#jaeger">4.1.12. Jaeger</a></li>
 </ul>
 </li>
-<li><a href="#项目部署">4.2. 项目部署</a>
+<li><a href="#devops-user-manual">4.2. DevOps使用手册[TBD]</a></li>
+<li><a href="#devops-configuration">4.3. DevOps配置速查[TBD]</a></li>
+<li><a href="#devops-best-practices">4.4. DevOps最佳实践[TBD]</a></li>
+<li><a href="#devops示例">4.5. DevOps示例</a>
 <ul class="sectlevel3">
-<li><a href="#前置准备">4.2.1. 前置准备</a></li>
-<li><a href="#gitlab配置">4.2.2. Gitlab配置</a></li>
-<li><a href="#源码变更">4.2.3. 源码变更</a></li>
+<li><a href="#devops示例_helloworld后端服务">4.5.1. DevOps示例 : Helloworld后端服务</a></li>
+<li><a href="#devops示例_helloworld类库">4.5.2. DevOps示例 : Helloworld类库</a></li>
+<li><a href="#devops示例_helloworld前端">4.5.3. DevOps示例 : Helloworld前端</a></li>
+<li><a href="#devops示例_to_do">4.5.4. DevOps示例 : To-Do</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#版本说明">5. 版本说明</a>
+<li><a href="#dew项目信息_dew_project_info">5. Dew项目信息 Dew Project Info</a>
 <ul class="sectlevel2">
-<li><a href="#2_0_0_rc_准备中">5.1. 2.0.0-RC(准备中)</a></li>
-<li><a href="#1_5_1_rc">5.2. 1.5.1-RC</a></li>
-<li><a href="#1_5_0_rc">5.3. 1.5.0-RC</a></li>
-<li><a href="#1_3_4_rc">5.4. 1.3.4-RC</a></li>
-<li><a href="#1_3_2_rc">5.5. 1.3.2-RC</a></li>
-<li><a href="#1_3_1_rc">5.6. 1.3.1-RC</a></li>
-<li><a href="#1_3_0_rc">5.7. 1.3.0-RC</a></li>
-<li><a href="#1_2_2_rc">5.8. 1.2.2-RC</a></li>
-<li><a href="#1_2_1_rc">5.9. 1.2.1-RC</a></li>
-<li><a href="#1_2_0_rc">5.10. 1.2.0-RC</a></li>
-<li><a href="#1_1_0_rc">5.11. 1.1.0-RC</a></li>
-<li><a href="#1_1_0_beta1">5.12. 1.1.0-beta1</a></li>
-<li><a href="#1_0_0_rc">5.13. 1.0.0-RC</a></li>
-<li><a href="#1_0_0_beta5">5.14. 1.0.0-beta5</a></li>
-<li><a href="#1_0_0_beta4">5.15. 1.0.0-beta4</a></li>
-<li><a href="#1_0_0_beta3">5.16. 1.0.0-beta3</a></li>
-<li><a href="#1_0_0_beta2">5.17. 1.0.0-Beta2</a></li>
-<li><a href="#1_0_0_beta1">5.18. 1.0.0-beta1</a></li>
+<li><a href="#开发指南">5.1. 开发指南</a>
+<ul class="sectlevel3">
+<li><a href="#代码要求">5.1.1. 代码要求</a></li>
+<li><a href="#环境要求">5.1.2. 环境要求</a></li>
 </ul>
 </li>
-<li><a href="#路线图">6. 路线图</a></li>
-<li><a href="#附录">7. 附录</a>
+<li><a href="#版本">5.2. 版本</a>
+<ul class="sectlevel3">
+<li><a href="#通道说明">5.2.1. 通道说明</a></li>
+<li><a href="#发行记录">5.2.2. 发行记录</a></li>
+</ul>
+</li>
+<li><a href="#路线图">5.3. 路线图</a></li>
+</ul>
+</li>
+<li><a href="#附录_appendix">6. 附录 Appendix</a>
 <ul class="sectlevel2">
-<li><a href="#proxies">7.1. 代理选择与设置</a></li>
-<li><a href="#middleware">7.2. 常用中间件安装配置</a>
+<li><a href="#proxies">6.1. 代理选择与设置</a>
 <ul class="sectlevel3">
-<li><a href="#mysql">7.2.1. MySQL</a></li>
-<li><a href="#mongo">7.2.2. Mongo</a></li>
-<li><a href="#jenkins">7.2.3. jenkins</a></li>
+<li><a href="#安装配置">6.1.1. 安装配置</a></li>
 </ul>
 </li>
-<li><a href="#内置image与chart">7.3. 内置Image与Chart</a>
+<li><a href="#middleware">6.2. 常用中间件安装配置</a>
 <ul class="sectlevel3">
-<li><a href="#dew_docker_image_集成kubectl与helm">7.3.1. Dew Docker Image : 集成Kubectl与Helm</a></li>
-<li><a href="#dew_docker_image_集成ci_cd能力">7.3.2. Dew Docker Image : 集成CI/CD能力</a></li>
-<li><a href="#dew_docker_image_spring_cloud_config">7.3.3. Dew Docker Image : Spring Cloud Config</a></li>
-<li><a href="#dew_helm_chart_spring_cloud_config">7.3.4. Dew Helm Chart : Spring Cloud Config</a></li>
+<li><a href="#postgresql">6.2.1. PostgreSql</a></li>
+<li><a href="#redis">6.2.2. Redis</a></li>
+<li><a href="#mysql">6.2.3. MySQL</a></li>
+<li><a href="#mongo">6.2.4. Mongo</a></li>
+<li><a href="#gitlab">6.2.5. Gitlab</a></li>
+<li><a href="#harbor">6.2.6. Harbor</a></li>
+<li><a href="#dnsmasq">6.2.7. Dnsmasq</a></li>
+<li><a href="#minio">6.2.8. Minio</a></li>
+<li><a href="#nfs">6.2.9. NFS</a></li>
+</ul>
+</li>
+<li><a href="#内置image与chart">6.3. 内置Image与Chart</a>
+<ul class="sectlevel3">
+<li><a href="#dew_docker_image_集成kubectl与helm">6.3.1. Dew Docker Image : 集成Kubectl与Helm</a></li>
+<li><a href="#dew_docker_image_集成ci_cd能力">6.3.2. Dew Docker Image : 集成CI/CD能力</a></li>
+<li><a href="#dew_docker_image_spring_cloud_config">6.3.3. Dew Docker Image : Spring Cloud Config</a></li>
+<li><a href="#dew_helm_chart_spring_cloud_config">6.3.4. Dew Helm Chart : Spring Cloud Config</a></li>
+</ul>
+</li>
+<li><a href="#支持的ci_cd服务">6.4. 支持的CI/CD服务</a>
+<ul class="sectlevel3">
+<li><a href="#dew_ci_cd_gitlab_ci_实现">6.4.1. Dew CI/CD : Gitlab CI 实现</a></li>
 </ul>
 </li>
 </ul>
@@ -595,7 +618,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1">
-<h2 id="dew微服务体系"><a class="anchor" href="#dew微服务体系"></a>1. Dew微服务体系</h2>
+<h2 id="dew微服务体系_dew_microservice_system"><a class="anchor" href="#dew微服务体系_dew_microservice_system"></a>1. Dew微服务体系 Dew Microservice System</h2>
 <div class="sectionbody">
 <div class="imageblock">
 <div class="content">
@@ -604,7 +627,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="imageblock">
 <div class="content">
-<a class="image" href="https://www.codacy.com/app/gudaoxuri/dew?utm_source=github.com&utm_medium=referral&utm_content=gudaoxuri/dew&utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/b27405dea94b4b4085324ae6107945ba" alt="Codacy code quality"></a>
+<a class="image" href="https://app.codacy.com/app/gudaoxuri/dew?utm_source=github.com&utm_medium=referral&utm_content=gudaoxuri/dew&utm_campaign=Badge_Grade_Dashboard"><img src="https://api.codacy.com/project/badge/Grade/aacfdad1579043f0a2c1928b53096b7b" alt="aacfdad1579043f0a2c1928b53096b7b"></a>
 </div>
 </div>
 <div class="imageblock">
@@ -613,7 +636,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>微服务一站式解决方案，提供：架构指南、容器优先/兼容Spring Cloud与Istio的框架、最佳实践及Devops标准化流程。</p>
+<p>微服务一站式解决方案( <a href="http://dew.ms" class="bare">http://dew.ms</a> )，提供：架构指南、容器优先/兼容Spring Cloud与Istio的框架、最佳实践及DevOps标准化流程。</p>
 </div>
 <div class="quoteblock">
 <blockquote>
@@ -696,8 +719,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>上述问题是Dew必须面对的，应对的设计核心理念是：</p>
 </div>
-<div class="paragraph">
-<p><code>提供微服务架构指南 + 扩展主流微服务框架 + 标准化DevOps流程</code></p>
+<div class="listingblock">
+<div class="content">
+<pre>提供微服务架构指南 + 扩展主流微服务框架 + 标准化DevOps流程</pre>
+</div>
 </div>
 <div class="paragraph">
 <div class="title"><strong>提供微服务架构指南</strong></div>
@@ -730,7 +755,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="title"><strong>标准化DevOps流程</strong></div>
 <ol class="arabic">
 <li>
-<p>CICD流程支持，自动化依赖管理、测试、质检、打包与发布</p>
+<p>CI/CD流程支持，自动化依赖管理、测试、质检、打包与发布</p>
 </li>
 <li>
 <p>全面容器化，所有环境均为容器方案</p>
@@ -738,19 +763,60 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ol>
 </div>
 <div class="paragraph">
-<p>实现上我们提供一体化的Maven插件与 <code>Gitlab CI</code> 整合，实现针对JVM服务、类库、前端等项目DevOps支持。</p>
+<p>实现上我们提供一体化的Maven插件与 <code>Gitlab CI</code> 或其它 CI/CD服务整合，实现针对JVM服务、类库、前端等项目的DevOps支持。</p>
 </div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>一言蔽之， <code>Dew</code> 致力于成为微服务一站式解决方案。</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="项目结构"><a class="anchor" href="#项目结构"></a>1.2. 项目结构</h3>
 <div class="listingblock">
 <div class="content">
-<pre>一言蔽之， ``Dew`` 致力于成为微服务一站式解决方案。</pre>
-</div>
+<pre>|- framework
+|-  |- modules
+|-  |-  |- parent-starter                  // 父Pom模块
+|-  |-  |- boot-starter                    // 核心模块，包含Spring Boot Web相关依赖
+|-  |-  |- cloud-starter                   // Cloud模块，包含Spring Cloud Kuberenetes相关依赖
+|-  |-  |- cluster-common                  // 集群能力接口
+|-  |-  |- cluster-common-test             // 集群测试模块
+|-  |-  |- cluster-hazelcast               // Hazelcast集群能力实现
+|-  |-  |- cluster-rabbit                  // RabbitMQ集群能力实现
+|-  |-  |- cluster-redis                   // Redis集群能力实现
+|-  |-  |- idempotent-starter              // 幂等处理模块
+|-  |-  |- notification                    // 通知处理模块
+|-  |-  |- test-starter                    // 单元测试模块
+|-  |- components                          // 集成的服务
+|-  |-  |- auth                            // 认证服务
+|-  |-  |- auth-sdk-starter                // 认证服务SDK
+|-  |-  |- config                          // Spring Cloud服务
+|-  |- checkstyle                          // 项目CheckStyle
+|- devops                                  // DevOps部分
+|-  |- maven                               // DevOps使用到的Maven插件
+|-  |-  |- dew-maven-plugin                // DevOps核心插件
+|-  |- sh                                  // DevOps执行脚本
+|-  |- chart                               // DevOps使用到的Helm Chart
+|-  |-  |- dew-spring-cloud-config         //  Spring Cloud Config Chart
+|-  |- cicd                                // 各CI服务的 CI/CD 配置
+|-  |-  |- gitlabci                        // Gitlab CI CI/CD配置
+|-  |- docker                              // DevOps使用到的镜像
+|-  |-  |- dew-devops                      // 集成 Java Maven Node Git 的镜像
+|-  |-  |- dew-k8s-native-client           // 集成 Kuberenetes 及 Docker 的镜像
+|-  |-  |- dew-spring-cloud-config         // Spring Cloud Config 镜像
+|-  |- it                                  // 集成测试
+|- docs                                    // 文档</pre>
 </div>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="架构_architecture"><a class="anchor" href="#架构_architecture"></a>2. 架构 Architecture</h2>
+<h2 id="架构设计_architecture_chapter"><a class="anchor" href="#架构设计_architecture_chapter"></a>2. 架构设计 Architecture Chapter</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>参见本书：</p>
@@ -761,44 +827,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect1">
-<h2 id="架构_framework"><a class="anchor" href="#架构_framework"></a>3. 架构 Framework</h2>
+<h2 id="编码开发_framework_chapter"><a class="anchor" href="#编码开发_framework_chapter"></a>3. 编码开发 Framework Chapter</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="使用手册"><a class="anchor" href="#使用手册"></a>3.1. 使用手册</h3>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-<div class="title">使用申明</div>
-<div class="paragraph">
-<p><code>Dew</code>有多个版本通道，使用时请谨慎选择：</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><code>GA</code> General Availability，正式版本，通过内部测试没有已知错误并且经过生产验证，生产环境首选！</p>
-</li>
-<li>
-<p><code>RC</code> Release Candidate，发行候选版本，通过内部测试没有已知错误，可用于生产环境。</p>
-</li>
-<li>
-<p><code>Beta</code> 公开测试版本，没有已知的Major类型Bug，但允许存在个别minor类型Bugs，生产环境使用需要谨慎评估！</p>
-</li>
-<li>
-<p><code>Alpha</code> 内部测试版本，很早期的测试版本，未经过内部测试，可能存在较多Bugs，此版本类似技术预览版（Technical Preview），切 <strong>不可</strong> 用于生产环境！</p>
-</li>
-<li>
-<p><code>SNAPSHOT</code> 快照版本，类似Nightly版本，更新频繁此不保证质量，切 <strong>不可</strong> 用于生产环境！</p>
-</li>
-</ol>
-</div>
-</td>
-</tr>
-</table>
-</div>
+<h3 id="framework-user-manual"><a class="anchor" href="#framework-user-manual"></a>3.1. 框架使用手册[TBD]</h3>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -806,7 +838,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<code>Dew</code> 框架是对 <code>Spring Boot/Cloud</code> 的扩展，使用之前务必了解相关框架的基础知识。
+<code>Dew</code> 框架部分是对 <code>Spring Boot/Cloud</code> 的扩展，使用之前务必了解相关框架的基础知识。
 </td>
 </tr>
 </table>
@@ -818,7 +850,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-本手册只介绍<code>Dew</code>扩展的功能！
+本手册只介绍<code>Dew</code>框架部分的扩展功能！
 </td>
 </tr>
 </table>
@@ -2076,7 +2108,7 @@ spring:
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-此功能由Devops流程涉及的Kubernetes环境自动完成。
+此功能由DevOps流程涉及的Kubernetes环境自动完成。
 </td>
 </tr>
 </table>
@@ -2085,27 +2117,492 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="开发指南"><a class="anchor" href="#开发指南"></a>3.2. 开发指南</h3>
+<h3 id="framework-configuration"><a class="anchor" href="#framework-configuration"></a>3.2. 框架配置速查[TBD]</h3>
 <div class="sect3">
-<h4 id="scm"><a class="anchor" href="#scm"></a>3.2.1. SCM</h4>
-<div class="paragraph">
-<p><a href="https://github.com/gudaoxuri/dew">https://github.com/gudaoxuri/dew</a></p>
+<h4 id="code_dew_code_参数"><a class="anchor" href="#code_dew_code_参数"></a>3.2.1. <code>Dew</code> 参数</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">dew: # Dew 参数key前缀
+    basic: # 基础信息
+        name: # 服务名称，用于API文档显示等
+        version: 1.0 # 服务版本号，用于API文档显示等
+        desc: # 服务描述，用于API文档显示等
+        webSite: # 官网，用于API文档显示等
+        doc:
+            enabled: true # 是否启用默认文档配置，关闭后可自定义文档管理，默认为true
+            base-package: # API文档要扫描的根包，多指定到 Controller 包中
+            contact: # 联系人信息
+                name: # 联系人姓名
+                url: # 联系人URL
+                email: # 联系人邮箱
+        format:
+            use-unity-error: true # 是否启用统一响应
+            error-flag: __DEW_ERROR__ # 默认的通知标识
+        error-mapping: # 自定义错误映射
+            "[&lt;异常类名&gt;]":
+                http-code: # http状态码，不存在时使用实例级http状态码
+                business-code: # 业务编码，不存在时使用实例级业务编码
+                message: # 错误描述，不存在时使用实例级错误描述
+    cluster: # 集群功能
+        cache: redis # 缓存实现
+        lock: redis # 分布式锁实现，可选 redis/hazelcast，默认redis
+        map: redis # 分布式Map实现，可选 redis/hazelcast，默认redis
+        mq: redis # MQ实现，可选 redis/hazelcast/rabbit，默认redis
+        election: redis # 领导者选举实现，可选 redis/eureka，默认redis
+        config: #集群相关配置
+            election-period-sec: 60 #领导者选举时间区间，默认60秒
+            ha-enabled: true #是否启用HA，默认为true
+    notifies:
+        "": # 通知的标识
+            type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
+            defaultReceivers: # 默认接收人列表，钉钉为手机号，邮件为邮箱
+            dndTimeReceivers: # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
+            args: # 不同类型的参数，邮件不需要设置
+                url: # 钉钉的推送地址，说明详见：https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.karFPe&amp;treeId=257&amp;articleId=105735&amp;docType=1
+            strategy: # 通知策略
+                minIntervalSec: 0 # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
+                dndTime: # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
+                forceSendTimes: 3 # 同一免扰周期间通知调用达到几次后强制发送
+    security: # 安全功能
+        cors:
+            allow-origin: * # 允许的来源，建议修改
+            allow-methods: POST,GET,OPTIONS,PUT,DELETE,HEAD # 允许的方法
+            allow-headers: x-requested-with,content-type # 允许的头信息
+        token-flag: __dew_token__ # token 标识
+        token-in-header: true # true：token标识在 header 中，反之在url参数中
+        token-hash: false # token值是否需要hash，用于解决token值有特殊字符的情况
+        include-services: [""] # 服务白名单，要求源服务头部带上 Request-From
+        exclude-services: [""] # 服务黑名单，要求源服务头部带上 Request-From
+    component:
+        auth:
+          token-expire-sec: 60 * 60 * 24 * 30 # token有效期，默认为30天
+          max-login-error-times: 3 # 最大登录错误次数，默认3次
+          clean-error-time-min: 10 # 登录错误限制登录时间，默认为10分钟
+          password-salt: # 密码加盐
+          email-account: # 发通知邮件的邮箱账号，比如用来发送用户注册成功邮件
+          sdk:
+              server-url: # 服务器地址
+              white-list: # 白名单，逗号分隔
+    cloud:
+        trace-log:
+            enabled: true # 是否启用服务API调用（追踪）日志，默认为true
+        error:
+             enabled: true # 启用降级邮件通知，默认为false
+             notify-flag: __HYSTRIX__ # 默认的通知标识
+             notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED # 通知的事件类型
+             notify-include-keys: # 需监控的方法key值，与notify-exclude-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
+             notify-exclude-keys: # 不需要监控的方法key值，与notify-include-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
+    idempotent:
+        default-expire-ms: 3600000 # 设置默认过期时间，1小时
+        default-strategy: item # 设置默认策略，目前支持item(逐条记录)
+        default-opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
+
+spring:
+    application:
+         name:  # 项目名称,若使用Dew，请配置
+    mail: #mail配置，需要hystrix降级通知需加以下配置
+         host: smtp.163.com
+         username:
+         password:
+         properties:
+           mail:
+             smtp:
+               auth: true
+                 starttls:
+                   enable: true
+                   required: true
+    hazelcast: # hazelcast相关配置
+         username:
+         password:
+         addresses: ["127.0.0.1"]
+         connection-timeout: #默认5000
+         connection-attempt-limit: #默认2
+         connection-attempt-period: #默认3000</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="checkstyle"><a class="anchor" href="#checkstyle"></a>3.2.2. CheckStyle</h4>
-<div class="paragraph">
-<p>TBD</p>
+<h4 id="code_spring_boot_code_核心参数"><a class="anchor" href="#code_spring_boot_code_核心参数"></a>3.2.2. <code>Spring boot</code> 核心参数</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html" class="bare">https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html</a>
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect3">
-<h4 id="环境要求"><a class="anchor" href="#环境要求"></a>3.2.3. 环境要求</h4>
+<h4 id="code_spring_cloud_code_核心参数"><a class="anchor" href="#code_spring_cloud_code_核心参数"></a>3.2.3. <code>Spring cloud</code> 核心参数</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="http://cloud.spring.io/spring-cloud-static/Edgware.SR4/single/spring-cloud.html" class="bare">http://cloud.spring.io/spring-cloud-static/Edgware.SR4/single/spring-cloud.html</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="framework-best-practices"><a class="anchor" href="#framework-best-practices"></a>3.3. 框架最佳实践[TBD]</h3>
+<div class="sect3">
+<h4 id="服务调用开发期使用"><a class="anchor" href="#服务调用开发期使用"></a>3.3.1. 服务调用开发期使用</h4>
 <div class="paragraph">
-<p>开发环境没有特别要求，如果需要服务间调用可使用 <code>&lt;服务名&gt;.ribbon.listOfServers=&lt;host:port&gt;</code> 的方式，详见 <code>tracing-invoke1-example</code> 。</p>
+<p>在 <code>Spring Cloud</code> 体系下，服务调用需要启动 <code>Eureka</code> 服务（对于 <code>Dew</code> 中的 <code>Registry</code> 组件），这对开发阶段并不友好：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>开发期间会不断启停服务，<code>Eureka</code> 保护机制会影响服务注册（当然这是可以关闭的）</p>
+</li>
+<li>
+<p>多人协作时可能会出现调用到他人服务的情况（同一服务多个实例）</p>
+</li>
+<li>
+<p>需要启动 <code>Eureka</code> 服务，多了一个依赖</p>
+</li>
+</ol>
 </div>
 <div class="paragraph">
-<p>调试环境需要Kubernetes支持。</p>
+<p>为解决上述问题,在使用 <code>Spring Cloud</code> 的 <code>RestTemplate</code> 时,增加 <code>Ribbon</code> 的服务配置.</p>
 </div>
+<div class="literalblock">
+<div class="content">
+<pre># &lt;client&gt;为service-id
+&lt;client&gt;.ribbon.listOfServers: &lt;直接访问的IPs&gt;
+# 如
+x-service.ribbon.listOfServers: 127.0.0.1:8812</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code_validated_code_注解"><a class="anchor" href="#code_validated_code_注解"></a>3.3.2. <code>@Validated</code> 注解</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>在Spring Controller类里，<code>@Validated</code> 注解初使用会比较不易上手，在此做下总结</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>对于基本数据类型和String类型，要使校验的注解生效，需在该类上方加 <code>@Validated</code> 注解</p>
+</li>
+<li>
+<p>对于抽象数据类型，需在形式参数前加<code>@Validated</code>注解</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Spring对抽象数据类型校验抛出异常为<code>MethodArgumentNotValidException</code>，http状态码为400，对基本数据类型校验抛出异常为<code>ConstraintViolationException</code>，http状态码为500，dew对这两种异常做了统一处理，http状态码均返回200，code为400
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据"><a class="anchor" href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据"></a>3.3.3. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>对于 <code>LocalDateTime</code> 类型，需在参数上加 <code>@JsonFormat</code> 注解，如下：<code>@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")</code></p>
+</li>
+<li>
+<p><code>LocalDate,LocalTime,Instant</code> 等，无需配置可自行转换</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<code>jackson</code> 对于 <code>LocalDateTime</code> 类型的支持与其他三种类型不具有一致性，这是 <code>jackson</code> 需要优化的一个点
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="断路保护"><a class="anchor" href="#断路保护"></a>3.3.4. 断路保护</h4>
+<div class="listingblock">
+<div class="title">Hystrix配置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-properties" data-lang="properties"># 执行的隔离策略 THREAD, SEMAPHORE 默认THREAD
+hystrix.command.default.execution.isolation.strategy=THREAD
+# 执行hystrix command的超时时间,超时后会进入fallback方法 默认1000
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=1000
+# 执行hystrix command是否限制超时,默认是true
+hystrix.command.default.execution.timeout.enabled=true
+# hystrix command 执行超时后是否中断 默认true
+hystrix.command.default.execution.isolation.thread.interruptOnTimeout=true
+# 使用信号量隔离时,信号量大小,默认10
+hystrix.command.default.execution.isolation.semaphore.maxConcurrentRequests=10
+# fallback方法最大并发请求数 默认是10
+hystrix.command.default.fallback.isolation.semaphore.maxConcurrentRequests=10
+# 服务降级是否开启,默认为true
+hystrix.command.default.fallback.enabled=true
+# 是否使用断路器来跟踪健康指标和熔断请求
+hystrix.command.default.circuitBreaker.enabled=true
+# 熔断器的最小请求数,默认20. (这个不是很理解,欢迎补充)
+hystrix.command.default.circuitBreaker.requestVolumeThreshold=20
+# 断路器打开后的休眠时间,默认5000
+hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds=5000
+# 断路器打开的容错比,默认50
+hystrix.command.default.circuitBreaker.errorThresholdPercentage=50
+# 强制打开断路器,拒绝所有请求. 默认false, 优先级高于forceClosed
+hystrix.command.default.circuitBreaker.forceOpen=false
+# 强制关闭断路器,接收所有请求,默认false,优先级低于forceOpen
+hystrix.command.default.circuitBreaker.forceClosed=false
+
+# hystrix command 命令执行核心线程数,最大并发 默认10
+hystrix.threadpool.default.coreSize=10</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>信息参见:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/Netflix/Hystrix/wiki/Configuration" class="bare">https://github.com/Netflix/Hystrix/wiki/Configuration</a></p>
+</li>
+<li>
+<p><a href="http://hwood.lofter.com/post/1cc7fbdc_e8c5c96" class="bare">http://hwood.lofter.com/post/1cc7fbdc_e8c5c96</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>使用断路保护可有效果的防止系统雪崩，<code>Spring Cloud</code> 对 <code>Hystrix</code> 做了封装，详见： <a href="http://cloud.spring.io/spring-cloud-netflix/single/spring-cloud-netflix.html#_circuit_breaker_hystrix_clients" class="bare">http://cloud.spring.io/spring-cloud-netflix/single/spring-cloud-netflix.html#_circuit_breaker_hystrix_clients</a></p>
+</div>
+<div class="paragraph">
+<p>需要说明的是 <code>Hystrix</code> 使用新线程执行代码，导致 <code>Threadlocal</code> 数据不能同步，使用时需要将用到的数据做为参数传入，如果需要使用 <code>Dew</code> 框架的上下文（请求链路/用户等获取）需要先传入再设值，e.g.</p>
+</div>
+<div class="listingblock">
+<div class="title">Hystrix Command 示例,及Context处理</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public class HystrixExampleService {
+    @HystrixCommand(fallbackMethod = "defaultFallback", commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000")
+    })
+    public String someMethod(Map&lt;String, Object&gt; parameters, DewContext context) {
+        // ！！！ Hystrix使用新线程执行代码，导致Threadlocal数据不能同步，
+        // 使用时需要将用到的数据做为参数传入，如果需要使用Dew框架的上下文需要先传入再设值
+        DewContext.setContext(context);
+        try {
+            Thread.sleep(new Random().nextInt(3000));
+            logger.info("Normal Service Token:" + Dew.context().getToken());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return "ok";
+    }
+
+    // 降级处理方法定义
+    public String defaultFallback(Map&lt;String, Object&gt; parameters, DewContext context, Throwable e) {
+        DewContext.setContext(context);
+        logger.info("Error Service Token:" + Dew.context().getToken());
+        return "fail";
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="定时任务"><a class="anchor" href="#定时任务"></a>3.3.5. 定时任务</h4>
+<div class="paragraph">
+<p>使用 <code>Spring Config</code>  配置中心 <code>refresh</code> 时,在 <code>@RefreshScope</code> 注解的类中, <code>@Scheduled</code> 注解的自动任务会失效。
+建议使用实现 <code>SchedulingConfigurer</code> 接口的方式添加自动任务。</p>
+</div>
+<div class="listingblock">
+<div class="title">自动任务添加</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Configuration
+@EnableScheduling
+public class SchedulingConfiguration implements SchedulingConfigurer {
+
+    private Logger logger = LoggerFactory.getLogger(SchedulingConfiguration.class);
+
+    @Autowired
+    private ConfigExampleConfig config;
+
+    @Override
+    public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
+        taskRegistrar.addTriggerTask(() -&gt; logger.info("task1: " + config.getVersion()), triggerContext -&gt; {
+            Instant instant = Instant.now().plus(5, SECONDS);
+            return Date.from(instant);
+        });
+
+        taskRegistrar.addTriggerTask(() -&gt; logger.info("task2: " + config.getVersion()), new CronTrigger("1/3 * * * * ?"));
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="主要性能影响参数"><a class="anchor" href="#主要性能影响参数"></a>3.3.6. 主要性能影响参数</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>内置 <code>Tomcat</code> 参数调整效果并不大,如果需要调整,建议适当调大 <code>max-treads</code> 和 <code>accept-count</code></p>
+<div class="literalblock">
+<div class="content">
+<pre># 最大等待请求数 默认100
+server.tomcat.accept-count=1000
+# 最大并发数 默认200
+server.tomcat.max-threads=1000
+# 最大连接数 默认BIO:200 NIO:10000 APR:8192
+server.tomcat.max-connections=2000</pre>
+</div>
+</div>
+</li>
+<li>
+<p><code>Ribbon</code> 性能参数说明调整 <code>MaxTotalConnections</code> 和 <code>MaxConnectionsPerHost</code> 时建议同比调整 <code>Pool</code> 相关的参数</p>
+<div class="literalblock">
+<div class="content">
+<pre># ribbon 单主机最大连接数,默认50
+ribbon.MaxConnectionsPerHost=500
+# ribbon 总连接数,默认 200
+ribbon.MaxTotalConnections=1000
+# 默认200
+ribbon.PoolMaxThreads=1000
+# 默认1
+ribbon.PoolMinThreads=500</pre>
+</div>
+</div>
+</li>
+<li>
+<p><code>Hystrix</code> 性能参数说明</p>
+<div class="literalblock">
+<div class="content">
+<pre># 并发执行的最大线程数,默认10
+hystrix.threadpool.default.coreSize=100</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+普通 <code>Service</code> 使用 <code>Hystrix</code> 时,最大并发主要调整 <code>hystrix.threadpool.default.coreSize</code>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<code>Hystrix</code> 的默认超时时间为1s,在高并发下容易出现超时,建议将默认超时时间适当调长,
+特殊接口需要将时间调短或更长的,使用特定配置。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="缓存处理"><a class="anchor" href="#缓存处理"></a>3.3.7. 缓存处理</h4>
+<div class="paragraph">
+<p><code>Spring Cache</code> 提供了很好的注解式缓存，但默认没有超时，需要根据使用的缓存容器特殊配置</p>
+</div>
+<div class="listingblock">
+<div class="title">Redis缓存过期时间设置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Bean
+RedisCacheManager cacheManager() {
+    final RedisCacheManager redisCacheManager = new RedisCacheManager(redisTemplate);
+    redisCacheManager.setUsePrefix(true);
+    redisCacheManager.setDefaultExpiration(&lt;过期秒数&gt;);
+    return redisCacheManager;
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="jdbc_批量插入性能问题"><a class="anchor" href="#jdbc_批量插入性能问题"></a>3.3.8. jdbc 批量插入性能问题</h4>
+<div class="paragraph">
+<p>如果不开启rewriteBatchedStatements=true，那么jdbc会把批量插入当做一行行的单条处理，也就没有达到批量插入的效果</p>
+</div>
+<div class="listingblock">
+<div class="title">jdbc配置示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/dew?useUnicode=true&amp;characterEncoding=utf-8&amp;rewriteBatchedStatements=true
+    username: root
+    password: 123456</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="http请求并发数性能瓶颈"><a class="anchor" href="#http请求并发数性能瓶颈"></a>3.3.9. http请求并发数性能瓶颈</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>当策略为Thread时（默认是Thread)，hystrix.threadpool.default.maximumSize为第一个性能瓶颈，默认值为10.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+修改值时，需要先设置hystrix.threadpool.default.allowMaximumSizeToDivergeFromCoreSize为true，默认为false
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<div class="title">hystrix详细配置参见https://github.com/Netflix/Hystrix/wiki/configuration#allowMaximumSizeToDivergeFromCoreSize</div>
+<ul>
+<li>
+<p>第二个瓶颈为springboot内置的tomcat的最大连接数，参数为server.tomcat.maxThreads，默认值为200</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="部署运维_devops_chapter"><a class="anchor" href="#部署运维_devops_chapter"></a>4. 部署运维 DevOps Chapter</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="devops-env-install"><a class="anchor" href="#devops-env-install"></a>4.1. 测试、生产环境安装配置</h3>
 <div class="admonitionblock important">
 <table>
 <tr>
@@ -2114,17 +2611,1473 @@ spring:
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Kubernetes环境要求使用代理。</p>
-</div>
-<div class="paragraph">
-<p>详见 <a href="#proxies">代理选择与设置</a></p>
+<p>本文会给出使用代理与不使用代理的安装、配置方式，但强烈推荐使用代理方式，详见 <a href="#proxies">代理选择与设置</a> 。</p>
 </div>
 </td>
 </tr>
 </table>
 </div>
-<div class="sect4">
-<h5 id="依赖组件列表"><a class="anchor" href="#依赖组件列表"></a>依赖组件列表</h5>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>本文各服务使用 <code>x.dew.ms</code> 做为访问的域名，可根据实际情况替换。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="服务规划"><a class="anchor" href="#服务规划"></a>4.1.1. 服务规划</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+常规的项目研发多会分 <code>开发(dev)、测试(test)、预发(pre-prod)/仿真(uat)、生产(prod)</code> 等多个环境。
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>服务整体上三类：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>公共支撑服务，如 Gitlab 、 Harbor 等，这些服务要求所有环境共用、互通</p>
+</li>
+<li>
+<p>每个环境独立部署的支撑服务， 如 RabbitMQ、PostgreSql、Redis、dnsmasq、Minio 等，出于数据、资源隔离的要求这些服务各个环境分别部署</p>
+</li>
+<li>
+<p>每个环境的Docker与Kubernetes集群，原则上各环境使用独立的集群，如果共用集群时需要使用<code>namespace</code>加以区分</p>
+</li>
+</ol>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. 推荐的服务列表</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">分类</th>
+<th class="tableblock halign-left valign-top">域名/主机名</th>
+<th class="tableblock halign-left valign-top">服务</th>
+<th class="tableblock halign-left valign-top">备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">公共支撑服务</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">domain:gitlab.dew.ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gitlab</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gitlab及其CI/CD服务</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">公共支撑服务</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">domain:harbor.dew.ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Harbor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Docker私有库服务</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">公共支撑服务</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">domain:maven.dew.ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maven</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maven私有库服务</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">环境相关的支撑服务</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dnsmasq</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">轻量级DNS解析服务</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">环境相关的支撑服务</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">domain:minio.dew.ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Minio</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">分布式对象存储服务，用于CI/CD时做为分布式缓存</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">环境相关的支撑服务</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">domain:nfs.dew.ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NFS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用于Kuernetes persistent volumes的文件存储服务，生产环境建议使用云厂商的分布式文件存储或 CephFS，支持的类型见
+                                                                   <a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes" class="bare">https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">容器集群</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">hostname:k8s-X</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Docker</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Docker容器服务，部署到所有Kubernetes所在的节点</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">容器集群</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">hostname:k8s-X</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;CNI&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes CNI服务，部署到所有Kubernetes所在的节点，本文使用 Flannel</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">容器集群</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">hostname:k8s-masterX</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes Master</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes Master服务，可做HA</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">容器集群</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">hostname:k8s-masterX</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Helm tiller</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Helm服务，部署到Kubernetes Master所在节点</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">容器集群</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">hostname:k8s-nodeX</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes Node</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes Node服务，至少3个节点</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>容器集群各节点主机名与IP的映射配置到 /etc/hosts 中</p>
+</li>
+<li>
+<p>kubernetes Node 应至少分两个组: <code>group=app</code> 用于运行应用， <code>group=devops</code> 用于运行运维管理工具。</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+各支撑服务（中间件）的安装见  <a href="#middleware">常用中间件安装配置</a> ，下文介绍容器服务的安装配置。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="基础配置"><a class="anchor" href="#基础配置"></a>4.1.2. 基础配置</h4>
+<div class="paragraph">
+<p><strong>以 Centos7 为例，各节点做好ssh免密互访、关闭防火墙、关闭swap、禁用SELINUX</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 关闭防火墙
+systemctl stop firewalld.service
+systemctl disable firewalld.service
+# 关闭swap
+swapoff -a
+sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+# 禁用SELINUX
+sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config
+# 创建key
+ssh-keygen -t rsa</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 每个节点执行完上述命令后再执行ssh复制，每个节点都要执行N次（N为节点数-1）
+ssh-copy-id -i ~/.ssh/id_rsa.pub root@k8s-X</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="docker"><a class="anchor" href="#docker"></a>4.1.3. Docker</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://kubernetes.io/docs/setup/cri/#docker" class="bare">https://kubernetes.io/docs/setup/cri/#docker</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>yum install -y yum-utils \
+  device-mapper-persistent-data \
+  lvm2
+
+yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+
+yum update -y &amp;&amp; yum install -y docker-ce-18.06.2.ce
+
+mkdir /etc/docker
+
+cat &gt; /etc/docker/daemon.json &lt;&lt;EOF
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2",
+  "storage-opts": [
+    "overlay2.override_kernel_check=true"
+  ]
+}
+EOF
+
+
+# 添加代理（可选）
+mkdir -p /etc/systemd/system/docker.service.d/
+cat &gt;&gt;/etc/systemd/system/docker.service.d/http-proxy.conf &lt;&lt;EOF
+[Service]
+Environment="HTTP_PROXY=http://&lt;代理host&gt;:&lt;代理端口&gt;" "HTTPS_PROXY=http://&lt;代理host&gt;:&lt;代理端口&gt;" "NO_PROXY=localhost,127.0.0.1,dew.ms"
+EOF
+
+systemctl daemon-reload
+systemctl restart docker
+systemctl enable docker</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="kubernetes"><a class="anchor" href="#kubernetes"></a>4.1.4. Kubernetes</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://kubernetes.io/docs/setup/independent/install-kubeadm/" class="bare">https://kubernetes.io/docs/setup/independent/install-kubeadm/</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre># 使用阿里云镜像加速下载
+cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=http://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=0
+repo_gpgcheck=0
+gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
+        http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+EOF
+
+setenforce 0
+sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
+cat &lt;&lt;EOF &gt;  /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+
+sysctl --system
+
+yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+systemctl enable --now kubelet
+
+# 查看安装的Kubernetes版本
+yum list installed | grep kube</pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/" class="bare">https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Master安装配置</div>
+<div class="content">
+<pre># 安装Git，后续会用到
+yum install -y git
+
+# 初始化Kubernetes，二选一，使用代理方式
+kubeadm init \
+    --pod-network-cidr=10.244.0.0/16
+
+# 初始化Kubernetes，二选一，不使用代理方式，通过image-repository 及 --kubernetes-version 避免被墙，注意版本与yum安装的版本对应
+kubeadm init \
+    --image-repository registry.aliyuncs.com/google_containers \
+    --kubernetes-version v1.14.1 \
+    --pod-network-cidr=10.244.0.0/16
+
+# 记录上述操作输出中的kubeadm join
+# e.g.
+# kubeadm join 10.200.10.10:6443 --token i3i7qw.2gst6kayu1e8ezlg --discovery-token-ca-cert-hash sha256:cabc90823a8e0bcf6e3bf719abc569a47c186f6cfd0e156ed5a3cd5a8d85fab0
+
+mkdir -p $HOME/.kube
+cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+chown $(id -u):$(id -g) $HOME/.kube/config
+
+# 查看集群状态
+kubectl get cs
+
+# 安装flannel
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
+
+# 都为Running后表示完成
+kubectl get pods --all-namespaces
+
+# 创建命名空间，方便后文使用
+kubectl create ns devops</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Master做为Node</div>
+<div class="paragraph">
+<p>默认情况下 master 不会做为 node 节点，可通过此命令强制启用（不推荐）</p>
+</div>
+<div class="paragraph">
+<p><code>kubectl taint nodes --all node-role.kubernetes.io/master-</code></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/" class="bare">https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Node安装配置</div>
+<div class="content">
+<pre># 执行上一步输出的 kubeadm join ...
+
+# 完成后在master上执行情况如下（以1.14.1版本为例）
+kubectl get no
+-
+k8s-master1   Ready    master   22m     v1.14.1
+k8s-node1     Ready    &lt;none&gt;   11m     v1.14.1
+k8s-node2     Ready    &lt;none&gt;   8m54s   v1.14.1
+k8s-node3     Ready    &lt;none&gt;   8m51s   v1.14.1
+k8s-node4     Ready    &lt;none&gt;   8m49s   v1.14.1
+-</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Master HA配置</div>
+<div class="content">
+<pre># @see https://kubernetes.io/docs/setup/independent/high-availability/</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Node功能划分（打label）</div>
+<div class="content">
+<pre>kubectl label nodes k8s-nodeX k8s-nodeX ...  group=app
+kubectl label nodes k8s-nodeX k8s-nodeX ...  group=devops</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">添加外部DNS服务，如dnsmasq</div>
+<div class="content">
+<pre># 编辑Kubernetes的DNS，加上dew.ms的代理
+kubectl -n kube-system edit cm coredns
+-
+data:
+  Corefile: |
+    ...
+    dew.ms:53 {
+        errors
+        cache 30
+        proxy . x.x.x.x
+    }
+-</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="helm"><a class="anchor" href="#helm"></a>4.1.5. Helm</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://docs.helm.sh/using_helm/#installing-helm" class="bare">https://docs.helm.sh/using_helm/#installing-helm</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
+
+cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tiller
+  namespace: kube-system
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tiller
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - kind: ServiceAccount
+    name: tiller
+    namespace: kube-system
+EOF
+
+# 初始化服务，二选一，使用代理方式
+helm init --service-account tiller
+
+# 初始化服务，二选一，不使用代理方式，需要指定镜像，注意tiller版本和helm版本对应
+helm init --service-account tiller -i registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.13.1
+# 或者初始化之后更换镜像
+kubectl set image deployment/tiller-deploy tiller=registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.13.1 -n kube-system
+
+# 查看helm版本
+helm version
+
+kubectl get pod -n kube-system -l app=helm</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="nginx_ingress_controller"><a class="anchor" href="#nginx_ingress_controller"></a>4.1.6. Nginx Ingress Controller</h4>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre># 使用如下方式将80 443暴露出来
+helm install stable/nginx-ingress --name dew-nginx --namespace ingress-nginx --version=1.4.0 \
+    --set controller.kind=DaemonSet \
+    --set controller.hostNetwork=true \
+    --set controller.stats.enabled=true \
+    --set controller.metrics.enabled=true \
+    --set nodeSelector.group=devops</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="dashboard"><a class="anchor" href="#dashboard"></a>4.1.7. Dashboard</h4>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard-certs
+  namespace: kube-system
+type: Opaque
+EOF
+
+# 安装，不使用代理方式需要加上 --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kubernetes-dashboard-amd64
+helm install stable/kubernetes-dashboard --name dew-dashboard --namespace kube-system --version=1.4.0 \
+    --set rbac.clusterAdminRole=true \
+    --set serviceAccount.create=true \
+    --set ingress.enabled=true \
+    --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/backend-protocol"="HTTPS" \
+    --set ingress.hosts={dashboard.dew.ms} \
+    --set ingress.tls[0].hosts={dashboard.dew.ms},ingress.tls[0].secretName=kubernetes-dashboard-certs \
+    --set nodeSelector.group=devops
+
+# 获取Token
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep dew-dashboard-kubernetes-dashboard | awk '{print $1}')
+
+# 添加域名到客户机hosts并访问 https://dashboard.dew.ms</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="elasticsearch"><a class="anchor" href="#elasticsearch"></a>4.1.8. Elasticsearch</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://github.com/elastic/helm-charts/blob/master/elasticsearch" class="bare">https://github.com/elastic/helm-charts/blob/master/elasticsearch</a> 注意仔细查看各参数设值的说明。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>app=dew-elasticsearch
+size=200Gi
+
+# 创建PV
+
+# 根据replicas的个数来决定下面PV的创建个数
+# 在NFS节点中创建NFS目录
+for i in {0..1}; do
+mkdir -p /data/nfs/elasticsearch/${i}
+chmod 775 /data/nfs/elasticsearch/${i}
+done
+
+# 在Kubernetes Master节点中创建PV
+for i in {0..1}; do
+cat &lt;&lt;EOF | kubectl -n devops apply -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    app: ${app}
+  name: ${app}-${i}
+spec:
+  capacity:
+    storage: ${size}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /data/nfs/elasticsearch/${i}
+    server: nfs.dew.ms
+EOF
+done
+
+# 使用helm安装
+helm repo add elastic https://helm.elastic.co
+
+helm install --name dew-elasticsearch elastic/elasticsearch --namespace devops --version=6.5.0 \
+    --set imageTag=6.6.1 \
+    --set clusterName=dew-elasticsearch \
+    --set nodeGroup=master \
+    --set masterService=dew-elasticsearch-master \
+    --set replicas=2 \
+    --set minimumMasterNodes=2 \
+    --set volumeClaimTemplate.storageClassName="" \
+    --set volumeClaimTemplate.resources.requests.storage=200Gi \
+    --set fsGroup=0 \
+    --set clusterHealthCheckParams="" \
+    --set ingress.enabled=true \
+    --set ingress.hosts={es.dew.ms} \
+    --set nodeSelector.group=devops</pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+其他Elasticsearch的helm chart : <a href="https://github.com/helm/charts/tree/master/stable/elasticsearch" class="bare">https://github.com/helm/charts/tree/master/stable/elasticsearch</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="kibana"><a class="anchor" href="#kibana"></a>4.1.9. Kibana</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://github.com/helm/charts/tree/master/stable/kibana" class="bare">https://github.com/helm/charts/tree/master/stable/kibana</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre># 创建PV &amp; PVC
+
+# 在NFS节点中创建NFS目录
+mkdir -p /data/nfs/kibana
+
+# 在Kubernetes Master节点中创建PV &amp; PVC
+cat &lt;&lt;EOF | kubectl -n devops apply -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    app: kibana
+  name: kibana
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /data/nfs/kibana
+    server: nfs.dew.ms
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: kibana
+  name: kibana
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  selector:
+    matchLabels:
+      app: kibana
+EOF
+
+helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 \
+    --set image.tag="6.6.1" \
+    --set env."ELASTICSEARCH_URL"="http://dew-elasticsearch-master:9200" \
+    --set service.internalPort=5601 \
+    --set ingress.enabled=true,ingress.hosts={kibana.dew.ms} \
+    --set-string ingress.annotations."kubernetes\.io/ingress\.class"=nginx \
+    --set-string ingress.annotations."kubernetes\.io/tls-acme"="true" \
+    --set ingress.tls[0].hosts={kibana.dew.ms},ingress.tls[0].secretName=kibana-certs \
+    --set dashboardImport.enabled=true \
+    --set dashboardImport.dashboards."k8s"="https://raw.githubusercontent.com/monotek/kibana-dashboards/master/k8s-fluentd-elasticsearch.json" \
+    --set serviceAccount.create=true,serviceAccountName=kibana \
+    --set plugins.enabled=true \
+    --set persistentVolumeClaim.enabled=true \
+    --set persistentVolumeClaim.existingClaim=true \
+    --set securityContext.enabled=true \
+    --set securityContext.allowPrivilegeEscalation=true \
+    --set securityContext.runAsUser=0 \
+    --set securityContext.fsGroup=0 \
+    --set nodeSelector.group=devops</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="prometheus_grafana"><a class="anchor" href="#prometheus_grafana"></a>4.1.10. Prometheus &amp;&amp; Grafana</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://github.com/helm/charts/tree/master/stable/prometheus-operator" class="bare">https://github.com/helm/charts/tree/master/stable/prometheus-operator</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">prometheus-operator结构</div>
+<div class="content">
+<pre> |--- prometheus-operator
+ |--- prometheus
+ |--- alertmanager
+ |--- node-exporter
+ |--- kube-state-metrics
+ |--- service monitors to scrape internal kubernetes components
+ |     |---kube-apiserver
+ |     |---kube-scheduler
+ |     |---kube-controller-manager
+ |     |---etcd
+ |     |---kube-dns/coredns
+ |--- grafana</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">创建prometheus 的 PV</div>
+<div class="content">
+<pre>app=prometheus
+components=("alertmanager" "prometheus")
+size=100Gi
+
+# 在NFS节点中创建NFS目录
+for i in ${components[@]};do
+mkdir -p /data/nfs/${app}/${i}
+done
+
+# 在Kubernetes Master节点中创建PV
+for i in ${components[@]};do
+cat &lt;&lt;EOF | kubectl -n devops apply -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    component: ${i}
+  name: ${app}-${i}
+spec:
+  capacity:
+    storage: ${size}
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /data/nfs/${app}/${i}
+    server: nfs.dew.ms
+EOF
+done</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">创建grafana 的 PV &amp; PVC</div>
+<div class="content">
+<pre># 在NFS节点中创建NFS目录
+mkdir -p /data/nfs/grafana
+
+# 在Kubernetes Master节点中创建PV &amp; PVC
+cat &lt;&lt;EOF | kubectl -n devops apply -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  labels:
+    app: grafana
+  name: grafana
+spec:
+  capacity:
+    storage: 50Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /data/nfs/grafana
+    server: nfs.dew.ms
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: grafana
+  name: grafana
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Gi
+  selector:
+    matchLabels:
+      app: grafana
+EOF</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">使用helm安装</div>
+<div class="content">
+<pre># 若需要对etcd进行监控，则需要先创建secret
+kubectl -n devops create secret generic dew-prometheus-operator-etcd \
+  --from-file=/etc/kubernetes/pki/etcd/ca.crt \
+  --from-file=/etc/kubernetes/pki/etcd/peer.crt \
+  --from-file=/etc/kubernetes/pki/etcd/peer.key
+
+# 安装，不使用代理要加上 --set kube-state-metrics.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kube-state-metrics
+# 若要启用对etcd监控，需设置kubeEtcd相关参数。
+# grafana.'grafana\.ini'为Grafana的配置参数,请安装时自行修改。
+helm install stable/prometheus-operator --name dew-prometheus-operator --namespace devops --version=5.0.10 \
+    --set kubelet.serviceMonitor.https=true \
+    --set prometheus.ingress.enabled=true \
+    --set prometheus.ingress.hosts={prometheus.dew.ms} \
+    --set alertmanager.ingress.enabled=true \
+    --set alertmanager.ingress.hosts={alertmanager.dew.ms} \
+    --set prometheusOperator.securityContext.runAsNonRoot=false \
+    --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
+    --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
+    --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.selector.matchLabels."component"="alertmanager" \
+    --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.selector.matchLabels."component"="prometheus" \
+    --set prometheus.prometheusSpec.secrets[0]=dew-prometheus-operator-etcd \
+    --set kubeEtcd.serviceMonitor.scheme=https \
+    --set kubeEtcd.serviceMonitor.insecureSkipVerify=true \
+    --set kubeEtcd.serviceMonitor.caFile="/etc/prometheus/secrets/dew-prometheus-operator-etcd/ca.crt" \
+    --set kubeEtcd.serviceMonitor.certFile="/etc/prometheus/secrets/dew-prometheus-operator-etcd/peer.crt" \
+    --set kubeEtcd.serviceMonitor.keyFile="/etc/prometheus/secrets/dew-prometheus-operator-etcd/peer.key" \
+    --set grafana.enabled=true \
+    --set grafana.adminPassword=Dew123456 \
+    --set grafana.defaultDashboardsEnabled=true \
+    --set grafana.ingress.enabled=true \
+    --set grafana.ingress.hosts={grafana.dew.ms} \
+    --set grafana.ingress.tls[0].host={grafana.dew.ms},ingress.tls[0].secretName=dew-grafana \
+    --set grafana.sidecar.dashboards.enabled=true \
+    --set grafana.sidecar.dashboards.searchNamespace="devops"\
+    --set grafana.sidecar.dashboards.label=grafana_dashboard \
+    --set grafana.sidecar.datasources.enabled=true \
+    --set grafana.sidecar.datasources.searchNamespace="devops" \
+    --set grafana.sidecar.datasources.label=grafana_datasource \
+    --set grafana.'grafana\.ini'.smtp.enabled="true" \
+    --set grafana.'grafana\.ini'.smtp.host="smtp.163.com:25" \
+    --set grafana.'grafana\.ini'.smtp.user=XXXXX@163.com \
+    --set grafana.'grafana\.ini'.smtp.password=XXXXX \
+    --set grafana.'grafana\.ini'.smtp.from_address="XXXXX@163.com" \
+    --set grafana.'grafana\.ini'.smtp.skip_verify=true \
+    --set grafana.'grafana\.ini'.server.root_url="https://grafana.dew.ms" \
+    --set grafana.persistence.enabled=true \
+    --set grafana.persistence.existingClaim=grafana \
+    --set prometheusOperator.nodeSelector.group=devops \
+    --set alertmanager.alertmanagerSpec.nodeSelector.group=devops \
+    --set prometheus.prometheusSpec.nodeSelector.group=devops \
+    --set kube-state-metrics.nodeSelector.group=devops \
+    --set nodeExporter.nodeSelector.group=devops \
+    --set grafana.nodeSelector.group=devops
+
+
+# grafana默认用户名：admin
+# 访问 http://prometheus.dew.ms
+# 访问 http://alertmanager.dew.ms
+# 访问 https://grafana.dew.ms</pre>
+</div>
+</div>
+<div class="quoteblock">
+<div class="title">常见问题</div>
+<blockquote>
+<div class="paragraph">
+<p>如何查看设置的密码</p>
+</div>
+</blockquote>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>kubectl get secret --namespace devops dew-prometheus-operator-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo</pre>
+</div>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>如何重置grafana密码</p>
+</div>
+</blockquote>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>进入grafana的容器内部后执行 ``grafana-cli admin reset-admin-password passwordvalue``</pre>
+</div>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>有pod启动失败,报文件权限拒绝相关问题，如 "opening storage failed: create dir: mkdir /prometheus/wal: permission denied"</p>
+</div>
+</blockquote>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>很可能和PV的文件目录的权限有关，检查下权限是否一致，设置对应的securityContext进行排查。例：
+``kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops``
+设置securityContext为以下内容
+-
+ securityContext:
+   fsGroup: 0
+   runAsNonRoot: false
+   runAsUser: 0
+-</pre>
+</div>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>通过UI查看prometheus的target中，kube-scheduler、kube-controller处于down状态</p>
+</div>
+</blockquote>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>因为它们只能在宿主机上通过127.0.0.1访问，可使用以下操作：
+. 如果使用kubeadm启动的集群，初始化时的config.yml里可以加入如下参数
+    controllerManagerExtraArgs:
+      address: 0.0.0.0
+    schedulerExtraArgs:
+      address: 0.0.0.0
+. 已经启动后的使用下面命令更改就会滚动更新
+    sed -e "s/- --address=127.0.0.1/- --address=0.0.0.0/" -i /etc/kubernetes/manifests/kube-controller-manager.yaml
+    sed -e "s/- --address=127.0.0.1/- --address=0.0.0.0/" -i /etc/kubernetes/manifests/kube-scheduler.yaml
+  或者全部替换：
+    sed -ri '/--address/s#=.+#=0.0.0.0#' /etc/kubernetes/manifests/kube-*
+. 参考文章：
+  http://www.servicemesher.com/blog/prometheus-operator-manual/
+  https://github.com/coreos/prometheus-operator/blob/master/Documentation/troubleshooting.md</pre>
+</div>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>如何监控APP</p>
+</div>
+</blockquote>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>1.首先需要将项目instrument
+  参考文章：https://prometheus.io/docs/instrumenting/clientlibs/
+2.部署项目及创建进行监控的ServiceMonitor
+  注意ServiceMonitor的labels要含有Prometheus-operator创建的Prometheus的serviceMonitorSelector的label。
+  详细文章：https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="fluentd"><a class="anchor" href="#fluentd"></a>4.1.11. Fluentd</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://github.com/kiwigrid/helm-charts/tree/master/charts/fluentd-elasticsearch" class="bare">https://github.com/kiwigrid/helm-charts/tree/master/charts/fluentd-elasticsearch</a><br>
+     <a href="https://kiwigrid.github.io/" class="bare">https://kiwigrid.github.io/</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>helm repo add kiwigrid https://kiwigrid.github.io
+
+# 安装，不使用代理要加上 --set image.tag=v2.4.0 --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/fluentd-elasticsearch
+# 若要启用Prometheus进行监控Fluentd，
+# 需要先将Fluentd通过设置service暴露出来，然后设置prometheusRule和serviceMonitor。
+# 此配置需结合Prometheus-operator使用。
+helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace devops --version=2.8.3 \
+    --set elasticsearch.host=dew-elasticsearch-master \
+    --set elasticsearch.logstash_prefix=logstash \
+    --set service.type=ClusterIP \
+    --set service.ports[0].name="monitor-agent" \
+    --set service.ports[0].port=24231 \
+    --set prometheusRule.enabled=true \
+    --set prometheusRule.prometheusNamespace=devops \
+    --set prometheusRule.labels.app=prometheus-operator \
+    --set prometheusRule.labels.release=dew-prometheus-operator \
+    --set serviceMonitor.enabled=true \
+    --set serviceMonitor.labels.release=dew-prometheus-operator \
+    --set nodeSelector.group=devops</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="jaeger"><a class="anchor" href="#jaeger"></a>4.1.12. Jaeger</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://github.com/jaegertracing/jaeger-operator" class="bare">https://github.com/jaegertracing/jaeger-operator</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/crds/jaegertracing_v1_jaeger_crd.yaml
+curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/service_account.yaml \
+    | sed "s/namespace: observability/namespace: devops/g" \
+    | kubectl create -f -
+curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/service_account.yaml \
+    | sed "s/namespace: observability/namespace: devops/g" \
+    | kubectl create -f -
+curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/role.yaml \
+    | sed "s/namespace: observability/namespace: devops/g" \
+    | kubectl create -f -
+curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/role_binding.yaml \
+    | sed "s/namespace: observability/namespace: devops/g" \
+    | kubectl create -f -
+curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/operator.yaml \
+    | sed "s/namespace: observability/namespace: devops/g" \
+    | kubectl create -f -
+
+# 创建Jaeger实例
+cat &lt;&lt;EOF | kubectl apply -n devops -f -
+apiVersion: jaegertracing.io/v1
+kind: Jaeger
+metadata:
+  name: jaeger
+spec:
+  strategy: production
+  storage:
+    type: elasticsearch
+    options:
+      es:
+        server-urls: http://dew-elasticsearch-master:9200
+EOF
+
+# Jaeger实例可在不同namespace下创建使用，使用中请注意namespace的问题。
+# 使用sidecar的方式部署项目：https://github.com/jaegertracing/jaeger-operator#auto-injection-of-jaeger-agent-sidecars
+# 使用daemonset的方式部署项目：https://github.com/jaegertracing/jaeger-operator#agent-as-daemonset
+
+# 添加Host，修改Jaeger实例的Ingress
+kubectl patch ingress jaeger-query -n devops -p "spec:
+ rules:
+   - host: jaeger.dew.ms
+     http:
+       paths:
+         - backend:
+             serviceName: jaeger-query
+             servicePort: 16686
+           path: /"
+
+# Pod的调度
+# 目前jaeger-operator暂不支持直接设置，请关注该项目的更新情况。
+# 可以自行给需要调度的pod的deployment添加限制条件。
+# e.g.
+ kubectl patch deploy jaeger-operator jaeger-collector jaeger-query -n devops -p '{"spec": {"template": {"spec": {"nodeSelector": {"group": "devops"}}}}}'</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">使用</div>
+<div class="content">
+<pre># 在Deployment 和 Service 中添加annotations : sidecar.jaegertracing.io/inject: "true" 即可。
+# 使用Dew的 devops-maven-plugin 部署会自动添加此注解。
+
+# 手工添加示例如下：
+cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    # 添加 Jaeger的注解
+    sidecar.jaegertracing.io/inject: "true"
+  name: jaeger-demo
+spec:
+  template:
+    metadata:
+      labels:
+        app: jaeger-demo
+        version: v1
+    spec:
+      containers:
+      - name: jaeger-demo
+        image: jaegertracing/example-hotrod:1.10
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+   # 添加 Jaeger的注解
+    sidecar.jaegertracing.io/inject: "true"
+  name: jaeger-demo
+  labels:
+    app: jaeger-demo
+spec:
+  ports:
+   - name: jaeger-demo
+     port: 8080
+     targetPort: 8080
+  selector:
+   app: jaeger-demo
+EOF</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="devops-user-manual"><a class="anchor" href="#devops-user-manual"></a>4.2. DevOps使用手册[TBD]</h3>
+<div class="paragraph">
+<p>CI/CD</p>
+</div>
+<div class="paragraph">
+<p>通过分支变更触发</p>
+</div>
+<div class="paragraph">
+<p>初始化</p>
+</div>
+<div class="paragraph">
+<p>发布</p>
+</div>
+<div class="paragraph">
+<p>回滚</p>
+</div>
+<div class="paragraph">
+<p>删除</p>
+</div>
+<div class="paragraph">
+<p>日志查看</p>
+</div>
+<div class="paragraph">
+<p>伸缩扩展</p>
+</div>
+<div class="paragraph">
+<p>Maven配置</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="devops-configuration"><a class="anchor" href="#devops-configuration"></a>4.3. DevOps配置速查[TBD]</h3>
+
+</div>
+<div class="sect2">
+<h3 id="devops-best-practices"><a class="anchor" href="#devops-best-practices"></a>4.4. DevOps最佳实践[TBD]</h3>
+
+</div>
+<div class="sect2">
+<h3 id="devops示例"><a class="anchor" href="#devops示例"></a>4.5. DevOps示例</h3>
+<div class="sect3">
+<h4 id="devops示例_helloworld后端服务"><a class="anchor" href="#devops示例_helloworld后端服务"></a>4.5.1. DevOps示例 : Helloworld后端服务</h4>
+<div class="paragraph">
+<p>本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/</p>
+</div>
+<div class="paragraph">
+<div class="title">说明</div>
+<p>此示例用于演示后端服务的自动化部署到Kubernetes，完成后推送钉钉通知。</p>
+</div>
+<div class="listingblock">
+<div class="title">/.dew配置说明</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
+notify:
+  # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
+  args:
+    # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+profiles:
+  # 添加测试环境
+  test:
+    # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
+    namespace: dew-test</code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<div class="title">前置准备</div>
+<ol class="arabic">
+<li>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的test环境（详见 <a href="#devops-user-manual">DevOps使用手册[TBD]</a>）</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">手工执行</div>
+<div class="content">
+<pre># 执行如下maven命令(发布到test环境)
+mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Gitlab CI执行</div>
+<div class="content">
+<pre># Merge或Push代码到test分支</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="devops示例_helloworld类库"><a class="anchor" href="#devops示例_helloworld类库"></a>4.5.2. DevOps示例 : Helloworld类库</h4>
+<div class="paragraph">
+<p>本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/</p>
+</div>
+<div class="paragraph">
+<div class="title">说明</div>
+<p>此示例用于演示类库的自动化部署到Maven。</p>
+</div>
+<div class="listingblock">
+<div class="title">/.dew配置说明</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">profiles:
+  # 添加测试环境
+  test:
+    # 指定测试环境的namespace
+    namespace: dew-test</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">手工执行</div>
+<div class="content">
+<pre># 执行如下maven命令(发布到test环境)
+mvn -P devops dew:build dew:release -Ddew.devops.profile=test \
+    -Ddew.devops.it.snapshotRepository.id=&lt;私库Id，如私库需要认证则此Id对应的认证信息要添加到 setting.xml中&gt; \
+    -Ddew.devops.it.snapshotRepository.url=&lt;私库Url&gt; \</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Gitlab CI执行</div>
+<div class="content">
+<pre># Merge或Push代码到test分支</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="devops示例_helloworld前端"><a class="anchor" href="#devops示例_helloworld前端"></a>4.5.3. DevOps示例 : Helloworld前端</h4>
+<div class="paragraph">
+<p>本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/</p>
+</div>
+<div class="paragraph">
+<div class="title">说明</div>
+<p>此示例用于演示前端服务的自动化部署到Kubernetes。</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>前端需要添加一个pom.xml，指定为pom类型 <code>&lt;packaging&gt;pom&lt;/packaging&gt;</code> 即可。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">/.dew配置说明</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">profiles:
+  # 添加测试环境
+  test:
+    # 指定测试环境的namespace
+    namespace: dew-test</code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<div class="title">前置准备</div>
+<ol class="arabic">
+<li>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的test环境（详见 <a href="#devops-user-manual">DevOps使用手册[TBD]</a>）</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">手工执行</div>
+<div class="content">
+<pre># 执行如下maven命令(发布到test环境)
+mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Gitlab CI执行</div>
+<div class="content">
+<pre># Merge或Push代码到test分支</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="devops示例_to_do"><a class="anchor" href="#devops示例_to_do"></a>4.5.4. DevOps示例 : To-Do</h4>
+<div class="paragraph">
+<p>本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/</p>
+</div>
+<div class="paragraph">
+<div class="title">说明</div>
+<p>此示例用于演示以下功能：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>包含modules</p>
+</li>
+<li>
+<p>有类库、JVM服务、前端等多种类型</p>
+</li>
+<li>
+<p>生产环境版本重用</p>
+</li>
+<li>
+<p>自定义.dew文件</p>
+</li>
+<li>
+<p>自动化部署到Kubernetes</p>
+</li>
+<li>
+<p>完成后推送钉钉通知</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>默认情况下Dew会视 <code>prod</code> 标识为生产环境，<code>uat</code> 为仿真环境，生产环境会重用（Docker Image重用）仿真或预发环境的最后一个版本。</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">/.dew配置说明</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
+notify:
+  # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
+  args:
+    # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+profiles:
+  # 添加uat环境
+  uat:
+    # 指定仿真环境的namespace
+    namespace: dew-uat
+  # 添加prod环境
+  prod:
+    # 指定生产环境的namespace
+    namespace: dew-prod</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">/kernel/.dew配置说明</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">docker:
+  # 使用自定义的Image，默认JVM类型项目的Image为openjdk:8-alpine
+  image: openjdk:8</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">/notifier/.dew配置说明</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">docker:
+  # 使用自定义的Image，默认JVM类型项目的Image为openjdk:8-alpine
+  image: openjdk:8</code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<div class="title">前置准备</div>
+<ol class="arabic">
+<li>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的uat和prod环境（详见 <a href="#devops-user-manual">DevOps使用手册[TBD]</a>）</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">手工执行</div>
+<div class="content">
+<pre># 执行如下maven命令(发布到uat环境)
+mvn -P devops dew:build dew:release -Ddew.devops.profile=uat
+# 执行如下maven命令(发布到prod环境)
+mvn -P devops dew:build dew:release -Ddew.devops.profile=prod</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Gitlab CI执行</div>
+<div class="content">
+<pre># Merge或Push代码到uat分支
+# Merge或Push代码到prod分支</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="dew项目信息_dew_project_info"><a class="anchor" href="#dew项目信息_dew_project_info"></a>5. Dew项目信息 Dew Project Info</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="开发指南"><a class="anchor" href="#开发指南"></a>5.1. 开发指南</h3>
+<div class="paragraph">
+<p><code>Dew</code> 基于 Apache 2.0 license 分发，如果您要向 <code>Dew</code> 贡献代码或 Fork 为自己的分支项目请遵循许可证要求。</p>
+</div>
+<div class="paragraph">
+<p>SCM： <a href="https://github.com/gudaoxuri/dew">https://github.com/gudaoxuri/dew</a></p>
+</div>
+<div class="paragraph">
+<p>Issues： <a href="https://github.com/gudaoxuri/dew/issues" class="bare">https://github.com/gudaoxuri/dew/issues</a></p>
+</div>
+<div class="sect3">
+<h4 id="代码要求"><a class="anchor" href="#代码要求"></a>5.1.1. 代码要求</h4>
+<div class="paragraph">
+<p>本项目使用修改版的Google CheckStyle做为代码规范，规则文件见 <code>framework/checkstyle/checkstyle.xml</code>。</p>
+</div>
+<div class="paragraph">
+<p>代码的变更需要有有对应的单元/集成测试。</p>
+</div>
+<div class="paragraph">
+<p>目前项目中只有<code>DevOps</code>部分用到集成测试，对应的需要修改 <code>devops/devops-test.properties</code> 为自己的支撑环境，但请不要提交此文件。</p>
+</div>
+<div class="listingblock">
+<div class="title">/devops/devops-test.properties示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-properties" data-lang="properties">#
+# Copyright 2019. the original author or authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+dew.devops.docker.host=tcp://10.200.131.182:2375
+# Docker registry url, nullable
+dew.devops.docker.registry.url=https://harbor.dew.env/v2
+# Docker registry user name, nullable
+dew.devops.docker.registry.username=admin
+# Docker registry password, nullable
+dew.devops.docker.registry.password=Harbor12345
+# Kubernetes base64 configuration
+dew.devops.kube.config=YXBpVmVyc2lvbjogdjEKY2x1c3RlcnM6Ci0gY2x1c3RlcjoKICAgIGNlcnRpZmljYXRlLWF1dGhvcml0eS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VONVJFTkRRV0pEWjBGM1NVSkJaMGxDUVVSQlRrSm5hM0ZvYTJsSE9YY3dRa0ZSYzBaQlJFRldUVkpOZDBWUldVUldVVkZFUlhkd2NtUlhTbXdLWTIwMWJHUkhWbnBOUWpSWVJGUkZOVTFFU1hsTlJFRTFUa1JqTVU0eGIxaEVWRWsxVFVSSmVFNTZRVFZPUkdNeFRqRnZkMFpVUlZSTlFrVkhRVEZWUlFwQmVFMUxZVE5XYVZwWVNuVmFXRkpzWTNwRFEwRlRTWGRFVVZsS1MyOWFTV2gyWTA1QlVVVkNRbEZCUkdkblJWQkJSRU5EUVZGdlEyZG5SVUpCVDFwTENuQkRVMDFKTUhGSFJFVjNaSFpZWkVGdGFuVjBVSGxVWmpGQlZrWTFkRll6Y0VRMFdXTkdXRzloYzNWMVNFdHdSVzlVZEVKVVFrdFVSazFNTWpSc01GRUtWRVphVERSWmNITkdURUo2YTJzek5YcHdZMWxvTDJGRFlVMDJaVTVHZFV4NU9ISlVja3RtSzNwV2NsRk1OeXQzY25CSlVHOTVORWRSUm5GbGNUQmliZ3BPVVhOUVR5dGpRMkZoV0VWVFRrOWhlRVF3WTB4clJGWnJabkpFVldkcGFYUjVVRVl2V1dGT2JUTm9hVk5vTkhNcmNXUmtORkZoUkZOTVlXeHhNRE5TQ2pkdU5uWk5hbnBZVTNSRlpsRkJaMWg1UlROWE5IaDJjV1U1U2xBcmVUWlNhM05KVVc5NlNuQktiWEkwUW5aTE0wRnVTVFF6TjNGTWR5OW5lR0ZDVFVnS1pWcGpSakZ3UjJsV1JpOW5TbkpYV0dWTk1EUnFTMFZsT0UxdmMyeEZlRWd6VmtkSVpGUlJWRUZRV1U1NmFHRm1NMlprY0N0cGFuUTNSRWhRTTI0NVRBcElaSHBZVmtoa1FuRkdaMDFqUlVjcll6QmpRMEYzUlVGQllVMXFUVU5GZDBSbldVUldVakJRUVZGSUwwSkJVVVJCWjB0clRVRTRSMEV4VldSRmQwVkNDaTkzVVVaTlFVMUNRV1k0ZDBSUldVcExiMXBKYUhaalRrRlJSVXhDVVVGRVoyZEZRa0ZGZFdjd0swOXdPVTlQT0VkbVoyNVFjR05MYUhGMlEwcHFOakVLUW1OUVZEQkpWREZNTWxGV1FVeDBOa0ZxWlRVM1ZYRXphR1JXUTJsMFdrNU5VRmsxZFUxSmJWcDNhRnBhWWtOUk5HbERiRmdyVGtoWGNsWjVTRkZ6ZEFvNFZXSkxLemRFYkVWTlVqSllZVWsxU0ZaUFdVVnJWaXRhT0RKeGFXeFNWSEJpY0NzeVFXTjRaVTFZY2pFeE5GSnFORElyUlRkaWNYY3hRMnRGTDNJNENtbEhhVlE0Tkhod2RXbzViRzFDYTBaaFkwSnJSblZYUmpoV1ZWZG1iV1ZFTDJwdGNUZEpjbmRNYUVSQ0wyNDJVWFpDVDA1UWEzcDJRV0ZTTjBkSlowd0tWblZyTUZkQ04zaDNVa05qUzJKRE5HZ3JlbmREVHpGamIzUk9Wamh3ZVRKVVltSnVjMGQ0VWpGWFNHOWhVekpJTUVjNWRYSlpSaXRZU0dKWWRrMVZUUXBVYmtkVlpqRklNVEE1YUVOUE9UaDVSRU5pWkM5dE5WYzFPRnBqYUVsdU1qUkRjM1l2UkZkelVUbHphak5ISzJsc2NFeG9iMkpHYW1kWll6MEtMUzB0TFMxRlRrUWdRMFZTVkVsR1NVTkJWRVV0TFMwdExRbz0KICAgIHNlcnZlcjogaHR0cHM6Ly8xMC4yMDAuMTMxLjE4OjY0NDMKICBuYW1lOiBrdWJlcm5ldGVzCmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBrdWJlcm5ldGVzCiAgICB1c2VyOiBrdWJlcm5ldGVzLWFkbWluCiAgbmFtZToga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmN1cnJlbnQtY29udGV4dDoga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmtpbmQ6IENvbmZpZwpwcmVmZXJlbmNlczoge30KdXNlcnM6Ci0gbmFtZToga3ViZXJuZXRlcy1hZG1pbgogIHVzZXI6CiAgICBjbGllbnQtY2VydGlmaWNhdGUtZGF0YTogTFMwdExTMUNSVWRKVGlCRFJWSlVTVVpKUTBGVVJTMHRMUzB0Q2sxSlNVTTRha05EUVdSeFowRjNTVUpCWjBsSlFVMUljR2RpU1RCNlVVMTNSRkZaU2t0dldrbG9kbU5PUVZGRlRFSlJRWGRHVkVWVVRVSkZSMEV4VlVVS1FYaE5TMkV6Vm1sYVdFcDFXbGhTYkdONlFXVkdkekI0VDFSQmVVMXFRWGRQVkZFelRsUmtZVVozTUhsTlJFRjVUV3BCZDA5VVVUTk9WR3hoVFVSUmVBcEdla0ZXUW1kT1ZrSkJiMVJFYms0MVl6TlNiR0pVY0hSWldFNHdXbGhLZWsxU2EzZEdkMWxFVmxGUlJFVjRRbkprVjBwc1kyMDFiR1JIVm5wTVYwWnJDbUpYYkhWTlNVbENTV3BCVGtKbmEzRm9hMmxIT1hjd1FrRlJSVVpCUVU5RFFWRTRRVTFKU1VKRFowdERRVkZGUVRSaFMwVmFhSFJVYlZScVdtVkVSMDhLZDFrNGMxaFRkVGhwWm1nd2Vta3JkSFpHUlU1U1FVWlRhMk14V0ROSE1HcGFka3RLVkZobE1VTkNielJKU21jM1pFUXZlVU5ZVmtwcWVuZEJWbFJhYUFwTmN6WjNXSGhITms1Q2RWaDZaV1E0VVhrNFpIWktiWFo2UjBreFNGbzNibTkwUTNsSE9URlliM1J6Y25aSlMwaEhWR3BCTlM4eWQyOVJiMlJ6VVU5U0NtSmpSRUZRY0dOb2NTOTZhRUo0WVhSSVRrZHlXbk5XY20xSFdEVlVaRTA0VVZOVGRtdHdiSE14WkhkUFlWWnZRWFpwYVRoUGNUWkhTR2wzY21wQlQwZ0tLMkYyVEhCTE1XZ3Zia05CUm1adWRrTTJOUzh2TWpaemRrTkVRMHRIYlRjdlNIY3ZWM2RGYWpWMk5FSXlMMk5oYVRWb1RUbFBZVmhRTTI0dmExbDZjQXBpYlRGMmJGRklhVGxMYkU1MlpYZGtXbk01VkdwVlZVbzVOR3R6YTJkWk1ub3dRWEowYUU5M1MzVlNNRTl3TWtWRlEzSXpTblZ6VVhWQlMzVkRUMUJIQ2l0R1VVSkVVVWxFUVZGQlFtOTVZM2RLVkVGUFFtZE9Wa2hST0VKQlpqaEZRa0ZOUTBKaFFYZEZkMWxFVmxJd2JFSkJkM2REWjFsSlMzZFpRa0pSVlVnS1FYZEpkMFJSV1VwTGIxcEphSFpqVGtGUlJVeENVVUZFWjJkRlFrRkRXbEE1TURKTGNsVTBOazgxTjFaRUsxZDBURGhKUlhKT1JHbHhXa0pPU3pRMVl3cDJZMnhXVWpodVNtWm1lREpVTUdOc0t6WTBMMmg0Y25CVE9WYzFZWHA2VEZOdGJYWk5RbXhOU0VJMldGcEZVR2h6TWtaV1VIVnlhek5pYVhGMk9XdFJDbFYwYURsUlZtUkhhMlEyUTAxMVpHNXBlRXRUTm5wbFppOTVLMHBsYW01VU0zRnVjazVsTVhWaGVqTm1RMjFLT0N0elNtOXllRWRoVTA1NmQwSm1WRmNLYXpkT2JEQnlObkZpV0ZKd1lsVjZWVXBrTVZkTk5EbFdia1JOVDJwMWRUYzFjVVl6WTJvek1FdFFhV2xsWkRaa1pIRkVhbkZ1V1ZaU1MxbGxORmhZZHdwTFUxTkZXREZ3VGxFeWJreDBVbFJXYUhCelVHTmFPSEYyV2xNNUx6RmpiVEp5YlhrdmNIaFBTMmhJZEVsckszVXlhQzlEVDJaaGQwOXFSSEZWWW01WkNtWk5jbTUyZUZadlNXaFlRM1pYTlVSamRFTktPSFl5VTJ0VGVuQXJNVkJaVFdkWVN6UTFOMjFMTTNWb1QzUlBRM2N5TUQwS0xTMHRMUzFGVGtRZ1EwVlNWRWxHU1VOQlZFVXRMUzB0TFFvPQogICAgY2xpZW50LWtleS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJTVTBFZ1VGSkpWa0ZVUlNCTFJWa3RMUzB0TFFwTlNVbEZiM2RKUWtGQlMwTkJVVVZCTkdGTFJWcG9kRlJ0VkdwYVpVUkhUM2RaT0hOWVUzVTRhV1pvTUhwcEszUjJSa1ZPVWtGR1UydGpNVmd6UnpCcUNscDJTMHBVV0dVeFEwSnZORWxLWnpka1JDOTVRMWhXU21wNmQwRldWRnBvVFhNMmQxaDRSelpPUW5WWWVtVmtPRkY1T0dSMlNtMTJla2RKTVVoYU4yNEtiM1JEZVVjNU1WaHZkSE55ZGtsTFNFZFVha0UxTHpKM2IxRnZaSE5SVDFKaVkwUkJVSEJqYUhFdmVtaENlR0YwU0U1SGNscHpWbkp0UjFnMVZHUk5PQXBSVTFOMmEzQnNjekZrZDA5aFZtOUJkbWxwT0U5eE5rZElhWGR5YWtGUFNDdGhka3h3U3pGb0wyNURRVVptYm5aRE5qVXZMekkyYzNaRFJFTkxSMjAzQ2k5SWR5OVhkMFZxTlhZMFFqSXZZMkZwTldoTk9VOWhXRkF6Ymk5cldYcHdZbTB4ZG14UlNHazVTMnhPZG1WM1pGcHpPVlJxVlZWS09UUnJjMnRuV1RJS2VqQkJjblJvVDNkTGRWSXdUM0F5UlVWRGNqTktkWE5SZFVGTGRVTlBVRWNyUmxGQ1JGRkpSRUZSUVVKQmIwbENRVVZ3YVRjNE9WSXhkaXNyZEVWT2FBbzBlbE5CTlZKc1lWZ3ZRVVZxTURKcFptdzJSbEZwUWxoYU1HUlhUVlU0YTFVdlYwOXdRMFk0UVRWNlIwOUNZbGN5Vmt3M0syVnRVVll3TXpOa1FYbHFDbloxZFc1S1NrcFVTRGxaY0N0eFVWSlhka0Y2VTJ4U2VGQnVibVJNY2tkNlVEVTFNM1Y1UW1kdGNFaEJUeXN3VFVFd2IxaFpaRWRhTWpJNVkwUkhibVFLVTFWaGNuTjZWblpWWkZOSWNrSkNVVTAwV1RaM1dURkRURXhUZVRJd1RIazBaRWxESzBzMGEzWXphR2Q0UzA1Nk9GWndZazl2S3l0Q2JXRjVVR1pKVVFwTlJWTlhXRzVGV25wR01sQnFOMWh5Um1jMlN6ZG9jbmhaYUZGbVVtUndSemR0ZUVabVRtMXFXRWxyVlM5UlZURnNUVTluZG5jclIwWTNkMmQzU1VWaENuRTFSVFpYYVVwdGMyOXdhV2RNTVdGRVoxUklMMnh0UlZnNVprSklWbkpRVTNwYUwyMDNNek5vV0haTVNWVk1WVWRQUjNCU05VcDNXSE5NV1ZFNU1uTUtMMWxMVEhVMmEwTm5XVVZCTjNVeVVWUnJZM2cwYlV0aVJqRnpXbUowVldaNU5qWXhiVEpKUnprNWF6RllSRGcyTmxFd2RsbE1jM2RqVjBwRlJqZG5RZ3ByWm1wb2JYRklNR1JIVTNWalpUSlROalZIZFVweGVVUk1aWEEwVG1KYU0xQmhWblZZVUZKSE5FaDFSa1J3VDBoME9IUndSa2h3Wmxsc2NWcHRabTU1Q21KR1dWcGpTeXRtV2tGTlZGTlZjRFpMTDNWRk1ITTJhMk54WW1kSlZtNDRUbkZGVVc4eGJXYzJUbGRVZUU5UVp6UklPV0paZFUxRFoxbEZRVGhqU0UwS1JHdFFWRzlpUTIwMVYyTkxiVzFyVW1GcWRYWmpNR0oyUjBoNE1HY3ZRMEpoUkV0eVYxaFJaRUpUTDA5elltUkJXVk5HUzJzcmRIUTBjVFoxTjJ4SFZRcFFXbXh5UjJGdVpWYzVWRlkyYjNkelFtUldXVTg0YUdGaWNUQmlXbEJIY0VGUk9GUnhMMnQzVFhwSE1UVnZZa2h5UzNab1JFbG1OVTFETWk5elVFdGlDak41Wm1Vell6RjVhMGg2U1UxUkwzQXhPRWhJZFcwdkszRnZPVXR3VlhwdlQyaHlkRWd3T0VObldVVkJOMkZxUjI5MVdqQmxNVUpGU0hRMVUwWlJibEFLTXpoWVFVSllhR3B2UVU5b04xVnNSRFoxT1dacmFVOUJhM3BuUVhKWGMzUjJTM0JKYkc5NlJWbFZZVWx6ZGtKNU9WQnNjWFJxVG1oS1RHOVhjWEUzS3dwUGQyRnJSMkpuZFVSRWMzaGFaMlJtZEROWFVUVXpjVEpEUm5CQlkxbFlURWQyU1d4NVp6UllVMDQ0TmxCMWRtcFVTRFpoV25sd0wwd3dRa2x5TUZGWUNpdGhjMHR3YzBkUWNXbHdVVWN3Wm10MGMzQllPVFp6UTJkWlFsaDNkMFl2YjBSSVFXWmhPVzlyWTNCM2JWaHRMemxsUkZGWFZYcE5kRGhzV1dGRlQyZ0tMM1J5YWxFeGNWSnRibEpRV1ZoWVYycE5OVlVyYkRsUGNtaHNSVE5KY1ZNdmFFYzJTa1ZrWWxWT01VUkplRmROU0VwSVIxTm5jRU5MVldSTWEzTnlSd3BZY1VoSGFWWlNkRVZVZFRKaWRrVnVhSFJJVVhsaUt6Rk9URnByTVhZeWMzVm1NbGQ1VmtWM2EwbDJaaXMyV0hCT1EyZzRWSFJJUms5MlZtWkpjR05tQ2tkTk1VSXdkMHRDWjBOaGNrOVFlbXhrT0U5U01HeG1UVFE1UlhCR1NtTjJia054YjNWVllXTmlNa1JJWlRCb1dYQkNTM0YyUlVWcVdtaDRWSGxZSzI4S1FtdFpNbWhxUkVwTVkyUkhSWEZMUzBwQk5XNU9XbXBuY21saWFrcHFObHBRUm5aaVVHdE5SRWQ0VVhGd0wyTnlOMjB3VUc5NFQxVjBkM2xITWpFMFJncGpSV2cxTkZSWUszUXlUMUpxU2tkVFZVcFhjRzFHWTJoMFRrSTNTVU5UWkU1SGVYbDFibHBSV1hoTFVIbHlRMmd6VWs1SENpMHRMUzB0UlU1RUlGSlRRU0JRVWtsV1FWUkZJRXRGV1MwdExTMHRDZz09Cg==
+# Snapshot repository id, must be filled out in version replacement mode
+# If the repository needs authentication, the authentication information corresponding to this Id should be added to setting.xml
+dew.devops.it.snapshotRepository.id=trc-snapshots
+# Snapshot  repository url, must be filled out in version replacement mode
+dew.devops.it.snapshotRepository.url=http://121.41.17.205:18081/nexus/content/repositories/snapshots/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>提交前请运行 <code>mvn clean test -P qa</code>，确认代码通过CheckStyle检查和测试。</p>
+</div>
+<div class="paragraph">
+<p>发起 <code>Pull Request</code> 后会调用 <code>travis-ci</code> 和 <code>codacy</code> 进行自动化代码检查，如有问题不会执行 <code>Merge</code> 。</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="环境要求"><a class="anchor" href="#环境要求"></a>5.1.2. 环境要求</h4>
+<div class="paragraph">
+<p><code>开发</code> 环境没有特别要求，如果需要服务间调用可使用 <code>&lt;服务名&gt;.ribbon.listOfServers=&lt;host:port&gt;</code> 的方式，详见 <code>examples/tracing-invokeX-example</code> 。</p>
+</div>
+<div class="paragraph">
+<p><code>调试</code> 环境部分模块需要Kubernetes、Docker等服务的支持。</p>
+</div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -2134,7 +4087,7 @@ spring:
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">环境</th>
-<th class="tableblock halign-left valign-top">组件</th>
+<th class="tableblock halign-left valign-top">模块</th>
 <th class="tableblock halign-left valign-top">备注</th>
 </tr>
 </thead>
@@ -2145,29 +4098,79 @@ spring:
 <td class="tableblock halign-left valign-top"><p class="tableblock">测试RabbitMQ</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes Docker</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">tracing-invokeX-example</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">测试服务间调用</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes Docker</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dew-maven-plugin</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DevOps插件</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes Docker</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">helloworld-backend
+                     helloworld-frontend
+                     helloworld-library
+                     todo</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">测试自动化部署</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Opentracing Jaeger</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">tracing-invokeX-example</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">todo</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">测试追踪日志</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Prometheus、Grafana</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">web-example</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fluentd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">todo</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">测试日志采集</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Prometheus Grafana</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">todo</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">测试Metrics</p></td>
 </tr>
 </tbody>
 </table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>如果已按 <a href="#devops-env-install">测试、生产环境安装配置</a> 完成了测试环境的安装配置，
+那么可部分使用这一环境进行调试，
+否则请按以下流程完成调试环境的安装配置。</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="sect4">
-<h5 id="环境部署"><a class="anchor" href="#环境部署"></a>环境部署</h5>
+<h5 id="调试环境安装配置"><a class="anchor" href="#调试环境安装配置"></a>调试环境安装配置</h5>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Kubernetes、Docker环境要求使用代理。</p>
+</div>
+<div class="paragraph">
+<p>详见 <a href="#proxies">代理选择与设置</a></p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 <div class="listingblock">
 <div class="title">Kubernetes安装</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 使用minikube
+<pre># 使用minikube
 
 # 各版本的安装见此
 # https://kubernetes.io/docs/tasks/tools/install-minikube/
@@ -2188,13 +4191,13 @@ minikube start \
 # 查询kubernetes IP
 minikube ip
 # 安装 dashboard
-minikube dashboard</code></pre>
+minikube dashboard</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">RabbitMQ安装</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">minikube ssh
+<pre>minikube ssh
 docker run -d --hostname rabbit --name rabbit \
     --restart=always \
     -e RABBITMQ_DEFAULT_USER=dew \
@@ -2207,13 +4210,13 @@ docker run -d --hostname rabbit --name rabbit \
     rabbitmq:management
 
 # 访问页面
-# Visit: http://&lt;minikube ip&gt;:15672</code></pre>
+# Visit: http://&lt;minikube ip&gt;:15672</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Opentracing Jaeger安装</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">minikube ssh
+<pre>minikube ssh
 docker run -d --name jaegertracing \
     --restart=always \
     -p 5775:5775/udp \
@@ -2226,13 +4229,13 @@ docker run -d --name jaegertracing \
     jaegertracing/all-in-one:latest
 
 # 访问页面
-# Visit: http://&lt;minikube ip&gt;:16686</code></pre>
+# Visit: http://&lt;minikube ip&gt;:16686</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Prometheus、Grafana安装</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">minikube ssh
+<pre>minikube ssh
 
 # 参考 https://prometheus.io/docs/prometheus/latest/getting_started/#configuring-prometheus-to-monitor-itself
 # 示例监控的是 web-example 工程，对应的配置: framework/examples/web-example/src/main/resources/application.yml
@@ -2262,7 +4265,7 @@ docker run -d --name=grafana \
     grafana/grafana
 
 # 访问页面
-# Visit: http://&lt;minikube ip&gt;:3000</code></pre>
+# Visit: http://&lt;minikube ip&gt;:3000</pre>
 </div>
 </div>
 </div>
@@ -2283,7 +4286,7 @@ Windows10请开启 <code>WSL</code>，不支持WSL的Windows请安装 <code>cygw
 <div class="listingblock">
 <div class="title">Windows10 WSL设置</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 开启WSL，使用linux环境操作kubernetes，以WSL ubuntu为例
+<pre># 开启WSL，使用linux环境操作kubernetes，以WSL ubuntu为例
 
 # windows下的用户名
 export WIN_USERNAME=i
@@ -2311,1635 +4314,64 @@ kubectl config set-context minikube \
     --user=minikube
 
 kubectl config use-context minikube
-kubectl get node</code></pre>
+kubectl get node</pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Helm安装</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
+<pre>curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
 helm init
 # 查询tiller是否部署完成
 kubectl -n kube-system get po | grep tiller
-helm list</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Unresolved directive in book.adoc - include::_chapter/best-practices.adoc[]</p>
-</div>
-<div class="paragraph">
-<p>Unresolved directive in book.adoc - include::_chapter/configuration.adoc[]</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="流程_devops"><a class="anchor" href="#流程_devops"></a>4. 流程 Devops</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="测试_生产环境安装配置"><a class="anchor" href="#测试_生产环境安装配置"></a>4.1. 测试、生产环境安装配置</h3>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>本文会给出使用代理与不使用代理的安装、配置方式，但强烈推荐使用代理方式，详见 <a href="#proxies">代理选择与设置</a> 。</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p><strong>以 Centos7 为例，做好ssh免密互访、关闭防火墙、关闭swap、禁用SELINUX</strong></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">systemctl stop firewalld.service
-systemctl disable firewalld.service
-swapoff -a
-sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
-sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config</code></pre>
-</div>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 1. 服务列表</caption>
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">主机名</th>
-<th class="tableblock halign-left valign-top">IP(示例)</th>
-<th class="tableblock halign-left valign-top">服务</th>
-<th class="tableblock halign-left valign-top">备注</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">devops(1-3)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">10.200.10.1-3</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Gitlab</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Gitlab及其CI/CD独立一台服务器部署，实际环境应该做HA</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">middleware(1-6)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">10.200.10.4-9</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Docker、RabbitMQ、PostgreSql、Redis、dnsmasq、Minio、harbor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">各类中间件，实际环境应该做HA</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">k8s-master(1-3)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">10.200.10.10-12</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Docker、kubernetes master、Helm</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes Master节点，实际环境应该做HA</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">k8s-node(1-N)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">10.200.10.13-N</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Docker、kubernetes node、nginx Ingress Controller、prometheus node exporter、fluentd</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">应用运行容器组 node label = app</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">……</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">……</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Docker、kubernetes node</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">应用运行容器组 node label = app</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">k8s-node(N+1-M)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">10.200.10.N+1-M</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Docker、kubernetes node、nginx Ingress Controller、prometheus node exporter、fluentd、dashboard、elasticsearch、kibana、jaeger、grafana、prometheus</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">集成运维容器组 node label = devops</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">……</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">……</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Docker、kubernetes node</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">集成运维容器组 node label = devops</p></td>
-</tr>
-</tbody>
-</table>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-kubernetes Node 分两个 label, <code>label=app</code> 用于运行应用， <code>label-devops</code> 用于运行运维管理工具。
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="title">各节点Host(示例)</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># dnsmasq服务节点
-
-cat &gt;&gt;/etc/hosts &lt;&lt;EOF
-10.200.10.1 devops1 gitlab.dew.ms
-10.200.10.2 devops2 gitlab.dew.ms
-...
-10.200.10.4 middleware1 rabbitmq.dew.ms redis.dew.ms postgre.dew.ms minio.dew.ms
-10.200.10.5 middleware2 rabbitmq.dew.ms redis.dew.ms postgre.dew.ms minio.dew.ms
-...
-10.200.10.10 k8s-master1
-10.200.10.11 k8s-master2
-...
-10.200.10.13 k8s-node1
-10.200.10.14 k8s-node2
-...
-10.200.10.101 k8s-node101 harbor.dew.ms notary.dew.ms dashboard.dew.ms es.dew.ms jaeger.dew.ms kibana.dew.ms prometheus.dew.ms grafana.dew.ms
-10.200.10.102 k8s-node102 harbor.dew.ms notary.dew.ms dashboard.dew.ms es.dew.ms jaeger.dew.ms kibana.dew.ms prometheus.dew.ms grafana.dew.ms
-...
-EOF
-
-# 除dnsmasq外的各节点
-
-cat &gt;&gt;/etc/hosts &lt;&lt;EOF
-10.200.10.1 devops1
-10.200.10.2 devops2
-...
-10.200.10.4 middleware1
-10.200.10.5 middleware2
-...
-10.200.10.10 k8s-master1
-10.200.10.11 k8s-master2
-...
-10.200.10.13 k8s-node1
-10.200.10.14 k8s-node2
-...
-10.200.10.101 k8s-node101
-10.200.10.102 k8s-node102
-...
-EOF</code></pre>
-</div>
-</div>
-<div class="sect3">
-<h4 id="docker"><a class="anchor" href="#docker"></a>4.1.1. docker</h4>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<a href="https://kubernetes.io/docs/setup/cri/#docker" class="bare">https://kubernetes.io/docs/setup/cri/#docker</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">yum install -y yum-utils \
-  device-mapper-persistent-data \
-  lvm2
-
-yum-config-manager \
-    --add-repo \
-    https://download.docker.com/linux/centos/docker-ce.repo
-
-yum update -y &amp;&amp; yum install -y docker-ce-18.06.2.ce
-
-mkdir /etc/docker
-
-cat &gt; /etc/docker/daemon.json &lt;&lt;EOF
-{
-  "exec-opts": ["native.cgroupdriver=systemd"],
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "100m"
-  },
-  "storage-driver": "overlay2",
-  "storage-opts": [
-    "overlay2.override_kernel_check=true"
-  ]
-}
-EOF
-
-mkdir -p /etc/systemd/system/docker.service.d
-
-# 添加代理
-cat &gt;&gt;/etc/systemd/system/docker.service.d/http-proxy.conf &lt;&lt;EOF
-[Service]
-Environment="HTTP_PROXY=http://&lt;代理host&gt;:&lt;代理端口&gt;" "HTTPS_PROXY=http://&lt;代理host&gt;:&lt;代理端口&gt;" "NO_PROXY=localhost,127.0.0.1,dew.ms"
-EOF
-
-systemctl daemon-reload
-systemctl restart docker
-systemctl enable docker.service</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="kubernetes"><a class="anchor" href="#kubernetes"></a>4.1.2. kubernetes</h4>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<a href="https://kubernetes.io/docs/setup/independent/install-kubeadm/" class="bare">https://kubernetes.io/docs/setup/independent/install-kubeadm/</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="title">安装</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 使用阿里云镜像
-cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=http://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
-enabled=1
-gpgcheck=0
-repo_gpgcheck=0
-gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
-        http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
-EOF
-
-setenforce 0
-sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
-
-cat &lt;&lt;EOF &gt;  /etc/sysctl.d/k8s.conf
-net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1
-EOF
-
-sysctl --system
-
-yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
-systemctl enable --now kubelet</code></pre>
-</div>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<a href="https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/" class="bare">https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="title">Master配置</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 安装Git，后续会用到
-yum install -y git
-
-# 初始化Kubernetes，二选一，使用代理方式
-kubeadm init \
-    --kubernetes-version v1.14.0 \
-    --pod-network-cidr=10.244.0.0/16
-
-# 初始化Kubernetes，二选一，不使用代理方式，通过image-repository 及 --kubernetes-version 避免被墙
-kubeadm init \
-    --image-repository registry.aliyuncs.com/google_containers \
-    --kubernetes-version v1.14.0 \
-    --pod-network-cidr=10.244.0.0/16
-
-# 记录上述操作输出中的kubeadm join
-# e.g.
-kubeadm join 10.200.10.10:6443 --token i3i7qw.2gst6kayu1e8ezlg --discovery-token-ca-cert-hash sha256:cabc90823a8e0bcf6e3bf719abc569a47c186f6cfd0e156ed5a3cd5a8d85fab0
-
-mkdir -p $HOME/.kube
-cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-chown $(id -u):$(id -g) $HOME/.kube/config
-
-# 查看集群状态
-kubectl get cs
-
-# 安装flannel
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
-
-# 都为Running后表示完成
-kubectl get pods --all-namespaces
-
-# 创建命名空间，方便后文使用
-kubectl create ns devops</code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="title">Master做为Node</div>
-<div class="paragraph">
-<p>默认情况下 master 不会做为 node 节点，可通过此命令强制启用（不推荐）<br>
-<code>kubectl taint nodes --all node-role.kubernetes.io/master-</code></p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<a href="https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/" class="bare">https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="title">Node配置</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 执行上一步输出的 kubeadm join ...
-
-# 完成后在master上执行情况如下（以1.14.0版本为例）
-kubectl get no
-NAME        STATUS     ROLES    AGE   VERSION
-test1.k8s   Ready   master   11m   v1.14.0
-test2.k8s   Ready   &lt;none&gt;   70s   v1.14.0
-test3.k8s   Ready   &lt;none&gt;   52s   v1.14.0
-test4.k8s   Ready   &lt;none&gt;   43s   v1.14.0
-test5.k8s   Ready   &lt;none&gt;   34s   v1.14.0</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Master HA配置</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">TBD</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="helm"><a class="anchor" href="#helm"></a>4.1.3. helm</h4>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<a href="https://docs.helm.sh/using_helm/#installing-helm" class="bare">https://docs.helm.sh/using_helm/#installing-helm</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
-
-cat &lt;&lt;EOF | kubectl apply -f -
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: tiller
-  namespace: kube-system
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: tiller
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-admin
-subjects:
-  - kind: ServiceAccount
-    name: tiller
-    namespace: kube-system
-EOF
-
-helm init --service-account tiller
-# 不使用代理方式，需要指定镜像，注意tiller版本和helm版本对应
-helm init --service-account tiller -i registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.13.1
-# 或者初始化之后更换镜像
-kubectl set image deployment/tiller-deploy tiller=registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.13.1 -n kube-system
-
-# 查看helm版本
-helm version
-
-kubectl get pod -n kube-system -l app=helm</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="dns"><a class="anchor" href="#dns"></a>4.1.4. dns</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 在middlewarer的某个节点上执行安装
-yum install -y dnsmasq
-systemctl enable dnsmasq
-systemctl start dnsmasq
-
-# 编辑各节点，加上dnsmasq节点的IP（示例为10.200.10.4）
-vi /etc/resolv.conf
--
-nameserver 10.200.10.4
--
-
-# TIP: 以上设置在节点重启后可能被重置，更好的做法见：
-# https://unix.stackexchange.com/questions/163831/nameservers-erased-after-systemctl-restart-network-service
-
-# 编辑Kubernetes的DNS，加上dew.ms的代理（示例为10.200.10.4）
-kubectl -n kube-system edit cm coredns
--
-data:
-  Corefile: |
-    ...
-    dew.ms:53 {
-        errors
-        cache 30
-        proxy . 10.200.10.4
-    }
--</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="minio"><a class="anchor" href="#minio"></a>4.1.5. minio</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 在middlewarer的某个节点上执行安装
-wget https://dl.minio.io/server/minio/release/linux-amd64/minio
-chmod +x minio
-nohup ./minio server /mnt/data &amp;
-
-# cat nohup.out，输出内容示例如下：
-# AccessKey: F1HR1NUAPVQVX3UPV73P
-# SecretKey: 0+vzU8IK+UjJTepBEiAt9x7QO5k+vYRW2KpISWVs
-#
-# Browser Access:
-#    http://10.200.10.5:9000  http://172.17.0.1:9000 ...
-
-# 访问 http://minio.dew.ms:9000
-# 修改访问AccessKey和SecretKey， e.g. dew / Dew123456
-# 创建名为 app-cache 的bucket用于缓存gitlab ci runner(或其它CICD服务）的构建缓存</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">MinIO HA配置</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">TBD https://docs.min.io/docs/distributed-minio-quickstart-guide.html</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">MinIO 多用户配置</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">TBD https://docs.min.io/docs/minio-multi-user-quickstart-guide.html</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="postgresql"><a class="anchor" href="#postgresql"></a>4.1.6. postgreSql</h4>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-生产环境需要HA部署。
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm
-
-rpm -Uvh pgdg-redhat96-9.6-3.noarch.rpm
-yum install -y postgresql96-server
-
-/usr/pgsql-9.6/bin/postgresql96-setup initdb
-
-vi /var/lib/pgsql/9.6/data/postgresql.conf
--
-listen_addresses='*'
--
-
-vi /var/lib/pgsql/9.6/data/pg_hba.conf
--
-host  all  all 0.0.0.0/0 md5
--
-
-systemctl enable postgresql-9.6.service
-systemctl start postgresql-9.6.service
-
-su - postgres
-psql -U postgres
--
-ALTER USER postgres WITH PASSWORD 'Dew!123456';
--</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="redis"><a class="anchor" href="#redis"></a>4.1.7. redis</h4>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-生产环境需要HA部署。
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">yum install -y epel-release
-yum -y install redis
-vi /etc/redis.conf
--
-# 注释
-# bind 127.0.0.1
-# 开启密码
-requirepass Dew!123456
--
-systemctl start redis</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="gitlab"><a class="anchor" href="#gitlab"></a>4.1.8. gitlab</h4>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<a href="https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package" class="bare">https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
-yum install -y gitlab-ce
-
-# 按需修改，可修改说明见: https://docs.gitlab.com/omnibus/settings/
-vi /etc/gitlab/gitlab.rb
--
-external_url 'http://gitlab.dew.ms'
-...
--
-gitlab-ctl reconfigure
-
-# 浏览器访问并修改root密码
-
-# 安装 gitlab runner，Helm方式
-helm repo add gitlab https://charts.gitlab.io
-helm fetch --untar gitlab/gitlab-runner
-cd gitlab-runner
-
-# 添加Cache secret
-kubectl create secret generic minio-access -n devops \
-    --from-literal=accesskey="dew" \
-    --from-literal=secretkey="Dew123456"
-
-
-# 自定义Maven settings.xml(可选)
-cat &lt;&lt;EOF | kubectl apply -f -
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: dew-maven-settings
-  namespace: devops
-data:
-  settings.xml: |-
-     &lt;?xml version="1.0" encoding="UTF-8"?&gt;
-     &lt;settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-               xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd"&gt;
-         &lt;servers&gt;
-             &lt;!--示例，添加一个私有库认证--&gt;
-             &lt;server&gt;
-                 &lt;id&gt;trc-repo&lt;/id&gt;
-                 &lt;username&gt;dew&lt;/username&gt;
-                 &lt;password&gt;Dew123456&lt;/password&gt;
-             &lt;/server&gt;
-         &lt;/servers&gt;
-     &lt;/settings&gt;
-EOF
-
-
-
-# 注意添加的位置在 “# Start the runner” 前
-vi templates/configmap.yaml
--
-    cat &gt;&gt;/home/gitlab-runner/.gitlab-runner/config.toml &lt;&lt;EOF
-            [[runners.kubernetes.volumes.config_map]]
-              name = "dew-maven-settings"
-              mount_path = "/opt/maven"
-    EOF
-    # Start the runner
--
-
-# 为每个项目的每个集群环境添加Runner
-helm install --name &lt;projectName&gt; --namespace devops \
-    --set gitlabUrl=http://gitlab.dew.ms/ \
-    --set runnerRegistrationToken=&lt;...&gt; \ # 需要从gitlab页面上获取
-    --set rbac.create=true \
-    --set rbacWideAccess=true \
-    --set runners.tags=&lt;profile&gt; \ # 当前集群环境名称
-    --set runners.image=dewms/devops:latest \
-    --set runners.cache.cacheType=s3 \
-    --set runners.cache.cacheShared=true \
-    --set runners.cache.s3ServerAddress=minio.dew.ms:9000 \
-    --set runners.cache.s3BucketName=app-cache \
-    --set runners.cache.s3CacheInsecure=true \
-    --set runners.cache.secretName=minio-access \
-    --set runners.env.MAVEN_OPTS="-Dmaven.repo.local=.m2 -Dorg.apache.maven.user-settings=/opt/maven/settings.xml" \
-    --set runners.env.dew_devops_profile=test \
-    --set runners.env.dew_devops_quiet=true \
-    --set runners.env.dew_devops_docker_host=&lt;...&gt; \
-    --set runners.env.dew_devops_docker_registry_url=https://harbor.dew.ms/v2 \
-    --set runners.env.dew_devops_docker_registry_username=&lt;...&gt; \
-    --set runners.env.dew_devops_docker_registry_password=&lt;...&gt; \
-    --set runners.env.dew_devops_kube_config=&lt;...&gt; \
-   .</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<div class="title">gitlab pod的调度</div>
-<p>可通过helm安装时，设置以下各具体值来指定pod要调度的node。<br>
-具体可参考： <a href="#prometheus-pod-assignment">prometheus pod的调度</a></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">   --set affinity: {}
-   --set nodeSelector: {}
-   --set tolerations: []</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Gitlab HA配置</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">TBD</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="harbor_tbd"><a class="anchor" href="#harbor_tbd"></a>4.1.9. harbor（TBD）</h4>
-<div class="paragraph">
-<p>TBD Harbor独立部署以确保各环境使用同一套</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<a href="https://github.com/goharbor/harbor-helm" class="bare">https://github.com/goharbor/harbor-helm</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">git clone https://github.com/goharbor/harbor-helm
-cd harbor-helm
-git checkout 1.0.0
-
-# 创建Postgres数据库
--
-CREATE DATABASE  registry;
-CREATE DATABASE  clair;
-CREATE DATABASE  notary_server;
-CREATE DATABASE  notary_signer;
--
-
-# 初始用户名/密码 admin/Harbor12345
-
-# 访问 https://harbor.dew.ms
-
-# 获取证书
-kubectl -n devops get secrets/dew-harbor-harbor-ingress -o jsonpath="{.data.ca\.crt}" | base64 --decode
-
-# 以下操作在每台服务上执行
-
-mkdir -p /etc/docker/certs.d/harbor.dew.ms
-cat &lt;&lt;EOF &gt; /etc/docker/certs.d/harbor.dew.ms/ca.crt
-&lt;上一步获取的证书&gt;
-EOF
-
-systemctl daemon-reload
-systemctl restart docker
-
-# 登录，用户名/密码 admin/Harbor12345
-docker login harbor.dew.ms -u admin -p Harbor12345
-
-# 测试
-docker pull registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.1
-docker tag registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.1 harbor.dew.ms/library/pause:3.1
-docker push harbor.dew.ms/library/pause:3.1</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="nginx_ingress_controller"><a class="anchor" href="#nginx_ingress_controller"></a>4.1.10. nginx Ingress Controller</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 使用如下方式将80 443暴露出来
-helm install stable/nginx-ingress --name dew-nginx --namespace ingress-nginx \
-    --set controller.kind=DaemonSet \
-    --set controller.hostNetwork=true \
-    --set controller.stats.enabled=true \
-    --set controller.metrics.enabled=true</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="dashboard"><a class="anchor" href="#dashboard"></a>4.1.11. dashboard</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">cat &lt;&lt;EOF | kubectl apply -f -
-apiVersion: v1
-kind: Secret
-metadata:
-  labels:
-    k8s-app: kubernetes-dashboard
-  name: kubernetes-dashboard-certs
-  namespace: kube-system
-type: Opaque
-EOF
-
-# 安装，不使用代理方式需要加上 --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kubernetes-dashboard-amd64
-helm install stable/kubernetes-dashboard --name dew-dashboard --namespace kube-system \
-    --set rbacAdminRole=true \
-    --set ingress.enabled=true \
-    --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/backend-protocol"="HTTPS" \
-    --set ingress.hosts={dashboard.dew.ms} \
-    --set ingress.tls[0].hosts={dashboard.dew.ms},ingress.tls[0].secretName=kubernetes-dashboard-certs
-
-# 获取Token
-kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep dew-dashboard-kubernetes-dashboard | awk '{print $1}')
-
-# 使用Firefox访问</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="elasticsearch"><a class="anchor" href="#elasticsearch"></a>4.1.12. elasticsearch</h4>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<a href="https://github.com/elastic/helm-charts/blob/master/elasticsearch" class="bare">https://github.com/elastic/helm-charts/blob/master/elasticsearch</a> 注意仔细查看各参数设值的说明。
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 创建PV
-app=dew-elasticsearch-client
-size=200Gi
-# 请根据replicas的个数来决定下面PV的创建个数
-for i in {0..1}; do
-cat &lt;&lt;EOF | kubectl -n devops apply -f -
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  labels:
-    app: ${app}
-  name: ${app}-${i}
-spec:
-  capacity:
-    storage: ${size}
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
-  nfs:
-    path: /data/nfs/elasticsearch/${app}-${i}
-    server: nfs.dew.ms
-EOF
-done
-
-# 注意在NFS服务器上创建对应文件夹
-for i in {0..1}; do
-mkdir -p /data/nfs/elasticsearch/${app}-${i}
-done
-
-# TIP：如果pod没有启动成功，报错和路径权限问题有关，可尝试给PV的存储路径添加权限,如：
-chmod 775 /data/nfs/elasticsearch/dew-elasticsearch-client-0
-chmod 775 /data/nfs/elasticsearch/dew-elasticsearch-client-1
-
-
-# 使用helm安装
-helm repo add elastic https://helm.elastic.co
-
-helm install --name dew-elasticsearch elastic/elasticsearch --namespace devops \
-    --set imageTag=6.6.1 \
-    --set clusterName=dew-elasticsearch \
-    --set nodeGroup=client \
-    --set masterService=dew-elasticsearch-client \
-    --set replicas=2 \
-    --set minimumMasterNodes=2 \
-    --set volumeClaimTemplate.storageClassName="" \
-    --set volumeClaimTemplate.resources.requests.storage=200Gi \
-    --set fsGroup=0 \
-    --set clusterHealthCheckParams="" \
-    --set ingress.enabled=true \
-    --set ingress.hosts={es.dew.ms}
-
-    # pod调度相关配置,请根据需要进行设值
-    --set nodeSelector."tag"="devops" \
-    --set tolerations[0].key="key" \
-    --set tolerations[0].operator="Equal" \
-    --set tolerations[0].value="value" \
-    --set tolerations[0].effect="NoSchedule" \
-    --set nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key="tag" \
-    --set nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].operator=In \
-    --set nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].values[0]=devops \
-    --set antiAffinity="hard" \  #该值可为soft
-    --set antiAffinityTopologyKey="kubernetes.io/hostname" \
-
-    # 若使用xpack security,请加上以下参数
-    --set-string extraEnvs[0]."name"="xpack\.security\.enabled" \
-    --set-string extraEnvs[0]."value"="true" \
-    --set-string extraEnvs[1]."name"="xpack\.security\.authc\.accept_default_password" \
-    --set-string extraEnvs[1]."value"="true" \
-    --set-string extraEnvs[2]."name"="ELASTIC_USERNAME" \
-    --set-string extraEnvs[2]."value"="elastic" \
-    --set-string extraEnvs[3]."name"="ELASTIC_PASSWORD" \
-    --set-string extraEnvs[3]."value"="123456"
-
-    xpack安装相关文档说明：https://github.com/elastic/helm-charts/blob/master/elasticsearch/README.md#security
-
-    * 开启xpack security的简单例子：
-      . 进入容器内部
-        kubectl exec -it dew-elasticsearch-client-0 -n devops /bin/sh
-      . 激活30天试用license
-        curl -H "Content-Type:application/json" -XPOST  http://localhost:9200/_xpack/license/start_trial?acknowledge=true
-      . 修改密码：
-        bin/elasticsearch-setup-passwords interactive
-      . 测试：
-        curl -u elastic -XGET 'localhost:9200/_cat/health?v&amp;pretty'</code></pre>
-</div>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-其他elasticsearch的helm chart : <a href="https://github.com/helm/charts/tree/master/stable/elasticsearch" class="bare">https://github.com/helm/charts/tree/master/stable/elasticsearch</a>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="fluentd"><a class="anchor" href="#fluentd"></a>4.1.13. fluentd</h4>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<a href="https://github.com/kiwigrid/helm-charts/tree/master/charts/fluentd-elasticsearch" class="bare">https://github.com/kiwigrid/helm-charts/tree/master/charts/fluentd-elasticsearch</a><br>
-     <a href="https://kiwigrid.github.io/" class="bare">https://kiwigrid.github.io/</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">helm repo add kiwigrid https://kiwigrid.github.io
-
-helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace devops \
-    --set elasticsearch.host=dew-elasticsearch-client \
-    --set elasticsearch.logstash_prefix=logstash \
-    # 若 ES 启用 xpack 的 security，加上以下参数
-    --set elasticsearch.user=elastic \
-    --set elasticsearch.password=123456
-    # Prometheus 相关设置(需先安装prometheus-operator)
-    --set service.type=ClusterIP \
-    --set service.ports[0].name="monitor-agent" \
-    --set service.ports[0].port=24231 \
-    --set prometheusRule.enabled=true \
-    --set prometheusRule.prometheusNamespace=devops \
-    --set prometheusRule.labels.app=prometheus-operator \
-    --set prometheusRule.labels.release=dew-prometheus-operator \
-    --set serviceMonitor.enabled=true \
-    --set serviceMonitor.labels.release=dew-prometheus-operator
-    # 不使用代理要加上
-    --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/fluentd-elasticsearch \
-    --set image.tag=v2.4.0
-    # pod调度相关配置,请根据实际需要进行设值
-    --set nodeSelector."tag"="devops" \
-    --set tolerations[0].key="key" \
-    --set tolerations[0].operator="Equal" \
-    --set tolerations[0].value="value" \
-    --set tolerations[0].effect="NoSchedule"</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="kibana"><a class="anchor" href="#kibana"></a>4.1.14. kibana</h4>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<a href="https://github.com/helm/charts/tree/master/stable/kibana" class="bare">https://github.com/helm/charts/tree/master/stable/kibana</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">使用PVC
-app=("kibana")
-size=10Gi
-
-for i in ${app[@]};do
-cat &lt;&lt;EOF | kubectl -n devops apply -f -
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  labels:
-    app: ${i}
-  name: dew-${i}
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: ${size}
-  selector:
-    matchLabels:
-      app: ${i}
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  labels:
-    app: ${i}
-  name: dew-${i}
-spec:
-  capacity:
-    storage: ${size}
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
-  nfs:
-    path: /data/nfs/${i}
-    server: nfs.dew.ms
-EOF
-done
-# 注意在NFS服务器上加上文件路径,并创建需要的目录
-
-helm install --name dew-kibana stable/kibana --namespace devops \
-    --set image.tag="6.6.1" \
-    --set env."ELASTICSEARCH_URL"="http://dew-elasticsearch-client:9200" \
-    --set service.internalPort=5601 \
-    --set ingress.enabled=true,ingress.hosts={kibana.dew.ms} \
-    --set-string ingress.annotations."kubernetes\.io/ingress\.class"=nginx \
-    --set-string ingress.annotations."kubernetes\.io/tls-acme"="true" \
-    --set ingress.tls[0].hosts={kibana.dew.ms},ingress.tls[0].secretName=kibana-certs \
-    --set dashboardImport.enabled=true \
-    --set dashboardImport.dashboards."k8s"="https://raw.githubusercontent.com/monotek/kibana-dashboards/master/k8s-fluentd-elasticsearch.json" \
-    --set serviceAccount.create=true,serviceAccountName=kibana \
-    --set plugins.enabled=true \
-    --set persistentVolumeClaim.enabled=true \
-    --set persistentVolumeClaim.existingClaim=true \
-    --set securityContext.enabled=true \
-    --set securityContext.allowPrivilegeEscalation=true \
-    --set securityContext.runAsUser=0 \
-    --set securityContext.fsGroup=0
-
-    # pod调度相关配置，请根据实际情况设值
-    --set nodeSelector."tag"="devops" \
-    --set tolerations[0].key="key" \
-    --set tolerations[0].operator="Equal" \
-    --set tolerations[0].value="value" \
-    --set tolerations[0].effect="NoSchedule" \
-    --set affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key="key" \
-    --set affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].operator=In \
-    --set affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].values[0]=target-host-name \
-
-    # xpack security相关参数：
-    --set image.repository=docker.elastic.co/kibana/kibana \
-    --set env."XPACK_SECURITY_ENABLED"="true" \
-    --set env."ELASTICSEARCH_USERNAME"="kibana" \
-    --set env."ELASTICSEARCH_PASSWORD"="dew123456" \
-    --set dashboardImport.xpackauth.enabled=true \
-    --set dashboardImport.xpackauth.username=kibana\
-    --set dashboardImport.xpackauth.password=dew123456</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="jaeger"><a class="anchor" href="#jaeger"></a>4.1.15. jaeger</h4>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<a href="https://github.com/jaegertracing/jaeger-operator" class="bare">https://github.com/jaegertracing/jaeger-operator</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/crds/jaegertracing_v1_jaeger_crd.yaml
-curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/service_account.yaml \
-    | sed "s/namespace: observability/namespace: devops/g" \
-    | kubectl create -f -
-curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/service_account.yaml \
-    | sed "s/namespace: observability/namespace: devops/g" \
-    | kubectl create -f -
-curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/role.yaml \
-    | sed "s/namespace: observability/namespace: devops/g" \
-    | kubectl create -f -
-curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/role_binding.yaml \
-    | sed "s/namespace: observability/namespace: devops/g" \
-    | kubectl create -f -
-curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/operator.yaml \
-    | sed "s/namespace: observability/namespace: devops/g" \
-    | kubectl create -f -
-
-# 使用elasticsearch作为jaeger的数据源
-    # 若ES启用Xpack Security，则需要创建secret
-    ELASTICSEARCH_USERNAME=elastic
-    ELASTICSEARCH_PASSWORD=123456
-    cat &lt;&lt;EOF | kubectl -n devops apply -f -
-    apiVersion: v1
-    kind: Secret
-    metadata:
-      name: jaeger-es-secrets
-    type: Opaque
-    data:
-      ES_USERNAME: `echo -n $ELASTICSEARCH_USERNAME | base64`
-      ES_PASSWORD: `echo -n $ELASTICSEARCH_PASSWORD | base64`
-    EOF
-
-    # 创建Jaeger实例
-    cat &lt;&lt;EOF | kubectl apply -n devops -f -
-    apiVersion: jaegertracing.io/v1
-    kind: Jaeger
-    metadata:
-      name: jaeger
-    spec:
-      strategy: production
-      storage:
-        type: elasticsearch
-        options:
-          es:
-            server-urls: http://dew-elasticsearch-client:9200
-        secretName: jaeger-es-secrets  # 若ES启用Xpack Security，需要设置此项及创建secret
-    EOF
-
-    TIP: Jaeger实例可在不同namespace下创建使用，使用中请注意namespace的问题。
-    使用sidecar的方式部署项目：https://github.com/jaegertracing/jaeger-operator#auto-injection-of-jaeger-agent-sidecars
-    使用daemonset的方式部署项目：https://github.com/jaegertracing/jaeger-operator#agent-as-daemonset
-
-# 修改Ingress
-cat &lt;&lt;EOF | kubectl -n devops apply -f -
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-  name: jaeger-query
-spec:
-  rules:
-    - host: jaeger.dew.ms
-      http:
-        paths:
-          - backend:
-              serviceName: jaeger-query
-              servicePort: 16686
-            path: /
-EOF</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<div class="title">pod的调度</div>
-<p>目前jaeger-operator暂不支持直接设置，请关注该项目的更新情况。
-可以自行给需要调度的pod的deployment添加限制条件。可参考： <a href="#podAssignment">[podAssignment]</a></p>
-</div>
-<div class="listingblock">
-<div class="title">Jaeger demo</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">cat &lt;&lt;EOF | kubectl apply -f -
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  annotations:
-    inject-jaeger-agent: "true"
-    sidecar.jaegertracing.io/inject: "true"
-  name: jaeger-demo
-spec:
-  template:
-    metadata:
-      labels:
-        app: jaeger-demo
-        version: v1
-    spec:
-      containers:
-      - name: jaeger-demo
-        image: jaegertracing/example-hotrod:1.10
-        ports:
-        - containerPort: 8080
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    inject-jaeger-agent: "true"
-    sidecar.jaegertracing.io/inject: "true"
-  name: jaeger-demo
-  labels:
-    app: jaeger-demo
-spec:
-  ports:
-   - name: jaeger-demo
-     port: 8080
-     targetPort: 8080
-  selector:
-   app: jaeger-demo
-EOF</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="prometheus_operator_和_grafana"><a class="anchor" href="#prometheus_operator_和_grafana"></a>4.1.16. prometheus-operator 和 grafana</h4>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<a href="https://github.com/helm/charts/tree/master/stable/prometheus-operator" class="bare">https://github.com/helm/charts/tree/master/stable/prometheus-operator</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>prometheus-operator结构：
-  |--- prometheus-operator
-  |--- prometheus
-  |--- alertmanager
-  |--- node-exporter
-  |--- kube-state-metrics
-  |--- service monitors to scrape internal kubernetes components
-  |     |---kube-apiserver
-  |     |---kube-scheduler
-  |     |---kube-controller-manager
-  |     |---etcd
-  |     |---kube-dns/coredns
-  |
-  |--- grafana</pre>
-</div>
-</div>
-<div class="sect4">
-<h5 id="prometheus_operator_使用pv"><a class="anchor" href="#prometheus_operator_使用pv"></a>prometheus-operator 使用PV</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 创建PV,注意label的对应
-
-app=prometheus-operator
-components=("alertmanager" "prometheus")
-size=100Gi
-
-for i in ${components[@]};do
-cat &lt;&lt;EOF | kubectl -n devops apply -f -
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  labels:
-    component: ${i}
-  name: dew-${app}-${i}
-spec:
-  capacity:
-    storage: ${size}
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
-  nfs:
-    path: /data/nfs/${app}/${i}
-    server: nfs.dew.ms
-EOF
-done
-
-# 在NFS服务器上创建相同路径
-for i in ${components[@]};do
-mkdir -p /data/nfs/${app}/${i}
-done</code></pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="创建grafana的pvc和pv"><a class="anchor" href="#创建grafana的pvc和pv"></a>创建grafana的PVC和PV</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">app=("grafana")
-size=50Gi
-
-for i in ${app[@]};do
-cat &lt;&lt;EOF | kubectl -n devops apply -f -
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  labels:
-    app: ${i}
-  name: dew-${i}
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: ${size}
-  selector:
-    matchLabels:
-      app: ${i}
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  labels:
-    app: ${i}
-  name: dew-${i}
-spec:
-  capacity:
-    storage: ${size}
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
-  nfs:
-    path: /data/nfs/prometheus-operator/${i}
-    server: nfs.dew.ms
-EOF
-done
-
-# 注意在NFS服务器上创建相同路径
-mkdir -p /data/nfs/prometheus-operator/grafana</code></pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="使用helm_安装"><a class="anchor" href="#使用helm_安装"></a>使用helm 安装</h5>
-<div class="paragraph">
-<p>注意安装前先更新chart仓库<br>
-<code>helm repo update</code></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml"># 若需要对etcd进行监控，则需要先创建secret
-kubectl -n devops create secret generic dew-prometheus-operator-etcd  --from-file=/etc/kubernetes/pki/etcd/ca.crt  --from-file=/etc/kubernetes/pki/etcd/peer.crt  --from-file=/etc/kubernetes/pki/etcd/peer.key
-
-helm install stable/prometheus-operator --name dew-prometheus-operator --namespace devops \
-    --set kubelet.serviceMonitor.https=true \
-    --set prometheus.ingress.enabled=true \
-    --set prometheus.ingress.hosts={prometheus.dew.ms} \
-    --set alertmanager.ingress.enabled=true \
-    --set alertmanager.ingress.hosts={prometheus.alertmanager.ms} \
-    --set prometheusOperator.securityContext.runAsNonRoot=false \
-    --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
-    --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
-    --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.selector.matchLabels."component"="alertmanager" \
-    --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.selector.matchLabels."component"="prometheus"
-    # 对etcd监测相关参数
-    --set prometheus.prometheusSpec.secrets[0]=dew-prometheus-operator-etcd \
-    --set kubeEtcd.serviceMonitor.scheme=https \
-    --set kubeEtcd.serviceMonitor.insecureSkipVerify=true \
-    --set kubeEtcd.serviceMonitor.caFile="/etc/prometheus/secrets/dew-prometheus-operator-etcd/ca.crt" \
-    --set kubeEtcd.serviceMonitor.certFile="/etc/prometheus/secrets/dew-prometheus-operator-etcd/peer.crt" \
-    --set kubeEtcd.serviceMonitor.keyFile="/etc/prometheus/secrets/dew-prometheus-operator-etcd/peer.key"
-    # 直接使用prometheus-operator的grafana，添加以下设置
-    --set grafana.enabled=true \
-    --set grafana.adminPassword=Dew123456 \
-    --set grafana.defaultDashboardsEnabled=true \
-    --set grafana.ingress.enabled=true \
-    --set grafana.ingress.hosts={grafana.dew.ms} \
-    --set grafana.ingress.tls[0].host={grafana.dew.ms},ingress.tls[0].secretName=dew-grafana \
-    --set grafana.sidecar.dashboards.enabled=true \
-    --set grafana.sidecar.dashboards.searchNamespace="devops"\
-    --set grafana.sidecar.dashboards.label=grafana_dashboard \
-    --set grafana.sidecar.datasources.enabled=true \
-    --set grafana.sidecar.datasources.searchNamespace="devops" \
-    --set grafana.sidecar.datasources.label=grafana_datasource \
-    --set grafana.'grafana\.ini'.smtp.enabled="true" \
-    --set grafana.'grafana\.ini'.smtp.host="smtp.163.com:25" \
-    --set grafana.'grafana\.ini'.smtp.user=XXXXX@163.com \
-    --set grafana.'grafana\.ini'.smtp.password=XXXXX \
-    --set grafana.'grafana\.ini'.smtp.from_address="XXXXX@163.com" \
-    --set grafana.'grafana\.ini'.smtp.skip_verify=true \
-    --set grafana.persistence.enabled=true \
-    --set grafana.persistence.existingClaim=dew-grafana
-    # 可选设置
-    --set grafana.'grafana\.ini'.server.root_url="https://grafana.dew.ms"
-
-    # 如不使用代理,更换以下镜像仓库
-    --set kube-state-metrics.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kube-state-metrics
-
-TIP: grafana默认用户名：admin,
-查看密码：
-kubectl get secret --namespace devops dew-prometheus-operator-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
-grafana重置密码：进入grafana的容器内部后执行
-grafana-cli admin reset-admin-password passwordvalue
-
-INFO: 若有pod启动失败,报文件权限拒绝相关问题，很可能和PV的文件目录的权限有关，检查下权限是否一致，设置对应的securityContext进行排查。
-例：
-kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops
-设置securityContext为以下内容
-      securityContext:
-        fsGroup: 0
-        runAsNonRoot: false
-        runAsUser: 0
-
-INFO: 若通过UI查看prometheus的target中，kube-scheduler、kube-controller处于down状态，是因为它们只能在宿主机上通过127.0.0.1访问，可使用以下操作：
-    . 如果使用kubeadm启动的集群，初始化时的config.yml里可以加入如下参数
-        controllerManagerExtraArgs:
-          address: 0.0.0.0
-        schedulerExtraArgs:
-          address: 0.0.0.0
-    . 已经启动后的使用下面命令更改就会滚动更新
-        sed -e "s/- --address=127.0.0.1/- --address=0.0.0.0/" -i /etc/kubernetes/manifests/kube-controller-manager.yaml
-        sed -e "s/- --address=127.0.0.1/- --address=0.0.0.0/" -i /etc/kubernetes/manifests/kube-scheduler.yaml
-      或者全部替换：
-        sed -ri '/--address/s#=.+#=0.0.0.0#' /etc/kubernetes/manifests/kube-*
-    . 参考文章：
-      http://www.servicemesher.com/blog/prometheus-operator-manual/
-      https://github.com/coreos/prometheus-operator/blob/master/Documentation/troubleshooting.md
-
-# 监控APP
-  1.首先需要将项目instrument
-    参考文章：https://prometheus.io/docs/instrumenting/clientlibs/
-  2.部署项目及创建进行监控的ServiceMonitor。
-    注意ServiceMonitor的labels要含有Prometheus-operator创建的Prometheus的serviceMonitorSelector的label。
-    详细文章：https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources</code></pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="prometheus-pod-assignment"><a class="anchor" href="#prometheus-pod-assignment"></a>pod的调度</h5>
-<div class="paragraph">
-<p>pod调度helm安装相关参数，以下配置仅供参考</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml">    --set alertmanager.alertmanagerSpec.nodeSelector."tag"="devops" \
-    --set alertmanager.alertmanagerSpec.tolerations[0].key="key" \
-    --set alertmanager.alertmanagerSpec.tolerations[0].operator="Equal" \
-    --set alertmanager.alertmanagerSpec.tolerations[0].value="value" \
-    --set alertmanager.alertmanagerSpec.tolerations[0].effect="NoSchedule" \
-    # podAntiAffinity的值可以 hard 或 soft
-    --set alertmanager.alertmanagerSpec.podAntiAffinity="hard" \
-    --set alertmanager.alertmanagerSpec.podAntiAffinityTopologyKey="kubernetes\.io/hostname" \
-
-    --set prometheusOperator.nodeSelector."tag"="devops" \
-    --set prometheusOperator.tolerations[0].key="key" \
-    --set prometheusOperator.tolerations[0].operator="Equal" \
-    --set prometheusOperator.tolerations[0].value="value" \
-    --set prometheusOperator.tolerations[0].effect="NoSchedule" \
-    --set prometheusOperator.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key="key" \
-    --set prometheusOperator.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].operator=In \
-    --set prometheusOperator.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].values[0]=target-host-name \
-
-    --set prometheus.prometheusSpec.nodeSelector."tag"="devops" \
-    --set prometheus.prometheusSpec.tolerations[0].key="key" \
-    --set prometheus.prometheusSpec.tolerations[0].operator="Equal" \
-    --set prometheus.prometheusSpec.tolerations[0].value="value" \
-    --set prometheus.prometheusSpec.tolerations[0].effect="NoSchedule" \
-    # podAntiAffinity的值可以 hard 或 soft
-    --set prometheus.prometheusSpec.podAntiAffinity=hard \
-    --set prometheus.prometheusSpec.podAntiAffinityTopologyKey="kubernetes\.io/hostname" \
-
-    --set kube-state-metrics.nodeSelector."tag"="devops" \
-    --set kube-state-metrics.tolerations[0].key="key" \
-    --set kube-state-metrics.tolerations[0].operator="Equal" \
-    --set kube-state-metrics.tolerations[0].value="value" \
-    --set kube-state-metrics.tolerations[0].effect="NoSchedule"
-
-    --set nodeExporter.nodeSelector."tag"="devops" \
-    --set nodeExporter.tolerations[0].key="key" \
-    --set nodeExporter.tolerations[0].operator="Equal" \
-    --set nodeExporter.tolerations[0].value="value" \
-    --set nodeExporter.tolerations[0].effect="NoSchedule" \
-    --set nodeExporter.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key="key" \
-    --set nodeExporter.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].operator=In \
-    --set nodeExporter.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].values[0]=target-host-name \
-
-    --set grafana.nodeSelector."tag"="devops" \
-    --set grafana.tolerations[0].key="key" \
-    --set grafana.tolerations[0].operator="Equal" \
-    --set grafana.tolerations[0].value="value" \
-    --set grafana.tolerations[0].effect="NoSchedule"
-    --set grafana.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].key="key" \
-    --set grafana.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].operator=In \
-    --set grafana.affinity.nodeAffinity.requiredDuringSchedulingIgnoredDuringExecution.nodeSelectorTerms[0].matchExpressions[0].values[0]=target-host-name \</code></pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="卸载"><a class="anchor" href="#卸载"></a>卸载</h5>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml">helm del --purge dew-prometheus-operator
-
-kubectl delete crd prometheuses.monitoring.coreos.com prometheusrules.monitoring.coreos.com servicemonitors.monitoring.coreos.com alertmanagers.monitoring.coreos.com
-
-kubectl delete pvc -n devops prometheus-dew-prometheus-operator-prometheus-db-prometheus-dew-prometheus-operator-prometheus-0 alertmanager-dew-prometheus-operator-alertmanager-db-alertmanager-dew-prometheus-operator-alertmanager-0
-
-最后注意删除自己创建的PV、PVC</code></pre>
+helm list</pre>
 </div>
 </div>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="项目部署"><a class="anchor" href="#项目部署"></a>4.2. 项目部署</h3>
+<h3 id="版本"><a class="anchor" href="#版本"></a>5.2. 版本</h3>
 <div class="sect3">
-<h4 id="前置准备"><a class="anchor" href="#前置准备"></a>4.2.1. 前置准备</h4>
-<div class="listingblock">
-<div class="title">集群初始化</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 创建集群角色，用于服务发现
-kubectl create clusterrole service-discovery-client \
-    --verb=get,list,watch \
-    --resource=pods,services,configmaps,endpoints</code></pre>
-</div>
-</div>
+<h4 id="通道说明"><a class="anchor" href="#通道说明"></a>5.2.1. 通道说明</h4>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<div class="title">项目初始化</div>
-<p>一个项目对应多个服务，在开始部署服务之前先要做一定的准备。</p>
+<p><code>Dew</code>有多个版本通道，使用时请谨慎选择：</p>
 </div>
-<div class="ulist">
-<ul>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
-<p>在harbor中创建对应项目的Docker项目私有库（如devops-example），并创建对应项目的用户，设置为该库的管理员</p>
+<p><code>GA</code> General Availability，正式版本，通过内部测试没有已知错误并且经过生产验证，生产环境首选！</p>
 </li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre># 协议类型与host
-SCHEME=https
-HARBOR_HOST=harbor.dew.ms
-# 若使用https，需要在每个curl命令后加 -k
-## 或使用service name作为host:
-#  SCHEME=http
-#  HARBOR_HOST=dew-harbor-harbor-core
-
-# 使用harbor管理员账号来创建用户
-DEW_HARBOR_ADMIN=admin
-DEW_HARBOR_ADMIN_PASSWORD=Harbor12345
-ADMIN_AUTHORIZATION=`echo -n ${DEW_HARBOR_ADMIN}:${DEW_HARBOR_ADMIN_PASSWORD} | base64`
-
-# 创建项目使用的参数，值与Kubernetes配置保持一致
-DEW_NAMESPACE=devops-example
-DEW_DOCKER_USER_NAME=$DEW_NAMESPACE
-DEW_DOCKER_USER_PASS=Dew\!123456
-DEW_DOCKER_USER_EMAIL=${DEW_DOCKER_USER_NAME}@dew.ms
-
-# 创建用户(创建成功的状态码为201)
-curl -X POST "${SCHEME}://${HARBOR_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"email\": \"${DEW_DOCKER_USER_EMAIL}\", \"username\": \"${DEW_DOCKER_USER_NAME}\", \"password\": \"${DEW_DOCKER_USER_PASS}\", \"realname\": \"${DEW_DOCKER_USER_NAME}\", \"comment\": \"init\"}"
-# 使用上面创建的用户登录
-USER_AUTHORIZATION=`echo -n $DEW_DOCKER_USER_NAME:$DEW_DOCKER_USER_PASS | base64`
-
-# 创建项目（创建项目的项目管理员默认为当前登录用户。创建成功的状态码为201，409为“项目名已存在”。）
-curl -X POST "${SCHEME}://${HARBOR_HOST}/api/projects" -H "accept: application/json" -H "authorization: Basic ${USER_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"project_name\": \"${DEW_NAMESPACE}\"}" -o /dev/nullrl -s -w %{http_code} -k</pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
 <li>
-<p>为当前项目初始化Kubernetes配置</p>
+<p><code>RC</code> Release Candidate，发行候选版本，通过内部测试没有已知错误，可用于生产环境。</p>
 </li>
-</ul>
+<li>
+<p><code>Beta</code> 公开测试版本，没有已知的Major类型Bug，但允许存在个别minor类型Bugs，生产环境使用需要谨慎评估！</p>
+</li>
+<li>
+<p><code>Alpha</code> 内部测试版本，很早期的测试版本，未经过内部测试，可能存在较多Bugs，此版本类似技术预览版（Technical Preview），切 <strong>不可</strong> 用于生产环境！</p>
+</li>
+<li>
+<p><code>SNAPSHOT</code> 快照版本，类似Nightly版本，更新频繁此不保证质量，切 <strong>不可</strong> 用于生产环境！</p>
+</li>
+</ol>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre># 命名空间，推荐与docker库同名
-DEW_NAMESPACE=devops-example
-# Docker Registry Host
-DEW_DOCKER_REGISTRY=harbor.dew.ms
-# Docker项目库管理员名称，推荐与docker库同名
-DEW_DOCKER_USER_NAME=$DEW_NAMESPACE
-# Docker项目库管理员密码
-DEW_DOCKER_USER_PASS=Dew\!123456
-# Docker项目库管理员邮箱
-DEW_DOCKER_USER_EMAIL=$DEW_DOCKER_USER_NAMEE@dew.ms
-
-# 创建新的命名空间，用于资源隔离
-kubectl create namespace $DEW_NAMESPACE
-
-# 绑定服务发现角色到该命名空间的默认用户
-kubectl create rolebinding default:service-discovery-client \
-    -n $DEW_NAMESPACE \
-    --clusterrole service-discovery-client \
-    --serviceaccount $DEW_NAMESPACE:default
-
-# 创建Docker Registry密钥
-kubectl -n $DEW_NAMESPACE create secret docker-registry dew-registry \
-    --docker-server=$DEW_DOCKER_REGISTRY \
-    --docker-username=$DEW_DOCKER_USER_NAME \
-    --docker-password=$DEW_DOCKER_USER_PASS \
-    --docker-email=$DEW_DOCKER_USER_EMAIL
-
-# 为该命名空间下的默认用户绑定Docker Registry密钥
-kubectl -n $DEW_NAMESPACE patch serviceaccount default \
-    -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
-
-# 创建Ingress
-# 详见 https://kubernetes.io/docs/concepts/services-networking/ingress/
-#######################
-# apiVersion: extensions/v1beta1
-# kind: Ingress
-# metadata:
-#   annotations:
-#     # 所有注解见 https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/
-#     # 重写示例见 https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/rewrite
-#     nginx.ingress.kubernetes.io/rewrite-target: /\$1
-#   name: dew-ingress
-#   namespace: $DEW_NAMESPACE
-# spec:
-#   rules:
-#     # 自定义规则
-#######################
-
-# 示例
-cat &lt;&lt;EOF | kubectl apply -f -
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /\$1
-  name: dew-ingress
-  namespace: $DEW_NAMESPACE
-spec:
-  rules:
-  - host: example.dew.ms
-    http:
-      paths:
-      - backend:
-          serviceName: tracing-invoke1-example
-          servicePort: 8080
-        path: /invoke1/?(.*)
-      - backend:
-          serviceName: tracing-invoke2-example
-          servicePort: 8080
-        path: /invoke2/?(.*)
-EOF</pre>
-</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect3">
-<h4 id="gitlab配置"><a class="anchor" href="#gitlab配置"></a>4.2.2. Gitlab配置</h4>
+<h4 id="发行记录"><a class="anchor" href="#发行记录"></a>5.2.2. 发行记录</h4>
 <div class="sect4">
-<h5 id="单库多模块"><a class="anchor" href="#单库多模块"></a>单库多模块</h5>
-
-</div>
-<div class="sect4">
-<h5 id="多库多模块_submodule"><a class="anchor" href="#多库多模块_submodule"></a>多库多模块（submodule）</h5>
-
-</div>
-</div>
-<div class="sect3">
-<h4 id="源码变更"><a class="anchor" href="#源码变更"></a>4.2.3. 源码变更</h4>
-
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="版本说明"><a class="anchor" href="#版本说明"></a>5. 版本说明</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="2_0_0_rc_准备中"><a class="anchor" href="#2_0_0_rc_准备中"></a>5.1. 2.0.0-RC(准备中)</h3>
+<h5 id="2_0_0_rc_准备中"><a class="anchor" href="#2_0_0_rc_准备中"></a>2.0.0-RC(准备中)</h5>
 <div class="ulist">
 <div class="title">Features</div>
 <ul>
@@ -3950,7 +4382,7 @@ EOF</pre>
 <p>实现兼容Spring Cloud与Istio的部署、监控架构</p>
 </li>
 <li>
-<p>引入Devops流程</p>
+<p>引入DevOps流程</p>
 </li>
 <li>
 <p>独立通知功能到<code>notification</code></p>
@@ -3980,8 +4412,8 @@ EOF</pre>
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_5_1_rc"><a class="anchor" href="#1_5_1_rc"></a>5.2. 1.5.1-RC</h3>
+<div class="sect4">
+<h5 id="1_5_1_rc"><a class="anchor" href="#1_5_1_rc"></a>1.5.1-RC</h5>
 <div class="ulist">
 <div class="title">Improvement</div>
 <ul>
@@ -3999,8 +4431,8 @@ EOF</pre>
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_5_0_rc"><a class="anchor" href="#1_5_0_rc"></a>5.3. 1.5.0-RC</h3>
+<div class="sect4">
+<h5 id="1_5_0_rc"><a class="anchor" href="#1_5_0_rc"></a>1.5.0-RC</h5>
 <div class="ulist">
 <div class="title">Features</div>
 <ul>
@@ -4112,8 +4544,8 @@ EOF</pre>
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_3_4_rc"><a class="anchor" href="#1_3_4_rc"></a>5.4. 1.3.4-RC</h3>
+<div class="sect4">
+<h5 id="1_3_4_rc"><a class="anchor" href="#1_3_4_rc"></a>1.3.4-RC</h5>
 <div class="ulist">
 <div class="title">Features</div>
 <ul>
@@ -4123,8 +4555,8 @@ EOF</pre>
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_3_2_rc"><a class="anchor" href="#1_3_2_rc"></a>5.5. 1.3.2-RC</h3>
+<div class="sect4">
+<h5 id="1_3_2_rc"><a class="anchor" href="#1_3_2_rc"></a>1.3.2-RC</h5>
 <div class="ulist">
 <div class="title">Features</div>
 <ul>
@@ -4134,8 +4566,8 @@ EOF</pre>
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_3_1_rc"><a class="anchor" href="#1_3_1_rc"></a>5.6. 1.3.1-RC</h3>
+<div class="sect4">
+<h5 id="1_3_1_rc"><a class="anchor" href="#1_3_1_rc"></a>1.3.1-RC</h5>
 <div class="ulist">
 <div class="title">Fixed</div>
 <ul>
@@ -4145,8 +4577,8 @@ EOF</pre>
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_3_0_rc"><a class="anchor" href="#1_3_0_rc"></a>5.7. 1.3.0-RC</h3>
+<div class="sect4">
+<h5 id="1_3_0_rc"><a class="anchor" href="#1_3_0_rc"></a>1.3.0-RC</h5>
 <div class="ulist">
 <div class="title">Features</div>
 <ul>
@@ -4198,8 +4630,8 @@ EOF</pre>
 </ol>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_2_2_rc"><a class="anchor" href="#1_2_2_rc"></a>5.8. 1.2.2-RC</h3>
+<div class="sect4">
+<h5 id="1_2_2_rc"><a class="anchor" href="#1_2_2_rc"></a>1.2.2-RC</h5>
 <div class="ulist">
 <div class="title">Fixed</div>
 <ul>
@@ -4212,8 +4644,8 @@ EOF</pre>
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_2_1_rc"><a class="anchor" href="#1_2_1_rc"></a>5.9. 1.2.1-RC</h3>
+<div class="sect4">
+<h5 id="1_2_1_rc"><a class="anchor" href="#1_2_1_rc"></a>1.2.1-RC</h5>
 <div class="ulist">
 <div class="title">Fixed</div>
 <ul>
@@ -4226,10 +4658,10 @@ EOF</pre>
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_2_0_rc"><a class="anchor" href="#1_2_0_rc"></a>5.10. 1.2.0-RC</h3>
+<div class="sect4">
+<h5 id="1_2_0_rc"><a class="anchor" href="#1_2_0_rc"></a>1.2.0-RC</h5>
 <div class="ulist">
-<div class="title">Feature</div>
+<div class="title">Features</div>
 <ul>
 <li>
 <p>#75 添加幂等处理功能， #77 可选策略类型Bloom Filter尚在开发中</p>
@@ -4282,10 +4714,10 @@ EOF</pre>
 </ol>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_1_0_rc"><a class="anchor" href="#1_1_0_rc"></a>5.11. 1.1.0-RC</h3>
+<div class="sect4">
+<h5 id="1_1_0_rc"><a class="anchor" href="#1_1_0_rc"></a>1.1.0-RC</h5>
 <div class="ulist">
-<div class="title">Feature</div>
+<div class="title">Features</div>
 <ul>
 <li>
 <p>[功能] #45 支持服务调用（ <code>Hystrix</code> ）异常邮件通知</p>
@@ -4324,10 +4756,10 @@ EOF</pre>
 </ol>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_1_0_beta1"><a class="anchor" href="#1_1_0_beta1"></a>5.12. 1.1.0-beta1</h3>
+<div class="sect4">
+<h5 id="1_1_0_beta1"><a class="anchor" href="#1_1_0_beta1"></a>1.1.0-beta1</h5>
 <div class="ulist">
-<div class="title">Feature</div>
+<div class="title">Features</div>
 <ul>
 <li>
 <p>[功能] #19 支持局部 <code>ShardingJDBC</code>(由于ShardingJDBC 2.0还未RC，测试发现存在较多问题，此功能需要等待官方RC)</p>
@@ -4396,10 +4828,10 @@ EOF</pre>
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_0_0_rc"><a class="anchor" href="#1_0_0_rc"></a>5.13. 1.0.0-RC</h3>
+<div class="sect4">
+<h5 id="1_0_0_rc"><a class="anchor" href="#1_0_0_rc"></a>1.0.0-RC</h5>
 <div class="ulist">
-<div class="title">Feature</div>
+<div class="title">Features</div>
 <ul>
 <li>
 <p>[功能]支持新版用户权限中心认证适配(* 新版用户权限中心Release后，此功能代码会有一定变更)</p>
@@ -4456,10 +4888,10 @@ EOF</pre>
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_0_0_beta5"><a class="anchor" href="#1_0_0_beta5"></a>5.14. 1.0.0-beta5</h3>
+<div class="sect4">
+<h5 id="1_0_0_beta5"><a class="anchor" href="#1_0_0_beta5"></a>1.0.0-beta5</h5>
 <div class="ulist">
-<div class="title">Feature</div>
+<div class="title">Features</div>
 <ul>
 <li>
 <p>添加服务调用限制（可定义A服务不允许B服务调用，防止服务双向依赖） e.g.</p>
@@ -4523,10 +4955,10 @@ EOF</pre>
 </ul>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_0_0_beta4"><a class="anchor" href="#1_0_0_beta4"></a>5.15. 1.0.0-beta4</h3>
+<div class="sect4">
+<h5 id="1_0_0_beta4"><a class="anchor" href="#1_0_0_beta4"></a>1.0.0-beta4</h5>
 <div class="ulist">
-<div class="title">Feature</div>
+<div class="title">Features</div>
 <ul>
 <li>
 <p>整合 <code>Spring boot admin</code> 与 <code>Turbine</code>，可直观的监控各个性能及访问指标</p>
@@ -4572,10 +5004,10 @@ EOF</pre>
 </table>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_0_0_beta3"><a class="anchor" href="#1_0_0_beta3"></a>5.16. 1.0.0-beta3</h3>
+<div class="sect4">
+<h5 id="1_0_0_beta3"><a class="anchor" href="#1_0_0_beta3"></a>1.0.0-beta3</h5>
 <div class="olist arabic">
-<div class="title">Feature</div>
+<div class="title">Features</div>
 <ol class="arabic">
 <li>
 <p>Cluster的MQ添加RabbitMQ SPI</p>
@@ -4597,10 +5029,10 @@ EOF</pre>
 </ol>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_0_0_beta2"><a class="anchor" href="#1_0_0_beta2"></a>5.17. 1.0.0-Beta2</h3>
+<div class="sect4">
+<h5 id="1_0_0_beta2"><a class="anchor" href="#1_0_0_beta2"></a>1.0.0-Beta2</h5>
 <div class="olist arabic">
-<div class="title">Feature</div>
+<div class="title">Features</div>
 <ol class="arabic">
 <li>
 <p>支持生成Html及PDF版本的离线文档</p>
@@ -4631,10 +5063,10 @@ EOF</pre>
 </ol>
 </div>
 </div>
-<div class="sect2">
-<h3 id="1_0_0_beta1"><a class="anchor" href="#1_0_0_beta1"></a>5.18. 1.0.0-beta1</h3>
+<div class="sect4">
+<h5 id="1_0_0_beta1"><a class="anchor" href="#1_0_0_beta1"></a>1.0.0-beta1</h5>
 <div class="olist arabic">
-<div class="title">Feature</div>
+<div class="title">Features</div>
 <ol class="arabic">
 <li>
 <p>多数据源支持，详见说明文档`多数据源支持`章节</p>
@@ -4681,9 +5113,8 @@ EOF</pre>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="路线图"><a class="anchor" href="#路线图"></a>6. 路线图</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="路线图"><a class="anchor" href="#路线图"></a>5.3. 路线图</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -4727,7 +5158,7 @@ EOF</pre>
 <p>实现兼容Spring Cloud与Istio的部署、监控架构</p>
 </li>
 <li>
-<p>引入Devops流程</p>
+<p>引入DevOps流程</p>
 </li>
 </ol>
 </div>
@@ -4747,19 +5178,24 @@ EOF</pre>
 </li>
 <li>
 <p>1.x</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>实现核心功能，为公司各项目的研发提供能力支撑</p>
+</li>
+</ol>
+</div>
 </li>
 </ul>
 </div>
-<div class="paragraph">
-<p>实现核心功能，为公司各项目的研发提供能力支撑</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="附录"><a class="anchor" href="#附录"></a>7. 附录</h2>
+<h2 id="附录_appendix"><a class="anchor" href="#附录_appendix"></a>6. 附录 Appendix</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="proxies"><a class="anchor" href="#proxies"></a>7.1. 代理选择与设置</h3>
+<h3 id="proxies"><a class="anchor" href="#proxies"></a>6.1. 代理选择与设置</h3>
 <div class="exampleblock">
 <div class="content">
 <div class="paragraph">
@@ -4789,9 +5225,11 @@ EOF</pre>
 <div class="paragraph">
 <p>代理的技术自然是选择 <code>shadowsocks</code> , 下面以 <code>centos 7.x</code> 为例进行安装设置</p>
 </div>
+<div class="sect3">
+<h4 id="安装配置"><a class="anchor" href="#安装配置"></a>6.1.1. 安装配置</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># ---------- Shadowsocks 安装（Centos 7）----------
+<pre># ---------- Shadowsocks 安装（Centos 7）----------
 
 # 切换到root
 sudo -i
@@ -4849,17 +5287,82 @@ echo 'net.ipv4.tcp_congestion_control=bbr' | tee -a /etc/sysctl.conf
 sysctl -p
 sysctl net.ipv4.tcp_available_congestion_control
 sysctl -n net.ipv4.tcp_congestion_control
-# 看到显示 bbr 即为完成</code></pre>
+# 看到显示 bbr 即为完成</pre>
+</div>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="middleware"><a class="anchor" href="#middleware"></a>7.2. 常用中间件安装配置</h3>
+<h3 id="middleware"><a class="anchor" href="#middleware"></a>6.2. 常用中间件安装配置</h3>
 <div class="sect3">
-<h4 id="mysql"><a class="anchor" href="#mysql"></a>7.2.1. MySQL</h4>
+<h4 id="postgresql"><a class="anchor" href="#postgresql"></a>6.2.1. PostgreSql</h4>
 <div class="listingblock">
+<div class="title">安装配置</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">wget https://repo.mysql.com//mysql57-community-release-el7-11.noarch.rpm
+<pre>wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm
+
+rpm -Uvh pgdg-redhat96-9.6-3.noarch.rpm
+yum install -y postgresql96-server
+
+/usr/pgsql-9.6/bin/postgresql96-setup initdb
+
+vi /var/lib/pgsql/9.6/data/postgresql.conf
+-
+listen_addresses='*'
+-
+
+vi /var/lib/pgsql/9.6/data/pg_hba.conf
+-
+host  all  all 0.0.0.0/0 md5
+-
+
+systemctl enable postgresql-9.6.service
+systemctl start postgresql-9.6.service
+
+su - postgres
+psql -U postgres
+-
+ALTER USER postgres WITH PASSWORD 'Dew!123456';
+-</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">HA配置</div>
+<div class="content">
+<pre># @see https://www.postgresql.org/docs/9.6/high-availability.html</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="redis"><a class="anchor" href="#redis"></a>6.2.2. Redis</h4>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>yum install -y epel-release
+yum -y install redis
+vi /etc/redis.conf
+-
+# 注释
+# bind 127.0.0.1
+# 开启密码
+requirepass Dew!123456
+-
+systemctl start redis</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">HA配置</div>
+<div class="content">
+<pre># @see https://redislabs.com/redis-features/high-availability</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="mysql"><a class="anchor" href="#mysql"></a>6.2.3. MySQL</h4>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>wget https://repo.mysql.com//mysql57-community-release-el7-11.noarch.rpm
 rpm -Uvh mysql57-community-release-el7-11.noarch.rpm
 yum install -y mysql-community-server
 
@@ -4886,15 +5389,22 @@ ALTER USER 'root'@'localhost' IDENTIFIED BY 'Dew!123456';
 # 远程访问(仅测试用)
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'Dew!123456' WITH GRANT OPTION;
 exit;
--</code></pre>
+-</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">HA配置</div>
+<div class="content">
+<pre># @see https://dev.mysql.com/doc/mysql-ha-scalability/en/</pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="mongo"><a class="anchor" href="#mongo"></a>7.2.2. Mongo</h4>
+<h4 id="mongo"><a class="anchor" href="#mongo"></a>6.2.4. Mongo</h4>
 <div class="listingblock">
+<div class="title">安装配置</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">cat &gt;&gt;/etc/yum.repos.d/mongodb-org-4.0.repo &lt;&lt;EOF
+<pre>cat &gt;&gt;/etc/yum.repos.d/mongodb-org-4.0.repo &lt;&lt;EOF
 [mongodb-org-4.0]
 name=MongoDB Repository
 baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/4.0/x86_64/
@@ -4929,52 +5439,204 @@ mongod --auth --port 27017 \
     --dbpath /data/mongo \
     --logpath /var/log/mongo \
     --bind_ip 0.0.0.0 \
-    --fork</code></pre>
+    --fork</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">HA配置</div>
+<div class="content">
+<pre># @see https://docs.mongodb.com/manual/core/replica-set-high-availability/</pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="jenkins"><a class="anchor" href="#jenkins"></a>7.2.3. jenkins</h4>
+<h4 id="gitlab"><a class="anchor" href="#gitlab"></a>6.2.5. Gitlab</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package" class="bare">https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="listingblock">
+<div class="title">安装配置</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 创建PV示例（如果没有的话）
-cat &lt;&lt;EOF | kubectl apply -f -
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: pvXXX
-  namespace: devops
-spec:
-  capacity:
-    storage: 100Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
-  nfs:
-    path: /data/nfs/dXXX
-    server: nfs.dew.ms
-EOF
+<pre>curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+yum install -y gitlab-ce
 
-# 如已创建PVC使用 --set Persistence.ExistingClaim=PVC_NAME
-helm install stable/jenkins --name dew-jenkins --namespace devops \
-    --set Master.AdminUser=dew \
-    --set Master.AdminPassword=Dew\!12345 \
-    --set Master.JenkinsAdminEmail=i@sunisle.org \
-    --set Master.HostName=jenkins.dew.ms</code></pre>
+# 按需修改，可修改说明见: https://docs.gitlab.com/omnibus/settings/
+vi /etc/gitlab/gitlab.rb
+-
+external_url 'http://gitlab.dew.ms'
+...
+-
+gitlab-ctl reconfigure
+
+# 浏览器访问并修改root密码</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">HA配置</div>
+<div class="content">
+<pre># @see https://about.gitlab.com/solutions/high-availability/</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="harbor"><a class="anchor" href="#harbor"></a>6.2.6. Harbor</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md" class="bare">https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="dnsmasq"><a class="anchor" href="#dnsmasq"></a>6.2.7. Dnsmasq</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+dnsmasq为轻量级的DNS解析工具，也可用类似的工具替代。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>yum install -y dnsmasq
+systemctl enable dnsmasq
+systemctl start dnsmasq
+
+# 编辑本机的 /etc/hosts 添加映射
+-
+x.x.x.x gitlab.dew.ms
+x.x.x.x harbor.dew.ms
+x.x.x.x maven.dew.ms
+x.x.x.x minio.dew.ms
+x.x.x.x nfs.dew.ms
+x.x.x.x es.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x kibana.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x prometheus.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x alertmanager.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x grafana.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x jaeger.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
+...
+-
+
+# 编辑所有容器服务节点，加上dnsmasq节点的IP
+vi /etc/resolv.conf
+-
+nameserver x.x.x.x # IP当前节点
+-
+
+# TIP: 以上设置在节点重启后可能被重置，更好的做法见：
+# @see https://unix.stackexchange.com/questions/163831/nameservers-erased-after-systemctl-restart-network-service</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="minio"><a class="anchor" href="#minio"></a>6.2.8. Minio</h4>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>mkdir -p /opt/minio &amp;&amp; cd /opt/minio
+wget https://dl.minio.io/server/minio/release/linux-amd64/minio
+chmod +x minio
+./minio server /mnt/data
+
+# 输出内容示例如下：
+# AccessKey: F1HR1NUAPVQVX3UPV73P
+# SecretKey: 0+vzU8IK+UjJTepBEiAt9x7QO5k+vYRW2KpISWVs
+#
+# Browser Access:
+#    http://10.200.10.5:9000  http://172.17.0.1:9000 ...
+
+# 再执行
+nohup ./minio server /mnt/data &amp;
+
+# 添加域名到客户机hosts并访问 http://minio.dew.ms:9000
+# 修改访问AccessKey和SecretKey， e.g. dew / Dew123456
+# 创建名为 app-cache 的bucket用于缓存gitlab ci runner(或其它CI/CD服务）的构建缓存</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">HA配置</div>
+<div class="content">
+<pre># @see https://docs.min.io/docs/distributed-minio-quickstart-guide.html</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">多用户配置</div>
+<div class="content">
+<pre># @see https://docs.min.io/docs/minio-multi-user-quickstart-guide.html</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="nfs"><a class="anchor" href="#nfs"></a>6.2.9. NFS</h4>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre>yum install -y nfs-utils
+mkdir -p /data/nfs
+chmod 755 /data/nfs
+
+mkdir -p /data/nfs/
+
+vi /etc/exports
+-
+/data/nfs     *(rw,sync,no_root_squash,no_all_squash)
+-
+
+systemctl enable rpcbind
+systemctl enable nfs-server
+systemctl start rpcbind
+systemctl start nfs-server
+
+showmount -e localhost</pre>
+</div>
+</div>
+<div class="quoteblock">
+<div class="title">常见问题</div>
+<blockquote>
+<div class="paragraph">
+<p>Kubernetes使用NFS做为PV时报 <code>kubernetes mount: wrong fs type, bad option, bad superblock</code></p>
+</div>
+</blockquote>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>各节点执行 yum install -y nfs-utils</pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="内置image与chart"><a class="anchor" href="#内置image与chart"></a>7.3. 内置Image与Chart</h3>
+<h3 id="内置image与chart"><a class="anchor" href="#内置image与chart"></a>6.3. 内置Image与Chart</h3>
 <div class="sect3">
-<h4 id="dew_docker_image_集成kubectl与helm"><a class="anchor" href="#dew_docker_image_集成kubectl与helm"></a>7.3.1. Dew Docker Image : 集成Kubectl与Helm</h4>
+<h4 id="dew_docker_image_集成kubectl与helm"><a class="anchor" href="#dew_docker_image_集成kubectl与helm"></a>6.3.1. Dew Docker Image : 集成Kubectl与Helm</h4>
 <div class="paragraph">
 <p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 直接使用docker hub镜像或手工打包：
+<pre># 直接使用docker hub镜像或手工打包：
 docker build -t dewms/k8s-native-client .
 
 # 测试
@@ -4990,18 +5652,18 @@ echo -n $KUBE_CONFIG | base64 -d &gt; $HOME/.kube/config
 kubectl version
 # 正确显示helm信息（如果存在的话）
 helm list
--</code></pre>
+-</pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="dew_docker_image_集成ci_cd能力"><a class="anchor" href="#dew_docker_image_集成ci_cd能力"></a>7.3.2. Dew Docker Image : 集成CI/CD能力</h4>
+<h4 id="dew_docker_image_集成ci_cd能力"><a class="anchor" href="#dew_docker_image_集成ci_cd能力"></a>6.3.2. Dew Docker Image : 集成CI/CD能力</h4>
 <div class="paragraph">
 <p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 直接使用docker hub镜像或手工打包：
+<pre># 直接使用docker hub镜像或手工打包：
 docker build -t dewms/devops .
 
 # 测试
@@ -5015,18 +5677,18 @@ mvn -version
 node -v
 # 正确显示NPM版本
 npm version
--</code></pre>
+-</pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="dew_docker_image_spring_cloud_config"><a class="anchor" href="#dew_docker_image_spring_cloud_config"></a>7.3.3. Dew Docker Image : Spring Cloud Config</h4>
+<h4 id="dew_docker_image_spring_cloud_config"><a class="anchor" href="#dew_docker_image_spring_cloud_config"></a>6.3.3. Dew Docker Image : Spring Cloud Config</h4>
 <div class="paragraph">
 <p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 直接使用docker hub镜像或手工打包：
+<pre># 直接使用docker hub镜像或手工打包：
 docker build -t dewms/spring-cloud-config .
 
 # 运行示例
@@ -5034,19 +5696,19 @@ docker run -d --name dew-spring-cloud-config \
     -p 8080:8080 \
     -e spring.profiles.active=prod \
     -v /opt/config:/config \
-    dewms/spring-cloud-config</code></pre>
+    dewms/spring-cloud-config</pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="dew_helm_chart_spring_cloud_config"><a class="anchor" href="#dew_helm_chart_spring_cloud_config"></a>7.3.4. Dew Helm Chart : Spring Cloud Config</h4>
+<h4 id="dew_helm_chart_spring_cloud_config"><a class="anchor" href="#dew_helm_chart_spring_cloud_config"></a>6.3.4. Dew Helm Chart : Spring Cloud Config</h4>
 <div class="paragraph">
 <p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
 </div>
 <div class="listingblock">
 <div class="title">使用</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 0. 添加库
+<pre># 0. 添加库
 helm repo add helm-dew-spring-cloud-config https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/chart/dew-spring-cloud-config/
 
 # 1. 安装
@@ -5057,7 +5719,7 @@ helm install helm-dew-spring-cloud-config/dew-spring-cloud-config --name dew-spr
 curl http://dew:override@config.dew.ms/encrypt -d abc
 
 # 3. 修改配置，比如加入git设置
-kubectl -n devops edit cm custom-config</code></pre>
+kubectl -n devops edit cm custom-config</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -5070,12 +5732,130 @@ git add --all</code></pre>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="支持的ci_cd服务"><a class="anchor" href="#支持的ci_cd服务"></a>6.4. 支持的CI/CD服务</h3>
+<div class="sect3">
+<h4 id="dew_ci_cd_gitlab_ci_实现"><a class="anchor" href="#dew_ci_cd_gitlab_ci_实现"></a>6.4.1. Dew CI/CD : Gitlab CI 实现</h4>
+<div class="paragraph">
+<p>此为Gitlab CI上的 CI/CD 处理，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+</div>
+<div class="olist arabic">
+<div class="title">前置准备</div>
+<ol class="arabic">
+<li>
+<p>创建Gitlab项目</p>
+</li>
+<li>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的各个环境（详见 <a href="#devops-user-manual">DevOps使用手册[TBD]</a>）</p>
+</li>
+<li>
+<p>在项目代码中添加并配置 <code>.dew</code> 文件（详见 <a href="#devops-user-manual">DevOps使用手册[TBD]</a>）</p>
+</li>
+</ol>
+</div>
+<div class="olist arabic">
+<div class="title">核心流程</div>
+<ol class="arabic">
+<li>
+<p>确认Gitlab中的项目已启用CI
+（勾选 <a href="https://&lt;Gitlab" class="bare">https://&lt;Gitlab</a> Host&gt;/&lt;Group&gt;/&lt;Project&gt;/settings/ci_cd 中的 <code>Default to Auto DevOps pipeline</code>），</p>
+</li>
+<li>
+<p>配置 <code>.gitlab-ci.yml</code>，配置参见 <code>devops/cicd/gilabci/.gitlab-ci-template.yml</code></p>
+</li>
+<li>
+<p>添加 <code>.gitlab-ci.yml</code> 到项目代码根目录</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="title">gitlab-ci-template.yml</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">#
+# Copyright 2019. the original author or authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# ======================================================
+
+# 此为 Gitlab CI的模板文件
+# 各配置说明见 https://docs.gitlab.com/ee/ci/yaml/
+
+# ======================================================
+
+# 要执行的Stages
+# Dew 推荐只创建一个名为deploy的Stages，因为Dew的 devops-maven-plugin 已高度集成了CI/CD流程
+stages:
+  - deploy
+
+# 缓存目录，必须添加
+cache:
+  paths:
+    # node项目必须添加
+    - node_modules/
+    # 所有项目必须添加（因为dew将所有类型的工程都视为maven项目，包含前端工程）
+    - .m2/
+
+# 不同环境的部署配置，各环境执行的操作一致，但触发的 branch 及 调用的 Runner 不同
+
+# 测试环境部署
+test deploy:
+  stage: deploy
+  only:
+    # 触发构建的 branch 名称
+    - test
+  tags:
+    # 调用的 runner 名称，需要与 Gitlab CI Runner的Tag匹配
+    - test
+  script:
+    # 执行的操作，可以扩展，但要保留以下代码
+    - mvn -P devops dew:build dew:release
+    # 可在此处添加代理
+    # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.ms" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.ms"
+
+# 仿真/预发环境部署
+uat deploy:
+  stage: deploy
+  only:
+    - uat
+  tags:
+    - uat
+  script:
+    - mvn -P devops dew:build dew:release
+
+prod deploy: # 生产环境部署
+  stage: deploy
+  only:
+    # 触发构建的 branch 名称
+    - prod
+  tags:
+    # 调用的 runner 名称，需要与 Gitlab CI Runner的Tag匹配
+    - prod
+  script:
+    # 执行的操作，可以扩展，但要保留以下代码
+    - mvn -P devops dew:build dew:release
+    # 可在此处添加代理
+    # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.ms" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.ms"</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-03-15 11:56:18 CST
+Last updated 2019-04-12 17:34:13 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

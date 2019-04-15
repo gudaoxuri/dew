@@ -5,7 +5,6 @@ metadata:
     dew.ms/git-commit: '0001'
     dew.ms/scm-url: ''
     prometheus.io/port: '9779'
-    inject-jaeger-agent: 'true'
     prometheus.io/scrape: 'true'
     sidecar.jaegertracing.io/inject: 'true'
   labels:
