@@ -2,10 +2,11 @@ FROM maven:3.6-jdk-8
 
 # ----------------- Add git client
 
-RUN apk add --no-cache git
+RUN apt-get install git
 
 # ----------------- Add node
-RUN apk add --no-cache nodejs nodejs-npm
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
+    && apt-get install -y nodejs
 
 # Use a custom settings.xml file
 # "/opt/maven/settings.xml" will be mounted by kubernetes ConfigMap in the CI/CD process
