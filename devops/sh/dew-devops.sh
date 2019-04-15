@@ -668,7 +668,7 @@ install_gitlab_runner_project(){
     press_enter_continue
 
     echo
-    read -n1 -e -p "# If you need to configure the Maven setting.xml? [Y/N] " answer_maven_setting
+    read -n1 -e -p "# If you need to configure the Maven settings.xml? [Y/N] " answer_maven_setting
     while [[ "${answer_maven_setting}" == "" ]]; do
         read -e -n1 -p "Please answer [Y/N]: " answer_maven_setting
     done
