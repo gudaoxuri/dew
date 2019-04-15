@@ -37,6 +37,7 @@ import java.util.List;
  * Dew Servlet拦截器.
  *
  * @author gudaoxuri
+ * @author gjason
  */
 public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
 

@@ -30,6 +30,7 @@ import java.util.Map;
  * Dew 核心配置.
  *
  * @author gudaoxuri
+ * @author gjason
  */
 @ConfigurationProperties(prefix = "dew")
 public class DewConfig {
@@ -891,7 +892,7 @@ public class DewConfig {
         }
 
         /**
-         * URL Router
+         * URL Router.
          */
         public static class Router {
 

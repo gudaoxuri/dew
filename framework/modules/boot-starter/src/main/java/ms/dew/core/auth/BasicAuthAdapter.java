@@ -28,6 +28,7 @@ import java.util.Optional;
  * 基础登录鉴权适配器.
  *
  * @author gudaoxuri
+ * @author gjason
  */
 public class BasicAuthAdapter implements AuthAdapter {
 
