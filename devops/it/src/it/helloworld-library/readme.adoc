@@ -15,7 +15,7 @@ include::.dew[]
 ----
 # 执行如下maven命令(发布到test环境)
 mvn -P devops dew:build dew:release -Ddew.devops.profile=test \
-    -Ddew.devops.it.snapshotRepository.id=<私库Id，如私库需要认证则此Id对应的认证信息要添加到 setting.xml中> \
+    -Ddew.devops.it.snapshotRepository.id=<私库Id，如私库需要认证则此Id对应的认证信息要添加到 settings.xml中> \
     -Ddew.devops.it.snapshotRepository.url=<私库Url> \
 ----
 

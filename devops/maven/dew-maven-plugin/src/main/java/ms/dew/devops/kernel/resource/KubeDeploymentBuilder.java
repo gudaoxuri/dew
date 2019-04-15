@@ -55,7 +55,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         selectorLabels.remove("version");
         selectorLabels.remove("provider");
 
-        V1ContainerBuilder containerBuilder = null;
+        V1ContainerBuilder containerBuilder;
         switch (config.getKind()) {
             case JVM_SERVICE:
                 containerBuilder = new V1ContainerBuilder()
@@ -135,6 +135,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                                         .build())
                                 .withSpec(new V1PodSpecBuilder()
                                         .withContainers(containerBuilder.build())
+                                        .withNodeSelector(config.getApp().getNodeSelector())
                                         .build())
                                 .build())
                         .build())

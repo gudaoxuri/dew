@@ -30,10 +30,12 @@ spec:
         group: ms.dew.devops.it
     spec:
       containers:
-      - image: harbor.dew.env/dew-prod/todo-frontend:0001
+      - image: harbor.trc.com/dew-prod/todo-frontend:0001
         imagePullPolicy: IfNotPresent
         name: dew-app
         ports:
         - containerPort: 80
           name: http
           protocol: TCP
+      nodeSelector:
+        group: app

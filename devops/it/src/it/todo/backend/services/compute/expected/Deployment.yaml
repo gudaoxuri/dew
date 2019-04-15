@@ -4,7 +4,6 @@ metadata:
   annotations:
     dew.ms/git-commit: '0001'
     dew.ms/scm-url: https://github.com/gudaoxuri/dew.git
-    inject-jaeger-agent: 'true'
     sidecar.jaegertracing.io/inject: 'true'
   labels:
     app: todo-compute
@@ -25,7 +24,6 @@ spec:
       annotations:
         dew.ms/git-commit: '0001'
         dew.ms/scm-url: https://github.com/gudaoxuri/dew.git
-        inject-jaeger-agent: 'true'
         sidecar.jaegertracing.io/inject: 'true'
       labels:
         app: todo-compute
@@ -41,7 +39,7 @@ spec:
             -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:+CMSClassUnloadingEnabled
             -XX:+ParallelRefProcEnabled -XX:+CMSScavengeBeforeRemark -XX:+HeapDumpOnOutOfMemoryError
             -Dspring.profiles.active=prod
-        image: harbor.dew.env/dew-prod/todo-compute:0001
+        image: harbor.trc.com/dew-prod/todo-compute:0001
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 6
@@ -67,3 +65,5 @@ spec:
             scheme: HTTP
           initialDelaySeconds: 10
           periodSeconds: 60
+      nodeSelector:
+        group: app
