@@ -35,10 +35,12 @@
     </properties>
 
     <dependencies>
+        <!-- 引用 cloud-starter 实现分布式能力  -->
         <dependency>
             <groupId>ms.dew</groupId>
             <artifactId>cloud-starter</artifactId>
         </dependency>
+        <!-- 添加JPA支持  -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>

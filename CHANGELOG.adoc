@@ -284,8 +284,6 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 
 * 整合 `Spring boot admin` 与 `Turbine`，可直观的监控各个性能及访问指标
 
-image::./images/spring-boot-admin.png[]
-
 * 添加实验功能：使用注解自定义查询（ `@Select` ）
 
 .Improvement

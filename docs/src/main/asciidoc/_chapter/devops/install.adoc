@@ -116,6 +116,32 @@ systemctl restart docker
 systemctl enable docker
 ----
 
+dew-maven-plugin 需要调用 docker 服务，推荐使用独立的一个Docker节点，暴露 DockerD 服务。
+
+.暴露DOCKER_HOST
+----
+# 详见 https://docs.docker.com/config/daemon/
+
+mkdir -p /etc/systemd/system/docker.service.d/
+vi /etc/systemd/system/docker.service.d/docker.conf
+-
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd
+-
+vi /etc/docker/daemon.json
+-
+{
+  "hosts":[
+    "unix:///var/run/docker.sock",
+    "tcp://0.0.0.0:2375"
+  ]
+}
+systemctl daemon-reload
+systemctl restart docker
+-
+----
+
 ==== Kubernetes
 
 TIP: https://kubernetes.io/docs/setup/independent/install-kubeadm/

@@ -20,9 +20,12 @@ import org.springframework.cloud.client.SpringCloudApplication;
 
 /**
  * To-do parent application.
+ * <p>
+ * 空实现，做为所有组件启动类的父类
  *
  * @author gudaoxuri
  */
+// 启用 Spring Cloud 能力
 @SpringCloudApplication
 public class TodoParentApplication {
 
