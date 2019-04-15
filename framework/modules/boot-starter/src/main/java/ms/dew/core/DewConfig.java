@@ -869,6 +869,9 @@ public class DewConfig {
             }
         }
 
+        /**
+         * URL Router
+         */
         public static class Router {
 
             private boolean enabled = false;
@@ -891,6 +894,7 @@ public class DewConfig {
             public void setEnabled(boolean enabled) {
                 this.enabled = enabled;
             }
+
             /**
              * Get black url list
              *

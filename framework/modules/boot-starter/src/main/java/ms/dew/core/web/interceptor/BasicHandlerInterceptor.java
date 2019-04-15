@@ -75,7 +75,9 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
         // 请求黑名单拦截
         if (Dew.dewConfig.getSecurity().getRouter().isEnabled()
                 && blackRequest(request.getMethod(), request.getRequestURI())) {
-            ErrorController.error(request, response, 403, String.format("The current[%S][%s] request is not allowed", request.getRequestURI(), request.getMethod()), AuthException.class.getName());
+            ErrorController.error(request, response, 403,
+                    String.format("The current[%S][%s] request is not allowed",
+                            request.getRequestURI(), request.getMethod()), AuthException.class.getName());
             return false;
         }
         DewContext context = new DewContext();
@@ -92,18 +94,18 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
         return super.preHandle(request, response, handler);
     }
 
-
     /**
-     * 黑名单
+     * 黑名单.
      *
      * @param method     Request method
      * @param requestUri URL
      */
     public boolean blackRequest(String method, String requestUri) {
-        /**
-         * 兼容requestUri末尾包含/的情况
+
+        /*
+          兼容requestUri末尾包含/的情况
          */
-        String reqUri = requestUri.replaceAll("/+$", "");
+        final String reqUri = requestUri.replaceAll("/+$", "");
         method = method.toLowerCase();
         if (method.equalsIgnoreCase(HttpMethod.OPTIONS.name())) {
             return false;
