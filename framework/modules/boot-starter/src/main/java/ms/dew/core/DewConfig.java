@@ -820,12 +820,10 @@ public class DewConfig {
          * Sets expiration.
          *
          * @param optExpiration the expiration
-         * @return the expiration
          */
         public void setOptExpiration(long optExpiration) {
             this.optExpiration = optExpiration;
         }
-
 
 
         /**
@@ -919,7 +917,7 @@ public class DewConfig {
             }
 
             /**
-             * Get black url list
+             * Get black url list.
              *
              * @return Map The request url method with black urls
              */
