@@ -28,6 +28,7 @@ import java.util.Optional;
  * 基础登录鉴权适配器.
  *
  * @author gudaoxuri
+ * @author gjason
  */
 public class BasicAuthAdapter implements AuthAdapter {
 
@@ -58,8 +59,8 @@ public class BasicAuthAdapter implements AuthAdapter {
     @Override
     public <E extends OptInfo> void setOptInfo(E optInfo) {
         Dew.cluster.cache.del(TOKEN_INFO_FLAG + Dew.cluster.cache.get(TOKEN_ID_REL_FLAG + optInfo.getAccountCode()));
-        Dew.cluster.cache.set(TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), optInfo.getToken());
-        Dew.cluster.cache.set(TOKEN_INFO_FLAG + optInfo.getToken(), $.json.toJsonString(optInfo));
+        Dew.cluster.cache.setex(TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), optInfo.getToken(), Dew.dewConfig.getSecurity().getOptExpiration());
+        Dew.cluster.cache.setex(TOKEN_INFO_FLAG + optInfo.getToken(), $.json.toJsonString(optInfo), Dew.dewConfig.getSecurity().getOptExpiration());
     }
 
 }

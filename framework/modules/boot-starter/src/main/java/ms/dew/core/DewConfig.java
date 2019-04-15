@@ -22,12 +22,15 @@ import ms.dew.notification.NotifyConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Dew 核心配置.
  *
  * @author gudaoxuri
+ * @author gjason
  */
 @ConfigurationProperties(prefix = "dew")
 public class DewConfig {
@@ -710,6 +713,10 @@ public class DewConfig {
 
         private boolean tokenHash = false;
 
+        private Router router = new Router();
+
+        private long optExpiration = 86400L;
+
         /**
          * Gets cors.
          *
@@ -782,6 +789,44 @@ public class DewConfig {
             this.tokenHash = tokenHash;
         }
 
+
+        /**
+         * Get route urls.
+         *
+         * @return the Router
+         */
+        public Router getRouter() {
+            return router;
+        }
+
+        /**
+         * Sets route urls.
+         *
+         * @param router the router info
+         */
+        public void setRouter(Router router) {
+            this.router = router;
+        }
+
+        /**
+         * Gets optExpiration.
+         *
+         * @return the expiration
+         */
+        public long getOptExpiration() {
+            return optExpiration;
+        }
+
+        /**
+         * Sets expiration.
+         *
+         * @param optExpiration the expiration
+         */
+        public void setOptExpiration(long optExpiration) {
+            this.optExpiration = optExpiration;
+        }
+
+
         /**
          * Security cors.
          */
@@ -843,6 +888,51 @@ public class DewConfig {
              */
             public void setAllowHeaders(String allowHeaders) {
                 this.allowHeaders = allowHeaders;
+            }
+        }
+
+        /**
+         * URL Router.
+         */
+        public static class Router {
+
+            private boolean enabled = false;
+            private Map<String, List<String>> blackUri = new LinkedHashMap<>();
+
+            /**
+             * Is enabled boolean.
+             *
+             * @return the boolean
+             */
+            public boolean isEnabled() {
+                return enabled;
+            }
+
+            /**
+             * Sets enabled.
+             *
+             * @param enabled the enabled
+             */
+            public void setEnabled(boolean enabled) {
+                this.enabled = enabled;
+            }
+
+            /**
+             * Get black uri list.
+             *
+             * @return Map The request url method with black urs
+             */
+            public Map<String, List<String>> getBlackUri() {
+                return blackUri;
+            }
+
+            /**
+             * Sets black uris.
+             *
+             * @param blackUri black uri list
+             */
+            public void setBlackUri(Map<String, List<String>> blackUri) {
+                this.blackUri = blackUri;
             }
         }
 
