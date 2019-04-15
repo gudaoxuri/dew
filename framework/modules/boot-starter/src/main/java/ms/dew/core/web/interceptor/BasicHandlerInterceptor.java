@@ -110,12 +110,13 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
         if (method.equalsIgnoreCase(HttpMethod.OPTIONS.name())) {
             return false;
         }
-        final String MATCHER = "*";
+        final String matcher = "*";
         final List<String> blacks = Dew.dewConfig.getSecurity().getRouter().getBlack().getOrDefault(method, new ArrayList<>());
         if (logger.isDebugEnabled()) {
             logger.debug("the black apis are {}", $.json.toJsonString(blacks));
         }
-        return blacks.stream().anyMatch(uri -> uri.indexOf(MATCHER) > 0)
-                && (blacks.stream().anyMatch(uri -> pathMatcher.match(uri, reqUri)) || blacks.stream().anyMatch(reqUri::startsWith));
+        return (blacks.stream().anyMatch(uri -> uri.contains(matcher))
+                && blacks.stream().anyMatch(uri -> pathMatcher.match(uri, reqUri)))
+                || blacks.stream().anyMatch(reqUri::startsWith);
     }
 }

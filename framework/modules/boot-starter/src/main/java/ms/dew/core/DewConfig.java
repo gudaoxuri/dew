@@ -714,6 +714,8 @@ public class DewConfig {
 
         private Router router = new Router();
 
+        private long optExpiration = 86400L;
+
         /**
          * Gets cors.
          *
@@ -804,6 +806,27 @@ public class DewConfig {
         public void setRouter(Router router) {
             this.router = router;
         }
+
+        /**
+         * Gets optExpiration.
+         *
+         * @return the expiration
+         */
+        public long getOptExpiration() {
+            return optExpiration;
+        }
+
+        /**
+         * Sets expiration.
+         *
+         * @param optExpiration the expiration
+         * @return the expiration
+         */
+        public void setOptExpiration(long optExpiration) {
+            this.optExpiration = optExpiration;
+        }
+
+
 
         /**
          * Security cors.
