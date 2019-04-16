@@ -39,6 +39,7 @@
             <groupId>ms.dew.devops.it</groupId>
             <artifactId>todo-common</artifactId>
         </dependency>
+        <!-- 引用 cluster-spi-redis 实现Dew集群能力的Redis实现 -->
         <dependency>
             <groupId>ms.dew</groupId>
             <artifactId>cluster-spi-redis</artifactId>
@@ -46,7 +47,7 @@
         <dependency>
             <groupId>ms.dew</groupId>
             <artifactId>test-starter</artifactId>
-            <!--仅用于演示-->
+            <!--仅用于演示， 启用内嵌的Redis及 H2-->
             <scope>compile</scope>
         </dependency>
     </dependencies>

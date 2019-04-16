@@ -1,0 +1,278 @@
+ifndef::imagesdir[:imagesdir: ../../../../../]
+
+[[framework-user-manual]]
+=== 框架快速入门
+
+NOTE: 本文以 To-Do 项目为示例讲解 ``Dew`` 框架部分的入门操作，项目地址： https://github.com/dew-ms/devops-exmaple-todo 。
+
+==== 需求分析
+
+To-Do项目实现一个简单的任务记录功能，要求支持：
+
+. 对任务的添加、删除，任务列表的查看等基础功能
+. 加入类似Excel的公式计算能力，所有以 ``=`` 号开头的任务均被视为计算公式，输入后返回计算后的值，
+例如输入 ``=1024*1024`` 返回``1048576``
+. 终端支持H5、微信小程序等平台
+
+==== 功能体验
+
+TIP: 体验环境要求安装 Java(>=8)、Maven、NodeJS(>=8)
+
+----
+git clone https://github.com/dew-ms/devops-exmaple-todo.git
+cd devops-exmaple-todo
+# 先执行安装
+mvn install -Dmaven.test.skip=true
+# 打开两个命令窗口分别启动两个组件（各组件的作用后文会说明）
+mvn spring-boot:run -pl backend/services/kernel
+mvn spring-boot:run -pl backend/services/compute
+# 打开新的命令窗口，启动前端
+cd frontend && npm install && npm run dev:h5
+# 自动打开浏览器，切换到移动模式体验
+----
+
+image::./images/todo-demo.gif[]
+
+==== 模块设计
+
+此程序比较简单，核心能力由 ``kernel`` 组件提供，
+考虑到公式计算对CPU的要求较高，所以独立成 ``compute`` 组件，由 ``kernel`` 发起调用，同时这也演示了服务间Rest调用。
+另外程序添加 ``notifier`` 组件，所有操作都可发起通知，用于演示MQ调用。
+三个组件共用的代码放在 ``common`` 模块中。
+
+为兼容不同终端，前端使用``taro`` 框架。
+
+目录结构如下：
+
+----
+|- backend                  // 后端服务
+|-  |- libraries            // 类库
+|-  |-  |- common           // 公共模块，三个服务组件都依赖于此
+|-  |- services             // 服务组件
+|-  |-  |- kernel           // 核心服务，与前端交互的唯一入口
+|-  |-  |- compute          // 公式计算服务，由kernel通过Rest调用
+|-  |-  |- notifier         // 通知服务，由kernel通过MQ调用
+|- frontend                 // 前端
+|- pom.xml                  // 父Pom
+----
+
+==== 核心代码说明
+
+NOTE: 这里只关注后端的实现，前端代码不展开说明。
+
+[source,xml]
+.pom.xml
+----
+<!-- 引用 Dew的 parent-starter -->
+<parent>
+    <groupId>ms.dew</groupId>
+    <artifactId>parent-starter</artifactId>
+    <version>...</version>
+</parent>
+
+<!-- ... -->
+----
+
+[source,xml]
+.backend/libraries/common/pom.xml
+----
+<!-- ... -->
+
+<dependencies>
+    <!-- 引用 cloud-starter 实现分布式能力  -->
+    <dependency>
+        <groupId>ms.dew</groupId>
+        <artifactId>cloud-starter</artifactId>
+    </dependency>
+    <!-- 添加JPA支持  -->
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+</dependencies>
+
+<!-- ... -->
+----
+
+[source,xml]
+.backend/services/kernel/pom.xml
+----
+<!-- ... -->
+
+    <dependencies>
+        <dependency>
+            <groupId>ms.dew.devops.it</groupId>
+            <artifactId>todo-common</artifactId>
+        </dependency>
+        <!-- 引用 cluster-spi-redis 实现Dew集群能力的Redis实现 -->
+        <dependency>
+            <groupId>ms.dew</groupId>
+            <artifactId>cluster-spi-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ms.dew</groupId>
+            <artifactId>test-starter</artifactId>
+            <!--仅用于演示， 启用内嵌的Redis及 H2-->
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
+
+<!-- ... -->
+----
+
+[source,yaml]
+.backend/services/kernel/resources/bootstrap.yml
+----
+dew:
+  cluster:
+    mq: redis # 使用Redis做为Dew集群的MQ实现
+
+# ...
+----
+
+[source,yaml]
+.backend/services/kernel/resources/bootstrap-default.yml
+----
+spring:
+  cloud:
+    config:
+      enabled: false  # 关闭统一配置
+    kubernetes:
+      ribbon:
+        enabled: false # 关闭ribbon
+  redis: # Redis配置
+    host: localhost
+    port: 6379
+    database: 0
+  datasource: # DB配置
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+
+todo-compute:
+  ribbon: # 使用自定义ribbon列表
+    listOfServers: localhost:8082
+
+# ...
+----
+
+[source,java]
+.backend/libraries/common/ms.dew.devops.it.todo.common.TodoParentApplication.java
+----
+/**
+ * 空实现，做为所有组件启动类的父类
+ */
+// 启用 Spring Cloud 能力
+@SpringCloudApplication
+public class TodoParentApplication {
+
+}
+----
+
+[source,xml]
+.backend/services/kernel/ms.dew.devops.it.todo.kernel.TodoKernelApplication.java
+----
+// 继承自TodoParentApplication
+public class TodoKernelApplication extends TodoParentApplication {
+
+    // 启动类
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(TodoKernelApplication.class).run(args);
+    }
+
+}
+----
+
+[source,java]
+.backend/services/kernel/ms.dew.devops.it.todo.kernel.controller.TodoController.java
+----
+@RestController
+// Swagger文档注解
+@Api("TODO示例")
+@RequestMapping("/api")
+public class TodoController {
+
+    @Autowired
+    private TodoService todoService;
+
+    /**
+     * Add int.
+     *
+     * @param content the content
+     * @return the int
+     */
+    @PostMapping("")
+    @ApiOperation(value = "添加Todo记录")
+    public Todo add(@RequestBody String content) {
+        return todoService.add(content);
+    }
+
+    // ...
+
+}
+----
+
+[source,java]
+.backend/services/kernel/ms.dew.devops.it.todo.kernel.service.TodoService.java
+----
+@Service
+public class TodoService {
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    /**
+     * Add int.
+     *
+     * @param content the content
+     * @return id int
+     */
+    public Todo add(String content) {
+        if (content.trim().startsWith("=")) {
+            // 去掉 = 号
+            content = content.trim().substring(1);
+            // 此为幂等修改操作，故使用 put 方法
+            // restTemplate 的 put 方法没有返回值，只能使用此方式
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.TEXT_PLAIN);
+            HttpEntity<String> entity = new HttpEntity<>(content, headers);
+            // 使用Spring的 restTemplate 实现服务间 rest 调用
+            content = restTemplate
+                    .exchange("http://" + Constants.REST_COMPUTE_SERVICE + "/compute", HttpMethod.PUT, entity, String.class)
+                    .getBody();
+        }
+        ...
+        // 使用Dew的集群MQ功能实现消息点对点发送
+        Dew.cluster.mq.request(Constants.MQ_NOTIFY_TODO_ADD, $.json.toJsonString(todo));
+        return todo;
+    }
+
+    // ...
+}
+----
+
+[source,java]
+.backend/services/notifier/ms.dew.devops.it.todo.notifier.controller.NotifierController.java
+----
+@RestController
+public class NotifierController {
+
+    private static final Logger logger = LoggerFactory.getLogger(NotifierController.class);
+
+    @PostConstruct
+    public void processTodoAddEvent() {
+        // 使用Dew的集群MQ功能实现消息点对点接收
+        Dew.cluster.mq.response(Constants.MQ_NOTIFY_TODO_ADD, todo -> {
+            logger.info("Received add todo event :" + todo);
+        });
+    }
+
+    // ...
+}
+----
+
+
+
+
+
+
+

@@ -43,6 +43,10 @@ dew:
     token-flag: _token_
     token-in-header: true
     token-hash: false
+    router:
+      enabled: true
+      blackUri:
+        post: ["/auth/register/*","/auth/re?","/user/**","/tes{t}"]
 
 spring:
   application:

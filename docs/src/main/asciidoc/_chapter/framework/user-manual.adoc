@@ -1,9 +1,9 @@
 [[framework-user-manual]]
 === 框架使用手册[TBD]
 
-NOTE: `Dew` 框架部分是对 ``Spring Boot/Cloud`` 的扩展，使用之前务必了解相关框架的基础知识。
+NOTE: ``Dew`` 框架部分是对 ``Spring Boot/Cloud`` 的扩展，使用之前务必了解相关框架的基础知识。
 
-IMPORTANT: 本手册只介绍``Dew``框架部分的扩展功能！
+IMPORTANT: 本手册只介绍 ``Dew`` 框架部分的扩展功能！
 
 ==== 结构说明
 

@@ -22,7 +22,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.6.1">
 <meta name="author" content="v2.0.0-SNAPSHOT">
-<title>Dew（轻量微服务体系）[2.x Building&#8230;&#8203;]</title>
+<title>Dew:一站式微服务解决方案 [2.x Building&#8230;&#8203;]</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -445,7 +445,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
-<h1>Dew（轻量微服务体系）[2.x Building&#8230;&#8203;]</h1>
+<h1>Dew:一站式微服务解决方案 [2.x Building&#8230;&#8203;]</h1>
 <div class="details">
 <span id="author" class="author">v2.0.0-SNAPSHOT</span><br>
 </div>
@@ -466,32 +466,40 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#架构设计_architecture_chapter">2. 架构设计 Architecture Chapter</a></li>
 <li><a href="#编码开发_framework_chapter">3. 编码开发 Framework Chapter</a>
 <ul class="sectlevel2">
-<li><a href="#framework-user-manual">3.1. 框架使用手册[TBD]</a>
+<li><a href="#framework-user-manual">3.1. 框架快速入门[TBD]</a>
 <ul class="sectlevel3">
-<li><a href="#结构说明">3.1.1. 结构说明</a></li>
-<li><a href="#功能模块">3.1.2. 功能模块</a></li>
-<li><a href="#核心功能">3.1.3. 核心功能</a></li>
-<li><a href="#工程化">3.1.4. 工程化</a></li>
+<li><a href="#需求分析">3.1.1. 需求分析</a></li>
+<li><a href="#功能体验">3.1.2. 功能体验</a></li>
+<li><a href="#模块设计">3.1.3. 模块设计</a></li>
+<li><a href="#核心代码说明">3.1.4. 核心代码说明</a></li>
 </ul>
 </li>
-<li><a href="#framework-configuration">3.2. 框架配置速查[TBD]</a>
+<li><a href="#framework-user-manual">3.2. 框架使用手册[TBD]</a>
 <ul class="sectlevel3">
-<li><a href="#code_dew_code_参数">3.2.1. <code>Dew</code> 参数</a></li>
-<li><a href="#code_spring_boot_code_核心参数">3.2.2. <code>Spring boot</code> 核心参数</a></li>
-<li><a href="#code_spring_cloud_code_核心参数">3.2.3. <code>Spring cloud</code> 核心参数</a></li>
+<li><a href="#结构说明">3.2.1. 结构说明</a></li>
+<li><a href="#功能模块">3.2.2. 功能模块</a></li>
+<li><a href="#核心功能">3.2.3. 核心功能</a></li>
+<li><a href="#工程化">3.2.4. 工程化</a></li>
 </ul>
 </li>
-<li><a href="#framework-best-practices">3.3. 框架最佳实践[TBD]</a>
+<li><a href="#framework-configuration">3.3. 框架配置速查[TBD]</a>
 <ul class="sectlevel3">
-<li><a href="#服务调用开发期使用">3.3.1. 服务调用开发期使用</a></li>
-<li><a href="#code_validated_code_注解">3.3.2. <code>@Validated</code> 注解</a></li>
-<li><a href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据">3.3.3. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</a></li>
-<li><a href="#断路保护">3.3.4. 断路保护</a></li>
-<li><a href="#定时任务">3.3.5. 定时任务</a></li>
-<li><a href="#主要性能影响参数">3.3.6. 主要性能影响参数</a></li>
-<li><a href="#缓存处理">3.3.7. 缓存处理</a></li>
-<li><a href="#jdbc_批量插入性能问题">3.3.8. jdbc 批量插入性能问题</a></li>
-<li><a href="#http请求并发数性能瓶颈">3.3.9. http请求并发数性能瓶颈</a></li>
+<li><a href="#code_dew_code_参数">3.3.1. <code>Dew</code> 参数</a></li>
+<li><a href="#code_spring_boot_code_核心参数">3.3.2. <code>Spring boot</code> 核心参数</a></li>
+<li><a href="#code_spring_cloud_code_核心参数">3.3.3. <code>Spring cloud</code> 核心参数</a></li>
+</ul>
+</li>
+<li><a href="#framework-best-practices">3.4. 框架最佳实践[TBD]</a>
+<ul class="sectlevel3">
+<li><a href="#服务调用开发期使用">3.4.1. 服务调用开发期使用</a></li>
+<li><a href="#code_validated_code_注解">3.4.2. <code>@Validated</code> 注解</a></li>
+<li><a href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据">3.4.3. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</a></li>
+<li><a href="#断路保护">3.4.4. 断路保护</a></li>
+<li><a href="#定时任务">3.4.5. 定时任务</a></li>
+<li><a href="#主要性能影响参数">3.4.6. 主要性能影响参数</a></li>
+<li><a href="#缓存处理">3.4.7. 缓存处理</a></li>
+<li><a href="#jdbc_批量插入性能问题">3.4.8. jdbc 批量插入性能问题</a></li>
+<li><a href="#http请求并发数性能瓶颈">3.4.9. http请求并发数性能瓶颈</a></li>
 </ul>
 </li>
 </ul>
@@ -830,7 +838,329 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="编码开发_framework_chapter"><a class="anchor" href="#编码开发_framework_chapter"></a>3. 编码开发 Framework Chapter</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="framework-user-manual"><a class="anchor" href="#framework-user-manual"></a>3.1. 框架使用手册[TBD]</h3>
+<h3 id="framework-user-manual"><a class="anchor" href="#framework-user-manual"></a>3.1. 框架快速入门[TBD]</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+本文以 To-Do 项目为示例讲解 <code>Dew</code> 框架部分的入门操作，项目地址： <a href="https://github.com/dew-ms/devops-exmaple-todo" class="bare">https://github.com/dew-ms/devops-exmaple-todo</a> 。
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="需求分析"><a class="anchor" href="#需求分析"></a>3.1.1. 需求分析</h4>
+<div class="paragraph">
+<p>To-Do项目实现一个简单的任务记录功能，要求支持：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>对任务的添加、删除，任务列表的查看等基础功能</p>
+</li>
+<li>
+<p>加入类似Excel的公式计算能力，所有以 <code>=</code> 号开头的任务均被视为计算公式，输入后返回计算后的值，
+例如输入 <code>=1024*1024</code> 返回<code>1048576</code></p>
+</li>
+<li>
+<p>终端支持H5、微信小程序等平台</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="功能体验"><a class="anchor" href="#功能体验"></a>3.1.2. 功能体验</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+体验环境要求安装 Java(&gt;=8)、Maven、NodeJS(&gt;=8)
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>git clone https://github.com/dew-ms/devops-exmaple-todo.git
+cd devops-exmaple-todo
+# 先执行安装
+mvn install -Dmaven.test.skip=true
+# 打开两个命令窗口分别启动两个组件（各组件的作用后文会说明）
+mvn spring-boot:run -pl backend/services/kernel
+mvn spring-boot:run -pl backend/services/compute
+# 打开新的命令窗口，启动前端
+cd frontend &amp;&amp; npm install &amp;&amp; npm run dev:h5
+# 自动打开浏览器，切换到移动模式体验</pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/todo-demo.gif" alt="todo demo">
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="模块设计"><a class="anchor" href="#模块设计"></a>3.1.3. 模块设计</h4>
+<div class="paragraph">
+<p>此程序比较简单，核心能力由 <code>kernel</code> 组件提供，
+考虑到公式计算对CPU的要求较高，所以独立成 <code>compute</code> 组件，由 <code>kernel</code> 发起调用，同时这也演示了服务间Rest调用。
+另外程序添加 <code>notifier</code> 组件，所有操作都可发起通知，用于演示MQ调用。
+三个组件共用的代码放在 <code>common</code> 模块中。</p>
+</div>
+<div class="paragraph">
+<p>为兼容不同终端，前端使用<code>taro</code> 框架。</p>
+</div>
+<div class="paragraph">
+<p>目录结构如下：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>|- backend                  // 后端服务
+|-  |- libraries            // 类库
+|-  |-  |- common           // 公共模块，三个服务组件都依赖于此
+|-  |- services             // 服务组件
+|-  |-  |- kernel           // 核心服务，与前端交互的唯一入口
+|-  |-  |- compute          // 公式计算服务，由kernel通过Rest调用
+|-  |-  |- notifier         // 通知服务，由kernel通过MQ调用
+|- frontend                 // 前端
+|- pom.xml                  // 父Pom</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="核心代码说明"><a class="anchor" href="#核心代码说明"></a>3.1.4. 核心代码说明</h4>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+这里只关注后端的实现，前端代码不展开说明。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;!-- 引用 Dew的 parent-starter --&gt;
+&lt;parent&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
+    &lt;version&gt;...&lt;/version&gt;
+&lt;/parent&gt;
+
+&lt;!-- ... --&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">backend/libraries/common/pom.xml</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;!-- ... --&gt;
+
+&lt;dependencies&gt;
+    &lt;!-- 引用 cloud-starter 实现分布式能力  --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+        &lt;artifactId&gt;cloud-starter&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;!-- 添加JPA支持  --&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;
+
+&lt;!-- ... --&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">backend/services/kernel/pom.xml</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;!-- ... --&gt;
+
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;ms.dew.devops.it&lt;/groupId&gt;
+            &lt;artifactId&gt;todo-common&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;!-- 引用 cluster-spi-redis 实现Dew集群能力的Redis实现 --&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+            &lt;artifactId&gt;cluster-spi-redis&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+            &lt;artifactId&gt;test-starter&lt;/artifactId&gt;
+            &lt;!--仅用于演示， 启用内嵌的Redis及 H2--&gt;
+            &lt;scope&gt;compile&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+
+&lt;!-- ... --&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">backend/services/kernel/resources/bootstrap.yml</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml">dew:
+  cluster:
+    mq: redis # 使用Redis做为Dew集群的MQ实现
+
+# ...</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">backend/services/kernel/resources/bootstrap-default.yml</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml">spring:
+  cloud:
+    config:
+      enabled: false  # 关闭统一配置
+    kubernetes:
+      ribbon:
+        enabled: false # 关闭ribbon
+  redis: # Redis配置
+    host: localhost
+    port: 6379
+    database: 0
+  datasource: # DB配置
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test
+
+todo-compute:
+  ribbon: # 使用自定义ribbon列表
+    listOfServers: localhost:8082
+
+# ...</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">backend/libraries/common/ms.dew.devops.it.todo.common.TodoParentApplication.java</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">/**
+ * 空实现，做为所有组件启动类的父类
+ */
+// 启用 Spring Cloud 能力
+@SpringCloudApplication
+public class TodoParentApplication {
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">backend/services/kernel/ms.dew.devops.it.todo.kernel.TodoKernelApplication.java</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">// 继承自TodoParentApplication
+public class TodoKernelApplication extends TodoParentApplication {
+
+    // 启动类
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(TodoKernelApplication.class).run(args);
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">backend/services/kernel/ms.dew.devops.it.todo.kernel.controller.TodoController.java</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@RestController
+// Swagger文档注解
+@Api("TODO示例")
+@RequestMapping("/api")
+public class TodoController {
+
+    @Autowired
+    private TodoService todoService;
+
+    /**
+     * Add int.
+     *
+     * @param content the content
+     * @return the int
+     */
+    @PostMapping("")
+    @ApiOperation(value = "添加Todo记录")
+    public Todo add(@RequestBody String content) {
+        return todoService.add(content);
+    }
+
+    // ...
+
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">backend/services/kernel/ms.dew.devops.it.todo.kernel.service.TodoService.java</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Service
+public class TodoService {
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    /**
+     * Add int.
+     *
+     * @param content the content
+     * @return id int
+     */
+    public Todo add(String content) {
+        if (content.trim().startsWith("=")) {
+            // 去掉 = 号
+            content = content.trim().substring(1);
+            // 此为幂等修改操作，故使用 put 方法
+            // restTemplate 的 put 方法没有返回值，只能使用此方式
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.TEXT_PLAIN);
+            HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(content, headers);
+            // 使用Spring的 restTemplate 实现服务间 rest 调用
+            content = restTemplate
+                    .exchange("http://" + Constants.REST_COMPUTE_SERVICE + "/compute", HttpMethod.PUT, entity, String.class)
+                    .getBody();
+        }
+        ...
+        // 使用Dew的集群MQ功能实现消息点对点发送
+        Dew.cluster.mq.request(Constants.MQ_NOTIFY_TODO_ADD, $.json.toJsonString(todo));
+        return todo;
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">backend/services/notifier/ms.dew.devops.it.todo.notifier.controller.NotifierController.java</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@RestController
+public class NotifierController {
+
+    private static final Logger logger = LoggerFactory.getLogger(NotifierController.class);
+
+    @PostConstruct
+    public void processTodoAddEvent() {
+        // 使用Dew的集群MQ功能实现消息点对点接收
+        Dew.cluster.mq.response(Constants.MQ_NOTIFY_TODO_ADD, todo -&gt; {
+            logger.info("Received add todo event :" + todo);
+        });
+    }
+
+    // ...
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="framework-user-manual"><a class="anchor" href="#framework-user-manual"></a>3.2. 框架使用手册[TBD]</h3>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -850,13 +1180,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-本手册只介绍<code>Dew</code>框架部分的扩展功能！
+本手册只介绍 <code>Dew</code> 框架部分的扩展功能！
 </td>
 </tr>
 </table>
 </div>
 <div class="sect3">
-<h4 id="结构说明"><a class="anchor" href="#结构说明"></a>3.1.1. 结构说明</h4>
+<h4 id="结构说明"><a class="anchor" href="#结构说明"></a>3.2.1. 结构说明</h4>
 <div class="listingblock">
 <div class="content">
 <pre>此章节关联示例:bone-example</pre>
@@ -944,7 +1274,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect3">
-<h4 id="功能模块"><a class="anchor" href="#功能模块"></a>3.1.2. 功能模块</h4>
+<h4 id="功能模块"><a class="anchor" href="#功能模块"></a>3.2.2. 功能模块</h4>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 50%;">
@@ -1009,7 +1339,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 <div class="sect3">
-<h4 id="核心功能"><a class="anchor" href="#核心功能"></a>3.1.3. 核心功能</h4>
+<h4 id="核心功能"><a class="anchor" href="#核心功能"></a>3.2.3. 核心功能</h4>
 <div class="sect4">
 <h5 id="常用工具集"><a class="anchor" href="#常用工具集"></a>常用工具集</h5>
 <div class="paragraph">
@@ -1950,7 +2280,7 @@ Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "x
 </div>
 </div>
 <div class="sect3">
-<h4 id="工程化"><a class="anchor" href="#工程化"></a>3.1.4. 工程化</h4>
+<h4 id="工程化"><a class="anchor" href="#工程化"></a>3.2.4. 工程化</h4>
 <div class="sect4">
 <h5 id="api文档"><a class="anchor" href="#api文档"></a>API文档</h5>
 <div class="paragraph">
@@ -2117,9 +2447,9 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="framework-configuration"><a class="anchor" href="#framework-configuration"></a>3.2. 框架配置速查[TBD]</h3>
+<h3 id="framework-configuration"><a class="anchor" href="#framework-configuration"></a>3.3. 框架配置速查[TBD]</h3>
 <div class="sect3">
-<h4 id="code_dew_code_参数"><a class="anchor" href="#code_dew_code_参数"></a>3.2.1. <code>Dew</code> 参数</h4>
+<h4 id="code_dew_code_参数"><a class="anchor" href="#code_dew_code_参数"></a>3.3.1. <code>Dew</code> 参数</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">dew: # Dew 参数key前缀
@@ -2222,7 +2552,7 @@ spring:
 </div>
 </div>
 <div class="sect3">
-<h4 id="code_spring_boot_code_核心参数"><a class="anchor" href="#code_spring_boot_code_核心参数"></a>3.2.2. <code>Spring boot</code> 核心参数</h4>
+<h4 id="code_spring_boot_code_核心参数"><a class="anchor" href="#code_spring_boot_code_核心参数"></a>3.3.2. <code>Spring boot</code> 核心参数</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -2237,7 +2567,7 @@ spring:
 </div>
 </div>
 <div class="sect3">
-<h4 id="code_spring_cloud_code_核心参数"><a class="anchor" href="#code_spring_cloud_code_核心参数"></a>3.2.3. <code>Spring cloud</code> 核心参数</h4>
+<h4 id="code_spring_cloud_code_核心参数"><a class="anchor" href="#code_spring_cloud_code_核心参数"></a>3.3.3. <code>Spring cloud</code> 核心参数</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -2253,9 +2583,9 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="framework-best-practices"><a class="anchor" href="#framework-best-practices"></a>3.3. 框架最佳实践[TBD]</h3>
+<h3 id="framework-best-practices"><a class="anchor" href="#framework-best-practices"></a>3.4. 框架最佳实践[TBD]</h3>
 <div class="sect3">
-<h4 id="服务调用开发期使用"><a class="anchor" href="#服务调用开发期使用"></a>3.3.1. 服务调用开发期使用</h4>
+<h4 id="服务调用开发期使用"><a class="anchor" href="#服务调用开发期使用"></a>3.4.1. 服务调用开发期使用</h4>
 <div class="paragraph">
 <p>在 <code>Spring Cloud</code> 体系下，服务调用需要启动 <code>Eureka</code> 服务（对于 <code>Dew</code> 中的 <code>Registry</code> 组件），这对开发阶段并不友好：</p>
 </div>
@@ -2285,7 +2615,7 @@ x-service.ribbon.listOfServers: 127.0.0.1:8812</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code_validated_code_注解"><a class="anchor" href="#code_validated_code_注解"></a>3.3.2. <code>@Validated</code> 注解</h4>
+<h4 id="code_validated_code_注解"><a class="anchor" href="#code_validated_code_注解"></a>3.4.2. <code>@Validated</code> 注解</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2317,7 +2647,7 @@ Spring对抽象数据类型校验抛出异常为<code>MethodArgumentNotValidExce
 </div>
 </div>
 <div class="sect3">
-<h4 id="code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据"><a class="anchor" href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据"></a>3.3.3. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</h4>
+<h4 id="code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据"><a class="anchor" href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据"></a>3.4.3. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -2342,7 +2672,7 @@ Spring对抽象数据类型校验抛出异常为<code>MethodArgumentNotValidExce
 </div>
 </div>
 <div class="sect3">
-<h4 id="断路保护"><a class="anchor" href="#断路保护"></a>3.3.4. 断路保护</h4>
+<h4 id="断路保护"><a class="anchor" href="#断路保护"></a>3.4.4. 断路保护</h4>
 <div class="listingblock">
 <div class="title">Hystrix配置</div>
 <div class="content">
@@ -2431,7 +2761,7 @@ hystrix.threadpool.default.coreSize=10</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="定时任务"><a class="anchor" href="#定时任务"></a>3.3.5. 定时任务</h4>
+<h4 id="定时任务"><a class="anchor" href="#定时任务"></a>3.4.5. 定时任务</h4>
 <div class="paragraph">
 <p>使用 <code>Spring Config</code>  配置中心 <code>refresh</code> 时,在 <code>@RefreshScope</code> 注解的类中, <code>@Scheduled</code> 注解的自动任务会失效。
 建议使用实现 <code>SchedulingConfigurer</code> 接口的方式添加自动任务。</p>
@@ -2462,7 +2792,7 @@ public class SchedulingConfiguration implements SchedulingConfigurer {
 </div>
 </div>
 <div class="sect3">
-<h4 id="主要性能影响参数"><a class="anchor" href="#主要性能影响参数"></a>3.3.6. 主要性能影响参数</h4>
+<h4 id="主要性能影响参数"><a class="anchor" href="#主要性能影响参数"></a>3.4.6. 主要性能影响参数</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2531,7 +2861,7 @@ hystrix.threadpool.default.coreSize=100</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="缓存处理"><a class="anchor" href="#缓存处理"></a>3.3.7. 缓存处理</h4>
+<h4 id="缓存处理"><a class="anchor" href="#缓存处理"></a>3.4.7. 缓存处理</h4>
 <div class="paragraph">
 <p><code>Spring Cache</code> 提供了很好的注解式缓存，但默认没有超时，需要根据使用的缓存容器特殊配置</p>
 </div>
@@ -2549,7 +2879,7 @@ RedisCacheManager cacheManager() {
 </div>
 </div>
 <div class="sect3">
-<h4 id="jdbc_批量插入性能问题"><a class="anchor" href="#jdbc_批量插入性能问题"></a>3.3.8. jdbc 批量插入性能问题</h4>
+<h4 id="jdbc_批量插入性能问题"><a class="anchor" href="#jdbc_批量插入性能问题"></a>3.4.8. jdbc 批量插入性能问题</h4>
 <div class="paragraph">
 <p>如果不开启rewriteBatchedStatements=true，那么jdbc会把批量插入当做一行行的单条处理，也就没有达到批量插入的效果</p>
 </div>
@@ -2566,7 +2896,7 @@ RedisCacheManager cacheManager() {
 </div>
 </div>
 <div class="sect3">
-<h4 id="http请求并发数性能瓶颈"><a class="anchor" href="#http请求并发数性能瓶颈"></a>3.3.9. http请求并发数性能瓶颈</h4>
+<h4 id="http请求并发数性能瓶颈"><a class="anchor" href="#http请求并发数性能瓶颈"></a>3.4.9. http请求并发数性能瓶颈</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2861,6 +3191,34 @@ EOF
 systemctl daemon-reload
 systemctl restart docker
 systemctl enable docker</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>dew-maven-plugin 需要调用 docker 服务，推荐使用独立的一个Docker节点，暴露 DockerD 服务。</p>
+</div>
+<div class="listingblock">
+<div class="title">暴露DOCKER_HOST</div>
+<div class="content">
+<pre># 详见 https://docs.docker.com/config/daemon/
+
+mkdir -p /etc/systemd/system/docker.service.d/
+vi /etc/systemd/system/docker.service.d/docker.conf
+-
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd
+-
+vi /etc/docker/daemon.json
+-
+{
+  "hosts":[
+    "unix:///var/run/docker.sock",
+    "tcp://0.0.0.0:2375"
+  ]
+}
+systemctl daemon-reload
+systemctl restart docker
+-</pre>
 </div>
 </div>
 </div>
@@ -3829,7 +4187,7 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
 <div class="content">
 <pre># 执行如下maven命令(发布到test环境)
 mvn -P devops dew:build dew:release -Ddew.devops.profile=test \
-    -Ddew.devops.it.snapshotRepository.id=&lt;私库Id，如私库需要认证则此Id对应的认证信息要添加到 setting.xml中&gt; \
+    -Ddew.devops.it.snapshotRepository.id=&lt;私库Id，如私库需要认证则此Id对应的认证信息要添加到 settings.xml中&gt; \
     -Ddew.devops.it.snapshotRepository.url=&lt;私库Url&gt; \</pre>
 </div>
 </div>
@@ -4047,17 +4405,17 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=prod</pre>
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-dew.devops.docker.host=tcp://10.200.131.182:2375
+dew.devops.docker.host=tcp://10.200.131.215:2375
 # Docker registry url, nullable
-dew.devops.docker.registry.url=https://harbor.dew.env/v2
+dew.devops.docker.registry.url=https://harbor.trc.com/v2
 # Docker registry user name, nullable
-dew.devops.docker.registry.username=admin
+dew.devops.docker.registry.username=dew
 # Docker registry password, nullable
-dew.devops.docker.registry.password=Harbor12345
+dew.devops.docker.registry.password=Dew123456
 # Kubernetes base64 configuration
-dew.devops.kube.config=YXBpVmVyc2lvbjogdjEKY2x1c3RlcnM6Ci0gY2x1c3RlcjoKICAgIGNlcnRpZmljYXRlLWF1dGhvcml0eS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VONVJFTkRRV0pEWjBGM1NVSkJaMGxDUVVSQlRrSm5hM0ZvYTJsSE9YY3dRa0ZSYzBaQlJFRldUVkpOZDBWUldVUldVVkZFUlhkd2NtUlhTbXdLWTIwMWJHUkhWbnBOUWpSWVJGUkZOVTFFU1hsTlJFRTFUa1JqTVU0eGIxaEVWRWsxVFVSSmVFNTZRVFZPUkdNeFRqRnZkMFpVUlZSTlFrVkhRVEZWUlFwQmVFMUxZVE5XYVZwWVNuVmFXRkpzWTNwRFEwRlRTWGRFVVZsS1MyOWFTV2gyWTA1QlVVVkNRbEZCUkdkblJWQkJSRU5EUVZGdlEyZG5SVUpCVDFwTENuQkRVMDFKTUhGSFJFVjNaSFpZWkVGdGFuVjBVSGxVWmpGQlZrWTFkRll6Y0VRMFdXTkdXRzloYzNWMVNFdHdSVzlVZEVKVVFrdFVSazFNTWpSc01GRUtWRVphVERSWmNITkdURUo2YTJzek5YcHdZMWxvTDJGRFlVMDJaVTVHZFV4NU9ISlVja3RtSzNwV2NsRk1OeXQzY25CSlVHOTVORWRSUm5GbGNUQmliZ3BPVVhOUVR5dGpRMkZoV0VWVFRrOWhlRVF3WTB4clJGWnJabkpFVldkcGFYUjVVRVl2V1dGT2JUTm9hVk5vTkhNcmNXUmtORkZoUkZOTVlXeHhNRE5TQ2pkdU5uWk5hbnBZVTNSRlpsRkJaMWg1UlROWE5IaDJjV1U1U2xBcmVUWlNhM05KVVc5NlNuQktiWEkwUW5aTE0wRnVTVFF6TjNGTWR5OW5lR0ZDVFVnS1pWcGpSakZ3UjJsV1JpOW5TbkpYV0dWTk1EUnFTMFZsT0UxdmMyeEZlRWd6VmtkSVpGUlJWRUZRV1U1NmFHRm1NMlprY0N0cGFuUTNSRWhRTTI0NVRBcElaSHBZVmtoa1FuRkdaMDFqUlVjcll6QmpRMEYzUlVGQllVMXFUVU5GZDBSbldVUldVakJRUVZGSUwwSkJVVVJCWjB0clRVRTRSMEV4VldSRmQwVkNDaTkzVVVaTlFVMUNRV1k0ZDBSUldVcExiMXBKYUhaalRrRlJSVXhDVVVGRVoyZEZRa0ZGZFdjd0swOXdPVTlQT0VkbVoyNVFjR05MYUhGMlEwcHFOakVLUW1OUVZEQkpWREZNTWxGV1FVeDBOa0ZxWlRVM1ZYRXphR1JXUTJsMFdrNU5VRmsxZFUxSmJWcDNhRnBhWWtOUk5HbERiRmdyVGtoWGNsWjVTRkZ6ZEFvNFZXSkxLemRFYkVWTlVqSllZVWsxU0ZaUFdVVnJWaXRhT0RKeGFXeFNWSEJpY0NzeVFXTjRaVTFZY2pFeE5GSnFORElyUlRkaWNYY3hRMnRGTDNJNENtbEhhVlE0Tkhod2RXbzViRzFDYTBaaFkwSnJSblZYUmpoV1ZWZG1iV1ZFTDJwdGNUZEpjbmRNYUVSQ0wyNDJVWFpDVDA1UWEzcDJRV0ZTTjBkSlowd0tWblZyTUZkQ04zaDNVa05qUzJKRE5HZ3JlbmREVHpGamIzUk9Wamh3ZVRKVVltSnVjMGQ0VWpGWFNHOWhVekpJTUVjNWRYSlpSaXRZU0dKWWRrMVZUUXBVYmtkVlpqRklNVEE1YUVOUE9UaDVSRU5pWkM5dE5WYzFPRnBqYUVsdU1qUkRjM1l2UkZkelVUbHphak5ISzJsc2NFeG9iMkpHYW1kWll6MEtMUzB0TFMxRlRrUWdRMFZTVkVsR1NVTkJWRVV0TFMwdExRbz0KICAgIHNlcnZlcjogaHR0cHM6Ly8xMC4yMDAuMTMxLjE4OjY0NDMKICBuYW1lOiBrdWJlcm5ldGVzCmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBrdWJlcm5ldGVzCiAgICB1c2VyOiBrdWJlcm5ldGVzLWFkbWluCiAgbmFtZToga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmN1cnJlbnQtY29udGV4dDoga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmtpbmQ6IENvbmZpZwpwcmVmZXJlbmNlczoge30KdXNlcnM6Ci0gbmFtZToga3ViZXJuZXRlcy1hZG1pbgogIHVzZXI6CiAgICBjbGllbnQtY2VydGlmaWNhdGUtZGF0YTogTFMwdExTMUNSVWRKVGlCRFJWSlVTVVpKUTBGVVJTMHRMUzB0Q2sxSlNVTTRha05EUVdSeFowRjNTVUpCWjBsSlFVMUljR2RpU1RCNlVVMTNSRkZaU2t0dldrbG9kbU5PUVZGRlRFSlJRWGRHVkVWVVRVSkZSMEV4VlVVS1FYaE5TMkV6Vm1sYVdFcDFXbGhTYkdONlFXVkdkekI0VDFSQmVVMXFRWGRQVkZFelRsUmtZVVozTUhsTlJFRjVUV3BCZDA5VVVUTk9WR3hoVFVSUmVBcEdla0ZXUW1kT1ZrSkJiMVJFYms0MVl6TlNiR0pVY0hSWldFNHdXbGhLZWsxU2EzZEdkMWxFVmxGUlJFVjRRbkprVjBwc1kyMDFiR1JIVm5wTVYwWnJDbUpYYkhWTlNVbENTV3BCVGtKbmEzRm9hMmxIT1hjd1FrRlJSVVpCUVU5RFFWRTRRVTFKU1VKRFowdERRVkZGUVRSaFMwVmFhSFJVYlZScVdtVkVSMDhLZDFrNGMxaFRkVGhwWm1nd2Vta3JkSFpHUlU1U1FVWlRhMk14V0ROSE1HcGFka3RLVkZobE1VTkNielJKU21jM1pFUXZlVU5ZVmtwcWVuZEJWbFJhYUFwTmN6WjNXSGhITms1Q2RWaDZaV1E0VVhrNFpIWktiWFo2UjBreFNGbzNibTkwUTNsSE9URlliM1J6Y25aSlMwaEhWR3BCTlM4eWQyOVJiMlJ6VVU5U0NtSmpSRUZRY0dOb2NTOTZhRUo0WVhSSVRrZHlXbk5XY20xSFdEVlVaRTA0VVZOVGRtdHdiSE14WkhkUFlWWnZRWFpwYVRoUGNUWkhTR2wzY21wQlQwZ0tLMkYyVEhCTE1XZ3Zia05CUm1adWRrTTJOUzh2TWpaemRrTkVRMHRIYlRjdlNIY3ZWM2RGYWpWMk5FSXlMMk5oYVRWb1RUbFBZVmhRTTI0dmExbDZjQXBpYlRGMmJGRklhVGxMYkU1MlpYZGtXbk01VkdwVlZVbzVOR3R6YTJkWk1ub3dRWEowYUU5M1MzVlNNRTl3TWtWRlEzSXpTblZ6VVhWQlMzVkRUMUJIQ2l0R1VVSkVVVWxFUVZGQlFtOTVZM2RLVkVGUFFtZE9Wa2hST0VKQlpqaEZRa0ZOUTBKaFFYZEZkMWxFVmxJd2JFSkJkM2REWjFsSlMzZFpRa0pSVlVnS1FYZEpkMFJSV1VwTGIxcEphSFpqVGtGUlJVeENVVUZFWjJkRlFrRkRXbEE1TURKTGNsVTBOazgxTjFaRUsxZDBURGhKUlhKT1JHbHhXa0pPU3pRMVl3cDJZMnhXVWpodVNtWm1lREpVTUdOc0t6WTBMMmg0Y25CVE9WYzFZWHA2VEZOdGJYWk5RbXhOU0VJMldGcEZVR2h6TWtaV1VIVnlhek5pYVhGMk9XdFJDbFYwYURsUlZtUkhhMlEyUTAxMVpHNXBlRXRUTm5wbFppOTVLMHBsYW01VU0zRnVjazVsTVhWaGVqTm1RMjFLT0N0elNtOXllRWRoVTA1NmQwSm1WRmNLYXpkT2JEQnlObkZpV0ZKd1lsVjZWVXBrTVZkTk5EbFdia1JOVDJwMWRUYzFjVVl6WTJvek1FdFFhV2xsWkRaa1pIRkVhbkZ1V1ZaU1MxbGxORmhZZHdwTFUxTkZXREZ3VGxFeWJreDBVbFJXYUhCelVHTmFPSEYyV2xNNUx6RmpiVEp5YlhrdmNIaFBTMmhJZEVsckszVXlhQzlEVDJaaGQwOXFSSEZWWW01WkNtWk5jbTUyZUZadlNXaFlRM1pYTlVSamRFTktPSFl5VTJ0VGVuQXJNVkJaVFdkWVN6UTFOMjFMTTNWb1QzUlBRM2N5TUQwS0xTMHRMUzFGVGtRZ1EwVlNWRWxHU1VOQlZFVXRMUzB0TFFvPQogICAgY2xpZW50LWtleS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJTVTBFZ1VGSkpWa0ZVUlNCTFJWa3RMUzB0TFFwTlNVbEZiM2RKUWtGQlMwTkJVVVZCTkdGTFJWcG9kRlJ0VkdwYVpVUkhUM2RaT0hOWVUzVTRhV1pvTUhwcEszUjJSa1ZPVWtGR1UydGpNVmd6UnpCcUNscDJTMHBVV0dVeFEwSnZORWxLWnpka1JDOTVRMWhXU21wNmQwRldWRnBvVFhNMmQxaDRSelpPUW5WWWVtVmtPRkY1T0dSMlNtMTJla2RKTVVoYU4yNEtiM1JEZVVjNU1WaHZkSE55ZGtsTFNFZFVha0UxTHpKM2IxRnZaSE5SVDFKaVkwUkJVSEJqYUhFdmVtaENlR0YwU0U1SGNscHpWbkp0UjFnMVZHUk5PQXBSVTFOMmEzQnNjekZrZDA5aFZtOUJkbWxwT0U5eE5rZElhWGR5YWtGUFNDdGhka3h3U3pGb0wyNURRVVptYm5aRE5qVXZMekkyYzNaRFJFTkxSMjAzQ2k5SWR5OVhkMFZxTlhZMFFqSXZZMkZwTldoTk9VOWhXRkF6Ymk5cldYcHdZbTB4ZG14UlNHazVTMnhPZG1WM1pGcHpPVlJxVlZWS09UUnJjMnRuV1RJS2VqQkJjblJvVDNkTGRWSXdUM0F5UlVWRGNqTktkWE5SZFVGTGRVTlBVRWNyUmxGQ1JGRkpSRUZSUVVKQmIwbENRVVZ3YVRjNE9WSXhkaXNyZEVWT2FBbzBlbE5CTlZKc1lWZ3ZRVVZxTURKcFptdzJSbEZwUWxoYU1HUlhUVlU0YTFVdlYwOXdRMFk0UVRWNlIwOUNZbGN5Vmt3M0syVnRVVll3TXpOa1FYbHFDbloxZFc1S1NrcFVTRGxaY0N0eFVWSlhka0Y2VTJ4U2VGQnVibVJNY2tkNlVEVTFNM1Y1UW1kdGNFaEJUeXN3VFVFd2IxaFpaRWRhTWpJNVkwUkhibVFLVTFWaGNuTjZWblpWWkZOSWNrSkNVVTAwV1RaM1dURkRURXhUZVRJd1RIazBaRWxESzBzMGEzWXphR2Q0UzA1Nk9GWndZazl2S3l0Q2JXRjVVR1pKVVFwTlJWTlhXRzVGV25wR01sQnFOMWh5Um1jMlN6ZG9jbmhaYUZGbVVtUndSemR0ZUVabVRtMXFXRWxyVlM5UlZURnNUVTluZG5jclIwWTNkMmQzU1VWaENuRTFSVFpYYVVwdGMyOXdhV2RNTVdGRVoxUklMMnh0UlZnNVprSklWbkpRVTNwYUwyMDNNek5vV0haTVNWVk1WVWRQUjNCU05VcDNXSE5NV1ZFNU1uTUtMMWxMVEhVMmEwTm5XVVZCTjNVeVVWUnJZM2cwYlV0aVJqRnpXbUowVldaNU5qWXhiVEpKUnprNWF6RllSRGcyTmxFd2RsbE1jM2RqVjBwRlJqZG5RZ3ByWm1wb2JYRklNR1JIVTNWalpUSlROalZIZFVweGVVUk1aWEEwVG1KYU0xQmhWblZZVUZKSE5FaDFSa1J3VDBoME9IUndSa2h3Wmxsc2NWcHRabTU1Q21KR1dWcGpTeXRtV2tGTlZGTlZjRFpMTDNWRk1ITTJhMk54WW1kSlZtNDRUbkZGVVc4eGJXYzJUbGRVZUU5UVp6UklPV0paZFUxRFoxbEZRVGhqU0UwS1JHdFFWRzlpUTIwMVYyTkxiVzFyVW1GcWRYWmpNR0oyUjBoNE1HY3ZRMEpoUkV0eVYxaFJaRUpUTDA5elltUkJXVk5HUzJzcmRIUTBjVFoxTjJ4SFZRcFFXbXh5UjJGdVpWYzVWRlkyYjNkelFtUldXVTg0YUdGaWNUQmlXbEJIY0VGUk9GUnhMMnQzVFhwSE1UVnZZa2h5UzNab1JFbG1OVTFETWk5elVFdGlDak41Wm1Vell6RjVhMGg2U1UxUkwzQXhPRWhJZFcwdkszRnZPVXR3VlhwdlQyaHlkRWd3T0VObldVVkJOMkZxUjI5MVdqQmxNVUpGU0hRMVUwWlJibEFLTXpoWVFVSllhR3B2UVU5b04xVnNSRFoxT1dacmFVOUJhM3BuUVhKWGMzUjJTM0JKYkc5NlJWbFZZVWx6ZGtKNU9WQnNjWFJxVG1oS1RHOVhjWEUzS3dwUGQyRnJSMkpuZFVSRWMzaGFaMlJtZEROWFVUVXpjVEpEUm5CQlkxbFlURWQyU1d4NVp6UllVMDQ0TmxCMWRtcFVTRFpoV25sd0wwd3dRa2x5TUZGWUNpdGhjMHR3YzBkUWNXbHdVVWN3Wm10MGMzQllPVFp6UTJkWlFsaDNkMFl2YjBSSVFXWmhPVzlyWTNCM2JWaHRMemxsUkZGWFZYcE5kRGhzV1dGRlQyZ0tMM1J5YWxFeGNWSnRibEpRV1ZoWVYycE5OVlVyYkRsUGNtaHNSVE5KY1ZNdmFFYzJTa1ZrWWxWT01VUkplRmROU0VwSVIxTm5jRU5MVldSTWEzTnlSd3BZY1VoSGFWWlNkRVZVZFRKaWRrVnVhSFJJVVhsaUt6Rk9URnByTVhZeWMzVm1NbGQ1VmtWM2EwbDJaaXMyV0hCT1EyZzRWSFJJUms5MlZtWkpjR05tQ2tkTk1VSXdkMHRDWjBOaGNrOVFlbXhrT0U5U01HeG1UVFE1UlhCR1NtTjJia054YjNWVllXTmlNa1JJWlRCb1dYQkNTM0YyUlVWcVdtaDRWSGxZSzI4S1FtdFpNbWhxUkVwTVkyUkhSWEZMUzBwQk5XNU9XbXBuY21saWFrcHFObHBRUm5aaVVHdE5SRWQ0VVhGd0wyTnlOMjB3VUc5NFQxVjBkM2xITWpFMFJncGpSV2cxTkZSWUszUXlUMUpxU2tkVFZVcFhjRzFHWTJoMFRrSTNTVU5UWkU1SGVYbDFibHBSV1hoTFVIbHlRMmd6VWs1SENpMHRMUzB0UlU1RUlGSlRRU0JRVWtsV1FWUkZJRXRGV1MwdExTMHRDZz09Cg==
+dew.devops.kube.config=YXBpVmVyc2lvbjogdjEKY2x1c3RlcnM6Ci0gY2x1c3RlcjoKICAgIGNlcnRpZmljYXRlLWF1dGhvcml0eS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VONVJFTkRRV0pEWjBGM1NVSkJaMGxDUVVSQlRrSm5hM0ZvYTJsSE9YY3dRa0ZSYzBaQlJFRldUVkpOZDBWUldVUldVVkZFUlhkd2NtUlhTbXdLWTIwMWJHUkhWbnBOUWpSWVJGUkZOVTFFVVhoTlZFRXpUVlJCZUU0eGIxaEVWRWsxVFVSUmQwOUVRVE5OVkVGNFRqRnZkMFpVUlZSTlFrVkhRVEZWUlFwQmVFMUxZVE5XYVZwWVNuVmFXRkpzWTNwRFEwRlRTWGRFVVZsS1MyOWFTV2gyWTA1QlVVVkNRbEZCUkdkblJWQkJSRU5EUVZGdlEyZG5SVUpCU3pWbENqUkpLekJrVG5RNVFsWm1OMWhOZWxWM2FIZGtTRlZ0WmsxWGFHdGlkelU1YVVGbmFVY3lSRGcyTTNkamNWWXhhRGswTjJ4c01rVlNRM0puWlRkM1prVUtWRklyY0ZOcVJUZGlPRWhNUlRaNE5VZEhXbkkyUkhKa1kwVnhhRFZSYzNoeUwyODVOVGxrYVNzeldYTmFNR3AwYVRSalFVNURjMGR2T0RkaFZpOUNOQXAzUmpBMmEyOXJVVU5yYlZSYVNXbG1kRWQwYW5CWlJWUkljV0phVlhwMlpYTnNRamRhY0daeWVXY3ZhWHBWVjI0M0x6VXhkVTVhZEdaclZtSkRhR0pCQ2psS1ozSnlXVFJqYTBZck1XdG5VVmxrTjFKMlRsRnVkMDQwTm5WbGJsUklhVlJaYWpONGVYVnVkbU5GYTNZd1RVNU1WV2haUXpOQ2JWcDNlVmxtTWxZS1IwaHJZbWt4VEZWa01WSlNSWFJVUTNKdWIydExPRUZ3UVV0NE4yaGpaVFpETm5OYVEwWTNWVEpvYXpWSk1qTlVUa2xJUkZGb1dGUkZka3BhTlZCbFpncFNNMDlWY0Zaak0wVkliREJPVDFGMFZ6Tk5RMEYzUlVGQllVMXFUVU5GZDBSbldVUldVakJRUVZGSUwwSkJVVVJCWjB0clRVRTRSMEV4VldSRmQwVkNDaTkzVVVaTlFVMUNRV1k0ZDBSUldVcExiMXBKYUhaalRrRlJSVXhDVVVGRVoyZEZRa0ZKZVdab1JqTmljMkZIWlRSeGQwMVdhRE14VjNCT1NTOU9URUVLZEZCc01VWkllbWxNYW5BcldVMW9MMjlyZDFKcmQzaERUbU5QWVhwRGVVUnlSbkozYVhkbE0ydG9USEExYVZwak5WTnVRMlJWUjBobVNsTjZPVEJwZWdwamNDdEViRXhQWnpKWGNUbFFObk5qTkZCV2JsaEhNRTVZUjBZMU1sSmtkRWw2Y205UE5ESkVVVWRDVTBSUGFVbHlTM2RpY25Bdk1HUTRLMWs1ZHl0WkNrSnVXVGxZZEVWNlNtOVdRMkp0YTFock5UTXlTa04xU0ZaSlVtOWpURGxUYjI1UVpIVjRNWFo0YjFJcmNuQTJRWE5VTkN0cloxRTFXbkJaVVZreVQzVUthVVJMTnpGWlFrbzBjbWxSZDBNNWJWRnJaV2RSYXpsdWFFUk9ORWhxYzIxMWJIQmFiemRJU0ZCTVZtVXZNa3BEZEhaRFUzUnVkVTFFYjNOQ1ZWRnJNZ292Ykd0b05uZzNkRlF2YWpKSU4wRldXalZMTlc5NE5FMHhPVFZ4ZEhrMFlsTmFjbmhoTWpVek5FTnpSblpJTTA1M1REZE1hMGhTYW5Sc2N6MEtMUzB0TFMxRlRrUWdRMFZTVkVsR1NVTkJWRVV0TFMwdExRbz0KICAgIHNlcnZlcjogaHR0cHM6Ly8xMC4yMDAuMTMxLjE4OjY0NDMKICBuYW1lOiBrdWJlcm5ldGVzCmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBrdWJlcm5ldGVzCiAgICB1c2VyOiBrdWJlcm5ldGVzLWFkbWluCiAgbmFtZToga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmN1cnJlbnQtY29udGV4dDoga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmtpbmQ6IENvbmZpZwpwcmVmZXJlbmNlczoge30KdXNlcnM6Ci0gbmFtZToga3ViZXJuZXRlcy1hZG1pbgogIHVzZXI6CiAgICBjbGllbnQtY2VydGlmaWNhdGUtZGF0YTogTFMwdExTMUNSVWRKVGlCRFJWSlVTVVpKUTBGVVJTMHRMUzB0Q2sxSlNVTTRha05EUVdSeFowRjNTVUpCWjBsSlJWUlZjbE5SV21kblowRjNSRkZaU2t0dldrbG9kbU5PUVZGRlRFSlJRWGRHVkVWVVRVSkZSMEV4VlVVS1FYaE5TMkV6Vm1sYVdFcDFXbGhTYkdONlFXVkdkekI0VDFSQk1FMVVSWGRPZWtWM1RWUmtZVVozTUhsTlJFRXdUVlJCZDA1NlJYZE5ha1poVFVSUmVBcEdla0ZXUW1kT1ZrSkJiMVJFYms0MVl6TlNiR0pVY0hSWldFNHdXbGhLZWsxU2EzZEdkMWxFVmxGUlJFVjRRbkprVjBwc1kyMDFiR1JIVm5wTVYwWnJDbUpYYkhWTlNVbENTV3BCVGtKbmEzRm9hMmxIT1hjd1FrRlJSVVpCUVU5RFFWRTRRVTFKU1VKRFowdERRVkZGUVhSdmFXOHdjbWxTU2k5QlkzQXhlVE1LUjBKbVkxaGhRbWhMTlRWek1EWk1ibEI2TmpCWGVEQnlkalZ6SzNWeVdVaFliWFYyU2pWVGNrVlpRbEpIWWtWdlRIcDVVemhYVW1KU01HdDFjbEJOUlFvMVpWUlpUR012UnpaeGNuVnVka1p4UjNSak4xaFJSMGN6VkVzdlJUSnNLMkkxZVdJeGEwTnliM2htTTNOelVFeFVVbVZDT0hFd1NrWm5iRmRpZEdjeUNsZElWVFJhUlZrNE1sbzVObkVyWkV4clZHaFJNRUV4YlZWMlUxRjZWMFlyU2xOaVNYbHNkVTV4VWxBMGExaHdZME16U1hKQlozcEdPWEZITkV0R1V6Z0tkM2xuUm5sRU9VUlJja3cyWkRGcE5qaDFVazR6YW10bFZYTTBNMHRDTlc4cldGcEhka05KY2tsR1owaDNXRUZhVkRkVE1ub3ZaRVJRZG5vcmFVaFdVQXBZYzFaUlIweEVkRGx4YWtwR2JYRk1WazlRZVVGelFuWlhWM0Z6VFZaTFpWSXJWbGhYYkRoSll6bG9iMFZWVkdOcmEyMXhRV0YzWkdNMlEzcEplbFJ5Q21FelNqRTRVVWxFUVZGQlFtOTVZM2RLVkVGUFFtZE9Wa2hST0VKQlpqaEZRa0ZOUTBKaFFYZEZkMWxFVmxJd2JFSkJkM2REWjFsSlMzZFpRa0pSVlVnS1FYZEpkMFJSV1VwTGIxcEphSFpqVGtGUlJVeENVVUZFWjJkRlFrRkRSVmRUYTB3MFkwRmFhekJsVnpScVMzTlhhVEV6YTAxSmJ5ODNMM3BZZG1aRWFBcGpTR05YYVdONlRqUndNRGs1T0RoVmVtbHdVak54YUZCMmVHaHhXR0pwTlRKS09WVlJOVkFyVUUxS05IRjJOamRSU1VGM1pHMXhlRXRzZFVORldqWk1DazVoYmtWRGNtZDVaek5QZW1kQ1dtaElUa3N4YUhob2VtdzBMME54YTBKTmNGbEJNSEprWWpKVlpUTlhiV05wV1hkc1EyUk9Ramw2ZVhKV01VUXZVa2tLZW5aTFYwUnJUMU5xV2pjMFVGWlpXbWh5VVdkWFJWVllPVWRGYlVsSlZXcFFZbXhsYTNKV1kyOXVTbmxpT1ZwV2VqZDNNbFZNVUVkTFkxcG1iMHBMYkFwWUt5OWhhVk5SYWs0NWRFazRRelEyYUd0aWFtTlFkalJwVHpJMmNtcFZSRTB2VDJsRWFuVlBLMnRFTjFaTlFqZHpWMjFTVFZkUWVGbFhTWE5rZG5wNUNtRk5Semd3VnpsMk9FMUpSbFJ4TjBsVVNVTTJjelowVld0aWFsUjVNMlZwVUhSM1ozUlFLMU5aZG1GRFVWRndiVFl6WnowS0xTMHRMUzFGVGtRZ1EwVlNWRWxHU1VOQlZFVXRMUzB0TFFvPQogICAgY2xpZW50LWtleS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJTVTBFZ1VGSkpWa0ZVUlNCTFJWa3RMUzB0TFFwTlNVbEZiMmRKUWtGQlMwTkJVVVZCZEc5cGJ6QnlhVkpLTDBGamNERjVNMGRDWm1OWVlVSm9TelUxY3pBMlRHNVFlall3VjNnd2NuWTFjeXQxY2xsSUNsaHRkWFpLTlZOeVJWbENVa2RpUlc5TWVubFRPRmRTWWxJd2EzVnlVRTFGTldWVVdVeGpMMGMyY1hKMWJuWkdjVWQwWXpkWVVVZEhNMVJMTDBVeWJDc0tZalY1WWpGclEzSnZlR1l6YzNOUVRGUlNaVUk0Y1RCS1JtZHNWMkowWnpKWFNGVTBXa1ZaT0RKYU9UWnhLMlJNYTFSb1VUQkJNVzFWZGxOUmVsZEdLd3BLVTJKSmVXeDFUbkZTVURScldIQmpRek5KY2tGbmVrWTVjVWMwUzBaVE9IZDVaMFo1UkRsRVVYSk1ObVF4YVRZNGRWSk9NMnByWlZWek5ETkxRalZ2Q2l0WVdrZDJRMGx5U1VablNIZFlRVnBVTjFNeWVpOWtSRkIyZWl0cFNGWlFXSE5XVVVkTVJIUTVjV3BLUm0xeFRGWlBVSGxCYzBKMlYxZHhjMDFXUzJVS1VpdFdXRmRzT0Vsak9XaHZSVlZVWTJ0cmJYRkJZWGRrWXpaRGVrbDZWSEpoTTBveE9GRkpSRUZSUVVKQmIwbENRVVV2SzJGbldWaEVjalI1T0RCMlFncFVVbWhKT1V4RmRscFJXa3B2Y1ZoS1NWcEVUU3RTZEhCSFJrRmlVMEV4Y0ZWeFpHeG9PV2hRZUdaNVoyZEhjRVJCYW5CYVZVbG9jbXMzYTFVNFJtbHdDa1V2T1hkSUwwWk1kVzlCUkUxNGIwTTRTalJqY25jMVpXRmxNSE51VTBwNmRrRTFUREIwZFRsalluSkRLMVJIYkhKeldERlNSMVJIZDJ4SFpTc3ZjMDRLTVVKMFIwYzVWMDlHYjB4Rk5tMTZSbkUwT1ZRek9EWmtORXhpTDJFMmRIbGFRV1pOZEVGYWNFaGhjRnBHZEVwYVZXOTJlRXRFZVVkWE56Rk9UMElyWWdwdWN6WlRaV2hRV1VZMU0wbGFXRGswYWk5NVJFeDNXRTVYT0ZNMmFGbEdORVpwY1RReVMyRkxlU3RFZVhKNVFrMTRVVzV4UzJaU1RsaDRRMlE0ZEhkeENuSjZWRGQwUldaQk1qVlljRllyU0hOemNVWjJVMVZEZDA1eFptbGxZbFprV25oSFdVc3dlbU5ZYnl0WWFuWlVVRlp3VTBkMlVrbHFaRlpOZFN0elNEQUtSak55VkZKNlZVTm5XVVZCTWpZeE5sTnRjbXhGWW1OTFIzbFFWRFJOUVVOVldFNVRabFJHU1RBMWJGWnRiVmRXU1RaTlRXRXlVSHBoWVRNeU4xcDFPUXBESzBwQlFYcFhTQ3RYVmpaaVZEQjVXbnBCU1Vwa05rY3JZbUZCZVhGMFVHaEdka1p6Y20xNWRXTk9lV2xzZURobVl6UkpVMHRLU3l0a2FrcHFOR0ZLQ2xKUlJsRk5UbkZ2VlhSblZXZHFVbE54WkRKNVkzcGFWRGcyTlM5VGJtWktRVVZ6U213dk9VdDBhSFpCZGpWWWIwdHBPWFJ1Tm5ORFoxbEZRVEZNWWpBS0syeE1kbWgwZVRWQmMwTkZZMGRNWTNKSlZTOWxTMUYyVHk5alJWbDNZMllyTjJ0aFZHZDJVMHN6Y0ZaVFUzcDZXWGhSUVVwa1NEYzNRWHBsWlVOT1RBcEphVlJoY1M5U2QweHlTalJrYlVkeVRYWmFhVVJZZVVWNFlUZDRjR1U0VldkQlpEQjFUV1pIYlRGbFIwdHBUelp6VmpKWFlrTkljME5EVm5sdmQyaHZDbUpLVGxwbVMwOUxObHBvVkZwaVUwZE9kSFJqVVdkaVRDdG1SM2t3U2s5amJqVmFZbXhPVFVObldVRTRaMjVvWnpkNmFsSjJSakZ2VWtkSmExVnFPVklLVDBSaVRXcFVja2RNYTBwTFIxSnJVR2tyV0hJemMyYzFiamxYV1dSWlIwcFBTRlI0WWxac1lUbFFlbGxCYW1SVUwxRk5RbWt4TkdGbmJ6ZFFVa2xxVHdweFNXazBVbXBhV1haUFJtTkJNRmN6VlZnd2RYQkxWMHRXU2tOUmJrUndUR0UyVlhaRU9IVXhjR2hrWjBab1JpOUJURmxoZW1sbmNIZDZUVVY2UTBoMENteHlNalY0U0ZKTU0xUkZiV3hMUVhsdWIxaFFjVkZMUW1kQ2JsWXZkblJKYURNNVFqTTVZazUxTUdoTVQySktZVzVPVEhsWWFYQlRXR3cwU1hnMFIzb0taMlJhYnpaVFdVOTJZakJrYTBwS1FVazJVakJXVEhwbE9EQmFNRkYyVUhGMFoxTmpjeXRPTkVka2JVaEZNWGRzVVU1UFUyaERNMlZwWTNNeGRIRXJNZ3BQUWpoYVdrczBTbVV5YjNrelRVbGxUVGszSzFnNFV6bG9ObUl4Y0c1c1NtcEdlblpKUkdkMlNVUkpRMDE1YzBkcFlsbGlWRlJ6VjJWRWJVNU9SVVJPQ2padFIzaEJiMGRCUVc5TVZEUmpOMGRJYkRaWlV6SjVRazlJWTJ4UU9FTTNZMnMwVDBFNE0xcFFRbmhGVkVzeGVua3hSblphVlcxb1ZGcDNlbmRJUlVFS1JEWTFUbWhVTW1SWlUwcFNXV3hKZFd0S1ptcEpTV0ZXWjNobVZHdGtTa0lyWlhOYWVtcHNXVkJFYTNWbVEzRmphWEY2UkZSNlptSlZSa29yYWpGMVpBcGhNbU00UlZCV2QyWTJRMWxLV2taYU1FZEpMMkp6VVN0Vk5XVnZZemN3ZW1FeVNtMUlhRVl5YTNocmRIUjZSME0zVTNNOUNpMHRMUzB0UlU1RUlGSlRRU0JRVWtsV1FWUkZJRXRGV1MwdExTMHRDZz09Cg==
 # Snapshot repository id, must be filled out in version replacement mode
-# If the repository needs authentication, the authentication information corresponding to this Id should be added to setting.xml
+# If the repository needs authentication, the authentication information corresponding to this Id should be added to settings.xml
 dew.devops.it.snapshotRepository.id=trc-snapshots
 # Snapshot  repository url, must be filled out in version replacement mode
 dew.devops.it.snapshotRepository.url=http://121.41.17.205:18081/nexus/content/repositories/snapshots/</code></pre>
@@ -4963,15 +5321,6 @@ helm list</pre>
 <li>
 <p>整合 <code>Spring boot admin</code> 与 <code>Turbine</code>，可直观的监控各个性能及访问指标</p>
 </li>
-</ul>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="./images/spring-boot-admin.png" alt="spring boot admin">
-</div>
-</div>
-<div class="ulist">
-<ul>
 <li>
 <p>添加实验功能：使用注解自定义查询（ <code>@Select</code> ）</p>
 </li>
@@ -5855,7 +6204,7 @@ prod deploy: # 生产环境部署
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-04-12 17:34:13 CST
+Last updated 2019-04-15 20:24:03 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

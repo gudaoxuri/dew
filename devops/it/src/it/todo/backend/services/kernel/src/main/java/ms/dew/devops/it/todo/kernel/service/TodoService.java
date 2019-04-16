@@ -77,6 +77,7 @@ public class TodoService {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.TEXT_PLAIN);
             HttpEntity<String> entity = new HttpEntity<>(content, headers);
+            // 使用Spring的 restTemplate 实现服务间 rest 调用
             content = restTemplate
                     .exchange("http://" + Constants.REST_COMPUTE_SERVICE + "/compute", HttpMethod.PUT, entity, String.class)
                     .getBody();
@@ -85,6 +86,7 @@ public class TodoService {
         todo.setContent(content);
         todo.setSort(System.currentTimeMillis());
         todo = todoRepository.save(todo);
+        // 使用Dew的集群MQ功能实现消息点对点发送
         Dew.cluster.mq.request(Constants.MQ_NOTIFY_TODO_ADD, $.json.toJsonString(todo));
         return todo;
     }

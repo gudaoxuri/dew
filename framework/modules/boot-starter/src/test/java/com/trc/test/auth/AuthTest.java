@@ -51,6 +51,15 @@ public class AuthTest {
         userDTO.setPhone("15957199704");
         Resp registerResult = testRestTemplate.postForObject("/auth/register", userDTO, Resp.class);
         Assert.assertEquals("200", registerResult.getCode());
+        //["/auth/register/*","/auth/re?","/user/**","/tes[t]"]
+        registerResult = testRestTemplate.postForObject("/auth/register/user", userDTO, Resp.class);
+        Assert.assertEquals("403", registerResult.getCode());
+        registerResult = testRestTemplate.postForObject("/auth/reg", userDTO, Resp.class);
+        Assert.assertEquals("403", registerResult.getCode());
+        registerResult = testRestTemplate.postForObject("/user/register/hello", userDTO, Resp.class);
+        Assert.assertEquals("403", registerResult.getCode());
+        registerResult = testRestTemplate.postForObject("/test", userDTO, Resp.class);
+        Assert.assertEquals("403", registerResult.getCode());
 
         AuthController.LoginDTO loginDTO = new AuthController.LoginDTO();
         loginDTO.setIdCard(userDTO.getIdCard());

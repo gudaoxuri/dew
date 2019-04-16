@@ -486,7 +486,7 @@ project_create(){
     echo
     read -e -p "请输入后端服务,如有多个，请以空格分隔： " backend_service
     backend_services=(${backend_service})
-    
+
     while [[ "${#backend_services[@]}"%3 -eq 1 || "${#backend_services[@]}" -eq 0 ]]; do
         read -p "服务名称和服务端口不可缺少，请重新输入服务名、端口号、接口前缀： " -e backend_service
         backend_services=(${backend_service})
@@ -660,7 +660,7 @@ install_gitlab_runner_project(){
     press_enter_continue
 
     echo
-    read -n1 -e -p "# 是否需要配置 Maven setting.xml? [Y/N] " answer_maven_setting
+    read -n1 -e -p "# 是否需要配置 Maven settings.xml? [Y/N] " answer_maven_setting
     while [[ "${answer_maven_setting}" == "" ]]; do
         read -e -n1 -p "请回答 [Y/N]: " answer_maven_setting
     done
