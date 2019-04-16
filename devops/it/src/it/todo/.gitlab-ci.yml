@@ -3,7 +3,7 @@ stages:
 
 cache:
   paths:
-    - node_modules/
+    - frontend/node_modules/
     - .m2/
 
 uat deploy:

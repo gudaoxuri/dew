@@ -20,7 +20,7 @@ import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.models.*;
 import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
-import ms.dew.devops.kernel.exception.ProcessException;
+import ms.dew.devops.exception.ProcessException;
 import ms.dew.devops.kernel.flow.BasicFlow;
 
 import java.util.HashMap;

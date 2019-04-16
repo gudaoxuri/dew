@@ -18,7 +18,7 @@ package ms.dew.devops.mojo;
 
 import io.kubernetes.client.ApiException;
 import ms.dew.devops.kernel.Dew;
-import ms.dew.devops.kernel.exception.ProcessException;
+import ms.dew.devops.exception.ProcessException;
 import ms.dew.devops.util.DewLog;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;

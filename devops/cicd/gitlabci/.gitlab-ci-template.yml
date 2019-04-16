@@ -28,9 +28,9 @@ stages:
 # 缓存目录，必须添加
 cache:
   paths:
-    # node项目必须添加
+    # node项目必须添加，需要根据实际情况指定到对应的目录，e.g. frontend/node_modules/
     - node_modules/
-    # 所有项目必须添加（因为dew将所有类型的工程都视为maven项目，包含前端工程）
+    # 所有项目必须添加（因为dew将所有类型的工程都视为maven项目，包含前端工程），固定为此目录
     - .m2/
 
 # 不同环境的部署配置，各环境执行的操作一致，但触发的 branch 及 调用的 Runner 不同

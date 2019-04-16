@@ -16,19 +16,13 @@
 
 package ms.dew.devops.kernel.flow.prepare;
 
-import com.ecfront.dew.common.$;
-import com.ecfront.dew.common.ReportHandler;
-import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
-import ms.dew.devops.kernel.exception.ProcessException;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Optional;
 
 /**
  * Frontend prepare flow.
@@ -37,44 +31,29 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class FrontendPrepareFlow extends BasicPrepareFlow {
 
-    protected boolean prePrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
-        String buildCmd = config.getApp().getBuildCmd();
-        if (buildCmd == null || buildCmd.trim().isEmpty()) {
+    @Override
+    protected Optional<String> getErrorProcessPackageCmd(FinalProjectConfig config, String currentPath) {
+        String cmd = config.getApp().getErrorProcessPackageCmd();
+        if (cmd == null || cmd.trim().isEmpty()) {
             // 使用默认命令
-            buildCmd = "npm install && npm run build:" + config.getProfile();
+            cmd = "npm install";
         }
-        buildCmd = "cd " + Dew.Config.getCurrentMavenProject().getBasedir() + " && " + buildCmd;
-        Dew.log.debug("Build frontend, cmd : " + buildCmd);
-        AtomicBoolean isSuccess = new AtomicBoolean(true);
-        Future<Void> execF = $.shell.execute(buildCmd, null, null, false, false, new ReportHandler() {
-            @Override
-            public void errorlog(String line) {
-                Dew.log.error(line);
-                isSuccess.set(false);
-            }
+        cmd = "cd " + currentPath + " && " + cmd;
+        return Optional.of(cmd);
+    }
 
-            @Override
-            public void outputlog(String line) {
-                Dew.log.debug(line);
-            }
+    @Override
+    protected Optional<String> getPackageCmd(FinalProjectConfig config, String currentPath) {
+        String cmd = config.getApp().getPackageCmd();
+        if (cmd == null || cmd.trim().isEmpty()) {
+            // 使用默认命令
+            cmd = "npm run build:" + config.getProfile();
+        }
+        cmd = "cd " + currentPath + " && " + cmd;
+        return Optional.of(cmd);
+    }
 
-            @Override
-            public void fail(String message) {
-                Dew.log.error(message);
-                isSuccess.set(false);
-            }
-        });
-        try {
-            execF.get();
-        } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-            throw new ProcessException("Frontend prepare flow error", ex);
-        } catch (ExecutionException ex) {
-            throw new ProcessException("Frontend prepare flow error", ex);
-        }
-        if (!isSuccess.get()) {
-            throw new ProcessException("Build frontend error, cmd : " + buildCmd);
-        }
+    protected boolean prePrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
         Files.move(Paths.get(config.getMvnDirectory() + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
         return true;
     }

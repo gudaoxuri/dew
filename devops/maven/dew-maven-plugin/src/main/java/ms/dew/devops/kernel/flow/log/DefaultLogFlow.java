@@ -22,7 +22,7 @@ import ms.dew.devops.helper.KubeHelper;
 import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
-import ms.dew.devops.kernel.exception.ProcessException;
+import ms.dew.devops.exception.ProcessException;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.resource.KubeDeploymentBuilder;
 

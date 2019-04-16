@@ -46,7 +46,8 @@ public class DewApp {
             put("group", "app");
         }
     };
-    private String buildCmd = "";
+    private String packageCmd = "";
+    private String errorProcessPackageCmd = "";
     private String runOptions = "-Xmx2688M -Xms2688M -Xmn960M -XX:MaxMetaspaceSize=512M "
             + "-XX:MetaspaceSize=512M -XX:+UseConcMarkSweepGC -XX:+UseCMSInitiatingOccupancyOnly "
             + "-XX:CMSInitiatingOccupancyFraction=70 -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses "
@@ -308,21 +309,29 @@ public class DewApp {
     }
 
     /**
-     * Gets build cmd.
+     * Gets package cmd.
      *
-     * @return the build cmd
+     * @return the package cmd
      */
-    public String getBuildCmd() {
-        return buildCmd;
+    public String getPackageCmd() {
+        return packageCmd;
     }
 
     /**
-     * Sets build cmd.
+     * Sets package cmd.
      *
-     * @param buildCmd the build cmd
+     * @param packageCmd the package cmd
      */
-    public void setBuildCmd(String buildCmd) {
-        this.buildCmd = buildCmd;
+    public void setPackageCmd(String packageCmd) {
+        this.packageCmd = packageCmd;
+    }
+
+    public String getErrorProcessPackageCmd() {
+        return errorProcessPackageCmd;
+    }
+
+    public void setErrorProcessPackageCmd(String errorProcessPackageCmd) {
+        this.errorProcessPackageCmd = errorProcessPackageCmd;
     }
 
     /**
