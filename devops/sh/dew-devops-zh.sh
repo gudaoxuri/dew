@@ -231,15 +231,15 @@ harbor_status_check(){
     echo "# e.g. ${HARBOR_REGISTRY_HOST}"
     read -e -p "请输入 Harbor 仓库地址： " registry_host
     if [[ "${registry_host}" != "" ]]; then
-        REGISTRY_HOST=${registry_host}
+        HARBOR_REGISTRY_HOST=${registry_host}
     else
         echo "* 未输入 Harbor 仓库地址，使用默认 Harbor 仓库："
-        echo "* ${REGISTRY_HOST}"
+        echo "* ${HARBOR_REGISTRY_HOST}"
     fi
     echo "* 默认为 https 协议。"
-    harbor_registry_health_check="curl ${SCHEME}://${REGISTRY_HOST}/health -k"
+    harbor_registry_health_check="curl ${HARBOR_REGISTRY_HOST}/health -k"
     # 检查harbor 仓库是否正常
-    registry_status=`curl ${SCHEME}://${REGISTRY_HOST}/health -o /dev/nullrl -s -w %{http_code} -k`
+    registry_status=`curl ${HARBOR_REGISTRY_HOST}/health -o /dev/nullrl -s -w %{http_code} -k`
     if [[ "${registry_status}" -ne 200 ]]; then
         echo
         echo ${harbor_registry_health_check}
@@ -260,7 +260,7 @@ project_create_check(){
     # 校验harbor相关参数
     read -e -p "输入Harbor仓库管理员账号" registry_admin
     if [[ "${registry_admin}" = "" ]]; then
-        echo "* 未输入Harbor仓库管理员账号，使用默认账号：${REGISTRY_ADMIN}"
+        echo "* 未输入Harbor仓库管理员账号，使用默认账号：${HARBOR_REGISTRY_ADMIN}"
     fi
 
     echo
@@ -277,23 +277,23 @@ project_create_check(){
     done
 
     if [[ "${registry_admin}"=="" ]]; then
-        registry_admin=${REGISTRY_ADMIN}
+        registry_admin=${HARBOR_REGISTRY_ADMIN}
     fi
 
     echo
     # 校验密码正确
     ADMIN_AUTHORIZATION=`echo -n ${registry_admin}:${registry_password} | base64`
-    check_admin_status=`curl "${SCHEME}://${REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -o /dev/nullrl -s -w %{http_code} -k`
+    check_admin_status=`curl "${HARBOR_REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -o /dev/nullrl -s -w %{http_code} -k`
     while [[ "${check_admin_status}" -eq 401 || "${check_admin_status}" -eq 403 ]];do
         echo "* 用户名或密码错误，或该账号不是管理员，请重新输入管理员用户名和密码："
         read -e -p "请输入管理员用户名：" registry_admin
         read -e -s -p "请输入密码" registry_password
         ADMIN_AUTHORIZATION=`echo -n ${registry_admin}:${registry_password} | base64`
-        check_admin_status=`curl "${SCHEME}://${REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -o /dev/nullrl -s -w %{http_code} -k`
+        check_admin_status=`curl "${HARBOR_REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -o /dev/nullrl -s -w %{http_code} -k`
     done
 
     if [[ "${registry_admin}" != "" ]]; then
-        REGISTRY_ADMIN=${registry_admin}
+        HARBOR_REGISTRY_ADMIN=${registry_admin}
     fi
     if [[ "${registry_password}" != "" ]]; then
         REGISTRY_ADMIN_PASSWORD=${registry_password}
@@ -323,7 +323,7 @@ project_create_check(){
         check_ns_exists=`kubectl get ns | grep -w ${project_name} | wc -l`
     done
     # 校验项目名是否存在 harbor
-    check_project_exists=`curl "${SCHEME}://${REGISTRY_HOST}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
+    check_project_exists=`curl "${HARBOR_REGISTRY_HOST}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
     while [[ "${check_project_exists}" -gt 0 ]];do
         read -p "项目名已存在，请重新输入：" -e project_name
 
@@ -340,7 +340,7 @@ project_create_check(){
             check_ns_exists=`kubectl get ns | grep -w ${project_name} | wc -l`
         done
 
-        check_project_exists=`curl "${SCHEME}://${REGISTRY_HOST}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
+        check_project_exists=`curl "${HARBOR_REGISTRY_HOST}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
     done
 
     if [[ "${project_name}" != "" ]]; then
@@ -350,10 +350,10 @@ project_create_check(){
     fi
 
     # 判断项目同名用户是否存在
-    check_user_exists=`curl "${SCHEME}://${REGISTRY_HOST}/api/users?username=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
+    check_user_exists=`curl "${HARBOR_REGISTRY_HOST}/api/users?username=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
     while [[ "${check_user_exists}" -gt 0 ]]; do
         read -p "已有与项目同名用户存在，请输入一个用户名以和该项目进行绑定：" -e user_name
-        check_user_exists=`curl "${SCHEME}://${REGISTRY_HOST}/api/users?username=${user_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_name} | wc -l`
+        check_user_exists=`curl "${HARBOR_REGISTRY_HOST}/api/users?username=${user_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_name} | wc -l`
         DEW_HARBOR_USER_NAME=${user_name}
     done
     echo
@@ -386,13 +386,13 @@ project_create_check(){
     done
 
     # 校验邮箱是否存在，以及邮箱格式的正确性
-    check_email_exists=`curl "${SCHEME}://${REGISTRY_HOST}/api/users?email=${user_email}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_email} | wc -l`
+    check_email_exists=`curl "${HARBOR_REGISTRY_HOST}/api/users?email=${user_email}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_email} | wc -l`
     while [[ ${check_email_exists} -gt 0 ]];do
         read -e -p "邮箱已存在，请重新输入：" user_email
         while [[ ! "${user_email}" =~ ${emailRegex} ]]; do
             read -e -p "邮箱格式不正确，请重新输入：" user_email
         done
-        check_email_exists=`curl "${SCHEME}://${REGISTRY_HOST}/api/users?email=${user_email}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_email} | wc -l`
+        check_email_exists=`curl "${HARBOR_REGISTRY_HOST}/api/users?email=${user_email}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_email} | wc -l`
     done
 
     if [[ "${user_email}" != "" ]]; then
@@ -404,9 +404,9 @@ project_create_check(){
 project_create(){
     echo
     echo "# 开始为项目创建用户。"
-    ADMIN_AUTHORIZATION=`echo -n ${REGISTRY_ADMIN}:${REGISTRY_ADMIN_PASSWORD} | base64`
+    ADMIN_AUTHORIZATION=`echo -n ${HARBOR_REGISTRY_ADMIN}:${REGISTRY_ADMIN_PASSWORD} | base64`
 
-    create_user_result=`curl -X POST "${SCHEME}://${REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"email\": \"${DEW_HARBOR_USER_EMAIL}\", \"username\": \"${DEW_HARBOR_USER_NAME}\", \"password\": \"${DEW_HARBOR_USER_PASS}\", \"realname\": \"${DEW_HARBOR_USER_NAME}\", \"comment\": \"init\"}" -o /dev/nullrl -s -w %{http_code} -k`
+    create_user_result=`curl -X POST "${HARBOR_REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"email\": \"${DEW_HARBOR_USER_EMAIL}\", \"username\": \"${DEW_HARBOR_USER_NAME}\", \"password\": \"${DEW_HARBOR_USER_PASS}\", \"realname\": \"${DEW_HARBOR_USER_NAME}\", \"comment\": \"init\"}" -o /dev/nullrl -s -w %{http_code} -k`
     if [[ "${create_user_result}" -ne 201 ]]; then
         echo "创建用户失败，脚本终止，请重试。"
         exit;
@@ -417,7 +417,7 @@ project_create(){
     echo "# 开始创建Harbor项目。"
     USER_AUTHORIZATION=`echo -n ${DEW_HARBOR_USER_NAME}:${DEW_HARBOR_USER_PASS} | base64`
 
-    create_project_result_code=`curl -X POST "${SCHEME}://${REGISTRY_HOST}/api/projects" -H "accept: application/json" -H "authorization: Basic ${USER_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"project_name\": \"${PROJECT_NAMESPACE}\"}" -o /dev/nullrl -s -w %{http_code} -k`
+    create_project_result_code=`curl -X POST "${HARBOR_REGISTRY_HOST}/api/projects" -H "accept: application/json" -H "authorization: Basic ${USER_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"project_name\": \"${PROJECT_NAMESPACE}\"}" -o /dev/nullrl -s -w %{http_code} -k`
     if [[ "${create_project_result_code}" -ne 201 ]]; then
         echo "创建项目失败，脚本终止，请重试。"
         exit;
@@ -437,7 +437,7 @@ project_create(){
 
     # 创建Docker Registry密钥
     kubectl -n ${PROJECT_NAMESPACE} create secret docker-registry dew-registry \
-        --docker-server=${REGISTRY_HOST} \
+        --docker-server=${HARBOR_REGISTRY_HOST} \
         --docker-username=${DEW_HARBOR_USER_NAME} \
         --docker-password=${DEW_HARBOR_USER_PASS} \
         --docker-email=${DEW_HARBOR_USER_EMAIL}
@@ -510,7 +510,7 @@ project_create(){
         yaml_value="            - backend:
                 serviceName: ${backend_services[b]}
                 servicePort: ${backend_services[${b}+1]}
-              path: /${backend_services[${b}+2]}/?(.*)
+              path: ${backend_services[${b}+2]}
 "
         let b=b+3
         backend_yaml_values+=${yaml_value}
@@ -551,7 +551,7 @@ project_create(){
         yaml_value="            - backend:
                 serviceName: ${frontend_services[f]}
                 servicePort: ${frontend_services[${f}+1]}
-              path: /${frontend_services[${f}+2]}/?(.*)
+              path: ${frontend_services[${f}+2]}
 "
         let f=f+3
         frontend_yaml_values+=${yaml_value}
@@ -702,6 +702,7 @@ EOF
     fi
 
     echo
+    answer_edit_chart="N"
     if [[ "${answer_maven_setting}" == "N" || "${answer_maven_setting}" == "n" ]]; then
         read -n1 -e -p "# 是否需要编辑 gitlab-runner chart的\"configmap.yaml\" ？ [Y/N]" answer_edit_chart
         while [[ "${answer_edit_chart}" == "" ]]; do
