@@ -17,7 +17,10 @@
 package ms.dew.devops.kernel.flow.prepare;
 
 import ms.dew.devops.kernel.Dew;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
+
+import java.util.Optional;
 
 /**
  * Prepare flow factory.
@@ -39,6 +42,15 @@ public class PrepareFlowFactory {
                 return new FrontendPrepareFlow();
             default:
                 return new BasicPrepareFlow() {
+                    @Override
+                    protected Optional<String> getErrorProcessPackageCmd(FinalProjectConfig config, String currentPath) {
+                        return Optional.empty();
+                    }
+
+                    @Override
+                    protected Optional<String> getPackageCmd(FinalProjectConfig config, String currentPath) {
+                        return Optional.empty();
+                    }
                 };
         }
     }

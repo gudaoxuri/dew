@@ -20,8 +20,10 @@ import ms.dew.devops.helper.DockerHelper;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
+import ms.dew.devops.util.ShellHelper;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Basic prepare flow.
@@ -29,6 +31,26 @@ import java.io.IOException;
  * @author gudaoxuri
  */
 public abstract class BasicPrepareFlow extends BasicFlow {
+
+
+    /**
+     * Gets error process package cmd.
+     *
+     * @param config      the config
+     * @param currentPath the current path
+     * @return the error process package cmd
+     */
+    protected abstract Optional<String> getErrorProcessPackageCmd(FinalProjectConfig config, String currentPath);
+
+    /**
+     * Gets package cmd.
+     *
+     * @param config      the config
+     * @param currentPath the current path
+     * @return the package cmd
+     */
+    protected abstract Optional<String> getPackageCmd(FinalProjectConfig config, String currentPath);
+
 
     /**
      * Pre prepare build.
@@ -48,13 +70,47 @@ public abstract class BasicPrepareFlow extends BasicFlow {
             // 重用模式下不用再执行准备操作
             return true;
         }
-        // 先判断是否存在
-        if (!DockerHelper.inst(config.getId()).registry.exist(config.getCurrImageName())
-                && !prePrepareBuild(config, flowBasePath)) {
+        if (DockerHelper.inst(config.getId()).registry.exist(config.getCurrImageName())) {
+            // 镜像已存在不用再执行准备操作
+            return true;
+        }
+        // 镜像不存在时执行准备操作
+        if (!execPackageCmd(config)) {
+            Dew.log.debug("Finished,because [execPackageCmd] is false");
+            return false;
+        }
+        if (!prePrepareBuild(config, flowBasePath)) {
             Dew.log.debug("Finished,because [prePrepareBuild] is false");
             return false;
         }
         return true;
+    }
+
+    private boolean execPackageCmd(FinalProjectConfig config) {
+        Optional<String> packageCmdOpt = getPackageCmd(config, Dew.Config.getCurrentMavenProject().getBasedir().getPath());
+        if (!packageCmdOpt.isPresent()) {
+            // 不用执行命令
+            return true;
+        }
+        boolean result = ShellHelper.execCmd("packageCmd", packageCmdOpt.get());
+        if (result) {
+            // 命令执行成功
+            return true;
+        }
+        // 命令执行失败，尝试进行失败处理后重试
+        Optional<String> errorProcessCmdOpt = getErrorProcessPackageCmd(config, Dew.Config.getCurrentMavenProject().getBasedir().getPath());
+        if (!errorProcessCmdOpt.isPresent()) {
+            // 失败处理命令不存在，无法重试
+            return false;
+        }
+        Dew.log.info("Package cmd execute fail , try exception recovery");
+        // 失败处理操作
+        result = ShellHelper.execCmd("errorProcessCmd", errorProcessCmdOpt.get());
+        if (result) {
+            // 重试
+            result = ShellHelper.execCmd("packageCmd", packageCmdOpt.get());
+        }
+        return result;
     }
 
 }

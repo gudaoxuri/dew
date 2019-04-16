@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.exception;
+package ms.dew.devops.exception;
 
 
 /**

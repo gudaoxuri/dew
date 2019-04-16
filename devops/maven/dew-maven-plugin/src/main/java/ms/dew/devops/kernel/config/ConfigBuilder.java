@@ -20,7 +20,7 @@ import com.ecfront.dew.common.$;
 import ms.dew.devops.helper.GitHelper;
 import ms.dew.devops.helper.YamlHelper;
 import ms.dew.devops.kernel.Dew;
-import ms.dew.devops.kernel.exception.ConfigException;
+import ms.dew.devops.exception.ConfigException;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;

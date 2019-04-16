@@ -25,7 +25,7 @@ import ms.dew.devops.kernel.config.ConfigBuilder;
 import ms.dew.devops.kernel.config.DewConfig;
 import ms.dew.devops.kernel.config.FinalConfig;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
-import ms.dew.devops.kernel.exception.ProcessException;
+import ms.dew.devops.exception.ProcessException;
 import ms.dew.notification.NotifyConfig;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;

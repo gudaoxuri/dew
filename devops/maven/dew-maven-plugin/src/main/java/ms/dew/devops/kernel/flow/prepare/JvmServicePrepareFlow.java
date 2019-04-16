@@ -21,6 +21,7 @@ import ms.dew.devops.kernel.config.FinalProjectConfig;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * Jvm service prepare flow.
@@ -28,6 +29,16 @@ import java.util.HashMap;
  * @author gudaoxuri
  */
 public class JvmServicePrepareFlow extends BasicPrepareFlow {
+
+    @Override
+    protected Optional<String> getErrorProcessPackageCmd(FinalProjectConfig config, String currentPath) {
+        return Optional.empty();
+    }
+
+    @Override
+    protected Optional<String> getPackageCmd(FinalProjectConfig config, String currentPath) {
+        return Optional.empty();
+    }
 
     protected boolean prePrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
         Dew.Invoke.invoke("org.springframework.boot",

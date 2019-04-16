@@ -1,2 +1,4 @@
 app:
-  buildCmd: "npm install && npm run build:h5"
+  packageCmd: "npm run build:h5"
+  # tarojs cli 没有添加到依赖 @see https://github.com/NervJS/taro/pull/2226
+  errorProcessPackageCmd: "npm install && npm install -g @tarojs/cli"
