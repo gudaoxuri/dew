@@ -374,7 +374,7 @@ public class DewApp {
     }
 
     /**
-     * Gets the container resources limits
+     * Gets the container resources limits.
      *
      * @return the container resources limits
      */
@@ -383,7 +383,7 @@ public class DewApp {
     }
 
     /**
-     * Sets the container resources limits
+     * Sets the container resources limits.
      *
      * @param containerResourcesLimits the container resources limits
      */
@@ -392,7 +392,7 @@ public class DewApp {
     }
 
     /**
-     * Gets the container resources requests
+     * Gets the container resources requests.
      *
      * @return the container resources requests
      */
@@ -401,7 +401,7 @@ public class DewApp {
     }
 
     /**
-     * Set the container resources requests
+     * Set the container resources requests.
      *
      * @param containerResourcesRequests the container resources requests
      */
