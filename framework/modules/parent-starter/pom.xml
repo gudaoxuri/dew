@@ -49,6 +49,8 @@
         <finalName>${project.artifactId}</finalName>
         <dew.version>2.0.0-SNAPSHOT</dew.version>
 
+        <guava.version>20.0</guava.version>
+
         <spring-cloud.version>2.1.1.RELEASE</spring-cloud.version>
         <dew-common.version>1.4.12</dew-common.version>
         <swagger.version>2.9.2</swagger.version>
@@ -181,6 +183,11 @@
                 <groupId>ms.dew</groupId>
                 <artifactId>auth-sdk-starter</artifactId>
                 <version>${dew.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

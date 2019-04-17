@@ -72,6 +72,11 @@
             <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
             <version>${spring-cloud.version}</version>
         </dependency>
+        <!--Fixed version conflicts-->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
         <!--Fixed ClassNotFoundException-->
         <dependency>
             <groupId>com.netflix.servo</groupId>
