@@ -17,7 +17,7 @@
 #
 # ======================================================
 
-HARBOR_REGISTRY_HOST=harbor.dew.ms
+HARBOR_REGISTRY_URL=https://harbor.dew.ms
 HARBOR_REGISTRY_ADMIN=admin
 HARBOR_REGISTRY_ADMIN_PASSWORD=Harbor12345
 HARBOR_REGISTRY_PASSWORD_REGEX="(?=^.{8,20}$)(?=^[^\s]*$)(?=.*\d)(?=.*[A-Z])(?=.*[a-z])"
@@ -36,10 +36,11 @@ MINIO_BUCKET_NAME="dew"
 GITLAB_URL="http://gitlab.dew.ms"
 GITLAB_RUNNER_NAMESPACE="default"
 GITLAB_RUNNER_NAME="dew-runner"
-GITLAB_RUNNER_IMAGE="ubuntu:16.04"
+GITLAB_RUNNER_IMAGE="dewms/devops:latest"
 GITLAB_RUNNER_REG_TOKEN=3mezus8cX9qAjkrNY4B
 GITLAB_RUNNER_PROFILE=test
 
+DOCKERD_URL=tcp://10.200.131.215:2375
 
 # ------------------
 # Params dealing
@@ -69,13 +70,13 @@ get_json_value(){
 
 press_enter_continue(){
     echo
-    read -s -p "* Press Enter to continue." enter
+    read -s -p "* Please press Enter to continue." enter
     echo
 }
 
 
 # ------------------
-# Init
+# Check
 # ------------------
 
 
@@ -121,12 +122,13 @@ add_helm_gitlab_repo(){
             echo "Updating the repo..."
             echo "Perhaps need a few minutes, please wait..."
             stty igncr
-            helm repo update
+            helm repo update;
             stty -igncr
             echo "Helm repo has been updated."
             press_enter_continue
         fi
     else
+        echo "Perhaps need a few minutes, please wait..."
         stty igncr
         check_gitlab_repo_add=`helm repo add gitlab https://charts.gitlab.io | grep '"gitlab" has been added to your repositories' | wc -l`
         stty -igncr
@@ -141,7 +143,7 @@ add_helm_gitlab_repo(){
 }
 
 
-minIO_status_check(){
+check_minIO_status(){
     echo "--------------------------------------"
     echo "# Checking MinIO status."
 
@@ -157,7 +159,7 @@ minIO_status_check(){
     check_minIo_status=`curl ${MINIO_HOST} -o /dev/nullrl -s -w %{http_code} `
     if [[ "${check_minIo_status}" != 403 ]]; then
         echo
-        echo "MinIO was not able to be accessed.Please check your MinIO environment."
+        echo "* MinIO was not able to be accessed.Please check your MinIO environment."
         echo "The script to end."
         exit;
     fi
@@ -208,43 +210,21 @@ minIO_status_check(){
     echo "--------------------------------------"
 }
 
-init_cluster(){
-    echo "--------------------------------------"
-    echo "# Initializing Kubernetes Cluster, creating the cluster role for service discovery."
-    check_cluster_role_exist=`kubectl get clusterrole | grep -w service-discovery-client | wc -l`
-    if [[ "${check_cluster_role_exist}" == 0 ]]; then
-        kubectl create clusterrole service-discovery-client \
-        --verb=get,list,watch \
-        --resource=pods,services,configmaps,endpoints
-    fi
-    add_helm_gitlab_repo
-    install_gitlab_runner_project
-    echo
-    echo "Kubernetes Cluster has been initialized."
-    echo "--------------------------------------"
-    exit;
-}
 
-
-# ------------------
-# Create a project
-# ------------------
-
-harbor_status_check(){
+check_harbor_status(){
     echo "------------------------------------"
     echo "## Checking Harbor status..."
     echo
-    echo "# e.g. ${HARBOR_REGISTRY_HOST} or https://${HARBOR_REGISTRY_HOST} "
-    read -e -p "Please input Harbor registry host： " registry_host
-    if [[ "${registry_host}" != "" ]]; then
-        HARBOR_REGISTRY_HOST=${registry_host}
+    echo "# e.g. ${HARBOR_REGISTRY_URL} "
+    read -e -p "Please input Harbor registry url： " registry_url
+    if [[ "${registry_url}" != "" ]]; then
+        HARBOR_REGISTRY_URL=${registry_url}
     else
-        echo "* No Harbor registry host was entered, using the default Harbor registry host："
-        echo "* ${HARBOR_REGISTRY_HOST}"
+        echo "* No Harbor registry url was entered, using the default Harbor registry host："
+        echo "* ${HARBOR_REGISTRY_URL}"
     fi
-    echo "* The default scheme is https."
-    harbor_registry_health_check="curl ${HARBOR_REGISTRY_HOST}/health -k"
-    registry_status=`curl ${HARBOR_REGISTRY_HOST}/health -o /dev/nullrl -s -w %{http_code} -k`
+    harbor_registry_health_check="curl ${HARBOR_REGISTRY_URL}/health -k"
+    registry_status=`curl ${HARBOR_REGISTRY_URL}/health -o /dev/nullrl -s -w %{http_code} -k`
     if [[ "${registry_status}" -ne 200 ]]; then
         echo
         echo ${harbor_registry_health_check}
@@ -259,10 +239,8 @@ harbor_status_check(){
     echo "------------------------------------"
 }
 
-project_create_check(){
-    echo "Tips: Before creating your project, you need to initialize your Kubernetes cluster for service discovery."
-    echo "____________________________________"
-    echo
+check_harbor_admin_account(){
+
     read -e -p "Please input your Harbor registry admin account: " registry_admin
     if [[ "${registry_admin}" == "" ]]; then
         echo "* No Harbor registry admin account was entered, using the default admin account: ${HARBOR_REGISTRY_ADMIN}"
@@ -274,7 +252,6 @@ project_create_check(){
     echo "# The password should have the length between 8 and 20,"
     echo "# and contain an uppercase letter, a lowercase letter and a number."
     read -p "Input your Harbor admin password: " -e -s registry_password
-    echo
 
     regex_password=${HARBOR_REGISTRY_PASSWORD_REGEX}
     check_password=`echo "${registry_password}" | grep -P ${regex_password}| wc -l`
@@ -288,16 +265,15 @@ project_create_check(){
         registry_admin=${HARBOR_REGISTRY_ADMIN}
     fi
 
-    echo
     ADMIN_AUTHORIZATION=`echo -n ${registry_admin}:${registry_password} | base64`
-    check_admin_status=`curl "${HARBOR_REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -o /dev/nullrl -s -w %{http_code} -k`
+    check_admin_status=`curl "${HARBOR_REGISTRY_URL}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -o /dev/nullrl -s -w %{http_code} -k`
     while [[ ${check_admin_status} -eq 401 || ${check_admin_status} -eq 403 ]];do
         echo
         echo "* Password or admin account maybe not right,or the account not admin.Please retype admin account and password."
         read -e -p "Please input Harbor registry admin account: " registry_admin
         read -e -s -p "Please input password: " registry_password
         ADMIN_AUTHORIZATION=`echo -n ${registry_admin}:${registry_password} | base64`
-        check_admin_status=`curl "${HARBOR_REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -o /dev/nullrl -s -w %{http_code} -k`
+        check_admin_status=`curl "${HARBOR_REGISTRY_URL}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -o /dev/nullrl -s -w %{http_code} -k`
     done
 
     if [[ "${registry_admin}" != "" ]]; then
@@ -306,7 +282,44 @@ project_create_check(){
     if [[ "${registry_password}" != "" ]]; then
         HARBOR_REGISTRY_ADMIN_PASSWORD=${registry_password}
     fi
+}
+
+
+# ------------------
+# Init
+# ------------------
+
+init_cluster(){
+    echo "--------------------------------------"
+    echo "# Initializing Kubernetes Cluster..."
+    echo "# * Create the cluster role for service discovery"
+    echo "# * Install the gitlab runner"
     echo
+    echo "creating the cluster role ..."
+    check_cluster_role_exist=`kubectl get clusterrole | grep -w service-discovery-client | wc -l`
+    if [[ "${check_cluster_role_exist}" == 0 ]]; then
+        kubectl create clusterrole service-discovery-client \
+        --verb=get,list,watch \
+        --resource=pods,services,configmaps,endpoints
+    fi
+    add_helm_gitlab_repo
+    install_gitlab_runner
+    echo
+    echo "Kubernetes Cluster has been initialized."
+    echo "--------------------------------------"
+    exit;
+}
+
+
+# ------------------
+# Create a project
+# ------------------
+
+project_create_check(){
+    echo "Tips: Before creating your project, you need to initialize your Kubernetes cluster for service discovery."
+    echo "____________________________________"
+    echo
+    check_harbor_admin_account
 
     echo
     echo "# The name of project would be used for creating Harbor project, Harbor user account and Kubernetes namespace."
@@ -332,7 +345,7 @@ project_create_check(){
         check_ns_exists=`kubectl get ns | grep -w ${project_name} | wc -l`
     done
     # Checking whether Harbor project name exists.
-    check_project_exists=`curl "${HARBOR_REGISTRY_HOST}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
+    check_project_exists=`curl "${HARBOR_REGISTRY_URL}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
     while [[ "${check_project_exists}" -gt 0 ]];do
         read -p "The project name already exists, please retype again: " -e project_name
 
@@ -349,7 +362,7 @@ project_create_check(){
             check_ns_exists=`kubectl get ns | grep -w ${project_name} | wc -l`
         done
 
-        check_project_exists=`curl "${HARBOR_REGISTRY_HOST}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
+        check_project_exists=`curl "${HARBOR_REGISTRY_URL}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
     done
 
     if [[ "${project_name}" != "" ]]; then
@@ -359,10 +372,10 @@ project_create_check(){
     fi
 
     # Checking whether user account exists.
-    check_user_exists=`curl "${HARBOR_REGISTRY_HOST}/api/users?username=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
+    check_user_exists=`curl "${HARBOR_REGISTRY_URL}/api/users?username=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
     while [[ "${check_user_exists}" -gt 0 ]]; do
         read -p "There is already existing the same Harbor user account with project name.Please input another user name to bind with your project: " -e user_name
-        check_user_exists=`curl "${HARBOR_REGISTRY_HOST}/api/users?username=${user_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_name} | wc -l`
+        check_user_exists=`curl "${HARBOR_REGISTRY_URL}/api/users?username=${user_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_name} | wc -l`
         DEW_HARBOR_USER_NAME=${user_name}
     done
     echo
@@ -399,13 +412,13 @@ project_create_check(){
     done
 
     # Checking whether e-mail is registered.
-    check_email_exists=`curl "${HARBOR_REGISTRY_HOST}/api/users?email=${user_email}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_email} | wc -l`
+    check_email_exists=`curl "${HARBOR_REGISTRY_URL}/api/users?email=${user_email}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_email} | wc -l`
     while [[ "${check_email_exists}" -gt 0 ]];do
         read -p "The e-mail is already registered, please retype another: " -e user_email
         while [[ ! "${user_email}" =~ ${emailRegex} ]]; do
             read -p "The e-mail format is not right, please retype again:" -e user_email
         done
-        check_email_exists=`curl "${HARBOR_REGISTRY_HOST}/api/users?email=${user_email}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_email} | wc -l`
+        check_email_exists=`curl "${HARBOR_REGISTRY_URL}/api/users?email=${user_email}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_email} | wc -l`
     done
 
     if [[ "${user_email}" != "" ]]; then
@@ -419,7 +432,7 @@ project_create(){
     echo "# Starting to create the Harbor user account."
     ADMIN_AUTHORIZATION=`echo -n ${HARBOR_REGISTRY_ADMIN}:${HARBOR_REGISTRY_ADMIN_PASSWORD} | base64`
 
-    create_user_result=`curl -X POST "${HARBOR_REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"email\": \"${DEW_HARBOR_USER_EMAIL}\", \"username\": \"${DEW_HARBOR_USER_NAME}\", \"password\": \"${DEW_HARBOR_USER_PASS}\", \"realname\": \"${DEW_HARBOR_USER_NAME}\", \"comment\": \"init\"}" -o /dev/nullrl -s -w %{http_code} -k`
+    create_user_result=`curl -X POST "${HARBOR_REGISTRY_URL}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"email\": \"${DEW_HARBOR_USER_EMAIL}\", \"username\": \"${DEW_HARBOR_USER_NAME}\", \"password\": \"${DEW_HARBOR_USER_PASS}\", \"realname\": \"${DEW_HARBOR_USER_NAME}\", \"comment\": \"init\"}" -o /dev/nullrl -s -w %{http_code} -k`
     if [[ "${create_user_result}" -ne 201 ]]; then
         echo "Failed to create user account, the script to end, please retry it later."
         exit;
@@ -431,7 +444,7 @@ project_create(){
     echo "# Starting to create Harbor project."
     USER_AUTHORIZATION=`echo -n ${DEW_HARBOR_USER_NAME}:${DEW_HARBOR_USER_PASS} | base64`
 
-    create_project_result_code=`curl -X POST "${HARBOR_REGISTRY_HOST}/api/projects" -H "accept: application/json" -H "authorization: Basic ${USER_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"project_name\": \"${PROJECT_NAMESPACE}\"}" -o /dev/nullrl -s -w %{http_code} -k`
+    create_project_result_code=`curl -X POST "${HARBOR_REGISTRY_URL}/api/projects" -H "accept: application/json" -H "authorization: Basic ${USER_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"project_name\": \"${PROJECT_NAMESPACE}\"}" -o /dev/nullrl -s -w %{http_code} -k`
     if [[ "${create_project_result_code}" -ne 201 ]]; then
         echo "Failed to create project, the script to end, please retry it later."
         exit;
@@ -448,7 +461,7 @@ project_create(){
         --serviceaccount ${PROJECT_NAMESPACE}:default
 
     kubectl -n ${PROJECT_NAMESPACE} create secret docker-registry dew-registry \
-        --docker-server=${HARBOR_REGISTRY_HOST} \
+        --docker-server=${HARBOR_REGISTRY_URL} \
         --docker-username=${DEW_HARBOR_USER_NAME} \
         --docker-password=${DEW_HARBOR_USER_PASS} \
         --docker-email=${DEW_HARBOR_USER_EMAIL}
@@ -599,16 +612,18 @@ EOF
         echo -e "\033[31m * Failed to created Ingress, the script to end. Please the Ingress yourself. \033[1;m"
         exit;
     else
-        echo "The creating of project [${PROJECT_NAMESPACE}] is completed."
+        echo "Finished to create project [${PROJECT_NAMESPACE}]."
         echo "The script to end."
         exit;
     fi
-
 }
 
 
-install_gitlab_runner_project(){
+install_gitlab_runner(){
 
+    echo "# Harbor is used for gitlab runner to store images."
+    check_harbor_status
+    check_harbor_admin_account
     echo
     read -e -p "# Please input the namespace for gitlab runner to install: " gitlab_runner_namespace
 
@@ -651,28 +666,20 @@ install_gitlab_runner_project(){
     fi
 
     if [[ "${answer_using_minio}" == "Y" || "${answer_using_minio}" == "y" ]]; then
-        minIO_status_check
-        echo "# Create secret for MinIO."
-        check_minio_secret_exists=`kubectl get secret -n ${GITLAB_RUNNER_NAMESPACE} | grep -w minio-access | wc -l`
-        if [[ "${check_minio_secret_exists}" == 1 ]]; then
-            echo "The secret \"minio-access\" already exists,using the created secret."
-        else
-            kubectl create secret generic minio-access -n ${GITLAB_RUNNER_NAMESPACE} \
-                --from-literal=accesskey=${MINIO_ACCESS_KEY} \
-                --from-literal=secretkey=${MINIO_SECRET_KEY}
-        fi
+        check_minIO_status
     else
         echo "* You should install your gitlab runner chart with your configurations in the last step."
     fi
 
     echo
-    echo "## Starting to install the gitlab-runner chart."
+    echo "## Starting to install the gitlab-runner."
     echo "Fetch the chart of gitlab-runner..."
     stty igncr
     helm fetch --untar gitlab/gitlab-runner --version=0.3.0
     stty -igncr
     echo "The chart has been fetched."
     press_enter_continue
+    echo
 
     echo
     read -n1 -e -p "# If you need to configure the Maven settings.xml? [Y/N] " answer_maven_setting
@@ -680,7 +687,7 @@ install_gitlab_runner_project(){
         read -e -n1 -p "Please answer [Y/N]: " answer_maven_setting
     done
     answer_check N ${answer_maven_setting}
-    if [[ "${answer_maven_setting}" == "Y" || "${answer_maven_setting}" == "y" ]]; then
+    if [[ "${answer_maven_setting}" != "Y" && "${answer_maven_setting}" != "y" ]]; then
         answer_maven_setting="N"
     fi
 
@@ -713,10 +720,8 @@ EOF
         echo "* Please edit the yaml file with your configurations."
         vi dew-maven-settings.yaml <EOF  < /dev/tty
         echo
-        kubectl apply -f dew-maven-settings.yaml
     fi
 
-    echo
     answer_edit_chart="N"
     if [[ "${answer_maven_setting}" == "N" || "${answer_maven_setting}" == "n" ]]; then
         read -n1 -e -p "# Do you need to edit the \"configmap.yaml\" of the gitlab-runner chart? [Y/N]" answer_edit_chart
@@ -747,49 +752,51 @@ EOF
     fi
 
     echo
-    read -e -p "# Please input your gitlab url, e.g. \"http://gitlab.dew.ms\" : " gitlab_url
+    read -e -p "# Please input your gitlab url, e.g. http://gitlab.dew.ms : " gitlab_url
     if [[ "${gitlab_url}" == "" ]]; then
         echo "* No gitlab url was entered, using the default url \"http://gitlab.dew.ms\"."
-        gitlab_url=${GITLAB_URL}
+    else
+        GITLAB_URL=${gitlab_url}
     fi
-    GITLAB_URL=${gitlab_url}
 
     echo
-    echo "# The project name is used for the helm release name of your project gitlab-runner."
-    read -e -p "# Please input your project name: " project_name
-    while [[ "${project_name}" == "" ]]; do
-        read -e -p "Please input your project name: " project_name
-    done
+    echo "# The name is used for the helm release name of your gitlab-runner."
+    read -e -p "# Please input your gitlab-runner name: " runner_name
 
-    check_helm_runner_exists=`helm list | grep -w ${project_name} | wc -l`
-    while [[ "${check_helm_runner_exists}" == 1 ]]; do
-        echo "* Error: a release named ${project_name} already exists."
-        read -e -p "Please input another project name: " project_name
-        while [[ "${project_name}" == "" ]]; do
-            read -e -p "Please input your project name: " project_name
+    if [[ "${runner_name}" == "" ]]; then
+        echo "No name was entered, Using the default runner name: ${GITLAB_RUNNER_NAME}"
+        runner_name=${GITLAB_RUNNER_NAME}
+    fi
+
+    check_helm_runner_name_exists=`helm list | grep -w ${runner_name} | wc -l`
+    while [[ "${check_helm_runner_name_exists}" == 1 ]]; do
+        echo "* Error: a release named ${runner_name} already exists."
+        read -e -p "Please input another project name: " runner_name
+        while [[ "${runner_name}" == "" ]]; do
+            read -e -p "Please input your project name: " runner_name
         done
-        check_helm_runner_exists=`helm list | grep -w ${project_name} | wc -l`
+        check_helm_runner_name_exists=`helm list | grep -w ${runner_name} | wc -l`
     done
-    GITLAB_RUNNER_NAME=${project_name}
+    GITLAB_RUNNER_NAME=${runner_name}
 
     echo
     echo "## The registration token for adding new Runners to the GitLab server."
     echo "# This must be retrieved from your GitLab instance."
     echo "# ref: https://docs.gitlab.com/ee/ci/runners/"
     echo "# e.g. ${GITLAB_RUNNER_REG_TOKEN}"
-    read -e -p "# Please input the runner registration token of your gitlab project: " runner_registration_token
+    read -e -p "# Please input the registration token of your gitlab runner: " runner_registration_token
     while [[ "${runner_registration_token}" == "" ]]; do
         read -e -p "# Please input the runner registration token: " runner_registration_token
     done
     GITLAB_RUNNER_REG_TOKEN=${runner_registration_token}
 
     echo
-    echo "# e.g. Using \"test\" to label your project environment. "
-    read -e -p "# Please input your project profile: " project_profile
-    while [[ "${project_profile}" == "" ]]; do
-        read -e -p "Please input your project profile: " project_profile
+    echo "# e.g. Using \"test\" to label your runner environment. "
+    read -e -p "# Please input your runner profile: " runner_profile
+    while [[ "${runner_profile}" == "" ]]; do
+        read -e -p "Please input your runner profile: " runner_profile
     done
-    GITLAB_RUNNER_PROFILE=${project_profile}
+    GITLAB_RUNNER_PROFILE=${runner_profile}
 
     echo
     echo "# Default container image to use for builds when none is specified."
@@ -797,9 +804,21 @@ EOF
     read -e -p "# Input your runner image:" gitlab_runner_image
     if [[ "${gitlab_runner_image}" == "" ]]; then
         echo "* No value was entered,using the default value \"${GITLAB_RUNNER_IMAGE}\"."
-        gitlab_runner_image=${GITLAB_RUNNER_IMAGE}
+    else
+        GITLAB_RUNNER_IMAGE=${gitlab_runner_image}
     fi
-    GITLAB_RUNNER_IMAGE=${gitlab_runner_image}
+
+    echo
+
+    echo "The DockerD url is used for dew-maven-plugin."
+    echo "e.g. ${DOCKERD_URL}"
+    read -e -p "Please input your DockerD service url:" docker_url
+
+    if [[ "${docker_url}" != "" ]]; then
+        DOCKERD_URL=${docker_url}
+    else
+       echo "No DockerD url was entered, using the default value \"${DOCKERD_URL}\""
+    fi
 
     # The settings for helm installation.
     gitlab_runner_helm_install_settings="helm install --name ${GITLAB_RUNNER_NAME} --namespace ${GITLAB_RUNNER_NAMESPACE} gitlab-runner \\
@@ -815,13 +834,13 @@ EOF
     --set runners.cache.s3BucketName=${MINIO_BUCKET_NAME} \\
     --set runners.cache.s3CacheInsecure=true \\
     --set runners.cache.secretName=minio-access \\
-    --set runners.env.dew_devops_docker_host=tcp://10.200.131.215:2375 \\
-    --set runners.env.dew_devops_docker_registry_url=https://harbor.trc.com/v2 \\
-    --set runners.env.dew_devops_docker_registry_username=dew \\
-    --set runners.env.dew_devops_docker_registry_password=Dew123456 \\
+    --set runners.env.dew_devops_docker_host=${DOCKERD_URL} \\
+    --set runners.env.dew_devops_docker_registry_url=${HARBOR_REGISTRY_URL}/v2 \\
+    --set runners.env.dew_devops_docker_registry_username=${HARBOR_REGISTRY_ADMIN} \\
+    --set runners.env.dew_devops_docker_registry_password=${HARBOR_REGISTRY_ADMIN_PASSWORD} \\
     --set runners.env.dew_devops_profile=${GITLAB_RUNNER_PROFILE} \\
     --set runners.env.dew_devops_quiet=true \\
-    --set runners.env.dew_devops_kube_config=${KUBE_CONFIG} \\ "
+    --set runners.env.dew_devops_kube_config=${KUBE_CONFIG} \\"
 
 cat > gitlab-runner/gitlab-runner-helm-installation.sh <<EOF
 #!/bin/bash
@@ -834,10 +853,6 @@ ${gitlab_runner_helm_install_settings}
 EOF
 
     echo
-    if [[ "${answer_maven_setting}" == "Y" || "${answer_maven_setting}" == "y" ]]; then
-    echo '    --set runners.env.MAVEN_OPTS="-Dmaven.repo.local=.m2 -Dorg.apache.maven.user-settings=/opt/maven/settings.xml" \' >> gitlab-runner/gitlab-runner-helm-installation.sh
-    fi
-
     read -n1 -e -p "# If you want to add your runner custom settings of helm installation? [Y/N] " answer_helm
     while [[ "${answer_helm}" == "" ]]; do
         read -e -n1 -p "Please answer [Y/N]: " answer_helm
@@ -846,18 +861,35 @@ EOF
     if [[ "${answer_helm}" != "Y" && "${answer_helm}" != "y"  ]]; then
         answer_helm="N"
     fi
-
     if [[ "${answer_helm}" == "Y" || "${answer_helm}" == "y" ||  "${answer_using_minio}" == "N" || "${answer_using_minio}" == "n" ]]; then
         vi gitlab-runner/gitlab-runner-helm-installation.sh <EOF  < /dev/tty
-        sh gitlab-runner/gitlab-runner-helm-installation.sh
     elif [[ "${answer_helm}" == "N" || "${answer_helm}" == "n" ]]; then
         echo "Installing gitlab runner chart with the default settings."
-        echo
-        sh gitlab-runner/gitlab-runner-helm-installation.sh
     fi
 
-   check_helm_runner_exists=`helm list | grep -w ${GITLAB_RUNNER_NAME} | wc -l`
-   if [[ "${check_helm_runner_exists}" == 0 ]]; then
+    if [[ "${answer_using_minio}" == "Y" || "${answer_using_minio}" == "y" ]]; then
+        echo "# Create secret for MinIO."
+        check_minio_secret_exists=`kubectl get secret -n ${GITLAB_RUNNER_NAMESPACE} | grep -w minio-access | wc -l`
+        if [[ "${check_minio_secret_exists}" == 1 ]]; then
+            echo "The secret \"minio-access\" already exists,using the created secret."
+        else
+            kubectl create secret generic minio-access -n ${GITLAB_RUNNER_NAMESPACE} \
+                --from-literal=accesskey=${MINIO_ACCESS_KEY} \
+                --from-literal=secretkey=${MINIO_SECRET_KEY}
+        fi
+    else
+        echo "* You should install your gitlab runner chart with your configurations in the last step."
+    fi
+
+    if [[ "${answer_maven_setting}" == "Y" || "${answer_maven_setting}" == "y" ]]; then
+        echo '    --set runners.env.MAVEN_OPTS="-Dmaven.repo.local=.m2 -Dorg.apache.maven.user-settings=/opt/maven/settings.xml"' >> gitlab-runner/gitlab-runner-helm-installation.sh
+        kubectl apply -f dew-maven-settings.yaml
+    fi
+
+    sh gitlab-runner/gitlab-runner-helm-installation.sh
+
+   check_helm_runner_name_exists=`helm list | grep -w ${GITLAB_RUNNER_NAME} | wc -l`
+   if [[ "${check_helm_runner_name_exists}" == 0 ]]; then
        echo
        echo -e "\033[31m * ERROR: \033[1;m""Failed to install gitlab runner! Please check your settings and execute it by yourself."
        echo
@@ -866,14 +898,11 @@ EOF
        echo "The script to end."
    else
        echo
-       echo "* Finished to install gitlab-runner for project [${GITLAB_RUNNER_NAME}]."
+       echo "* Finished to install gitlab-runner."
    fi
    echo
    exit;
-
 }
-
-
 
 # ------------------
 # Select an option
@@ -882,10 +911,9 @@ echo ""
 echo "=================== Dew DevOps Script ==================="
 echo ""
 
-
 PS3='Choose your option: '
 
-select option in "Init cluster" "Create a project" "Install a gitlab runner project"
+select option in "Init cluster" "Create a project"
 
 do
     case ${option} in
@@ -897,13 +925,9 @@ do
      'Create a project')
       echo "========== Create a Project =========="
       init_env_check
-      harbor_status_check
+      check_harbor_status
       project_create_check
       project_create
-      break;;
-     'Install a gitlab runner project')
-      echo "========== Install a gitlab runner for project =========="
-      init_env_check
       break;;
     esac
 done
