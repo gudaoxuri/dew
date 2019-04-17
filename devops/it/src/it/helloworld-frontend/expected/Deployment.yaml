@@ -37,5 +37,8 @@ spec:
         - containerPort: 80
           name: http
           protocol: TCP
+        resources:
+          limits: {}
+          requests: {}
       nodeSelector:
         group: app
