@@ -55,6 +55,8 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         selectorLabels.remove("version");
         selectorLabels.remove("provider");
 
+        V1ResourceRequirements re = new V1ResourceRequirements();
+        re.setRequests(config.getApp().getContainerResourcesRequests());
         V1ContainerBuilder containerBuilder;
         switch (config.getKind()) {
             case JVM_SERVICE:
@@ -96,7 +98,10 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                                 .withInitialDelaySeconds(config.getApp().getReadinessInitialDelaySeconds())
                                 .withPeriodSeconds(config.getApp().getReadinessPeriodSeconds())
                                 .withFailureThreshold(config.getApp().getReadinessFailureThreshold())
-                                .build());
+                                .build())
+                        .withResources(new V1ResourceRequirements()
+                                .requests(config.getApp().getContainerResourcesRequests())
+                                .limits(config.getApp().getContainerResourcesLimits()));
                 break;
             case FRONTEND:
                 containerBuilder = new V1ContainerBuilder()
@@ -107,7 +112,10 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                                 .withContainerPort(config.getApp().getPort())
                                 .withName("http")
                                 .withProtocol("TCP")
-                                .build());
+                                .build())
+                        .withResources(new V1ResourceRequirements()
+                                .requests(config.getApp().getContainerResourcesRequests())
+                                .limits(config.getApp().getContainerResourcesLimits()));
                 break;
             default:
                 throw new ProcessException("Kind " + config.getKind().name() + " does not require deployment");

@@ -65,5 +65,8 @@ spec:
             scheme: HTTP
           initialDelaySeconds: 10
           periodSeconds: 60
+        resources:
+          limits: {}
+          requests: {}
       nodeSelector:
         group: app

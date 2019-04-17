@@ -16,6 +16,8 @@
 
 package ms.dew.devops.kernel.config;
 
+import io.kubernetes.client.custom.Quantity;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -53,7 +55,8 @@ public class DewApp {
             + "-XX:CMSInitiatingOccupancyFraction=70 -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses "
             + "-XX:+CMSClassUnloadingEnabled -XX:+ParallelRefProcEnabled -XX:+CMSScavengeBeforeRemark -XX:+HeapDumpOnOutOfMemoryError";
     private Set<String> ignoreChangeFiles = new HashSet<>();
-
+    private Map<String, Quantity> containerResourcesLimits = new HashMap<>();
+    private Map<String, Quantity> containerResourcesRequests = new HashMap<>();
     /**
      * Gets replicas.
      *
@@ -368,5 +371,41 @@ public class DewApp {
      */
     public void setIgnoreChangeFiles(Set<String> ignoreChangeFiles) {
         this.ignoreChangeFiles = ignoreChangeFiles;
+    }
+
+    /**
+     * Gets the container resources limits
+     *
+     * @return the container resources limits
+     */
+    public Map<String, Quantity> getContainerResourcesLimits() {
+        return containerResourcesLimits;
+    }
+
+    /**
+     * Sets the container resources limits
+     *
+     * @param containerResourcesLimits the container resources limits
+     */
+    public void setContainerResourcesLimits(Map<String, Quantity> containerResourcesLimits) {
+        this.containerResourcesLimits = containerResourcesLimits;
+    }
+
+    /**
+     *  Gets the container resources requests
+     *
+     * @return the container resources requests
+     */
+    public Map<String, Quantity> getContainerResourcesRequests() {
+        return containerResourcesRequests;
+    }
+
+    /**
+     *  Set the container resources requests
+     *
+     * @param containerResourcesRequests the container resources requests
+     */
+    public void setContainerResourcesRequests(Map<String, Quantity> containerResourcesRequests) {
+        this.containerResourcesRequests = containerResourcesRequests;
     }
 }
