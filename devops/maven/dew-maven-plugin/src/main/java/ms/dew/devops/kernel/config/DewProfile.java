@@ -33,6 +33,8 @@ public class DewProfile {
     private AppKind kind;
     // 命名空间
     private String namespace = "dew-default-ns";
+    // 是否禁用重用版本，默认情况下前期工程禁用，其它工程启用
+    private Boolean disableReuseVersion;
     // 是否重用最后一个版本，值为重用的目标环境名称
     private String reuseLastVersionFromProfile = "";
 
@@ -114,6 +116,24 @@ public class DewProfile {
     }
 
     /**
+     * Gets disable reuse version.
+     *
+     * @return the disable reuse version
+     */
+    public Boolean getDisableReuseVersion() {
+        return disableReuseVersion;
+    }
+
+    /**
+     * Sets disable reuse version.
+     *
+     * @param disableReuseVersion the disable reuse version
+     */
+    public void setDisableReuseVersion(Boolean disableReuseVersion) {
+        this.disableReuseVersion = disableReuseVersion;
+    }
+
+    /**
      * Gets reuse last version from profile.
      *
      * @return the reuse last version from profile
@@ -130,6 +150,7 @@ public class DewProfile {
     public void setReuseLastVersionFromProfile(String reuseLastVersionFromProfile) {
         this.reuseLastVersionFromProfile = reuseLastVersionFromProfile;
     }
+
 
     /**
      * Gets app.

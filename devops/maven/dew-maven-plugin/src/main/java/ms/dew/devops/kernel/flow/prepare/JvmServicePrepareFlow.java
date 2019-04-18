@@ -31,7 +31,12 @@ import java.util.Optional;
 public class JvmServicePrepareFlow extends BasicPrepareFlow {
 
     @Override
-    protected Optional<String> getErrorProcessPackageCmd(FinalProjectConfig config, String currentPath) {
+    protected boolean needExecutePreparePackageCmd(FinalProjectConfig config, String currentPath) {
+        return false;
+    }
+
+    @Override
+    protected Optional<String> getPreparePackageCmd(FinalProjectConfig config, String currentPath) {
         return Optional.empty();
     }
 
@@ -40,7 +45,12 @@ public class JvmServicePrepareFlow extends BasicPrepareFlow {
         return Optional.empty();
     }
 
-    protected boolean prePrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
+    @Override
+    protected Optional<String> getErrorCompensationPackageCmd(FinalProjectConfig config, String currentPath) {
+        return Optional.empty();
+    }
+
+    protected boolean postPrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
         Dew.Invoke.invoke("org.springframework.boot",
                 "spring-boot-maven-plugin",
                 null,

@@ -173,7 +173,7 @@ public class NeedProcessChecker {
     private static void checkNeedProcessByGit(FinalProjectConfig config) throws ApiException {
         // kubernetes上部署的最新的commit版本
         String lastVersionDeployCommit = fetchLastVersionDeployCommit(config.getId(), config.getAppName(), config.getNamespace());
-        if (!config.getReuseLastVersionFromProfile().isEmpty()) {
+        if (!config.getDisableReuseVersion()) {
             // 重用版本
             String lastVersionDeployCommitFromProfile =
                     fetchLastVersionDeployCommit(config.getId() + "-append", config.getAppName(), config.getAppendProfile().getNamespace());

@@ -17,7 +17,9 @@
 package ms.dew.devops.kernel.flow.prepare;
 
 import ms.dew.devops.kernel.config.FinalProjectConfig;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -32,8 +34,13 @@ import java.util.Optional;
 public class FrontendPrepareFlow extends BasicPrepareFlow {
 
     @Override
-    protected Optional<String> getErrorProcessPackageCmd(FinalProjectConfig config, String currentPath) {
-        String cmd = config.getApp().getErrorProcessPackageCmd();
+    protected boolean needExecutePreparePackageCmd(FinalProjectConfig config, String currentPath) {
+        return new File(currentPath).listFiles((dir, name) -> name.equals("node_modules")).length == 0;
+    }
+
+    @Override
+    protected Optional<String> getPreparePackageCmd(FinalProjectConfig config, String currentPath) {
+        String cmd = config.getApp().getPreparePackageCmd();
         if (cmd == null || cmd.trim().isEmpty()) {
             // 使用默认命令
             cmd = "npm install";
@@ -53,7 +60,25 @@ public class FrontendPrepareFlow extends BasicPrepareFlow {
         return Optional.of(cmd);
     }
 
-    protected boolean prePrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
+    @Override
+    protected Optional<String> getErrorCompensationPackageCmd(FinalProjectConfig config, String currentPath) {
+        String preparePackageCmd = config.getApp().getPreparePackageCmd();
+        String packageCmd = config.getApp().getPackageCmd();
+        String cmd = "";
+        if (preparePackageCmd == null || preparePackageCmd.trim().isEmpty()) {
+            // 使用默认命令
+            cmd = "npm install";
+        }
+        if (packageCmd == null || packageCmd.trim().isEmpty()) {
+            // 使用默认命令
+            cmd += " && npm run build:" + config.getProfile();
+        }
+        cmd = "cd " + currentPath + " && " + cmd;
+        return Optional.of(cmd);
+    }
+
+    protected boolean postPrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
+        FileUtils.deleteDirectory(new File(flowBasePath + "dist"));
         Files.move(Paths.get(config.getMvnDirectory() + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
         return true;
     }

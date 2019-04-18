@@ -17,10 +17,10 @@
 package ms.dew.devops.kernel.config;
 
 import com.ecfront.dew.common.$;
+import ms.dew.devops.exception.ConfigException;
 import ms.dew.devops.helper.GitHelper;
 import ms.dew.devops.helper.YamlHelper;
 import ms.dew.devops.kernel.Dew;
-import ms.dew.devops.exception.ConfigException;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
@@ -299,6 +299,20 @@ public class ConfigBuilder {
          * @param dewConfig          the dew config
          */
         static void fillReuseVersionInfo(FinalProjectConfig finalProjectConfig, DewConfig dewConfig) {
+            if (finalProjectConfig.getDisableReuseVersion() != null
+                    && finalProjectConfig.getDisableReuseVersion()) {
+                // 配置显示要求禁用重用版本
+                return;
+            }
+            // 配置没有指明，按默认逻辑执行
+            // 先设置默认启用
+            finalProjectConfig.setDisableReuseVersion(false);
+            if (finalProjectConfig.getKind() == AppKind.FRONTEND) {
+                // 前端工程由于在编译时混入了环境信息，所以不允许重用版本，每次部署都要重新编译
+                finalProjectConfig.setDisableReuseVersion(true);
+                return;
+            }
+            // 其它工程
             finalProjectConfig.setReuseLastVersionFromProfile(finalProjectConfig.getReuseLastVersionFromProfile().trim());
             if (finalProjectConfig.getReuseLastVersionFromProfile().isEmpty()
                     && (finalProjectConfig.getProfile().equals("production")
@@ -317,80 +331,83 @@ public class ConfigBuilder {
                     finalProjectConfig.setReuseLastVersionFromProfile(guessFromProfile);
                 }
             }
-            if (!finalProjectConfig.getReuseLastVersionFromProfile().isEmpty()) {
-                // 存在重用版本，不允许重用默认profile
-                DewProfile appendProfile = dewConfig.getProfiles().get(finalProjectConfig.getReuseLastVersionFromProfile());
-                Map<String, String> formattedProperties = Dew.Constants.getMavenProperties(null);
-                Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_HOST + "-append", formattedProperties).ifPresent(obj ->
-                        appendProfile.getDocker().setHost(obj.trim())
-                );
-                // 附加Kubernetes和Docker的配置
-                // 附加顺序：
-                // 1) 带 '-append' 命令行参数
-                // 2) '.dew' 配置中对应环境的配置
-                // 3) 当前环境的配置，这意味着目标环境与当前环境共用配置！
-                if (appendProfile.getDocker().getHost() == null || appendProfile.getDocker().getHost().isEmpty()) {
-                    appendProfile.getDocker().setHost(dewConfig.getDocker().getHost());
-                }
-                if (appendProfile.getDocker().getHost() == null || appendProfile.getDocker().getHost().isEmpty()) {
-                    appendProfile.getDocker().setHost(finalProjectConfig.getDocker().getHost());
-                }
-
-                Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL + "-append", formattedProperties).ifPresent(obj ->
-                        appendProfile.getDocker().setRegistryUrl(obj.trim())
-                );
-                if (appendProfile.getDocker().getRegistryUrl() == null || appendProfile.getDocker().getRegistryUrl().isEmpty()) {
-                    appendProfile.getDocker().setRegistryUrl(dewConfig.getDocker().getRegistryUrl());
-                }
-                if (appendProfile.getDocker().getRegistryUrl() == null || appendProfile.getDocker().getRegistryUrl().isEmpty()) {
-                    appendProfile.getDocker().setRegistryUrl(finalProjectConfig.getDocker().getRegistryUrl());
-                }
-
-                Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME + "-append",
-                        formattedProperties).ifPresent(obj ->
-                        appendProfile.getDocker().setRegistryUserName(obj.trim())
-                );
-                if (appendProfile.getDocker().getRegistryUserName() == null || appendProfile.getDocker().getRegistryUserName().isEmpty()) {
-                    appendProfile.getDocker().setRegistryUserName(dewConfig.getDocker().getRegistryUserName());
-                }
-                if (appendProfile.getDocker().getRegistryUserName() == null || appendProfile.getDocker().getRegistryUserName().isEmpty()) {
-                    appendProfile.getDocker().setRegistryUserName(finalProjectConfig.getDocker().getRegistryUserName());
-                }
-
-                Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD + "-append",
-                        formattedProperties).ifPresent(obj ->
-                        appendProfile.getDocker().setRegistryPassword(obj.trim())
-                );
-                if (appendProfile.getDocker().getRegistryPassword() == null || appendProfile.getDocker().getRegistryPassword().isEmpty()) {
-                    appendProfile.getDocker().setRegistryPassword(dewConfig.getDocker().getRegistryPassword());
-                }
-                if (appendProfile.getDocker().getRegistryPassword() == null || appendProfile.getDocker().getRegistryPassword().isEmpty()) {
-                    appendProfile.getDocker().setRegistryPassword(finalProjectConfig.getDocker().getRegistryPassword());
-                }
-
-                Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_KUBE_CONFIG + "-append", formattedProperties).ifPresent(obj ->
-                        appendProfile.getKube().setBase64Config(obj.trim())
-                );
-                if (appendProfile.getKube().getBase64Config() == null || appendProfile.getKube().getBase64Config().isEmpty()) {
-                    appendProfile.getKube().setBase64Config(dewConfig.getKube().getBase64Config());
-                }
-                if (appendProfile.getKube().getBase64Config() == null || appendProfile.getKube().getBase64Config().isEmpty()) {
-                    appendProfile.getKube().setBase64Config(finalProjectConfig.getKube().getBase64Config());
-                }
-
-                if (appendProfile.getKube().getBase64Config().isEmpty()
-                        || appendProfile.getDocker().getHost().isEmpty()) {
-                    throw new ConfigException("In reuse version mode, "
-                            + "'kubernetes base64 config' and 'docker host' must be specified by "
-                            + "command-line arguments '"
-                            + Dew.Constants.FLAG_DEW_DEVOPS_KUBE_CONFIG + "-append'/ "
-                            + Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_HOST + "-append'"
-                            + "OR '.dew' profile configuration file");
-                }
-                finalProjectConfig.setAppendProfile(appendProfile);
-                // 重用版本时Git信息后续会重用目标Git信息
-                finalProjectConfig.setGitCommit("");
+            if (finalProjectConfig.getReuseLastVersionFromProfile().isEmpty()) {
+                // 没有找到重用版本对应的目标环境
+                finalProjectConfig.setDisableReuseVersion(true);
+                return;
             }
+            // 存在重用版本，不允许重用默认profile
+            DewProfile appendProfile = dewConfig.getProfiles().get(finalProjectConfig.getReuseLastVersionFromProfile());
+            Map<String, String> formattedProperties = Dew.Constants.getMavenProperties(null);
+            Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_HOST + "-append", formattedProperties).ifPresent(obj ->
+                    appendProfile.getDocker().setHost(obj.trim())
+            );
+            // 附加Kubernetes和Docker的配置
+            // 附加顺序：
+            // 1) 带 '-append' 命令行参数
+            // 2) '.dew' 配置中对应环境的配置
+            // 3) 当前环境的配置，这意味着目标环境与当前环境共用配置！
+            if (appendProfile.getDocker().getHost() == null || appendProfile.getDocker().getHost().isEmpty()) {
+                appendProfile.getDocker().setHost(dewConfig.getDocker().getHost());
+            }
+            if (appendProfile.getDocker().getHost() == null || appendProfile.getDocker().getHost().isEmpty()) {
+                appendProfile.getDocker().setHost(finalProjectConfig.getDocker().getHost());
+            }
+
+            Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL + "-append", formattedProperties).ifPresent(obj ->
+                    appendProfile.getDocker().setRegistryUrl(obj.trim())
+            );
+            if (appendProfile.getDocker().getRegistryUrl() == null || appendProfile.getDocker().getRegistryUrl().isEmpty()) {
+                appendProfile.getDocker().setRegistryUrl(dewConfig.getDocker().getRegistryUrl());
+            }
+            if (appendProfile.getDocker().getRegistryUrl() == null || appendProfile.getDocker().getRegistryUrl().isEmpty()) {
+                appendProfile.getDocker().setRegistryUrl(finalProjectConfig.getDocker().getRegistryUrl());
+            }
+
+            Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME + "-append",
+                    formattedProperties).ifPresent(obj ->
+                    appendProfile.getDocker().setRegistryUserName(obj.trim())
+            );
+            if (appendProfile.getDocker().getRegistryUserName() == null || appendProfile.getDocker().getRegistryUserName().isEmpty()) {
+                appendProfile.getDocker().setRegistryUserName(dewConfig.getDocker().getRegistryUserName());
+            }
+            if (appendProfile.getDocker().getRegistryUserName() == null || appendProfile.getDocker().getRegistryUserName().isEmpty()) {
+                appendProfile.getDocker().setRegistryUserName(finalProjectConfig.getDocker().getRegistryUserName());
+            }
+
+            Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD + "-append",
+                    formattedProperties).ifPresent(obj ->
+                    appendProfile.getDocker().setRegistryPassword(obj.trim())
+            );
+            if (appendProfile.getDocker().getRegistryPassword() == null || appendProfile.getDocker().getRegistryPassword().isEmpty()) {
+                appendProfile.getDocker().setRegistryPassword(dewConfig.getDocker().getRegistryPassword());
+            }
+            if (appendProfile.getDocker().getRegistryPassword() == null || appendProfile.getDocker().getRegistryPassword().isEmpty()) {
+                appendProfile.getDocker().setRegistryPassword(finalProjectConfig.getDocker().getRegistryPassword());
+            }
+
+            Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_KUBE_CONFIG + "-append", formattedProperties).ifPresent(obj ->
+                    appendProfile.getKube().setBase64Config(obj.trim())
+            );
+            if (appendProfile.getKube().getBase64Config() == null || appendProfile.getKube().getBase64Config().isEmpty()) {
+                appendProfile.getKube().setBase64Config(dewConfig.getKube().getBase64Config());
+            }
+            if (appendProfile.getKube().getBase64Config() == null || appendProfile.getKube().getBase64Config().isEmpty()) {
+                appendProfile.getKube().setBase64Config(finalProjectConfig.getKube().getBase64Config());
+            }
+
+            if (appendProfile.getKube().getBase64Config().isEmpty()
+                    || appendProfile.getDocker().getHost().isEmpty()) {
+                throw new ConfigException("In reuse version mode, "
+                        + "'kubernetes base64 config' and 'docker host' must be specified by "
+                        + "command-line arguments '"
+                        + Dew.Constants.FLAG_DEW_DEVOPS_KUBE_CONFIG + "-append'/ "
+                        + Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_HOST + "-append'"
+                        + "OR '.dew' profile configuration file");
+            }
+            finalProjectConfig.setAppendProfile(appendProfile);
+            // 重用版本时Git信息后续会重用目标Git信息
+            finalProjectConfig.setGitCommit("");
         }
     }
 }

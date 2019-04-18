@@ -328,8 +328,12 @@ public class DockerOpt {
         private String[] parseImageInfo(String imageName) {
             String[] imageFragment = imageName.split(":");
             String tag = imageFragment.length == 2 ? imageFragment[1] : "latest";
-            String imageNameWithoutHost = imageFragment[0].substring(imageFragment[0].indexOf("/") + 1);
-            return new String[]{imageNameWithoutHost, tag};
+            if (imageName.split("/").length == 1) {
+                // 不带host
+                return new String[]{imageFragment[0], tag};
+            } else {
+                return new String[]{imageFragment[0].substring(imageFragment[0].indexOf("/") + 1), tag};
+            }
         }
 
         private Map<String, String> wrapHeader() {

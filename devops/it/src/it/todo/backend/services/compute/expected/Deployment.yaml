@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   annotations:
     dew.ms/git-commit: '0001'
-    dew.ms/scm-url: https://github.com/gudaoxuri/dew.git
+    dew.ms/scm-url: ''
     sidecar.jaegertracing.io/inject: 'true'
   labels:
     app: todo-compute
@@ -23,7 +23,7 @@ spec:
     metadata:
       annotations:
         dew.ms/git-commit: '0001'
-        dew.ms/scm-url: https://github.com/gudaoxuri/dew.git
+        dew.ms/scm-url: ''
         sidecar.jaegertracing.io/inject: 'true'
       labels:
         app: todo-compute

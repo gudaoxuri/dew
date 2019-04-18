@@ -48,8 +48,9 @@ public class DewApp {
             put("group", "app");
         }
     };
+    private String preparePackageCmd = "";
     private String packageCmd = "";
-    private String errorProcessPackageCmd = "";
+    private String errorCompensationPackageCmd = "";
     private String runOptions = "-Xmx2688M -Xms2688M -Xmn960M -XX:MaxMetaspaceSize=512M "
             + "-XX:MetaspaceSize=512M -XX:+UseConcMarkSweepGC -XX:+UseCMSInitiatingOccupancyOnly "
             + "-XX:CMSInitiatingOccupancyFraction=70 -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses "
@@ -313,6 +314,24 @@ public class DewApp {
     }
 
     /**
+     * Gets prepare package cmd.
+     *
+     * @return the prepare package cmd
+     */
+    public String getPreparePackageCmd() {
+        return preparePackageCmd;
+    }
+
+    /**
+     * Sets prepare package cmd.
+     *
+     * @param preparePackageCmd the prepare package cmd
+     */
+    public void setPreparePackageCmd(String preparePackageCmd) {
+        this.preparePackageCmd = preparePackageCmd;
+    }
+
+    /**
      * Gets package cmd.
      *
      * @return the package cmd
@@ -330,12 +349,22 @@ public class DewApp {
         this.packageCmd = packageCmd;
     }
 
-    public String getErrorProcessPackageCmd() {
-        return errorProcessPackageCmd;
+    /**
+     * Gets error compensation package cmd.
+     *
+     * @return the error compensation package cmd
+     */
+    public String getErrorCompensationPackageCmd() {
+        return errorCompensationPackageCmd;
     }
 
-    public void setErrorProcessPackageCmd(String errorProcessPackageCmd) {
-        this.errorProcessPackageCmd = errorProcessPackageCmd;
+    /**
+     * Sets error compensation package cmd.
+     *
+     * @param errorCompensationPackageCmd the error compensation package cmd
+     */
+    public void setErrorCompensationPackageCmd(String errorCompensationPackageCmd) {
+        this.errorCompensationPackageCmd = errorCompensationPackageCmd;
     }
 
     /**

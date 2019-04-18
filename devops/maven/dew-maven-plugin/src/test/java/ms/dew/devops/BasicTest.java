@@ -21,6 +21,7 @@ import org.junit.BeforeClass;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.Properties;
 
@@ -43,6 +44,10 @@ public abstract class BasicTest {
      * The constant defaultDockerRegistryUrl.
      */
     protected static String defaultDockerRegistryUrl;
+    /**
+     * The constant defaultDockerRegistryHost.
+     */
+    protected static String defaultDockerRegistryHost;
     /**
      * The constant defaultDockerRegistryUserName.
      */
@@ -67,6 +72,9 @@ public abstract class BasicTest {
         defaultKubeConfig = properties.getProperty("dew.devops.kube.config");
         defaultDockerHost = properties.getProperty("dew.devops.docker.host");
         defaultDockerRegistryUrl = properties.getProperty("dew.devops.docker.registry.url");
+        if (defaultDockerRegistryUrl != null) {
+            defaultDockerRegistryHost = new URL(defaultDockerRegistryUrl).getHost();
+        }
         defaultDockerRegistryUserName = properties.getProperty("dew.devops.docker.registry.username");
         defaultDockerRegistryPassword = properties.getProperty("dew.devops.docker.registry.password");
     }

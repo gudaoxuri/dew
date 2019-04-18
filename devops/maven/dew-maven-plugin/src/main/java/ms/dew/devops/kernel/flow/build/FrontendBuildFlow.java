@@ -19,6 +19,7 @@ package ms.dew.devops.kernel.flow.build;
 import com.ecfront.dew.common.$;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class FrontendBuildFlow extends DockerBuildFlow {
 
     protected boolean preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
         String preparePath = config.getMvnTargetDirectory() + "dew_prepare" + File.separator;
+        FileUtils.deleteDirectory(new File(flowBasePath + "dist"));
         Files.move(Paths.get(preparePath + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
         $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/frontend/Dockerfile"), flowBasePath + "Dockerfile");
         return true;

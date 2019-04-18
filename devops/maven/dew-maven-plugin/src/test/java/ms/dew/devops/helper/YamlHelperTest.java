@@ -57,6 +57,15 @@ public class YamlHelperTest {
         Assert.assertEquals("valc2", o.getFc().getC2());
         Assert.assertEquals("vala", o.getFa());
         Assert.assertEquals("valb", o.getFb());
+        Assert.assertNull(o.getFd());
+        o.setFd(false);
+        String yaml = YamlHelper.toString(o);
+        o = YamlHelper.toObject(TestYaml.class, yaml);
+        Assert.assertEquals("valc1_new", o.getFc().getC1());
+        Assert.assertEquals("valc2", o.getFc().getC2());
+        Assert.assertEquals("vala", o.getFa());
+        Assert.assertEquals("valb", o.getFb());
+        Assert.assertFalse(o.getFd());
     }
 
 }

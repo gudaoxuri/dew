@@ -36,6 +36,14 @@
         <sonar.skip>true</sonar.skip>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>common</artifactId>
+            <version>1.4.13</version>
+        </dependency>
+    </dependencies>
+
     <repositories>
         <repository>
             <id>central</id>
