@@ -1,6 +1,6 @@
 ifndef::imagesdir[:imagesdir: ../../../../../]
 
-[[framework-user-manual]]
+[[framework-quick-start]]
 === 框架快速入门
 
 NOTE: 本文以 To-Do 项目为示例讲解 ``Dew`` 框架部分的入门操作，项目地址： https://github.com/dew-ms/devops-exmaple-todo 。
@@ -94,6 +94,8 @@ NOTE: 这里只关注后端的实现，前端代码不展开说明。
 <!-- ... -->
 ----
 
+TIP: 详见 <<framework-user-manual-import>>
+
 [source,xml]
 .backend/services/kernel/pom.xml
 ----
@@ -129,6 +131,8 @@ dew:
 
 # ...
 ----
+
+TIP: 详见 <<framework-user-manual-cluster>>
 
 [source,yaml]
 .backend/services/kernel/resources/bootstrap-default.yml

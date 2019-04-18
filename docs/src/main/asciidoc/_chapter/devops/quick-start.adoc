@@ -1,0 +1,70 @@
+ifndef::imagesdir[:imagesdir: ../../../../../]
+
+[[devops-quick-start]]
+=== DevOps快速入门
+
+NOTE: 本文以 To-Do 项目为示例讲解 ``Dew`` DevOps部分的入门操作，项目地址： https://github.com/dew-ms/devops-exmaple-todo 。
+
+TIP: 关于 TO-Do 项目的介绍请先阅读 <<framework-quick-start>>
+
+==== 功能体验
+
+TIP: 体验环境要求安装 Java(>=8)、Maven、NodeJS(>=8)
+
+目录结构如下：
+
+----
+# ======= 前置准备 =======
+# 执行dew-devops.sh根据提示创建项目
+sh dew-devops.sh
+# 添加本地Host映射
+-
+x.x.x.x todo-uat.dew.ms
+x.x.x.x todo-api-uat.dew.ms
+-
+# ======= 前置准备 =======
+git clone https://github.com/dew-ms/devops-exmaple-todo.git
+cd devops-exmaple-todo
+# 执行安装
+mvn install -Dmaven.test.skip=true
+# 部署到Kubernetes
+mvn -P devops dew:build dew:release -Ddew.devops.profile=uat
+
+# 打开浏览器，输入 http://todo-uat.dew.ms，切换到移动模式体验
+----
+
+==== 发生了什么？
+
+当执行 ``sh dew-devops.sh`` 创建项目时实际上做了：
+
+. 创建一个Harbor project及对应的用户，并做了权限绑定
+. 创建一个kubernetes namespace
+. 为这个kubernetes namespace绑定service-discovery-client角色，用于服务间发现
+. 为这个kubernetes namespace创建docker-registry Secret，用于Harbor认证
+. 为这个Kubernetes namespace创建Ingress，绑定服务与域名
+
+当执行 ``mvn -P devops dew:build dew:release -Ddew.devops.profile=uat`` 时实际上做了：
+
+. 根据根目录的 ``pom.xml`` 配置找到所有的Maven模块并按依赖排序
+. 对比当前的Git版本(git commit)与已部署的服务版本找到之间变更的文件
+. 遍历每个Maven模块找到当前有文件变更的模块，视这些模块为要部署的模块
+. 提示用户是否部署
+. 根据模块对应的类型执行不同的准备操作：
+.. JVM服务(Spring Boot): 执行 ``mvn package spring-boot-maven-plugin:repackage`` 打出fatjar
+.. 前端项目: 执行``cd ./frontend && npm install && npm install -g @tarojs/cli && set NODE_ENV=test && npm run build:h5`` 打出dist文件
+. 根据模块对应的类型执行不同的编译操作：
+.. JVM服务/前端项目: 执行 ``docker build`` 与 ``docker push`` 发布到 Harbor
+. 根据模块对应的类型执行不同的部署操作：
+.. JVM类库/Pom项目: 执行 ``mvn deploy`` 发布到Maven仓库
+.. JVM服务/前端项目: 部署 deployment 与 service 到 kuberenetes，并创建 configmap 打上版本记录
+
+
+
+
+
+
+
+
+
+
+

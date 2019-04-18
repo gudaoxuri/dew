@@ -466,7 +466,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#架构设计_architecture_chapter">2. 架构设计 Architecture Chapter</a></li>
 <li><a href="#编码开发_framework_chapter">3. 编码开发 Framework Chapter</a>
 <ul class="sectlevel2">
-<li><a href="#framework-user-manual">3.1. 框架快速入门[TBD]</a>
+<li><a href="#framework-user-manual">3.1. 框架快速入门</a>
 <ul class="sectlevel3">
 <li><a href="#需求分析">3.1.1. 需求分析</a></li>
 <li><a href="#功能体验">3.1.2. 功能体验</a></li>
@@ -474,32 +474,40 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#核心代码说明">3.1.4. 核心代码说明</a></li>
 </ul>
 </li>
-<li><a href="#framework-user-manual">3.2. 框架使用手册[TBD]</a>
+<li><a href="#framework-user-manual">3.2. 框架使用手册</a>
 <ul class="sectlevel3">
-<li><a href="#结构说明">3.2.1. 结构说明</a></li>
-<li><a href="#功能模块">3.2.2. 功能模块</a></li>
-<li><a href="#核心功能">3.2.3. 核心功能</a></li>
-<li><a href="#工程化">3.2.4. 工程化</a></li>
+<li><a href="#引入方式">3.2.1. 引入方式</a></li>
+<li><a href="#dew类介绍">3.2.2. Dew类介绍</a></li>
+<li><a href="#常用工具集">3.2.3. 常用工具集</a></li>
+<li><a href="#集群功能">3.2.4. 集群功能</a></li>
+<li><a href="#统一响应">3.2.5. 统一响应</a></li>
+<li><a href="#异常处理">3.2.6. 异常处理</a></li>
+<li><a href="#数据验证">3.2.7. 数据验证</a></li>
+<li><a href="#cors支持">3.2.8. CORS支持</a></li>
+<li><a href="#权限认证">3.2.9. 权限认证</a></li>
+<li><a href="#测试支持">3.2.10. 测试支持</a></li>
+<li><a href="#幂等处理">3.2.11. 幂等处理</a></li>
+<li><a href="#api文档">3.2.12. API文档</a></li>
+<li><a href="#代码质量检查">3.2.13. 代码质量检查</a></li>
 </ul>
 </li>
-<li><a href="#framework-configuration">3.3. 框架配置速查[TBD]</a>
+<li><a href="#framework-configuration">3.3. 框架配置速查</a>
 <ul class="sectlevel3">
 <li><a href="#code_dew_code_参数">3.3.1. <code>Dew</code> 参数</a></li>
 <li><a href="#code_spring_boot_code_核心参数">3.3.2. <code>Spring boot</code> 核心参数</a></li>
 <li><a href="#code_spring_cloud_code_核心参数">3.3.3. <code>Spring cloud</code> 核心参数</a></li>
 </ul>
 </li>
-<li><a href="#framework-best-practices">3.4. 框架最佳实践[TBD]</a>
+<li><a href="#framework-best-practices">3.4. 框架最佳实践</a>
 <ul class="sectlevel3">
-<li><a href="#服务调用开发期使用">3.4.1. 服务调用开发期使用</a></li>
-<li><a href="#code_validated_code_注解">3.4.2. <code>@Validated</code> 注解</a></li>
-<li><a href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据">3.4.3. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</a></li>
-<li><a href="#断路保护">3.4.4. 断路保护</a></li>
-<li><a href="#定时任务">3.4.5. 定时任务</a></li>
-<li><a href="#主要性能影响参数">3.4.6. 主要性能影响参数</a></li>
+<li><a href="#项目模块设计">3.4.1. 项目模块设计</a></li>
+<li><a href="#代码包设计">3.4.2. 代码包设计</a></li>
+<li><a href="#开发期服务调用">3.4.3. 开发期服务调用</a></li>
+<li><a href="#代码质量管理">3.4.4. 代码质量管理</a></li>
+<li><a href="#code_validated_code_注解">3.4.5. <code>@Validated</code> 注解</a></li>
+<li><a href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据">3.4.6. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</a></li>
 <li><a href="#缓存处理">3.4.7. 缓存处理</a></li>
 <li><a href="#jdbc_批量插入性能问题">3.4.8. jdbc 批量插入性能问题</a></li>
-<li><a href="#http请求并发数性能瓶颈">3.4.9. http请求并发数性能瓶颈</a></li>
 </ul>
 </li>
 </ul>
@@ -838,7 +846,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="编码开发_framework_chapter"><a class="anchor" href="#编码开发_framework_chapter"></a>3. 编码开发 Framework Chapter</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="framework-user-manual"><a class="anchor" href="#framework-user-manual"></a>3.1. 框架快速入门[TBD]</h3>
+<h3 id="framework-user-manual"><a class="anchor" href="#framework-user-manual"></a>3.1. 框架快速入门</h3>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1160,7 +1168,7 @@ public class NotifierController {
 </div>
 </div>
 <div class="sect2">
-<h3 id="framework-user-manual"><a class="anchor" href="#framework-user-manual"></a>3.2. 框架使用手册[TBD]</h3>
+<h3 id="framework-user-manual"><a class="anchor" href="#framework-user-manual"></a>3.2. 框架使用手册</h3>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1186,10 +1194,10 @@ public class NotifierController {
 </table>
 </div>
 <div class="sect3">
-<h4 id="结构说明"><a class="anchor" href="#结构说明"></a>3.2.1. 结构说明</h4>
+<h4 id="引入方式"><a class="anchor" href="#引入方式"></a>3.2.1. 引入方式</h4>
 <div class="listingblock">
 <div class="content">
-<pre>此章节关联示例:bone-example</pre>
+<pre>此章节关联示例:examples/bone-example</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1201,7 +1209,7 @@ public class NotifierController {
 &lt;parent&gt;
     &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
-    &lt;!--生产环境请选择合适的版本!!!!!!!!--&gt;
+    &lt;!--生产环境请选择合适的版本!--&gt;
     &lt;version&gt;${dew.version}&lt;/version&gt;
 &lt;/parent&gt;
 ...
@@ -1209,23 +1217,24 @@ public class NotifierController {
     &lt;!--引入需要的模块--&gt;
     &lt;dependency&gt;
         &lt;groupId&gt;ms.dew&lt;/groupId&gt;
-        &lt;artifactId&gt;&lt;模块名&gt;&lt;/artifactId&gt;
+        &lt;artifactId&gt;对应模块名，见下文&lt;/artifactId&gt;
     &lt;/dependency&gt;
 &lt;/dependencies&gt;
 ...
-&lt;!--开发者--&gt;
+&lt;!--开发者介绍--&gt;
 &lt;developers&gt;
     &lt;developer&gt;
-        &lt;name&gt;&lt;/name&gt;
-        &lt;email&gt;&lt;/email&gt;
+        &lt;name&gt;...&lt;/name&gt;
+        &lt;email&gt;...&lt;/email&gt;
     &lt;/developer&gt;
 &lt;/developers&gt;
 &lt;!--SCM信息--&gt;
 &lt;scm&gt;
-    &lt;connection&gt;&lt;/connection&gt;
-    &lt;developerConnection&gt;&lt;/developerConnection&gt;
+    &lt;connection&gt;...&lt;/connection&gt;
+    &lt;developerConnection&gt;...&lt;/developerConnection&gt;
     &lt;url&gt;&lt;/url&gt;
-&lt;/scm&gt;</code></pre>
+&lt;/scm&gt;
+...</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -1240,42 +1249,8 @@ public class NotifierController {
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p><code>Dew</code>推荐的代码结构为：</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>|- common-service
-|   |- src
-|   |   |- main
-|   |   |   |- java
-|   |   |   |   |- src
-|   |   |   |   |   |- x.y.z
-|   |   |   |   |   |   |- XApplication <i class="conum" data-value="1"></i><b>(1)</b>
-|   |   |   |   |   |   |- XConfig <i class="conum" data-value="2"></i><b>(2)</b>
-|   |   |   |   |   |   |- XInitiator <i class="conum" data-value="3"></i><b>(3)</b></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>XApplication : 服务启动类</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>XConfig：当前服务的配置文件（Spring Cloud格式）</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>XInitiator：当前服务启动初始化器，原则上所有初始化操作都应该从此类发起，如初始化脚本、定时任务等，以方便排错</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="功能模块"><a class="anchor" href="#功能模块"></a>3.2.2. 功能模块</h4>
 <table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. 功能模块</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -1288,62 +1263,151 @@ public class NotifierController {
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>parent-starter</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Dew的工程父依赖</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">parent-starter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">父Pom模块</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>boot-starter</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">基于Spring Boot的扩展，Dew的核心模块</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">boot-starter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">核心模块，包含Spring Boot Web相关依赖</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cloud-starter</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">基于Spring Cloud的扩展</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cloud-starter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cloud模块，包含Spring Cloud Kuberenetes相关依赖</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>idempotent-starter</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">幂性处理模块</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cluster-common</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cluster-common</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">集群能力接口</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cluster-redis</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">集群能力-Redis实现</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cluster-hazelcast</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hazelcast集群能力实现</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cluster-hazelcast</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">集群能力-Hazelcast实现</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cluster-rabbit</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RabbitMQ集群能力实现</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cluster-rabbit</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">集群能力-Rabbit实现</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cluster-redis</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redis集群能力实现</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>test-starter</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Dew的单元测试封装</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">idempotent-starter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">幂等处理模块</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>config</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">统一配置中心组件</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>auth</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">多租户的权限组件（Scala语言编写）</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>&lt;x&gt;-example</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">各类示例</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">notification</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">通知处理模块</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="sect3">
-<h4 id="核心功能"><a class="anchor" href="#核心功能"></a>3.2.3. 核心功能</h4>
-<div class="sect4">
-<h5 id="常用工具集"><a class="anchor" href="#常用工具集"></a>常用工具集</h5>
+<h4 id="dew类介绍"><a class="anchor" href="#dew类介绍"></a>3.2.2. Dew类介绍</h4>
 <div class="paragraph">
-<p><code>Dew</code> 框架的常用工具由 <code>Dew-Common</code> 包提供（ <a href="https://github.com/gudaoxuri/dew-common" class="bare">https://github.com/gudaoxuri/dew-common</a> ），功能如下：</p>
+<p><code>Dew</code>类包装了一些常用的功能，是Dew的能力的主要输出口。</p>
+</div>
+<div class="listingblock">
+<div class="title"><code>Dew</code>功能说明</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// 获取集群操作能力，见下文
+Dew.cluster.xx
+// 获取通知操作能力，见下文
+Dew.notify.xx
+// 获取Spring上下文
+Dew.applicationContext.xx
+// 获取Dew配置，说见 框架配置速查
+Dew.dewConfig.xx
+// 获取认证处理能力，见下文
+Dew.auth.xx
+
+//  ============ 获取请求上下文信息  ============
+// 当次请求的ID
+Dew.context().getId()
+// 请求来源IP
+Dew.context().getSourceIP()
+// 请求最初的URL
+Dew.context().getRequestUri()
+// 请求对应的token，详见下文
+Dew.context().getToken()
+// 请求对应的操作者信息，详见下文
+Dew.context().optInfo()
+
+// ============ 获取当前组件基础信息 ============
+// 应用名称，对应为 spring.application.name
+Dew.Info.name
+// 应用环境，对应为 spring.profiles.active
+Dew.Info.profile
+// 应用主机Web端口，对应为 server.port
+Dew.Info.webPort
+// 应用主机IP
+Dew.Info.ip
+// 应用主机Host
+Dew.Info.host
+// 应用实例，各组件实例唯一
+Dew.Info.instance
+
+// ============ 定时任务操作 ============
+// 此类下的操作会自动带入Dew.context()
+/**
+* 设定一个周期性调度任务.
+*
+* @param initialDelaySec 延迟启动的秒数
+* @param periodSec       周期调度秒数
+* @param fun             调度方法
+*/
+Dew.Timer.periodic(long initialDelaySec, long periodSec, VoidExecutor fun)
+/**
+* 设定一个定时任务.
+*
+* @param delaySec 延迟启动的秒数
+* @param fun      定时任务方法
+*/
+Dew.Timer.timer(long delaySec, VoidExecutor fun)
+
+// ============ 常用工具 ============
+/**
+* 获取真实IP.
+*
+* @param request 请求信息
+* @return 真实的IP
+*/
+Dew.Util.getRealIP(HttpServletRequest request)
+**
+* 获取真实IP.
+*
+* @param requestHeader     请求头信息
+* @param defaultRemoteAddr 缺省的IP地址
+* @return 真实的IP
+*/
+Dew.Util.getRealIP(Map&lt;String, String&gt; requestHeader, String defaultRemoteAddr)
+/**
+* 创建一个新的线程.
+* &lt;p&gt;
+* 自动带入Dew.context()
+*
+* @param fun 执行的方法
+*/
+Dew.Util.newThread(Runnable fun)
+
+/**
+* 统一异常处理.
+* &lt;p&gt;
+* 封装任意异常到统一的格式，见下文
+*
+* @param &lt;E&gt;            上抛的异常类型
+* @param code           异常编码
+* @param ex             上抛的异常对象
+* @param customHttpCode 自定义Http状态码
+* @return 上抛的异常对象
+*/
+Dew.E.e(String code, E ex, int customHttpCode)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="常用工具集"><a class="anchor" href="#常用工具集"></a>3.2.3. 常用工具集</h4>
+<div class="paragraph">
+<p><code>Dew</code> 的常用工具由 <code>Dew-Common</code> 包提供（ <a href="https://github.com/gudaoxuri/dew-common" class="bare">https://github.com/gudaoxuri/dew-common</a> ），功能如下：</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -1360,10 +1424,10 @@ public class NotifierController {
 <p>Shell脚本操作，Shell内容获取、成功捕获及进度报告等</p>
 </li>
 <li>
-<p>加解密操作，Base64、MD5/BCrypt/SHA等对称算法和RSA等非对称算法</p>
+<p>安全（加解密、信息摘要等）操作，Base64、MD5/BCrypt/AES/SHA等对称算法和RSA等非对称算法</p>
 </li>
 <li>
-<p>Http操作，包含Get/Post/Put/Delete/Head/Options操作</p>
+<p>Http操作，包含Get/Post/Put/Delete/Head/Options/Patch操作</p>
 </li>
 <li>
 <p>金额操作，金额转大写操作</p>
@@ -1375,7 +1439,7 @@ public class NotifierController {
 <p>定时器操作，定时和周期性任务</p>
 </li>
 <li>
-<p>常用文件操作，根据不同情况获取文件内容</p>
+<p>常用文件操作，根据不同情况获取文件内容、Glob匹配等</p>
 </li>
 <li>
 <p>常用字段操作，各类字段验证、身份证提取、UUID创建等</p>
@@ -1387,52 +1451,37 @@ public class NotifierController {
 <p>主流文件MIME整理，MIME分类</p>
 </li>
 <li>
+<p>服务降级处理</p>
+</li>
+<li>
+<p>脚本处理</p>
+</li>
+<li>
 <p>响应处理及分页模型</p>
 </li>
 </ol>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
+<div class="listingblock">
 <div class="title"><code>Dew Common</code> 的使用</div>
-<div class="paragraph">
-<p><code>Dew Common</code> 功能均以<code>$</code>开始，比如:</p>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// Dew Common 功能均以 $ 开始，如:
+
+//Json转成Java对象:
+$.json.toObject(json,JavaModel.class)
+//Json字符串转成List对象
+$.json.toList(jsonArray, JavaModel.class)
+//Bean复制
+$.bean.copyProperties(ori, dist)
+//获取Class的注解信息
+$.bean.getClassAnnotation(IdxController.class, TestAnnotation.RPC.class)
+//非对称加密
+$.encrypt.Asymmetric.encrypt(d.getBytes("UTF-8"), publicKey, 1024, "RSA")
+//Http Get
+$.http.get("https://httpbin.org/get")
+//验证手机号格式是否合法
+$.field.validateMobile("18657120000")
+//...</code></pre>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Json转成Java对象: <code>$.json.toObject(json,JavaModel.class)</code></p>
-</li>
-<li>
-<p>Json字符串转成List对象: <code>$.json.toList(jsonArray, JavaModel.class)</code></p>
-</li>
-<li>
-<p>Bean复制：<code>$.bean.copyProperties(ori, dist)</code></p>
-</li>
-<li>
-<p>获取Class的注解信息: <code>$.bean.getClassAnnotation(IdxController.class, TestAnnotation.RPC.class)</code></p>
-</li>
-<li>
-<p>非对称加密: <code>$.encrypt.Asymmetric.encrypt(d.getBytes("UTF-8"), publicKey, 1024, "RSA")</code></p>
-</li>
-<li>
-<p>Http Get: <code>$.http.get("https://httpbin.org/get")</code></p>
-</li>
-<li>
-<p>验证手机号格式是否合法: <code>$.field.validateMobile("18657120000")</code></p>
-</li>
-<li>
-<p>&#8230;&#8203;</p>
-</li>
-</ul>
-</div>
-</td>
-</tr>
-</table>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1447,8 +1496,8 @@ public class NotifierController {
 </table>
 </div>
 </div>
-<div class="sect4">
-<h5 id="集群功能"><a class="anchor" href="#集群功能"></a>集群功能</h5>
+<div class="sect3">
+<h4 id="集群功能"><a class="anchor" href="#集群功能"></a>3.2.4. 集群功能</h4>
 <div class="listingblock">
 <div class="content">
 <pre>此章节关联示例:cluster-example</pre>
@@ -1456,7 +1505,7 @@ public class NotifierController {
 </div>
 <div class="paragraph">
 <p><code>Dew</code> 的集群支持 <code>分布式缓存</code> <code>分布式Map</code> <code>分布式锁</code> <code>MQ</code> <code>领导者选举</code>，
-并且做了接口抽象以适配不同的实现，目前支持 <code>Redis</code> <code>Hazelcast</code> <code>Rabbit</code> <code>Eureka</code> 。</p>
+并且做了接口抽象以适配不同的实现，目前支持 <code>Redis</code> <code>Hazelcast</code> <code>Rabbit</code> 。</p>
 </div>
 <div class="paragraph">
 <p>各实现对应的支持如下：</p>
@@ -1509,18 +1558,18 @@ public class NotifierController {
 </tr>
 </tbody>
 </table>
-<div class="admonitionblock note">
+<div class="admonitionblock important">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
 <div class="title">各实现的差异</div>
 <div class="ulist">
 <ul>
 <li>
-<p>Redis实现了所有功能，但其MQ上不适用于高可靠场景</p>
+<p>Redis实现了所有功能，但其MQ上不适用于高可用场景</p>
 </li>
 <li>
 <p>只有Rabbit的MQ支持跟踪日志（见跟踪日志章节）</p>
@@ -1531,8 +1580,8 @@ public class NotifierController {
 </tr>
 </table>
 </div>
-<div class="sect5">
-<h6 id="使用"><a class="anchor" href="#使用"></a>使用</h6>
+<div class="sect4">
+<h5 id="启用方式"><a class="anchor" href="#启用方式"></a>启用方式</h5>
 <div class="listingblock">
 <div class="title">依赖</div>
 <div class="content">
@@ -1540,7 +1589,7 @@ public class NotifierController {
     &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;boot-starter&lt;/artifactId&gt;
 &lt;/dependency&gt;
-&lt;!--引入集群依赖，可选redis/hazelcast/rabbit/eureka--&gt;
+&lt;!--引入集群依赖，可选redis/hazelcast/rabbit--&gt;
 &lt;dependency&gt;
     &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;cluster-spi-redis&lt;/artifactId&gt;
@@ -1583,12 +1632,6 @@ spring:
         addresses: [] # hazelcast地址，端口可选</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>集群服务的使用入口统一为： <code>Dew.cluster.XX</code></p>
-</div>
-</div>
-<div class="sect5">
-<h6 id="分布式缓存"><a class="anchor" href="#分布式缓存"></a>分布式缓存</h6>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -1596,23 +1639,412 @@ spring:
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-接口见：ClusterCache
+集群服务的使用入口统一为： <code>Dew.cluster.XX</code>
 </td>
 </tr>
 </table>
 </div>
+</div>
+<div class="sect4">
+<h5 id="分布式缓存"><a class="anchor" href="#分布式缓存"></a>分布式缓存</h5>
+<div class="listingblock">
+<div class="title">API</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">/*
+ * Copyright 2019. the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package ms.dew.core.cluster;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * 缓存服务.
+ *
+ * @author gudaoxuri
+ */
+public interface ClusterCache {
+
+    /**
+     * key是否存在.
+     *
+     * @param key key
+     * @return 是否存在
+     */
+    boolean exists(String key);
+
+    /**
+     * 获取字符串值.
+     *
+     * @param key key
+     * @return 值
+     */
+    String get(String key);
+
+    /**
+     * 设置字符串值.
+     *
+     * @param key   key
+     * @param value value
+     */
+    void set(String key, String value);
+
+    /**
+     * 设置字符串值.
+     *
+     * @param key   key
+     * @param value value
+     */
+    void setIfAbsent(String key, String value);
+
+    /**
+     * 设置字符串值，带过期时间.
+     *
+     * @param key       key
+     * @param value     value
+     * @param expireSec 过期时间(seconds)，0表示永不过期
+     */
+    void setex(String key, String value, long expireSec);
+
+    /**
+     * 字符串不存在时设置值，带过期时间.
+     *
+     * @param key       key
+     * @param value     value
+     * @param expireSec 过期时间(seconds)，0表示永不过期
+     * @return true 设置成功 , false 设置失败（key已存在）
+     */
+    boolean setnx(String key, String value, long expireSec);
+
+
+    /**
+     * 设置字符串值，并返回其旧值，不存在时返回null.
+     *
+     * @param key   key
+     * @param value value
+     */
+    String getSet(String key, String value);
+
+    /**
+     * 删除key.
+     *
+     * @param key key
+     */
+    void del(String key);
+
+    /**
+     * 添加列表值.
+     *
+     * @param key   key
+     * @param value value
+     */
+    void lpush(String key, String value);
+
+    /**
+     * 添加列表.
+     *
+     * @param key       key
+     * @param values    values
+     * @param expireSec 过期时间(seconds)，0表示永不过期
+     */
+    void lmset(String key, List&lt;String&gt; values, long expireSec);
+
+    /**
+     * 添加列表.
+     *
+     * @param key    key
+     * @param values values
+     */
+    void lmset(String key, List&lt;String&gt; values);
+
+    /**
+     * 弹出栈顶的列表值.
+     * &lt;p&gt;
+     * 注意，Redis的列表是栈结构，先进后出
+     *
+     * @param key key
+     * @return 栈顶的列表值
+     */
+    String lpop(String key);
+
+    /**
+     * 获取列表值的长度.
+     *
+     * @param key key
+     * @return 长度
+     */
+    long llen(String key);
+
+    /**
+     * 获取列表中的所有值.
+     *
+     * @param key key
+     * @return 值列表
+     */
+    List&lt;String&gt; lget(String key);
+
+    /**
+     * 添加Set集合.
+     *
+     * @param key    key
+     * @param values values
+     */
+    void smset(String key, List&lt;String&gt; values);
+
+    /**
+     * 添加Set集合.
+     *
+     * @param key       key
+     * @param values    values
+     * @param expireSec 过期时间(seconds)，0表示永不过期
+     */
+    void smset(String key, List&lt;String&gt; values, long expireSec);
+
+    /**
+     * 设置Set集合.
+     *
+     * @param key   key
+     * @param value value
+     */
+    void sset(String key, String value);
+
+    /**
+     * 返回一个随机的成员值.
+     *
+     * @param key key
+     * @return 返回值
+     */
+    String spop(String key);
+
+    /**
+     * 获取Set集合的长度.
+     *
+     * @param key key
+     * @return 长度
+     */
+    long slen(String key);
+
+    /**
+     * 删除Set集合对应的values.
+     *
+     * @param key    key
+     * @param values values
+     * @return 影响的行数
+     */
+    long sdel(String key, String... values);
+
+    /**
+     * 返回set集合.
+     *
+     * @param key key
+     * @return 值集合
+     */
+    Set&lt;String&gt; sget(String key);
+
+    /**
+     * 设置Hash集合.
+     *
+     * @param key       key
+     * @param items     items
+     * @param expireSec 过期时间(seconds)，0表示永不过期
+     */
+    void hmset(String key, Map&lt;String, String&gt; items, long expireSec);
+
+    /**
+     * 设置Hash集合.
+     *
+     * @param key   key
+     * @param items items
+     */
+    void hmset(String key, Map&lt;String, String&gt; items);
+
+
+    /**
+     * 设置Hash集合field对应的value.
+     *
+     * @param key   key
+     * @param field field
+     * @param value value
+     */
+    void hset(String key, String field, String value);
+
+    /**
+     * 设置Hash集合field对应的value.
+     *
+     * @param key   key
+     * @param field field
+     * @param value value
+     */
+    void hsetIfAbsent(String key, String field, String value);
+
+
+    /**
+     * 获取Hash集合field对应的value.
+     *
+     * @param key   key
+     * @param field field
+     * @return field对应的value，不存在时返回null
+     */
+    String hget(String key, String field);
+
+    /**
+     * 获取Hash集合的所有items.
+     *
+     * @param key key
+     * @return 所有items
+     */
+    Map&lt;String, String&gt; hgetAll(String key);
+
+    /**
+     * 判断Hash集合field是否存在.
+     *
+     * @param key   key
+     * @param field field
+     * @return 是否存在
+     */
+    boolean hexists(String key, String field);
+
+    /**
+     * 获取Hash集合的所有keys.
+     *
+     * @param key key
+     * @return 所有keys
+     */
+    Set&lt;String&gt; hkeys(String key);
+
+    /**
+     * 获取Hash集合的所有values.
+     *
+     * @param key key
+     * @return 所有values
+     */
+    Set&lt;String&gt; hvalues(String key);
+
+    /**
+     * 获取Hash集合的长度.
+     *
+     * @param key key
+     * @return 长度
+     */
+    long hlen(String key);
+
+    /**
+     * 删除Hash集合是对应的field.
+     *
+     * @param key   key
+     * @param field field
+     */
+    void hdel(String key, String field);
+
+    /**
+     * 原子加操作.
+     *
+     * @param key       key，key不存在时会自动创建值为0的对象
+     * @param incrValue 要增加的值，必须是Long Int Float 或 Double
+     * @return 操作后的值
+     */
+    long incrBy(String key, long incrValue);
+
+    /**
+     * Hash原子加操作.
+     *
+     * @param h         h
+     * @param hk        hk
+     * @param incrValue 要增加的值，必须是Long Int Float 或 Double
+     * @return 操作后的值
+     */
+    long hashIncrBy(String h, String hk, long incrValue);
+
+
+    /**
+     * 原子减操作.
+     *
+     * @param key       key不存在时会自动创建值为0的对象
+     * @param decrValue 要减少的值，必须是Long  或 Int
+     * @return 操作后的值
+     */
+    long decrBy(String key, long decrValue);
+
+    /**
+     * 原子减操作.
+     *
+     * @param h         h
+     * @param hk        hk
+     * @param decrValue 要减少的值，必须是Long  或 Int
+     * @return 操作后的值
+     */
+    long hashDecrBy(String h, String hk, long decrValue);
+
+    /**
+     * 设置过期时间.
+     *
+     * @param key       key
+     * @param expireSec 过期时间(seconds)，0表示永不过期
+     */
+    void expire(String key, long expireSec);
+
+    /**
+     * 获取过期时间（秒）.
+     *
+     * @param key key
+     * @return -2 key不存在，-1 对应的key永不过期，正数 过期时间(seconds)
+     */
+    long ttl(String key);
+
+    /**
+     * 删除当前数据库中的所有Key.
+     */
+    void flushdb();
+
+    /**
+     * 设置bit.
+     *
+     * @param key    key
+     * @param offset offset
+     * @param value  值
+     * @return 原来的值
+     */
+    boolean setBit(String key, long offset, boolean value);
+
+    /**
+     * 获取指定偏移bit的值.
+     *
+     * @param key    key
+     * @param offset offset
+     * @return 指定偏移的值
+     */
+    boolean getBit(String key, long offset);
+
+}</code></pre>
+</div>
+</div>
 <div class="listingblock">
 <div class="title">示例</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">Dew.cluster.cache.flushdb();
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// 清空DB
+Dew.cluster.cache.flushdb();
+// 删除key
 Dew.cluster.cache.del("n_test");
-assert !Dew.cluster.cache.exists("n_test");
+// 判断是否存在
+Dew.cluster.cache.exists("n_test");
+// 设置值
 Dew.cluster.cache.set("n_test", "{\"name\":\"jzy\"}", 1);
-assert Dew.cluster.cache.exists("n_test");
-assert "jzy".equals($.json.toJson(Dew.cluster.cache.get("n_test")).get("name").asText());
-Thread.sleep(1000);
-assert !Dew.cluster.cache.exists("n_test");
-assert null == Dew.cluster.cache.get("n_test");</code></pre>
+// 获取值并转成Json
+$.json.toJson(Dew.cluster.cache.get("n_test"));</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -1622,87 +2054,457 @@ assert null == Dew.cluster.cache.get("n_test");</code></pre>
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Dew的缓存默认只实现了String、List、Set、Hash等结构常用的，时间复杂度低的操作，
+Dew的缓存默认只实现了String、List、Set、Hash等结构常用的、时间复杂度低的操作，
 如需要的操作Dew没有提供可使用Spring Boot Data Redis原生的<code>RedisTemplate&lt;String,String&gt;</code>
 </td>
 </tr>
 </table>
 </div>
 </div>
-<div class="sect5">
-<h6 id="分布式map"><a class="anchor" href="#分布式map"></a>分布式Map</h6>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-接口见：ClusterMap
-</td>
-</tr>
-</table>
+<div class="sect4">
+<h5 id="分布式map"><a class="anchor" href="#分布式map"></a>分布式Map</h5>
+<div class="listingblock">
+<div class="title">API</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">/*
+ * Copyright 2019. the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package ms.dew.core.cluster;
+
+import java.util.Map;
+import java.util.function.Consumer;
+
+/**
+ * 分布式Map服务.
+ *
+ * @param &lt;M&gt; 值的类型
+ * @author gudaoxuri
+ */
+public interface ClusterMap&lt;M&gt; {
+
+    /**
+     * 添加Item，同步实现.
+     *
+     * @param key   key
+     * @param value value
+     */
+    void put(String key, M value);
+
+    /**
+     * 添加Item，异步实现.
+     *
+     * @param key   key
+     * @param value value
+     */
+    void putAsync(String key, M value);
+
+    /**
+     * 添加不存在的Item，同步实现.
+     *
+     * @param key   key
+     * @param value value
+     */
+    void putIfAbsent(String key, M value);
+
+    /**
+     * 指定Key是否存在.
+     *
+     * @param key key
+     * @return 是否存在 boolean
+     */
+    boolean containsKey(String key);
+
+    /**
+     * 获取所有Item.
+     *
+     * @return 所有Item all
+     */
+    Map&lt;String, M&gt; getAll();
+
+    /**
+     * 获取指定key的value.
+     *
+     * @param key key
+     * @return 对应的value m
+     */
+    M get(String key);
+
+    /**
+     * 删除指定key的Item，同步实现.
+     *
+     * @param key key
+     */
+    void remove(String key);
+
+    /**
+     * 删除指定key的Item，异步实现.
+     *
+     * @param key key
+     */
+    void removeAsync(String key);
+
+    /**
+     * 清空Map.
+     */
+    void clear();
+
+    /**
+     * 注册新增Item时要执行的函数.
+     * &lt;p&gt;
+     * 目前只支持Hazelcast实现
+     *
+     * @param fun 执行的函数
+     * @return the cluster map
+     */
+    default ClusterMap&lt;M&gt; regEntryAddedEvent(Consumer&lt;EntryEvent&lt;M&gt;&gt; fun) {
+        return this;
+    }
+
+    /**
+     * 注册删除Item时要执行的函数.
+     * &lt;p&gt;
+     * 目前只支持Hazelcast实现
+     *
+     * @param fun 执行的函数
+     * @return the cluster map
+     */
+    default ClusterMap&lt;M&gt; regEntryRemovedEvent(Consumer&lt;EntryEvent&lt;M&gt;&gt; fun) {
+        return this;
+    }
+
+    /**
+     * 注册更新Item时要执行的函数.
+     * &lt;p&gt;
+     * 目前只支持Hazelcast实现
+     *
+     * @param fun 执行的函数
+     * @return the cluster map
+     */
+    default ClusterMap&lt;M&gt; regEntryUpdatedEvent(Consumer&lt;EntryEvent&lt;M&gt;&gt; fun) {
+        return this;
+    }
+
+    /**
+     * 注册清空Map时要执行的函数.
+     * &lt;p&gt;
+     * 目前只支持Hazelcast实现
+     *
+     * @param fun 执行的函数
+     * @return the cluster map
+     */
+    default ClusterMap&lt;M&gt; regMapClearedEvent(VoidProcessFun fun) {
+        return this;
+    }
+
+    /**
+     * Entry event.
+     *
+     * @param &lt;V&gt; the type parameter
+     */
+    class EntryEvent&lt;V&gt; {
+        private String key;
+        private V oldValue;
+        private V value;
+
+        /**
+         * Gets key.
+         *
+         * @return the key
+         */
+        public String getKey() {
+            return key;
+        }
+
+        /**
+         * Sets key.
+         *
+         * @param key the key
+         */
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        /**
+         * Gets old value.
+         *
+         * @return the old value
+         */
+        public V getOldValue() {
+            return oldValue;
+        }
+
+        /**
+         * Sets old value.
+         *
+         * @param oldValue the old value
+         */
+        public void setOldValue(V oldValue) {
+            this.oldValue = oldValue;
+        }
+
+        /**
+         * Gets value.
+         *
+         * @return the value
+         */
+        public V getValue() {
+            return value;
+        }
+
+        /**
+         * Sets value.
+         *
+         * @param value the value
+         */
+        public void setValue(V value) {
+            this.value = value;
+        }
+
+    }
+}</code></pre>
+</div>
 </div>
 <div class="listingblock">
 <div class="title">示例</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">ClusterMap&lt;TestMapObj&gt; mapObj = Dew.cluster.map.instance("test_obj_map", TestMapObj.class);
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// 创建指定名为test_obj_map的分布Map实例
+ClusterMap&lt;TestMapObj&gt; mapObj = Dew.cluster.map.instance("test_obj_map", TestMapObj.class);
+// 清空记录
 mapObj.clear();
 TestMapObj obj = new TestMapObj();
 obj.a = "测试";
+// 添加一条记录
 mapObj.put("test", obj);
-assert "测试".equals(mapObj.get("test").a);</code></pre>
+// 获取记录
+mapObj.get("test");</code></pre>
 </div>
 </div>
 </div>
-<div class="sect5">
-<h6 id="分布式锁"><a class="anchor" href="#分布式锁"></a>分布式锁</h6>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-接口见：ClusterLock
-</td>
-</tr>
-</table>
+<div class="sect4">
+<h5 id="分布式锁"><a class="anchor" href="#分布式锁"></a>分布式锁</h5>
+<div class="listingblock">
+<div class="title">API</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">/*
+ * Copyright 2019. the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package ms.dew.core.cluster;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * 分布式锁服务.
+ *
+ * @author gudaoxuri
+ */
+public interface ClusterLock {
+
+    Logger logger = LoggerFactory.getLogger(ClusterLock.class);
+
+    /**
+     * 尝试加锁，加锁成功后执行对应的函数，执行完成自动解锁.
+     * &lt;p&gt;
+     * 推荐使用 {@link #tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun)}
+     *
+     * @param fun 加锁成功后执行的函数
+     */
+    void tryLockWithFun(VoidProcessFun fun) throws Exception;
+
+    /**
+     * 尝试加锁，加锁成功后执行对应的函数，执行完成自动解锁.
+     * &lt;p&gt;
+     * 推荐使用 {@link #tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun)}
+     *
+     * @param fun 加锁成功后执行的函数
+     */
+    void tryLockWithFun(long waitMillSec, VoidProcessFun fun) throws Exception;
+
+    /**
+     * 尝试加锁，加锁成功后执行对应的函数，执行完成自动解锁.
+     *
+     * @param waitMillSec  等待毫秒数
+     * @param leaseMillSec 锁释放毫秒数
+     * @param fun          加锁成功后执行的函数
+     */
+    void tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun) throws Exception;
+
+    /**
+     * 尝试加锁.
+     * &lt;p&gt;
+     * 推荐使用 {@link #tryLock(long waitMillSec, long leaseMillSec)}
+     */
+    boolean tryLock();
+
+    /**
+     * 尝试加锁.
+     * &lt;p&gt;
+     * 推荐使用 {@link #tryLock(long waitMillSec, long leaseMillSec)}
+     *
+     * @param waitMillSec 等待毫秒数
+     */
+    boolean tryLock(long waitMillSec) throws InterruptedException;
+
+    /**
+     * 尝试加锁.
+     *
+     * @param waitMillSec  等待毫秒数
+     * @param leaseMillSec 锁释放毫秒数，估计值，实际释放时间视各中间件的配置及执行环境会有一定偏差
+     */
+    boolean tryLock(long waitMillSec, long leaseMillSec) throws InterruptedException;
+
+    /**
+     * 解锁操作，只有加锁的实例及线程才能解锁.
+     */
+    boolean unLock();
+
+    /**
+     * 强制解锁，不用匹配加锁的实例与线程.
+     * &lt;p&gt;
+     * 谨慎使用
+     */
+    void delete();
+
+    /**
+     * 判断是否有锁.
+     */
+    boolean isLocked();
+
+}</code></pre>
+</div>
 </div>
 <div class="listingblock">
 <div class="title">示例</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// dist lock
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// 创建指定名为test_lock的分布锁实例
 ClusterLock lock = Dew.cluster.lock.instance("test_lock");
 // tryLock 示例，等待0ms，忘了手工unLock或出异常时1s后自动解锁
 if (lock.tryLock(0, 1000)) {
     try {
         // 已加锁，执行业务方法
     } finally {
-        // 必须手工解锁
+        // 手工解锁
         lock.unLock();
     }
 }
-// tryLockWithFun 示例
+// 上面的示例可用 tryLockWithFun 简化
 lock.tryLockWithFun(0, 1000, () -&gt; {
-    // 已加锁，执行业务方法，tryLockWithFun会将业务方法包裹在try-cache中，无需手工解锁
+    // 已加锁，执行业务方法，tryLockWithFun会将业务方法包裹在try-finally中，无需手工解锁
 });</code></pre>
 </div>
 </div>
 </div>
-<div class="sect5">
-<h6 id="mq"><a class="anchor" href="#mq"></a>MQ</h6>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-接口见：ClusterMQ
-</td>
-</tr>
-</table>
+<div class="sect4">
+<h5 id="mq"><a class="anchor" href="#mq"></a>MQ</h5>
+<div class="listingblock">
+<div class="title">API</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">/*
+ * Copyright 2019. the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package ms.dew.core.cluster;
+
+import java.util.Map;
+import java.util.function.Consumer;
+
+/**
+ * MQ服务.
+ *
+ * @author gudaoxuri
+ */
+public interface ClusterMQ {
+
+    /**
+     * MQ 发布订阅模式 之 发布.
+     * &lt;p&gt;
+     * 请确保发布之前 topic 已经存在
+     *
+     * @param topic   主题
+     * @param message 消息内容
+     * @return 是否发布成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
+     */
+    boolean publish(String topic, String message);
+
+
+    /**
+     * MQ 发布订阅模式 之 订阅.
+     * &lt;p&gt;
+     * 非阻塞方式
+     *
+     * @param topic    主题
+     * @param consumer 订阅处理方法
+     */
+    void subscribe(String topic, Consumer&lt;String&gt; consumer);
+
+
+    /**
+     * MQ 请求响应模式 之 请求.
+     *
+     * @param address 请求地址
+     * @param message 消息内容
+     * @return 是否请求成功
+     */
+    boolean request(String address, String message);
+
+    /**
+     * MQ 请求响应模式 之 响应.
+     * &lt;p&gt;
+     * 非阻塞方式
+     *
+     * @param address  请求对应的地址
+     * @param consumer 响应处理方法
+     */
+    void response(String address, Consumer&lt;String&gt; consumer);
+
+    default Map&lt;String, Object&gt; getMQHeader(String name) {
+        return Cluster.getMQHeader(name);
+    }
+
+    default void setMQHeader(String name, Map&lt;String, Object&gt; header) {
+        Cluster.setMQHeader(name, header);
+    }
+
+}</code></pre>
+</div>
 </div>
 <div class="listingblock">
 <div class="title">示例</div>
@@ -1710,7 +2512,6 @@ lock.tryLockWithFun(0, 1000, () -&gt; {
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">// pub-sub
 Dew.cluster.mq.subscribe("test_pub_sub", message -&gt;
         logger.info("pub_sub&gt;&gt;" + message));
-Thread.sleep(1000);
 Dew.cluster.mq.publish("test_pub_sub", "msgA");
 Dew.cluster.mq.publish("test_pub_sub", "msgB");
 // req-resp
@@ -1720,8 +2521,8 @@ Dew.cluster.mq.request("test_rep_resp", "msg1");
 Dew.cluster.mq.request("test_rep_resp", "msg2");
 // rabbit confirm
 if (Dew.cluster.mq instanceof RabbitClusterMQ) {
-    boolean success = ((RabbitClusterMQ) Dew.cluster.mq).publish("test_pub_sub", "confirm message", true);
-    success = ((RabbitClusterMQ) Dew.cluster.mq).request("test_rep_resp", "confirm message", true);
+    boolean success = Dew.cluster.mq.publish("test_pub_sub", "confirm message");
+    success = Dew.cluster.mq.request("test_rep_resp", "confirm message");
 }</code></pre>
 </div>
 </div>
@@ -1751,27 +2552,52 @@ if (Dew.cluster.mq instanceof RabbitClusterMQ) {
 </div>
 <div class="paragraph">
 <div class="title">MQ的HA功能</div>
-<p>MQ的HA（高可用）支持，默认MQ启用HA（可通过<code>dew.cluster.config.ha-enabled=false</code>关闭）。
-可实现。</p>
+<p>MQ的HA（高可用）支持，默认为禁用，可通过<code>dew.cluster.config.ha-enabled=true</code>启用。</p>
 </div>
 <div class="paragraph">
 <p>Dew的MQ仅在数据处理完成后才做commit，这限制了对同一个队列只能串行处理，
 MQ的HA开启后，您可以以多线程的方式消费消息，处理过程中如发生服务宕机重启后仍可从未处理完成的消息开始消费。</p>
 </div>
 </div>
-<div class="sect5">
-<h6 id="领导者选举"><a class="anchor" href="#领导者选举"></a>领导者选举</h6>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-接口见：ClusterElection
-</td>
-</tr>
-</table>
+<div class="sect4">
+<h5 id="领导者选举"><a class="anchor" href="#领导者选举"></a>领导者选举</h5>
+<div class="listingblock">
+<div class="title">API</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">/*
+ * Copyright 2019. the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package ms.dew.core.cluster;
+
+/**
+ * 领导者选举服务.
+ *
+ * @author gudaoxuri
+ */
+public interface ClusterElection {
+
+    /**
+     * 当前工程是否是领导者.
+     *
+     * @return 是否是领导者
+     */
+    boolean isLeader();
+
+}</code></pre>
+</div>
 </div>
 <div class="listingblock">
 <div class="title">示例</div>
@@ -1787,8 +2613,8 @@ if (electionFun1.isLeader()) {
 </div>
 </div>
 </div>
-<div class="sect4">
-<h5 id="统一响应"><a class="anchor" href="#统一响应"></a>统一响应</h5>
+<div class="sect3">
+<h4 id="统一响应"><a class="anchor" href="#统一响应"></a>3.2.5. 统一响应</h4>
 <div class="paragraph">
 <p><code>Dew</code> 推荐使用 <code>协议无关的响应格式</code>，此格式在 <code>方法间调用</code> <code>非HTTP协议RPC</code> <code>MQ</code> 等数据交互场景做到真正的 <code>统一响应格式</code>。
 要求返回的格式为<code>Resp</code>对象，格式为：</p>
@@ -1796,9 +2622,9 @@ if (electionFun1.isLeader()) {
 <div class="listingblock">
 <div class="content">
 <pre>{
-    code: "", // 响应编码，与http状态码类似，200表示成功
-    message:"", // 响应附加消息，多有于错误描述
-    body: // 响应正文
+    "code": "", // 响应编码，与http状态码类似，200表示成功
+    "message":"", // 响应附加消息，多有于错误描述
+    "body": // 响应正文
 }</pre>
 </div>
 </div>
@@ -1807,7 +2633,7 @@ if (electionFun1.isLeader()) {
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">public Resp&lt;String&gt; test(){
     return Resp.success("enjoy!");
-    // or return Resp.notFound("…")/conflict("…")/badRequest("…")/…
+    // OR return Resp.notFound("…")/conflict("…")/badRequest("…")/…
 }</code></pre>
 </div>
 </div>
@@ -1826,13 +2652,13 @@ if (electionFun1.isLeader()) {
 <td class="content">
 <div class="title">500 Http状态码说明</div>
 <div class="paragraph">
-<p><code>500</code> 状态码仅用于告诉 <code>Hystrix</code> 这次请求是需要降级的错误，对于 <code>Resp</code> 中的 <code>code</code> 没有影响。</p>
+<p><code>500</code> 状态码仅用于告诉 <code>Hystrix</code> 或其它熔断器这次请求是需要降级的错误，对于 <code>Resp</code> 中的 <code>code</code> 没有影响。</p>
 </div>
 <div class="paragraph">
 <p><code>dew</code> 框架会把所有 <code>5xx</code>（服务端错误，需要降级） 的异常统一转换成 <code>500</code> 的Http状态码返回给调用方。</p>
 </div>
 <div class="paragraph">
-<p><code>Resp.xxx.fallback()</code> 用于显示声明当前返回需要降级，
+<p><code>Resp.xxx.fallback()</code> 用于显式声明当前返回需要降级，
 比如 <code>Resp.serverError("some message")</code> 不会降级，返回http状态码为200，body为 <code>{"code":"500","message":"some message","body":null}</code>，
 但 <code>Resp.serverError("some message").fallback()</code> 会降级，返回http状态码为500，body为 同上。</p>
 </div>
@@ -1840,11 +2666,10 @@ if (electionFun1.isLeader()) {
 </tr>
 </table>
 </div>
-</div>
 <div class="sect4">
 <h5 id="消息通知"><a class="anchor" href="#消息通知"></a>消息通知</h5>
 <div class="paragraph">
-<p><code>Dew</code> 支持发送消息到钉钉或邮件，默认支持对未捕获异常及Hystrix错误的通知。</p>
+<p><code>Dew</code> 支持发送消息到钉钉、邮件或自定义HTTP地址，默认支持对未捕获异常及Hystrix错误的通知。</p>
 </div>
 <div class="listingblock">
 <div class="title">通知配置</div>
@@ -1907,7 +2732,7 @@ Dew.notify.sendAsync("&lt;通知的标识&gt;", "&lt;通知的内容或Throwable
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>非捕获异常: <code><em>DEW_ERROR</em></code>，所有非捕获异常（ErrorController）调用此标识发送错误，可通过<code>dew.basic.format.error-flag</code> 修改</p>
+<p>未捕获异常: <code><em>DEW_ERROR</em></code>，所有未捕获异常（ErrorController）调用此标识发送错误，可通过<code>dew.basic.format.error-flag</code> 修改</p>
 </li>
 <li>
 <p>Hystrix错误: <code><em>HYSTRIX</em></code>，所有Hystrix错误调用此标识发送错误，可通过<code>dew.cloud.error.notify-flag</code> 修改</p>
@@ -1915,7 +2740,7 @@ Dew.notify.sendAsync("&lt;通知的标识&gt;", "&lt;通知的内容或Throwable
 </ol>
 </div>
 <div class="paragraph">
-<p>要启用以上两个通知请确保<code>dew.notifies</code>有相应的配置。</p>
+<p>要启用以上两个通知请确保<code>dew.notifies</code>下有相应的配置。</p>
 </div>
 </td>
 </tr>
@@ -1946,21 +2771,59 @@ Dew.notify.sendAsync("&lt;通知的标识&gt;", "&lt;通知的内容或Throwable
 </tr>
 </table>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+消息通知由 <code>notification</code> 模块提供，<code>boot-starter</code> 集成了此模块，开发中也可以单独引用 <code>notification</code>。
+</td>
+</tr>
+</table>
 </div>
-<div class="sect4">
-<h5 id="异常处理"><a class="anchor" href="#异常处理"></a>异常处理</h5>
+</div>
+</div>
+<div class="sect3">
+<h4 id="异常处理"><a class="anchor" href="#异常处理"></a>3.2.6. 异常处理</h4>
 <div class="paragraph">
-<p><code>Dew</code> 会把程序没有捕获的异常统一上抛，同时框架提供了常用的异常检查：</p>
+<p><code>Dew</code> 会把程序没有捕获的异常统一上抛，同时框架也支持上文统一响应的异常处理：</p>
 </div>
 <div class="listingblock">
-<div class="title">异常检查，异常类型要求为RuntimeException及其子类</div>
+<div class="title">自定义异常以支持统一响应API</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">Dew.E.check(VoidPredicate notExpected, E ex)
-Dew.E.check(boolean notExpected, E ex)
-Dew.E.checkNotEmpty(Map&lt;?, ?&gt; objects, E ex)
-Dew.E.checkNotEmpty(Iterable&lt;?&gt; objects, E ex)
-Dew.E.checkNotNull(Object obj, E ex)</code></pre>
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">/**
+* 统一异常处理.
+* &lt;p&gt;
+* 封装任意异常到统一的格式，见下文
+*
+* @param &lt;E&gt;            上抛的异常类型
+* @param code           异常编码
+* @param ex             上抛的异常对象
+* @param customHttpCode 自定义Http状态码
+* @return 上抛的异常对象
+*/
+Dew.E.e(String code, E ex, int customHttpCode)</code></pre>
 </div>
+</div>
+<div class="listingblock">
+<div class="title">自定义异常以支持统一响应示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// 业务代码捕获了一个异常
+Exception someError = new IOException("xxx不存在")
+// 使用统一异常处理封装
+throw Dew.E.e("NBE00123",someError,200)
+// 请求方得到的结果为 http状态=200，响应体：
+{
+    "code": "NBE00123",
+    "message": "xxx不存在",
+    "body": null
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>上面介绍的是编码的方式将某些异常封装处理，我们也可以用配置解决：</p>
 </div>
 <div class="listingblock">
 <div class="title">自定义异常配置，启用后此类异常均使用此模块</div>
@@ -1974,9 +2837,20 @@ Dew.E.checkNotNull(Object obj, E ex)</code></pre>
         message: # 错误描述，不存在时使用实例级错误描述</code></pre>
 </div>
 </div>
+<div class="listingblock">
+<div class="title">自定义异常配置示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">dew:
+  basic:
+    error-mapping:
+      "java.io.IOException":
+        http-code: 200
+        business-code: "NBE00123"</code></pre>
 </div>
-<div class="sect4">
-<h5 id="数据验证"><a class="anchor" href="#数据验证"></a>数据验证</h5>
+</div>
+</div>
+<div class="sect3">
+<h4 id="数据验证"><a class="anchor" href="#数据验证"></a>3.2.7. 数据验证</h4>
 <div class="paragraph">
 <p><code>Dew</code>集成了<code>Spring validate</code> 机制，支持针对 <code>URL</code> 及 <code>Bean</code> 的验证。</p>
 </div>
@@ -2000,9 +2874,81 @@ IdNumber、Phone</p>
 </li>
 </ul>
 </div>
+<div class="listingblock">
+<div class="title">数据验证示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@RestController
+@Api(value = "测试")
+@RequestMapping(value = "/test/")
+@Validated
+public class WebController {
+
+    /**
+     * Valid create user dto.
+     *
+     * @param userDTO the user dto
+     * @return the user dto
+     */
+    @PostMapping(value = "valid-create")
+    public UserDTO validCreate(@Validated(CreateGroup.class) @RequestBody UserDTO userDTO) {
+        return userDTO;
+    }
+
+    /**
+     * Valid update user dto.
+     *
+     * @param userDTO the user dto
+     * @return the user dto
+     */
+    @PostMapping(value = "valid-update")
+    public UserDTO validUpdate(@Validated(UpdateGroup.class) @RequestBody UserDTO userDTO) {
+        return userDTO;
+    }
+
+    /**
+     * Valid in method.
+     *
+     * @param age the age
+     * @return the string
+     */
+    @GetMapping(value = "valid-method-spring/{age}")
+    public String validInMethod(@Min(value = 2, message = "age必须大于2") @PathVariable("age") int age) {
+        return String.valueOf(age);
+    }
+
+    /**
+     * Valid in method.
+     *
+     * @param phone the phone
+     * @return the string
+     */
+    @GetMapping(value = "valid-method-own/{phone}")
+    public String validInMethod(@Phone @PathVariable("phone") String phone) {
+        return phone;
+    }
+
+    public static class UserDTO {
+
+        @NotNull(groups = CreateGroup.class)
+        @IdNumber(message = "身份证号错误", groups = {CreateGroup.class, UpdateGroup.class})
+        private String idCard;
+
+        @Min(value = 10, groups = {CreateGroup.class, UpdateGroup.class})
+        private Integer age;
+
+        @NotNull(groups = CreateGroup.class)
+        @Phone(message = "手机号错误", groups = {CreateGroup.class, UpdateGroup.class})
+        private String phone;
+
+        // Get &amp; Set ...
+    }
+
+}</code></pre>
 </div>
-<div class="sect4">
-<h5 id="cors支持"><a class="anchor" href="#cors支持"></a>CORS支持</h5>
+</div>
+</div>
+<div class="sect3">
+<h4 id="cors支持"><a class="anchor" href="#cors支持"></a>3.2.8. CORS支持</h4>
 <div class="listingblock">
 <div class="title">配置</div>
 <div class="content">
@@ -2015,8 +2961,8 @@ IdNumber、Phone</p>
 </div>
 </div>
 </div>
-<div class="sect4">
-<h5 id="权限认证"><a class="anchor" href="#权限认证"></a>权限认证</h5>
+<div class="sect3">
+<h4 id="权限认证"><a class="anchor" href="#权限认证"></a>3.2.9. 权限认证</h4>
 <div class="listingblock">
 <div class="content">
 <pre>此章节关联示例:auth-example</pre>
@@ -2034,9 +2980,14 @@ IdNumber、Phone</p>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">dew:
     security:
-        token-flag: # token key的名称
-        token-in-header: # token key是否在http header中，为false是会从url query中获取
-        token-hash: # token 值是否做hash（MD5）处理</code></pre>
+        token-flag: # Token key的名称
+        token-in-header: # Token key是否在http header中，为false是会从url query中获取
+        token-hash: # Token 值是否做hash（MD5）处理
+        opt-expiration:86400L # Token 过期时间（秒）
+        router: # 路由功能
+            enabled: false # 是否启用
+            black-uri: # URL黑名单，支持ant风格
+                &lt;Http Method&gt;: [&lt;URLs&gt;]</code></pre>
 </div>
 </div>
 <div class="admonitionblock important">
@@ -2060,7 +3011,7 @@ Dew.auth.setOptInfo(OptInfo optInfo);
 // 获取登录信息，要求在http请求加上token信息
 Dew.context().optInfo();
 // 删除登录信息
-// 一般在注销登录后操作
+// 一般在注销登录OptInfo后操作
 Dew.auth.removeOptInfo();
 
 // 登录信息
@@ -2100,7 +3051,7 @@ public class OptInfo {
 <div class="title">basic 认证缓存示例</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">/**
- * 模拟用户注册
+ * 模拟用户注册.
  */
 @PostMapping(value = "user/register")
 public Resp&lt;Void&gt; register(@RequestBody User user) {
@@ -2111,7 +3062,7 @@ public Resp&lt;Void&gt; register(@RequestBody User user) {
 }
 
 /**
- * 模拟用户登录
+ * 模拟用户登录.
  */
 @PostMapping(value = "auth/login")
 public Resp&lt;String&gt; login(@RequestBody LoginDTO loginDTO) {
@@ -2128,7 +3079,7 @@ public Resp&lt;String&gt; login(@RequestBody LoginDTO loginDTO) {
 }
 
 /**
- * 模拟业务操作
+ * 模拟业务操作.
  */
 @GetMapping(value = "business/someopt")
 public Resp&lt;Void&gt; someOpt() {
@@ -2143,7 +3094,7 @@ public Resp&lt;Void&gt; someOpt() {
 }
 
 /**
- * 模拟用户注销
+ * 模拟用户注销.
  */
 @DeleteMapping(value = "auth/logout")
 public Resp&lt;Void&gt; logout() {
@@ -2153,9 +3104,113 @@ public Resp&lt;Void&gt; logout() {
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>上述操作的核心是认证适配器，其接口如下：</p>
 </div>
-<div class="sect4">
-<h5 id="测试支持"><a class="anchor" href="#测试支持"></a>测试支持</h5>
+<div class="listingblock">
+<div class="title">AuthAdapter</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">/*
+ * Copyright 2019. the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package ms.dew.core.auth;
+
+import ms.dew.Dew;
+import ms.dew.core.auth.dto.OptInfo;
+
+import java.util.Optional;
+
+/**
+ * 登录鉴权适配器.
+ *
+ * @author gudaoxuri
+ */
+public interface AuthAdapter {
+
+    /**
+     * 获取当前登录的操作用户信息.
+     *
+     * @param &lt;E&gt; 扩展操作用户信息类型
+     * @return 操作用户信息
+     */
+    default &lt;E extends OptInfo&gt; Optional&lt;E&gt; getOptInfo() {
+        return Dew.context().optInfo();
+    }
+
+    /**
+     * 根据Token获取操作用户信息.
+     *
+     * @param &lt;E&gt;   扩展操作用户信息类型
+     * @param token 登录Token
+     * @return 操作用户信息
+     */
+    &lt;E extends OptInfo&gt; Optional&lt;E&gt; getOptInfo(String token);
+
+    /**
+     * 设置操作用户信息类型.
+     *
+     * @param &lt;E&gt;     扩展操作用户信息类型
+     * @param optInfo 扩展操作用户信息
+     */
+    &lt;E extends OptInfo&gt; void setOptInfo(E optInfo);
+
+    /**
+     * 删除当前登录的操作用户信息.
+     * &lt;p&gt;
+     * 对指注销登录
+     */
+    default void removeOptInfo() {
+        getOptInfo().ifPresent(optInfo -&gt; removeOptInfo(optInfo.getToken()));
+    }
+
+    /**
+     * 根据Token删除操作用户信息.
+     *
+     * @param token 登录Token
+     */
+    void removeOptInfo(String token);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>Dew</code> 默认实现了基于 <code>Dew.cluster.cache</code> 的适配器以支持上述功能，项目中也可以实现自己的适配器。</p>
+</div>
+<div class="listingblock">
+<div class="title">自定义认证适配器</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// 自定义适配器
+public class CustomAuthAdapter implements AuthAdapter {
+
+ // ...
+
+}
+
+// 注册为Bean（可选，如果自定义适配器用到Spring功能时必须）
+@Bean
+public CustomAuthAdapter customAuthAdapter() {
+    return new CustomAuthAdapter();
+}
+
+// 注册自定义适配器
+Dew.auth = new CustomAuthAdapter() // 或 Bean实例</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="测试支持"><a class="anchor" href="#测试支持"></a>3.2.10. 测试支持</h4>
 <div class="paragraph">
 <p>良好的单元测试可以保证代码的高质量，单测的重要原则是内聚、无依赖，好的单测应该是"函数化"的——结果的变化只与传入参数有关。
 但实际上我们会的代码往往会与数据库、缓存、MQ等外部工具交互，这会使单测的结果不可控，通常的解决方案是使用Mock，但这无行中引入了单测撰写的成本，
@@ -2190,8 +3245,8 @@ spring:
 </div>
 </div>
 </div>
-<div class="sect4">
-<h5 id="幂等处理"><a class="anchor" href="#幂等处理"></a>幂等处理</h5>
+<div class="sect3">
+<h4 id="幂等处理"><a class="anchor" href="#幂等处理"></a>3.2.11. 幂等处理</h4>
 <div class="listingblock">
 <div class="content">
 <pre>此章节关联示例:idempotent-example</pre>
@@ -2278,14 +3333,8 @@ Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "x
 </div>
 </div>
 </div>
-</div>
 <div class="sect3">
-<h4 id="工程化"><a class="anchor" href="#工程化"></a>3.2.4. 工程化</h4>
-<div class="sect4">
-<h5 id="api文档"><a class="anchor" href="#api文档"></a>API文档</h5>
-<div class="paragraph">
-<p>用于生成Asciidoc格式的离线API文档，可通过软件转换成HTML及PDF版本。</p>
-</div>
+<h4 id="api文档"><a class="anchor" href="#api文档"></a>3.2.12. API文档</h4>
 <div class="listingblock">
 <div class="title">配置</div>
 <div class="content">
@@ -2307,6 +3356,12 @@ management: # 文档生成地址前缀为 /management.endpoints.web.base-path
     web:
       base-path: /management</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>在线API文档请访问 <code>http(s)://&lt;host&gt;:&lt;port&gt;/doc.html</code></p>
+</div>
+<div class="paragraph">
+<p>离线API文档会生成Asciidoc格式，可通过软件转换成HTML及PDF版本。</p>
 </div>
 <div class="listingblock">
 <div class="title">使用</div>
@@ -2345,8 +3400,8 @@ swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，�
 <p>调用此接口后返回Asciidoc格式的文档内容，复制此内容到相应的转换工具中即可生成对应的HTTP或PDF文档。</p>
 </div>
 </div>
-<div class="sect4">
-<h5 id="代码质量检查"><a class="anchor" href="#代码质量检查"></a>代码质量检查</h5>
+<div class="sect3">
+<h4 id="代码质量检查"><a class="anchor" href="#代码质量检查"></a>3.2.13. 代码质量检查</h4>
 <div class="paragraph">
 <p><code>Dew</code> 已集成 <code>Sonar</code> 插件，只需要在maven中配置 <code>sonar.host.url</code> 为目标地址，
 然后执行 <code>mvn clean verify sonar:sonar -P qa -Dsonar.login=&lt;用户名&gt; -Dsonar.password=&lt;密码&gt;</code> 即可。</p>
@@ -2376,78 +3431,9 @@ swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，�
 </table>
 </div>
 </div>
-<div class="sect4">
-<h5 id="降级通知"><a class="anchor" href="#降级通知"></a>降级通知</h5>
-<div class="listingblock">
-<div class="content">
-<pre>此章节关联 `hystrix-example` 示例</pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-为能更及时的对服务异常做出处理， <code>dew</code> 增加邮件通知功能。
-</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 通知条件配置示例
-dew:
-  cloud:
-    error:
-      enabled: true
-      notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED
-      notify-include-keys: ["ExampleClient#deleteExe(int,String)","ExampleClient#postExe(int,String)"]
-
-# 邮箱配置示例
-spring:
-  mail:
-    host: smtp.163.com
-    username: &lt;邮件地址&gt;
-    password: &lt;password为smtp授权码，非邮箱密码&gt;
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-            required: true</code></pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="跟踪日志"><a class="anchor" href="#跟踪日志"></a>跟踪日志</h5>
-<div class="listingblock">
-<div class="content">
-<pre>此章节关联 `tracing-invokeX-example` 示例</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>用于记录 <code>服务API调用</code> （追踪）日志到 <code>Jaeger</code>。</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-此功能由DevOps流程涉及的Kubernetes环境自动完成。
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
 </div>
 <div class="sect2">
-<h3 id="framework-configuration"><a class="anchor" href="#framework-configuration"></a>3.3. 框架配置速查[TBD]</h3>
+<h3 id="framework-configuration"><a class="anchor" href="#framework-configuration"></a>3.3. 框架配置速查</h3>
 <div class="sect3">
 <h4 id="code_dew_code_参数"><a class="anchor" href="#code_dew_code_参数"></a>3.3.1. <code>Dew</code> 参数</h4>
 <div class="listingblock">
@@ -2478,10 +3464,10 @@ spring:
         lock: redis # 分布式锁实现，可选 redis/hazelcast，默认redis
         map: redis # 分布式Map实现，可选 redis/hazelcast，默认redis
         mq: redis # MQ实现，可选 redis/hazelcast/rabbit，默认redis
-        election: redis # 领导者选举实现，可选 redis/eureka，默认redis
+        election: redis # 领导者选举实现，可选 redis，默认redis
         config: #集群相关配置
             election-period-sec: 60 #领导者选举时间区间，默认60秒
-            ha-enabled: true #是否启用HA，默认为true
+            ha-enabled: false #是否启用HA，默认为false
     notifies:
         "": # 通知的标识
             type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
@@ -2501,9 +3487,29 @@ spring:
         token-flag: __dew_token__ # token 标识
         token-in-header: true # true：token标识在 header 中，反之在url参数中
         token-hash: false # token值是否需要hash，用于解决token值有特殊字符的情况
-        include-services: [""] # 服务白名单，要求源服务头部带上 Request-From
-        exclude-services: [""] # 服务黑名单，要求源服务头部带上 Request-From
+        opt-expiration:86400L # Token 过期时间（秒）
+        router: # 路由功能
+            enabled: false # 是否启用
+            black-uri: # URL黑名单，支持ant风格
+                &lt;Http Method&gt;: [&lt;URLs&gt;]
+    # 需要引入 cloud-starter 模块
+    cloud:
+        trace-log:
+            enabled: true # 是否启用服务API调用（追踪）日志，默认为true
+        error:
+             enabled: false # 启用降级邮件通知，默认为false
+             notify-flag: __HYSTRIX__ # 默认的通知标识
+             notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED # 通知的事件类型
+             notify-include-keys: # 需监控的方法key值，与notify-exclude-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
+             notify-exclude-keys: # 不需要监控的方法key值，与notify-include-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
+    # 需要引入 idempotent-starter 模块
+    idempotent:
+        default-expire-ms: 3600000 # 设置默认过期时间，1小时
+        default-strategy: item # 设置默认策略，目前支持item(逐条记录)
+        default-opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
+    # 各组件配置
     component:
+        # 需要引入 auth 组件
         auth:
           token-expire-sec: 60 * 60 * 24 * 30 # token有效期，默认为30天
           max-login-error-times: 3 # 最大登录错误次数，默认3次
@@ -2513,23 +3519,20 @@ spring:
           sdk:
               server-url: # 服务器地址
               white-list: # 白名单，逗号分隔
-    cloud:
-        trace-log:
-            enabled: true # 是否启用服务API调用（追踪）日志，默认为true
-        error:
-             enabled: true # 启用降级邮件通知，默认为false
-             notify-flag: __HYSTRIX__ # 默认的通知标识
-             notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED # 通知的事件类型
-             notify-include-keys: # 需监控的方法key值，与notify-exclude-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
-             notify-exclude-keys: # 不需要监控的方法key值，与notify-include-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
-    idempotent:
-        default-expire-ms: 3600000 # 设置默认过期时间，1小时
-        default-strategy: item # 设置默认策略，目前支持item(逐条记录)
-        default-opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
 
+# 常用 Spring 配置
 spring:
     application:
          name:  # 项目名称,若使用Dew，请配置
+  cloud:
+    config: # 统一配置
+      enabled: true # 是否启用
+      uri: # URL
+      username: 认证用户名
+      password: 认证密码
+    kubernetes: # kubernetes相关配置
+      ribbon: # 客户端轮询配置
+        enabled: true # 是否启用
     mail: #mail配置，需要hystrix降级通知需加以下配置
          host: smtp.163.com
          username:
@@ -2541,13 +3544,43 @@ spring:
                  starttls:
                    enable: true
                    required: true
-    hazelcast: # hazelcast相关配置
+    redis:
+        host: # redis主机
+        port: # redis端口
+        database: # redis数据库
+        password: # redis密码
+        pool: # 连接池配置
+    rabbitmq:
+      host: # rabbit主机
+      port: # rabbit端口
+      username: # rabbit用户名
+      password: # rabbit密码
+      virtual-host: # rabbit VH
+    hazelcast:
          username:
          password:
          addresses: ["127.0.0.1"]
-         connection-timeout: #默认5000
-         connection-attempt-limit: #默认2
-         connection-attempt-period: #默认3000</code></pre>
+         connection-timeout: # 默认5000
+         connection-attempt-limit: # 默认2
+         connection-attempt-period: # 默认3000
+
+server:
+  port: 8081 # 服务端口
+
+&lt;application name&gt;: # 自定义服务列表，使用此功能需要设置 spring.cloud.kubernetes.ribbon.enabled = false
+  ribbon:
+    listOfServers: &lt;host&gt;:&lt;port&gt;
+
+management:
+  endpoints:
+    web:
+      base-path: /management # 管理路径前缀
+
+logging:
+  level:
+    ROOT: INFO
+    ms.dew: DEBUG # Dew目录日志配置
+    org.springframework.jdbc.core: TRACE # Jdbc目录日志配置</code></pre>
 </div>
 </div>
 </div>
@@ -2575,7 +3608,7 @@ spring:
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-<a href="http://cloud.spring.io/spring-cloud-static/Edgware.SR4/single/spring-cloud.html" class="bare">http://cloud.spring.io/spring-cloud-static/Edgware.SR4/single/spring-cloud.html</a>
+<a href="https://cloud.spring.io/spring-cloud-static/spring-cloud-kubernetes/2.1.0.RC1/single/spring-cloud-kubernetes.html" class="bare">https://cloud.spring.io/spring-cloud-static/spring-cloud-kubernetes/2.1.0.RC1/single/spring-cloud-kubernetes.html</a>
 </td>
 </tr>
 </table>
@@ -2583,39 +3616,161 @@ spring:
 </div>
 </div>
 <div class="sect2">
-<h3 id="framework-best-practices"><a class="anchor" href="#framework-best-practices"></a>3.4. 框架最佳实践[TBD]</h3>
+<h3 id="framework-best-practices"><a class="anchor" href="#framework-best-practices"></a>3.4. 框架最佳实践</h3>
 <div class="sect3">
-<h4 id="服务调用开发期使用"><a class="anchor" href="#服务调用开发期使用"></a>3.4.1. 服务调用开发期使用</h4>
+<h4 id="项目模块设计"><a class="anchor" href="#项目模块设计"></a>3.4.1. 项目模块设计</h4>
 <div class="paragraph">
-<p>在 <code>Spring Cloud</code> 体系下，服务调用需要启动 <code>Eureka</code> 服务（对于 <code>Dew</code> 中的 <code>Registry</code> 组件），这对开发阶段并不友好：</p>
+<p><code>Dew</code>推荐的项目结构为：</p>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>开发期间会不断启停服务，<code>Eureka</code> 保护机制会影响服务注册（当然这是可以关闭的）</p>
-</li>
-<li>
-<p>多人协作时可能会出现调用到他人服务的情况（同一服务多个实例）</p>
-</li>
-<li>
-<p>需要启动 <code>Eureka</code> 服务，多了一个依赖</p>
-</li>
-</ol>
+<div class="listingblock">
+<div class="content">
+<pre>X Build Project                 // 构建工程
+|- sources                      // 源码目录
+|-  |- basics                   // 基础源码，为各服务工程的依赖，要求deploy到Maven仓库
+|-  |-  |- parent               // 父工程，所有服务端项目的根POM
+|-  |-  |- common               // 公共工程，所有服务端项目的基础依赖
+|-  |-  |- common-service       // 公共服务工程，所有服务工程的根POM，自身依赖于common
+|-  |-  |- &lt;...&gt;                // 其它基础工程，比如common-spark，大数据服务的基础依赖
+|-  |- services                 // 服务源码，对应于一个个微服务
+|-  |-  |- &lt;service 1&gt;          // 服务1工程
+|-  |-  |- &lt;service ...&gt;        // 其它服务工程
+|-  |- sdk                      // SDK源码，如项目需要提供SDK时建立此目录
+|-  |-  |- &lt;java&gt;               // Java版本的SDK工程
+|-  |-  |- &lt;js&gt;                 // JS版本的SDK工程
+|-  |-  |- &lt;rest&gt;               // REST版本的SDK工程
+|-  |-  |- &lt;...&gt;                // 其它语言版本的SDK工程
+|-  |- terminals                // 终端源码
+|-  |-  |- &lt;android&gt;            // Android APP工程
+|-  |-  |- &lt;ios&gt;                // IOS APP工程
+|-  |-  |- &lt;wechat&gt;             // Wechat工程
+|-  |-  |- &lt;...&gt;                // 其它终端工程
+|- docs                         // 文档工程，所有团队共同维护，Asciidoc方案，后文会介绍
+|-  |- src
+|-  |-  |- main
+|-  |-  |-  |- asciidoc
+|-  |-  |-  |-  |- book.adoc    // 文档主目录
+|-  |-  |-  |-  |- &lt;...&gt;        // 分模块建立不同的文档文件
+|-  |-  |- resources            // 文档引用资源目录，如图片、CSS
+|-  |-  |-  |- images
+|-  |-  |-  |-  |- &lt;...&gt;
+|-  |-  |- pom.xml              // 文档工程使用Maven管理
+|-  |-  |- .gitignore
+|- env                          // 环境配置工程，以Spring Cloud Config为例，配置存放于Git
+|-  |- application.yml
+|-  |- &lt;...&gt;
+|-  |- .gitignore
+|- pom.xml                      // 构建工程的POM
+|- .gitmodules                  // Git子模块定义，所有工程都注册到此文件中
+|- .gitignore
+|- README.adoc                  // 构建工程使用说明</pre>
+</div>
 </div>
 <div class="paragraph">
-<p>为解决上述问题,在使用 <code>Spring Cloud</code> 的 <code>RestTemplate</code> 时,增加 <code>Ribbon</code> 的服务配置.</p>
+<p>推荐各工程使用独立Git库，详见： <a href="https://gudaoxuri.gitbook.io/microservices-architecture/wei-fu-wu-hua-zhi-kai-fa-yu-ce-shi/code-managerment">微服务架构设计-代码管理</a></p>
 </div>
+</div>
+<div class="sect3">
+<h4 id="代码包设计"><a class="anchor" href="#代码包设计"></a>3.4.2. 代码包设计</h4>
+<div class="paragraph">
+<p><code>Dew</code>推荐的包结构为：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>|- X service
+|-  |- src
+|-  |-  |- main
+|-  |-  |-  |- java
+|-  |-  |-  |-  |- src
+|-  |-  |-  |-  |-  |- x.y.z
+|-  |-  |-  |-  |-  |-  |- XApplication <i class="conum" data-value="1"></i><b>(1)</b>
+|-  |-  |-  |-  |-  |-  |- XConfig <i class="conum" data-value="2"></i><b>(2)</b>
+|-  |-  |-  |-  |-  |-  |- XInitiator <i class="conum" data-value="3"></i><b>(3)</b>
+|-  |-  |-  |-  |-  |-  |- controller
+|-  |-  |-  |-  |-  |-  |-  |- EventController <i class="conum" data-value="4"></i><b>(4)</b></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>XApplication : 服务启动类</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>XConfig：当前服务的配置文件（Spring Cloud格式）</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>XInitiator：当前服务启动初始化器，原则上所有与数据库、缓存、定时任务相关的初始化操作都应该从此类发起，以方便排错</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>EventController：事件处理器，名称可以更具象，原则上所有与MQ receive相关的操作都被视为交互接口，应该放到controller包下
 <div class="literalblock">
 <div class="content">
-<pre># &lt;client&gt;为service-id
-&lt;client&gt;.ribbon.listOfServers: &lt;直接访问的IPs&gt;
-# 如
-x-service.ribbon.listOfServers: 127.0.0.1:8812</pre>
+<pre>.示例
+----
+@PostConstruct
+public void processTodoAddEvent() {
+    // 使用Dew的集群MQ功能实现消息点对点接收
+    Dew.cluster.mq.response(Constants.MQ_NOTIFY_TODO_ADD, todo -&gt; {
+        logger.info("Received add todo event :" + todo);
+    });
+}
+----</pre>
+</div>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="开发期服务调用"><a class="anchor" href="#开发期服务调用"></a>3.4.3. 开发期服务调用</h4>
+<div class="paragraph">
+<p>在 <code>Spring Cloud</code> 体系下，服务间调用需要在Kubernetes环境下，这对开发阶段并不友好，可使用如下方案，模拟多个服务间调用。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">spring:
+  cloud:
+    kubernetes:
+      ribbon:
+        enabled: false # 禁用服务自动发现
+
+&lt;application name&gt;: # 自定义服务列表，使用此功能需要设置 spring.cloud.kubernetes.ribbon.enabled = false
+  ribbon:
+    listOfServers: &lt;host&gt;:&lt;port&gt;
+
+# e.g.
+
+tracing-invoke2-example:
+  ribbon:
+    listOfServers: localhost:8082</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="code_validated_code_注解"><a class="anchor" href="#code_validated_code_注解"></a>3.4.2. <code>@Validated</code> 注解</h4>
+<h4 id="代码质量管理"><a class="anchor" href="#代码质量管理"></a>3.4.4. 代码质量管理</h4>
+<div class="paragraph">
+<p>推荐使用 <code>checkstyle</code> 管理代码风格，使用方式：</p>
+</div>
+<div class="listingblock">
+<div class="title">checkstyle使用</div>
+<div class="content">
+<pre># 在Maven中配置自定义的 checkstyle 文件的路径
+&lt;properties&gt;
+    &lt;checkstyle.config.path&gt;../../checkstyle/checkstyle.xml&lt;/checkstyle.config.path&gt;
+&lt;/properties&gt;
+
+# 使用Maven命令
+mvn -P qa compile
+
+# 也可以IDE的checkstyle插件实现</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="code_validated_code_注解"><a class="anchor" href="#code_validated_code_注解"></a>3.4.5. <code>@Validated</code> 注解</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2647,7 +3802,7 @@ Spring对抽象数据类型校验抛出异常为<code>MethodArgumentNotValidExce
 </div>
 </div>
 <div class="sect3">
-<h4 id="code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据"><a class="anchor" href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据"></a>3.4.3. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</h4>
+<h4 id="code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据"><a class="anchor" href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据"></a>3.4.6. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -2666,195 +3821,6 @@ Spring对抽象数据类型校验抛出异常为<code>MethodArgumentNotValidExce
 </td>
 <td class="content">
 <code>jackson</code> 对于 <code>LocalDateTime</code> 类型的支持与其他三种类型不具有一致性，这是 <code>jackson</code> 需要优化的一个点
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="断路保护"><a class="anchor" href="#断路保护"></a>3.4.4. 断路保护</h4>
-<div class="listingblock">
-<div class="title">Hystrix配置</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-properties" data-lang="properties"># 执行的隔离策略 THREAD, SEMAPHORE 默认THREAD
-hystrix.command.default.execution.isolation.strategy=THREAD
-# 执行hystrix command的超时时间,超时后会进入fallback方法 默认1000
-hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=1000
-# 执行hystrix command是否限制超时,默认是true
-hystrix.command.default.execution.timeout.enabled=true
-# hystrix command 执行超时后是否中断 默认true
-hystrix.command.default.execution.isolation.thread.interruptOnTimeout=true
-# 使用信号量隔离时,信号量大小,默认10
-hystrix.command.default.execution.isolation.semaphore.maxConcurrentRequests=10
-# fallback方法最大并发请求数 默认是10
-hystrix.command.default.fallback.isolation.semaphore.maxConcurrentRequests=10
-# 服务降级是否开启,默认为true
-hystrix.command.default.fallback.enabled=true
-# 是否使用断路器来跟踪健康指标和熔断请求
-hystrix.command.default.circuitBreaker.enabled=true
-# 熔断器的最小请求数,默认20. (这个不是很理解,欢迎补充)
-hystrix.command.default.circuitBreaker.requestVolumeThreshold=20
-# 断路器打开后的休眠时间,默认5000
-hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds=5000
-# 断路器打开的容错比,默认50
-hystrix.command.default.circuitBreaker.errorThresholdPercentage=50
-# 强制打开断路器,拒绝所有请求. 默认false, 优先级高于forceClosed
-hystrix.command.default.circuitBreaker.forceOpen=false
-# 强制关闭断路器,接收所有请求,默认false,优先级低于forceOpen
-hystrix.command.default.circuitBreaker.forceClosed=false
-
-# hystrix command 命令执行核心线程数,最大并发 默认10
-hystrix.threadpool.default.coreSize=10</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>信息参见:</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://github.com/Netflix/Hystrix/wiki/Configuration" class="bare">https://github.com/Netflix/Hystrix/wiki/Configuration</a></p>
-</li>
-<li>
-<p><a href="http://hwood.lofter.com/post/1cc7fbdc_e8c5c96" class="bare">http://hwood.lofter.com/post/1cc7fbdc_e8c5c96</a></p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>使用断路保护可有效果的防止系统雪崩，<code>Spring Cloud</code> 对 <code>Hystrix</code> 做了封装，详见： <a href="http://cloud.spring.io/spring-cloud-netflix/single/spring-cloud-netflix.html#_circuit_breaker_hystrix_clients" class="bare">http://cloud.spring.io/spring-cloud-netflix/single/spring-cloud-netflix.html#_circuit_breaker_hystrix_clients</a></p>
-</div>
-<div class="paragraph">
-<p>需要说明的是 <code>Hystrix</code> 使用新线程执行代码，导致 <code>Threadlocal</code> 数据不能同步，使用时需要将用到的数据做为参数传入，如果需要使用 <code>Dew</code> 框架的上下文（请求链路/用户等获取）需要先传入再设值，e.g.</p>
-</div>
-<div class="listingblock">
-<div class="title">Hystrix Command 示例,及Context处理</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">public class HystrixExampleService {
-    @HystrixCommand(fallbackMethod = "defaultFallback", commandProperties = {
-            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000")
-    })
-    public String someMethod(Map&lt;String, Object&gt; parameters, DewContext context) {
-        // ！！！ Hystrix使用新线程执行代码，导致Threadlocal数据不能同步，
-        // 使用时需要将用到的数据做为参数传入，如果需要使用Dew框架的上下文需要先传入再设值
-        DewContext.setContext(context);
-        try {
-            Thread.sleep(new Random().nextInt(3000));
-            logger.info("Normal Service Token:" + Dew.context().getToken());
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        return "ok";
-    }
-
-    // 降级处理方法定义
-    public String defaultFallback(Map&lt;String, Object&gt; parameters, DewContext context, Throwable e) {
-        DewContext.setContext(context);
-        logger.info("Error Service Token:" + Dew.context().getToken());
-        return "fail";
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="定时任务"><a class="anchor" href="#定时任务"></a>3.4.5. 定时任务</h4>
-<div class="paragraph">
-<p>使用 <code>Spring Config</code>  配置中心 <code>refresh</code> 时,在 <code>@RefreshScope</code> 注解的类中, <code>@Scheduled</code> 注解的自动任务会失效。
-建议使用实现 <code>SchedulingConfigurer</code> 接口的方式添加自动任务。</p>
-</div>
-<div class="listingblock">
-<div class="title">自动任务添加</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Configuration
-@EnableScheduling
-public class SchedulingConfiguration implements SchedulingConfigurer {
-
-    private Logger logger = LoggerFactory.getLogger(SchedulingConfiguration.class);
-
-    @Autowired
-    private ConfigExampleConfig config;
-
-    @Override
-    public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-        taskRegistrar.addTriggerTask(() -&gt; logger.info("task1: " + config.getVersion()), triggerContext -&gt; {
-            Instant instant = Instant.now().plus(5, SECONDS);
-            return Date.from(instant);
-        });
-
-        taskRegistrar.addTriggerTask(() -&gt; logger.info("task2: " + config.getVersion()), new CronTrigger("1/3 * * * * ?"));
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="主要性能影响参数"><a class="anchor" href="#主要性能影响参数"></a>3.4.6. 主要性能影响参数</h4>
-<div class="ulist">
-<ul>
-<li>
-<p>内置 <code>Tomcat</code> 参数调整效果并不大,如果需要调整,建议适当调大 <code>max-treads</code> 和 <code>accept-count</code></p>
-<div class="literalblock">
-<div class="content">
-<pre># 最大等待请求数 默认100
-server.tomcat.accept-count=1000
-# 最大并发数 默认200
-server.tomcat.max-threads=1000
-# 最大连接数 默认BIO:200 NIO:10000 APR:8192
-server.tomcat.max-connections=2000</pre>
-</div>
-</div>
-</li>
-<li>
-<p><code>Ribbon</code> 性能参数说明调整 <code>MaxTotalConnections</code> 和 <code>MaxConnectionsPerHost</code> 时建议同比调整 <code>Pool</code> 相关的参数</p>
-<div class="literalblock">
-<div class="content">
-<pre># ribbon 单主机最大连接数,默认50
-ribbon.MaxConnectionsPerHost=500
-# ribbon 总连接数,默认 200
-ribbon.MaxTotalConnections=1000
-# 默认200
-ribbon.PoolMaxThreads=1000
-# 默认1
-ribbon.PoolMinThreads=500</pre>
-</div>
-</div>
-</li>
-<li>
-<p><code>Hystrix</code> 性能参数说明</p>
-<div class="literalblock">
-<div class="content">
-<pre># 并发执行的最大线程数,默认10
-hystrix.threadpool.default.coreSize=100</pre>
-</div>
-</div>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-普通 <code>Service</code> 使用 <code>Hystrix</code> 时,最大并发主要调整 <code>hystrix.threadpool.default.coreSize</code>
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-<code>Hystrix</code> 的默认超时时间为1s,在高并发下容易出现超时,建议将默认超时时间适当调长,
-特殊接口需要将时间调短或更长的,使用特定配置。
 </td>
 </tr>
 </table>
@@ -2893,36 +3859,6 @@ RedisCacheManager cacheManager() {
     username: root
     password: 123456</code></pre>
 </div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="http请求并发数性能瓶颈"><a class="anchor" href="#http请求并发数性能瓶颈"></a>3.4.9. http请求并发数性能瓶颈</h4>
-<div class="ulist">
-<ul>
-<li>
-<p>当策略为Thread时（默认是Thread)，hystrix.threadpool.default.maximumSize为第一个性能瓶颈，默认值为10.</p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-修改值时，需要先设置hystrix.threadpool.default.allowMaximumSizeToDivergeFromCoreSize为true，默认为false
-</td>
-</tr>
-</table>
-</div>
-<div class="ulist">
-<div class="title">hystrix详细配置参见https://github.com/Netflix/Hystrix/wiki/configuration#allowMaximumSizeToDivergeFromCoreSize</div>
-<ul>
-<li>
-<p>第二个瓶颈为springboot内置的tomcat的最大连接数，参数为server.tomcat.maxThreads，默认值为200</p>
-</li>
-</ul>
 </div>
 </div>
 </div>
@@ -2992,7 +3928,7 @@ RedisCacheManager cacheManager() {
 </ol>
 </div>
 <table class="tableblock frame-all grid-all spread">
-<caption class="title">Table 1. 推荐的服务列表</caption>
+<caption class="title">Table 2. 推荐的服务列表</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -6150,9 +7086,9 @@ stages:
 # 缓存目录，必须添加
 cache:
   paths:
-    # node项目必须添加
+    # node项目必须添加，需要根据实际情况指定到对应的目录，e.g. frontend/node_modules/
     - node_modules/
-    # 所有项目必须添加（因为dew将所有类型的工程都视为maven项目，包含前端工程）
+    # 所有项目必须添加（因为dew将所有类型的工程都视为maven项目，包含前端工程），固定为此目录
     - .m2/
 
 # 不同环境的部署配置，各环境执行的操作一致，但触发的 branch 及 调用的 Runner 不同

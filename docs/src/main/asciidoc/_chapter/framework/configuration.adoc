@@ -1,5 +1,5 @@
 [[framework-configuration]]
-=== 框架配置速查[TBD]
+=== 框架配置速查
 
 ==== `Dew` 参数
 
@@ -31,10 +31,10 @@ dew: # Dew 参数key前缀
         lock: redis # 分布式锁实现，可选 redis/hazelcast，默认redis
         map: redis # 分布式Map实现，可选 redis/hazelcast，默认redis
         mq: redis # MQ实现，可选 redis/hazelcast/rabbit，默认redis
-        election: redis # 领导者选举实现，可选 redis/eureka，默认redis
+        election: redis # 领导者选举实现，可选 redis，默认redis
         config: #集群相关配置
             election-period-sec: 60 #领导者选举时间区间，默认60秒
-            ha-enabled: true #是否启用HA，默认为true
+            ha-enabled: false #是否启用HA，默认为false
     notifies:
         "": # 通知的标识
             type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
@@ -54,9 +54,29 @@ dew: # Dew 参数key前缀
         token-flag: __dew_token__ # token 标识
         token-in-header: true # true：token标识在 header 中，反之在url参数中
         token-hash: false # token值是否需要hash，用于解决token值有特殊字符的情况
-        include-services: [""] # 服务白名单，要求源服务头部带上 Request-From
-        exclude-services: [""] # 服务黑名单，要求源服务头部带上 Request-From
+        opt-expiration:86400L # Token 过期时间（秒）
+        router: # 路由功能
+            enabled: false # 是否启用
+            black-uri: # URL黑名单，支持ant风格
+                <Http Method>: [<URLs>]
+    # 需要引入 cloud-starter 模块
+    cloud:
+        trace-log:
+            enabled: true # 是否启用服务API调用（追踪）日志，默认为true
+        error:
+             enabled: false # 启用降级邮件通知，默认为false
+             notify-flag: __HYSTRIX__ # 默认的通知标识
+             notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED # 通知的事件类型
+             notify-include-keys: # 需监控的方法key值，与notify-exclude-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
+             notify-exclude-keys: # 不需要监控的方法key值，与notify-include-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
+    # 需要引入 idempotent-starter 模块
+    idempotent:
+        default-expire-ms: 3600000 # 设置默认过期时间，1小时
+        default-strategy: item # 设置默认策略，目前支持item(逐条记录)
+        default-opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
+    # 各组件配置
     component:
+        # 需要引入 auth 组件
         auth:
           token-expire-sec: 60 * 60 * 24 * 30 # token有效期，默认为30天
           max-login-error-times: 3 # 最大登录错误次数，默认3次
@@ -66,23 +86,20 @@ dew: # Dew 参数key前缀
           sdk:
               server-url: # 服务器地址
               white-list: # 白名单，逗号分隔
-    cloud:
-        trace-log:
-            enabled: true # 是否启用服务API调用（追踪）日志，默认为true
-        error:
-             enabled: true # 启用降级邮件通知，默认为false
-             notify-flag: __HYSTRIX__ # 默认的通知标识
-             notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED # 通知的事件类型
-             notify-include-keys: # 需监控的方法key值，与notify-exclude-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
-             notify-exclude-keys: # 不需要监控的方法key值，与notify-include-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
-    idempotent:
-        default-expire-ms: 3600000 # 设置默认过期时间，1小时
-        default-strategy: item # 设置默认策略，目前支持item(逐条记录)
-        default-opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
 
+# 常用 Spring 配置
 spring:
     application:
          name:  # 项目名称,若使用Dew，请配置
+  cloud:
+    config: # 统一配置
+      enabled: true # 是否启用
+      uri: # URL
+      username: 认证用户名
+      password: 认证密码
+    kubernetes: # kubernetes相关配置
+      ribbon: # 客户端轮询配置
+        enabled: true # 是否启用
     mail: #mail配置，需要hystrix降级通知需加以下配置
          host: smtp.163.com
          username:
@@ -94,13 +111,43 @@ spring:
                  starttls:
                    enable: true
                    required: true
-    hazelcast: # hazelcast相关配置
+    redis:
+        host: # redis主机
+        port: # redis端口
+        database: # redis数据库
+        password: # redis密码
+        pool: # 连接池配置
+    rabbitmq:
+      host: # rabbit主机
+      port: # rabbit端口
+      username: # rabbit用户名
+      password: # rabbit密码
+      virtual-host: # rabbit VH
+    hazelcast:
          username:
          password:
          addresses: ["127.0.0.1"]
-         connection-timeout: #默认5000
-         connection-attempt-limit: #默认2
-         connection-attempt-period: #默认3000
+         connection-timeout: # 默认5000
+         connection-attempt-limit: # 默认2
+         connection-attempt-period: # 默认3000
+
+server:
+  port: 8081 # 服务端口
+
+<application name>: # 自定义服务列表，使用此功能需要设置 spring.cloud.kubernetes.ribbon.enabled = false
+  ribbon:
+    listOfServers: <host>:<port>
+
+management:
+  endpoints:
+    web:
+      base-path: /management # 管理路径前缀
+
+logging:
+  level:
+    ROOT: INFO
+    ms.dew: DEBUG # Dew目录日志配置
+    org.springframework.jdbc.core: TRACE # Jdbc目录日志配置
 ----
 
 ==== `Spring boot` 核心参数
@@ -109,6 +156,6 @@ TIP: https://docs.spring.io/spring-boot/docs/current/reference/html/common-appli
 
 ==== `Spring cloud` 核心参数
 
-TIP: http://cloud.spring.io/spring-cloud-static/Edgware.SR4/single/spring-cloud.html
+TIP: https://cloud.spring.io/spring-cloud-static/spring-cloud-kubernetes/2.1.0.RC1/single/spring-cloud-kubernetes.html
 
 
