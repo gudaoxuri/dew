@@ -256,8 +256,8 @@ public class NeedProcessChecker {
         Dew.log.info("Found " + changedFiles.size() + " changed files for " + projectConfig.getAppName());
         if (changedFiles.isEmpty()) {
             return false;
-        } else if (!projectConfig.getApp().getIgnoreChangeFiles().isEmpty()
-                && !$.file.noneMath(changedFiles, new ArrayList<>(projectConfig.getApp().getIgnoreChangeFiles()))) {
+        } else if (!projectConfig.getIgnoreChangeFiles().isEmpty()
+                && !$.file.noneMath(changedFiles, new ArrayList<>(projectConfig.getIgnoreChangeFiles()))) {
             // 排除忽略的文件后是否存在未部署的文件
             Dew.log.info("Found 0 changed files filtered ignore files for " + projectConfig.getAppName());
             return false;

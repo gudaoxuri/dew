@@ -193,7 +193,7 @@ public abstract class BasicMojo extends AbstractMojo {
             }
             if (executeInternal()) {
                 Dew.log.info("Successful");
-                Dew.Notify.success("Successful", getMojoName());
+                Dew.Notify.success(getMojoName());
             } else {
                 Dew.Config.getCurrentProject().setSkip(true);
             }

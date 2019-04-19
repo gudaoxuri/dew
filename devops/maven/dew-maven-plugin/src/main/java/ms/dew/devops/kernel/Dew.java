@@ -17,6 +17,7 @@
 package ms.dew.devops.kernel;
 
 import com.ecfront.dew.common.$;
+import ms.dew.devops.exception.ProcessException;
 import ms.dew.devops.helper.DockerHelper;
 import ms.dew.devops.helper.GitHelper;
 import ms.dew.devops.helper.KubeHelper;
@@ -25,7 +26,6 @@ import ms.dew.devops.kernel.config.ConfigBuilder;
 import ms.dew.devops.kernel.config.DewConfig;
 import ms.dew.devops.kernel.config.FinalConfig;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
-import ms.dew.devops.exception.ProcessException;
 import ms.dew.notification.NotifyConfig;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
@@ -358,6 +358,12 @@ public class Dew {
             Map<String, NotifyConfig> configMap = Dew.Config.getProjects().entrySet().stream()
                     .filter(config -> config.getValue().getNotify() != null)
                     .collect(Collectors.toMap(Map.Entry::getKey, config -> config.getValue().getNotify()));
+            configMap.values().forEach(config -> {
+                if (!config.getArgs().containsKey("msgType")) {
+                    // 默认使用Markdown格式
+                    config.getArgs().put("msgType", "markdown");
+                }
+            });
             ms.dew.notification.Notify.init(configMap, flag -> "");
         }
 
@@ -486,39 +492,62 @@ public class Dew {
         /**
          * Success.
          *
-         * @param content  the content
          * @param mojoName the mojo name
          */
-        public static void success(String content, String mojoName) {
-            send(null, content, mojoName);
+        public static void success(String mojoName) {
+            success("", mojoName);
+        }
+
+        /**
+         * Success.
+         *
+         * @param message  the message
+         * @param mojoName the mojo name
+         */
+        public static void success(String message, String mojoName) {
+            if (!mojoName.equalsIgnoreCase("release")
+                    && !mojoName.equalsIgnoreCase("rollback")
+                    && !mojoName.equalsIgnoreCase("scale")
+                    && !mojoName.equalsIgnoreCase("unrelease")
+            ) {
+                return;
+            }
+            send(null, message, mojoName);
         }
 
         /**
          * Fail.
          *
-         * @param content  the content
-         * @param mojoName the mojo name
+         * @param throwable the throwable
+         * @param mojoName  the mojo name
          */
-        public static void fail(Throwable content, String mojoName) {
-            send(content, null, mojoName);
+        public static void fail(Throwable throwable, String mojoName) {
+            send(throwable, "", mojoName);
         }
 
-        private static void send(Throwable failContent, String successContent, String mojoName) {
-            if (mojoName.equalsIgnoreCase("log")) {
+        private static void send(Throwable throwable, String message, String mojoName) {
+            String flag = Dew.Config.getCurrentProject().getId();
+            if (!ms.dew.notification.Notify.contains(flag)) {
                 return;
             }
-            String flag = Dew.Config.getCurrentProject().getId();
-            if (ms.dew.notification.Notify.contains(flag)) {
-                String title = Dew.Config.getCurrentProject().getProfile()
-                        + " "
-                        + Dew.Config.getCurrentProject().getAppName()
-                        + " "
-                        + mojoName;
-                if (failContent != null) {
-                    ms.dew.notification.Notify.send(flag, failContent, title);
-                } else {
-                    ms.dew.notification.Notify.send(flag, successContent, title);
-                }
+            String content =
+                    "![](http://dew.ms/images/" + (throwable != null ? "failure" : "successful") + ".png)"
+                            + "\n"
+                            + "# " + Dew.Config.getCurrentProject().getAppName() + "\n"
+                            + "> " + Dew.Config.getCurrentProject().getAppGroup() + "\n"
+                            + "\n"
+                            + "## " + (throwable != null ? "Failure" : "Successful")
+                            + " : [" + mojoName + "] @ [" + Dew.Config.getCurrentProject().getProfile() + "]\n";
+            if (message != null && !message.trim().isEmpty()
+                    || throwable != null) {
+                content += "> ---------\n"
+                        + "> " + message + "\n"
+                        + "> " + throwable + "\n";
+            }
+            if (throwable != null) {
+                ms.dew.notification.Notify.send(flag, content, "DevOps process successful");
+            } else {
+                ms.dew.notification.Notify.send(flag, content, "DevOps process failure");
             }
         }
 
