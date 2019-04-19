@@ -478,17 +478,19 @@ public Resp<String> test(){
 ----
 # 格式
 dew:
-    notifies:
-        "": # 通知的标识
-            type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
-            defaultReceivers: # 默认接收人列表，钉钉为手机号，邮件为邮箱
-            dndTimeReceivers: # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
-            args: # 不同类型的参数，邮件不需要设置
-                url: # 钉钉及自定义HTTP的推送地址，钉钉URL说明详见：https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.karFPe&treeId=257&articleId=105735&docType=1
-            strategy: # 通知策略
-                minIntervalSec: 0 # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
-                dndTime: # 开启免扰时间，HH:mm-HH:mm 如，18:00-06:00
-                forceSendTimes: 3 # 同一免扰周期间通知调用达到几次后强制发送
+  notifies:
+    "": # 通知的标识
+      type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
+      defaultReceivers: # 默认接收人列表，钉钉为手机号，邮件为邮箱
+      dndTimeReceivers: # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
+      args: # 不同类型的参数，邮件不需要设置
+        url: # type=DD表示钉钉的推送地址
+             # 说明详见：https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+             # type=HTTP表示HTTP Hook的地址
+        msgType: # 仅用于type=DD，支持 text/markdown            strategy: # 通知策略
+        minIntervalSec: 0 # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
+        dndTime: # 开启免扰时间，HH:mm-HH:mm 如，18:00-06:00
+        forceSendTimes: 3 # 同一免扰周期间通知调用达到几次后强制发送
 
 # 示例
 dew:
@@ -721,15 +723,15 @@ ____
 .配置认证缓存
 ----
 dew:
-    security:
-        token-flag: # Token key的名称
-        token-in-header: # Token key是否在http header中，为false是会从url query中获取
-        token-hash: # Token 值是否做hash（MD5）处理
-        opt-expiration:86400L # Token 过期时间（秒）
-        router: # 路由功能
-            enabled: false # 是否启用
-            black-uri: # URL黑名单，支持ant风格
-                <Http Method>: [<URLs>]
+  security:
+    token-flag: # Token key的名称
+    token-in-header: # Token key是否在http header中，为false是会从url query中获取
+    token-hash: # Token 值是否做hash（MD5）处理
+    opt-expiration:86400L # Token 过期时间（秒）
+    router: # 路由功能
+      enabled: false # 是否启用
+      black-uri: # URL黑名单，支持ant风格
+        <Http Method>: [<URLs>]
 ----
 
 IMPORTANT: 认证缓存需要 `集群缓存` 服务支持，请引入相关的依赖并配置对应的连接信息等。
@@ -966,11 +968,11 @@ dew:
     desc: # 文档说明
     web-site: # 文档站点
     doc:
-        base-package: # API文档要扫描的根包，多指定到 Controller 包中
-        contact: # 联系人信息，可为空
-            name: # 联系人姓名
-            url: # 联系人URL
-            email: # 联系人邮箱
+      base-package: # API文档要扫描的根包，多指定到 Controller 包中
+      contact: # 联系人信息，可为空
+        name: # 联系人姓名
+        url: # 联系人URL
+        email: # 联系人邮箱
 
 management: # 文档生成地址前缀为 /management.endpoints.web.base-path
   endpoints:

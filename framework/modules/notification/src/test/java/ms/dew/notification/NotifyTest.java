@@ -105,25 +105,39 @@ public class NotifyTest {
      */
     @Test
     public void testDD() {
-        NotifyConfig ddConfig = new NotifyConfig();
-        ddConfig.setType(NotifyConfig.TYPE_DD);
-        ddConfig.setDefaultReceivers(new HashSet<String>() {
+        NotifyConfig ddConfigByText = new NotifyConfig();
+        ddConfigByText.setType(NotifyConfig.TYPE_DD);
+        ddConfigByText.setDefaultReceivers(new HashSet<String>() {
             {
                 add("18657120203");
             }
         });
-        ddConfig.setArgs(new HashMap<String, Object>() {
+        ddConfigByText.setArgs(new HashMap<String, Object>() {
             {
                 put("url", "https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455");
             }
         });
+        NotifyConfig ddConfigByMarkdown = new NotifyConfig();
+        ddConfigByMarkdown.setType(NotifyConfig.TYPE_DD);
+        ddConfigByMarkdown.setDefaultReceivers(new HashSet<String>() {
+            {
+                add("18657120203");
+            }
+        });
+        ddConfigByMarkdown.setArgs(new HashMap<String, Object>() {
+            {
+                put("url", "https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455");
+                put("msgType", "markdown");
+            }
+        });
         Notify.init(new HashMap<String, NotifyConfig>() {
             {
-                put("dd", ddConfig);
+                put("dd_text", ddConfigByText);
+                put("dd_markdown", ddConfigByMarkdown);
             }
         }, flag -> "test");
 
-        Resp<Void> result = Notify.send("dd", "测试消息，带符号$$ com.trc.test.web.WebController.customHttpState(WebController.java:73)\n"
+        Resp<Void> result = Notify.send("dd_text", "测试消息，带符号$$ com.trc.test.web.WebController.customHttpState(WebController.java:73)\n"
                 + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n"
                 + "org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:204)\n"
                 + "org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:736)\n"
@@ -157,6 +171,44 @@ public class NotifyTest {
                 + "org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)\n"
                 + "java.lang.Thread.run(Thread.java:745)\n");
         Assert.assertTrue(result.ok());
+
+        result = Notify.send("dd_markdown", "测试消息，带符号$$ com.trc.test.web.WebController.customHttpState(WebController.java:73)\n"
+                + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n"
+                + "org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:204)\n"
+                + "org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:736)\n"
+                + "org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:157)\n"
+                + "org.springframework.validation.beanvalidation.MethodValidationInterceptor.invoke(MethodValidationInterceptor.java:150)\n"
+                + "org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)\n"
+                + "org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:671)\n"
+                + "com.trc.test.web.WebController$$EnhancerBySpringCGLIB$$34293e67.customHttpState(<generated>)\n"
+                + "sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n"
+                + "sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n"
+                + "sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n"
+                + "java.lang.reflect.Method.invoke(Method.java:497)\n"
+                + "java.lang.Thread.run(Thread.java:745)\n", "错误消息");
+        Assert.assertTrue(result.ok());
+
+        result = Notify.send("dd_markdown",
+                "![](http://dew.ms/images/failure.png)"
+                        + "\n"
+                        + "# Kernel\n"
+                        + "> ms.dew.devops.example.todo\n"
+                        + "\n"
+                        + "## **release** @ **test** profile process failure\n"
+                        + "\n"
+                        + "> ---------\n"
+                        + "补充信息\n"
+                        + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n"
+                        + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n"
+                        + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n"
+                        + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n"
+                        + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n"
+                        + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n"
+                        + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n"
+                        + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n",
+                "DevOps通知");
+        Assert.assertTrue(result.ok());
+
     }
 
     /**

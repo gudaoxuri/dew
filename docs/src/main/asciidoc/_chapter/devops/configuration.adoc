@@ -123,8 +123,10 @@ ignoreChangeFiles: []                   # 忽略变更文件列表，此列表�
     defaultReceivers:                   # 默认接收人列表，钉钉为手机号，邮件为邮箱
     dndTimeReceivers:                   # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
     args:                               # 不同类型的参数，邮件不需要设置
-        url:                            # 钉钉的推送地址
-                                        # 说明详见：https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.karFPe&treeId=257&articleId=105735&docType=1
+        url:                            # type=DD表示钉钉的推送地址
+                                        # 说明详见：https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+                                        # type=HTTP表示HTTP Hook的地址
+        msgType:                        # 仅用于type=DD，支持 text/markdown
     strategy:                           # 通知策略
         minIntervalSec: 0               # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
         dndTime:                        # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
