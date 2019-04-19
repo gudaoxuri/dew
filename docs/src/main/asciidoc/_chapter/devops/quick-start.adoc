@@ -41,7 +41,31 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=uat
 . 创建一个kubernetes namespace
 . 为这个kubernetes namespace绑定service-discovery-client角色，用于服务间发现
 . 为这个kubernetes namespace创建docker-registry Secret，用于Harbor认证
-. 为这个Kubernetes namespace创建Ingress，绑定服务与域名
+. 为这个Kubernetes namespace创建Ingress，绑定服务与域名，内容类似：
+
+  apiVersion: extensions/v1beta1
+  kind: Ingress
+  metadata:
+    annotations:
+    name: dew-ingress
+    namespace: dew-uat
+  spec:
+    rules:
+    - host: todo-api-uat.dew.ms
+      http:
+        paths:
+        - backend:
+            serviceName: todo-kernel
+            servicePort: 8080
+          path: /
+    - host: todo-uat.dew.ms
+      http:
+        paths:
+        - backend:
+            serviceName: todo-frontend
+            servicePort: 80
+          path: /
+
 
 当执行 ``mvn -P devops dew:build dew:release -Ddew.devops.profile=uat`` 时实际上做了：
 

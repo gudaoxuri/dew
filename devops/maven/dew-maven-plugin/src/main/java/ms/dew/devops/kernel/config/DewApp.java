@@ -19,9 +19,7 @@ package ms.dew.devops.kernel.config;
 import io.kubernetes.client.custom.Quantity;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Dew app.
@@ -30,33 +28,58 @@ import java.util.Set;
  */
 public class DewApp {
 
+    // 部署的副本数
     private int replicas = 1;
+    // 保留的历史版本数
     private int revisionHistoryLimit = 3;
+    // 端口号，默认情况下前端项目为80，后端服务为8080，目前不支持自定义
     private int port = 8080;
+    // Prometheus Metric 采集端口号，不建议修改，仅用于后端服务
     private int metricPort = 9779;
+    // 存活检测HTTP的路径，仅用于后端服务
     private String livenessPath = "/actuator/health";
+    // 可用检测HTTP的路径，仅用于后端服务
     private String readinessPath = "/actuator/health";
+    // 首次存活检测延迟时间，仅用于后端服务
     private int livenessInitialDelaySeconds = 60;
+    // 存活检测周期，仅用于后端服务
     private int livenessPeriodSeconds = 30;
+    // 存活检测失败次数阈值，超过后销毁当前实例并重启另一个实例，仅用于后端服务
     private int livenessFailureThreshold = 6;
+    // 首次可用检测延迟时间，仅用于后端服务
     private int readinessInitialDelaySeconds = 10;
+    // 可用检测周期，仅用于后端服务
     private int readinessPeriodSeconds = 60;
+    // 可用检测失败次数阈值，超过后当前实例不可用，仅用于后端服务
     private int readinessFailureThreshold = 3;
+    // 是否启用追踪日志，仅用于后端服务
     private boolean traceLogEnabled = true;
+    // 节点亲和性配置
+    // 默认选择标签为 group=app 的节点
     private Map<String, String> nodeSelector = new HashMap<String, String>() {
         {
             put("group", "app");
         }
     };
+    // 预打包命令
+    // 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> && npm install，发现不存在 node_modules 时执行
+    // 后端服务默认为空
     private String preparePackageCmd = "";
+    // 打包命令
+    // 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> npm run build:<环境名称>
+    // 后端服务默认为空
     private String packageCmd = "";
+    // packageCmd 执行错误时的补偿命令
+    // 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> npm install && npm run build:<环境名称>
+    // 后端服务默认为空
     private String errorCompensationPackageCmd = "";
-    private String runOptions = "-Xmx2688M -Xms2688M -Xmn960M -XX:MaxMetaspaceSize=512M "
-            + "-XX:MetaspaceSize=512M -XX:+UseConcMarkSweepGC -XX:+UseCMSInitiatingOccupancyOnly "
-            + "-XX:CMSInitiatingOccupancyFraction=70 -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses "
-            + "-XX:+CMSClassUnloadingEnabled -XX:+ParallelRefProcEnabled -XX:+CMSScavengeBeforeRemark -XX:+HeapDumpOnOutOfMemoryError";
-    private Set<String> ignoreChangeFiles = new HashSet<>();
+    // 运行参数，可指定诸如 JVM 配置等信息
+    private String runOptions = "";
+    // 容器资源上限，同Kubernetes配置
+    // @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
     private Map<String, Quantity> containerResourcesLimits = new HashMap<>();
+    // 容器资源下限，同Kubernetes配置
+    // @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
     private Map<String, Quantity> containerResourcesRequests = new HashMap<>();
 
     /**
@@ -383,24 +406,6 @@ public class DewApp {
      */
     public void setRunOptions(String runOptions) {
         this.runOptions = runOptions;
-    }
-
-    /**
-     * Gets ignore change files.
-     *
-     * @return the ignore change files
-     */
-    public Set<String> getIgnoreChangeFiles() {
-        return ignoreChangeFiles;
-    }
-
-    /**
-     * Sets ignore change files.
-     *
-     * @param ignoreChangeFiles the ignore change files
-     */
-    public void setIgnoreChangeFiles(Set<String> ignoreChangeFiles) {
-        this.ignoreChangeFiles = ignoreChangeFiles;
     }
 
     /**

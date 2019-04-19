@@ -273,6 +273,7 @@ public class ConfigBuilder {
                 finalProjectConfig.getApp().setPort(80);
                 finalProjectConfig.getApp().setTraceLogEnabled(false);
             }
+
         }
 
         /**

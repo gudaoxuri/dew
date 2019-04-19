@@ -129,7 +129,7 @@ public class Dew {
          */
         public static final String FLAG_DEW_DEVOPS_POD_NAME = "dew.devops.log.podName";
         /**
-         * 滚动查看日志标识.
+         * 是否滚动查看日志标识.
          */
         public static final String FLAG_DEW_DEVOPS_LOG_FOLLOW = "dew.devops.log.follow";
 

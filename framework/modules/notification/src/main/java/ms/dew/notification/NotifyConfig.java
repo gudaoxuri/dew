@@ -41,10 +41,15 @@ public class NotifyConfig {
      */
     public static final String TYPE_HTTP = "HTTP";
 
+    // 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
     private String type = TYPE_DD; // DD->钉钉 MAIL->邮件 HTTP->自定义HTTP Hook
+    // 默认接收人列表，钉钉为手机号，邮件为邮箱
     private Set<String> defaultReceivers = new HashSet<>();
+    // 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
     private Set<String> dndTimeReceivers = new HashSet<>();
+    // 不同类型的参数，邮件不需要设置
     private Map<String, Object> args = new HashMap<>();
+    // 通知策略
     private Strategy strategy = new Strategy();
 
     /**
@@ -146,9 +151,12 @@ public class NotifyConfig {
      */
     public static class Strategy {
 
+        // 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
         private int minIntervalSec = 0;
+        // 免扰时间，HH:mm-HH:mm 如，18:00-06:00
         // HH:mm-HH:mm，如果两个时间相等表示全天免扰，如果后者大于前者表示跨天免扰
         private String dndTime = "";
+        // 同一免扰周期间通知调用达到几次后强制发送
         private int forceSendTimes = 3;
 
         /**

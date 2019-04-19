@@ -28,10 +28,17 @@ import java.net.URL;
  */
 public class DewDocker {
 
+    // Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
     private String host = "";
+    // Docker Registry Url  e.g. https://harbor.trc.com/v2
     private String registryUrl = "";
+    // Docker Registry 用户名
     private String registryUserName = "";
+    // Docker Registry 密码
     private String registryPassword = "";
+    // Docker 镜像
+    // 前端项目默认使用 nginx:alpine
+    // 后端服务项目默认使用 openjdk:8-alpine
     private String image = "";
 
     /**

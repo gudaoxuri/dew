@@ -5,102 +5,103 @@
 
 [source,yml]
 ----
-dew: # Dew 参数key前缀
-    basic: # 基础信息
-        name: # 服务名称，用于API文档显示等
-        version: 1.0 # 服务版本号，用于API文档显示等
-        desc: # 服务描述，用于API文档显示等
-        webSite: # 官网，用于API文档显示等
-        doc:
-            enabled: true # 是否启用默认文档配置，关闭后可自定义文档管理，默认为true
-            base-package: # API文档要扫描的根包，多指定到 Controller 包中
-            contact: # 联系人信息
-                name: # 联系人姓名
-                url: # 联系人URL
-                email: # 联系人邮箱
-        format:
-            use-unity-error: true # 是否启用统一响应
-            error-flag: __DEW_ERROR__ # 默认的通知标识
-        error-mapping: # 自定义错误映射
-            "[<异常类名>]":
-                http-code: # http状态码，不存在时使用实例级http状态码
-                business-code: # 业务编码，不存在时使用实例级业务编码
-                message: # 错误描述，不存在时使用实例级错误描述
-    cluster: # 集群功能
-        cache: redis # 缓存实现
-        lock: redis # 分布式锁实现，可选 redis/hazelcast，默认redis
-        map: redis # 分布式Map实现，可选 redis/hazelcast，默认redis
-        mq: redis # MQ实现，可选 redis/hazelcast/rabbit，默认redis
-        election: redis # 领导者选举实现，可选 redis，默认redis
-        config: #集群相关配置
-            election-period-sec: 60 #领导者选举时间区间，默认60秒
-            ha-enabled: false #是否启用HA，默认为false
-    notifies:
-        "": # 通知的标识
-            type: DD # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
-            defaultReceivers: # 默认接收人列表，钉钉为手机号，邮件为邮箱
-            dndTimeReceivers: # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
-            args: # 不同类型的参数，邮件不需要设置
-                url: # 钉钉的推送地址，说明详见：https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.karFPe&treeId=257&articleId=105735&docType=1
-            strategy: # 通知策略
-                minIntervalSec: 0 # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
-                dndTime: # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
-                forceSendTimes: 3 # 同一免扰周期间通知调用达到几次后强制发送
-    security: # 安全功能
-        cors:
-            allow-origin: * # 允许的来源，建议修改
-            allow-methods: POST,GET,OPTIONS,PUT,DELETE,HEAD # 允许的方法
-            allow-headers: x-requested-with,content-type # 允许的头信息
-        token-flag: __dew_token__ # token 标识
-        token-in-header: true # true：token标识在 header 中，反之在url参数中
-        token-hash: false # token值是否需要hash，用于解决token值有特殊字符的情况
-        opt-expiration:86400L # Token 过期时间（秒）
-        router: # 路由功能
-            enabled: false # 是否启用
-            black-uri: # URL黑名单，支持ant风格
+dew:                                    # Dew 参数key前缀
+    basic:                              # 基础配置
+        name:                           # 服务名称，用于API文档显示等
+        version: 1.0                    # 服务版本号，用于API文档显示等
+        desc:                           # 服务描述，用于API文档显示等
+        webSite:                        # 官网，用于API文档显示等
+        doc:                            # 文档配置
+            enabled: true               # 是否启用默认文档配置，关闭后可自定义文档管理，默认为true
+            base-package:               # API文档要扫描的根包，多指定到 Controller 包中
+            contact:                    # 联系人信息
+                name:                   # 联系人姓名
+                url:                    # 联系人URL
+                email:                  # 联系人邮箱
+        format:                         # 格式化配置
+            use-unity-error: true       # 是否启用统一响应
+            error-flag: __DEW_ERROR__   # 默认的通知标识
+        error-mapping:                  # 自定义错误映射
+            "[<>]":                     # 异常类名
+                http-code:              # http状态码，不存在时使用实例级http状态码
+                business-code:          # 业务编码，不存在时使用实例级业务编码
+                message:                # 错误描述，不存在时使用实例级错误描述
+    cluster:                            # 集群功能
+        cache: redis                    # 缓存实现
+        lock: redis                     # 分布式锁实现，可选 redis/hazelcast，默认redis
+        map: redis                      # 分布式Map实现，可选 redis/hazelcast，默认redis
+        mq: redis                       # MQ实现，可选 redis/hazelcast/rabbit，默认redis
+        election: redis                 # 领导者选举实现，可选 redis，默认redis
+        config:                         # 集群相关配置
+            election-period-sec: 60     # 领导者选举时间区间，默认60秒
+            ha-enabled: false           # 是否启用HA，默认为false
+    notifies:                           # 通知功能
+        "":                             # 通知的标识
+            type: DD                    # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
+            defaultReceivers:           # 默认接收人列表，钉钉为手机号，邮件为邮箱
+            dndTimeReceivers:           # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
+            args:                       # 不同类型的参数，邮件不需要设置
+                url:                    # 钉钉的推送地址，说明详见：https://open-doc.dingtalk.com/docs/doc.htm?spm=a219a.7629140.0.0.karFPe&treeId=257&articleId=105735&docType=1
+            strategy:                   # 通知策略
+                minIntervalSec: 0       # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
+                dndTime:                # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
+                                        # HH:mm-HH:mm，如果两个时间相等表示全天免扰，如果后者大于前者表示跨天免扰
+                forceSendTimes: 3       # 同一免扰周期间通知调用达到几次后强制发送
+    security:                           # 安全功能
+        cors:                           # 跨域设置
+            allow-origin: *             # 允许的来源，建议修改
+            allow-methods: POST,GET,OPTIONS,PUT,DELETE,HEAD
+                                        # 允许的方法
+            allow-headers: x-requested-with,content-type
+                                        # 允许的头信息
+        token-flag: __dew_token__       # token 标识
+        token-in-header: true           # true：token标识在 header 中，反之在url参数中
+        token-hash: false               # token值是否需要hash，用于解决token值有特殊字符的情况
+        opt-expiration: 86400           # Token 过期时间（秒）
+        router:                         # 路由功能
+            enabled: false              # 是否启用
+            black-uri:                  # URL黑名单，支持ant风格
                 <Http Method>: [<URLs>]
-    # 需要引入 cloud-starter 模块
-    cloud:
-        trace-log:
-            enabled: true # 是否启用服务API调用（追踪）日志，默认为true
-        error:
-             enabled: false # 启用降级邮件通知，默认为false
-             notify-flag: __HYSTRIX__ # 默认的通知标识
-             notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED # 通知的事件类型
-             notify-include-keys: # 需监控的方法key值，与notify-exclude-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
-             notify-exclude-keys: # 不需要监控的方法key值，与notify-include-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
-    # 需要引入 idempotent-starter 模块
-    idempotent:
-        default-expire-ms: 3600000 # 设置默认过期时间，1小时
-        default-strategy: item # 设置默认策略，目前支持item(逐条记录)
-        default-opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
-    # 各组件配置
-    component:
-        # 需要引入 auth 组件
-        auth:
-          token-expire-sec: 60 * 60 * 24 * 30 # token有效期，默认为30天
-          max-login-error-times: 3 # 最大登录错误次数，默认3次
-          clean-error-time-min: 10 # 登录错误限制登录时间，默认为10分钟
-          password-salt: # 密码加盐
-          email-account: # 发通知邮件的邮箱账号，比如用来发送用户注册成功邮件
-          sdk:
-              server-url: # 服务器地址
-              white-list: # 白名单，逗号分隔
+    cloud:                              # 需要引入 cloud-starter 模块
+        trace-log:                      # 追踪日志配置
+            enabled: true               # 是否启用服务API调用（追踪）日志，默认为true
+        error:                          # 错误配置
+             enabled: false             # 启用降级邮件通知，默认为false
+             notify-flag: __HYSTRIX__   # 默认的通知标识
+             notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED
+                                        # 通知的事件类型
+             notify-include-keys:       # 需监控的方法key值，与notify-exclude-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
+             notify-exclude-keys:       # 不需要监控的方法key值，与notify-include-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
+    idempotent:                         # 需要引入 idempotent-starter 模块
+        default-expire-ms: 3600000      # 设置默认过期时间，1小时
+        default-strategy: item          # 设置默认策略，目前支持item(逐条记录)
+        default-opt-id-flag: __IDEMPOTENT_OPT_ID__
+                                        # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
+    component:                          # 各组件配置
+        auth:                           # 需要引入 auth 组件
+          token-expire-sec: 2592000     # token有效期，默认为30天
+          max-login-error-times: 3      # 最大登录错误次数，默认3次
+          clean-error-time-min: 10      # 登录错误限制登录时间，默认为10分钟
+          password-salt:                # 密码加盐
+          email-account:                # 发通知邮件的邮箱账号，比如用来发送用户注册成功邮件
+          sdk:                          # SDK配置
+              server-url:               # 服务器地址
+              white-list:               # 白名单，逗号分隔
 
-# 常用 Spring 配置
-spring:
+
+spring:                                 # 常用 Spring 配置
     application:
-         name:  # 项目名称,若使用Dew，请配置
+         name:                          # 项目名称,若使用Dew，请配置
   cloud:
-    config: # 统一配置
-      enabled: true # 是否启用
-      uri: # URL
-      username: 认证用户名
-      password: 认证密码
-    kubernetes: # kubernetes相关配置
-      ribbon: # 客户端轮询配置
-        enabled: true # 是否启用
-    mail: #mail配置，需要hystrix降级通知需加以下配置
+    config:                             # 统一配置
+      enabled: true                     # 是否启用
+      uri:                              # URL
+      username:                         # 认证用户名
+      password:                         # 认证密码
+    kubernetes:                         # kubernetes相关配置
+      ribbon:                           # 客户端轮询配置
+        enabled: true                   # 是否启用
+    mail:                               # Mail配置，需要hystrix降级通知需加以下配置
          host: smtp.163.com
          username:
          password:
@@ -112,42 +113,39 @@ spring:
                    enable: true
                    required: true
     redis:
-        host: # redis主机
-        port: # redis端口
-        database: # redis数据库
-        password: # redis密码
-        pool: # 连接池配置
+        host:                           # Redis主机
+        port:                           # Redis端口
+        database:                       # Redis数据库
+        password:                       # Redis密码
+        pool:                           # 连接池配置
     rabbitmq:
-      host: # rabbit主机
-      port: # rabbit端口
-      username: # rabbit用户名
-      password: # rabbit密码
-      virtual-host: # rabbit VH
+      host:                             # Rabbit主机
+      port:                             # Rabbit端口
+      username:                         # Rabbit用户名
+      password:                         # Rabbit密码
+      virtual-host:                     # Rabbit VH
     hazelcast:
          username:
          password:
          addresses: ["127.0.0.1"]
-         connection-timeout: # 默认5000
-         connection-attempt-limit: # 默认2
-         connection-attempt-period: # 默认3000
 
 server:
-  port: 8081 # 服务端口
+  port: 8081                            # 服务端口
 
-<application name>: # 自定义服务列表，使用此功能需要设置 spring.cloud.kubernetes.ribbon.enabled = false
+<application name>:                     # 自定义服务列表，使用此功能需要设置 spring.cloud.kubernetes.ribbon.enabled = false
   ribbon:
     listOfServers: <host>:<port>
 
 management:
   endpoints:
     web:
-      base-path: /management # 管理路径前缀
+      base-path: /management            # 管理路径前缀
 
 logging:
   level:
     ROOT: INFO
-    ms.dew: DEBUG # Dew目录日志配置
-    org.springframework.jdbc.core: TRACE # Jdbc目录日志配置
+    ms.dew: DEBUG                       # Dew目录日志配置
+    org.springframework.jdbc.core: TRACE# Jdbc目录日志配置
 ----
 
 ==== `Spring boot` 核心参数
