@@ -1,3 +1,8 @@
 docker:
   # 使用自定义的Image，默认JVM类型项目的Image为openjdk:8-alpine
   image: openjdk:8
+app:
+    # 资源上限设定
+    containerResourcesLimits:
+      memory: "1024Mi"
+      cpu: "800m"
