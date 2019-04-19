@@ -18,16 +18,13 @@ package ms.dew.devops.kernel.flow.release;
 
 import com.ecfront.dew.common.$;
 import io.kubernetes.client.ApiException;
-import io.kubernetes.client.models.ExtensionsV1beta1Deployment;
-import io.kubernetes.client.models.V1ConfigMap;
-import io.kubernetes.client.models.V1Pod;
-import io.kubernetes.client.models.V1Service;
+import io.kubernetes.client.models.*;
+import ms.dew.devops.exception.ProcessException;
 import ms.dew.devops.helper.DockerHelper;
 import ms.dew.devops.helper.KubeHelper;
 import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
-import ms.dew.devops.exception.ProcessException;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.resource.KubeConfigMapBuilder;
 import ms.dew.devops.kernel.resource.KubeDeploymentBuilder;
@@ -217,11 +214,16 @@ public class KubeReleaseFlow extends BasicFlow {
                 resp -> {
                     // Ready Pod数量是否等于设定的数量
                     if (resp.object.getStatus().getReadyReplicas() != null
-                            && resp.object.getStatus().getReadyReplicas().intValue() == resp.object.getSpec().getReplicas()) {
+                            && resp.object.getStatus().getAvailableReplicas() != null
+                            && resp.object.getStatus().getReadyReplicas().intValue() == resp.object.getSpec().getReplicas()
+                            && resp.object.getStatus().getAvailableReplicas().intValue() == resp.object.getSpec().getReplicas()) {
                         try {
                             long runningPodSize = KubeHelper.inst(config.getId())
                                     .list(select, deploymentRes.getMetadata().getNamespace(), KubeRES.POD, V1Pod.class)
-                                    .stream().filter(pod -> pod.getStatus().getPhase().equalsIgnoreCase("Running"))
+                                    .stream().filter(pod ->
+                                            pod.getStatus().getPhase().equalsIgnoreCase("Running")
+                                                    && pod.getStatus().getContainerStatuses().stream().allMatch(V1ContainerStatus::isReady)
+                                    )
                                     .count();
                             if (resp.object.getSpec().getReplicas() != runningPodSize) {
                                 // 之前版本没有销毁
