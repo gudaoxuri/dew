@@ -42,13 +42,24 @@ public class PrepareFlowFactory {
                 return new FrontendPrepareFlow();
             default:
                 return new BasicPrepareFlow() {
+
                     @Override
-                    protected Optional<String> getErrorProcessPackageCmd(FinalProjectConfig config, String currentPath) {
+                    protected boolean needExecutePreparePackageCmd(FinalProjectConfig config, String currentPath) {
+                        return false;
+                    }
+
+                    @Override
+                    protected Optional<String> getPreparePackageCmd(FinalProjectConfig config, String currentPath) {
                         return Optional.empty();
                     }
 
                     @Override
                     protected Optional<String> getPackageCmd(FinalProjectConfig config, String currentPath) {
+                        return Optional.empty();
+                    }
+
+                    @Override
+                    protected Optional<String> getErrorCompensationPackageCmd(FinalProjectConfig config, String currentPath) {
                         return Optional.empty();
                     }
                 };

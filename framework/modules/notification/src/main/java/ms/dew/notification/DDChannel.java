@@ -31,11 +31,18 @@ import java.util.stream.Collectors;
 public class DDChannel extends AbsChannel {
 
     private String ddUrl = "";
+    private String msgType = "";
 
     @Override
     protected boolean innerInit(NotifyConfig notifyConfig) {
         if (notifyConfig.getArgs().containsKey("url")) {
             ddUrl = (String) notifyConfig.getArgs().get("url");
+            msgType = (String) notifyConfig.getArgs().getOrDefault("msgType", "text");
+            if (!msgType.equalsIgnoreCase("text")
+                    && !msgType.equalsIgnoreCase("markdown")) {
+                logger.error("Notify DingDing channel init error, [msgType] only support text/markdown");
+                return false;
+            }
             return true;
         } else {
             logger.error("Notify DingDing channel init error,missing [url] parameter");
@@ -50,11 +57,36 @@ public class DDChannel extends AbsChannel {
 
     @Override
     protected Resp<String> innerSend(String content, String title, Set<String> receivers) throws Exception {
+        switch (msgType) {
+            case "text":
+                if (receivers.isEmpty()) {
+                    content = "     \"text\": {\"content\":\"" + title + "\r\n" + content + "\"},\n";
+                } else {
+                    content = "     \"text\": {\"content\":\"" + title + "\r\n" + content + "\n|"
+                            + receivers.stream().map(r -> "@" + r).collect(Collectors.joining(" ")) + "\"},\n";
+                }
+                break;
+            case "markdown":
+                if (receivers.isEmpty()) {
+                    content = "     \"markdown\": {\n"
+                            + "         \"title\":\"" + title + "\",\n"
+                            + "         \"text\":\"" + content + "\"\n"
+                            + "     },\n";
+                } else {
+                    content = "     \"markdown\": {\n"
+                            + "         \"title\":\"" + title + "\",\n"
+                            + "         \"text\":\"" + content + "\n"
+                            + "> " + receivers.stream().map(r -> "@" + r).collect(Collectors.joining(" ")) + "\"\n"
+                            + "     },\n";
+                }
+                break;
+            default:
+                throw new UnsupportedOperationException("[msgType] only support text/markdown");
+        }
         HttpHelper.ResponseWrap result = $.http.postWrap(ddUrl,
                 "{\n"
-                        + "     \"msgtype\": \"text\",\n"
-                        + "     \"text\": {\"content\":\"" + title + "\r\n" + content + "\n|"
-                        + receivers.stream().map(r -> "@" + r).collect(Collectors.joining(" ")) + "\"},\n"
+                        + "     \"msgtype\": \"" + msgType + "\",\n"
+                        + content
                         + "    \"at\": {\n"
                         + "        \"atMobiles\": [" + receivers.stream().map(r -> "\"" + r + "\"").collect(Collectors.joining(",")) + "], \n"
                         + "        \"isAtAll\": false\n"

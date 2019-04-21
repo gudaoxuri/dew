@@ -17,6 +17,9 @@
 package ms.dew.devops.util;
 
 import org.apache.maven.plugin.logging.Log;
+import org.fusesource.jansi.Ansi;
+
+import static org.fusesource.jansi.Ansi.Color.*;
 
 /**
  * Dew log.
@@ -46,17 +49,17 @@ public class DewLog implements Log {
 
     @Override
     public void debug(CharSequence content) {
-        log.debug(prefix + content);
+        log.debug(ansi(content.toString(), WHITE));
     }
 
     @Override
     public void debug(CharSequence content, Throwable error) {
-        log.debug(prefix + content, error);
+        log.debug(ansi(content.toString(), WHITE, error));
     }
 
     @Override
     public void debug(Throwable error) {
-        log.debug(error);
+        log.debug(ansi("", WHITE, error));
     }
 
     @Override
@@ -66,17 +69,17 @@ public class DewLog implements Log {
 
     @Override
     public void info(CharSequence content) {
-        log.info(prefix + content);
+        log.info(ansi(content.toString(), GREEN));
     }
 
     @Override
     public void info(CharSequence content, Throwable error) {
-        log.info(prefix + content, error);
+        log.info(ansi(content.toString(), GREEN, error));
     }
 
     @Override
     public void info(Throwable error) {
-        log.info(error);
+        log.info(ansi("", GREEN, error));
     }
 
     @Override
@@ -86,17 +89,17 @@ public class DewLog implements Log {
 
     @Override
     public void warn(CharSequence content) {
-        log.warn(prefix + content);
+        log.warn(ansi(content.toString(), YELLOW));
     }
 
     @Override
     public void warn(CharSequence content, Throwable error) {
-        log.warn(prefix + content, error);
+        log.warn(ansi(content.toString(), YELLOW, error));
     }
 
     @Override
     public void warn(Throwable error) {
-        log.warn(error);
+        log.warn(ansi("", YELLOW, error));
     }
 
     @Override
@@ -106,16 +109,31 @@ public class DewLog implements Log {
 
     @Override
     public void error(CharSequence content) {
-        log.error(prefix + content);
+        log.error(ansi(content.toString(), RED));
     }
 
     @Override
     public void error(CharSequence content, Throwable error) {
-        log.error(prefix + content, error);
+        log.error(ansi(content.toString(), RED, error));
     }
 
     @Override
     public void error(Throwable error) {
-        log.error(error);
+        log.error(ansi("", RED, error));
     }
+
+    private String ansi(String message, Ansi.Color color, Object... params) {
+        return Ansi.ansi().fg(color).a(format(prefix + message, params)).reset().toString();
+    }
+
+    private String format(String message, Object[] params) {
+        if (params.length == 0) {
+            return message;
+        } else if (params.length == 1 && params[0] instanceof Throwable) {
+            return message + ": " + params[0].toString();
+        } else {
+            return String.format(message, params);
+        }
+    }
+
 }

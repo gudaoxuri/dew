@@ -22,6 +22,7 @@ import ms.dew.devops.exception.ProcessException;
 import ms.dew.devops.kernel.Dew;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -40,14 +41,20 @@ public class ShellHelper {
      * Exec cmd.
      *
      * @param flag the flag
+     * @param env  环境变量
      * @param cmd  the cmd
      * @return the result
      */
-    public static boolean execCmd(String flag, String cmd) {
+    public static boolean execCmd(String flag, Map<String, String> env, String cmd) {
+        return doExecCmd(flag, env, cmd, 1);
+    }
+
+
+    private static boolean doExecCmd(String flag, Map<String, String> env, String cmd, int retry) {
         Dew.log.info("[" + flag + "] Exec : " + cmd);
         AtomicBoolean isSuccess = new AtomicBoolean(true);
         try {
-            Future<Void> execF = $.shell.execute(cmd, null, null, false, false, new ReportHandler() {
+            Future<Void> execF = $.shell.execute(cmd, env, null, null, false, false, new ReportHandler() {
                 @Override
                 public void errorlog(String line) {
                     Dew.log.warn(line);
@@ -73,7 +80,13 @@ public class ShellHelper {
         }
         if (!isSuccess.get()) {
             // 命令执行过程错误，由上层业务判断是否抛异常
-            Dew.log.warn("[" + flag + "] Exec error : " + cmd);
+            if (retry < 3) {
+                // 重试一次
+                Dew.log.warn("[" + flag + "] Exec error : " + cmd + " , Retry  : " + retry + 1);
+                return doExecCmd(flag, env, cmd, retry + 1);
+            } else {
+                Dew.log.warn("[" + flag + "] Exec error : " + cmd);
+            }
             return false;
         }
         return true;

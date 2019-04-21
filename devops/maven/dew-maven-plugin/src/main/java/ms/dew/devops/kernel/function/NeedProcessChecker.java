@@ -173,7 +173,7 @@ public class NeedProcessChecker {
     private static void checkNeedProcessByGit(FinalProjectConfig config) throws ApiException {
         // kubernetes上部署的最新的commit版本
         String lastVersionDeployCommit = fetchLastVersionDeployCommit(config.getId(), config.getAppName(), config.getNamespace());
-        if (!config.getReuseLastVersionFromProfile().isEmpty()) {
+        if (!config.getDisableReuseVersion()) {
             // 重用版本
             String lastVersionDeployCommitFromProfile =
                     fetchLastVersionDeployCommit(config.getId() + "-append", config.getAppName(), config.getAppendProfile().getNamespace());
@@ -256,8 +256,8 @@ public class NeedProcessChecker {
         Dew.log.info("Found " + changedFiles.size() + " changed files for " + projectConfig.getAppName());
         if (changedFiles.isEmpty()) {
             return false;
-        } else if (!projectConfig.getApp().getIgnoreChangeFiles().isEmpty()
-                && !$.file.noneMath(changedFiles, new ArrayList<>(projectConfig.getApp().getIgnoreChangeFiles()))) {
+        } else if (!projectConfig.getIgnoreChangeFiles().isEmpty()
+                && !$.file.noneMath(changedFiles, new ArrayList<>(projectConfig.getIgnoreChangeFiles()))) {
             // 排除忽略的文件后是否存在未部署的文件
             Dew.log.info("Found 0 changed files filtered ignore files for " + projectConfig.getAppName());
             return false;

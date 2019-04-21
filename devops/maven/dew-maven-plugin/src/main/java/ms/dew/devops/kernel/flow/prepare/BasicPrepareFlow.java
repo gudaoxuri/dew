@@ -23,6 +23,7 @@ import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.util.ShellHelper;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Optional;
 
 /**
@@ -34,13 +35,24 @@ public abstract class BasicPrepareFlow extends BasicFlow {
 
 
     /**
-     * Gets error process package cmd.
+     * Need execute prepare package cmd.
+     *
+     * @param config      the config
+     * @param currentPath the current path
+     * @return the boolean
+     */
+    protected abstract boolean needExecutePreparePackageCmd(FinalProjectConfig config, String currentPath);
+
+
+    /**
+     * Gets prepare package cmd.
      *
      * @param config      the config
      * @param currentPath the current path
      * @return the error process package cmd
      */
-    protected abstract Optional<String> getErrorProcessPackageCmd(FinalProjectConfig config, String currentPath);
+    protected abstract Optional<String> getPreparePackageCmd(FinalProjectConfig config, String currentPath);
+
 
     /**
      * Gets package cmd.
@@ -51,22 +63,31 @@ public abstract class BasicPrepareFlow extends BasicFlow {
      */
     protected abstract Optional<String> getPackageCmd(FinalProjectConfig config, String currentPath);
 
+    /**
+     * Gets error compensation package cmd.
+     *
+     * @param config      the config
+     * @param currentPath the current path
+     * @return the error process package cmd
+     */
+    protected abstract Optional<String> getErrorCompensationPackageCmd(FinalProjectConfig config, String currentPath);
+
 
     /**
-     * Pre prepare build.
+     * Post prepare build.
      *
      * @param config       the project config
      * @param flowBasePath the flow base path
      * @return build result
      * @throws IOException the io exception
      */
-    protected boolean prePrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
+    protected boolean postPrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
         return true;
     }
 
     @Override
     protected boolean process(FinalProjectConfig config, String flowBasePath) throws IOException {
-        if (!config.getReuseLastVersionFromProfile().isEmpty()) {
+        if (!config.getDisableReuseVersion()) {
             // 重用模式下不用再执行准备操作
             return true;
         }
@@ -76,40 +97,65 @@ public abstract class BasicPrepareFlow extends BasicFlow {
         }
         // 镜像不存在时执行准备操作
         if (!execPackageCmd(config)) {
-            Dew.log.debug("Finished,because [execPackageCmd] is false");
+            Dew.log.warn("Finished,because [execPackageCmd] is false");
             return false;
         }
-        if (!prePrepareBuild(config, flowBasePath)) {
-            Dew.log.debug("Finished,because [prePrepareBuild] is false");
+        if (!postPrepareBuild(config, flowBasePath)) {
+            Dew.log.warn("Finished,because [postPrepareBuild] is false");
             return false;
         }
         return true;
     }
 
     private boolean execPackageCmd(FinalProjectConfig config) {
-        Optional<String> packageCmdOpt = getPackageCmd(config, Dew.Config.getCurrentMavenProject().getBasedir().getPath());
+        String currentPath = Dew.Config.getCurrentMavenProject().getBasedir().getPath();
+        Optional<String> packageCmdOpt = getPackageCmd(config, currentPath);
         if (!packageCmdOpt.isPresent()) {
             // 不用执行命令
             return true;
         }
-        boolean result = ShellHelper.execCmd("packageCmd", packageCmdOpt.get());
+
+        boolean result;
+        if (needExecutePreparePackageCmd(config, currentPath)) {
+            Optional<String> preparePackageCmdOpt = getPreparePackageCmd(config, currentPath);
+            if (!preparePackageCmdOpt.isPresent()) {
+                // 失败处理命令失败
+                Dew.log.warn("Prepare package command needs to be executed, but the command does not exist");
+                return false;
+            }
+            result = ShellHelper.execCmd("preparePackageCmd", new HashMap<String, String>() {
+                {
+                    put("NODE_ENV", config.getProfile());
+                }
+            }, preparePackageCmdOpt.get());
+            if (!result) {
+                // 预打包命令执行失败
+                Dew.log.warn("Prepare package command execution failed");
+                return false;
+            }
+        }
+        result = ShellHelper.execCmd("packageCmd", new HashMap<String, String>() {
+            {
+                put("NODE_ENV", config.getProfile());
+            }
+        }, packageCmdOpt.get());
         if (result) {
             // 命令执行成功
             return true;
         }
         // 命令执行失败，尝试进行失败处理后重试
-        Optional<String> errorProcessCmdOpt = getErrorProcessPackageCmd(config, Dew.Config.getCurrentMavenProject().getBasedir().getPath());
-        if (!errorProcessCmdOpt.isPresent()) {
+        Optional<String> errorCompensationPackageCmdOpt = getErrorCompensationPackageCmd(config, currentPath);
+        if (!errorCompensationPackageCmdOpt.isPresent()) {
             // 失败处理命令不存在，无法重试
             return false;
         }
-        Dew.log.info("Package cmd execute fail , try exception recovery");
+        Dew.log.info("Package command execution failed, try exception recovery");
         // 失败处理操作
-        result = ShellHelper.execCmd("errorProcessCmd", errorProcessCmdOpt.get());
-        if (result) {
-            // 重试
-            result = ShellHelper.execCmd("packageCmd", packageCmdOpt.get());
-        }
+        result = ShellHelper.execCmd("errorCompensationPackageCmd", new HashMap<String, String>() {
+            {
+                put("NODE_ENV", config.getProfile());
+            }
+        }, errorCompensationPackageCmdOpt.get());
         return result;
     }
 

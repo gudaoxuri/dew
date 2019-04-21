@@ -34,11 +34,7 @@ spec:
       containers:
       - env:
         - name: JAVA_OPTIONS
-          value: -Xmx2688M -Xms2688M -Xmn960M -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M
-            -XX:+UseConcMarkSweepGC -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70
-            -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:+CMSClassUnloadingEnabled
-            -XX:+ParallelRefProcEnabled -XX:+CMSScavengeBeforeRemark -XX:+HeapDumpOnOutOfMemoryError
-            -Dspring.profiles.active=test
+          value: ' -Dspring.profiles.active=test'
         image: harbor.trc.com/dew-test/helloworld-backend:0001
         imagePullPolicy: IfNotPresent
         livenessProbe:

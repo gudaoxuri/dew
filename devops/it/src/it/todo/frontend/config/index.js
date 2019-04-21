@@ -43,7 +43,7 @@ const config = {
     }
   },
   defineConstants: {
-    API_SERVER:""
+    API_SERVER: ""
   },
   alias: {
     '@components': path.resolve(__dirname, '..', 'src/components'),
@@ -51,10 +51,8 @@ const config = {
     '@utils': path.resolve(__dirname, '..', 'src/utils')
   },
   copy: {
-    patterns: [
-    ],
-    options: {
-    }
+    patterns: [],
+    options: {}
   },
   weapp: {
     module: {
@@ -71,9 +69,7 @@ const config = {
         },
         pxtransform: {
           enable: true,
-          config: {
-
-          }
+          config: {}
         },
         url: {
           enable: true,
@@ -120,8 +116,10 @@ const config = {
 }
 
 module.exports = function (merge) {
-  if (process.env.NODE_ENV === 'development') {
-    return merge({}, config, require('./dev'))
+  if (process.env.NODE_ENV === 'uat') {
+    return merge({}, config, require('./uat'))
+  } else if (process.env.NODE_ENV === 'prod') {
+    return merge({}, config, require('./prod'))
   }
-  return merge({}, config, require('./prod'))
+  return merge({}, config, require('./dev'))
 }

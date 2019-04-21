@@ -25,6 +25,7 @@ public class TestYaml {
     private String fa;
     private String fb;
     private TestYamlSub fc;
+    private Boolean fd;
 
     /**
      * Gets fa.
@@ -78,5 +79,23 @@ public class TestYaml {
      */
     public void setFc(TestYamlSub fc) {
         this.fc = fc;
+    }
+
+    /**
+     * Gets fd.
+     *
+     * @return the fd
+     */
+    public Boolean getFd() {
+        return fd;
+    }
+
+    /**
+     * Sets fd.
+     *
+     * @param fd the fd
+     */
+    public void setFd(Boolean fd) {
+        this.fd = fd;
     }
 }

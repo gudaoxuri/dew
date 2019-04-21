@@ -37,20 +37,20 @@ public class TestConfigBuilder extends BasicTest {
         YamlHelper.init(new SystemStreamLog());
         String basicConfigStr = "namespace: dew\n"
                 + "kind: JVM_SERVICE\n"
+                + "ignoreChangeFiles:\n"
+                + "- '*.txt'\n"
                 + "app:\n"
                 + "  replicas: 1\n"
                 + "  revisionHistoryLimit: 2\n"
-                + "  ignoreChangeFiles:\n"
-                + "  - '*.txt'\n"
                 + "profiles:\n"
                 + "  test:\n"
                 + "    namespace: dew-test\n"
                 + "    skip: true\n"
+                + "    ignoreChangeFiles:\n"
+                + "    - '*.yaml'\n"
                 + "    app:\n"
                 + "      replicas: 2\n"
                 + "      port: 8080\n"
-                + "      ignoreChangeFiles:\n"
-                + "      - '*.yaml'\n"
                 + "    docker:\n"
                 + "      host: 127.0.0.1";
 
@@ -62,7 +62,7 @@ public class TestConfigBuilder extends BasicTest {
         Assert.assertEquals(2, basicConfig.getProfiles().get("test").getApp().getReplicas());
         Assert.assertEquals(2, basicConfig.getProfiles().get("test").getApp().getRevisionHistoryLimit());
         Assert.assertEquals(8080, basicConfig.getProfiles().get("test").getApp().getPort());
-        Assert.assertEquals("*.yaml", basicConfig.getProfiles().get("test").getApp().getIgnoreChangeFiles().iterator().next());
+        Assert.assertEquals("*.yaml", basicConfig.getProfiles().get("test").getIgnoreChangeFiles().iterator().next());
         Assert.assertEquals("127.0.0.1", basicConfig.getProfiles().get("test").getDocker().getHost());
 
         String projectConfigStr =
@@ -74,12 +74,12 @@ public class TestConfigBuilder extends BasicTest {
                         + "  test:\n"
                         + "    namespace: dew-test-spec\n"
                         + "    skip: false\n"
+                        + "    ignoreChangeFiles:\n"
+                        + "    - '*.yaml'\n"
                         + "    app:\n"
                         + "      replicas: 4\n"
                         + "      revisionHistoryLimit: 5\n"
                         + "      port: 8080\n"
-                        + "      ignoreChangeFiles:\n"
-                        + "      - '*.yaml'\n"
                         + "    docker:\n"
                         + "      host: 127.0.0.2\n"
                         + "      registryUserName: sunisle";
@@ -95,7 +95,7 @@ public class TestConfigBuilder extends BasicTest {
         Assert.assertEquals(4, projectConfig.getProfiles().get("test").getApp().getReplicas());
         Assert.assertEquals(5, projectConfig.getProfiles().get("test").getApp().getRevisionHistoryLimit());
         Assert.assertEquals(8080, projectConfig.getProfiles().get("test").getApp().getPort());
-        Assert.assertEquals("*.yaml", projectConfig.getProfiles().get("test").getApp().getIgnoreChangeFiles().iterator().next());
+        Assert.assertEquals("*.yaml", projectConfig.getProfiles().get("test").getIgnoreChangeFiles().iterator().next());
         Assert.assertEquals("127.0.0.2", projectConfig.getProfiles().get("test").getDocker().getHost());
         Assert.assertEquals("sunisle", projectConfig.getProfiles().get("test").getDocker().getRegistryUserName());
 

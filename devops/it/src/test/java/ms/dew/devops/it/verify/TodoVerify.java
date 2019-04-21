@@ -110,8 +110,8 @@ public class TodoVerify extends BasicProcessor implements Verify {
                 + "frontend" + File.separator
                 + "expected" + File.separator;
         buildPath = basePath + "frontend" + File.separator + "target" + File.separator;
-        Assert.assertFalse("frontend | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
-        Assert.assertFalse("frontend | exist dist", new File(buildPath + "dew_build" + File.separator + "dist").exists());
+        Assert.assertTrue("frontend | exist dockerFile", new File(buildPath + "dew_build" + File.separator + "Dockerfile").exists());
+        Assert.assertTrue("frontend | exist dist", new File(buildPath + "dew_build" + File.separator + "dist").exists());
         Assert.assertTrue("frontend | exist Deployment.yaml", new File(buildPath + "dew_release" + File.separator + "Deployment.yaml").exists());
         Assert.assertTrue("frontend | exist Service.yaml", new File(buildPath + "dew_release" + File.separator + "Service.yaml").exists());
         Assert.assertEquals("frontend | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),

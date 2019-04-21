@@ -110,7 +110,7 @@ public class Dew {
      * @throws ClassNotFoundException the class not found exception
      */
     @PostConstruct
-    public void init() throws IOException, ClassNotFoundException {
+    private void init() throws IOException, ClassNotFoundException {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
 
         logger.info("Load Dew basic info...");
@@ -190,7 +190,7 @@ public class Dew {
          */
         public static int webPort;
         /**
-         * 应用实例，各组件唯一.
+         * 应用实例，各组件实例唯一.
          */
         public static String instance;
 
@@ -210,11 +210,11 @@ public class Dew {
         private static final Logger logger = LoggerFactory.getLogger(Timer.class);
 
         /**
-         * Periodic.
+         * 设定一个周期性调度任务.
          *
-         * @param initialDelaySec the initial delay sec
-         * @param periodSec       the period sec
-         * @param fun             the fun
+         * @param initialDelaySec 延迟启动的秒数
+         * @param periodSec       周期调度秒数
+         * @param fun             调度方法
          */
         public static void periodic(long initialDelaySec, long periodSec, VoidExecutor fun) {
             DewContext context = Dew.context();
@@ -229,20 +229,20 @@ public class Dew {
         }
 
         /**
-         * Periodic.
+         * 设定一个周期性调度任务.
          *
-         * @param periodSec the period sec
-         * @param fun       the fun
+         * @param periodSec 周期调度秒数
+         * @param fun       调度方法
          */
         public static void periodic(long periodSec, VoidExecutor fun) {
             periodic(0, periodSec, fun);
         }
 
         /**
-         * Timer.
+         * 设定一个定时任务.
          *
-         * @param delaySec the delay sec
-         * @param fun      the fun
+         * @param delaySec 延迟启动的秒数
+         * @param fun      定时任务方法
          */
         public static void timer(long delaySec, VoidExecutor fun) {
             DewContext context = Dew.context();
@@ -265,10 +265,10 @@ public class Dew {
         private static ExecutorService executorService = Executors.newCachedThreadPool();
 
         /**
-         * Gets real ip.
+         * 获取真实IP.
          *
-         * @param request the request
-         * @return the real ip
+         * @param request 请求信息
+         * @return 真实的IP
          */
         public static String getRealIP(HttpServletRequest request) {
             Map<String, String> requestHeader = new HashMap<>();
@@ -281,13 +281,13 @@ public class Dew {
         }
 
         /**
-         * Gets real ip.
+         * 获取真实IP.
          *
-         * @param requestHeader the request header
-         * @param remoteAddr    the remote addr
-         * @return the real ip
+         * @param requestHeader     请求头信息
+         * @param defaultRemoteAddr 缺省的IP地址
+         * @return 真实的IP
          */
-        public static String getRealIP(Map<String, String> requestHeader, String remoteAddr) {
+        public static String getRealIP(Map<String, String> requestHeader, String defaultRemoteAddr) {
             Map<String, String> formattedRequestHeader = new HashMap<>();
             requestHeader.forEach((k, v) -> formattedRequestHeader.put(k.toLowerCase(), v));
             if (formattedRequestHeader.containsKey("x-forwarded-for")
@@ -305,13 +305,15 @@ public class Dew {
                     && !formattedRequestHeader.get("x-forwarded-host").isEmpty()) {
                 return formattedRequestHeader.get("x-forwarded-host");
             }
-            return remoteAddr;
+            return defaultRemoteAddr;
         }
 
         /**
-         * New thread.
+         * 创建一个新的线程.
+         * <p>
+         * 自动带入Dew.context()
          *
-         * @param fun the fun
+         * @param fun 执行的方法
          */
         public static void newThread(Runnable fun) {
             executorService.execute(fun);
@@ -350,38 +352,44 @@ public class Dew {
     public static class E {
 
         /**
-         * 异常处理-重用Http状态.
+         * 异常处理.
+         * <p>
+         * 封装任意异常到统一的格式
          *
-         * @param <E>  the type parameter
+         * @param <E>  上抛的异常类型
          * @param code 异常编码
-         * @param ex   异常类型
-         * @return the e
+         * @param ex   上抛的异常对象
+         * @return 上抛的异常对象
          */
         public static <E extends Throwable> E e(String code, E ex) {
             return e(code, ex, -1);
         }
 
         /**
-         * 异常处理-重用Http状态.
+         * 异常处理.
+         * <p>
+         * 封装任意异常到统一的格式
          *
-         * @param <E>            the type parameter
+         * @param <E>            上抛的异常类型
          * @param code           异常编码
-         * @param ex             异常类型
+         * @param ex             上抛的异常对象
          * @param customHttpCode 自定义Http状态码
-         * @return the e
+         * @return 上抛的异常对象
          */
         public static <E extends Throwable> E e(String code, E ex, StandardCode customHttpCode) {
             return e(code, ex, Integer.valueOf(customHttpCode.toString()));
         }
 
         /**
-         * 异常处理-重用Http状态.
+         * 统一异常处理.
+         * <p>
+         * 封装任意异常到统一的格式
          *
-         * @param <E>            the type parameter
+         * @param <E>            上抛的异常类型
          * @param code           异常编码
-         * @param ex             异常类型
+         * @param ex             上抛的异常对象
          * @param customHttpCode 自定义Http状态码
-         * @return the e
+         * @return 上抛的异常对象
          */
         public static <E extends Throwable> E e(String code, E ex, int customHttpCode) {
             try {

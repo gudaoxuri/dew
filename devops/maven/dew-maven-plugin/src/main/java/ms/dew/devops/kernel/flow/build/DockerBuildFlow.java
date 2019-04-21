@@ -53,7 +53,7 @@ public abstract class DockerBuildFlow extends BasicFlow {
         // 先判断是否存在
         if (!DockerHelper.inst(config.getId()).registry.exist(config.getCurrImageName())) {
             boolean result;
-            if (config.getReuseLastVersionFromProfile().isEmpty()) {
+            if (config.getDisableReuseVersion()) {
                 result = processByNewImage(config, flowBasePath);
             } else {
                 result = processByReuse(config, flowBasePath);

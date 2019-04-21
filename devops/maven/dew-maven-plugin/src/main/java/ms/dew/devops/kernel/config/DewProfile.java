@@ -18,6 +18,9 @@ package ms.dew.devops.kernel.config;
 
 import ms.dew.notification.NotifyConfig;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * Dew profile.
  *
@@ -25,20 +28,28 @@ import ms.dew.notification.NotifyConfig;
  */
 public class DewProfile {
 
-    // 环境名称
+    // 环境名称，内部使用，不需要显式指定
     private String profile;
+    // 命名空间
+    private String namespace = "default";
     // 是否跳过
     private boolean skip = false;
     // 项目类型
     private AppKind kind;
-    // 命名空间
-    private String namespace = "dew-default-ns";
-    // 是否重用最后一个版本，值为重用的目标环境名称
+    // 是否禁用重用版本，默认情况前端工程为true（node编译期会混入环境信息导致无法重用），其它工程为false
+    private Boolean disableReuseVersion;
+    // 重用版本的目标环境名称，默认会尝试使用 pre-prod/pre-production/uat 为名称（找到当前项目第一个存在的环境），都不存在时需要显式指定
     private String reuseLastVersionFromProfile = "";
-
+    // 忽略变更文件列表，此列表指定的文件不用于是否有变更要部署的判断依据
+    // 支持 glob , @see https://en.wikipedia.org/wiki/Glob_(programming)
+    private Set<String> ignoreChangeFiles = new HashSet<>();
+    // 应用配置
     private DewApp app = new DewApp();
+    // Docker配置
     private DewDocker docker = new DewDocker();
+    // Kubernetes配置
     private DewKube kube = new DewKube();
+    // 通知配置
     private NotifyConfig notify = null;
 
     /**
@@ -114,6 +125,24 @@ public class DewProfile {
     }
 
     /**
+     * Gets disable reuse version.
+     *
+     * @return the disable reuse version
+     */
+    public Boolean getDisableReuseVersion() {
+        return disableReuseVersion;
+    }
+
+    /**
+     * Sets disable reuse version.
+     *
+     * @param disableReuseVersion the disable reuse version
+     */
+    public void setDisableReuseVersion(Boolean disableReuseVersion) {
+        this.disableReuseVersion = disableReuseVersion;
+    }
+
+    /**
      * Gets reuse last version from profile.
      *
      * @return the reuse last version from profile
@@ -129,6 +158,24 @@ public class DewProfile {
      */
     public void setReuseLastVersionFromProfile(String reuseLastVersionFromProfile) {
         this.reuseLastVersionFromProfile = reuseLastVersionFromProfile;
+    }
+
+    /**
+     * Gets ignore change files.
+     *
+     * @return the ignore change files
+     */
+    public Set<String> getIgnoreChangeFiles() {
+        return ignoreChangeFiles;
+    }
+
+    /**
+     * Sets ignore change files.
+     *
+     * @param ignoreChangeFiles the ignore change files
+     */
+    public void setIgnoreChangeFiles(Set<String> ignoreChangeFiles) {
+        this.ignoreChangeFiles = ignoreChangeFiles;
     }
 
     /**

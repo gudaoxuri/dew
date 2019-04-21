@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   annotations:
     dew.ms/git-commit: '0001'
-    dew.ms/scm-url: https://github.com/gudaoxuri/dew.git
+    dew.ms/scm-url: ''
     sidecar.jaegertracing.io/inject: 'true'
   labels:
     app: todo-notifier
@@ -23,7 +23,7 @@ spec:
     metadata:
       annotations:
         dew.ms/git-commit: '0001'
-        dew.ms/scm-url: https://github.com/gudaoxuri/dew.git
+        dew.ms/scm-url: ''
         sidecar.jaegertracing.io/inject: 'true'
       labels:
         app: todo-notifier
@@ -34,11 +34,7 @@ spec:
       containers:
       - env:
         - name: JAVA_OPTIONS
-          value: -Xmx2688M -Xms2688M -Xmn960M -XX:MaxMetaspaceSize=512M -XX:MetaspaceSize=512M
-            -XX:+UseConcMarkSweepGC -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70
-            -XX:+ExplicitGCInvokesConcurrentAndUnloadsClasses -XX:+CMSClassUnloadingEnabled
-            -XX:+ParallelRefProcEnabled -XX:+CMSScavengeBeforeRemark -XX:+HeapDumpOnOutOfMemoryError
-            -Dspring.profiles.active=prod
+          value: ' -Dspring.profiles.active=prod'
         image: harbor.trc.com/dew-prod/todo-notifier:0001
         imagePullPolicy: IfNotPresent
         livenessProbe:

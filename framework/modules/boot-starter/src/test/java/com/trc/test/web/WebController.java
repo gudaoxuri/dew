@@ -150,7 +150,7 @@ public class WebController {
     }
 
     /**
-     * Valid in method string.
+     * Valid in method.
      *
      * @param age the age
      * @return the string
@@ -161,7 +161,7 @@ public class WebController {
     }
 
     /**
-     * Valid in method string.
+     * Valid in method.
      *
      * @param phone the phone
      * @return the string
@@ -172,7 +172,7 @@ public class WebController {
     }
 
     /**
-     * Error mapping string.
+     * Error mapping.
      *
      * @return the string
      */

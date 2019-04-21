@@ -1,20 +1,126 @@
 [[framework-best-practices]]
-=== 框架最佳实践[TBD]
+=== 框架最佳实践
 
-==== 服务调用开发期使用
+==== 项目模块设计
 
-在 `Spring Cloud` 体系下，服务调用需要启动 `Eureka` 服务（对于 `Dew` 中的 `Registry` 组件），这对开发阶段并不友好：
+``Dew``推荐的项目结构为：
 
-. 开发期间会不断启停服务，`Eureka` 保护机制会影响服务注册（当然这是可以关闭的）
-. 多人协作时可能会出现调用到他人服务的情况（同一服务多个实例）
-. 需要启动 `Eureka` 服务，多了一个依赖
+----
+X Build Project                 // 构建工程
+|- sources                      // 源码目录
+|-  |- basics                   // 基础源码，为各服务工程的依赖，要求deploy到Maven仓库
+|-  |-  |- parent               // 父工程，所有服务端项目的根POM
+|-  |-  |- common               // 公共工程，所有服务端项目的基础依赖
+|-  |-  |- common-service       // 公共服务工程，所有服务工程的根POM，自身依赖于common
+|-  |-  |- <...>                // 其它基础工程，比如common-spark，大数据服务的基础依赖
+|-  |- services                 // 服务源码，对应于一个个微服务
+|-  |-  |- <service 1>          // 服务1工程
+|-  |-  |- <service ...>        // 其它服务工程
+|-  |- sdk                      // SDK源码，如项目需要提供SDK时建立此目录
+|-  |-  |- <java>               // Java版本的SDK工程
+|-  |-  |- <js>                 // JS版本的SDK工程
+|-  |-  |- <rest>               // REST版本的SDK工程
+|-  |-  |- <...>                // 其它语言版本的SDK工程
+|-  |- terminals                // 终端源码
+|-  |-  |- <android>            // Android APP工程
+|-  |-  |- <ios>                // IOS APP工程
+|-  |-  |- <wechat>             // Wechat工程
+|-  |-  |- <...>                // 其它终端工程
+|- docs                         // 文档工程，所有团队共同维护，Asciidoc方案，后文会介绍
+|-  |- src
+|-  |-  |- main
+|-  |-  |-  |- asciidoc
+|-  |-  |-  |-  |- book.adoc    // 文档主目录
+|-  |-  |-  |-  |- <...>        // 分模块建立不同的文档文件
+|-  |-  |- resources            // 文档引用资源目录，如图片、CSS
+|-  |-  |-  |- images
+|-  |-  |-  |-  |- <...>
+|-  |-  |- pom.xml              // 文档工程使用Maven管理
+|-  |-  |- .gitignore
+|- env                          // 环境配置工程，以Spring Cloud Config为例，配置存放于Git
+|-  |- application.yml
+|-  |- <...>
+|-  |- .gitignore
+|- pom.xml                      // 构建工程的POM
+|- .gitmodules                  // Git子模块定义，所有工程都注册到此文件中
+|- .gitignore
+|- README.adoc                  // 构建工程使用说明
+----
 
-为解决上述问题,在使用 `Spring Cloud` 的 `RestTemplate` 时,增加 `Ribbon` 的服务配置.
+推荐各工程使用独立Git库，详见： https://gudaoxuri.gitbook.io/microservices-architecture/wei-fu-wu-hua-zhi-kai-fa-yu-ce-shi/code-managerment[微服务架构设计-代码管理]
 
-    # <client>为service-id
-    <client>.ribbon.listOfServers: <直接访问的IPs>
-    # 如
-    x-service.ribbon.listOfServers: 127.0.0.1:8812
+==== 代码包设计
+
+``Dew``推荐的包结构为：
+
+----
+|- X service
+|-  |- src
+|-  |-  |- main
+|-  |-  |-  |- java
+|-  |-  |-  |-  |- src
+|-  |-  |-  |-  |-  |- x.y.z
+|-  |-  |-  |-  |-  |-  |- XApplication <1>
+|-  |-  |-  |-  |-  |-  |- XConfig <2>
+|-  |-  |-  |-  |-  |-  |- XInitiator <3>
+|-  |-  |-  |-  |-  |-  |- controller
+|-  |-  |-  |-  |-  |-  |-  |- EventController <4>
+----
+<1>	XApplication : 服务启动类
+<2>	XConfig：当前服务的配置文件（Spring Cloud格式）
+<3>	XInitiator：当前服务启动初始化器，原则上所有与数据库、缓存、定时任务相关的初始化操作都应该从此类发起，以方便排错
+<4>	EventController：事件处理器，名称可以更具象，原则上所有与MQ receive相关的操作都被视为交互接口，应该放到controller包下
+
+    .示例
+    ----
+    @PostConstruct
+    public void processTodoAddEvent() {
+        // 使用Dew的集群MQ功能实现消息点对点接收
+        Dew.cluster.mq.response(Constants.MQ_NOTIFY_TODO_ADD, todo -> {
+            logger.info("Received add todo event :" + todo);
+        });
+    }
+    ----
+
+==== 开发期服务调用
+
+在 `Spring Cloud` 体系下，服务间调用需要在Kubernetes环境下，这对开发阶段并不友好，可使用如下方案，模拟多个服务间调用。
+
+[source,yml]
+----
+spring:
+  cloud:
+    kubernetes:
+      ribbon:
+        enabled: false # 禁用服务自动发现
+
+<application name>: # 自定义服务列表，使用此功能需要设置 spring.cloud.kubernetes.ribbon.enabled = false
+  ribbon:
+    listOfServers: <host>:<port>
+
+# e.g.
+
+tracing-invoke2-example:
+  ribbon:
+    listOfServers: localhost:8082
+----
+
+==== 代码质量管理
+
+推荐使用 ``checkstyle`` 管理代码风格，使用方式：
+
+.checkstyle使用
+----
+# 在Maven中配置自定义的 checkstyle 文件的路径
+<properties>
+    <checkstyle.config.path>../../checkstyle/checkstyle.xml</checkstyle.config.path>
+</properties>
+
+# 使用Maven命令
+mvn -P qa compile
+
+# 也可以IDE的checkstyle插件实现
+----
 
 ==== `@Validated` 注解
 
@@ -31,140 +137,6 @@ TIP: Spring对抽象数据类型校验抛出异常为``MethodArgumentNotValidExc
 .  `LocalDate,LocalTime,Instant` 等，无需配置可自行转换
 
 TIP: `jackson` 对于 `LocalDateTime` 类型的支持与其他三种类型不具有一致性，这是 `jackson` 需要优化的一个点
-
-==== 断路保护
-
-[source,properties]
-.Hystrix配置
-----
-# 执行的隔离策略 THREAD, SEMAPHORE 默认THREAD
-hystrix.command.default.execution.isolation.strategy=THREAD
-# 执行hystrix command的超时时间,超时后会进入fallback方法 默认1000
-hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds=1000
-# 执行hystrix command是否限制超时,默认是true
-hystrix.command.default.execution.timeout.enabled=true
-# hystrix command 执行超时后是否中断 默认true
-hystrix.command.default.execution.isolation.thread.interruptOnTimeout=true
-# 使用信号量隔离时,信号量大小,默认10
-hystrix.command.default.execution.isolation.semaphore.maxConcurrentRequests=10
-# fallback方法最大并发请求数 默认是10
-hystrix.command.default.fallback.isolation.semaphore.maxConcurrentRequests=10
-# 服务降级是否开启,默认为true
-hystrix.command.default.fallback.enabled=true
-# 是否使用断路器来跟踪健康指标和熔断请求
-hystrix.command.default.circuitBreaker.enabled=true
-# 熔断器的最小请求数,默认20. (这个不是很理解,欢迎补充)
-hystrix.command.default.circuitBreaker.requestVolumeThreshold=20
-# 断路器打开后的休眠时间,默认5000
-hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds=5000
-# 断路器打开的容错比,默认50
-hystrix.command.default.circuitBreaker.errorThresholdPercentage=50
-# 强制打开断路器,拒绝所有请求. 默认false, 优先级高于forceClosed
-hystrix.command.default.circuitBreaker.forceOpen=false
-# 强制关闭断路器,接收所有请求,默认false,优先级低于forceOpen
-hystrix.command.default.circuitBreaker.forceClosed=false
-
-# hystrix command 命令执行核心线程数,最大并发 默认10
-hystrix.threadpool.default.coreSize=10
-----
-
-* 信息参见:
-** https://github.com/Netflix/Hystrix/wiki/Configuration
-** http://hwood.lofter.com/post/1cc7fbdc_e8c5c96
-
-使用断路保护可有效果的防止系统雪崩，`Spring Cloud` 对 `Hystrix` 做了封装，详见： http://cloud.spring.io/spring-cloud-netflix/single/spring-cloud-netflix.html#_circuit_breaker_hystrix_clients
-
-需要说明的是 `Hystrix` 使用新线程执行代码，导致 `Threadlocal` 数据不能同步，使用时需要将用到的数据做为参数传入，如果需要使用 `Dew` 框架的上下文（请求链路/用户等获取）需要先传入再设值，e.g.
-
-[source,java]
-.Hystrix Command 示例,及Context处理
-----
-public class HystrixExampleService {
-    @HystrixCommand(fallbackMethod = "defaultFallback", commandProperties = {
-            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "2000")
-    })
-    public String someMethod(Map<String, Object> parameters, DewContext context) {
-        // ！！！ Hystrix使用新线程执行代码，导致Threadlocal数据不能同步，
-        // 使用时需要将用到的数据做为参数传入，如果需要使用Dew框架的上下文需要先传入再设值
-        DewContext.setContext(context);
-        try {
-            Thread.sleep(new Random().nextInt(3000));
-            logger.info("Normal Service Token:" + Dew.context().getToken());
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        return "ok";
-    }
-
-    // 降级处理方法定义
-    public String defaultFallback(Map<String, Object> parameters, DewContext context, Throwable e) {
-        DewContext.setContext(context);
-        logger.info("Error Service Token:" + Dew.context().getToken());
-        return "fail";
-    }
-}
-----
-
-==== 定时任务
-
-使用 `Spring Config`  配置中心 `refresh` 时,在 `@RefreshScope` 注解的类中, `@Scheduled` 注解的自动任务会失效。
-建议使用实现 `SchedulingConfigurer` 接口的方式添加自动任务。
-
-[source,java]
-.自动任务添加
-----
-@Configuration
-@EnableScheduling
-public class SchedulingConfiguration implements SchedulingConfigurer {
-
-    private Logger logger = LoggerFactory.getLogger(SchedulingConfiguration.class);
-
-    @Autowired
-    private ConfigExampleConfig config;
-
-    @Override
-    public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-        taskRegistrar.addTriggerTask(() -> logger.info("task1: " + config.getVersion()), triggerContext -> {
-            Instant instant = Instant.now().plus(5, SECONDS);
-            return Date.from(instant);
-        });
-
-        taskRegistrar.addTriggerTask(() -> logger.info("task2: " + config.getVersion()), new CronTrigger("1/3 * * * * ?"));
-    }
-}
-----
-
-==== 主要性能影响参数
-
-* 内置 `Tomcat` 参数调整效果并不大,如果需要调整,建议适当调大 `max-treads` 和 `accept-count`
-
-  # 最大等待请求数 默认100
-  server.tomcat.accept-count=1000
-  # 最大并发数 默认200
-  server.tomcat.max-threads=1000
-  # 最大连接数 默认BIO:200 NIO:10000 APR:8192
-  server.tomcat.max-connections=2000
-
-* `Ribbon` 性能参数说明调整 `MaxTotalConnections` 和 `MaxConnectionsPerHost` 时建议同比调整 `Pool` 相关的参数
-
-  # ribbon 单主机最大连接数,默认50
-  ribbon.MaxConnectionsPerHost=500
-  # ribbon 总连接数,默认 200
-  ribbon.MaxTotalConnections=1000
-  # 默认200
-  ribbon.PoolMaxThreads=1000
-  # 默认1
-  ribbon.PoolMinThreads=500
-
-* `Hystrix` 性能参数说明
-
-  # 并发执行的最大线程数,默认10
-  hystrix.threadpool.default.coreSize=100
-
-NOTE: 普通 `Service` 使用 `Hystrix` 时,最大并发主要调整 `hystrix.threadpool.default.coreSize`
-
-WARNING: `Hystrix` 的默认超时时间为1s,在高并发下容易出现超时,建议将默认超时时间适当调长,
-特殊接口需要将时间调短或更长的,使用特定配置。
 
 ==== 缓存处理
 
@@ -196,15 +168,3 @@ spring:
     username: root
     password: 123456
 ----
-
-==== http请求并发数性能瓶颈
-
-* 当策略为Thread时（默认是Thread)，hystrix.threadpool.default.maximumSize为第一个性能瓶颈，默认值为10.
-
-TIP: 修改值时，需要先设置hystrix.threadpool.default.allowMaximumSizeToDivergeFromCoreSize为true，默认为false
-
-.hystrix详细配置参见https://github.com/Netflix/Hystrix/wiki/configuration#allowMaximumSizeToDivergeFromCoreSize
-
-* 第二个瓶颈为springboot内置的tomcat的最大连接数，参数为server.tomcat.maxThreads，默认值为200
-
-

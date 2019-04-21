@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   annotations:
     dew.ms/git-commit: '0001'
-    dew.ms/scm-url: https://github.com/gudaoxuri/dew.git
+    dew.ms/scm-url: ''
   labels:
     app: todo-frontend
     provider: dew
@@ -22,7 +22,7 @@ spec:
     metadata:
       annotations:
         dew.ms/git-commit: '0001'
-        dew.ms/scm-url: https://github.com/gudaoxuri/dew.git
+        dew.ms/scm-url: ''
       labels:
         app: todo-frontend
         provider: dew

@@ -1,3 +1,171 @@
 [[devops-configuration]]
-=== DevOps配置速查[TBD]
+=== DevOps配置速查
+
+[TIP]
+====
+DevOps的配置有两类，
+一是通过项目目录下的 ``.dew`` 配置，
+二是通过 ``Maven`` 配置，在 ``pom.xml`` 中的properties或是 ``mvn -Dxxx`` 作为参数传入。
+
+推荐的做法是相对固定的、不敏感的信息配置到 ``.dew`` 中，而诸如Kubernetes配置、Harbor用户名/密码等信息用Maven在命令行中作为参数传入。
+====
+
+[[devops-configuration-dew]]
+==== .dew 配置
+
+.继承规则
+
+* ``.dew`` 可放在任意子项目（模块）的根目录（与pom.xml同级）下，子项目会继承父项目的配置
+* ``.dew`` 支持多环境(profile)，各环境继承默认环境的配置
+
+.继承示例
+
+----
+# 项目结构
+|- moduleA
+|-  |- pom.xml
+|-  |- .dew         # 项目A配置
+|- pom.xml
+|- .dew             # 全局配置
+
+# 全局配置的.dew 内容:
+-
+app:
+  replicas: 1
+profile:
+  test:
+    namespace: todo-test
+  prod:
+    namespace: todo-prod
+-
+# 项目A配置的.dew 内容:
+-
+profile:
+  uat:
+    app:
+      replicas: 2
+-
+
+# 对于项目A最终的配置为:
+-
+app:
+  replicas: 1               # 继承全局配置
+profile:
+  test:
+    namespace: todo-test    # 继承全局配置
+    app:
+      replicas: 1           # 继承全局配置的默认环境配置
+  prod:
+    namespace: todo-prod
+    app:
+      replicas: 2           # 使用项目A的覆写配置
+-
+----
+
+
+[source,yaml]
+.配置说明
+----
+# 默认环境配置
+namespace: default                      # 命名空间，强烈建议修改为特定的命名空间
+kind:                                   # 项目类型，默认自动探测，也可以显式指定为 JVM_SERVICE/JVM_LIB/FRONTEND/POM
+skip: false                             # 是否跳过，为true时表示
+disableReuseVersion:                    # 是否禁用重用版本，e.g. 生产环境重用预发环境的最后一个版本（不用重新打包Docker image)
+                                        # 默认情况前端工程为true（node编译期会混入环境信息导致无法重用），其它工程为false
+reuseLastVersionFromProfile:            # 重用版本的目标环境名称
+                                        # 默认会尝试使用 pre-prod/pre-production/uat 为名称（找到当前项目第一个存在的环境）
+                                        # 都不存在时需要显式指定
+ignoreChangeFiles: []                   # 忽略变更文件列表，此列表指定的文件不用于是否有变更要部署的判断依据
+                                        # 支持 glob , @see https://en.wikipedia.org/wiki/Glob_(programming)
+  app:                                  # 应用配置
+    replicas: 1                         # 部署的副本数
+    revisionHistoryLimit: 3             # 保留的历史版本数
+    port: 8080                          # 端口号，默认情况下前端项目为80，后端服务为8080，目前不支持自定义
+    metricPort: 9779                    # Prometheus Metric 采集端口号，不建议修改，仅用于后端服务
+    livenessPath: /actuator/health      # 存活检测HTTP的路径，仅用于后端服务
+    readinessPath: /actuator/health     # 可用检测HTTP的路径，仅用于后端服务
+    livenessInitialDelaySeconds: 60     # 首次存活检测延迟时间，仅用于后端服务
+    livenessPeriodSeconds: 30           # 存活检测周期，仅用于后端服务
+    livenessFailureThreshold: 6         # 存活检测失败次数阈值，超过后销毁当前实例并重启另一个实例，仅用于后端服务
+    readinessInitialDelaySeconds: 10    # 首次可用检测延迟时间，仅用于后端服务
+    readinessPeriodSeconds: 60          # 可用检测周期，仅用于后端服务
+    readinessFailureThreshold: 3        # 可用检测失败次数阈值，超过后当前实例不可用，仅用于后端服务
+    traceLogEnabled: true               # 是否启用追踪日志，仅用于后端服务
+    nodeSelector:                       # 节点亲和性配置
+      group: app                        # 默认选择标签为 group=app 的节点
+    preparePackageCmd:                  # 预打包命令
+                                        # 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> && npm install，发现不存在 node_modules 时执行
+                                        # 后端服务默认为空
+    packageCmd:                         # 打包命令
+                                        # 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> npm run build:<环境名称>
+                                        # 后端服务默认为空
+    errorCompensationPackageCmd:        # packageCmd 执行错误时的补偿命令
+                                        # 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> npm install && npm run build:<环境名称>
+                                        # 后端服务默认为空
+    runOptions:                         # 运行参数，可指定诸如 JVM 配置等信息
+    containerResourcesLimits:           # 容器资源上限，同Kubernetes配置
+                                        # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+    containerResourcesRequests:         # 容器资源下限，同Kubernetes配置
+                                        # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+  docker:                               # Docker配置
+    host:                               # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
+    registryUrl:                        # Docker Registry Url  e.g. https://harbor.trc.com/v2
+    registryUserName:                   # Docker Registry 用户名，此项建议使用Maven方式配置
+    registryPassword:                   # Docker Registry 密码，此项建议使用Maven方式配置
+    image:                              # Docker 镜像
+                                        # 前端项目默认使用 nginx:alpine
+                                        # 后端服务项目默认使用 openjdk:8-alpine
+  kube:                                 # Kubernetes配置
+    base64Config:                       # Kubernetes Base64 后的配置，此项建议使用Maven方式配置
+                                        # 使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
+  notify:                               # 通知配置
+    type: DD                            # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
+    defaultReceivers:                   # 默认接收人列表，钉钉为手机号，邮件为邮箱
+    dndTimeReceivers:                   # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
+    args:                               # 不同类型的参数，邮件不需要设置
+        url:                            # type=DD表示钉钉的推送地址
+                                        # 说明详见：https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+                                        # type=HTTP表示HTTP Hook的地址
+        msgType:                        # 仅用于type=DD，支持 text/markdown
+    strategy:                           # 通知策略
+        minIntervalSec: 0               # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
+        dndTime:                        # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
+                                        # HH:mm-HH:mm，如果两个时间相等表示全天免扰，如果后者大于前者表示跨天免扰
+        forceSendTimes: 3               # 同一免扰周期间通知调用达到几次后强制发送
+# 其它环境配置
+profiles:
+    <name>: # 环境名称，e.g. test uat prod
+        # 此处配置项同默认环境的配置项，用于覆写默认配置
+
+----
+==== Maven 配置
+
+[source,bash]
+.配置说明
+----
+# ============= 公共场景使用 =============
+dew.devops.profile                           # 默认环境
+dew.devops.kube.config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
+# ============= 发布与回滚使用 =============
+dew.devops.docker.host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
+dew.devops.docker.registry.url               # Docker Registry Url  e.g. https://harbor.trc.com/v2
+dew.devops.docker.registry.username          # Docker Registry 用户名
+dew.devops.docker.registry.password          # Docker Registry 密码
+ew.devops.quiet
+dew.devops.version.custom                    # 自定义版本标识，仅用于集成测试，实际场景中慎用！
+# ============= 日志场景使用 =============
+dew.devops.log.podName                       # 要查看日志的Pod名称
+dew.devops.log.follow                        # 是否滚动查看日志
+# ============= 伸缩场景使用 =============
+dew.devops.scale.replicas                    # 伸缩Pod数量
+dew.devops.scale.auto                        # 是否启用自动伸缩
+dew.devops.scale.auto.minReplicas            # 自动伸缩Pod数下限
+dew.devops.scale.auto.maxReplicas            # 自动伸缩Pod数上限
+dew.devops.scale.auto.cpu.averageUtilization # 自动伸缩条件：CPU平均使用率标识
+dew.devops.scale.auto.tps                    # 自动伸缩条件：TPS标识
+----
+
+
+
+
 
