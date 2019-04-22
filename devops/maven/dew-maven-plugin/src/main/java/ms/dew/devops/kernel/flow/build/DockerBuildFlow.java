@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 /**
  * Docker build flow.
@@ -121,7 +122,11 @@ public abstract class DockerBuildFlow extends BasicFlow {
             dockerFileContent = dockerFileContent.replaceAll("FROM .*", "FROM " + config.getDocker().getImage().trim());
             Files.write(Paths.get(flowBasePath + "Dockerfile"), dockerFileContent.getBytes());
         }
-        DockerHelper.inst(config.getId()).image.build(config.getCurrImageName(), flowBasePath);
+        DockerHelper.inst(config.getId()).image.build(config.getCurrImageName(), flowBasePath, new HashMap<String, String>() {
+            {
+                put("PORT", config.getApp().getPort() + "");
+            }
+        });
         return true;
     }
 

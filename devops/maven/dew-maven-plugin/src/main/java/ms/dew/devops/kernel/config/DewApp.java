@@ -32,7 +32,7 @@ public class DewApp {
     private int replicas = 1;
     // 保留的历史版本数
     private int revisionHistoryLimit = 3;
-    // 端口号，默认情况下前端项目为80，后端服务为8080，目前不支持自定义
+    // 端口号，默认情况下前端项目为80(不可修改)，后端服务为8080
     private int port = 8080;
     // Prometheus Metric 采集端口号，不建议修改，仅用于后端服务
     private int metricPort = 9779;

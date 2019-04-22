@@ -5,6 +5,8 @@ COPY ./serv.jar ./
 
 RUN chmod 777 ./run-java.sh
 
-EXPOSE 8080
+ARG PORT=8080
+
+EXPOSE $PORT
 
 CMD [ "./run-java.sh" ]

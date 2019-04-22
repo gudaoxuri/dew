@@ -77,7 +77,9 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                         .withEnv(new V1EnvVarBuilder()
                                 .withName("JAVA_OPTIONS")
                                 // 附加spring boot的环境信息
-                                .withValue(config.getApp().getRunOptions() + " -Dspring.profiles.active=" + config.getProfile())
+                                .withValue(config.getApp().getRunOptions()
+                                        + " -Dspring.profiles.active=" + config.getProfile()
+                                        + " -Dserver.port=" + config.getApp().getPort())
                                 .build())
                         .withLivenessProbe(new V1ProbeBuilder()
                                 .withHttpGet(new V1HTTPGetActionBuilder()
