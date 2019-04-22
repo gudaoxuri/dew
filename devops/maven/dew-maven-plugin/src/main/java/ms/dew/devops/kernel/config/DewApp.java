@@ -41,7 +41,7 @@ public class DewApp {
     // 可用检测HTTP的路径，仅用于后端服务
     private String readinessPath = "/actuator/health";
     // 首次存活检测延迟时间，仅用于后端服务
-    private int livenessInitialDelaySeconds = 60;
+    private int livenessInitialDelaySeconds = 30;
     // 存活检测周期，仅用于后端服务
     private int livenessPeriodSeconds = 30;
     // 存活检测失败次数阈值，超过后销毁当前实例并重启另一个实例，仅用于后端服务
@@ -49,7 +49,7 @@ public class DewApp {
     // 首次可用检测延迟时间，仅用于后端服务
     private int readinessInitialDelaySeconds = 10;
     // 可用检测周期，仅用于后端服务
-    private int readinessPeriodSeconds = 60;
+    private int readinessPeriodSeconds = 30;
     // 可用检测失败次数阈值，超过后当前实例不可用，仅用于后端服务
     private int readinessFailureThreshold = 3;
     // 是否启用追踪日志，仅用于后端服务

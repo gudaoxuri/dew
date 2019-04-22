@@ -119,9 +119,9 @@ public class ExecuteEventProcessor {
                     + "> " + throwable + "\n";
         }
         if (throwable != null) {
-            Notify.send(flag, content, "DevOps process successful");
-        } else {
             Notify.send(flag, content, "DevOps process failure");
+        } else {
+            Notify.send(flag, content, "DevOps process successful");
         }
     }
 

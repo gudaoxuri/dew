@@ -16,13 +16,12 @@
 
 package ms.dew.devops.kernel.config;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Final config.
- *
+ * <p>
  * 最终生成的配置
  *
  * @author gudaoxuri
