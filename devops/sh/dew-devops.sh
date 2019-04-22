@@ -1,5 +1,4 @@
 #!/bin/bash
-#set -e
 #
 # Copyright 2019. the original author or authors.
 #
@@ -16,42 +15,163 @@
 # limitations under the License.
 #
 # ======================================================
+set -o pipefail
+set -u
 
-HARBOR_SCHEME=https
-HARBOR_REGISTRY_HOST=harbor.dew.ms
+HARBOR_REGISTRY_URL=https://harbor.dew.ms
 HARBOR_REGISTRY_ADMIN=admin
 HARBOR_REGISTRY_ADMIN_PASSWORD=Harbor12345
 HARBOR_REGISTRY_PASSWORD_REGEX="(?=^.{8,20}$)(?=^[^\s]*$)(?=.*\d)(?=.*[A-Z])(?=.*[a-z])"
 PROJECT_NAMESPACE=devops-example
 DEW_HARBOR_USER_NAME=${PROJECT_NAMESPACE}
-DEW_HARBOR_USER_PASS=Dew\!123456
+DEW_HARBOR_USER_PASSWORD=Dew\!123456
 DEW_HARBOR_USER_EMAIL=${DEW_HARBOR_USER_NAME}@dew.ms
+DOCKERD_URL=tcp://dockerd.dew.ms:2375
 
-MINIO_HOST="10.200.131.182:9000"
-MINIO_ACCESS_KEY="dew"
-MINIO_SECRET_KEY="Dew123456"
-MINIO_BUCKET_NAME="dew"
+MINIO_HOST=minio.dew.ms:9000
+MINIO_ACCESS_KEY=dew
+MINIO_SECRET_KEY=Dew123456
+MINIO_BUCKET_NAME=dew
 
-GITLAB_URL="http://gitlab.dew.ms"
-GITLAB_RUNNER_NAMESPACE="default"
-GITLAB_RUNNER_IMAGE="ubuntu:16.04"
-GITLAB_PROJECT_NAME="dew-project-name"
+GITLAB_URL=http://gitlab.dew.ms
+GITLAB_RUNNER_NAMESPACE=devops
+GITLAB_RUNNER_NAME=dew-runner
+GITLAB_RUNNER_IMAGE=dewms/devops:latest
 GITLAB_RUNNER_REG_TOKEN=3mezus8cX9qAjkrNY4B
-GITLAB_RUNNER_PROJECT_PROFILE=test
+GITLAB_RUNNER_PROFILE=test
+
+KUBERNETES_CONFIG=$(echo $( < ~/.kube/config | base64 <~/.kube/config) | tr -d " ")
+INGRESS_HOST_EXAMPLE="test.dew.ms/api user-service:8080"
 
 # ------------------
 # Params dealing
 # ------------------
+GENERAL_INPUT_ANSWER=""
 
-answer_check(){
-    case $2 in
-    Y | y)
-          echo "The answer is \"Yes\", continue.";;
-    N | n)
-          echo "The answer is \"No\", skip this step.";;
-    *)
-          echo "* The other value was entered, using the default answer \"$1\".";;
-    esac
+waiting_input_YN(){
+    local tip=$1
+    local defaultValue=$(echo $2 | tr a-z A-Z)
+    GENERAL_INPUT_ANSWER=""
+    if [[ "${defaultValue}" == "Y" ]]; then
+        tip="${tip} [Y/n]"
+    else
+        tip="${tip} [y/N]"
+    fi
+    read -e -n1 -p "${tip}:" answer
+    while [[ "${answer}" != "Y" && "${answer}" != "y" && "${answer}" != "N" && "${answer}" != "n" && "${answer}" != "" ]]; do
+        read -e -n1 -p "${tip}:" answer
+    done
+    if [[ "${answer}" == "Y" || "${answer}" == "y"  || ( "${answer}" == "" && ${defaultValue} == "Y" ) ]]; then
+        echo "* The answer is \"Yes\", continue."
+        GENERAL_INPUT_ANSWER="Y"
+    else
+        echo "* The answer is \"No\", skip this step."
+        GENERAL_INPUT_ANSWER="N"
+    fi
+}
+
+waiting_input(){
+    local tip=$1
+    local defaultValue=$2
+    local isRequired=${3:-}
+    local isSecret=${4:-}
+    local readCmd="-e -p"
+    GENERAL_INPUT_ANSWER=""
+    if [[ "${isSecret}" != "" ]]; then
+        readCmd="-s ${readCmd}"
+    fi
+    if [[ "${defaultValue}" != "" ]]; then
+        tip="${tip} [${defaultValue}]:"
+    else
+        tip="${tip}:"
+    fi
+    read ${readCmd} "${tip}" answer
+    if [[ "${isSecret}" != "" ]]; then
+        echo
+    fi
+    if [[ "${isRequired}" != "" ]]; then
+        while [[ "${answer}" == "" ]]; do
+            read ${readCmd} "${tip}" answer
+            if [[ "${isSecret}" != "" ]]; then
+                echo
+            fi
+        done
+    fi
+    if [[ "${answer}" == "" ]]; then
+        echo "* The answer is ${defaultValue}."
+        answer=${defaultValue}
+    fi
+    GENERAL_INPUT_ANSWER=${answer}
+}
+
+# e.g.
+# not match regex: waiting_input_check_regex "tips" "regex" "notMatch" "iSecret" "defaultValue"
+# need match regex: waiting_input_check_regex "tips" "regex" "Y" "iSecret" "defaultValue"
+waiting_input_check_regex(){
+
+    local tip=$1
+    local regex=$2
+    local needMatch=${3:-}
+    local isSecret=${4:-}
+    local defaultValue=${5:-}
+    local readCmd="-e -p"
+    GENERAL_INPUT_ANSWER=""
+    if [[ "${isSecret}" != "" ]]; then
+        readCmd="-s ${readCmd}"
+    fi
+    if [[ "${defaultValue}" != "" ]]; then
+        tip="${tip} [${defaultValue}]"
+    fi
+    read ${readCmd} "${tip}:" answer
+    if [[ "${defaultValue}" != "" ]]; then
+        answer=${defaultValue}
+        echo "* No value was entered,using the default [${defaultValue}]."
+    fi
+    if [[ "${isSecret}" != "" ]]; then
+        echo
+    fi
+    # If "needMatch" is not Y ,the answer would not match the regex.
+    if [[ "${needMatch}" == "Y" ]]; then
+        while [[ ! "${answer}" =~ ${regex} ]]; do
+            read ${readCmd} "* The format of value is not right,please retype:" answer
+            if [[ "${isSecret}" != "" ]]; then
+                echo
+            fi
+        done
+    elif [[ "${needMatch}" != "" ]]; then
+        while [[ "${answer}" =~ ${regex} ]]; do
+            read ${readCmd} "* The format of value is not right,please retype:" answer
+            if [[ "${isSecret}" != "" ]]; then
+                echo
+            fi
+        done
+    fi
+    GENERAL_INPUT_ANSWER=${answer}
+}
+
+check_regex_match_with_retype(){
+    local regex=$1
+    local str=$2
+    local strType=${3:-}
+    while [[ ! "${str}" =~ ${regex} ]]; do
+        read -e -p "* The format of ${strType} [${str}]is not right,please input another:" str
+    done
+    echo ${str}
+}
+
+check_regex_match_with_grep(){
+    local tip=$1
+    local regex=$2
+    local strType=${3:-}
+    local answer=""
+    GENERAL_INPUT_ANSWER=""
+    read -e -p "${tip}:" answer
+    check_str_format_match=$(echo "${answer}" | grep -P ${regex} | wc -l)
+    GENERAL_INPUT_ANSWER=${answer}
+    while [[ ${check_str_format_match} != 1 ]]; do
+        waiting_input "The format of ${strType} is not right,please retype" "" "Y"
+        check_str_format_match=$(echo "${GENERAL_INPUT_ANSWER}" | grep -P ${regex} | wc -l)
+    done
 }
 
 get_json_value(){
@@ -65,28 +185,61 @@ get_json_value(){
     fi
 }
 
-press_enter_continue(){
-    echo
-    read -s -p "* Press Enter to continue." enter
-    echo
+# Deal the input while executing a cmd which needs few minutes.
+# the cmd should be located between 'stty igncr' and 'stty -igncr'.
+dealing_wrong_input(){
+    read -e -s -t 1
 }
 
+press_enter_continue(){
+    read -n1 -s -p "* Please press [Enter] to continue."
+}
+
+INGRESS_HOST_YAML_VALUE=""
+deal_ingress_backend_yaml(){
+    INGRESS_HOST_YAML_VALUE=""
+    local backend_str="$1"
+    local url=$(echo ${backend_str} | cut -d ' ' -f1)
+    local host=$(echo ${url} | cut -d '/' -f1)
+    local svcPath=$(echo ${url#*/})
+    if [[ "${svcPath}" != "" ]]; then
+        svcPath=/${svcPath}
+    fi
+    local backend=$(echo ${backend_str} | cut -d ' ' -f2)
+    local svcName=$(echo ${backend} | cut -d ':' -f1)
+    local svcPort=$(echo ${backend} | cut -d ':' -f2)
+
+    # Check params.
+    local host_regex="^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$"
+    local backend_service_name_regex="^[a-z]([a-z0-9]*)(-[a-z0-9]+)*$"
+    local backend_service_port_regex="^[a-z0-9]+$"
+    host=$(check_regex_match_with_retype ${host_regex} "${host}" "host")
+    svcName=$(check_regex_match_with_retype ${backend_service_name_regex} "${svcName}" "service name")
+    svcPort=$(check_regex_match_with_retype ${backend_service_port_regex} "${svcPort}" "service port")
+    INGRESS_HOST_YAML_VALUE="
+        - host: ${host}
+          http:
+            paths:
+            - backend:
+                serviceName: ${svcName}
+                servicePort: ${svcPort}
+              path: ${svcPath}"
+}
 
 # ------------------
-# Init
+# Check
 # ------------------
 
-
-init_env_check(){
+check_kubernetes_env(){
     echo "--------------------------------------"
-    echo "# Checking Kubernetes cluster status."
-    node_ready_check=`kubectl get node | grep -w Ready | wc -l`
+    echo "## Checking Kubernetes cluster status."
+    node_ready_check=$(kubectl get node | grep -w Ready | wc -l)
 
-    node_not_ready_check=`kubectl get node | grep -w NotReady | wc -l`
-    node_x509_check=`kubectl get node | grep x509 | wc -l`
+    node_not_ready_check=$(kubectl get node | grep -w NotReady | wc -l)
+    node_x509_check=$(kubectl get node | grep x509 | wc -l)
     if [[ "${node_not_ready_check}" -gt 0 || "${node_x509_check}" -gt 0 ]] ; then
         echo "kubectl get node"
-        echo "`kubectl get node`"
+        echo "$(kubectl get node)"
         echo
         echo "There are some Nodes NotReady!Please check your Kubernetes Cluster status."
         echo "--------------------------------------"
@@ -99,114 +252,118 @@ init_env_check(){
     echo "--------------------------------------"
 }
 
-
-add_helm_gitlab_repo(){
+check_minio_status(){
     echo "--------------------------------------"
-    echo "# Adding the gitlab repository of Helm."
-    check_gitlab_repo_exists=`helm repo list | grep -P 'gitlab\s*https://charts.gitlab.io'| wc -l`
-    if [[ "${check_gitlab_repo_exists}" == 1 ]]; then
-        echo "* \"gitlab\" has been added to your repositories."
-        read -e -n1 -p "Do you need to update the helm repo? [Y/N]" answer_update_helm_repo
-        while [[ "${answer_update_helm_repo}" == "" ]]; do
-            read -e -n1 -p "Please answer [Y/N]:" answer_update_helm_repo
-        done
-        answer_check N ${answer_update_helm_repo}
-        if [[ "${answer_update_helm_repo}" != "Y" && "${answer_update_helm_repo}" != "y" ]]; then
-            answer_update_helm_repo="N"
-        fi
-        if [[ "${answer_update_helm_repo}" == "Y" || "${answer_update_helm_repo}" == "y" ]]; then
-            echo
-            echo "Updating the repo..."
-            echo "Perhaps need a few minutes, please wait..."
-            stty igncr
-            helm repo update
-            stty -igncr
-            echo "Helm repo has been updated."
-            press_enter_continue
-        fi
-    else
-        check_gitlab_repo_add=`helm repo add gitlab https://charts.gitlab.io | grep '"gitlab" has been added to your repositories' | wc -l`
-        if [[ "${check_gitlab_repo_add}" -ne 1 ]]; then
-            echo "Failed to add the gitlab repository, please check your Helm status.The script to end."
-            exit;
-        fi
-        echo "\"gitlab\" has been added to your repositories."
-    fi
-    echo "--------------------------------------"
-}
+    echo "## Checking MinIO status."
 
+    waiting_input "Please input your MinIO address" ${MINIO_HOST}
+    MINIO_HOST=${GENERAL_INPUT_ANSWER}
 
-minIO_status_check(){
-    echo "--------------------------------------"
-    echo "# Checking MinIO status."
-
-    echo "MinIO address, e.g. ${MINIO_HOST}"
-    read -e -p "Please input your MinIO address: " minIO_host
-    if [[ "${minIO_host}" == "" ]]; then
-        echo "* No MinIO address was entered, using the default MinIO address："
-        echo "${MINIO_HOST}"
-        minIO_host=${MINIO_HOST}
-    fi
-    MINIO_HOST=${minIO_host}
-
-    check_minIo_status=`curl ${MINIO_HOST} -o /dev/nullrl -s -w %{http_code} `
+    check_minIo_status=$(curl ${MINIO_HOST} -o /dev/nullrl -s -w %{http_code} )
     if [[ "${check_minIo_status}" != 403 ]]; then
         echo
-        echo "MinIO was not able to be accessed.Please check your MinIO environment."
+        echo "* MinIO was not able to be accessed.Please check your MinIO environment."
         echo "The script to end."
         exit;
     fi
     echo
     echo "MinIO is ready."
-    echo
 
+    echo
     echo "# Checking the access key and secret key."
-    read -e -p "Please input your MinIO access key: " minio_access_key
-    if [[ "${minio_access_key}" == "" ]]; then
-        echo "* No access key was entered,using the default value \"${MINIO_ACCESS_KEY}\"."
-        minio_access_key=${MINIO_ACCESS_KEY}
-    fi
-    read -e -s -p "Please input your MinIO secret key: " nimio_secret_key
-    if [[ "${nimio_secret_key}" == "" ]]; then
-        echo
-        echo "* No secret key was entered,using the default value \"${MINIO_SECRET_KEY}\"."
-        nimio_secret_key=${MINIO_SECRET_KEY}
-    fi
+    waiting_input "Please input your MinIO access key" ${MINIO_ACCESS_KEY}
+    MINIO_ACCESS_KEY=${GENERAL_INPUT_ANSWER}
+    waiting_input "Please input your MinIO secret key" minio_secret_key "Y" "Y"
+    MINIO_SECRET_KEY=${GENERAL_INPUT_ANSWER}
+
     echo
-
-    MINIO_ACCESS_KEY=${minio_access_key}
-    MINIO_SECRET_KEY=${nimio_secret_key}
-
-    minio_key_check=`curl -X POST "${MINIO_HOST}/minio/webrpc" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"id\":1,\"jsonrpc\":\"2.0\",\"params\":{\"username\":\"${MINIO_ACCESS_KEY}\",\"password\":\"${MINIO_SECRET_KEY}\"},\"method\":\"Web.Login\"}}" -s -k`
+    local minio_key_check=$(curl -X POST "${MINIO_HOST}/minio/webrpc" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"id\":1,\"jsonrpc\":\"2.0\",\"params\":{\"username\":\"${MINIO_ACCESS_KEY}\",\"password\":\"${MINIO_SECRET_KEY}\"},\"method\":\"Web.Login\"}}" -s -k)
 
     while [[ "${minio_key_check}" =~ error ]]; do
-        echo
-        echo "* "`get_json_value "${minio_key_check}" message`
-        read -e -p "Please input the right access key: " minio_access_key
-        read -e -s -p "Please input the right secret key: " nimio_secret_key
-        MINIO_ACCESS_KEY=${minio_access_key}
-        MINIO_SECRET_KEY=${nimio_secret_key}
-
-        minio_key_check=`curl -X POST "${MINIO_HOST}/minio/webrpc" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"id\":1,\"jsonrpc\":\"2.0\",\"params\":{\"username\":\"${MINIO_ACCESS_KEY}\",\"password\":\"${MINIO_SECRET_KEY}\"},\"method\":\"Web.Login\"}}" -s -k`
+        echo "* Your MinIo access key or secret may be not right."
+        echo "* "$(get_json_value "${minio_key_check}" "message")
+        waiting_input "Please input your MinIO access key" "" "Y"
+        MINIO_ACCESS_KEY=${GENERAL_INPUT_ANSWER}
+        waiting_input "Please input your MinIO secret key" "" "Y" "Y"
+        MINIO_SECRET_KEY=${GENERAL_INPUT_ANSWER}
+        minio_key_check=$(curl -X POST "${MINIO_HOST}/minio/webrpc" -H "accept: application/json" -H "Content-Type: application/json" -d "{\"id\":1,\"jsonrpc\":\"2.0\",\"params\":{\"username\":\"${MINIO_ACCESS_KEY}\",\"password\":\"${MINIO_SECRET_KEY}\"},\"method\":\"Web.Login\"}}" -s -k)
     done
     echo "The access key and secret key are right."
 
     echo
-    read -e -p "# Please input your MinIO bucket name for gitlab storage: " minio_bucket_name
-    if [[ "${minio_bucket_name}" == "" ]]; then
-        echo "* No value was entered, using the default value \"${MINIO_BUCKET_NAME}\"."
-        minio_bucket_name=${MINIO_BUCKET_NAME}
-    fi
-       MINIO_BUCKET_NAME=${minio_bucket_name}
+    echo "# The MinIO must be already created."
+    waiting_input "Please input your MinIO bucket name for gitlab storage" ${MINIO_BUCKET_NAME} Y
+    MINIO_BUCKET_NAME=${GENERAL_INPUT_ANSWER}
 
     echo
     echo "--------------------------------------"
 }
 
-init_cluster(){
+check_harbor_status(){
+    echo "------------------------------------"
+    echo "## Checking Harbor status..."
+    echo
+    waiting_input "Please input Harbor registry url" ${HARBOR_REGISTRY_URL}
+    HARBOR_REGISTRY_URL=${GENERAL_INPUT_ANSWER}
+    harbor_registry_health_check="curl ${HARBOR_REGISTRY_URL}/health -k"
+    registry_status=$(curl ${HARBOR_REGISTRY_URL}/health -o /dev/nullrl -s -w %{http_code} -k)
+    if [[ "${registry_status}" -ne 200 ]]; then
+        echo
+        echo ${harbor_registry_health_check}
+        echo "$(${harbor_registry_health_check})"
+        echo "Harbor was not able to be accessed.Please check your Harbor environment."
+        echo "The script to end."
+        exit;
+    fi
+    echo
+    echo "Harbor is ready."
+    echo "------------------------------------"
+}
+
+check_harbor_admin_account(){
+
+    waiting_input "Please input your Harbor registry admin account" ${HARBOR_REGISTRY_ADMIN}
+    registry_admin=${GENERAL_INPUT_ANSWER}
+
+    echo
+    echo "# Please input your Harbor registry admin account password."
+    echo "# The password should have the length between 8 and 20,"
+    echo "# and contain an uppercase letter, a lowercase letter and a number."
+
+    read -e -s -p "Input your Harbor admin password: " registry_password
+
+    local check_password=$(echo "${registry_password}" | grep -P ${HARBOR_REGISTRY_PASSWORD_REGEX}| wc -l)
+    while [[ "${check_password}" -eq 0 ]];do
+        echo
+        read -e -s -p "The password format is not right, please retype: " registry_password
+        check_password=$(echo "${registry_password}" | grep -P ${HARBOR_REGISTRY_PASSWORD_REGEX}| wc -l)
+    done
+
+    ADMIN_AUTHORIZATION=$(echo -n ${registry_admin}:${registry_password} | base64)
+    check_admin_status=$(curl "${HARBOR_REGISTRY_URL}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -o /dev/nullrl -s -w %{http_code} -k)
+    while [[ ${check_admin_status} -eq 401 || ${check_admin_status} -eq 403 ]];do
+        echo
+        echo "* Password or admin account maybe not right,or the account not admin.Please retype admin account and password."
+        waiting_input "Please input Harbor registry admin account" "" "Y"
+        HARBOR_REGISTRY_ADMIN=${GENERAL_INPUT_ANSWER}
+        waiting_input "Please input password" "" "Y" "Y"
+        HARBOR_REGISTRY_ADMIN_PASSWORD=${GENERAL_INPUT_ANSWER}
+        ADMIN_AUTHORIZATION=$(echo -n ${HARBOR_REGISTRY_ADMIN}:${HARBOR_REGISTRY_ADMIN_PASSWORD} | base64)
+        check_admin_status=$(curl "${HARBOR_REGISTRY_URL}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -o /dev/nullrl -s -w %{http_code} -k)
+    done
+}
+
+
+# ------------------
+# Init
+# ------------------
+
+init_kubernetes_cluster(){
     echo "--------------------------------------"
-    echo "# Initializing Kubernetes Cluster, creating the cluster role for service discovery."
-    check_cluster_role_exist=`kubectl get clusterrole | grep -w service-discovery-client | wc -l`
+    echo "# Initializing Kubernetes Cluster..."
+    echo
+    echo "creating the cluster role ..."
+    check_cluster_role_exist=$(kubectl get clusterrole | grep -w service-discovery-client | wc -l)
     if [[ "${check_cluster_role_exist}" == 0 ]]; then
         kubectl create clusterrole service-discovery-client \
         --verb=get,list,watch \
@@ -215,469 +372,89 @@ init_cluster(){
     echo
     echo "Kubernetes Cluster has been initialized."
     echo "--------------------------------------"
-    exit;
 }
 
-
-# ------------------
-# Create a project
-# ------------------
-
-harbor_status_check(){
-    echo "------------------------------------"
-    echo "## Checking Harbor status..."
-    echo
-    echo "# e.g. ${HARBOR_REGISTRY_HOST}"
-    read -e -p "Please input Harbor registry host： " registry_host
-    if [[ "${registry_host}" != "" ]]; then
-        HARBOR_REGISTRY_HOST=${registry_host}
-    else
-        echo "* No Harbor registry host was entered, using the default Harbor registry host："
-        echo "* ${HARBOR_REGISTRY_HOST}"
-    fi
-    echo "* The default scheme is https."
-    harbor_registry_health_check="curl ${HARBOR_SCHEME}://${HARBOR_REGISTRY_HOST}/health -k"
-    registry_status=`curl ${HARBOR_SCHEME}://${HARBOR_REGISTRY_HOST}/health -o /dev/nullrl -s -w %{http_code} -k`
-    if [[ "${registry_status}" -ne 200 ]]; then
-        echo
-        echo ${harbor_registry_health_check}
-        echo "`${harbor_registry_health_check}`"
-        echo "Harbor was not able to be accessed.Please check your Harbor environment."
-        echo "The script to end."
-        echo
-        exit;
-    fi
-    echo
-    echo "Harbor is ready."
-    echo "------------------------------------"
-}
-
-project_create_check(){
-    echo "Tips: Before creating your project, you need to initialize your Kubernetes cluster for service discovery."
-    echo "____________________________________"
-    echo
-    read -e -p "Please input your Harbor registry admin account: " registry_admin
-    if [[ "${registry_admin}" == "" ]]; then
-        echo "* No Harbor registry admin account was entered, using the default admin account: ${HARBOR_REGISTRY_ADMIN}"
-    fi
-
-    echo
-
-    echo "Please input your Harbor registry admin account password."
-    echo "# The password should have the length between 8 and 20,"
-    echo "# and contain an uppercase letter, a lowercase letter and a number."
-    read -p "Input your Harbor admin password: " -e -s registry_password
-    echo
-
-    regex_password=${HARBOR_REGISTRY_PASSWORD_REGEX}
-    check_password=`echo "${registry_password}" | grep -P ${regex_password}| wc -l`
-    while [[ "${check_password}" -eq 0 ]];do
-        echo
-        read -e -s -p "The password format is not right, please retype: " registry_password
-        check_password=`echo "${registry_password}" | grep -P ${regex_password}| wc -l`
-    done
-
-    if [[ "${registry_admin}" == "" ]]; then
-        registry_admin=${HARBOR_REGISTRY_ADMIN}
-    fi
-
-    echo
-    ADMIN_AUTHORIZATION=`echo -n ${registry_admin}:${registry_password} | base64`
-    check_admin_status=`curl "${HARBOR_SCHEME}://${HARBOR_REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -o /dev/nullrl -s -w %{http_code} -k`
-    while [[ ${check_admin_status} -eq 401 || ${check_admin_status} -eq 403 ]];do
-        echo
-        echo "* Password or admin account maybe not right,or the account not admin.Please retype admin account and password."
-        read -e -p "Please input Harbor registry admin account: " registry_admin
-        read -e -s -p "Please input password: " registry_password
-        ADMIN_AUTHORIZATION=`echo -n ${registry_admin}:${registry_password} | base64`
-        check_admin_status=`curl "${HARBOR_SCHEME}://${HARBOR_REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -o /dev/nullrl -s -w %{http_code} -k`
-    done
-
-    if [[ "${registry_admin}" != "" ]]; then
-        HARBOR_REGISTRY_ADMIN=${registry_admin}
-    fi
-    if [[ "${registry_password}" != "" ]]; then
-        HARBOR_REGISTRY_ADMIN_PASSWORD=${registry_password}
-    fi
-    echo
-
-    echo
-    echo "# The name of project would be used for creating Harbor project, Harbor user account and Kubernetes namespace."
-    echo "# Project name must consist of lower case alphanumeric characters or '-' "
-    echo "# and must start and end with an alphanumeric character,"
-    echo "# and the length must be greater than two."
-    read -e -p "Please input project name: " project_name
-
-    project_name_regex="^([a-z0-9]+-?[a-z0-9]+)+$"
-    while [[ ! "${project_name}" =~ ${project_name_regex} ]]; do
-        read -e -p "Please input the right project name: " project_name
-    done
-
-    # Checking whether Kubernetes namespace exists.
-    check_ns_exists=`kubectl get ns | grep -w ${project_name} | wc -l`
-    while [[ "${check_ns_exists}" -gt 0 ]];do
-        read -e -p "There is already existing the same namespace, please retype another project name: " project_name
-
-        while [[ ! "${project_name}" =~ ${project_name_regex} ]]; do
-            read -p "The project name format is not right,please retype: " -e project_name
-        done
-
-        check_ns_exists=`kubectl get ns | grep -w ${project_name} | wc -l`
-    done
-    # Checking whether Harbor project name exists.
-    check_project_exists=`curl "${HARBOR_SCHEME}://${HARBOR_REGISTRY_HOST}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
-    while [[ "${check_project_exists}" -gt 0 ]];do
-        read -p "The project name already exists, please retype again: " -e project_name
-
-        while [[ ! "${project_name}" =~ ${project_name_regex} ]]; do
-            read -p "The project name format is not right,please retype again: " -e project_name
-        done
-
-        check_ns_exists=`kubectl get ns | grep -w ${project_name} | wc -l`
-        while [[ "${check_ns_exists}" -gt 0 ]];do
-            read -e -p "There is already existing the same namespace, please retype another project name: " project_name
-            while [[ ! "${project_name}" =~ ${project_name_regex} ]]; do
-                read -p "The project name format is not right,please retype again: " -e project_name
-            done
-            check_ns_exists=`kubectl get ns | grep -w ${project_name} | wc -l`
-        done
-
-        check_project_exists=`curl "${HARBOR_SCHEME}://${HARBOR_REGISTRY_HOST}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
-    done
-
-    if [[ "${project_name}" != "" ]]; then
-        PROJECT_NAMESPACE=${project_name}
-        DEW_HARBOR_USER_NAME=${PROJECT_NAMESPACE}
-        DEW_HARBOR_USER_EMAIL=${DEW_HARBOR_USER_NAME}@dew.ms
-    fi
-
-    # Checking whether user account exists.
-    check_user_exists=`curl "${HARBOR_SCHEME}://${HARBOR_REGISTRY_HOST}/api/users?username=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l`
-    while [[ "${check_user_exists}" -gt 0 ]]; do
-        read -p "There is already existing the same Harbor user account with project name.Please input another user name to bind with your project: " -e user_name
-        check_user_exists=`curl "${HARBOR_SCHEME}://${HARBOR_REGISTRY_HOST}/api/users?username=${user_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_name} | wc -l`
-        DEW_HARBOR_USER_NAME=${user_name}
-    done
-    echo
-
-    read -e -n1 -p "If you would like to use your custom password for the project user account? [Y/N]" answer_custom_user_password
-    while [[ "${answer_custom_user_password}" == "" ]]; do
-        read -e -n1 -p "Please answer [Y/N]: " answer_custom_user_password
-    done
-    answer_check N ${answer_custom_user_password}
-    if [[ "${answer_custom_user_password}" != "Y" && "${answer_custom_user_password}" != "y" ]]; then
-        answer_custom_user_password="N"
-    fi
-    if [[ "${answer_custom_user_password}" == "Y" || "${answer_custom_user_password}" == "y" ]]; then
-        read -e -s -p "Please input the password for the project user account: " user_account_password
-        check_user_password=`echo "${user_account_password}" | grep -P ${regex_password}| wc -l`
-        while [[ "${check_user_password}" -eq 0 ]];do
+init_helm_gitlab_repo(){
+    echo "--------------------------------------"
+    echo "# Adding the gitlab repository of Helm."
+    check_gitlab_repo_exists=$(helm repo list | grep -P 'gitlab\s*https://charts.gitlab.io'| wc -l)
+    if [[ "${check_gitlab_repo_exists}" == 1 ]]; then
+        echo "* \"gitlab\" has been added to your repositories."
+        waiting_input_YN "Do you need to update the helm repo?" "N"
+        local answer_update_helm_repo=${GENERAL_INPUT_ANSWER}
+        if [[ "${answer_update_helm_repo}" == "Y" ]]; then
             echo
-            read -e -s -p "The password format is not right, please retype: " user_account_password
-            check_user_password=`echo "${user_account_password}" | grep -P ${regex_password}| wc -l`
-        done
-        DEW_HARBOR_USER_PASS=${user_account_password}
+            echo "Updating the repo..."
+            echo "Perhaps need a few minutes, please wait..."
+            stty igncr
+            helm repo update;
+            stty -igncr
+            echo "Helm repo has been updated."
+            dealing_wrong_input
+        fi
     else
-        echo "* Using the default password \"${DEW_HARBOR_USER_PASS}\" for the project user account."
+        echo "Perhaps need a few minutes, please wait..."
+        stty igncr
+        check_gitlab_repo_add=$(helm repo add gitlab https://charts.gitlab.io | grep '"gitlab" has been added to your repositories' | wc -l)
+        stty -igncr
+        if [[ "${check_gitlab_repo_add}" -ne 1 ]]; then
+            echo "Failed to add the gitlab repository, please check your Helm status.The script to end."
+            exit;
+        fi
+        echo "\"gitlab\" has been added to your repositories."
+        dealing_wrong_input
     fi
-    echo
-
-    # The e-mail format checking.
-    echo
-    echo "# E-mail is used for binding the Harbor user account that you created above."
-    emailRegex="^([a-zA-Z0-9_\-\.\+]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$"
-    read -e -p "Please input the e-mail for your Harbor project user account: " user_email
-    while [[ ! "${user_email}" =~ ${emailRegex} ]]; do
-    read -e -p "The e-mail format is not right, please retype again: " user_email
-    done
-
-    # Checking whether e-mail is registered.
-    check_email_exists=`curl "${HARBOR_SCHEME}://${HARBOR_REGISTRY_HOST}/api/users?email=${user_email}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_email} | wc -l`
-    while [[ "${check_email_exists}" -gt 0 ]];do
-        read -p "The e-mail is already registered, please retype another: " -e user_email
-        while [[ ! "${user_email}" =~ ${emailRegex} ]]; do
-            read -p "The e-mail format is not right, please retype again:" -e user_email
-        done
-        check_email_exists=`curl "${HARBOR_SCHEME}://${HARBOR_REGISTRY_HOST}/api/users?email=${user_email}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_email} | wc -l`
-    done
-
-    if [[ "${user_email}" != "" ]]; then
-        DEW_HARBOR_USER_EMAIL=${user_email}
-    fi
+    echo "--------------------------------------"
 }
 
+init_gitlab_runner(){
 
-project_create(){
-    echo
-    echo "# Starting to create the Harbor user account."
-    ADMIN_AUTHORIZATION=`echo -n ${HARBOR_REGISTRY_ADMIN}:${HARBOR_REGISTRY_ADMIN_PASSWORD} | base64`
-
-    create_user_result=`curl -X POST "${HARBOR_SCHEME}://${HARBOR_REGISTRY_HOST}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"email\": \"${DEW_HARBOR_USER_EMAIL}\", \"username\": \"${DEW_HARBOR_USER_NAME}\", \"password\": \"${DEW_HARBOR_USER_PASS}\", \"realname\": \"${DEW_HARBOR_USER_NAME}\", \"comment\": \"init\"}" -o /dev/nullrl -s -w %{http_code} -k`
-    if [[ "${create_user_result}" -ne 201 ]]; then
-        echo "Failed to create user account, the script to end, please retry it later."
-        exit;
-    fi
-
-    echo "Created Harbor user account [${DEW_HARBOR_USER_NAME}] successfully.The password is ${DEW_HARBOR_USER_PASS}."
-    echo
-
-    echo "# Starting to create Harbor project."
-    USER_AUTHORIZATION=`echo -n ${DEW_HARBOR_USER_NAME}:${DEW_HARBOR_USER_PASS} | base64`
-
-    create_project_result_code=`curl -X POST "${HARBOR_SCHEME}://${HARBOR_REGISTRY_HOST}/api/projects" -H "accept: application/json" -H "authorization: Basic ${USER_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"project_name\": \"${PROJECT_NAMESPACE}\"}" -o /dev/nullrl -s -w %{http_code} -k`
-    if [[ "${create_project_result_code}" -ne 201 ]]; then
-        echo "Failed to create project, the script to end, please retry it later."
-        exit;
-    fi
-    echo "The project [${PROJECT_NAMESPACE}] is created successfully."
-    echo
-
-    echo "# Starting to initialize the project in the Kubernetes Cluster."
-    kubectl create namespace ${PROJECT_NAMESPACE}
-
-    kubectl create rolebinding default:service-discovery-client \
-        -n ${PROJECT_NAMESPACE} \
-        --clusterrole service-discovery-client \
-        --serviceaccount ${PROJECT_NAMESPACE}:default
-
-    kubectl -n ${PROJECT_NAMESPACE} create secret docker-registry dew-registry \
-        --docker-server=${HARBOR_REGISTRY_HOST} \
-        --docker-username=${DEW_HARBOR_USER_NAME} \
-        --docker-password=${DEW_HARBOR_USER_PASS} \
-        --docker-email=${DEW_HARBOR_USER_EMAIL}
-
-    kubectl -n ${PROJECT_NAMESPACE} patch serviceaccount default \
-        -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
-
-    # Creating Ingress
-    # More details: https://kubernetes.io/docs/concepts/services-networking/ingress/
-    #######################
-    # apiVersion: extensions/v1beta1
-    # kind: Ingress
-    # metadata:
-    #   annotations:
-    #     # For more details: https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/
-    #     # The example: https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/rewrite
-    #     nginx.ingress.kubernetes.io/rewrite-target: /\$1
-    #   name: dew-ingress
-    #   namespace: $PROJECT_NAMESPACE
-    # spec:
-    #   rules:
-    #     # Your custom rules.
-    #######################
-    echo
-    echo "# Starting to create Ingress in the Kubernetes Cluster."
+    echo "# Harbor is used for gitlab runner to store images."
+    check_harbor_status
+    check_harbor_admin_account
 
     echo
-    echo "# The nginx rewrite target is used for the annotation of Ingress."
-    echo "# See example: https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/rewrite"
-    echo "# All of the nginx ingress annotations: https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/"
-    echo "# You can edit the ingress freely after the script to end."
-    echo "# kubectl edit ingress dew-ingress -n ${PROJECT_NAMESPACE}"
-    echo
-    read -e -p "Please input nginx rewrite target:" nginx_rewrite_target
-
-    read -e -p "Input the host of your backend: " backend_host
-    while [[ ! "${backend_host}" =~ ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$ ]] ;do
-        read -e -p "The host is not right,please retype: " backend_host
-    done
-
-    echo
-    echo "# Please input your backend service name,service port and path in order."
-    echo "# If you have one more service group, please user the space to separate."
-    echo "# The service params should accord with the DNS label."
-    echo "# Service name  must consist of lower case alphanumeric characters or '-', "
-    echo "# start with an alphabetic character, and end with an alphanumeric character."
-    echo "# e.g. servicea 8080 api serviceb 8081 rest servicec 8090 manage"
-    echo
-    read -e -p "Please input your backend services: " backend_service
-    backend_services=(${backend_service})
-
-    while [[ "${#backend_services[@]}"%3 -eq 1  || "${#backend_services[@]}" -eq 0 ]]; do
-        read -e -p "Service port or name is indispensable, please retype your service params: " backend_service
-        backend_services=(${backend_service})
-    done
-
-    b=0
-    backend_yaml_values=""
-    while [[ "${b}" -lt "${#backend_services[@]}" ]]; do
-        while [[ ! "${backend_services[b]}" =~ ^[a-z]([a-z0-9]*)(-[a-z0-9]+)*$ ]]; do
-            echo "The service name ["${backend_services[b]}"] format is not right，please retype another: "
-            read -e service_name
-            backend_services[b]=${service_name}
-        done
-
-        while [[ ! "${backend_services[${b}+1]}" =~ ^[a-z0-9]*$ ]]; do
-            echo "The service port ["${backend_services[${b}+1]}"] format is not right，please retype another: "
-            read -e service_port
-            backend_services[${b}+1]=${service_port}
-        done
-
-        yaml_value="            - backend:
-                serviceName: ${backend_services[b]}
-                servicePort: ${backend_services[${b}+1]}
-              path: /${backend_services[${b}+2]}/?(.*)
-"
-        let b=b+3
-        backend_yaml_values+=${yaml_value}
-    done
-
-    echo
-    read -e -p "Please input your frontend host: " frontend_host
-    while [[ ! "${frontend_host}" =~ ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$ ]] ;do
-        read -p "The host is not right, please retype again: " -e frontend_host
-    done
-
-    echo
-    echo "# Please input your frontend service name,service port and path in order."
-    echo "# If you have one more service groups, please user the space to separate."
-    echo "# The service params should accord with the DNS label."
-    echo "# Service name must consist of lower case alphanumeric characters or '-', "
-    echo "# start with an alphabetic character, and end with an alphanumeric character."
-    echo "# e.g. servicea 8080 api serviceb 8081 rest servicec 8090 manage"
-    echo
-    read -e -p "Please input your services: " frontend_service
-    frontend_services=(${frontend_service})
-
-    while [[ "${#frontend_services[@]}"%3 -eq 1  || "${#frontend_services[@]}" -eq 0 ]]; do
-        read -p "The service port or name is indispensable, please retype your service params: " -e frontend_service
-        frontend_services=(${frontend_service})
-    done
-
-    f=0
-    frontend_yaml_values=""
-    while [[ "${f}" -lt "${#frontend_services[@]}" ]]; do
-        while [[ ! ${frontend_services[f]} =~ ^[a-z]([a-z0-9]*)(-[a-z0-9]+)*$ ]]; do
-            echo "The service name ["${frontend_services[f]}"] format is not right, please retype another: "
-            read -e service_name
-            frontend_services[f]=${service_name}
-        done
-        while [[ ! "${frontend_services[${f}+1]}" =~ ^[a-z0-9]*$ ]]; do
-            echo "Service Port ["${frontend_services[${f}+1]}"] format is not right, please retype another: "
-            read -e service_port
-            frontend_services[${f}+1]=${service_port}
-        done
-        yaml_value="            - backend:
-                serviceName: ${frontend_services[f]}
-                servicePort: ${frontend_services[${f}+1]}
-              path: /${frontend_services[${f}+2]}/?(.*)
-"
-        let f=f+3
-        frontend_yaml_values+=${yaml_value}
-    done
-
-    # Creating Ingress
-    cat <<EOF | kubectl -n ${PROJECT_NAMESPACE} apply -f -
-    apiVersion: extensions/v1beta1
-    kind: Ingress
-    metadata:
-      annotations:
-        nginx.ingress.kubernetes.io/rewrite-target: /${nginx_rewrite_target}
-      name: dew-ingress
-    spec:
-      rules:
-      - host: ${backend_host}
-        http:
-          paths:
-${backend_yaml_values}
-      - host: ${frontend_host}
-        http:
-          paths:
-${frontend_yaml_values}
-EOF
-
-    echo
-    check_ingress_exist=`kubectl get ing dew-ingress -n ${PROJECT_NAMESPACE} | wc -l`
-    if [[ "${check_ingress_exist}" -eq 0 ]]; then
-        echo -e "\033[31m * Failed to created Ingress, the script to end. Please the Ingress yourself. \033[1;m"
-        exit;
-    else
-        echo "The creating of project [${PROJECT_NAMESPACE}] is completed."
-        echo "The script to end."
-        exit;
-    fi
-
-}
-
-
-install_gitlab_runner_project(){
-
-    echo
-    read -e -p "# Please input the namespace for gitlab runner to install: " gitlab_runner_namespace
-
-    if [[ "${gitlab_runner_namespace}" == "" ]]; then
-        echo "* No namespace for gitlab runner was entered, using the \"${GITLAB_RUNNER_NAMESPACE}\" namespace."
-        gitlab_runner_namespace="${GITLAB_RUNNER_NAMESPACE}"
-    fi
-
-    check_ns_exists=`kubectl get ns | grep -w ${gitlab_runner_namespace} | wc -l`
-    while [[ "${check_ns_exists}" == 0 ]]; do
-        read -e -n1 -p "* the namespace [${gitlab_runner_namespace}] doesn't exist,would you like to create it? [Y/N]: " answer_create_namespace
-        while [[ "${answer_create_namespace}" == "" ]]; do
-            read -e -n1 -p "Please answer [Y/N]: " answer_create_namespace
-        done
-        answer_check Y ${answer_create_namespace}
-        if [[ "${answer_create_namespace}" != "N" && "${answer_create_namespace}" != "n" ]]; then
-            answer_create_namespace="Y"
-        fi
-        if [[ "${answer_create_namespace}" == "Y" || "${answer_create_namespace}" == "y" ]]; then
-            kubectl create ns ${gitlab_runner_namespace}
-        fi
-        if [[ "${answer_create_namespace}" == "N" || "${answer_create_namespace}" == "n" ]]; then
-            read -e -p "Please input the namespace for gitlab runner to install: " gitlab_runner_namespace
-            while [[ "${gitlab_runner_namespace}" == "" ]]; do
-                read -e -p "Please input the namespace: " gitlab_runner_namespace
-            done
-        fi
-        check_ns_exists=`kubectl get ns | grep -w ${gitlab_runner_namespace} | wc -l`
-    done
-    GITLAB_RUNNER_NAMESPACE=${gitlab_runner_namespace}
-
-    echo
-    read -e -n1 -p "# If you use MinIO as your gitlab storage? [Y/N]" answer_using_minio
-    while [[ "${answer_using_minio}" == "" ]]; do
-        read -e -n1 -p "Please answer [Y/N]: " answer_using_minio
-    done
-    answer_check Y ${answer_using_minio}
-    if [[ ${answer_using_minio} != "N" &&  ${answer_using_minio} != "n" ]]; then
-        answer_using_minio="Y"
-    fi
-
-    if [[ "${answer_using_minio}" == "Y" || "${answer_using_minio}" == "y" ]]; then
-        minIO_status_check
-        echo "# Create secret for MinIO."
-        check_minio_secret_exists=`kubectl get secret -n ${GITLAB_RUNNER_NAMESPACE} | grep -w minio-access | wc -l`
-        if [[ "${check_minio_secret_exists}" == 1 ]]; then
-            echo "The secret \"minio-access\" already exists,using the created secret."
-        else
-            kubectl create secret generic minio-access -n ${GITLAB_RUNNER_NAMESPACE} \
-                --from-literal=accesskey=${MINIO_ACCESS_KEY} \
-                --from-literal=secretkey=${MINIO_SECRET_KEY}
-        fi
+    waiting_input_YN "If you use MinIO as your gitlab storage?" "Y"
+    local answer_using_minio=${GENERAL_INPUT_ANSWER}
+    if [[ "${answer_using_minio}" == "Y" ]]; then
+        check_minio_status
     else
         echo "* You should install your gitlab runner chart with your configurations in the last step."
     fi
 
     echo
-    echo "## Starting to install the gitlab-runner chart."
-    echo "Fetch the chart of gitlab-runner..."
-    stty igncr
-    helm fetch --untar gitlab/gitlab-runner
-    stty -igncr
-    echo "The chart has been fetched."
-    press_enter_continue
+    waiting_input "Please input the namespace for gitlab runner to install" ${GITLAB_RUNNER_NAMESPACE}
+    local gitlab_runner_namespace=${GENERAL_INPUT_ANSWER}
+
+    local check_ns_exists=$(kubectl get ns | grep -w ${gitlab_runner_namespace} | wc -l)
+    while [[ "${check_ns_exists}" == 0 ]]; do
+        waiting_input_YN "* the namespace [${gitlab_runner_namespace}] doesn't exist,would you like to create it?" "Y"
+        local answer_create_namespace=${GENERAL_INPUT_ANSWER}
+        if [[ "${answer_create_namespace}" == "Y" ]]; then
+            kubectl create ns ${gitlab_runner_namespace}
+        else
+            waiting_input "Please input the namespace for gitlab runner to install" ${GITLAB_RUNNER_NAMESPACE} "Y"
+            gitlab_runner_namespace=${GENERAL_INPUT_ANSWER}
+        fi
+        check_ns_exists=$(kubectl get ns | grep -w ${gitlab_runner_namespace} | wc -l)
+    done
+    GITLAB_RUNNER_NAMESPACE=${gitlab_runner_namespace}
 
     echo
-    read -n1 -e -p "# If you need to configure the Maven settings.xml? [Y/N] " answer_maven_setting
-    while [[ "${answer_maven_setting}" == "" ]]; do
-        read -e -n1 -p "Please answer [Y/N]: " answer_maven_setting
-    done
-    answer_check N ${answer_maven_setting}
-    if [[ "${answer_maven_setting}" == "Y" || "${answer_maven_setting}" == "y" ]]; then
-        answer_maven_setting="N"
-    fi
+    echo "## Starting to install the gitlab-runner."
+    echo "Fetch the chart of gitlab-runner..."
+    stty igncr
+    helm fetch --untar gitlab/gitlab-runner --version=0.3.0
+    stty -igncr
+    echo "The chart has been fetched."
+    dealing_wrong_input
+    echo
 
-    if [[ "${answer_maven_setting}" == "Y" || "${answer_maven_setting}" == "y" ]]; then
+    echo
+    waiting_input_YN "If you need to configure the Maven settings.xml?" "Y"
+    local answer_maven_setting=${GENERAL_INPUT_ANSWER}
+
+    if [[ "${answer_maven_setting}" == "Y" ]]; then
 cat > dew-maven-settings.yaml <<EOF
 # Please edit this yaml file with your configurations.
 
@@ -703,110 +480,70 @@ data:
      </settings>
 EOF
         echo
-        echo "* Please edit the yaml file with your configurations."
-        vi dew-maven-settings.yaml <EOF  < /dev/tty
-        echo
-        kubectl apply -f dew-maven-settings.yaml
+        vi dew-maven-settings.yaml
+    fi
+
+    if [[ "${answer_maven_setting}" == "Y" ]]; then
+        sed -i -e'/# Start the runner/i\    cat >>/home/gitlab-runner/.gitlab-runner/config.toml <<EOF\n        [[runners.kubernetes.volumes.config_map]]\n          name = \"dew-maven-settings\"\n          mount_path = \"/opt/maven\"\n    EOF' gitlab-runner/templates/configmap.yaml
     fi
 
     echo
-    if [[ "${answer_maven_setting}" == "N" || "${answer_maven_setting}" == "n" ]]; then
-        read -n1 -e -p "# Do you need to edit the \"configmap.yaml\" of the gitlab-runner chart? [Y/N]" answer_edit_chart
-        while [[ "${answer_edit_chart}" == "" ]]; do
-            read -e -n1 -p "Please answer [Y/N]: " answer_edit_chart
-        done
-        answer_check N ${answer_edit_chart}
-        if [[ "${answer_edit_chart}" != "Y" && "${answer_edit_chart}" != "y" ]]; then
-            answer_edit_chart="N"
-        fi
-    fi
-
-   if [[ "${answer_maven_setting}" == "Y" || "${answer_maven_setting}" == "y" || "${answer_edit_chart}" == "Y"|| "${answer_edit_chart}" == "y" ]]; then
-        echo
-        echo "# Edit the \"configmap.yaml\" of gitlab runner chart."
-        echo "# Tips: add your configuration before \"# Start the runner\"."
-        echo "# e.g."
-        echo "  -----------"
-        echo -e "    cat >>/home/gitlab-runner/.gitlab-runner/config.toml <<EOF
-        [[runners.kubernetes.volumes.config_map]]
-          name = \"dew-maven-settings\"
-          mount_path = \"/opt/maven\"
-    EOF
-    # Start the runner"
-        echo "  -----------"
-        press_enter_continue
-        vi gitlab-runner/templates/configmap.yaml +/"# Start the runner" <EOF  < /dev/tty
-    fi
+    waiting_input "Please input your gitlab url" ${GITLAB_URL}
+    GITLAB_URL=${GENERAL_INPUT_ANSWER}
 
     echo
-    read -e -p "# Please input your gitlab url, e.g. \"http://gitlab.dew.ms\" : " gitlab_url
-    if [[ "${gitlab_url}" == "" ]]; then
-        echo "* No gitlab url was entered, using the default url \"http://gitlab.dew.ms\"."
-        gitlab_url=${GITLAB_URL}
-    fi
-    GITLAB_URL=${gitlab_url}
-
-    echo
-    echo "# The project name is used for the helm release name of your project gitlab-runner."
-    read -e -p "# Please input your project name: " project_name
-    while [[ "${project_name}" == "" ]]; do
-        read -e -p "Please input your project name: " project_name
+    echo "# The name is used for the helm release name of your gitlab-runner."
+    waiting_input "Please input your gitlab-runner name" ${GITLAB_RUNNER_NAME}
+    GITLAB_RUNNER_NAME=${GENERAL_INPUT_ANSWER}
+    check_helm_runner_name_exists=$(helm list | awk '{print $1}' | cut -d: -f1 | grep ^${GITLAB_RUNNER_NAME}$ | wc -l)
+    while [[ "${check_helm_runner_name_exists}" -ge 1 ]]; do
+        echo "* Error: a release named ${GITLAB_RUNNER_NAME} already exists."
+        waiting_input "Please input another project name" "" "Y"
+        GITLAB_RUNNER_NAME=${GENERAL_INPUT_ANSWER}
+        check_helm_runner_name_exists=$(helm list | awk '{print $1}' | cut -d: -f1 | grep ^${GITLAB_RUNNER_NAME}$ | wc -l)
     done
 
-    check_helm_runner_exists=`helm list | grep -w ${project_name} | wc -l`
-    while [[ "${check_helm_runner_exists}" == 1 ]]; do
-        echo "* Error: a release named ${project_name} already exists."
-        read -e -p "Please input another project name: " project_name
-        while [[ "${project_name}" == "" ]]; do
-            read -e -p "Please input your project name: " project_name
-        done
-        check_helm_runner_exists=`helm list | grep -w ${project_name} | wc -l`
-    done
-    GITLAB_PROJECT_NAME=${project_name}
-
     echo
-    echo "## The registration token for adding new Runners to the GitLab server."
+    echo "# * The registration token for adding new Runners to the GitLab server."
     echo "# This must be retrieved from your GitLab instance."
     echo "# ref: https://docs.gitlab.com/ee/ci/runners/"
     echo "# e.g. ${GITLAB_RUNNER_REG_TOKEN}"
-    read -e -p "# Please input the runner registration token of your gitlab project: " runner_registration_token
-    while [[ "${runner_registration_token}" == "" ]]; do
-        read -e -p "# Please input the runner registration token: " runner_registration_token
-    done
-    GITLAB_RUNNER_REG_TOKEN=${runner_registration_token}
+    waiting_input "Please input the registration token of your gitlab runner" "" "Y"
+    GITLAB_RUNNER_REG_TOKEN=${GENERAL_INPUT_ANSWER}
 
     echo
-    echo "# e.g. Using \"test\" to label your project environment. "
-    read -e -p "# Please input your project profile: " project_profile
-    while [[ "${project_profile}" == "" ]]; do
-        read -e -p "Please input your project profile: " project_profile
-    done
-    GITLAB_RUNNER_PROJECT_PROFILE=${project_profile}
+    echo "# e.g. Using \"test\" to label your runner environment. "
+    waiting_input "Please input your runner profile" "" "Y"
+    GITLAB_RUNNER_PROFILE=${GENERAL_INPUT_ANSWER}
 
     echo
-    echo "# Default container image to use for builds when none is specified."
-    echo "# the default value is \"${GITLAB_RUNNER_IMAGE}\"."
-    read -e -p "# Input your runner image:" gitlab_runner_image
-    if [[ "${gitlab_runner_image}" == "" ]]; then
-        echo "* No value was entered,using the default value \"${GITLAB_RUNNER_IMAGE}\"."
-        gitlab_runner_image=${GITLAB_RUNNER_IMAGE}
-    fi
-    GITLAB_RUNNER_IMAGE=${gitlab_runner_image}
+    echo "# The DockerD url is used for dew-maven-plugin."
+    echo "# e.g. ${DOCKERD_URL}"
+    waiting_input "Please input your DockerD service url" "" "Y"
+    DOCKERD_URL=${GENERAL_INPUT_ANSWER}
 
     # The settings for helm installation.
-    gitlab_runner_helm_install_settings="helm install --name ${GITLAB_PROJECT_NAME} --namespace ${GITLAB_RUNNER_NAMESPACE} gitlab-runner \\
+    gitlab_runner_helm_install_settings="helm install --name ${GITLAB_RUNNER_NAME} --namespace ${GITLAB_RUNNER_NAMESPACE} gitlab-runner \\
     --set gitlabUrl=${GITLAB_URL}\\
     --set runnerRegistrationToken=${GITLAB_RUNNER_REG_TOKEN} \\
+    --set concurrent=20 \\
     --set rbac.create=true \\
-    --set rbacWideAccess=true \\
-    --set runners.tags=${GITLAB_RUNNER_PROJECT_PROFILE} \\
+    --set rbac.clusterWideAccess=true \\
+    --set runners.tags=${GITLAB_RUNNER_PROFILE} \\
     --set runners.image=${GITLAB_RUNNER_IMAGE} \\
     --set runners.cache.cacheType=s3 \\
     --set runners.cache.cacheShared=true \\
     --set runners.cache.s3ServerAddress=${MINIO_HOST} \\
     --set runners.cache.s3BucketName=${MINIO_BUCKET_NAME} \\
     --set runners.cache.s3CacheInsecure=true \\
-    --set runners.cache.secretName=minio-access \\"
+    --set runners.cache.secretName=minio-access \\
+    --set runners.env.dew_devops_docker_host=${DOCKERD_URL} \\
+    --set runners.env.dew_devops_docker_registry_url=${HARBOR_REGISTRY_URL}/v2 \\
+    --set runners.env.dew_devops_docker_registry_username=${HARBOR_REGISTRY_ADMIN} \\
+    --set runners.env.dew_devops_docker_registry_password=${HARBOR_REGISTRY_ADMIN_PASSWORD} \\
+    --set runners.env.dew_devops_profile=${GITLAB_RUNNER_PROFILE} \\
+    --set runners.env.dew_devops_quiet=true \\
+    --set runners.env.dew_devops_kube_config=${KUBERNETES_CONFIG} \\"
 
 cat > gitlab-runner/gitlab-runner-helm-installation.sh <<EOF
 #!/bin/bash
@@ -818,46 +555,270 @@ cat > gitlab-runner/gitlab-runner-helm-installation.sh <<EOF
 ${gitlab_runner_helm_install_settings}
 EOF
 
+
     echo
-    if [[ "${answer_maven_setting}" == "Y" || "${answer_maven_setting}" == "y" ]]; then
-    echo '    --set runners.env.MAVEN_OPTS="-Dmaven.repo.local=.m2 -Dorg.apache.maven.user-settings=/opt/maven/settings.xml" \' >> gitlab-runner/gitlab-runner-helm-installation.sh
+    waiting_input_YN "If you want to add your runner custom settings of helm installation?" "N"
+    local answer_helm=${GENERAL_INPUT_ANSWER}
+    if [[ "${answer_helm}" == "Y" ||  "${answer_using_minio}" == "N" ]]; then
+        if [[ "${answer_using_minio}" == "N" ]]; then
+            echo "* Without using MinIO for gitlab runner,please edit the helm settings:"
+        fi
+        vi gitlab-runner/gitlab-runner-helm-installation.sh
+    elif [[ "${answer_helm}" == "N" ]]; then
+        echo "* Installing gitlab runner chart with the default settings."
     fi
 
-    read -n1 -e -p "# If you want to add your runner custom settings of helm installation? [Y/N] " answer_helm
-    while [[ "${answer_helm}" == "" ]]; do
-        read -e -n1 -p "Please answer [Y/N]: " answer_helm
-    done
-    answer_check N ${answer_helm}
-    if [[ "${answer_helm}" != "Y" && "${answer_helm}" != "y"  ]]; then
-        answer_helm="N"
+    if [[ "${answer_maven_setting}" == "Y" ]]; then
+        echo '    --set runners.env.MAVEN_OPTS="-Dmaven.repo.local=.m2 -Dorg.apache.maven.user-settings=/opt/maven/settings.xml"' >> gitlab-runner/gitlab-runner-helm-installation.sh
+        kubectl apply -f dew-maven-settings.yaml
     fi
 
-    if [[ "${answer_helm}" == "Y" || "${answer_helm}" == "y" ||  "${answer_using_minio}" == "N" || "${answer_using_minio}" == "n" ]]; then
-        vi gitlab-runner/gitlab-runner-helm-installation.sh <EOF  < /dev/tty
-        sh gitlab-runner/gitlab-runner-helm-installation.sh
-    elif [[ "${answer_helm}" == "N" || "${answer_helm}" == "n" ]]; then
-        echo "Installing gitlab runner chart with the default settings."
+    if [[ "${answer_using_minio}" == "Y" ]]; then
+        echo "# Create secret for MinIO."
+        check_minio_secret_exists=$(kubectl get secret -n ${GITLAB_RUNNER_NAMESPACE} |  awk '{print $1}' | cut -d: -f1 | grep ^minio-access$ | wc -l)
+        if [[ "${check_minio_secret_exists}" == 1 ]]; then
+            echo "The secret \"minio-access\" already exists,using the created secret."
+        else
+            kubectl create secret generic minio-access -n ${GITLAB_RUNNER_NAMESPACE} \
+                --from-literal=accesskey=${MINIO_ACCESS_KEY} \
+                --from-literal=secretkey=${MINIO_SECRET_KEY}
+        fi
+    fi
+
+    echo
+    sh gitlab-runner/gitlab-runner-helm-installation.sh
+
+    check_helm_runner_name_exists=$(helm list | awk '{print $1}' | cut -d: -f1 | grep ^${GITLAB_RUNNER_NAME}$ | wc -l)
+    if [[ "${check_helm_runner_name_exists}" == 0 ]]; then
         echo
-        sh gitlab-runner/gitlab-runner-helm-installation.sh
+        cat gitlab-runner/gitlab-runner-helm-installation.sh
+        echo
+        echo -e "\033[31m * ERROR: \033[1;m""Failed to install gitlab runner! Please check your settings and execute it by yourself."
+        echo "The script to end."
+    else
+        echo
+        echo "* Finished to install gitlab-runner [${GITLAB_RUNNER_NAME}]."
     fi
-
-   check_helm_runner_exists=`helm list | grep -w ${GITLAB_PROJECT_NAME} | wc -l`
-   if [[ "${check_helm_runner_exists}" == 0 ]]; then
-       echo
-       echo -e "\033[31m * ERROR: \033[1;m""Failed to install gitlab runner! Please check your settings and execute it by yourself."
-       echo
-       cat gitlab-runner/gitlab-runner-helm-installation.sh
-       echo
-       echo "The script to end."
-   else
-       echo
-       echo "* Finished to install gitlab-runner for project [${GITLAB_PROJECT_NAME}]."
-   fi
-   echo
-   exit;
-
+    echo
+    exit;
 }
 
+# ------------------
+# Create a project
+# ------------------
+
+project_create_check(){
+    echo "Tips: Before creating your project, you need to initialize your Kubernetes cluster."
+    echo
+    check_harbor_admin_account
+
+    echo
+    echo
+    echo "# The name of project would be used for creating Harbor project, Harbor user account and Kubernetes namespace."
+    echo "# Project name must consist of lower case alphanumeric characters or '-' "
+    echo "# and must start and end with an alphanumeric character,"
+    echo "# and the length must be greater than two."
+
+    local project_name_regex="^([a-z0-9]+-?[a-z0-9]+)+$"
+    waiting_input_check_regex "Please input project name" ${project_name_regex} "Y" ""
+    local project_name=${GENERAL_INPUT_ANSWER}
+
+    # Checking whether Kubernetes namespace exists.
+    check_ns_exists=$(kubectl get ns | grep -w ${project_name} | wc -l)
+    while [[ "${check_ns_exists}" -gt 0 ]];do
+        waiting_input_check_regex "* There is already existing the same namespace, please retype another project name" ${project_name_regex} "Y" ""
+        project_name=${GENERAL_INPUT_ANSWER}
+        check_ns_exists=$(kubectl get ns | grep -w ${project_name} | wc -l)
+    done
+    # Checking whether Harbor project name exists.
+    check_project_exists=$(curl "${HARBOR_REGISTRY_URL}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l)
+    while [[ "${check_project_exists}" -gt 0 ]];do
+        waiting_input_check_regex "* The project name already exists, please retype again" ${project_name_regex} "Y" ""
+        project_name=${GENERAL_INPUT_ANSWER}
+        check_ns_exists=$(kubectl get ns | grep -w ${project_name} | wc -l)
+        while [[ "${check_ns_exists}" -gt 0 ]];do
+            read -e -p "There is already existing the same namespace, please retype another project name: " project_name
+            while [[ ! "${project_name}" =~ ${project_name_regex} ]]; do
+                read -p "The project name format is not right,please retype again: " -e project_name
+            done
+            check_ns_exists=$(kubectl get ns | grep -w ${project_name} | wc -l)
+        done
+
+        check_project_exists=$(curl "${HARBOR_REGISTRY_URL}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l)
+    done
+
+    PROJECT_NAMESPACE=${project_name}
+    DEW_HARBOR_USER_NAME=${PROJECT_NAMESPACE}
+    DEW_HARBOR_USER_EMAIL=${DEW_HARBOR_USER_NAME}@dew.ms
+
+    # Checking whether user account exists.
+    check_user_exists=$(curl "${HARBOR_REGISTRY_URL}/api/users?username=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l)
+    while [[ "${check_user_exists}" -gt 0 ]]; do
+        echo "There is already existing the same Harbor user account with project name."
+        read -p "Please input another user name to bind with your project: " -e user_name
+        check_user_exists=$(curl "${HARBOR_REGISTRY_URL}/api/users?username=${user_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_name} | wc -l)
+        DEW_HARBOR_USER_NAME=${user_name}
+    done
+
+    echo
+    waiting_input_YN "If you would like to use your custom password for the project user account?" N
+    local answer_custom_user_password=${GENERAL_INPUT_ANSWER}
+    if [[ "${answer_custom_user_password}" == "Y" ]]; then
+        read -e -s -p "Please input the password for the project user account: " user_account_password
+        check_user_password=$(echo "${user_account_password}" | grep -P ${HARBOR_REGISTRY_PASSWORD_REGEX}| wc -l)
+        while [[ "${check_user_password}" -eq 0 ]];do
+            echo
+            read -e -s -p "The password format is not right, please retype: " user_account_password
+            check_user_password=$(echo "${user_account_password}" | grep -P ${HARBOR_REGISTRY_PASSWORD_REGEX}| wc -l)
+        done
+        DEW_HARBOR_USER_PASSWORD=${user_account_password}
+    else
+        echo "* Using the default password \"${DEW_HARBOR_USER_PASSWORD}\" for the project user account."
+    fi
+    echo
+
+
+
+    # The e-mail format checking.
+    echo
+    echo "# E-mail is used for binding the Harbor user account that you created above."
+    local emailRegex="^([a-zA-Z0-9_\-\.\+]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$"
+    waiting_input_check_regex "Please input the e-mail for your Harbor project user account" "${emailRegex}" "Y" "" "${DEW_HARBOR_USER_EMAIL}"
+    local user_email=${GENERAL_INPUT_ANSWER}
+
+    # Checking whether e-mail is registered.
+    local check_email_exists=$(curl "${HARBOR_REGISTRY_URL}/api/users?email=${user_email}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_email} | wc -l)
+    while [[ "${check_email_exists}" -gt 0 ]];do
+        waiting_input_check_regex "The e-mail is already registered, please retype another" "${emailRegex}" "Y" "" "${DEW_HARBOR_USER_EMAIL}"
+        user_email=${GENERAL_INPUT_ANSWER}
+        check_email_exists=$(curl "${HARBOR_REGISTRY_URL}/api/users?email=${user_email}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${user_email} | wc -l)
+    done
+    DEW_HARBOR_USER_EMAIL=${user_email}
+}
+
+project_create(){
+    echo
+    echo "# Starting to create the Harbor user account."
+    ADMIN_AUTHORIZATION=$(echo -n ${HARBOR_REGISTRY_ADMIN}:${HARBOR_REGISTRY_ADMIN_PASSWORD} | base64)
+
+    create_user_result=$(curl -X POST "${HARBOR_REGISTRY_URL}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"email\": \"${DEW_HARBOR_USER_EMAIL}\", \"username\": \"${DEW_HARBOR_USER_NAME}\", \"password\": \"${DEW_HARBOR_USER_PASSWORD}\", \"realname\": \"${DEW_HARBOR_USER_NAME}\", \"comment\": \"init\"}" -o /dev/nullrl -s -w %{http_code} -k)
+    if [[ "${create_user_result}" -ne 201 ]]; then
+        echo "Failed to create user account, the script to end, please retry it later."
+        exit;
+    fi
+    echo "Created Harbor user account [${DEW_HARBOR_USER_NAME}] successfully.The password is ${DEW_HARBOR_USER_PASSWORD}."
+
+    echo
+    echo "# Starting to create Harbor project."
+    USER_AUTHORIZATION=$(echo -n ${DEW_HARBOR_USER_NAME}:${DEW_HARBOR_USER_PASSWORD} | base64)
+
+    create_project_result_code=$(curl -X POST "${HARBOR_REGISTRY_URL}/api/projects" -H "accept: application/json" -H "authorization: Basic ${USER_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"project_name\": \"${PROJECT_NAMESPACE}\"}" -o /dev/nullrl -s -w %{http_code} -k)
+    if [[ "${create_project_result_code}" -ne 201 ]]; then
+        echo "Failed to create project, the script to end, please retry it later."
+        exit;
+    fi
+    echo "The project [${PROJECT_NAMESPACE}] is created successfully."
+
+    echo
+    echo "# Starting to initialize the project in the Kubernetes Cluster."
+    kubectl create namespace ${PROJECT_NAMESPACE}
+
+    kubectl create rolebinding default:service-discovery-client \
+        -n ${PROJECT_NAMESPACE} \
+        --clusterrole service-discovery-client \
+        --serviceaccount ${PROJECT_NAMESPACE}:default
+
+    kubectl -n ${PROJECT_NAMESPACE} create secret docker-registry dew-registry \
+        --docker-server=${HARBOR_REGISTRY_URL} \
+        --docker-username=${DEW_HARBOR_USER_NAME} \
+        --docker-password=${DEW_HARBOR_USER_PASSWORD} \
+        --docker-email=${DEW_HARBOR_USER_EMAIL}
+
+    kubectl -n ${PROJECT_NAMESPACE} patch serviceaccount default \
+        -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
+
+    project_ingress_create
+    echo
+    local check_ingress_exist=$(kubectl get ing dew-ingress -n ${PROJECT_NAMESPACE} | wc -l)
+    if [[ "${check_ingress_exist}" -eq 0 ]]; then
+        echo -e "\033[31m * Failed to created Ingress, the script to end. Please create the Ingress yourself. \033[1;m"
+        exit;
+    else
+        echo "Finished to create project [${PROJECT_NAMESPACE}]."
+        echo "The script to end."
+        exit;
+    fi
+}
+
+project_ingress_create(){
+    # Creating Ingress
+    # More details: https://kubernetes.io/docs/concepts/services-networking/ingress/
+    #######################
+    # apiVersion: extensions/v1beta1
+    # kind: Ingress
+    # metadata:
+    #   annotations:
+    #     # For more details: https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/
+    #     # The example: https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/rewrite
+    #     nginx.ingress.kubernetes.io/rewrite-target: /\$1
+    #   name: dew-ingress
+    #   namespace: $PROJECT_NAMESPACE
+    # spec:
+    #   rules:
+    #     # Your custom rules.
+    #######################
+    echo
+    echo "# Starting to create Ingress in the Kubernetes Cluster."
+
+    echo
+    echo "# The Nginx rewrite target is used for the annotation of Ingress."
+    echo "# See example: https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/rewrite"
+    echo "# All of the nginx ingress annotations: https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/"
+    echo "# You can edit the Ingress freely using below cmd after the script to end."
+    echo "# $ kubectl edit ingress dew-ingress -n ${PROJECT_NAMESPACE}"
+    echo
+    read -e -p "Please input Nginx rewrite target(not required):" nginx_rewrite_target
+
+    echo
+    echo "# Ingress backend host params is used for custom the host of Kubernetes Ingress rules."
+    echo "# The params should accord with the DNS label."
+    echo "# Service name must consist of lower case alphanumeric characters or '-', "
+    echo "# start with an alphabetic character, and end with an alphanumeric character."
+    echo "# Using the space to separate your host url, Kubernetes service name and service port."
+    echo "# [your.host/path service-name:service-port]"
+    echo "# e.g.  ${INGRESS_HOST_EXAMPLE}"
+    echo "* You could add another group of Ingress backend host params after Input."
+    echo
+
+    local backend_str_regex="^[a-z0-9-_.]+/?.+\s[a-z0-9-]+:{1}[a-z0-9]+$"
+
+    check_regex_match_with_grep "Please input Ingress backend host params" ${backend_str_regex} "Ingress backend host params"
+    deal_ingress_backend_yaml "${GENERAL_INPUT_ANSWER}"
+    local ingress_ingress_host_yaml=${INGRESS_HOST_YAML_VALUE}
+
+    waiting_input_YN "Would you like add another group Ingress host?" "N"
+    answer_add_ingress_host=${GENERAL_INPUT_ANSWER}
+    while [[ ${answer_add_ingress_host} == "Y" ]]; do
+        check_regex_match_with_grep "Please input a group of your Ingress backend host params" ${backend_str_regex} "Ingress backend host params"
+        deal_ingress_backend_yaml "${GENERAL_INPUT_ANSWER}"
+        ingress_ingress_host_yaml+=${INGRESS_HOST_YAML_VALUE}
+        waiting_input_YN "Would you like add another group Ingress host?" "N"
+        answer_add_ingress_host=${GENERAL_INPUT_ANSWER}
+    done
+
+    # Creating Ingress
+    cat <<EOF | kubectl -n ${PROJECT_NAMESPACE} apply -f -
+    apiVersion: extensions/v1beta1
+    kind: Ingress
+    metadata:
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /${nginx_rewrite_target}
+      name: dew-ingress
+    spec:
+      rules:
+${ingress_ingress_host_yaml}
+EOF
+}
 
 
 # ------------------
@@ -867,30 +828,29 @@ echo ""
 echo "=================== Dew DevOps Script ==================="
 echo ""
 
-
 PS3='Choose your option: '
 
-select option in "Init cluster" "Create a project" "Install a gitlab runner project"
+select option in "Init cluster" "Create a project"
 
 do
     case ${option} in
      'Init cluster')
       echo "========== Init cluster =========="
-      init_env_check
-      init_cluster
+      echo "# * Create the cluster role for service discovery"
+      echo "# * Install the gitlab runner"
+      check_kubernetes_env
+      init_kubernetes_cluster
+      init_helm_gitlab_repo
+      init_gitlab_runner
+      echo "=================================="
       break;;
      'Create a project')
-      echo "========== Create a Project =========="
-      init_env_check
-      harbor_status_check
+      echo "======== Create a Project ========"
+      check_kubernetes_env
+      check_harbor_status
       project_create_check
       project_create
-      break;;
-     'Install a gitlab runner project')
-      echo "========== Install a gitlab runner for project =========="
-      init_env_check
-      add_helm_gitlab_repo
-      install_gitlab_runner_project
+      echo "=================================="
       break;;
     esac
 done
