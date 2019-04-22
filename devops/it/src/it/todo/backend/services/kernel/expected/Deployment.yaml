@@ -62,7 +62,9 @@ spec:
           initialDelaySeconds: 10
           periodSeconds: 60
         resources:
-          limits: {}
+          limits:
+            memory: 1Gi
+            cpu: 800m
           requests: {}
       nodeSelector:
         group: app

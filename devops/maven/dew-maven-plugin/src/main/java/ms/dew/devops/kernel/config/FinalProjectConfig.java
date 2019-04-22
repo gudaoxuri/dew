@@ -16,6 +16,8 @@
 
 package ms.dew.devops.kernel.config;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -34,18 +36,21 @@ public class FinalProjectConfig extends DewProfile {
     private String gitCommit = "";
     private String scmUrl = "";
     private String appName = "";
+    private String appShowName = "";
     private String appGroup = "";
     private String mvnGroupId;
     private String mvnArtifactId;
     private String mvnDirectory;
     private String mvnTargetDirectory;
+    private String skipReason = "";
+    private Set<String> executeSuccessfulMojos = new HashSet<>();
 
     private DewProfile appendProfile;
 
     /**
      * 是否是自定义版本.
      *
-     * @return 是否是自定义版本
+     * @return 是否是自定义版本 boolean
      */
     public boolean isCustomVersion() {
         return !GIT_HASH.matcher(this.getGitCommit()).matches();
@@ -121,6 +126,24 @@ public class FinalProjectConfig extends DewProfile {
      */
     public void setAppName(String appName) {
         this.appName = appName;
+    }
+
+    /**
+     * Gets app show name.
+     *
+     * @return the app show name
+     */
+    public String getAppShowName() {
+        return appShowName;
+    }
+
+    /**
+     * Sets app show name.
+     *
+     * @param appShowName the app show name
+     */
+    public void setAppShowName(String appShowName) {
+        this.appShowName = appShowName;
     }
 
     /**
@@ -232,6 +255,42 @@ public class FinalProjectConfig extends DewProfile {
     }
 
     /**
+     * Gets skip reason.
+     *
+     * @return the skip reason
+     */
+    public String getSkipReason() {
+        return skipReason;
+    }
+
+    /**
+     * Sets skip reason.
+     *
+     * @param skipReason the skip reason
+     */
+    public void setSkipReason(String skipReason) {
+        this.skipReason = skipReason;
+    }
+
+    /**
+     * Gets execute successful mojos.
+     *
+     * @return the execute successful mojos
+     */
+    public Set<String> getExecuteSuccessfulMojos() {
+        return executeSuccessfulMojos;
+    }
+
+    /**
+     * Sets execute successful mojos.
+     *
+     * @param executeSuccessfulMojos the execute successful mojos
+     */
+    public void setExecuteSuccessfulMojos(Set<String> executeSuccessfulMojos) {
+        this.executeSuccessfulMojos = executeSuccessfulMojos;
+    }
+
+    /**
      * Get current image name.
      *
      * @return the current image name
@@ -264,4 +323,16 @@ public class FinalProjectConfig extends DewProfile {
                 + namespace + "/"
                 + appName + ":" + specTag;
     }
+
+
+    /**
+     * Skip this project.
+     *
+     * @param reason the reason
+     */
+    public void skip(String reason) {
+        super.setSkip(true);
+        this.setSkipReason(reason);
+    }
+
 }

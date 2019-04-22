@@ -17,6 +17,7 @@
 package ms.dew.devops.kernel.config;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -28,7 +29,7 @@ import java.util.Map;
  */
 public class FinalConfig {
 
-    private Map<String, FinalProjectConfig> projects = new HashMap<>();
+    private Map<String, FinalProjectConfig> projects = new LinkedHashMap<>();
 
     /**
      * Gets projects.

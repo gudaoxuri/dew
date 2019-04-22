@@ -269,6 +269,11 @@ public class ConfigBuilder {
         static void fillApp(FinalProjectConfig finalProjectConfig, MavenProject mavenProject) {
             finalProjectConfig.setAppGroup(mavenProject.getGroupId());
             finalProjectConfig.setAppName(mavenProject.getArtifactId());
+            if (mavenProject.getName() != null && !mavenProject.getName().trim().isEmpty()) {
+                finalProjectConfig.setAppShowName(mavenProject.getName());
+            } else {
+                finalProjectConfig.setAppShowName(mavenProject.getArtifactId());
+            }
             if (finalProjectConfig.getKind() == AppKind.FRONTEND) {
                 finalProjectConfig.getApp().setPort(80);
                 finalProjectConfig.getApp().setTraceLogEnabled(false);

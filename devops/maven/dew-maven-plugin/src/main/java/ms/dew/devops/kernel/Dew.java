@@ -22,10 +22,8 @@ import ms.dew.devops.helper.DockerHelper;
 import ms.dew.devops.helper.GitHelper;
 import ms.dew.devops.helper.KubeHelper;
 import ms.dew.devops.helper.YamlHelper;
-import ms.dew.devops.kernel.config.ConfigBuilder;
-import ms.dew.devops.kernel.config.DewConfig;
-import ms.dew.devops.kernel.config.FinalConfig;
-import ms.dew.devops.kernel.config.FinalProjectConfig;
+import ms.dew.devops.kernel.config.*;
+import ms.dew.devops.kernel.function.ExecuteEventProcessor;
 import ms.dew.notification.NotifyConfig;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
@@ -56,6 +54,8 @@ public class Dew {
 
     /**
      * 全局停止标识，如果为true则表示停止后续各项目的所有操作.
+     * <p>
+     * 目前仅在不存在需要处理的项目及人为中止处理的情况下为 true
      */
     public static boolean stopped = false;
     /**
@@ -291,6 +291,7 @@ public class Dew {
                 });
                 initNotify();
                 initMock(mockClasspath);
+                shutdownHook();
             }
         }
 
@@ -319,6 +320,13 @@ public class Dew {
             String basicConfig = "";
             if (new File(basicDirectory + ".dew").exists()) {
                 basicConfig = ConfigBuilder.mergeProfiles($.file.readAllByPathName(basicDirectory + ".dew", "UTF-8")) + "\r\n";
+                DewConfig dewConfig = YamlHelper.toObject(DewConfig.class, basicConfig);
+                if (inputProfile.equalsIgnoreCase(Dew.Constants.FLAG_DEW_DEVOPS_DEFAULT_PROFILE)) {
+                    dewConfig.getProfiles().clear();
+                    Config.basicProfileConfig = dewConfig;
+                } else {
+                    Config.basicProfileConfig = dewConfig.getProfiles().get(inputProfile);
+                }
             }
             for (MavenProject project : mavenSession.getProjects()) {
                 String projectDirectory = project.getBasedir().getPath() + File.separator;
@@ -355,7 +363,7 @@ public class Dew {
          * Init notify.
          */
         private static void initNotify() {
-            Map<String, NotifyConfig> configMap = Dew.Config.getProjects().entrySet().stream()
+            Map<String, NotifyConfig> configMap = Config.getProjects().entrySet().stream()
                     .filter(config -> config.getValue().getNotify() != null)
                     .collect(Collectors.toMap(Map.Entry::getKey, config -> config.getValue().getNotify()));
             configMap.values().forEach(config -> {
@@ -364,6 +372,15 @@ public class Dew {
                     config.getArgs().put("msgType", "markdown");
                 }
             });
+            DewProfile dewProfile = Config.basicProfileConfig;
+            if (dewProfile != null && dewProfile.getNotify() != null) {
+                if (!dewProfile.getNotify().getArgs().containsKey("msgType")) {
+                    // 默认使用Markdown格式
+                    dewProfile.getNotify().getArgs().put("msgType", "markdown");
+                }
+                // 添加key为空的全局通知配置
+                configMap.put("", dewProfile.getNotify());
+            }
             ms.dew.notification.Notify.init(configMap, flag -> "");
         }
 
@@ -390,12 +407,23 @@ public class Dew {
             }
         }
 
+        /**
+         * Init shutdown process.
+         */
+        private static void shutdownHook() {
+            Runtime.getRuntime().addShutdownHook(new Thread(() ->
+                    ExecuteEventProcessor.onShutdown(Config.getProjects())));
+        }
+
     }
 
     /**
      * 配置输出.
      */
     public static class Config {
+
+        // 基础配置，全局 .dew 配置对应的当前Profile
+        private static DewProfile basicProfileConfig;
 
         // 最终的配置
         private static FinalConfig config = new FinalConfig();
@@ -477,77 +505,6 @@ public class Dew {
                 );
             } catch (MojoExecutionException e) {
                 throw new ProcessException("Invoke maven mojo error", e);
-            }
-        }
-
-    }
-
-    /**
-     * 通知.
-     * <p>
-     * 支持 dew notification 模块的通知功能
-     */
-    public static class Notify {
-
-        /**
-         * Success.
-         *
-         * @param mojoName the mojo name
-         */
-        public static void success(String mojoName) {
-            success("", mojoName);
-        }
-
-        /**
-         * Success.
-         *
-         * @param message  the message
-         * @param mojoName the mojo name
-         */
-        public static void success(String message, String mojoName) {
-            if (!mojoName.equalsIgnoreCase("release")
-                    && !mojoName.equalsIgnoreCase("rollback")
-                    && !mojoName.equalsIgnoreCase("scale")
-                    && !mojoName.equalsIgnoreCase("unrelease")
-            ) {
-                return;
-            }
-            send(null, message, mojoName);
-        }
-
-        /**
-         * Fail.
-         *
-         * @param throwable the throwable
-         * @param mojoName  the mojo name
-         */
-        public static void fail(Throwable throwable, String mojoName) {
-            send(throwable, "", mojoName);
-        }
-
-        private static void send(Throwable throwable, String message, String mojoName) {
-            String flag = Dew.Config.getCurrentProject().getId();
-            if (!ms.dew.notification.Notify.contains(flag)) {
-                return;
-            }
-            String content =
-                    "![](http://dew.ms/images/" + (throwable != null ? "failure" : "successful") + ".png)"
-                            + "\n"
-                            + "# " + Dew.Config.getCurrentProject().getAppName() + "\n"
-                            + "> " + Dew.Config.getCurrentProject().getAppGroup() + "\n"
-                            + "\n"
-                            + "## " + (throwable != null ? "Failure" : "Successful")
-                            + " : [" + mojoName + "] @ [" + Dew.Config.getCurrentProject().getProfile() + "]\n";
-            if (message != null && !message.trim().isEmpty()
-                    || throwable != null) {
-                content += "> ---------\n"
-                        + "> " + message + "\n"
-                        + "> " + throwable + "\n";
-            }
-            if (throwable != null) {
-                ms.dew.notification.Notify.send(flag, content, "DevOps process successful");
-            } else {
-                ms.dew.notification.Notify.send(flag, content, "DevOps process failure");
             }
         }
 

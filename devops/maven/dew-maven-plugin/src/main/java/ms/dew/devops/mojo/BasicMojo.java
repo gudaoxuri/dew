@@ -17,8 +17,9 @@
 package ms.dew.devops.mojo;
 
 import io.kubernetes.client.ApiException;
-import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.exception.ProcessException;
+import ms.dew.devops.kernel.Dew;
+import ms.dew.devops.kernel.function.ExecuteEventProcessor;
 import ms.dew.devops.util.DewLog;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
@@ -183,9 +184,14 @@ public abstract class BasicMojo extends AbstractMojo {
             Dew.Init.init(session, pluginManager, profile,
                     dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,
                     customVersion, mockClasspath);
-            if (!preExecute() || Dew.Config.getCurrentProject() == null || Dew.Config.getCurrentProject().isSkip()) {
-                // 各项目 .dew 配置 skip=true || 不支持的app kind
-                Dew.log.info("Skipped");
+            if (Dew.Config.getCurrentProject() == null || Dew.Config.getCurrentProject().isSkip()) {
+                // 这多半是正常的行为
+                Dew.log.info("The current project kind does not match or is manually set to skip");
+                return;
+            }
+            if (!preExecute()) {
+                Dew.log.warn("Pre-execution error");
+                Dew.Config.getCurrentProject().skip("Pre-execution error");
                 return;
             }
             if (Dew.stopped) {
@@ -193,13 +199,16 @@ public abstract class BasicMojo extends AbstractMojo {
             }
             if (executeInternal()) {
                 Dew.log.info("Successful");
-                Dew.Notify.success(getMojoName());
+                ExecuteEventProcessor.onMojoExecuteSuccessful(getMojoName(), Dew.Config.getCurrentProject(), "");
             } else {
-                Dew.Config.getCurrentProject().setSkip(true);
+                // 此错误不会中止程序
+                Dew.Config.getCurrentProject().skip("Internal execution error");
             }
         } catch (Exception e) {
+            // 此错误会中止程序
             Dew.log.error("Process error", e);
-            Dew.Notify.fail(e, getMojoName());
+            Dew.Config.getCurrentProject().skip("Process error : " + e.getMessage());
+            ExecuteEventProcessor.onMojoExecuteFailure(getMojoName(), Dew.Config.getCurrentProject(), e);
             throw new ProcessException("Process error", e);
         }
     }

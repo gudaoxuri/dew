@@ -133,7 +133,7 @@ public class NeedProcessChecker {
                     || Dew.Config.getCurrentMavenProject().getDistributionManagement().getSnapshotRepository().getUrl() == null
                     || Dew.Config.getCurrentMavenProject().getDistributionManagement().getSnapshotRepository().getUrl().trim().isEmpty()) {
                 Dew.log.warn("Maven distribution snapshot repository not found");
-                config.setSkip(true);
+                config.skip("Maven distribution snapshot repository not found");
             }
             return;
         }
@@ -143,7 +143,7 @@ public class NeedProcessChecker {
                 || Dew.Config.getCurrentMavenProject().getDistributionManagement().getRepository().getUrl() == null
                 || Dew.Config.getCurrentMavenProject().getDistributionManagement().getRepository().getUrl().trim().isEmpty()) {
             Dew.log.warn("Maven distribution repository not found");
-            config.setSkip(true);
+            config.skip("Maven distribution repository not found");
             return;
         }
         String repoUrl = Dew.Config.getCurrentMavenProject().getDistributionManagement().getRepository().getUrl().trim();
@@ -159,7 +159,7 @@ public class NeedProcessChecker {
         }
         // 已存在不需要部署
         Dew.log.warn("Maven repository exist this version :" + Dew.Config.getCurrentMavenProject().getArtifactId());
-        config.setSkip(true);
+        config.skip("Maven repository exist this version :" + Dew.Config.getCurrentMavenProject().getArtifactId());
     }
 
     /**
@@ -179,7 +179,7 @@ public class NeedProcessChecker {
                     fetchLastVersionDeployCommit(config.getId() + "-append", config.getAppName(), config.getAppendProfile().getNamespace());
             if (lastVersionDeployCommit != null && lastVersionDeployCommit.equals(lastVersionDeployCommitFromProfile)) {
                 Dew.log.warn("Reuse last version " + lastVersionDeployCommit + " has been deployed");
-                config.setSkip(true);
+                config.skip("Reuse last version " + lastVersionDeployCommit + " has been deployed");
             } else {
                 Dew.log.info("Reuse last version " + lastVersionDeployCommitFromProfile + " from " + config.getReuseLastVersionFromProfile());
                 config.setGitCommit(lastVersionDeployCommitFromProfile);
@@ -191,7 +191,7 @@ public class NeedProcessChecker {
                 List<String> changedFiles = fetchGitDiff(lastVersionDeployCommit);
                 // 判断有没有代码变更
                 if (!hasUnDeployFiles(changedFiles, config)) {
-                    config.setSkip(true);
+                    config.skip("Code that has no changes compared to the current version");
                 }
             }
         }

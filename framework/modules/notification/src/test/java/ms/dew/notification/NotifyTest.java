@@ -209,6 +209,23 @@ public class NotifyTest {
                 "DevOps通知");
         Assert.assertTrue(result.ok());
 
+        result = Notify.send("dd_markdown",
+                "# The execution result \n"
+                        + "-----------------\n"
+                        + "## Executed\n"
+                        + "- Kernel1\n"
+                        + "- Kernel2\n"
+                        + "-----------------\n"
+                        + "## Non-execution\n"
+                        + "- Kernel3\n"
+                        + "> some reason.....\n"
+                        + "- Kernel4\n"
+                        + "> some reason.....\n"
+                        + "\n"
+                        + "-----------------\n",
+                "DevOps完成通知");
+        Assert.assertTrue(result.ok());
+
     }
 
     /**
