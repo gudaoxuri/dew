@@ -1,0 +1,71 @@
+[[dew-2-migration-guide]]
+=== Dew 2.x Migration guide
+
+本手册适用于从原生 Spring Cloud 项目及 Dew 1.x 项目迁移到 Dew 2.x 的操作说明。
+
+==== Framework 迁移
+
+. [Spring Boot] Spring boot 1.x 迁移到 Spring boot 2.x
+
+  # @see https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide
+
+. [Spring Cloud] 删除所有 ``eureka`` 相关的配置
+
+. [Dew] 修改 ``dew-parent`` 的版本号到最新版本
+. [Dew] 全局查询替换 ``com.tairanchina.csp.dew`` 到 ``ms.dew``
+
+
+TBD 认证修改
+
+
+==== DevOps 实现
+
+. 使用 ``dew-devops.sh`` 初始化集群并创建项目
+
+  TBD
+
+. 安装并设置Spring Cloud Config
+
+  # 添加helm库
+  helm repo add helm-dew-spring-cloud-config https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/chart/dew-spring-cloud-config/
+  # 安装，注意域名要能被Kubernetes Pod访问
+  helm install helm-dew-spring-cloud-config/dew-spring-cloud-config --name dew-spring-cloud-config --namespace devops \
+      --set ingress.hosts={config.dew.ms}
+  # 修改配置，修改后需要删除Pod以实现重启获取最新配置
+  kubectl -n devops edit cm custom-config
+  # e.g.
+  # spring:
+  #   cloud:
+  #     config:
+  #       server:
+  #         git:
+  #           uri: https://rep.360taihe.com/env/csp-message.git
+  #           username: cdman
+  #           password: cdman123
+  #   security:
+  #     user:
+  #       name: dew
+  #       password: dew!123456
+  #
+  # encrypt:
+  #   key: dsffjs%^skeSfddeDFS
+
+. 在项目中添加``.dew``配置
+
+  # 在根目录添加 .dew ,至少添加 使用到的profile 及 namespace 信息
+  # e.g.
+  # 默认通知配置，详见 Dew的通知处理模块
+  profiles:
+    test:
+      namespace: dew-test
+    uat:
+      namespace: dew-uat
+    prod:
+      namespace: dew-prod
+  # （可选）根据实际情况为每个项目添加 .dew 文件以添加各项目的特殊配置
+
+
+# 修改项目中的Spring Cloud Config配置
+
+logback-spring.xml
+

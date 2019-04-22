@@ -708,6 +708,7 @@ dew:
       allow-headers: # 允许头信息 x-requested-with,content-type
 ----
 
+[[framework-user-manual-auth]]
 ==== 权限认证
 
 ----

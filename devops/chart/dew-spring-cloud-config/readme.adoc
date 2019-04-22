@@ -1,3 +1,4 @@
+[[helm-chart-spring-cloud-config]]
 ==== Dew Helm Chart : Spring Cloud Config
 
 本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/
@@ -16,6 +17,8 @@ curl http://dew:override@config.dew.ms/encrypt -d abc
 
 # 3. 修改配置，比如加入git设置
 kubectl -n devops edit cm custom-config
+
+# 4. 配置修改后需要删除Pod以实现重启获取最新配置
 ----
 
 [source,bash]

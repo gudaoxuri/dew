@@ -1,2 +1,27 @@
 [[devops-best-practices]]
 === DevOps最佳实践[TBD]
+
+==== 为什么不用 fabric8
+
+Fabric8的maven插件( https://github.com/fabric8io/docker-maven-plugin )比较成熟，并且被 Spring Cloud Kubernetes 官方推荐( https://github.com/fabric8-quickstarts/spring-boot-ribbon )。
+
+``dew`` 之所以没有使用fabric8是因为设计理念有一定差异，``dew`` 追求 ``轻量化、在一定规范下的可定制化、集成化`` ，
+比如实现了基于环境的部署流程，自动判断子项目是否需要发布、版本管理、版本重用模式、钉钉通知等，这些差异是导致自研的原因。
+当然在实现上也借鉴了fabric8比较好的做法，比如JVM参数的自动化处理。
+
+==== 认证处理
+
+在传统的Spring Cloud工程中多使用网关（如 Zuul、Spring Cloud Gateway）做统一的认证处理，但在Kubernetes下使用了 ``ingress`` ，如果再加上网关会导致多了一层转发。
+并且Kubernetes使用自身的Service已经实现了网关的服务发现，所以再引入网关就显得累赘了。
+
+去掉网关后认证处理会下沉到各业务组件， ``dew`` 提供了基础的认证支持 <<framework-user-manual-auth>> 也可使用 Spring Cloud Security 方案实现。
+
+==== 统一配置处理
+
+Spring Cloud Kubernetes 实现了基于ConfigMap/Secrets的统一配置管理，但由于后者暂未解决版本化管理、自定义密钥的加解密及友好的配置编辑能力，
+故推荐使用Spring Cloud Config， ``dew`` 基于Spring Cloud Config封装了Chart，详见 <<helm-chart-spring-cloud-config>> 。
+
+==== JVM设置
+
+默认情况下 ``dew`` 会根据容器环境自行设置JVM参数，规则及自定义配置见 <<>> 。
+
