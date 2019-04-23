@@ -191,11 +191,13 @@ public abstract class BasicMojo extends AbstractMojo {
             }
             if (Dew.Config.getCurrentProject().isSkip()) {
                 // 这多半是正常的行为
+                disabledDefaultBehavior();
                 Dew.log.info("The current project is manually set to skip");
                 return;
             }
             if (!preExecute()) {
                 Dew.log.warn("Pre-execution error");
+                disabledDefaultBehavior();
                 Dew.Config.getCurrentProject().skip("Pre-execution error");
                 return;
             }
@@ -207,6 +209,7 @@ public abstract class BasicMojo extends AbstractMojo {
                 ExecuteEventProcessor.onMojoExecuteSuccessful(getMojoName(), Dew.Config.getCurrentProject(), "");
             } else {
                 // 此错误不会中止程序
+                disabledDefaultBehavior();
                 Dew.Config.getCurrentProject().skip("Internal execution error");
             }
         } catch (Exception e) {
@@ -216,6 +219,12 @@ public abstract class BasicMojo extends AbstractMojo {
             ExecuteEventProcessor.onMojoExecuteFailure(getMojoName(), Dew.Config.getCurrentProject(), e);
             throw new ProcessException("Process error", e);
         }
+    }
+
+    private void disabledDefaultBehavior() {
+        Dew.Config.getMavenProperties().setProperty("maven.test.skip", "true");
+        Dew.Config.getMavenProperties().setProperty("maven.install.skip", "true");
+        Dew.Config.getMavenProperties().setProperty("maven.deploy.skip", "true");
     }
 
     private void formatParameters() {
