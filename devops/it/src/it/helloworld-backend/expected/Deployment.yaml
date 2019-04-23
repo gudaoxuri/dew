@@ -34,9 +34,7 @@ spec:
       containers:
       - env:
         - name: JAVA_OPTIONS
-          value: ' -Dspring.profiles.active=test -Dserver.port=8080 -Dopentracing.jaeger.log-spans=false
-            -Dopentracing.jaeger.probabilistic-sampler.sampling-rate=0.1 -Dspring.web.skip-pattern=/actuator/.*|/api-docs.*|/swagger.*|.*\\.png|.*\\.css|.*\\.js|.*\\.html|/favicon.ico|/hystrix.stream
-            -Dmanagement.endpoints.web.exposure.include=* -Dmetrics.tags:application=${spring.application.name}'
+          value: ' -Dspring.profiles.active=test -Dserver.port=8080'
         image: harbor.trc.com/dew-test/helloworld-backend:0001
         imagePullPolicy: IfNotPresent
         livenessProbe:
@@ -45,7 +43,7 @@ spec:
             path: /actuator/health
             port: 8080
             scheme: HTTP
-          initialDelaySeconds: 60
+          initialDelaySeconds: 30
           periodSeconds: 30
         name: dew-app
         ports:
@@ -62,7 +60,7 @@ spec:
             port: 8080
             scheme: HTTP
           initialDelaySeconds: 10
-          periodSeconds: 60
+          periodSeconds: 30
         resources:
           limits: {}
           requests: {}

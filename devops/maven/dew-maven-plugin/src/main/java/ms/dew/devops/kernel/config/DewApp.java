@@ -54,13 +54,13 @@ public class DewApp {
     private int readinessFailureThreshold = 3;
     // 是否启用追踪日志，仅用于后端服务
     private boolean traceLogEnabled = true;
-    // 是否在控制台输出spans日志
+    // 是否在控制台输出spans日志，仅用于后端服务
     private boolean traceLogSpans = false;
-    // 设置跳过追踪的接口，为空则使用官方默认值
+    // 设置跳过追踪的接口，为空则使用官方默认值，仅用于后端服务
     // @see https://github.com/opentracing-contrib/java-spring-web/blob/master/opentracing-spring-web-starter/src/main/java/io/opentracing/contrib/spring/web/starter/WebTracingProperties.java
-    private String traceWebSkipPattern = "/actuator/.*|/api-docs.*|/swagger.*|.*\\\\.png|.*\\\\.css|.*\\\\.js|.*\\\\.html|/favicon.ico|/hystrix.stream";
-    // 追踪日志随机采样比率
-    private Double traceProbabilisticSamplingRate = 0.1;
+    private String traceWebSkipPattern = "";
+    // 追踪日志随机采样比率，为0则使用全量采样，仅用于后端服务
+    private Double traceProbabilisticSamplingRate = 0D;
     // 是否启用Prometheus的metrics，仅用于后端服务
     private boolean metricsEnabled = true;
     // 节点亲和性配置
@@ -400,7 +400,6 @@ public class DewApp {
 
     /**
      * Gets node selector.
-     *
      * @return the node selector
      */
     public Map<String, String> getNodeSelector() {
