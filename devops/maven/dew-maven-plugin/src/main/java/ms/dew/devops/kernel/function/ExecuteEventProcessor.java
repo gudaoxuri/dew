@@ -87,12 +87,12 @@ public class ExecuteEventProcessor {
                 .map(project -> "- " + project.getAppShowName())
                 .collect(Collectors.joining("\n")));
         content.append("\n-----------------\n")
-                .append("## Non-execution");
+                .append("## Non-execution\n");
         content.append(projects.values().stream()
                 .filter(project -> !executionProjects.contains(project))
                 .map(project -> {
                     String reason = project.getSkipReason().isEmpty() ? "unknown error" : project.getSkipReason();
-                    return "- " + project.getAppShowName() + "\n> " + reason;
+                    return "- " + project.getAppShowName() + "\n> " + reason + "\n";
                 })
                 .collect(Collectors.joining("\n")));
         content.append("\n-----------------\n");
