@@ -77,9 +77,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                         .withEnv(new V1EnvVarBuilder()
                                 .withName("JAVA_OPTIONS")
                                 // 附加spring boot的环境信息
-                                .withValue(config.getApp().getRunOptions()
-                                        + " -Dspring.profiles.active=" + config.getProfile()
-                                        + " -Dserver.port=" + config.getApp().getPort())
+                                .withValue(setContainerEnvJavaOptionsValue(config))
                                 .build())
                         .withLivenessProbe(new V1ProbeBuilder()
                                 .withHttpGet(new V1HTTPGetActionBuilder()
@@ -151,5 +149,27 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                         .build())
                 .build();
         return builder.build();
+    }
+
+    private String setContainerEnvJavaOptionsValue(FinalProjectConfig config) {
+        String containerEnvJavaOptionsValue = config.getApp().getRunOptions()
+                + " -Dspring.profiles.active=" + config.getProfile()
+                + " -Dserver.port=" + config.getApp().getPort();
+        if (config.getApp().isTraceLogEnabled()) {
+            containerEnvJavaOptionsValue = containerEnvJavaOptionsValue
+                    + " -Dopentracing.jaeger.log-spans=" + config.getApp().isTraceLogSpans();
+            if (!config.getApp().getTraceProbabilisticSamplingRate().equals(0D)) {
+                containerEnvJavaOptionsValue = containerEnvJavaOptionsValue + " -Dopentracing.jaeger.probabilistic-sampler.sampling-rate=" + config.getApp().getTraceProbabilisticSamplingRate();
+            }
+            if (!config.getApp().getTraceWebSkipPattern().isEmpty()) {
+                containerEnvJavaOptionsValue = containerEnvJavaOptionsValue + " -Dspring.web.skip-pattern=" + config.getApp().getTraceWebSkipPattern();
+            }
+        }
+        if (config.getApp().isMetricsEnabled()) {
+            containerEnvJavaOptionsValue = containerEnvJavaOptionsValue
+                    + " -Dmanagement.endpoints.web.exposure.include=*"
+                    + " -Dmetrics.tags:application=${spring.application.name}";
+        }
+        return containerEnvJavaOptionsValue;
     }
 }

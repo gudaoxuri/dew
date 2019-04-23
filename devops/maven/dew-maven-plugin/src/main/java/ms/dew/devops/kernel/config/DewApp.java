@@ -54,6 +54,15 @@ public class DewApp {
     private int readinessFailureThreshold = 3;
     // 是否启用追踪日志，仅用于后端服务
     private boolean traceLogEnabled = true;
+    // 是否在控制台输出spans日志
+    private boolean traceLogSpans = false;
+    // 设置跳过追踪的接口，为空则使用官方默认值
+    // @see https://github.com/opentracing-contrib/java-spring-web/blob/master/opentracing-spring-web-starter/src/main/java/io/opentracing/contrib/spring/web/starter/WebTracingProperties.java
+    private String traceWebSkipPattern = "/actuator/.*|/api-docs.*|/swagger.*|.*\\\\.png|.*\\\\.css|.*\\\\.js|.*\\\\.html|/favicon.ico|/hystrix.stream";
+    // 追踪日志随机采样比率
+    private Double traceProbabilisticSamplingRate = 0.1;
+    // 是否启用Prometheus的metrics，仅用于后端服务
+    private boolean metricsEnabled = true;
     // 节点亲和性配置
     // 默认选择标签为 group=app 的节点
     private Map<String, String> nodeSelector = new HashMap<String, String>() {
@@ -317,6 +326,77 @@ public class DewApp {
         this.traceLogEnabled = traceLogEnabled;
     }
 
+    /**
+     * Is trace log spans enabled boolean.
+     *
+     * @return the boolean
+     */
+    public boolean isTraceLogSpans() {
+        return traceLogSpans;
+    }
+
+    /**
+     * Sets trace log spans enabled.
+     *
+     * @param traceLogSpans the trace log spans enabled
+     */
+    public void setTraceLogSpans(boolean traceLogSpans) {
+        this.traceLogSpans = traceLogSpans;
+    }
+
+    /**
+     * Gets trace web skip pattern.
+     *
+     * @return the trace web skip pattern
+     */
+    public String getTraceWebSkipPattern() {
+        return traceWebSkipPattern;
+    }
+
+    /**
+     * Sets trace web skip pattern.
+     *
+     * @param traceWebSkipPattern the trace web skip pattern
+     */
+    public void setTraceWebSkipPattern(String traceWebSkipPattern) {
+        this.traceWebSkipPattern = traceWebSkipPattern;
+    }
+
+    /**
+     * Gets trace probabilistic sampling rate.
+     *
+     * @return the trace probabilistic sampling rate
+     */
+    public Double getTraceProbabilisticSamplingRate() {
+        return traceProbabilisticSamplingRate;
+    }
+
+    /**
+     * Sets trace probabilistic sampling rate.
+     *
+     * @param traceProbabilisticSamplingRate the trace probabilistic sampling rate
+     */
+    public void setTraceProbabilisticSamplingRate(Double traceProbabilisticSamplingRate) {
+        this.traceProbabilisticSamplingRate = traceProbabilisticSamplingRate;
+    }
+
+    /**
+     * Is metrics enabled boolean.
+     *
+     * @return the boolean
+     */
+    public boolean isMetricsEnabled() {
+        return metricsEnabled;
+    }
+
+    /**
+     * Sets metrics enabled.
+     *
+     * @param metricsEnabled the metrics enabled
+     */
+    public void setMetricsEnabled(boolean metricsEnabled) {
+        this.metricsEnabled = metricsEnabled;
+    }
 
     /**
      * Gets node selector.

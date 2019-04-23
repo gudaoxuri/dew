@@ -11,7 +11,7 @@ metadata:
     version: '0001'
     group: ms.dew.devops.it
   name: todo-notifier
-  namespace: dew-prod
+  namespace: dew-uat
 spec:
   replicas: 1
   revisionHistoryLimit: 3
@@ -34,8 +34,10 @@ spec:
       containers:
       - env:
         - name: JAVA_OPTIONS
-          value: ' -Dspring.profiles.active=prod'
-        image: harbor.trc.com/dew-prod/todo-notifier:0001
+          value: ' -Dspring.profiles.active=uat -Dserver.port=8080 -Dopentracing.jaeger.log-spans=false
+            -Dopentracing.jaeger.probabilistic-sampler.sampling-rate=0.1 -Dspring.web.skip-pattern=/actuator/.*|/api-docs.*|/swagger.*|.*\\.png|.*\\.css|.*\\.js|.*\\.html|/favicon.ico|/hystrix.stream
+            -Dmanagement.endpoints.web.exposure.include=* -Dmetrics.tags:application=${spring.application.name}'
+        image: harbor.trc.com/dew-uat/todo-notifier:0001
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 6

@@ -34,7 +34,9 @@ spec:
       containers:
       - env:
         - name: JAVA_OPTIONS
-          value: ' -Dspring.profiles.active=test'
+          value: ' -Dspring.profiles.active=test -Dserver.port=8080 -Dopentracing.jaeger.log-spans=false
+            -Dopentracing.jaeger.probabilistic-sampler.sampling-rate=0.1 -Dspring.web.skip-pattern=/actuator/.*|/api-docs.*|/swagger.*|.*\\.png|.*\\.css|.*\\.js|.*\\.html|/favicon.ico|/hystrix.stream
+            -Dmanagement.endpoints.web.exposure.include=* -Dmetrics.tags:application=${spring.application.name}'
         image: harbor.trc.com/dew-test/helloworld-backend:0001
         imagePullPolicy: IfNotPresent
         livenessProbe:

@@ -277,6 +277,7 @@ public class ConfigBuilder {
             if (finalProjectConfig.getKind() == AppKind.FRONTEND) {
                 finalProjectConfig.getApp().setPort(80);
                 finalProjectConfig.getApp().setTraceLogEnabled(false);
+                finalProjectConfig.getApp().setMetricsEnabled(false);
             }
 
         }
