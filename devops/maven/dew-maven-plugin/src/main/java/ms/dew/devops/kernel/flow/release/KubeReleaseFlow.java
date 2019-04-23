@@ -238,8 +238,12 @@ public class KubeReleaseFlow extends BasicFlow {
                 ExtensionsV1beta1Deployment.class);
         try {
             // 等待 deployment 部署完成
-            cdl.await(WAIT_ITMEOUT_MINUTES, TimeUnit.MINUTES);
+            boolean awaitResult = cdl.await(WAIT_ITMEOUT_MINUTES, TimeUnit.MINUTES);
             KubeHelper.inst(config.getId()).stopWatch(watchId);
+            if (!awaitResult) {
+                Dew.log.error("Publish wait timeout");
+                throw new ProcessException("Publish wait timeout");
+            }
             // 部署 service
             V1Service service = (V1Service) kubeResources.get(KubeRES.SERVICE.getVal());
             if (!KubeHelper.inst(config.getId()).exist(service.getMetadata().getName(), service.getMetadata().getNamespace(), KubeRES.SERVICE)) {
@@ -251,8 +255,8 @@ public class KubeReleaseFlow extends BasicFlow {
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            Dew.log.error("Publish error,maybe timeout", e);
-            throw new ProcessException("Publish error,maybe timeout", e);
+            Dew.log.error("Publish error", e);
+            throw new ProcessException("Publish error", e);
         }
     }
 
