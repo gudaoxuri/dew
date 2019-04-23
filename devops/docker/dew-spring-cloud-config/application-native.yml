@@ -4,4 +4,4 @@ spring:
       password: override
 
 encrypt:
-  key: dsffjsskeSwku^%&*&
+  key: dsffjsskeSwk
