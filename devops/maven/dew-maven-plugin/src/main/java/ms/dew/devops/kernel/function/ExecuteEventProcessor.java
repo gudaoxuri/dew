@@ -92,7 +92,7 @@ public class ExecuteEventProcessor {
                 .filter(project -> !executionProjects.contains(project))
                 .map(project -> {
                     String reason = project.getSkipReason().isEmpty() ? "unknown error" : project.getSkipReason();
-                    return "- " + project.getAppShowName() + "\n> " + reason + "\n";
+                    return "- " + project.getAppShowName() + "\n> " + reason;
                 })
                 .collect(Collectors.joining("\n")));
         content.append("\n-----------------\n");

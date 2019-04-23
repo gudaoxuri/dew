@@ -184,9 +184,14 @@ public abstract class BasicMojo extends AbstractMojo {
             Dew.Init.init(session, pluginManager, profile,
                     dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,
                     customVersion, mockClasspath);
-            if (Dew.Config.getCurrentProject() == null || Dew.Config.getCurrentProject().isSkip()) {
+            if (Dew.Config.getCurrentProject() == null) {
                 // 这多半是正常的行为
-                Dew.log.info("The current project kind does not match or is manually set to skip");
+                Dew.log.info("The current project kind does not match");
+                return;
+            }
+            if (Dew.Config.getCurrentProject().isSkip()) {
+                // 这多半是正常的行为
+                Dew.log.info("The current project is manually set to skip");
                 return;
             }
             if (!preExecute()) {

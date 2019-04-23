@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
  */
 public class KubeReleaseFlow extends BasicFlow {
 
-    private static final int WAIT_ITMEOUT_MINUTES = 30;
+    private static final int WAIT_ITMEOUT_MINUTES = 20;
 
     private String flowBasePath;
 
