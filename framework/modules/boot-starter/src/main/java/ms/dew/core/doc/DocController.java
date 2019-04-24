@@ -18,8 +18,6 @@ package ms.dew.core.doc;
 
 import com.ecfront.dew.common.Resp;
 import ms.dew.Dew;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.validation.annotation.Validated;
@@ -41,10 +39,8 @@ import java.util.function.Supplier;
 @ApiIgnore
 @Validated
 @ConditionalOnWebApplication
-@RequestMapping("${management.endpoints.web.base-path:/management}/doc")
+@RequestMapping("${management.endpoints.web.base-path:/actuator}/doc")
 public class DocController {
-
-    private static final Logger logger = LoggerFactory.getLogger(DocController.class);
 
     private Supplier<List<String>> fetchSwaggerJsonUrlsFun;
 

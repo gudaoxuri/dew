@@ -87,7 +87,7 @@ public class ExecuteEventProcessor {
                 .map(project -> "- " + project.getAppShowName())
                 .collect(Collectors.joining("\n")));
         content.append("\n-----------------\n")
-                .append("## Non-execution");
+                .append("## Non-execution\n");
         content.append(projects.values().stream()
                 .filter(project -> !executionProjects.contains(project))
                 .map(project -> {

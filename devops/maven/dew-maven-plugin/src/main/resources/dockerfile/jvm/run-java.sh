@@ -30,9 +30,6 @@
 # Fail on error and undefined vars
 set -eu
 
-# Save global script args
-ARGS="$@"
-
 # Generic formula evaluation based on awk
 calc() {
   local formula="$1"

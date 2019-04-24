@@ -3,7 +3,7 @@ apiVersion: v1
 metadata:
   name: custom-config
 data:
-  application.yml: |-
+  bootstrap.yml: |-
     spring:
       profiles:
         active: native
@@ -11,5 +11,6 @@ data:
         user:
           name: dew
           password: override
+    # This configuration must be in bootstrap file
     encrypt:
       key: sfosdfY22ddf

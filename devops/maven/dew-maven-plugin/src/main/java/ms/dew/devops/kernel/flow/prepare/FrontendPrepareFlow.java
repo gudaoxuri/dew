@@ -35,7 +35,7 @@ public class FrontendPrepareFlow extends BasicPrepareFlow {
 
     @Override
     protected boolean needExecutePreparePackageCmd(FinalProjectConfig config, String currentPath) {
-        return new File(currentPath).listFiles((dir, name) -> name.equals("node_modules")).length == 0;
+        return new File(currentPath).listFiles((dir, name) -> "node_modules".equals(name)).length == 0;
     }
 
     @Override
