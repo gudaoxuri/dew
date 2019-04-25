@@ -30,7 +30,7 @@ public class DewDocker {
 
     // Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
     private String host = "";
-    // Docker Registry Url  e.g. https://harbor.trc.com/v2
+    // Docker Registry Url  e.g. https://harbor.dew.ms/v2
     private String registryUrl = "";
     // Docker Registry 用户名
     private String registryUserName = "";

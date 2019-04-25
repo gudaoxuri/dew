@@ -669,7 +669,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p>Dew [du:] 意为`露水`，希望此体系可以像晨间的露水一样透明、静谧、丰盈。让使用者尽量不要感知Dew的存在，专注业务实现。</p>
+<p>Dew [du:] 意为 <code>露水</code> ，希望此体系可以像晨间的露水一样透明、静谧、丰盈。让使用者尽量不要感知Dew的存在，专注业务实现。</p>
 </div>
 </blockquote>
 </div>
@@ -777,7 +777,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ol>
 </div>
 <div class="paragraph">
-<p>实现上我们选择 <code>Spring Boot</code> 这一业界主流框架，对上兼容`Spring Cloud` 与 <code>Istio</code>。</p>
+<p>实现上我们选择 <code>Spring Boot</code> 这一业界主流框架，对上兼容 <code>Spring Cloud</code> 与 <code>Istio</code>。</p>
 </div>
 <div class="olist arabic">
 <div class="title"><strong>标准化DevOps流程</strong></div>
@@ -2895,7 +2895,7 @@ throw Dew.E.e("NBE00123",someError,200)
 <div class="ulist">
 <ul>
 <li>
-<p>在 java bean 中添加各项validation，支持标准`javax.validation.constraints`包下的诸如：<code>NotNull</code> ，同时框架扩展了几个检查，如：
+<p>在 java bean 中添加各项validation，支持标准<code>javax.validation.constraints</code>包下的诸如：<code>NotNull</code> ，同时框架扩展了几个检查，如：
 IdNumber、Phone</p>
 </li>
 <li>
@@ -3009,7 +3009,7 @@ public class WebController {
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p>支持`认证缓存`，即支持将鉴权系统生成的登录信息缓存到业务系统中方便即时调用，并提供三方适配。</p>
+<p>支持 <code>认证缓存</code> ，即支持将鉴权系统生成的登录信息缓存到业务系统中方便即时调用，并提供三方适配。</p>
 </div>
 </blockquote>
 </div>
@@ -4826,7 +4826,8 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>进入grafana的容器内部后执行 ``grafana-cli admin reset-admin-password passwordvalue``</pre>
+<pre>进入grafana的容器内部后执行
+grafana-cli admin reset-admin-password passwordvalue</pre>
 </div>
 </div>
 <div class="quoteblock">
@@ -4839,7 +4840,7 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
 <div class="literalblock">
 <div class="content">
 <pre>很可能和PV的文件目录的权限有关，检查下权限是否一致，设置对应的securityContext进行排查。例：
-``kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops``
+kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops
 设置securityContext为以下内容
 -
  securityContext:
@@ -4887,7 +4888,34 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
   参考文章：https://prometheus.io/docs/instrumenting/clientlibs/
 2.部署项目及创建进行监控的ServiceMonitor
   注意ServiceMonitor的labels要含有Prometheus-operator创建的Prometheus的serviceMonitorSelector的label。
-  详细文章：https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources</pre>
+  详细文章：https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources
+3.Demo
+  以devops-exmaple-todo的compute模块为例创建ServiceMonitor
+  link: https://github.com/dew-ms/devops-exmaple-todo
+  -
+  cat &lt;&lt;EOF | kubectl -n devops apply -f -
+  apiVersion: monitoring.coreos.com/v1
+  kind: ServiceMonitor
+  metadata:
+    labels:
+      app: todo-compute
+      release: dew-prometheus-operator
+    name: dew-app-todo-compute
+  spec:
+    endpoints:
+    - honorLabels: true
+      interval: 10s
+      path: /actuator/prometheus
+      port: http
+    jobLabel: dew-app-todo
+    namespaceSelector:
+      matchNames:
+      - dew-uat
+    selector:
+      matchLabels:
+        app: todo-compute
+  EOF
+  -</pre>
 </div>
 </div>
 </div>
@@ -5196,6 +5224,10 @@ ignoreChangeFiles: []                   # 忽略变更文件列表，此列表�
     readinessPeriodSeconds: 60          # 可用检测周期，仅用于后端服务
     readinessFailureThreshold: 3        # 可用检测失败次数阈值，超过后当前实例不可用，仅用于后端服务
     traceLogEnabled: true               # 是否启用追踪日志，仅用于后端服务
+    traceLogSpans: false                # 是否在控制台输出spans日志，仅用于后端服务
+    traceWebSkipPattern: ""             # 设置跳过追踪的接口，为空则使用官方默认值，仅用于后端服务
+    traceProbabilisticSamplingRate: 0.1 # 追踪日志概率采样比率，为1.0则使用全量采样，仅用于后端服务
+    metricsEnabled: true                # 是否启用Prometheus的metrics，仅用于后端服务
     nodeSelector:                       # 节点亲和性配置
       group: app                        # 默认选择标签为 group=app 的节点
     preparePackageCmd:                  # 预打包命令
@@ -5214,7 +5246,7 @@ ignoreChangeFiles: []                   # 忽略变更文件列表，此列表�
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
   docker:                               # Docker配置
     host:                               # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-    registryUrl:                        # Docker Registry Url  e.g. https://harbor.trc.com/v2
+    registryUrl:                        # Docker Registry Url  e.g. https://harbor.dew.ms/v2
     registryUserName:                   # Docker Registry 用户名，此项建议使用Maven方式配置
     registryPassword:                   # Docker Registry 密码，此项建议使用Maven方式配置
     image:                              # Docker 镜像
@@ -5254,7 +5286,7 @@ dew.devops.profile                           # 默认环境
 dew.devops.kube.config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 # ============= 发布与回滚使用 =============
 dew.devops.docker.host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-dew.devops.docker.registry.url               # Docker Registry Url  e.g. https://harbor.trc.com/v2
+dew.devops.docker.registry.url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
 dew.devops.docker.registry.username          # Docker Registry 用户名
 dew.devops.docker.registry.password          # Docker Registry 密码
 ew.devops.quiet
@@ -5325,11 +5357,11 @@ dew.devops.scale.auto.tps                    # 自动伸缩条件：TPS标识</c
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-notify:
+#notify:
   # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
-  args:
+ # args:
     # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+  #  url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加测试环境
   test:
@@ -5498,11 +5530,11 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-notify:
+#notify:
   # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
-  args:
+ # args:
     # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+  #  url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加uat环境
   uat:
@@ -5954,19 +5986,11 @@ helm list</pre>
 <li>
 <p>核心模块通过<code>checkstyle</code>检查</p>
 </li>
-</ul>
-</div>
-<div class="ulist">
-<div class="title">迁移指南（从1.5.1-RC到此版本）</div>
-<ul>
 <li>
-<p>Spring Boot升级：Spring boot 1.x 迁移到 Spring boot 2.x 见 <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide" class="bare">https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide</a></p>
+<p><code>dew-jdbc</code> 被移除，请直接使用其它数据库管理工具</p>
 </li>
 <li>
-<p>功能变更：包名由 <code>com.tairanchina.csp.dew</code> 变更为 <code>ms.dew</code></p>
-</li>
-<li>
-<p>功能变更：移除了 <code>dew-jdbc</code> 模块</p>
+<p><code>cluster-spi-eureka</code> 被移除，请用 <code>cluster-spi-redis</code> 代替其集群选举功能</p>
 </li>
 </ul>
 </div>
@@ -7407,7 +7431,7 @@ prod deploy: # 生产环境部署
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-04-15 20:24:03 CST
+Last updated 2019-04-16 10:55:05 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
