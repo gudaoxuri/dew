@@ -157,8 +157,9 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                 + " -Dserver.port=" + config.getApp().getPort();
         if (config.getApp().isTraceLogEnabled()) {
             containerEnvJavaOptionsValue += " -Dopentracing.jaeger.log-spans=" + config.getApp().isTraceLogSpans();
-            if (!config.getApp().getTraceProbabilisticSamplingRate().equals(0D)) {
-                containerEnvJavaOptionsValue += " -Dopentracing.jaeger.probabilistic-sampler.sampling-rate=" + config.getApp().getTraceProbabilisticSamplingRate();
+            if (!config.getApp().getTraceProbabilisticSamplingRate().equals(1.0)) {
+                containerEnvJavaOptionsValue += " -Dopentracing.jaeger.probabilistic-sampler.sampling-rate="
+                        + config.getApp().getTraceProbabilisticSamplingRate();
             }
             if (!config.getApp().getTraceWebSkipPattern().isEmpty()) {
                 containerEnvJavaOptionsValue += " -Dopentracing.spring.web.skip-pattern=" + config.getApp().getTraceWebSkipPattern();

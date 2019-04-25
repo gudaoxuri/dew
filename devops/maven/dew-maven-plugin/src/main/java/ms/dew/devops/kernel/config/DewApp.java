@@ -59,8 +59,8 @@ public class DewApp {
     // 设置跳过追踪的接口，为空则使用官方默认值，仅用于后端服务
     // @see https://github.com/opentracing-contrib/java-spring-web/blob/master/opentracing-spring-web-starter/src/main/java/io/opentracing/contrib/spring/web/starter/WebTracingProperties.java
     private String traceWebSkipPattern = "";
-    // 追踪日志随机采样比率，为0则使用全量采样，仅用于后端服务
-    private Double traceProbabilisticSamplingRate = 0D;
+    // 追踪日志概率采样比率，为1.0则使用全量采样，仅用于后端服务
+    private Double traceProbabilisticSamplingRate = 0.1;
     // 是否启用Prometheus的metrics，仅用于后端服务
     private boolean metricsEnabled = true;
     // 节点亲和性配置

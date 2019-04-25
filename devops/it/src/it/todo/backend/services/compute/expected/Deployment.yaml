@@ -11,7 +11,7 @@ metadata:
     version: '0001'
     group: ms.dew.devops.it
   name: todo-compute
-  namespace: dew-uat
+  namespace: dew-prod
 spec:
   replicas: 1
   revisionHistoryLimit: 3
@@ -34,9 +34,10 @@ spec:
       containers:
       - env:
         - name: JAVA_OPTIONS
-          value: ' -Dspring.profiles.active=uat -Dserver.port=8080 -Dopentracing.jaeger.log-spans=false
-            -Dmanagement.endpoints.web.exposure.include=* -Dmetrics.tags:application=${spring.application.name}'
-        image: harbor.trc.com/dew-uat/todo-compute:0001
+          value: ' -Dspring.profiles.active=prod -Dserver.port=8080 -Dopentracing.jaeger.log-spans=false
+            -Dopentracing.jaeger.probabilistic-sampler.sampling-rate=0.1 -Dmanagement.endpoints.web.exposure.include=*
+            -Dmetrics.tags:application=${spring.application.name}'
+        image: harbor.trc.com/dew-prod/todo-compute:0001
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 6
