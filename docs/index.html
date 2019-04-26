@@ -5356,11 +5356,11 @@ dew.devops.scale.auto.tps                    # 自动伸缩条件：TPS标识</c
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-#notify:
+notify:
   # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
- # args:
+  args:
     # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-  #  url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加测试环境
   test:
@@ -5529,11 +5529,11 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-#notify:
+notify:
   # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
- # args:
+  args:
     # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-  #  url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加uat环境
   uat:
