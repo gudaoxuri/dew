@@ -309,7 +309,7 @@ public class KubeOpt {
                     rbacAuthorizationApi.createNamespacedRole(
                             roleObj.getMetadata().getNamespace(), roleObj, false, "true", null);
                     break;
-                case RULE_BINDING:
+                case ROLE_BINDING:
                     V1RoleBinding roleBindingObj = Yaml.loadAs(body, V1RoleBinding.class);
                     rbacAuthorizationApi
                             .createNamespacedRoleBinding(
@@ -320,7 +320,7 @@ public class KubeOpt {
                     rbacAuthorizationApi.createClusterRole(
                             clusterRoleObj, false, "true", null);
                     break;
-                case CLUSTER_RULE_BINDING:
+                case CLUSTER_ROLE_BINDING:
                     V1ClusterRoleBinding clusterRoleBindingObj = Yaml.loadAs(body, V1ClusterRoleBinding.class);
                     rbacAuthorizationApi.createClusterRoleBinding(
                             clusterRoleBindingObj, false, "true", null);
@@ -435,7 +435,7 @@ public class KubeOpt {
                 resource = rbacAuthorizationApi.listNamespacedRole(
                         namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
-            case RULE_BINDING:
+            case ROLE_BINDING:
                 resource = rbacAuthorizationApi.listNamespacedRoleBinding(
                         namespace, true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
@@ -443,7 +443,7 @@ public class KubeOpt {
                 resource = rbacAuthorizationApi.listClusterRole(
                         true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
-            case CLUSTER_RULE_BINDING:
+            case CLUSTER_ROLE_BINDING:
                 resource = rbacAuthorizationApi.listClusterRoleBinding(
                         true, "true", null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
                 break;
@@ -534,7 +534,7 @@ public class KubeOpt {
                     resource = rbacAuthorizationApi.readNamespacedRole(
                             name, namespace, "true");
                     break;
-                case RULE_BINDING:
+                case ROLE_BINDING:
                     resource = rbacAuthorizationApi.readNamespacedRoleBinding(
                             name, namespace, "true");
                     break;
@@ -542,7 +542,7 @@ public class KubeOpt {
                     resource = rbacAuthorizationApi.readClusterRole(
                             name, "true");
                     break;
-                case CLUSTER_RULE_BINDING:
+                case CLUSTER_ROLE_BINDING:
                     resource = rbacAuthorizationApi.readClusterRoleBinding(
                             name, "true");
                     break;
@@ -638,7 +638,7 @@ public class KubeOpt {
                     rbacAuthorizationApi.replaceNamespacedRole(
                             roleObj.getMetadata().getName(), roleObj.getMetadata().getNamespace(), roleObj, "true", null);
                     break;
-                case RULE_BINDING:
+                case ROLE_BINDING:
                     V1RoleBinding roleBindingObj = Yaml.loadAs(body, V1RoleBinding.class);
                     rbacAuthorizationApi.replaceNamespacedRoleBinding(
                             roleBindingObj.getMetadata().getName(), roleBindingObj.getMetadata().getNamespace(), roleBindingObj, "true", null);
@@ -648,7 +648,7 @@ public class KubeOpt {
                     rbacAuthorizationApi.replaceClusterRole(
                             clusterRoleObj.getMetadata().getName(), clusterRoleObj, "true", null);
                     break;
-                case CLUSTER_RULE_BINDING:
+                case CLUSTER_ROLE_BINDING:
                     V1ClusterRoleBinding clusterRoleBindingObj = Yaml.loadAs(body, V1ClusterRoleBinding.class);
                     rbacAuthorizationApi.replaceClusterRoleBinding(
                             clusterRoleBindingObj.getMetadata().getName(), clusterRoleBindingObj, "true", null);
@@ -735,7 +735,7 @@ public class KubeOpt {
                     rbacAuthorizationApi.patchNamespacedRole(
                             name, namespace, jsonPatchers, "true", null);
                     break;
-                case RULE_BINDING:
+                case ROLE_BINDING:
                     rbacAuthorizationApi.patchNamespacedRoleBinding(
                             name, namespace, jsonPatchers, "true", null);
                     break;
@@ -743,7 +743,7 @@ public class KubeOpt {
                     rbacAuthorizationApi.patchClusterRole(
                             name, jsonPatchers, "true", null);
                     break;
-                case CLUSTER_RULE_BINDING:
+                case CLUSTER_ROLE_BINDING:
                     rbacAuthorizationApi.patchClusterRoleBinding(
                             name, jsonPatchers, "true", null);
                     break;
@@ -1003,7 +1003,7 @@ public class KubeOpt {
                     rbacAuthorizationApi.deleteNamespacedRole(
                             name, namespace, deleteOptions, "true", null, null, null, null);
                     break;
-                case RULE_BINDING:
+                case ROLE_BINDING:
                     rbacAuthorizationApi.deleteNamespacedRoleBinding(
                             name, namespace, deleteOptions, "true", null, null, null, null);
                     break;
@@ -1011,7 +1011,7 @@ public class KubeOpt {
                     rbacAuthorizationApi.deleteClusterRole(
                             name, deleteOptions, "true", null, null, null, null);
                     break;
-                case CLUSTER_RULE_BINDING:
+                case CLUSTER_ROLE_BINDING:
                     rbacAuthorizationApi.deleteClusterRoleBinding(
                             name, deleteOptions, "true", null, null, null, null);
                     break;

@@ -34,7 +34,9 @@ spec:
       containers:
       - env:
         - name: JAVA_OPTIONS
-          value: ' -Dspring.profiles.active=prod'
+          value: ' -Dspring.profiles.active=prod -Dserver.port=8080 -Dopentracing.jaeger.log-spans=false
+            -Dopentracing.jaeger.probabilistic-sampler.sampling-rate=0.1 -Dmanagement.endpoints.web.exposure.include=*
+            -Dmetrics.tags:application=${spring.application.name}'
         image: harbor.trc.com/dew-prod/todo-notifier:0001
         imagePullPolicy: IfNotPresent
         livenessProbe:
@@ -43,15 +45,12 @@ spec:
             path: /actuator/health
             port: 8080
             scheme: HTTP
-          initialDelaySeconds: 60
+          initialDelaySeconds: 30
           periodSeconds: 30
         name: dew-app
         ports:
         - containerPort: 8080
           name: http
-          protocol: TCP
-        - containerPort: 9779
-          name: prometheus
           protocol: TCP
         readinessProbe:
           failureThreshold: 3
@@ -60,7 +59,7 @@ spec:
             port: 8080
             scheme: HTTP
           initialDelaySeconds: 10
-          periodSeconds: 60
+          periodSeconds: 30
         resources:
           limits: {}
           requests: {}

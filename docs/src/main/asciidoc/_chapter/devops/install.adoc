@@ -646,12 +646,13 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
 
 > 如何重置grafana密码
 
-  进入grafana的容器内部后执行 ``grafana-cli admin reset-admin-password passwordvalue``
+  进入grafana的容器内部后执行
+  grafana-cli admin reset-admin-password passwordvalue
 
 > 有pod启动失败,报文件权限拒绝相关问题，如 "opening storage failed: create dir: mkdir /prometheus/wal: permission denied"
 
  很可能和PV的文件目录的权限有关，检查下权限是否一致，设置对应的securityContext进行排查。例：
- ``kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops``
+ kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops
  设置securityContext为以下内容
  -
   securityContext:
@@ -685,6 +686,33 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
   2.部署项目及创建进行监控的ServiceMonitor
     注意ServiceMonitor的labels要含有Prometheus-operator创建的Prometheus的serviceMonitorSelector的label。
     详细文章：https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources
+  3.Demo
+    以devops-example-todo的compute模块为例创建ServiceMonitor
+    link: https://github.com/dew-ms/devops-example-todo
+    -
+    cat <<EOF | kubectl -n devops apply -f -
+    apiVersion: monitoring.coreos.com/v1
+    kind: ServiceMonitor
+    metadata:
+      labels:
+        app: todo-compute
+        release: dew-prometheus-operator
+      name: dew-app-todo-compute
+    spec:
+      endpoints:
+      - honorLabels: true
+        interval: 10s
+        path: /actuator/prometheus
+        port: http
+      jobLabel: dew-app-todo-compute
+      namespaceSelector:
+        matchNames:
+        - dew-uat
+      selector:
+        matchLabels:
+          app: todo-compute
+    EOF
+    -
 
 ==== Fluentd
 

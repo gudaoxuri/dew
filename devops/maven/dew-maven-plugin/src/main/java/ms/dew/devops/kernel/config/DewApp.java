@@ -34,8 +34,6 @@ public class DewApp {
     private int revisionHistoryLimit = 3;
     // 端口号，默认情况下前端项目为80(不可修改)，后端服务为8080
     private int port = 8080;
-    // Prometheus Metric 采集端口号，不建议修改，仅用于后端服务
-    private int metricPort = 9779;
     // 存活检测HTTP的路径，仅用于后端服务
     private String livenessPath = "/actuator/health";
     // 可用检测HTTP的路径，仅用于后端服务
@@ -54,6 +52,15 @@ public class DewApp {
     private int readinessFailureThreshold = 3;
     // 是否启用追踪日志，仅用于后端服务
     private boolean traceLogEnabled = true;
+    // 是否在控制台输出spans日志，仅用于后端服务
+    private boolean traceLogSpans = false;
+    // 设置跳过追踪的接口，为空则使用官方默认值，仅用于后端服务
+    // @see https://github.com/opentracing-contrib/java-spring-web/blob/master/opentracing-spring-web-starter/src/main/java/io/opentracing/contrib/spring/web/starter/WebTracingProperties.java
+    private String traceWebSkipPattern = "";
+    // 追踪日志概率采样比率，为1.0则使用全量采样，仅用于后端服务
+    private Double traceProbabilisticSamplingRate = 0.1;
+    // 是否启用Prometheus的metrics，仅用于后端服务
+    private boolean metricsEnabled = true;
     // 节点亲和性配置
     // 默认选择标签为 group=app 的节点
     private Map<String, String> nodeSelector = new HashMap<String, String>() {
@@ -116,25 +123,6 @@ public class DewApp {
      */
     public void setPort(int port) {
         this.port = port;
-    }
-
-    /**
-     * Gets metric port.
-     *
-     * @return the metric port
-     */
-    public int getMetricPort() {
-        return
-                metricPort;
-    }
-
-    /**
-     * Sets metric port.
-     *
-     * @param metricPort the metric port
-     */
-    public void setMetricPort(int metricPort) {
-        this.metricPort = metricPort;
     }
 
     /**
@@ -317,10 +305,80 @@ public class DewApp {
         this.traceLogEnabled = traceLogEnabled;
     }
 
+    /**
+     * Is trace log spans enabled boolean.
+     *
+     * @return the boolean
+     */
+    public boolean isTraceLogSpans() {
+        return traceLogSpans;
+    }
+
+    /**
+     * Sets trace log spans enabled.
+     *
+     * @param traceLogSpans the trace log spans enabled
+     */
+    public void setTraceLogSpans(boolean traceLogSpans) {
+        this.traceLogSpans = traceLogSpans;
+    }
+
+    /**
+     * Gets trace web skip pattern.
+     *
+     * @return the trace web skip pattern
+     */
+    public String getTraceWebSkipPattern() {
+        return traceWebSkipPattern;
+    }
+
+    /**
+     * Sets trace web skip pattern.
+     *
+     * @param traceWebSkipPattern the trace web skip pattern
+     */
+    public void setTraceWebSkipPattern(String traceWebSkipPattern) {
+        this.traceWebSkipPattern = traceWebSkipPattern;
+    }
+
+    /**
+     * Gets trace probabilistic sampling rate.
+     *
+     * @return the trace probabilistic sampling rate
+     */
+    public Double getTraceProbabilisticSamplingRate() {
+        return traceProbabilisticSamplingRate;
+    }
+
+    /**
+     * Sets trace probabilistic sampling rate.
+     *
+     * @param traceProbabilisticSamplingRate the trace probabilistic sampling rate
+     */
+    public void setTraceProbabilisticSamplingRate(Double traceProbabilisticSamplingRate) {
+        this.traceProbabilisticSamplingRate = traceProbabilisticSamplingRate;
+    }
+
+    /**
+     * Is metrics enabled boolean.
+     *
+     * @return the boolean
+     */
+    public boolean isMetricsEnabled() {
+        return metricsEnabled;
+    }
+
+    /**
+     * Sets metrics enabled.
+     *
+     * @param metricsEnabled the metrics enabled
+     */
+    public void setMetricsEnabled(boolean metricsEnabled) {
+        this.metricsEnabled = metricsEnabled;
+    }
 
     /**
      * Gets node selector.
-     *
      * @return the node selector
      */
     public Map<String, String> getNodeSelector() {

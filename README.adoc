@@ -19,7 +19,7 @@ image::https://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2",lin
 
 [quote,]
 ____
-Dew [du:] 意为`露水`，希望此体系可以像晨间的露水一样透明、静谧、丰盈。让使用者尽量不要感知Dew的存在，专注业务实现。
+Dew [du:] 意为 `露水` ，希望此体系可以像晨间的露水一样透明、静谧、丰盈。让使用者尽量不要感知Dew的存在，专注业务实现。
 ____
 
 === 设计理念
@@ -65,7 +65,7 @@ ____
 . 可替换，只做扩展，尽量不修改基础框架代码，开发人员完全可以直接基于基础框架开发
 . 主流，整合流行的微服务框架
 
-实现上我们选择 `Spring Boot` 这一业界主流框架，对上兼容`Spring Cloud` 与 `Istio`。
+实现上我们选择 `Spring Boot` 这一业界主流框架，对上兼容 `Spring Cloud` 与 `Istio`。
 
 .**标准化DevOps流程**
 

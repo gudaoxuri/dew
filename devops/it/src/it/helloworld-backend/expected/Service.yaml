@@ -4,8 +4,6 @@ metadata:
   annotations:
     dew.ms/git-commit: '0001'
     dew.ms/scm-url: ''
-    prometheus.io/port: '9779'
-    prometheus.io/scrape: 'true'
     sidecar.jaegertracing.io/inject: 'true'
   labels:
     app: helloworld-backend

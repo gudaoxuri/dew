@@ -81,7 +81,6 @@ ignoreChangeFiles: []                   # 忽略变更文件列表，此列表�
     replicas: 1                         # 部署的副本数
     revisionHistoryLimit: 3             # 保留的历史版本数
     port: 8080                          # 端口号，默认情况下前端项目为80(不可修改)，后端服务为8080
-    metricPort: 9779                    # Prometheus Metric 采集端口号，不建议修改，仅用于后端服务
     livenessPath: /actuator/health      # 存活检测HTTP的路径，仅用于后端服务
     readinessPath: /actuator/health     # 可用检测HTTP的路径，仅用于后端服务
     livenessInitialDelaySeconds: 60     # 首次存活检测延迟时间，仅用于后端服务
@@ -91,6 +90,10 @@ ignoreChangeFiles: []                   # 忽略变更文件列表，此列表�
     readinessPeriodSeconds: 60          # 可用检测周期，仅用于后端服务
     readinessFailureThreshold: 3        # 可用检测失败次数阈值，超过后当前实例不可用，仅用于后端服务
     traceLogEnabled: true               # 是否启用追踪日志，仅用于后端服务
+    traceLogSpans: false                # 是否在控制台输出spans日志，仅用于后端服务
+    traceWebSkipPattern: ""             # 设置跳过追踪的接口，为空则使用官方默认值，仅用于后端服务
+    traceProbabilisticSamplingRate: 0.1 # 追踪日志概率采样比率，为1.0则使用全量采样，仅用于后端服务
+    metricsEnabled: true                # 是否启用Prometheus的metrics，仅用于后端服务
     nodeSelector:                       # 节点亲和性配置
       group: app                        # 默认选择标签为 group=app 的节点
     preparePackageCmd:                  # 预打包命令
@@ -109,7 +112,7 @@ ignoreChangeFiles: []                   # 忽略变更文件列表，此列表�
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
   docker:                               # Docker配置
     host:                               # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-    registryUrl:                        # Docker Registry Url  e.g. https://harbor.trc.com/v2
+    registryUrl:                        # Docker Registry Url  e.g. https://harbor.dew.ms/v2
     registryUserName:                   # Docker Registry 用户名，此项建议使用Maven方式配置
     registryPassword:                   # Docker Registry 密码，此项建议使用Maven方式配置
     image:                              # Docker 镜像
@@ -148,7 +151,7 @@ dew.devops.profile                           # 默认环境
 dew.devops.kube.config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 # ============= 发布与回滚使用 =============
 dew.devops.docker.host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-dew.devops.docker.registry.url               # Docker Registry Url  e.g. https://harbor.trc.com/v2
+dew.devops.docker.registry.url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
 dew.devops.docker.registry.username          # Docker Registry 用户名
 dew.devops.docker.registry.password          # Docker Registry 密码
 ew.devops.quiet

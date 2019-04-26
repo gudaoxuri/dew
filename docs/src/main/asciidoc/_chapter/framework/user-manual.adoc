@@ -616,7 +616,7 @@ dew:
 
 ``Dew``集成了``Spring validate`` 机制，支持针对 `URL` 及 `Bean` 的验证。
 
-* 在 java bean 中添加各项validation，支持标准`javax.validation.constraints`包下的诸如：`NotNull` ，同时框架扩展了几个检查，如：
+* 在 java bean 中添加各项validation，支持标准``javax.validation.constraints``包下的诸如：`NotNull` ，同时框架扩展了几个检查，如：
    IdNumber、Phone
 * 在Controller中添加 `@Validated` 注解 ( Spring还支持@Vaild，但这一注解不支持分组 )
 * 支持Spring原生分组校验
@@ -717,7 +717,7 @@ dew:
 
 [quote,]
 ____
-支持`认证缓存`，即支持将鉴权系统生成的登录信息缓存到业务系统中方便即时调用，并提供三方适配。
+支持 `认证缓存` ，即支持将鉴权系统生成的登录信息缓存到业务系统中方便即时调用，并提供三方适配。
 ____
 
 [source,yml]

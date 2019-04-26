@@ -4,8 +4,6 @@ metadata:
   annotations:
     dew.ms/git-commit: '0001'
     dew.ms/scm-url: ''
-    prometheus.io/port: '9779'
-    prometheus.io/scrape: 'true'
   labels:
     app: todo-frontend
     provider: dew

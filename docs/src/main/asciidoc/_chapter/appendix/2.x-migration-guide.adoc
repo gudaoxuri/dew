@@ -22,7 +22,11 @@ TBD 认证修改
 
 . 使用 ``dew-devops.sh`` 初始化集群并创建项目
 
-  TBD
+  curl -O https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/sh/dew-devops.sh
+  sh dew-devops.sh
+  # 选择对应操作，根据提示操作即可
+  # 选择 1 进行集群初始化和 gitlab-runner 安装
+  # 选择 2 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等
 
 . 安装并设置Spring Cloud Config
 
