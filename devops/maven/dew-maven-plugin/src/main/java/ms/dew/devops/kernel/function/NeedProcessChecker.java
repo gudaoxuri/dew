@@ -24,6 +24,7 @@ import ms.dew.devops.helper.KubeHelper;
 import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
+import org.apache.maven.project.MavenProject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -90,6 +91,7 @@ public class NeedProcessChecker {
             // 不存在需要处理的项目
             Dew.stopped = true;
             Dew.log.info("No project found to be processed");
+            ExecuteEventProcessor.onShutdown(Dew.Config.getProjects());
             return;
         }
         // 提示将要处理的项目
@@ -109,6 +111,7 @@ public class NeedProcessChecker {
             if (reader.readLine().trim().equalsIgnoreCase("N")) {
                 Dew.stopped = true;
                 Dew.log.info("Process canceled");
+                return;
             }
         }
     }
@@ -124,24 +127,25 @@ public class NeedProcessChecker {
      * @throws IOException  the io exception
      */
     private static void checkNeedProcessByMavenRepo(FinalProjectConfig config) throws ApiException, IOException {
-        String version = Dew.Config.getCurrentMavenProject().getVersion();
+        MavenProject mavenProject = Dew.Config.getMavenProject(config.getId());
+        String version = mavenProject.getVersion();
         if (version.trim().toLowerCase().endsWith("snapshot")) {
             // 如果快照仓库存在
-            if (Dew.Config.getCurrentMavenProject().getDistributionManagement() == null
-                    || Dew.Config.getCurrentMavenProject().getDistributionManagement().getSnapshotRepository() == null
-                    || Dew.Config.getCurrentMavenProject().getDistributionManagement().getSnapshotRepository().getUrl() == null
-                    || Dew.Config.getCurrentMavenProject().getDistributionManagement().getSnapshotRepository().getUrl().trim().isEmpty()) {
+            if (mavenProject.getDistributionManagement() == null
+                    || mavenProject.getDistributionManagement().getSnapshotRepository() == null
+                    || mavenProject.getDistributionManagement().getSnapshotRepository().getUrl() == null
+                    || mavenProject.getDistributionManagement().getSnapshotRepository().getUrl().trim().isEmpty()) {
                 Dew.log.warn("Maven distribution snapshot repository not found");
-                config.skip("Maven distribution snapshot repository not found");
+                config.skip("Maven distribution snapshot repository not found", false);
                 return;
             }
-        } else if (Dew.Config.getCurrentMavenProject().getDistributionManagement() == null
-                || Dew.Config.getCurrentMavenProject().getDistributionManagement().getRepository() == null
-                || Dew.Config.getCurrentMavenProject().getDistributionManagement().getRepository().getUrl() == null
-                || Dew.Config.getCurrentMavenProject().getDistributionManagement().getRepository().getUrl().trim().isEmpty()) {
+        } else if (mavenProject.getDistributionManagement() == null
+                || mavenProject.getDistributionManagement().getRepository() == null
+                || mavenProject.getDistributionManagement().getRepository().getUrl() == null
+                || mavenProject.getDistributionManagement().getRepository().getUrl().trim().isEmpty()) {
             // 处理非快照版
             Dew.log.warn("Maven distribution repository not found");
-            config.skip("Maven distribution repository not found");
+            config.skip("Maven distribution repository not found", false);
             return;
         }
         if (config.isCustomVersion()) {
@@ -154,7 +158,7 @@ public class NeedProcessChecker {
             List<String> changedFiles = fetchGitDiff(lastVersionDeployCommit);
             // 判断有没有代码变更
             if (!hasUnDeployFiles(changedFiles, config)) {
-                config.skip("Code that has no changes compared to the current version");
+                config.skip("No code changes", false);
             }
         }
     }
@@ -176,7 +180,7 @@ public class NeedProcessChecker {
                     fetchLastVersionDeployCommit(config.getId() + "-append", config.getAppName(), config.getAppendProfile().getNamespace());
             if (lastVersionDeployCommit != null && lastVersionDeployCommit.equals(lastVersionDeployCommitFromProfile)) {
                 Dew.log.warn("Reuse last version " + lastVersionDeployCommit + " has been deployed");
-                config.skip("Reuse last version " + lastVersionDeployCommit + " has been deployed");
+                config.skip("Reuse last version " + lastVersionDeployCommit + " has been deployed", false);
             } else {
                 Dew.log.info("Reuse last version " + lastVersionDeployCommitFromProfile + " from " + config.getReuseLastVersionFromProfile());
                 config.setGitCommit(lastVersionDeployCommitFromProfile);
@@ -188,7 +192,7 @@ public class NeedProcessChecker {
                 List<String> changedFiles = fetchGitDiff(lastVersionDeployCommit);
                 // 判断有没有代码变更
                 if (!hasUnDeployFiles(changedFiles, config)) {
-                    config.skip("Code that has no changes compared to the current version");
+                    config.skip("No code changes", false);
                 }
             }
         }

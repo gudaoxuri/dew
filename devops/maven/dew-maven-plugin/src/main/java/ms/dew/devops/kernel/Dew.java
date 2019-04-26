@@ -417,8 +417,11 @@ public class Dew {
          * Init shutdown process.
          */
         private static void shutdownHook() {
-            Runtime.getRuntime().addShutdownHook(new Thread(() ->
-                    ExecuteEventProcessor.onShutdown(Config.getProjects())));
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                if (!Dew.stopped) {
+                    ExecuteEventProcessor.onShutdown(Config.getProjects());
+                }
+            }));
         }
 
     }
@@ -448,8 +451,9 @@ public class Dew {
          *
          * @return the current maven project
          */
-        public static MavenProject getCurrentMavenProject() {
-            return Dew.mavenSession.getCurrentProject();
+        public static MavenProject getMavenProject(String mavenId) {
+            return Dew.mavenSession.getProjects().stream()
+                    .filter(project -> project.getId().equalsIgnoreCase(mavenId)).findAny().get();
         }
 
         /**

@@ -108,7 +108,7 @@ public abstract class BasicPrepareFlow extends BasicFlow {
     }
 
     private boolean execPackageCmd(FinalProjectConfig config) {
-        String currentPath = Dew.Config.getCurrentMavenProject().getBasedir().getPath();
+        String currentPath = Dew.Config.getCurrentProject().getMvnDirectory();
         Optional<String> packageCmdOpt = getPackageCmd(config, currentPath);
         if (!packageCmdOpt.isPresent()) {
             // 不用执行命令

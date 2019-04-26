@@ -21,7 +21,33 @@ Fabric8的maven插件( https://github.com/fabric8io/docker-maven-plugin )比较�
 Spring Cloud Kubernetes 实现了基于ConfigMap/Secrets的统一配置管理，但由于后者暂未解决版本化管理、自定义密钥的加解密及友好的配置编辑能力，
 故推荐使用Spring Cloud Config， ``dew`` 基于Spring Cloud Config封装了Chart，详见 <<helm-chart-spring-cloud-config>> 。
 
+统一配置服务建议多个项目共享一套，为方便开发调试，故此服务建议使用URL调用而非ServiceId，e.g:
+
+|===
+|原配置 |现配置
+
+a|
+----
+spring:
+   cloud:
+     config:
+       discovery:
+         service-id: config
+         enabled: true
+----
+a|
+----
+spring:
+   cloud:
+     config:
+       uri: http://config.dew.ms
+----
+|===
+
+
 ==== JVM设置
 
 默认情况下 ``dew`` 会根据容器环境自行设置JVM参数，规则及自定义配置见 <<>> 。
+
+==== Spring Cloud Config的部署方式
 

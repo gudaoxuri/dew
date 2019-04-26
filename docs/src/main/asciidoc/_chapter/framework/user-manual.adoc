@@ -282,7 +282,8 @@ spring:
         port: # redis端口
         database: # redis数据库
         password: # redis密码
-        pool: # 连接池配置
+        lettuce:
+          pool: # 连接池配置
     rabbitmq:
       host: # rabbit主机
       port: # rabbit端口
@@ -978,7 +979,7 @@ dew:
 management: # 文档生成地址前缀为 /management.endpoints.web.base-path
   endpoints:
     web:
-      base-path: /management
+      base-path: /management # 可修改成自定义路径，默认为 actuator
 
 ----
 

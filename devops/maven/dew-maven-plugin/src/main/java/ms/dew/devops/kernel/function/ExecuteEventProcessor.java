@@ -30,6 +30,10 @@ import java.util.stream.Collectors;
  */
 public class ExecuteEventProcessor {
 
+    public static void init() {
+        // Do nothing
+    }
+
     /**
      * On mojo execute successful.
      *
@@ -73,23 +77,36 @@ public class ExecuteEventProcessor {
         if (!Notify.contains("")) {
             return;
         }
-        List<FinalProjectConfig> executionProjects = projects.values().stream()
+        List<FinalProjectConfig> executionSuccessfulProjects = projects.values().stream()
                 .filter(project -> project.getExecuteSuccessfulMojos().contains("release")
                         || project.getExecuteSuccessfulMojos().contains("rollback")
                         || project.getExecuteSuccessfulMojos().contains("scale")
                         || project.getExecuteSuccessfulMojos().contains("unrelease")
                 ).collect(Collectors.toList());
+        List<FinalProjectConfig> nonExecutionProjects =
+                projects.values().stream()
+                        .filter(project -> !executionSuccessfulProjects.contains(project))
+                        .collect(Collectors.toList());
         StringBuilder content = new StringBuilder();
         content.append("# The execution result\n")
                 .append("-----------------\n")
-                .append("## Executed\n");
-        content.append(executionProjects.stream()
+                .append("## Execute Successful\n");
+        content.append(executionSuccessfulProjects.stream()
                 .map(project -> "- " + project.getAppShowName())
                 .collect(Collectors.joining("\n")));
         content.append("\n-----------------\n")
-                .append("## Non-execution\n");
-        content.append(projects.values().stream()
-                .filter(project -> !executionProjects.contains(project))
+                .append("## Ignore execution\n");
+        content.append(nonExecutionProjects.stream()
+                .filter(project -> !project.isHasError())
+                .map(project -> {
+                    String reason = project.getSkipReason();
+                    return "- " + project.getAppShowName() + "\n> " + reason;
+                })
+                .collect(Collectors.joining("\n")));
+        content.append("\n-----------------\n")
+                .append("## Execute Failure\n");
+        content.append(nonExecutionProjects.stream()
+                .filter(FinalProjectConfig::isHasError)
                 .map(project -> {
                     String reason = project.getSkipReason().isEmpty() ? "unknown error" : project.getSkipReason();
                     return "- " + project.getAppShowName() + "\n> " + reason;

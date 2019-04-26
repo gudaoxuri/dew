@@ -1,24 +1,9 @@
 [[dew-2-migration-guide]]
-=== Dew 2.x Migration guide
+=== Dew 2.x Migration guide[TBD]
 
 本手册适用于从原生 Spring Cloud 项目及 Dew 1.x 项目迁移到 Dew 2.x 的操作说明。
 
-==== Framework 迁移
-
-. [Spring Boot] Spring boot 1.x 迁移到 Spring boot 2.x
-
-  # @see https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide
-
-. [Spring Cloud] 删除所有 ``eureka`` 相关的配置
-
-. [Dew] 修改 ``dew-parent`` 的版本号到最新版本
-. [Dew] 全局查询替换 ``com.tairanchina.csp.dew`` 到 ``ms.dew``
-
-
-TBD 认证修改
-
-
-==== DevOps 实现
+==== 初始准备
 
 . 使用 ``dew-devops.sh`` 初始化集群并创建项目
 
@@ -52,7 +37,78 @@ TBD 认证修改
   #       password: dew!123456
   #
   # encrypt:
-  #   key: dsffjs%^skeSfddeDFS
+  #   key: dsffjs%^skeSfS@#
+
+==== 迁移步骤
+
+. [Spring Boot] Spring boot 1.x 迁移到 Spring boot 2.x
+
+  # @see https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide
+
+  ######################### 特别注意 ########################
+
+  # 关系型数据库连接池默认由Tomcat改为Hikari，对应的配置示例：
+  spring:
+    datasource:
+      url: jdbc:mysql://...
+      username: ...
+      password: "{cipher}..."
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        ...
+  # MySQL默认的client升级到8.x 注意时区设置及驱动名变更(com.mysql.cj.jdbc.Driver)
+
+  # Redis的客户端默认由Jedis改为Lettuce，对应的配置示例：
+  redis:
+    host: ...
+    port: 6379
+    password: "{cipher}..."
+    database: 1
+    lettuce:
+      pool:
+        max-active: 200
+        max-wait: 300
+        max-idle: 50
+        min-idle: 10
+
+  # actuators被重构，修改见：https://www.baeldung.com/spring-boot-actuators
+
+  # Cache不再支持Guava，替换为Caffeine，见： https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-caching.html#boot-features-caching-provider-caffeine
+
+  # 配置值不能为空，e.g.
+  csp:
+    sdk:
+      basic:
+        app-secret: "{cipher}..."
+        token-expire-ms:  # 错误，值不能为空
+
+
+. [Dew Framework] 修改 ``dew-parent`` 的版本号到最新版本
+. [Dew Framework] 全局查询替换 ``com.tairanchina.csp.dew`` 到 ``ms.dew``
+
+. [Dew DevOps] 删除所有 ``eureka`` / ``zuul`` 相关的配置
+. [Dew DevOps] 修改项目中的 ``Spring Cloud Config`` 配置
+
+  spring:
+    cloud:
+      config:
+        uri: # 配置中心的URL（见下文 DevOps实现 说明）, e.g. http://config.dew.ms
+        username:  # 配置中心访问用户名
+        password:  # 配置中心访问密码
+        label:  # 加载的Git分支名
+
+. [Dew DevOps] 删除或修改 ``logback-spring.xml``
+
+  日志会由fluentd自动收集，一般情况下无需配置 logback-spring.xml
+  更改日志级别使用 application-X.yml e.g.
+  logging:
+    level:
+      ROOT: INFO
+      ms.dew: DEBUG                       # Dew目录日志配置
+      org.springframework.jdbc.core: TRACE# Jdbc目录日志配置
+
+
+TBD 认证修改
 
 . 在项目中添加``.dew``配置
 
@@ -68,8 +124,48 @@ TBD 认证修改
       namespace: dew-prod
   # （可选）根据实际情况为每个项目添加 .dew 文件以添加各项目的特殊配置
 
+. 为前端工程添加 ``pom.xml`` ,e.g.
 
-# 修改项目中的Spring Cloud Config配置
+  -----------
+  <project xmlns="http://maven.apache.org/POM/4.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+      <groupId>ms.dew</groupId>
+      <artifactId>parent-starter</artifactId>
+      <version>2.0.0-SNAPSHOT</version>
+    </parent>
+    <groupId>ms.dew.devops.it</groupId>
+    <artifactId>todo-frontend</artifactId>
+    <packaging>pom</packaging>
+    <repositories>
+      <repository>
+        <id>central</id>
+        <url>https://repo.maven.apache.org/maven2</url>
+      </repository>
+      <repository>
+        <id>oss-public</id>
+        <url>https://oss.sonatype.org/content/groups/public</url>
+      </repository>
+      <repository>
+        <id>oss-snapshot</id>
+        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        <snapshots>
+          <enabled>true</enabled>
+          <checksumPolicy>warn</checksumPolicy>
+        </snapshots>
+      </repository>
+    </repositories>
+  </project>
+  -----------
+  将此工程加入到<modules>中
 
-logback-spring.xml
+. 为没有继承 ``parent-starter`` 的工程添加 ``parent-starter`` 模块，以实现DevOps功能，此模块没有任何依赖，故引入不会产生副作用
+
+  <parent>
+      <groupId>ms.dew</groupId>
+      <artifactId>parent-starter</artifactId>
+      <version><最新的版本></version>
+  </parent>
 

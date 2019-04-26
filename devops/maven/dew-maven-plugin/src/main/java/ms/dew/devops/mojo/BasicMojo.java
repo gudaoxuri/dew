@@ -204,7 +204,7 @@ public abstract class BasicMojo extends AbstractMojo {
             if (!preExecute()) {
                 Dew.log.warn("Pre-execution error");
                 disabledDefaultBehavior();
-                Dew.Config.getCurrentProject().skip("Pre-execution error");
+                Dew.Config.getCurrentProject().skip("Pre-execution error", true);
                 return;
             }
             if (Dew.stopped) {
@@ -216,12 +216,12 @@ public abstract class BasicMojo extends AbstractMojo {
             } else {
                 // 此错误不会中止程序
                 disabledDefaultBehavior();
-                Dew.Config.getCurrentProject().skip("Internal execution error");
+                Dew.Config.getCurrentProject().skip("Internal execution error", true);
             }
         } catch (Exception e) {
             // 此错误会中止程序
             Dew.log.error("Process error", e);
-            Dew.Config.getCurrentProject().skip("Process error : " + e.getMessage());
+            Dew.Config.getCurrentProject().skip("Process error : " + e.getMessage(), true);
             ExecuteEventProcessor.onMojoExecuteFailure(getMojoName(), Dew.Config.getCurrentProject(), e);
             throw new ProcessException("Process error", e);
         }

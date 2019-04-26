@@ -120,7 +120,8 @@ spring:                                 # 常用 Spring 配置
         port:                           # Redis端口
         database:                       # Redis数据库
         password:                       # Redis密码
-        pool:                           # 连接池配置
+        lettuce:
+          pool:                         # 连接池配置
     rabbitmq:
       host:                             # Rabbit主机
       port:                             # Rabbit端口
