@@ -687,8 +687,8 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     注意ServiceMonitor的labels要含有Prometheus-operator创建的Prometheus的serviceMonitorSelector的label。
     详细文章：https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources
   3.Demo
-    以devops-exmaple-todo的compute模块为例创建ServiceMonitor
-    link: https://github.com/dew-ms/devops-exmaple-todo
+    以devops-example-todo的compute模块为例创建ServiceMonitor
+    link: https://github.com/dew-ms/devops-example-todo
     -
     cat <<EOF | kubectl -n devops apply -f -
     apiVersion: monitoring.coreos.com/v1
@@ -704,7 +704,7 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
         interval: 10s
         path: /actuator/prometheus
         port: http
-      jobLabel: dew-app-todo
+      jobLabel: dew-app-todo-compute
       namespaceSelector:
         matchNames:
         - dew-uat

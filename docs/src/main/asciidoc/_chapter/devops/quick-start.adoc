@@ -3,7 +3,7 @@ ifndef::imagesdir[:imagesdir: ../../../../../]
 [[devops-quick-start]]
 === DevOps快速入门
 
-NOTE: 本文以 To-Do 项目为示例讲解 ``Dew`` DevOps部分的入门操作，项目地址： https://github.com/dew-ms/devops-exmaple-todo 。
+NOTE: 本文以 To-Do 项目为示例讲解 ``Dew`` DevOps部分的入门操作，项目地址： https://github.com/dew-ms/devops-example-todo 。
 
 TIP: 关于 TO-Do 项目的介绍请先阅读 <<framework-quick-start>>
 
@@ -23,8 +23,8 @@ x.x.x.x todo-uat.dew.ms
 x.x.x.x todo-api-uat.dew.ms
 -
 # ======= 前置准备 =======
-git clone https://github.com/dew-ms/devops-exmaple-todo.git
-cd devops-exmaple-todo
+git clone https://github.com/dew-ms/devops-example-todo.git
+cd devops-example-todo
 # 执行安装
 mvn install -Dmaven.test.skip=true
 # 部署到Kubernetes

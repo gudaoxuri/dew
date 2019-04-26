@@ -866,7 +866,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-本文以 To-Do 项目为示例讲解 <code>Dew</code> 框架部分的入门操作，项目地址： <a href="https://github.com/dew-ms/devops-exmaple-todo" class="bare">https://github.com/dew-ms/devops-exmaple-todo</a> 。
+本文以 To-Do 项目为示例讲解 <code>Dew</code> 框架部分的入门操作，项目地址： <a href="https://github.com/dew-ms/devops-example-todo" class="bare">https://github.com/dew-ms/devops-example-todo</a> 。
 </td>
 </tr>
 </table>
@@ -907,8 +907,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>git clone https://github.com/dew-ms/devops-exmaple-todo.git
-cd devops-exmaple-todo
+<pre>git clone https://github.com/dew-ms/devops-example-todo.git
+cd devops-example-todo
 # 先执行安装
 mvn install -Dmaven.test.skip=true
 # 打开两个命令窗口分别启动两个组件（各组件的作用后文会说明）
@@ -4890,8 +4890,8 @@ kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops
   注意ServiceMonitor的labels要含有Prometheus-operator创建的Prometheus的serviceMonitorSelector的label。
   详细文章：https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources
 3.Demo
-  以devops-exmaple-todo的compute模块为例创建ServiceMonitor
-  link: https://github.com/dew-ms/devops-exmaple-todo
+  以devops-example-todo的compute模块为例创建ServiceMonitor
+  link: https://github.com/dew-ms/devops-example-todo
   -
   cat &lt;&lt;EOF | kubectl -n devops apply -f -
   apiVersion: monitoring.coreos.com/v1
@@ -4907,7 +4907,7 @@ kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops
       interval: 10s
       path: /actuator/prometheus
       port: http
-    jobLabel: dew-app-todo
+    jobLabel: dew-app-todo-compute
     namespaceSelector:
       matchNames:
       - dew-uat
@@ -5214,7 +5214,6 @@ ignoreChangeFiles: []                   # 忽略变更文件列表，此列表�
     replicas: 1                         # 部署的副本数
     revisionHistoryLimit: 3             # 保留的历史版本数
     port: 8080                          # 端口号，默认情况下前端项目为80(不可修改)，后端服务为8080
-    metricPort: 9779                    # Prometheus Metric 采集端口号，不建议修改，仅用于后端服务
     livenessPath: /actuator/health      # 存活检测HTTP的路径，仅用于后端服务
     readinessPath: /actuator/health     # 可用检测HTTP的路径，仅用于后端服务
     livenessInitialDelaySeconds: 60     # 首次存活检测延迟时间，仅用于后端服务
@@ -5834,7 +5833,7 @@ docker run -d --name jaegertracing \
 cat &gt;&gt;./prometheus.yml &lt;&lt;EOF
 scrape_configs:
   - job_name: 'dew-web-example-actuator'
-    metrics_path: '/management/prometheus'
+    metrics_path: '/actuator/prometheus'
     scrape_interval: 5s
     static_configs:
     - targets: ['10.200.20.147:80']

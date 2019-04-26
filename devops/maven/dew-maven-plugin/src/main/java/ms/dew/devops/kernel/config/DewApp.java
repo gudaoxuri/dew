@@ -34,8 +34,6 @@ public class DewApp {
     private int revisionHistoryLimit = 3;
     // 端口号，默认情况下前端项目为80(不可修改)，后端服务为8080
     private int port = 8080;
-    // Prometheus Metric 采集端口号，不建议修改，仅用于后端服务
-    private int metricPort = 9779;
     // 存活检测HTTP的路径，仅用于后端服务
     private String livenessPath = "/actuator/health";
     // 可用检测HTTP的路径，仅用于后端服务
@@ -125,25 +123,6 @@ public class DewApp {
      */
     public void setPort(int port) {
         this.port = port;
-    }
-
-    /**
-     * Gets metric port.
-     *
-     * @return the metric port
-     */
-    public int getMetricPort() {
-        return
-                metricPort;
-    }
-
-    /**
-     * Sets metric port.
-     *
-     * @param metricPort the metric port
-     */
-    public void setMetricPort(int metricPort) {
-        this.metricPort = metricPort;
     }
 
     /**

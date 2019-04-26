@@ -3,7 +3,7 @@ ifndef::imagesdir[:imagesdir: ../../../../../]
 [[framework-quick-start]]
 === 框架快速入门
 
-NOTE: 本文以 To-Do 项目为示例讲解 ``Dew`` 框架部分的入门操作，项目地址： https://github.com/dew-ms/devops-exmaple-todo 。
+NOTE: 本文以 To-Do 项目为示例讲解 ``Dew`` 框架部分的入门操作，项目地址： https://github.com/dew-ms/devops-example-todo 。
 
 ==== 需求分析
 
@@ -19,8 +19,8 @@ To-Do项目实现一个简单的任务记录功能，要求支持：
 TIP: 体验环境要求安装 Java(>=8)、Maven、NodeJS(>=8)
 
 ----
-git clone https://github.com/dew-ms/devops-exmaple-todo.git
-cd devops-exmaple-todo
+git clone https://github.com/dew-ms/devops-example-todo.git
+cd devops-example-todo
 # 先执行安装
 mvn install -Dmaven.test.skip=true
 # 打开两个命令窗口分别启动两个组件（各组件的作用后文会说明）

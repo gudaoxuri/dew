@@ -81,7 +81,6 @@ ignoreChangeFiles: []                   # 忽略变更文件列表，此列表�
     replicas: 1                         # 部署的副本数
     revisionHistoryLimit: 3             # 保留的历史版本数
     port: 8080                          # 端口号，默认情况下前端项目为80(不可修改)，后端服务为8080
-    metricPort: 9779                    # Prometheus Metric 采集端口号，不建议修改，仅用于后端服务
     livenessPath: /actuator/health      # 存活检测HTTP的路径，仅用于后端服务
     readinessPath: /actuator/health     # 可用检测HTTP的路径，仅用于后端服务
     livenessInitialDelaySeconds: 60     # 首次存活检测延迟时间，仅用于后端服务

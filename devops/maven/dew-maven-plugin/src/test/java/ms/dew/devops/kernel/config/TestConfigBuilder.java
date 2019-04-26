@@ -69,7 +69,6 @@ public class TestConfigBuilder extends BasicTest {
                 "namespace: dew-spec\n"
                         + "app:\n"
                         + "  revisionHistoryLimit: 4\n"
-                        + "  metricPort: 9000\n"
                         + "profiles:\n"
                         + "  test:\n"
                         + "    namespace: dew-test-spec\n"

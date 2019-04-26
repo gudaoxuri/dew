@@ -69,7 +69,7 @@ public enum KubeRES {
     /**
      * Rule binding kube res.
      */
-    RULE_BINDING("RoleBinding"),
+    ROLE_BINDING("RoleBinding"),
     /**
      * Cluster role kube res.
      */
@@ -77,7 +77,7 @@ public enum KubeRES {
     /**
      * Cluster rule binding kube res.
      */
-    CLUSTER_RULE_BINDING("ClusterRoleBinding"),
+    CLUSTER_ROLE_BINDING("ClusterRoleBinding"),
     /**
      * Horizontal pod autoscaler kube res.
      */

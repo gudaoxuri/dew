@@ -40,8 +40,6 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
         Map<String, String> annotations = new HashMap<>();
         annotations.put(BasicFlow.FLAG_KUBE_RESOURCE_GIT_COMMIT, config.getGitCommit());
         annotations.put("dew.ms/scm-url", config.getScmUrl());
-        annotations.put("prometheus.io/port", config.getApp().getMetricPort() + "");
-        annotations.put("prometheus.io/scrape", "true");
         if (config.getApp().isTraceLogEnabled()) {
             annotations.put("sidecar.jaegertracing.io/inject", "true");
         }

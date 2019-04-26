@@ -68,11 +68,6 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                                         .withContainerPort(config.getApp().getPort())
                                         .withName("http")
                                         .withProtocol("TCP")
-                                        .build(),
-                                new V1ContainerPortBuilder()
-                                        .withContainerPort(config.getApp().getMetricPort())
-                                        .withName("prometheus")
-                                        .withProtocol("TCP")
                                         .build())
                         .withEnv(new V1EnvVarBuilder()
                                 .withName("JAVA_OPTIONS")
