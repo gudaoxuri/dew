@@ -26,6 +26,7 @@ import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.flow.release.KubeReleaseFlow;
+import ms.dew.devops.kernel.function.VersionController;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,18 +47,18 @@ public class DefaultRollbackFlow extends BasicFlow {
         V1Service service = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(), KubeRES.SERVICE, V1Service.class);
         String currentGitCommit = null;
         if (service != null) {
-            currentGitCommit = service.getMetadata().getAnnotations().get(FLAG_KUBE_RESOURCE_GIT_COMMIT);
+            currentGitCommit = VersionController.getGitCommit(service);
         }
-        Map<String, V1ConfigMap> versions = getVersionHistory(config, true).stream()
+        Map<String, V1ConfigMap> versions = VersionController.getVersionHistory(config, true).stream()
                 .collect(Collectors
-                        .toMap(ver -> ver.getMetadata().getLabels().get(FLAG_KUBE_RESOURCE_GIT_COMMIT), ver -> ver,
+                        .toMap(VersionController::getGitCommit, ver -> ver,
                                 (v1, v2) -> v1, LinkedHashMap::new));
         String finalCurrentGitCommit = currentGitCommit;
         String sb = "\r\n------------------ Please select rollback version : ------------------\r\n"
                 + versions.entrySet().stream()
                 .map(ver -> " < " + ver.getKey() + " > Last update time : "
                         + $.time().yyyy_MM_dd_HH_mm_ss_SSS.format(
-                        new Date(Long.valueOf(ver.getValue().getMetadata().getLabels().get(FLAG_VERSION_LAST_UPDATE_TIME))))
+                        new Date(VersionController.getLastUpdateTime(ver.getValue())))
                         + (finalCurrentGitCommit != null && finalCurrentGitCommit.equalsIgnoreCase(ver.getKey()) ? " [Online]" : ""))
                 .collect(Collectors.joining("\r\n"))
                 + "\r\n---------------------------------------------------------------------\r\n";
@@ -70,7 +71,7 @@ public class DefaultRollbackFlow extends BasicFlow {
             selected = reader.readLine().trim();
         }
         // 要回滚的版本
-        String rollbackGitCommit = versions.get(selected).getMetadata().getLabels().get(FLAG_KUBE_RESOURCE_GIT_COMMIT);
+        String rollbackGitCommit = VersionController.getGitCommit(versions.get(selected));
         // 调用部署流程执行重新部署
         new KubeReleaseFlow().release(config, rollbackGitCommit);
         return true;

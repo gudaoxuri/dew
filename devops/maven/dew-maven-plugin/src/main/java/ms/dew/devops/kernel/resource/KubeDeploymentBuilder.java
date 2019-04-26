@@ -18,10 +18,10 @@ package ms.dew.devops.kernel.resource;
 
 import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.models.*;
+import ms.dew.devops.exception.ProcessException;
 import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
-import ms.dew.devops.exception.ProcessException;
-import ms.dew.devops.kernel.flow.BasicFlow;
+import ms.dew.devops.kernel.function.VersionController;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +39,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
     public ExtensionsV1beta1Deployment build(FinalProjectConfig config) {
 
         Map<String, String> annotations = new HashMap<>();
-        annotations.put(BasicFlow.FLAG_KUBE_RESOURCE_GIT_COMMIT, config.getGitCommit());
+        annotations.put(VersionController.FLAG_KUBE_RESOURCE_GIT_COMMIT, config.getGitCommit());
         annotations.put("dew.ms/scm-url", config.getScmUrl());
         if (config.getApp().isTraceLogEnabled()) {
             annotations.put("sidecar.jaegertracing.io/inject", "true");

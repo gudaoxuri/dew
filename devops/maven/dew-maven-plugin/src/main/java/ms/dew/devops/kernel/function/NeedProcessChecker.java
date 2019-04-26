@@ -24,7 +24,6 @@ import ms.dew.devops.helper.KubeHelper;
 import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
-import ms.dew.devops.kernel.flow.BasicFlow;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -127,39 +126,37 @@ public class NeedProcessChecker {
     private static void checkNeedProcessByMavenRepo(FinalProjectConfig config) throws ApiException, IOException {
         String version = Dew.Config.getCurrentMavenProject().getVersion();
         if (version.trim().toLowerCase().endsWith("snapshot")) {
-            // 如果快照仓库存在，则快照版本每次都部署
+            // 如果快照仓库存在
             if (Dew.Config.getCurrentMavenProject().getDistributionManagement() == null
                     || Dew.Config.getCurrentMavenProject().getDistributionManagement().getSnapshotRepository() == null
                     || Dew.Config.getCurrentMavenProject().getDistributionManagement().getSnapshotRepository().getUrl() == null
                     || Dew.Config.getCurrentMavenProject().getDistributionManagement().getSnapshotRepository().getUrl().trim().isEmpty()) {
                 Dew.log.warn("Maven distribution snapshot repository not found");
                 config.skip("Maven distribution snapshot repository not found");
+                return;
             }
-            return;
-        }
-        // 处理非快照版
-        if (Dew.Config.getCurrentMavenProject().getDistributionManagement() == null
+        } else if (Dew.Config.getCurrentMavenProject().getDistributionManagement() == null
                 || Dew.Config.getCurrentMavenProject().getDistributionManagement().getRepository() == null
                 || Dew.Config.getCurrentMavenProject().getDistributionManagement().getRepository().getUrl() == null
                 || Dew.Config.getCurrentMavenProject().getDistributionManagement().getRepository().getUrl().trim().isEmpty()) {
+            // 处理非快照版
             Dew.log.warn("Maven distribution repository not found");
             config.skip("Maven distribution repository not found");
             return;
         }
-        String repoUrl = Dew.Config.getCurrentMavenProject().getDistributionManagement().getRepository().getUrl().trim();
-        // TBD auth
-        repoUrl = repoUrl.endsWith("/") ? repoUrl : repoUrl + "/";
-        repoUrl += Dew.Config.getCurrentMavenProject().getGroupId().replaceAll("\\.", "/")
-                + "/"
-                + Dew.Config.getCurrentMavenProject().getArtifactId()
-                + "/"
-                + version;
-        if ($.http.getWrap(repoUrl).statusCode == 404) {
+        if (config.isCustomVersion()) {
             return;
         }
-        // 已存在不需要部署
-        Dew.log.warn("Maven repository exist this version :" + Dew.Config.getCurrentMavenProject().getArtifactId());
-        config.skip("Maven repository exist this version :" + Dew.Config.getCurrentMavenProject().getArtifactId());
+        String lastVersionDeployCommit = VersionController.getGitCommit(VersionController.getLastVersion(config, true));
+        Dew.log.debug("Latest version is " + lastVersionDeployCommit);
+        // 判断有没有发过版本
+        if (lastVersionDeployCommit != null) {
+            List<String> changedFiles = fetchGitDiff(lastVersionDeployCommit);
+            // 判断有没有代码变更
+            if (!hasUnDeployFiles(changedFiles, config)) {
+                config.skip("Code that has no changes compared to the current version");
+            }
+        }
     }
 
     /**
@@ -208,12 +205,7 @@ public class NeedProcessChecker {
      * @throws ApiException the api exception
      */
     private static String fetchLastVersionDeployCommit(String configId, String appName, String namespace) throws ApiException {
-        V1Service lastVersionService = KubeHelper.inst(configId).read(appName, namespace, KubeRES.SERVICE, V1Service.class);
-        if (lastVersionService == null) {
-            return null;
-        } else {
-            return lastVersionService.getMetadata().getAnnotations().get(BasicFlow.FLAG_KUBE_RESOURCE_GIT_COMMIT);
-        }
+        return VersionController.getGitCommit(KubeHelper.inst(configId).read(appName, namespace, KubeRES.SERVICE, V1Service.class));
     }
 
     /**

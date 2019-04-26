@@ -17,10 +17,14 @@
 package ms.dew.devops.kernel.flow.release;
 
 import io.kubernetes.client.ApiException;
+import io.kubernetes.client.models.V1ConfigMap;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
+import ms.dew.devops.kernel.function.VersionController;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Maven release flow.
@@ -32,6 +36,14 @@ import java.io.IOException;
 public class MavenReleaseFlow extends BasicFlow {
 
     public boolean process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
+        VersionController.addNewVersion(config, config.getGitCommit(), false, new HashMap<>(), new HashMap<>());
+        List<V1ConfigMap> versions = VersionController.getVersionHistory(config, false);
+        for (V1ConfigMap version : versions) {
+            String gitCommit = VersionController.getGitCommit(version);
+            if (!gitCommit.equalsIgnoreCase(config.getGitCommit())) {
+                VersionController.deleteVersion(config, gitCommit);
+            }
+        }
         return true;
     }
 

@@ -26,7 +26,7 @@ import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
-import ms.dew.devops.kernel.resource.KubeConfigMapBuilder;
+import ms.dew.devops.kernel.function.VersionController;
 import ms.dew.devops.kernel.resource.KubeDeploymentBuilder;
 import ms.dew.devops.kernel.resource.KubeServiceBuilder;
 
@@ -35,7 +35,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,13 +74,13 @@ public class KubeReleaseFlow extends BasicFlow {
      */
     public void release(FinalProjectConfig config, String gitCommit) throws ApiException, IOException {
         Map<String, Object> deployResult;
-        V1ConfigMap oldVersion = getOldVersion(config, gitCommit);
+        V1ConfigMap oldVersion = VersionController.getVersion(config, gitCommit, true);
         if (oldVersion != null) {
             deployResult = fetchOldVersionResources(config, oldVersion);
-            Dew.log.info("Rollback version to : " + getVersionName(config, gitCommit));
+            Dew.log.info("Rollback version to : " + VersionController.getVersionName(config, gitCommit));
             release(config, deployResult, gitCommit, true);
         } else {
-            Dew.log.info("Deploy new version : " + getVersionName(config, gitCommit));
+            Dew.log.info("Deploy new version : " + VersionController.getVersionName(config, gitCommit));
             deployResult = buildNewVersionResources(config, flowBasePath);
             release(config, deployResult, gitCommit, false);
         }
@@ -99,12 +98,10 @@ public class KubeReleaseFlow extends BasicFlow {
      */
     private void release(FinalProjectConfig config, Map<String, Object> deployResult, String gitCommit, boolean reRelease)
             throws ApiException, IOException {
-        Dew.log.debug("Add version to ConfigMap");
-        appendVersionInfo(config, deployResult, gitCommit, reRelease);
         Dew.log.info("Publishing kubernetes resources");
         deployResources(config, deployResult);
-        Dew.log.debug("Enabled version");
-        enabledVersionInfo(config, gitCommit);
+        Dew.log.debug("Add version to ConfigMap");
+        appendVersionInfo(config, deployResult, gitCommit, reRelease);
     }
 
     /**
@@ -151,41 +148,6 @@ public class KubeReleaseFlow extends BasicFlow {
                 put(KubeRES.SERVICE.getVal(), service);
             }
         };
-    }
-
-    /**
-     * Append version info.
-     *
-     * @param config        the project config
-     * @param kubeResources the kube resources
-     * @param gitCommit     the git commit
-     * @param reRelease     the re-release
-     * @throws ApiException the api exception
-     */
-    private void appendVersionInfo(FinalProjectConfig config, Map<String, Object> kubeResources, String gitCommit, boolean reRelease)
-            throws ApiException {
-        Map<String, String> resources = kubeResources.entrySet()
-                .stream().collect(Collectors.toMap(Map.Entry::getKey,
-                        entry -> {
-                            try {
-                                return $.security.encodeStringToBase64(KubeHelper.inst(config.getId()).toString(entry.getValue()), "UTF-8");
-                            } catch (UnsupportedEncodingException ignore) {
-                                return "";
-                            }
-                        }));
-        V1ConfigMap currVerConfigMap = new KubeConfigMapBuilder().build(
-                getVersionName(config, gitCommit), config.getNamespace(), new HashMap<String, String>() {
-                    {
-                        put(FLAG_VERSION_APP, config.getAppName());
-                        put(FLAG_KUBE_RESOURCE_GIT_COMMIT, gitCommit);
-                        put(FLAG_VERSION_KIND, "version");
-                        // 初始时为禁用状态
-                        put(FLAG_VERSION_ENABLED, "false");
-                        put(FLAG_VERSION_LAST_UPDATE_TIME, System.currentTimeMillis() + "");
-                        put(FLAG_VERSION_RE_RELEASE, reRelease + "");
-                    }
-                }, resources);
-        KubeHelper.inst(config.getId()).apply(currVerConfigMap);
     }
 
     /**
@@ -261,18 +223,26 @@ public class KubeReleaseFlow extends BasicFlow {
     }
 
     /**
-     * Enabled version info.
+     * Append version info.
      *
-     * @param config    the project config
-     * @param gitCommit the git commit
+     * @param config        the project config
+     * @param kubeResources the kube resources
+     * @param gitCommit     the git commit
+     * @param reRelease     the re-release
      * @throws ApiException the api exception
      */
-    private void enabledVersionInfo(FinalProjectConfig config, String gitCommit) throws ApiException {
-        KubeHelper.inst(config.getId()).patch(getVersionName(config, gitCommit), new ArrayList<String>() {
-            {
-                add("{\"op\":\"replace\",\"path\":\"/metadata/labels/enabled\",\"value\":\"true\"}");
-            }
-        }, config.getNamespace(), KubeRES.CONFIG_MAP);
+    private void appendVersionInfo(FinalProjectConfig config, Map<String, Object> kubeResources, String gitCommit, boolean reRelease)
+            throws ApiException {
+        Map<String, String> resources = kubeResources.entrySet()
+                .stream().collect(Collectors.toMap(Map.Entry::getKey,
+                        entry -> {
+                            try {
+                                return $.security.encodeStringToBase64(KubeHelper.inst(config.getId()).toString(entry.getValue()), "UTF-8");
+                            } catch (UnsupportedEncodingException ignore) {
+                                return "";
+                            }
+                        }));
+        VersionController.addNewVersion(config, gitCommit, reRelease, resources, new HashMap<>());
     }
 
     /**
@@ -284,16 +254,16 @@ public class KubeReleaseFlow extends BasicFlow {
      */
     private void removeOldVersions(FinalProjectConfig config) throws ApiException, IOException {
         // 获取所有历史版本
-        List<V1ConfigMap> verConfigMaps = getVersionHistory(config, false);
+        List<V1ConfigMap> verConfigMaps = VersionController.getVersionHistory(config, false);
         int offset = config.getApp().getRevisionHistoryLimit();
         for (V1ConfigMap configMap : verConfigMaps) {
-            boolean enabled = configMap.getMetadata().getLabels().get(FLAG_VERSION_ENABLED).equalsIgnoreCase("true");
+            boolean enabled = VersionController.isVersionEnabled(configMap);
             if (enabled) {
                 // 保留要求的版本数量
                 offset--;
             }
             if (!enabled || offset <= 0) {
-                String oldGitCommit = configMap.getMetadata().getLabels().get(FLAG_KUBE_RESOURCE_GIT_COMMIT);
+                String oldGitCommit = VersionController.getGitCommit(configMap);
                 Dew.log.debug("Remove old version : " + configMap.getMetadata().getName());
                 // 删除 config map
                 KubeHelper.inst(config.getId()).delete(configMap.getMetadata().getName(), config.getNamespace(), KubeRES.CONFIG_MAP);

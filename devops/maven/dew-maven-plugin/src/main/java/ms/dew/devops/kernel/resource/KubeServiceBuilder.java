@@ -20,7 +20,7 @@ import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.models.*;
 import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
-import ms.dew.devops.kernel.flow.BasicFlow;
+import ms.dew.devops.kernel.function.VersionController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +38,7 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
     public V1Service build(FinalProjectConfig config) {
 
         Map<String, String> annotations = new HashMap<>();
-        annotations.put(BasicFlow.FLAG_KUBE_RESOURCE_GIT_COMMIT, config.getGitCommit());
+        annotations.put(VersionController.FLAG_KUBE_RESOURCE_GIT_COMMIT, config.getGitCommit());
         annotations.put("dew.ms/scm-url", config.getScmUrl());
         annotations.put("prometheus.io/port", config.getApp().getMetricPort() + "");
         annotations.put("prometheus.io/scrape", "true");
