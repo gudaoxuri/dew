@@ -61,27 +61,27 @@ public class DockerOpt {
     /**
      * Log.
      */
-    protected Log log;
+    private Log log;
     /**
      * Docker native client.
      */
-    protected DockerClient docker;
+    private DockerClient docker;
     /**
      * The Default auth config.
      */
-    protected AuthConfig defaultAuthConfig;
+    private AuthConfig defaultAuthConfig;
     /**
      * The Registry api url.
      */
-    protected String registryApiUrl;
+    private String registryApiUrl;
     /**
      * The Registry password.
      */
-    protected String registryPassword;
+    private String registryPassword;
     /**
      * The Registry username.
      */
-    protected String registryUsername;
+    private String registryUsername;
 
     /**
      * Instantiates a new Docker opt.

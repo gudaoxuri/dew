@@ -1,9 +1,11 @@
 FROM openjdk:8-alpine
 
 COPY ./run-java.sh ./
+COPY ./debug-java.sh ./
 COPY ./serv.jar ./
 
 RUN chmod 777 ./run-java.sh
+RUN chmod 777 ./debug-java.sh
 
 ARG PORT=8080
 

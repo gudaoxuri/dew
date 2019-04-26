@@ -123,15 +123,21 @@ public class Dew {
          */
         public static final String FLAG_DEW_DEVOPS_VERSION_CUST = "dew.devops.version.custom";
 
-        // ============= 日志场景使用 =============
+        // ============= 日志及调试场景使用 =============
         /**
-         * 要查看日志的Pod名称标识.
+         * 要使用的Pod名称标识.
          */
-        public static final String FLAG_DEW_DEVOPS_POD_NAME = "dew.devops.log.podName";
+        public static final String FLAG_DEW_DEVOPS_POD_NAME = "dew.devops.podName";
+        // ============= 日志场景使用 =============
         /**
          * 是否滚动查看日志标识.
          */
         public static final String FLAG_DEW_DEVOPS_LOG_FOLLOW = "dew.devops.log.follow";
+        // ============= 调试场景使用 =============
+        /**
+         * 转发端口标识.
+         */
+        public static final String FLAG_DEW_DEVOPS_DEBUG_FORWARD_PORT = "dew.devops.debug.forward.port";
 
         // ============= 伸缩场景使用 =============
 

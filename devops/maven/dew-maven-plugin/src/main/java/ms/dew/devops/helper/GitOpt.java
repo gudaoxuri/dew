@@ -32,7 +32,7 @@ public class GitOpt {
     /**
      * Log.
      */
-    protected Log log;
+    private Log log;
 
     /**
      * Instantiates a new Git opt.

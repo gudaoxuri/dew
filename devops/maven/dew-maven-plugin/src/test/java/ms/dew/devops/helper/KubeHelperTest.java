@@ -20,15 +20,19 @@ import com.ecfront.dew.common.$;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.*;
 import ms.dew.devops.BasicTest;
+import ms.dew.devops.kernel.resource.KubeDeploymentBuilder;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 /**
  * Kube helper test.
@@ -45,6 +49,19 @@ public class KubeHelperTest extends BasicTest {
     @Before
     public void before() throws IOException {
         KubeHelper.init("", new SystemStreamLog(), defaultKubeConfig);
+    }
+
+    @Test
+    public void test() throws IOException, ApiException, InterruptedException {
+        KubeHelper.inst("")
+                .exec("helloworld-backend-79989646f9-bs5r4", "dew-app", "dew-test",
+                        new String[]{
+                                "./debug-java.sh"
+                        }, System.out::println);
+        Thread.sleep(10000);
+        KubeHelper.inst("")
+                .forward("helloworld-backend-79989646f9-bs5r4", "dew-test", 5005, 9999);
+        new CountDownLatch(1).await();
     }
 
     /**
@@ -74,9 +91,27 @@ public class KubeHelperTest extends BasicTest {
                 resp -> {
                     System.out.printf("%s : %s%n", resp.type, $.json.toJsonString(resp.object.getStatus()));
                     if (resp.object.getStatus().getReadyReplicas() != null
-                            && resp.object.getStatus().getReadyReplicas().intValue() == resp.object.getSpec().getReplicas()) {
+                            && resp.object.getStatus().getAvailableReplicas() != null
+                            && resp.object.getStatus().getReadyReplicas() == 2
+                            && resp.object.getStatus().getAvailableReplicas() == 2) {
+                        try {
+                            long runningPodSize = KubeHelper.inst("")
+                                    .list("name=nginx", "ns-test", KubeRES.POD, V1Pod.class)
+                                    .stream().filter(pod ->
+                                            pod.getStatus().getPhase().equalsIgnoreCase("Running")
+                                                    && pod.getStatus().getContainerStatuses().stream().allMatch(V1ContainerStatus::isReady)
+                                    )
+                                    .count();
+                            if (2 != runningPodSize) {
+                                // 之前版本没有销毁
+                                Thread.sleep(1000);
+                            }
+                        } catch (ApiException | InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         cdl.countDown();
                     }
+
                 },
                 ExtensionsV1beta1Deployment.class);
         Assert.assertFalse(
@@ -101,6 +136,8 @@ public class KubeHelperTest extends BasicTest {
                 KubeRES.DEPLOYMENT,
                 ExtensionsV1beta1Deployment.class).size());
 
+        // 避免各pod的startTime相同
+        Thread.sleep(1000);
         KubeHelper.inst("").patch("nginx-deployment", new ArrayList<String>() {
             {
                 add("{\"op\":\"replace\",\"path\":\"/spec/replicas\",\"value\":2}");
@@ -118,18 +155,39 @@ public class KubeHelperTest extends BasicTest {
 
         cdl.await();
 
-        // TODO
-        /*
-        String podName = KubeHelper.inst("").list(
+        List<V1Pod> pods = KubeHelper.inst("").list(
                 "app=nginx",
                 deployment.getMetadata().getNamespace(),
                 KubeRES.POD,
-                V1Pod.class).get(0).getMetadata().getName();
+                V1Pod.class)
+                .stream()
+                .filter(pod -> pod.getStatus().getPhase().equalsIgnoreCase("Running"))
+                .sorted((m1, m2) ->
+                        Long.compare(m2.getStatus().getStartTime().getMillis(), m1.getStatus().getStartTime().getMillis()))
+                .collect(Collectors.toList());
+        String podName = pods.get(0).getMetadata().getName();
+        List<String> execResult = KubeHelper.inst("").exec(podName, null, deployment.getMetadata().getNamespace(),
+                new String[]{
+                        "sh",
+                        "-c",
+                        "ls -l"
+                });
+        Assert.assertEquals("total 8", execResult.get(0));
 
+        Closeable closeable = KubeHelper.inst("").forward(podName, deployment.getMetadata().getNamespace(), 80, 8081);
+
+        Assert.assertTrue($.http.get("http://127.0.0.1:8081").contains("Welcome to nginx!"));
+        Assert.assertTrue($.http.get("http://127.0.0.1:8081").contains("Welcome to nginx!"));
+
+        closeable.close();
+
+        // TODO
+        /*
         Ngnix没有日志输出，程序会一直等待
         List<String> logs = KubeHelper.inst("").log(podName, "ns-test");
         logs.forEach(System.out::println);
         */
+
 
         KubeHelper.inst("").stopWatch(watchId);
         KubeHelper.inst("").delete("ns-test", KubeRES.NAME_SPACE);

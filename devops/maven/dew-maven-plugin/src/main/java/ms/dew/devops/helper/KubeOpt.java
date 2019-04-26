@@ -17,15 +17,13 @@
 package ms.dew.devops.helper;
 
 import com.ecfront.dew.common.$;
+import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import io.kubernetes.client.ApiClient;
-import io.kubernetes.client.ApiException;
-import io.kubernetes.client.Configuration;
-import io.kubernetes.client.PodLogs;
+import io.kubernetes.client.*;
 import io.kubernetes.client.apis.AutoscalingV2beta2Api;
 import io.kubernetes.client.apis.CoreV1Api;
 import io.kubernetes.client.apis.ExtensionsV1beta1Api;
@@ -38,10 +36,14 @@ import io.kubernetes.client.util.Yaml;
 import org.apache.maven.plugin.logging.Log;
 
 import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -56,40 +58,40 @@ public class KubeOpt {
     /**
      * The Watch map.
      */
-    protected final Map<String, Watch> watchMap = new ConcurrentHashMap<>();
+    private final Map<String, Watch> watchMap = new ConcurrentHashMap<>();
     /**
      * The Executor service.
      */
-    protected final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
 
     /**
      * Log.
      */
-    protected Log log;
+    private Log log;
     /**
      * kuberentes native API Client.
      */
-    protected ApiClient client;
+    private ApiClient client;
     /**
      * kuberentes native Core api.
      */
-    protected CoreV1Api coreApi;
+    private CoreV1Api coreApi;
     /**
      * kuberentes native Extensions api.
      */
-    protected ExtensionsV1beta1Api extensionsApi;
+    private ExtensionsV1beta1Api extensionsApi;
     /**
      * kuberentes native RBAC authorization api.
      */
-    protected RbacAuthorizationV1Api rbacAuthorizationApi;
+    private RbacAuthorizationV1Api rbacAuthorizationApi;
     /**
      * kuberentes native Autoscaling api.
      */
-    protected AutoscalingV2beta2Api autoscalingApi;
+    private AutoscalingV2beta2Api autoscalingApi;
     /**
      * kuberentes native Pod logs.
      */
-    protected PodLogs podLogs;
+    private PodLogs podLogs;
 
     /**
      * Instantiates a new Kube opt.
@@ -111,8 +113,8 @@ public class KubeOpt {
         } catch (IOException ignore) {
             throw new RuntimeException(ignore);
         }
-        Configuration.setDefaultApiClient(client);
         client.getHttpClient().setReadTimeout(0, TimeUnit.MILLISECONDS);
+        Configuration.setDefaultApiClient(client);
         coreApi = new CoreV1Api(client);
         extensionsApi = new ExtensionsV1beta1Api(client);
         rbacAuthorizationApi = new RbacAuthorizationV1Api(client);
@@ -857,7 +859,6 @@ public class KubeOpt {
             Thread.currentThread().interrupt();
             return logResult;
         }
-
     }
 
     /**
@@ -907,14 +908,14 @@ public class KubeOpt {
                         tailFollowFun.accept(msg);
                     }
                 } catch (IOException e) {
-                    if (closed.get()) {
-                        // 正常关闭
-                    } else {
+                    if (!closed.get()) {
                         log.error("Output log error", e);
                     }
                 } finally {
                     try {
+                        closed.set(true);
                         is.close();
+                        r.close();
                     } catch (IOException e) {
                         log.error("Close log stream error", e);
                     }
@@ -925,7 +926,7 @@ public class KubeOpt {
                 is.close();
                 r.close();
             };
-        } catch (ApiException | IOException e) {
+        } catch (IOException e) {
             log.error("Output log error", e);
         }
         return () -> {
@@ -1041,6 +1042,158 @@ public class KubeOpt {
             }
             exist = exist(name, namespace, res);
         }
+    }
+
+    /**
+     * Exec command.
+     *
+     * @param name      the name
+     * @param container the container
+     * @param namespace the namespace
+     * @return result list
+     * @throws ApiException the api exception
+     * @throws IOException  the io exception
+     */
+    public List<String> exec(String name, String container, String namespace, String[] cmd) throws ApiException, IOException {
+        List<String> result = new CopyOnWriteArrayList<>();
+        exec(name, container, namespace, cmd, result::add, true).close();
+        return result;
+    }
+
+    /**
+     * Exec command.
+     * <p>
+     * 需要手工关闭
+     *
+     * @param name      the name
+     * @param container the container
+     * @param namespace the namespace
+     * @param cmd       command
+     * @param outputFun output fun
+     * @return the closeable
+     * @throws ApiException the api exception
+     * @throws IOException  the io exception
+     */
+    public Closeable exec(String name, String container, String namespace,
+                          String[] cmd, Consumer<String> outputFun) throws ApiException, IOException {
+        return exec(name, container, namespace, cmd, outputFun, false);
+    }
+
+    /**
+     * Exec command.
+     *
+     * @param name      the name
+     * @param container the container
+     * @param namespace the namespace
+     * @param cmd       command
+     * @param outputFun output fun
+     * @param waiting   if <b>true</b> waiting unit execute finish
+     * @return the closeable
+     * @throws ApiException the api exception
+     * @throws IOException  the io exception
+     */
+    private Closeable exec(String name, String container, String namespace,
+                           String[] cmd, Consumer<String> outputFun, boolean waiting) throws ApiException, IOException {
+        if (container == null) {
+            container = read(name, namespace, KubeRES.POD, V1Pod.class).getSpec().getContainers().get(0).getName();
+        }
+        String finalContainer = container;
+        try {
+            AtomicBoolean closed = new AtomicBoolean(false);
+            CountDownLatch cdl = new CountDownLatch(1);
+            final Process proc = new Exec().exec(namespace, name, cmd, finalContainer, true, true);
+            executorService.execute(() -> {
+                try {
+                    ByteStreams.copy(System.in, proc.getOutputStream());
+                } catch (IOException e) {
+                    if (!closed.get()) {
+                        log.error("Exec error", e);
+                    }
+                }
+            });
+            executorService.execute(() -> {
+                try {
+                    BufferedReader outputReader = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+                    String outputLine;
+                    while ((outputLine = outputReader.readLine()) != null) {
+                        outputFun.accept(outputLine);
+                    }
+                } catch (IOException e) {
+                    if (!closed.get()) {
+                        log.error("Exec error", e);
+                    }
+                } finally {
+                    cdl.countDown();
+                }
+            });
+            if (waiting) {
+                cdl.await();
+            }
+            return () -> {
+                closed.set(true);
+                proc.destroy();
+            };
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Exec error", e);
+        }
+        return () -> {
+        };
+    }
+
+
+    /**
+     * Forward.
+     *
+     * @param name        the name
+     * @param namespace   the namespace
+     * @param innerPort   the inner port
+     * @param forwardPort the forward port
+     * @return the closeable
+     * @throws IOException  the io exception
+     * @throws ApiException the api exception
+     */
+    public Closeable forward(String name, String namespace, int innerPort, int forwardPort) throws IOException, ApiException {
+        AtomicBoolean closed = new AtomicBoolean(false);
+        PortForward.PortForwardResult result = new PortForward().forward(namespace, name, new ArrayList<Integer>() {
+            {
+                add(forwardPort);
+                add(innerPort);
+            }
+        });
+        ServerSocket ss = new ServerSocket(forwardPort);
+        AtomicReference<Socket> s = new AtomicReference<>();
+        executorService.execute(() -> {
+            try {
+                while (!closed.get()) {
+                    s.set(ss.accept());
+                    ByteStreams.copy(s.get().getInputStream(), result.getOutboundStream(innerPort));
+                }
+            } catch (IOException e) {
+                if (!closed.get()) {
+                    log.error("Froward error", e);
+                }
+            }
+        });
+        executorService.execute(() -> {
+            try {
+                while (!closed.get()) {
+                    if (s.get() != null) {
+                        ByteStreams.copy(result.getInputStream(innerPort), s.get().getOutputStream());
+                    }
+                }
+            } catch (IOException e) {
+                if (!closed.get()) {
+                    log.error("Froward error", e);
+                }
+            }
+        });
+        log.info("Connect address: <Current Host> <" + forwardPort + ">");
+        return () -> {
+            closed.set(true);
+            s.get().close();
+            ss.close();
+        };
     }
 
 }

@@ -90,18 +90,24 @@ public abstract class BasicMojo extends AbstractMojo {
     private String customVersion;
 
 
-    // ============= 日志场景使用 =============
+    // ============= 日志及调试场景使用 =============
     /**
      * The Pod name.
      */
     @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_POD_NAME)
     String podName;
+    // ============= 日志场景使用 =============
     /**
      * The Follow.
      */
     @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_LOG_FOLLOW)
     boolean follow;
-
+    // ============= 调试场景使用 =============
+    /**
+     * The Forward Port.
+     */
+    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_DEBUG_FORWARD_PORT, defaultValue = "9999")
+    int forwardPort;
 
     // ============= 伸缩场景使用 =============
     /**
@@ -250,6 +256,8 @@ public abstract class BasicMojo extends AbstractMojo {
                 .ifPresent(obj -> podName = obj);
         Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_LOG_FOLLOW, formattedProperties)
                 .ifPresent(obj -> follow = Boolean.valueOf(obj));
+        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_DEBUG_FORWARD_PORT, formattedProperties)
+                .ifPresent(obj -> forwardPort = Integer.valueOf(obj));
         Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_SCALE_REPLICAS, formattedProperties)
                 .ifPresent(obj -> replicas = Integer.valueOf(obj));
         Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_SCALE_AUTO, formattedProperties)
