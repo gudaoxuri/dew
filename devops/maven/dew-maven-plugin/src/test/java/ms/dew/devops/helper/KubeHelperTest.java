@@ -20,7 +20,6 @@ import com.ecfront.dew.common.$;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.*;
 import ms.dew.devops.BasicTest;
-import ms.dew.devops.kernel.resource.KubeDeploymentBuilder;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Assert;
 import org.junit.Before;
@@ -51,6 +50,13 @@ public class KubeHelperTest extends BasicTest {
         KubeHelper.init("", new SystemStreamLog(), defaultKubeConfig);
     }
 
+    /**
+     * Test.
+     *
+     * @throws IOException          the io exception
+     * @throws ApiException         the api exception
+     * @throws InterruptedException the interrupted exception
+     */
     @Test
     public void test() throws IOException, ApiException, InterruptedException {
         KubeHelper.inst("")

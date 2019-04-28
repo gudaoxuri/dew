@@ -54,7 +54,7 @@ public class KubeReleaseFlow extends BasicFlow {
     private String flowBasePath;
 
     @Override
-    public boolean process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
+    protected boolean process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
         this.flowBasePath = flowBasePath;
         release(config, config.getGitCommit());
         if (config.getApp().getRevisionHistoryLimit() > 0) {

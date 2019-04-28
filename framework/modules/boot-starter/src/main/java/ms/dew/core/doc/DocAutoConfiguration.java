@@ -19,8 +19,6 @@ package ms.dew.core.doc;
 
 import ms.dew.Dew;
 import ms.dew.core.DewConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -56,7 +54,7 @@ public class DocAutoConfiguration {
      * The constant FLAG_APPLICATION_NAME.
      */
     public static final String FLAG_APPLICATION_NAME = "applicationName";
-    private static final Logger logger = LoggerFactory.getLogger(DocAutoConfiguration.class);
+
     @Autowired
     private DewConfig dewConfig;
 

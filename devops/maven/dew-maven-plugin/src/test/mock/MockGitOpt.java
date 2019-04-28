@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Mock Git Opt.
+ *
  * @author gudaoxuri
  */
 public class MockGitOpt extends GitOpt {

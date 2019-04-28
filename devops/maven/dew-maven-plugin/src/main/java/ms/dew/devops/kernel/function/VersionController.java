@@ -57,7 +57,8 @@ public class VersionController {
      * @param appendLabels the append labels
      * @throws ApiException the api exception
      */
-    public static void addNewVersion(FinalProjectConfig config, String gitCommit, boolean reRelease, Map<String, String> data, Map<String, String> appendLabels)
+    public static void addNewVersion(FinalProjectConfig config, String gitCommit,
+                                     boolean reRelease, Map<String, String> data, Map<String, String> appendLabels)
             throws ApiException {
         Map<String, String> labels = new HashMap<String, String>() {
             {

@@ -35,7 +35,8 @@ import java.util.List;
  */
 public class MavenReleaseFlow extends BasicFlow {
 
-    public boolean process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
+    @Override
+    protected boolean process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
         VersionController.addNewVersion(config, config.getGitCommit(), false, new HashMap<>(), new HashMap<>());
         List<V1ConfigMap> versions = VersionController.getVersionHistory(config, false);
         for (V1ConfigMap version : versions) {

@@ -23,8 +23,6 @@ import ms.dew.core.web.validation.CreateGroup;
 import ms.dew.core.web.validation.IdNumber;
 import ms.dew.core.web.validation.Phone;
 import ms.dew.core.web.validation.UpdateGroup;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +32,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Web example controller.
@@ -45,9 +42,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Api("示例应用")
 @Validated // URL 类型的验证需要使用此注解
 public class WebExampleController {
-    private static final Logger logger = LoggerFactory.getLogger(WebExampleController.class);
-
-    private AtomicInteger atomicInteger = new AtomicInteger();
 
     /**
      * 最基础的Controller示例.

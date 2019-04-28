@@ -83,10 +83,6 @@ public class ExecuteEventProcessor {
                         || project.getExecuteSuccessfulMojos().contains("scale")
                         || project.getExecuteSuccessfulMojos().contains("unrelease")
                 ).collect(Collectors.toList());
-        List<FinalProjectConfig> nonExecutionProjects =
-                projects.values().stream()
-                        .filter(project -> !executionSuccessfulProjects.contains(project))
-                        .collect(Collectors.toList());
         StringBuilder content = new StringBuilder();
         content.append("# The execution result\n")
                 .append("-----------------\n")
@@ -94,6 +90,11 @@ public class ExecuteEventProcessor {
         content.append(executionSuccessfulProjects.stream()
                 .map(project -> "- " + project.getAppShowName())
                 .collect(Collectors.joining("\n")));
+
+        List<FinalProjectConfig> nonExecutionProjects =
+                projects.values().stream()
+                        .filter(project -> !executionSuccessfulProjects.contains(project))
+                        .collect(Collectors.toList());
         content.append("\n-----------------\n")
                 .append("## Ignore execution\n");
         content.append(nonExecutionProjects.stream()

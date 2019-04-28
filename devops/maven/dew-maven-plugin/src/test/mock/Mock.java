@@ -20,6 +20,8 @@ import ms.dew.devops.helper.GitHelper;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 
 /**
+ * Mock.
+ *
  * @author gudaoxuri
  */
 public class Mock {

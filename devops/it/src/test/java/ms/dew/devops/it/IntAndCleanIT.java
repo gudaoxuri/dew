@@ -55,11 +55,11 @@ public class IntAndCleanIT extends BasicProcessor {
                 dockerRegistryPassword);
         String registryHost = new URL(dockerRegistryUrl).getHost();
         logger.info("Clean kubernetes ns by dew-test");
-        cleanResources("dew-test", registryHost);
+        cleanResources("dew-test");
         logger.info("Clean kubernetes ns by dew-uat");
-        cleanResources("dew-uat", registryHost);
+        cleanResources("dew-uat");
         logger.info("Clean kubernetes ns by dew-prod");
-        cleanResources("dew-prod", registryHost);
+        cleanResources("dew-prod");
         logger.info("Clean docker images");
         DockerHelper.inst("").image.list().stream()
                 .filter(image -> image.getRepoTags() != null
@@ -76,7 +76,7 @@ public class IntAndCleanIT extends BasicProcessor {
                 });
     }
 
-    private void cleanResources(String namespaces, String registryHost) throws ApiException {
+    private void cleanResources(String namespaces) throws ApiException {
         KubeHelper.inst("").list("", namespaces, KubeRES.SERVICE, V1Service.class)
                 .forEach(res -> {
                     try {

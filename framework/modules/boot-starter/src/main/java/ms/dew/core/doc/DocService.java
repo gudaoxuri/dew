@@ -425,7 +425,7 @@ public class DocService {
                 String type = prop.getValue().path("type").asText("");
                 String ref = prop.getValue().path("$ref").asText("");
                 if (!type.isEmpty()) {
-                    if (type.equals("array")) {
+                    if ("array".equals(type)) {
                         isArray = true;
                         type = prop.getValue().path("items").path("type").asText("");
                         if (!type.isEmpty()) {

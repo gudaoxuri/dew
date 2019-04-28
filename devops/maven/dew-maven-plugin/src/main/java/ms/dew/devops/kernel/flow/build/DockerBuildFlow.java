@@ -17,7 +17,6 @@
 package ms.dew.devops.kernel.flow.build;
 
 import com.ecfront.dew.common.$;
-import io.kubernetes.client.ApiException;
 import ms.dew.devops.helper.DockerHelper;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
@@ -42,22 +41,21 @@ public abstract class DockerBuildFlow extends BasicFlow {
      * @param config       the project config
      * @param flowBasePath the flow base path
      * @return the build result
-     * @throws ApiException the api exception
-     * @throws IOException  the io exception
+     * @throws IOException the io exception
      */
-    protected boolean preDockerBuild(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
+    protected boolean preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
         return true;
     }
 
     @Override
-    protected boolean process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
+    protected boolean process(FinalProjectConfig config, String flowBasePath) throws IOException {
         // 先判断是否存在
         if (!DockerHelper.inst(config.getId()).registry.exist(config.getCurrImageName())) {
             boolean result;
             if (config.getDisableReuseVersion()) {
                 result = processByNewImage(config, flowBasePath);
             } else {
-                result = processByReuse(config, flowBasePath);
+                result = processByReuse(config);
             }
             if (!result) {
                 return false;
@@ -79,13 +77,10 @@ public abstract class DockerBuildFlow extends BasicFlow {
     /**
      * 重用版本模式下的处理.
      *
-     * @param config       the project config
-     * @param flowBasePath the flow base path
+     * @param config the project config
      * @return the build result
-     * @throws ApiException the api exception
-     * @throws IOException  the io exception
      */
-    private boolean processByReuse(FinalProjectConfig config, String flowBasePath) throws IOException, ApiException {
+    private boolean processByReuse(FinalProjectConfig config) {
         String reuseImageName = config.getImageName(
                 config.getAppendProfile().getDocker().getRegistryHost(),
                 config.getAppendProfile().getNamespace(),
@@ -105,10 +100,9 @@ public abstract class DockerBuildFlow extends BasicFlow {
      * @param config       the project config
      * @param flowBasePath the flow base path
      * @return the build result
-     * @throws ApiException the api exception
-     * @throws IOException  the io exception
+     * @throws IOException the io exception
      */
-    private boolean processByNewImage(FinalProjectConfig config, String flowBasePath) throws IOException, ApiException {
+    private boolean processByNewImage(FinalProjectConfig config, String flowBasePath) throws IOException {
         Dew.log.info("Building image : " + config.getCurrImageName());
         if (!preDockerBuild(config, flowBasePath)) {
             Dew.log.debug("Finished,because [preDockerBuild] is false");
