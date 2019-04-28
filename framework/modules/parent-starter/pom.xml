@@ -371,45 +371,6 @@
                         <artifactId>sonar-maven-plugin</artifactId>
                         <version>3.6.0.1398</version>
                     </plugin>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.3</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>org.jacoco</groupId>
-                                <artifactId>org.jacoco.agent</artifactId>
-                                <classifier>runtime</classifier>
-                                <version>0.8.3</version>
-                            </dependency>
-                        </dependencies>
-                        <executions>
-                            <execution>
-                                <id>instrument</id>
-                                <phase>process-classes</phase>
-                                <goals>
-                                    <goal>instrument</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>report</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>restore-instrumented-classes</goal>
-                                    <goal>report</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <jacoco-agent.destfile>target/jacoco.exec</jacoco-agent.destfile>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
                 </plugins>
             </build>
         </profile>

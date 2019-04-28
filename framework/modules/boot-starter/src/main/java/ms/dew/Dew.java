@@ -130,13 +130,11 @@ public class Dew {
         if (jacksonProperties != null) {
             jacksonProperties.getSerialization().put(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         }
-        // Load Auth Adapter
-        auth = Dew.applicationContext.getBean(BasicAuthAdapter.class);
-        logger.info("Use Auth Adapter:" + auth.getClass().getName());
 
         logger.info("Load Dew cluster...");
         if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getCache() + "ClusterCache")) {
-            Dew.cluster.cache = (ClusterCache) Dew.applicationContext.getBean(injectDewConfig.getCluster().getCache() + "ClusterCache");
+            Dew.cluster.caches = (ClusterCacheWrap) Dew.applicationContext.getBean(injectDewConfig.getCluster().getCache() + "ClusterCache");
+            Dew.cluster.cache = Dew.cluster.caches.instance();
         }
         if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getLock() + "ClusterLock")) {
             Dew.cluster.lock = (ClusterLockWrap) Dew.applicationContext.getBean(injectDewConfig.getCluster().getLock() + "ClusterLock");
@@ -154,6 +152,10 @@ public class Dew {
         if (dewConfig.getCluster().getConfig().isHaEnabled()) {
             Cluster.ha(dewConfig.getCluster().getConfig().getHa());
         }
+
+        // Load Auth Adapter
+        auth = Dew.applicationContext.getBean(BasicAuthAdapter.class);
+        logger.info("Use Auth Adapter:" + auth.getClass().getName());
 
         logger.info("Load Dew funs...");
         // Load Immediately

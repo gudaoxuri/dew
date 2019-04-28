@@ -44,7 +44,7 @@ import javax.servlet.ServletContext;
  * Swagger配置.
  *
  * @author gudaoxuri
- * @link https ://springfox.github.io/springfox/docs/snapshot/#customizing-the-swagger-endpoints
+ * @link https://springfox.github.io/springfox/docs/snapshot/#customizing-the-swagger-endpoints
  */
 @Configuration
 @ConditionalOnProperty(prefix = "dew.basic.doc", name = "enabled", havingValue = "true", matchIfMissing = true)

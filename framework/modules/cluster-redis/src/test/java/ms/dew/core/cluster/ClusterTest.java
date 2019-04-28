@@ -26,9 +26,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- *  Cluster test.
+ * Cluster test.
  *
- *  @author gudaoxuri
+ * @author gudaoxuri
  */
 @RunWith(SpringRunner.class)
 @SpringBootApplication
@@ -36,7 +36,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class ClusterTest {
 
     @Autowired
-    private RedisClusterCache redisClusterCache;
+    private RedisClusterCacheWrap redisClusterCacheWrap;
     @Autowired
     private RedisClusterMQ redisClusterMQ;
     @Autowired
@@ -63,7 +63,7 @@ public class ClusterTest {
      */
     @Test
     public void testCache() throws InterruptedException {
-        new ClusterCacheTest().test(redisClusterCache);
+        new ClusterCacheTest().test(redisClusterCacheWrap.instance(), redisClusterCacheWrap.instance("auth"));
     }
 
     /**

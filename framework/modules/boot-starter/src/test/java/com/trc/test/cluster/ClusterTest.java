@@ -41,7 +41,7 @@ public class ClusterTest {
         logger.info("Testing MQ");
         new ClusterMQTest().test(Dew.cluster.mq);
         logger.info("Testing Cache");
-        new ClusterCacheTest().test(Dew.cluster.cache);
+        new ClusterCacheTest().test(Dew.cluster.cache, null);
         logger.info("Testing Lock");
         new ClusterLockTest().test(Dew.cluster.lock.instance("test"));
         logger.info("Testing Map");

@@ -38,7 +38,7 @@ public class RedisClusterMQ extends AbsClusterMQ {
      *
      * @param redisTemplate the redis template
      */
-    public RedisClusterMQ(RedisTemplate<String, String> redisTemplate) {
+    RedisClusterMQ(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 

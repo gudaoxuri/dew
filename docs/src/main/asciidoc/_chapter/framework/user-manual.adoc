@@ -322,6 +322,36 @@ $.json.toJson(Dew.cluster.cache.get("n_test"));
 TIP: Dew的缓存默认只实现了String、List、Set、Hash等结构常用的、时间复杂度低的操作，
 如需要的操作Dew没有提供可使用Spring Boot Data Redis原生的``RedisTemplate<String,String>``
 
+.多实例支持
+
+TIP: Redis的Cache实现支持多连接实例，目前只支持Lettuce client。
+
+----
+# 配置
+spring
+    redis:
+        host:       # Redis主机
+        port:       # Redis端口
+        ...
+        multi:      # <- 多实例支持
+          <key>:    # 实例名称
+                    # 可用 Dew.cluster.caches.instance(<key>) 获取
+                    # 同时可以用 @Autowired <Key>RedisTemplate 获取Bean
+            host:   # Redis主机
+            port:   # Redis端口
+            ...
+
+# 使用
+Dew.cluster.caches.instance("<key>").XXX
+
+# 示例
+# 使用key为auth的连接
+Dew.cluster.caches.instance("auth").set("token", "xxxxx");
+# 使用默认连接
+Dew.cluster.cache.set("name", "xxxxx")
+
+----
+
 ===== 分布式Map
 
 [source,java]

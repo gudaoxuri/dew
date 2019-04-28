@@ -20,7 +20,9 @@ import com.ecfront.dew.common.$;
 import ms.dew.Dew;
 import ms.dew.core.DewContext;
 import ms.dew.core.auth.dto.OptInfo;
+import ms.dew.core.cluster.ClusterCache;
 
+import javax.annotation.PostConstruct;
 import java.util.Optional;
 
 
@@ -37,9 +39,26 @@ public class BasicAuthAdapter implements AuthAdapter {
     // Token Id 关联 key : dew:auth:token:id:rel:<code> value : <token Id>
     private static final String TOKEN_ID_REL_FLAG = "dew:auth:token:id:rel:";
 
+    private static final String AUTH_DS_FLAG = "__auth__";
+
+    private static ClusterCache cache;
+
+
+    /**
+     * Init.
+     */
+    @PostConstruct
+    public void init() {
+        if (Dew.cluster.caches.exist(AUTH_DS_FLAG)) {
+            cache = Dew.cluster.caches.instance(AUTH_DS_FLAG);
+        } else {
+            cache = Dew.cluster.cache;
+        }
+    }
+
     @Override
     public <E extends OptInfo> Optional<E> getOptInfo(String token) {
-        String optInfoStr = Dew.cluster.cache.get(TOKEN_INFO_FLAG + token);
+        String optInfoStr = cache.get(TOKEN_INFO_FLAG + token);
         if (optInfoStr != null && !optInfoStr.isEmpty()) {
             return Optional.of($.json.toObject(optInfoStr, DewContext.getOptInfoClazz()));
         } else {
@@ -51,16 +70,16 @@ public class BasicAuthAdapter implements AuthAdapter {
     public void removeOptInfo(String token) {
         Optional<OptInfo> tokenInfoOpt = getOptInfo(token);
         if (tokenInfoOpt.isPresent()) {
-            Dew.cluster.cache.del(TOKEN_ID_REL_FLAG + tokenInfoOpt.get().getAccountCode());
-            Dew.cluster.cache.del(TOKEN_INFO_FLAG + token);
+            cache.del(TOKEN_ID_REL_FLAG + tokenInfoOpt.get().getAccountCode());
+            cache.del(TOKEN_INFO_FLAG + token);
         }
     }
 
     @Override
     public <E extends OptInfo> void setOptInfo(E optInfo) {
-        Dew.cluster.cache.del(TOKEN_INFO_FLAG + Dew.cluster.cache.get(TOKEN_ID_REL_FLAG + optInfo.getAccountCode()));
-        Dew.cluster.cache.setex(TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), optInfo.getToken(), Dew.dewConfig.getSecurity().getOptExpiration());
-        Dew.cluster.cache.setex(TOKEN_INFO_FLAG + optInfo.getToken(), $.json.toJsonString(optInfo), Dew.dewConfig.getSecurity().getOptExpiration());
+        cache.del(TOKEN_INFO_FLAG + cache.get(TOKEN_ID_REL_FLAG + optInfo.getAccountCode()));
+        cache.setex(TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), optInfo.getToken(), Dew.dewConfig.getSecurity().getOptExpiration());
+        cache.setex(TOKEN_INFO_FLAG + optInfo.getToken(), $.json.toJsonString(optInfo), Dew.dewConfig.getSecurity().getOptExpiration());
     }
 
 }

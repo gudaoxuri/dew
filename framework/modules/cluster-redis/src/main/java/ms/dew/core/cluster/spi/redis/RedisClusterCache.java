@@ -41,7 +41,7 @@ public class RedisClusterCache implements ClusterCache {
      *
      * @param redisTemplate the redis template
      */
-    public RedisClusterCache(RedisTemplate<String, String> redisTemplate) {
+    RedisClusterCache(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 

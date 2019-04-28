@@ -34,7 +34,7 @@ public class ClusterCacheTest {
      * @param cache the cache
      * @throws InterruptedException the interrupted exception
      */
-    public void test(ClusterCache cache) throws InterruptedException {
+    public void test(ClusterCache cache, ClusterCache authCache) throws InterruptedException {
         cache.flushdb();
         assert !cache.exists("key");
         cache.set("key", "value");
@@ -149,6 +149,16 @@ public class ClusterCacheTest {
         cache.hsetIfAbsent("hkey", "key", "Ture");
         cache.hsetIfAbsent("hkey", "key", "False");
         assert cache.hget("hkey", "key").equals("Ture");
+
+        // multi
+        if (authCache != null) {
+            authCache.set("token", "xxxxx");
+            assert !cache.exists("token");
+            assert authCache.exists("token");
+            authCache.del("token");
+            assert !authCache.exists("token");
+        }
+
     }
 
 }

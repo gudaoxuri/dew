@@ -42,7 +42,7 @@ public class RedisClusterMap<M> implements ClusterMap<M> {
      * @param clazz         the clazz
      * @param redisTemplate the redis template
      */
-    public RedisClusterMap(String mapKey, Class<M> clazz, RedisTemplate<String, String> redisTemplate) {
+    RedisClusterMap(String mapKey, Class<M> clazz, RedisTemplate<String, String> redisTemplate) {
         this.mapKey = "dew:cluster:map:" + mapKey;
         this.clazz = clazz;
         this.redisTemplate = redisTemplate;

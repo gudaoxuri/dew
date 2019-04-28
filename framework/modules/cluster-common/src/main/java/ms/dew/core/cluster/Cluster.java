@@ -55,7 +55,11 @@ public class Cluster {
      */
     public ClusterMapWrap map;
     /**
-     * 缓存服务.
+     * 多实例缓存服务.
+     */
+    public ClusterCacheWrap caches;
+    /**
+     * 默认缓存服务.
      */
     public ClusterCache cache;
     /**
