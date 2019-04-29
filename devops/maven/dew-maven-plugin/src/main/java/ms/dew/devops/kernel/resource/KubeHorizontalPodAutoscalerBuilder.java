@@ -16,7 +16,6 @@
 
 package ms.dew.devops.kernel.resource;
 
-import io.kubernetes.client.custom.Quantity;
 import io.kubernetes.client.models.*;
 import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
@@ -44,10 +43,9 @@ public class KubeHorizontalPodAutoscalerBuilder implements KubeResourceBuilder<V
      * @param minReplicas the min replicas
      * @param maxReplicas the max replicas
      * @param cpuAvg      the cpu avg
-     * @param tps         the tps
      * @return the horizontal pod auto scaler
      */
-    public V2beta2HorizontalPodAutoscaler build(FinalProjectConfig config, int minReplicas, int maxReplicas, int cpuAvg, long tps) {
+    public V2beta2HorizontalPodAutoscaler build(FinalProjectConfig config, int minReplicas, int maxReplicas, int cpuAvg) {
         List<V2beta2MetricSpec> metrics = new ArrayList<>();
         if (cpuAvg != 0) {
             metrics.add(new V2beta2MetricSpecBuilder()
@@ -57,20 +55,6 @@ public class KubeHorizontalPodAutoscalerBuilder implements KubeResourceBuilder<V
                             .withTarget(new V2beta2MetricTargetBuilder()
                                     .withType("Utilization")
                                     .withAverageUtilization(cpuAvg)
-                                    .build())
-                            .build())
-                    .build());
-        }
-        if (tps != 0) {
-            metrics.add(new V2beta2MetricSpecBuilder()
-                    .withType("Pods")
-                    .withPods(new V2beta2PodsMetricSourceBuilder()
-                            .withMetric(new V2beta2MetricIdentifierBuilder()
-                                    .withName("packets-per-second")
-                                    .build())
-                            .withTarget(new V2beta2MetricTargetBuilder()
-                                    .withType("AverageValue")
-                                    .withAverageValue(Quantity.fromString(tps + ""))
                                     .build())
                             .build())
                     .build());

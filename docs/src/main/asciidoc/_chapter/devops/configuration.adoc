@@ -168,7 +168,6 @@ dew.devops.scale.auto                        # 是否启用自动伸缩
 dew.devops.scale.auto.minReplicas            # 自动伸缩Pod数下限
 dew.devops.scale.auto.maxReplicas            # 自动伸缩Pod数上限
 dew.devops.scale.auto.cpu.averageUtilization # 自动伸缩条件：CPU平均使用率标识
-dew.devops.scale.auto.tps                    # 自动伸缩条件：TPS标识
 ----
 
 
