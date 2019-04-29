@@ -3528,7 +3528,7 @@ swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，�
                                         # 允许的方法
             allow-headers: x-requested-with,content-type
                                         # 允许的头信息
-        token-flag: __dew_token__       # token 标识
+        token-flag: X-Dew-Token       # token 标识
         token-in-header: true           # true：token标识在 header 中，反之在url参数中
         token-hash: false               # token值是否需要hash，用于解决token值有特殊字符的情况
         opt-expiration: 86400           # Token 过期时间（秒）

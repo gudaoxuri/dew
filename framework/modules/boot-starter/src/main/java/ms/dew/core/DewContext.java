@@ -49,6 +49,10 @@ public class DewContext {
      * 请求对应的token.
      */
     private String token;
+    /**
+     * 请求对应的token kind.
+     */
+    private String tokenKind;
 
     private Optional innerOptInfo = Optional.empty();
 
@@ -181,6 +185,24 @@ public class DewContext {
      */
     public void setToken(String token) {
         this.token = token;
+    }
+
+    /**
+     * Gets token kind.
+     *
+     * @return the token kind
+     */
+    public String getTokenKind() {
+        return tokenKind;
+    }
+
+    /**
+     * Sets token kind.
+     *
+     * @param tokenKind the token kind
+     */
+    public void setTokenKind(String tokenKind) {
+        this.tokenKind = tokenKind;
     }
 
     /**

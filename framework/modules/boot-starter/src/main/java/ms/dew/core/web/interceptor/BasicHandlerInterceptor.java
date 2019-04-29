@@ -62,16 +62,22 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
         }
 
         String token;
+        String tokenKind;
         if (Dew.dewConfig.getSecurity().isTokenInHeader()) {
             token = request.getHeader(Dew.dewConfig.getSecurity().getTokenFlag());
+            tokenKind = request.getHeader(Dew.dewConfig.getSecurity().getTokenKindFlag());
         } else {
             token = request.getParameter(Dew.dewConfig.getSecurity().getTokenFlag());
+            tokenKind = request.getParameter(Dew.dewConfig.getSecurity().getTokenKindFlag());
         }
         if (token != null) {
             token = URLDecoder.decode(token, "UTF-8");
             if (Dew.dewConfig.getSecurity().isTokenHash()) {
                 token = $.security.digest.digest(token, "MD5");
             }
+        }
+        if (tokenKind == null) {
+            tokenKind = "";
         }
         // 请求黑名单拦截
         if (Dew.dewConfig.getSecurity().getRouter().isEnabled()
@@ -86,6 +92,7 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
         context.setSourceIP(Dew.Util.getRealIP(request));
         context.setRequestUri(request.getRequestURI());
         context.setToken(token);
+        context.setTokenKind(tokenKind);
         DewContext.setContext(context);
 
         logger.trace("[{}] {}{} from {}",
@@ -101,7 +108,7 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
      * @param method     Request method
      * @param requestUri URL
      */
-    public boolean blackRequest(String method, String requestUri) {
+    private boolean blackRequest(String method, String requestUri) {
 
         /*
           兼容requestUri末尾包含/的情况

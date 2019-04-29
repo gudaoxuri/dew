@@ -18,12 +18,15 @@ package ms.dew.core.auth;
 
 import com.ecfront.dew.common.$;
 import ms.dew.Dew;
+import ms.dew.core.DewConfig;
 import ms.dew.core.DewContext;
 import ms.dew.core.auth.dto.OptInfo;
 import ms.dew.core.cluster.ClusterCache;
 
 import javax.annotation.PostConstruct;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -34,15 +37,14 @@ import java.util.Optional;
  */
 public class BasicAuthAdapter implements AuthAdapter {
 
-    // token存储key
+    // token存储key : <token>:<opt info>
     private static final String TOKEN_INFO_FLAG = "dew:auth:token:info:";
-    // Token Id 关联 key : dew:auth:token:id:rel:<code> value : <token Id>
+    // AccountCode 关联 Tokens : <account code>:<token kind##current time>:<token>
     private static final String TOKEN_ID_REL_FLAG = "dew:auth:token:id:rel:";
 
     private static final String AUTH_DS_FLAG = "__auth__";
 
     private static ClusterCache cache;
-
 
     /**
      * Init.
@@ -53,6 +55,10 @@ public class BasicAuthAdapter implements AuthAdapter {
             cache = Dew.cluster.caches.instance(AUTH_DS_FLAG);
         } else {
             cache = Dew.cluster.cache;
+        }
+        if (!Dew.dewConfig.getSecurity().getTokenKinds().containsKey("")) {
+            // 赋值一个默认的kind
+            Dew.dewConfig.getSecurity().getTokenKinds().put("", new DewConfig.Security.TokenKind());
         }
     }
 
@@ -70,16 +76,49 @@ public class BasicAuthAdapter implements AuthAdapter {
     public void removeOptInfo(String token) {
         Optional<OptInfo> tokenInfoOpt = getOptInfo(token);
         if (tokenInfoOpt.isPresent()) {
-            cache.del(TOKEN_ID_REL_FLAG + tokenInfoOpt.get().getAccountCode());
             cache.del(TOKEN_INFO_FLAG + token);
+            removeOldToken(tokenInfoOpt.get().getAccountCode(), tokenInfoOpt.get().getTokenKind());
         }
     }
 
     @Override
     public <E extends OptInfo> void setOptInfo(E optInfo) {
-        cache.del(TOKEN_INFO_FLAG + cache.get(TOKEN_ID_REL_FLAG + optInfo.getAccountCode()));
-        cache.setex(TOKEN_ID_REL_FLAG + optInfo.getAccountCode(), optInfo.getToken(), Dew.dewConfig.getSecurity().getOptExpiration());
-        cache.setex(TOKEN_INFO_FLAG + optInfo.getToken(), $.json.toJsonString(optInfo), Dew.dewConfig.getSecurity().getOptExpiration());
+        cache.hset(TOKEN_ID_REL_FLAG + optInfo.getAccountCode(),
+                optInfo.getTokenKind() + "##" + System.currentTimeMillis(), optInfo.getToken());
+        cache.setex(TOKEN_INFO_FLAG + optInfo.getToken(), $.json.toJsonString(optInfo),
+                Dew.dewConfig.getSecurity().getTokenKinds().get(optInfo.getTokenKind()).getExpireSec());
+        removeOldToken(optInfo.getAccountCode(), optInfo.getTokenKind());
+    }
+
+    private void removeOldToken(Object accountCode, String tokenKind) {
+        // 当前 token kind 要求保留的历史版本数
+        int revisionHistoryLimit = Dew.dewConfig.getSecurity().getTokenKinds().get(tokenKind).getRevisionHistoryLimit();
+        // 当前 account code 关联的所有 token
+        Map<String, String> tokenKinds = cache.hgetAll(TOKEN_ID_REL_FLAG + accountCode);
+        tokenKinds.keySet().stream()
+                // 按创建时间倒序
+                .sorted((i1, i2) ->
+                        Long.compare(Long.valueOf(i2.split("##")[1]), Long.valueOf(i1.split("##")[1])))
+                // 按 token kind 分组
+                .collect(Collectors.groupingBy(i -> i.split("##")[0]))
+                .forEach((key, value) -> {
+                    value.stream()
+                            .filter(tokenInfo ->
+                                    // 当前token已过期
+                                    !cache.exists(TOKEN_INFO_FLAG + tokenKinds.get(tokenInfo)))
+                            .forEach(tokenInfo ->
+                                    // 删除过期的关联token
+                                    cache.hdel(TOKEN_ID_REL_FLAG + accountCode, tokenInfo));
+                    if (key.equals(tokenKind) && value.size() > revisionHistoryLimit + 1) {
+                        // 版本处理
+                        value.subList(revisionHistoryLimit + 1, value.size())
+                                .forEach(tokenInfo -> {
+                                    // 删除多余版本
+                                    cache.del(TOKEN_INFO_FLAG + tokenKinds.get(tokenInfo));
+                                    cache.hdel(TOKEN_ID_REL_FLAG + accountCode, tokenInfo);
+                                });
+                    }
+                });
     }
 
 }

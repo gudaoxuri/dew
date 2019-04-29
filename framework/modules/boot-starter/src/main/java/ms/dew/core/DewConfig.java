@@ -707,7 +707,9 @@ public class DewConfig {
 
         private SecurityCORS cors = new SecurityCORS();
 
-        private String tokenFlag = "__dew_token__";
+        private String tokenFlag = "X-Dew-Token";
+
+        private String tokenKindFlag = "X-Dew-Token-Kind";
 
         private boolean tokenInHeader = true;
 
@@ -715,7 +717,7 @@ public class DewConfig {
 
         private Router router = new Router();
 
-        private long optExpiration = 86400L;
+        private Map<String, TokenKind> tokenKinds = new HashMap<>();
 
         /**
          * Gets cors.
@@ -751,6 +753,24 @@ public class DewConfig {
          */
         public void setTokenFlag(String tokenFlag) {
             this.tokenFlag = tokenFlag;
+        }
+
+        /**
+         * Gets token kind flag.
+         *
+         * @return the token kind flag
+         */
+        public String getTokenKindFlag() {
+            return tokenKindFlag;
+        }
+
+        /**
+         * Sets token kind flag.
+         *
+         * @param tokenKindFlag the token kind flag
+         */
+        public void setTokenKindFlag(String tokenKindFlag) {
+            this.tokenKindFlag = tokenKindFlag;
         }
 
         /**
@@ -809,23 +829,22 @@ public class DewConfig {
         }
 
         /**
-         * Gets optExpiration.
+         * Gets token kinds.
          *
-         * @return the expiration
+         * @return the token kinds
          */
-        public long getOptExpiration() {
-            return optExpiration;
+        public Map<String, TokenKind> getTokenKinds() {
+            return tokenKinds;
         }
 
         /**
-         * Sets expiration.
+         * Sets token kinds.
          *
-         * @param optExpiration the expiration
+         * @param tokenKinds the token kinds
          */
-        public void setOptExpiration(long optExpiration) {
-            this.optExpiration = optExpiration;
+        public void setTokenKinds(Map<String, TokenKind> tokenKinds) {
+            this.tokenKinds = tokenKinds;
         }
-
 
         /**
          * Security cors.
@@ -936,6 +955,50 @@ public class DewConfig {
             }
         }
 
+        /**
+         * Token by kind.
+         */
+        public static class TokenKind {
+
+            private long expireSec = 86400L;
+            private int revisionHistoryLimit = 0;
+
+            /**
+             * Gets expire sec.
+             *
+             * @return the expire sec
+             */
+            public long getExpireSec() {
+                return expireSec;
+            }
+
+            /**
+             * Sets expire sec.
+             *
+             * @param expireSec the expire sec
+             */
+            public void setExpireSec(long expireSec) {
+                this.expireSec = expireSec;
+            }
+
+            /**
+             * Gets revision history limit.
+             *
+             * @return the revision history limit
+             */
+            public int getRevisionHistoryLimit() {
+                return revisionHistoryLimit;
+            }
+
+            /**
+             * Sets revision history limit.
+             *
+             * @param revisionHistoryLimit the revision history limit
+             */
+            public void setRevisionHistoryLimit(int revisionHistoryLimit) {
+                this.revisionHistoryLimit = revisionHistoryLimit;
+            }
+        }
     }
 
     /**

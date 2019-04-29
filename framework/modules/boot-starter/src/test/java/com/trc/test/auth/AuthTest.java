@@ -51,6 +51,7 @@ public class AuthTest {
         userDTO.setPhone("15957199704");
         Resp registerResult = testRestTemplate.postForObject("/auth/register", userDTO, Resp.class);
         Assert.assertEquals("200", registerResult.getCode());
+
         //["/auth/register/*","/auth/re?","/user/**","/tes[t]"]
         registerResult = testRestTemplate.postForObject("/auth/register/user", userDTO, Resp.class);
         Assert.assertEquals("403", registerResult.getCode());
@@ -69,20 +70,11 @@ public class AuthTest {
         loginDTO.setPassword(userDTO.getPassword());
         loginResult = Resp.generic(testRestTemplate.postForObject("/auth/login", loginDTO, Resp.class), String.class);
         Assert.assertEquals("200", loginResult.getCode());
-        String token1 = loginResult.getBody();
-        loginResult = Resp.generic(testRestTemplate.postForObject("/auth/login", loginDTO, Resp.class), String.class);
-        Assert.assertEquals("200", loginResult.getCode());
-        String token2 = loginResult.getBody();
+        String token = loginResult.getBody();
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set(Dew.dewConfig.getSecurity().getTokenFlag(), token1);
+        headers.set(Dew.dewConfig.getSecurity().getTokenFlag(), token);
         Resp<OptInfoExt> bussinessResult = Resp.generic(
-                testRestTemplate.exchange("/auth/business/someopt",
-                        HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody(),
-                OptInfoExt.class);
-        Assert.assertEquals("401", bussinessResult.getCode());
-        headers.set(Dew.dewConfig.getSecurity().getTokenFlag(), token2);
-        bussinessResult = Resp.generic(
                 testRestTemplate.exchange("/auth/business/someopt",
                         HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody(), OptInfoExt.class);
         Assert.assertEquals("200", bussinessResult.getCode());
@@ -93,6 +85,72 @@ public class AuthTest {
                 testRestTemplate.exchange("/auth/business/someopt",
                         HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody(), OptInfoExt.class);
         Assert.assertEquals("401", bussinessResult.getCode());
+
+        testTokenKind(loginDTO);
+    }
+
+    private void testTokenKind(AuthController.LoginDTO loginDTO) {
+        // PC不保留历史版本
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(Dew.dewConfig.getSecurity().getTokenKindFlag(), "pc");
+        final String token1 = Resp.generic(
+                testRestTemplate.exchange("/auth/login",
+                        HttpMethod.POST, new HttpEntity<>(loginDTO, httpHeaders), Resp.class).getBody(), String.class).getBody();
+        final String token2 = Resp.generic(
+                testRestTemplate.exchange("/auth/login",
+                        HttpMethod.POST, new HttpEntity<>(loginDTO, httpHeaders), Resp.class).getBody(), String.class).getBody();
+
+        httpHeaders = new HttpHeaders();
+        // 上一次Token已失效
+        httpHeaders.set(Dew.dewConfig.getSecurity().getTokenFlag(), token1);
+        Resp<OptInfoExt> bussinessResult = Resp.generic(
+                testRestTemplate.exchange("/auth/business/someopt",
+                        HttpMethod.GET, new HttpEntity<>(null, httpHeaders), Resp.class).getBody(),
+                OptInfoExt.class);
+        Assert.assertEquals("401", bussinessResult.getCode());
+        httpHeaders.set(Dew.dewConfig.getSecurity().getTokenFlag(), token2);
+        bussinessResult = Resp.generic(
+                testRestTemplate.exchange("/auth/business/someopt",
+                        HttpMethod.GET, new HttpEntity<>(null, httpHeaders), Resp.class).getBody(),
+                OptInfoExt.class);
+        Assert.assertEquals("200", bussinessResult.getCode());
+
+
+        // Mobile保留1个历史版本
+        httpHeaders = new HttpHeaders();
+        httpHeaders.add(Dew.dewConfig.getSecurity().getTokenKindFlag(), "mobile");
+        final String token3 = Resp.generic(
+                testRestTemplate.exchange("/auth/login",
+                        HttpMethod.POST, new HttpEntity<>(loginDTO, httpHeaders), Resp.class).getBody(), String.class).getBody();
+        final String token4 = Resp.generic(
+                testRestTemplate.exchange("/auth/login",
+                        HttpMethod.POST, new HttpEntity<>(loginDTO, httpHeaders), Resp.class).getBody(), String.class).getBody();
+        final String token5 = Resp.generic(
+                testRestTemplate.exchange("/auth/login",
+                        HttpMethod.POST, new HttpEntity<>(loginDTO, httpHeaders), Resp.class).getBody(), String.class).getBody();
+
+        httpHeaders = new HttpHeaders();
+        // Token3已失效
+        httpHeaders.set(Dew.dewConfig.getSecurity().getTokenFlag(), token3);
+        bussinessResult = Resp.generic(
+                testRestTemplate.exchange("/auth/business/someopt",
+                        HttpMethod.GET, new HttpEntity<>(null, httpHeaders), Resp.class).getBody(),
+                OptInfoExt.class);
+        Assert.assertEquals("401", bussinessResult.getCode());
+        // Token4有效
+        httpHeaders.set(Dew.dewConfig.getSecurity().getTokenFlag(), token4);
+        bussinessResult = Resp.generic(
+                testRestTemplate.exchange("/auth/business/someopt",
+                        HttpMethod.GET, new HttpEntity<>(null, httpHeaders), Resp.class).getBody(),
+                OptInfoExt.class);
+        Assert.assertEquals("200", bussinessResult.getCode());
+        // Token5有效
+        httpHeaders.set(Dew.dewConfig.getSecurity().getTokenFlag(), token5);
+        bussinessResult = Resp.generic(
+                testRestTemplate.exchange("/auth/business/someopt",
+                        HttpMethod.GET, new HttpEntity<>(null, httpHeaders), Resp.class).getBody(),
+                OptInfoExt.class);
+        Assert.assertEquals("200", bussinessResult.getCode());
     }
 
 }

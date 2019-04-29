@@ -39,6 +39,11 @@ public class OptInfo<E> {
      */
     @ApiModelProperty(value = "账号编码", required = true)
     protected Object accountCode;
+    /**
+     * The Token kind.
+     */
+    @ApiModelProperty(value = "Token类型")
+    protected String tokenKind = "";
 
     /**
      * Gets token.
@@ -77,6 +82,25 @@ public class OptInfo<E> {
      */
     public E setAccountCode(Object accountCode) {
         this.accountCode = accountCode;
+        return (E) this;
+    }
+
+    /**
+     * Gets token kind.
+     *
+     * @return the token kind
+     */
+    public String getTokenKind() {
+        return tokenKind;
+    }
+
+    /**
+     * Sets token kind.
+     *
+     * @param tokenKind the token kind
+     */
+    public E setTokenKind(String tokenKind) {
+        this.tokenKind = tokenKind;
         return (E) this;
     }
 }

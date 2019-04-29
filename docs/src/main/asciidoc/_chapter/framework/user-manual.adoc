@@ -322,6 +322,7 @@ $.json.toJson(Dew.cluster.cache.get("n_test"));
 TIP: Dew的缓存默认只实现了String、List、Set、Hash等结构常用的、时间复杂度低的操作，
 如需要的操作Dew没有提供可使用Spring Boot Data Redis原生的``RedisTemplate<String,String>``
 
+[[framework-user-manual-cluster-redis-mutli-connection]]
 .多实例支持
 
 TIP: Redis的Cache实现支持多连接实例，目前只支持Lettuce client。
@@ -756,14 +757,18 @@ ____
 ----
 dew:
   security:
-    token-flag: # Token key的名称
-    token-in-header: # Token key是否在http header中，为false是会从url query中获取
-    token-hash: # Token 值是否做hash（MD5）处理
-    opt-expiration:86400L # Token 过期时间（秒）
-    router: # 路由功能
-      enabled: false # 是否启用
-      black-uri: # URL黑名单，支持ant风格
-        <Http Method>: [<URLs>]
+    token-flag: X-Dew-Token             # Token 标识
+    token-kind-flag: X-Dew-Token-Kind   # Token类型 标识
+    token-in-header: true               # true：token标识在 header 中，反之在url参数中
+    token-hash: false                   # Token值是否需要hash，用于解决token值有特殊字符的情况
+    router:                             # 路由功能
+      enabled: false                    # 是否启用
+      black-uri:                        # URL黑名单，支持ant风格
+        <Http Method>: [<URLs>]         # URL黑名单列表
+    token-kinds:                        # Token类型，可为不同的Token类型设置不同的过期时间、保留的版本
+      <Kind>                            # Token类型名称，比如 PC/Android/...
+        expire-sec: 86400L              # Token 过期时间（秒）
+        revision-history-limit: 0       # Token 保留的历史版本数量， 0表示不保留历史版本，即有新的登录时会删除此类型下之前所有的Token
 ----
 
 IMPORTANT: 认证缓存需要 `集群缓存` 服务支持，请引入相关的依赖并配置对应的连接信息等。
@@ -859,7 +864,9 @@ public Resp<Void> logout() {
 include::../../../../../../framework/modules/boot-starter/src/main/java/ms/dew/core/auth/AuthAdapter.java[]
 ----
 
-``Dew`` 默认实现了基于 ``Dew.cluster.cache`` 的适配器以支持上述功能，项目中也可以实现自己的适配器。
+``Dew`` 默认实现了基于 ``Dew.cluster.cache`` 的适配器以支持上述功能，
+对于Redis的Cache实现了 <<framework-user-manual-cluster-redis-mutli-connection>> ，默认优先获取key = ``__auth__`` 的连接配置，不存在时使用默认连接配置。
+，项目中也可以实现自己的适配器。
 
 [source,java]
 .自定义认证适配器

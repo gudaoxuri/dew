@@ -52,7 +52,8 @@ public class AuthController {
      * @return the resp
      */
     @PostMapping(value = "register")
-    public Resp<Void> register(@RequestBody UserDTO userDTO) {
+    public Resp<Void> register(@RequestBody UserDTO userDTO) throws InterruptedException {
+        Thread.sleep(10);
         // 实际注册处理
         userDTO.setId($.field.createUUID());
         MOCK_USER_CONTAINER.put(userDTO.getId(), userDTO);
@@ -68,8 +69,10 @@ public class AuthController {
      */
     @PostMapping(value = "login")
     public Resp<String> login(@RequestBody LoginDTO loginDTO) throws Exception {
+        Thread.sleep(10);
         // 实际登录处理
-        UserDTO userDTO = MOCK_USER_CONTAINER.values().stream().filter(u -> u.getIdCard().equals(loginDTO.getIdCard())).findFirst().get();
+        UserDTO userDTO = MOCK_USER_CONTAINER.values().stream()
+                .filter(u -> u.getIdCard().equals(loginDTO.getIdCard())).findFirst().get();
         if (!loginDTO.getPassword().equals(userDTO.getPassword())) {
             throw Dew.E.e("ASXXX0", new Exception("密码错误"));
         }
@@ -78,6 +81,7 @@ public class AuthController {
                 .setIdCard(userDTO.getIdCard())
                 .setAccountCode(loginDTO.getIdCard())
                 .setToken(token)
+                .setTokenKind(Dew.context().getTokenKind())
                 .setName(userDTO.getName())
                 .setMobile(userDTO.getPhone()));
         return Resp.success(token);
@@ -89,7 +93,8 @@ public class AuthController {
      * @return the resp
      */
     @GetMapping(value = "business/someopt")
-    public Resp<OptInfoExt> someOpt() {
+    public Resp<OptInfoExt> someOpt() throws InterruptedException {
+        Thread.sleep(10);
         // 获取登录用户信息
         return Dew.auth.getOptInfo().map(i -> Resp.success((OptInfoExt) i)).orElse(Resp.unAuthorized("用户认证错误"));
     }
@@ -100,7 +105,8 @@ public class AuthController {
      * @return the resp
      */
     @DeleteMapping(value = "logout")
-    public Resp<Void> logout() {
+    public Resp<Void> logout() throws InterruptedException {
+        Thread.sleep(10);
         // 实际注册处理
         Dew.auth.removeOptInfo();
         return Resp.success(null);

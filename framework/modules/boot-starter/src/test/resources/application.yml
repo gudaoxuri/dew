@@ -47,7 +47,11 @@ dew:
       enabled: true
       blackUri:
         post: ["/auth/register/*","/auth/re?","/user/**","/tes{t}"]
-
+    token-kinds:
+      pc:
+        revisionHistoryLimit: 0
+      mobile:
+        revisionHistoryLimit: 1
 spring:
   application:
     name: boot-start-test
