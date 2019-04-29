@@ -3069,7 +3069,7 @@ public class WebController {
       black-uri:                        # URL黑名单，支持ant风格
         &lt;Http Method&gt;: [&lt;URLs&gt;]         # URL黑名单列表
     token-kinds:                        # Token类型，可为不同的Token类型设置不同的过期时间、保留的版本
-      &lt;Kind&gt;                            # Token类型名称，比如 PC/Android/...
+      &lt;Kind&gt;:                           # Token类型名称，比如 PC/Android/...
         expire-sec: 86400L              # Token 过期时间（秒）
         revision-history-limit: 0       # Token 保留的历史版本数量， 0表示不保留历史版本，即有新的登录时会删除此类型下之前所有的Token</code></pre>
 </div>
@@ -3585,7 +3585,7 @@ swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，�
       black-uri:                        # URL黑名单，支持ant风格
         &lt;Http Method&gt;: [&lt;URLs&gt;]         # URL黑名单列表
     token-kinds:                        # Token类型，可为不同的Token类型设置不同的过期时间、保留的版本
-      &lt;Kind&gt;                            # Token类型名称，比如 PC/Android/...
+      &lt;Kind&gt;:                           # Token类型名称，比如 PC/Android/...
         expire-sec: 86400L              # Token 过期时间（秒）
         revision-history-limit: 0       # Token 保留的历史版本数量， 0表示不保留历史版本，即有新的登录时会删除此类型下之前所有的Token
   cloud:                                # 需要引入 cloud-starter 模块
@@ -4509,7 +4509,7 @@ kubectl create -f metrics-server/deploy/1.8+/
 # Fix issue: https://github.com/kubernetes-incubator/metrics-server/issues/131
 kubectl patch deploy metrics-server -n kube-system -p "
 spec:
-  template:co
+  template:
     spec:
       containers:
       - name: metrics-server
@@ -5498,11 +5498,11 @@ dew.devops.scale.auto.cpu.averageUtilization # 自动伸缩条件：CPU平均使
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-#notify:
+notify:
   # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
-  #args:
+  args:
     # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-    #url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加测试环境
   test:
@@ -5671,11 +5671,11 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-#notify:
+notify:
   # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
-  #args:
+  args:
     # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-    #url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加uat环境
   uat:
@@ -7572,7 +7572,7 @@ prod deploy: # 生产环境部署
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-04-16 10:55:05 CST
+Last updated 2019-04-15 20:24:03 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
