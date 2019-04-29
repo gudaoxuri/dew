@@ -66,8 +66,8 @@ dew:                                    # Dew 参数key前缀
       black-uri:                        # URL黑名单，支持ant风格
         <Http Method>: [<URLs>]         # URL黑名单列表
     token-kinds:                        # Token类型，可为不同的Token类型设置不同的过期时间、保留的版本
-      <Kind>:                           # Token类型名称，比如 PC/Android/...
-        expire-sec: 86400L              # Token 过期时间（秒）
+      <Kind>:                           # Token类型名称，比如 PC/Android/... ，默认会创建名为 DEFAULT 的类型
+        expire-sec: 86400               # Token 过期时间（秒）
         revision-history-limit: 0       # Token 保留的历史版本数量， 0表示不保留历史版本，即有新的登录时会删除此类型下之前所有的Token
   cloud:                                # 需要引入 cloud-starter 模块
     trace-log:                          # 追踪日志配置

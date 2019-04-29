@@ -114,28 +114,6 @@
       ms.dew: DEBUG                       # Dew目录日志配置
       org.springframework.jdbc.core: TRACE# Jdbc目录日志配置
 
-
-* [ ] [Dew DevOps] 在项目中添加``.dew``配置
-
-  # 在根目录添加 .dew ,至少添加 使用到的 profile 及 namespace 信息
-  # e.g.
-  # -----------------
-  # 默认通知配置，详见 Dew的通知处理模块
-  # 默认为钉钉通知
-  notify:
-    args:
-      # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-      url: xxx
-  profiles:
-    test:
-      namespace: dew-test
-    uat:
-      namespace: dew-uat
-    prod:
-      namespace: dew-prod
-  # -----------------
-  # （可选）根据实际情况为每个项目添加 .dew 文件以添加各项目的特殊配置
-
 * [ ] [Dew DevOps] 为前端工程添加 ``pom.xml`` ,e.g.
 
   -----------------
@@ -185,3 +163,58 @@
       <version><最新的版本></version>
   </parent>
 
+* [ ] [Dew DevOps] 在项目中添加``.dew``配置，详见 <<devops-configuration-dew>>
+
+  # 在根目录添加 .dew ,至少添加 使用到的 profile 及 namespace 信息
+  # e.g.
+  # -----------------
+  # 默认通知配置，详见 Dew的通知处理模块
+  # 默认为钉钉通知
+  notify:
+    args:
+      # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+      url: xxx
+  profiles:
+    test:
+      namespace: dew-test
+    uat:
+      namespace: dew-uat
+    prod:
+      namespace: dew-prod
+  # -----------------
+  # （可选）根据实际情况为每个项目添加 .dew 文件以添加各项目的特殊配置
+
+* [ ] [Dew DevOps] 在项目中添加``.gitlab``配置，详见 <<devops-cicd-gitlab-template>>， e.g.
+
+  stages:
+    - deploy
+  cache:
+    paths:
+      - node_modules/
+      - .m2/
+  # 测试环境部署
+  test deploy:
+    stage: deploy
+    only:
+      - test
+    tags:
+      - test
+    script:
+      - mvn -P devops dew:build dew:release
+  # 仿真/预发环境部署
+  uat deploy:
+    stage: deploy
+    only:
+      - uat
+    tags:
+      - uat
+    script:
+      - mvn -P devops dew:build dew:release
+  prod deploy: # 生产环境部署
+    stage: deploy
+    only:
+      - prod
+    tags:
+      - prod
+    script:
+      - mvn -P devops dew:build dew:release
