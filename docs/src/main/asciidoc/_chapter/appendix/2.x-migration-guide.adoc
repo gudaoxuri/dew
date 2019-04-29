@@ -5,7 +5,9 @@
 
 ==== 初始准备
 
-. 使用 ``dew-devops.sh`` 初始化集群并创建项目
+[options="interactive"]
+
+* [ ] 使用 ``dew-devops.sh`` 初始化集群并创建项目
 
   curl -O https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/sh/dew-devops.sh
   sh dew-devops.sh
@@ -13,7 +15,7 @@
   # 选择 1 进行集群初始化和 gitlab-runner 安装
   # 选择 2 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等
 
-. 安装并设置Spring Cloud Config
+* [ ] 安装并设置Spring Cloud Config
 
   # 添加helm库
   helm repo add helm-dew-spring-cloud-config https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/chart/dew-spring-cloud-config/
@@ -41,7 +43,9 @@
 
 ==== 迁移步骤
 
-. [Spring Boot] Spring boot 1.x 迁移到 Spring boot 2.x
+[options="interactive"]
+
+* [ ] [Spring Boot] Spring boot 1.x 迁移到 Spring boot 2.x
 
   # @see https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide
 
@@ -83,11 +87,14 @@
         token-expire-ms:  # 错误，值不能为空
 
 
-. [Dew Framework] 修改 ``dew-parent`` 的版本号到最新版本
-. [Dew Framework] 全局查询替换 ``com.tairanchina.csp.dew`` 到 ``ms.dew``
+* [ ] [Dew Framework] 修改 ``dew-parent`` 的版本号到最新版本
+* [ ] [Dew Framework] 使用IDE全局查询替换 ``com.tairanchina.csp.dew`` 为 ``ms.dew``
+* [ ] [Dew Framework] 鉴权修改，详见 <<devops-best-practices-auth>>
 
-. [Dew DevOps] 删除所有 ``eureka`` / ``zuul`` 相关的配置
-. [Dew DevOps] 修改项目中的 ``Spring Cloud Config`` 配置
+  由于Dew 2.x 不推荐引入独立的服务网关，故需要对鉴权做一定的修改 。
+
+* [ ] [Dew DevOps] 删除所有 ``eureka`` / ``zuul`` 相关的配置
+* [ ] [Dew DevOps] 修改项目中的 ``Spring Cloud Config`` 配置
 
   spring:
     cloud:
@@ -97,7 +104,7 @@
         password:  # 配置中心访问密码
         label:  # 加载的Git分支名
 
-. [Dew DevOps] 删除或修改 ``logback-spring.xml``
+* [ ] [Dew DevOps] 删除或修改 ``logback-spring.xml``
 
   日志会由fluentd自动收集，一般情况下无需配置 logback-spring.xml
   更改日志级别使用 application-X.yml e.g.
@@ -108,13 +115,17 @@
       org.springframework.jdbc.core: TRACE# Jdbc目录日志配置
 
 
-TBD 认证修改
+* [ ] [Dew DevOps] 在项目中添加``.dew``配置
 
-. 在项目中添加``.dew``配置
-
-  # 在根目录添加 .dew ,至少添加 使用到的profile 及 namespace 信息
+  # 在根目录添加 .dew ,至少添加 使用到的 profile 及 namespace 信息
   # e.g.
+  # -----------------
   # 默认通知配置，详见 Dew的通知处理模块
+  # 默认为钉钉通知
+  notify:
+    args:
+      # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+      url: xxx
   profiles:
     test:
       namespace: dew-test
@@ -122,11 +133,12 @@ TBD 认证修改
       namespace: dew-uat
     prod:
       namespace: dew-prod
+  # -----------------
   # （可选）根据实际情况为每个项目添加 .dew 文件以添加各项目的特殊配置
 
-. 为前端工程添加 ``pom.xml`` ,e.g.
+* [ ] [Dew DevOps] 为前端工程添加 ``pom.xml`` ,e.g.
 
-  -----------
+  -----------------
   <project xmlns="http://maven.apache.org/POM/4.0.0"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -158,10 +170,14 @@ TBD 认证修改
       </repository>
     </repositories>
   </project>
-  -----------
+  -----------------
   将此工程加入到<modules>中
 
-. 为没有继承 ``parent-starter`` 的工程添加 ``parent-starter`` 模块，以实现DevOps功能，此模块没有任何依赖，故引入不会产生副作用
+* [ ] [Dew DevOps] 去掉前端编译时的进度条显示
+
+  由于进度条的显示调用了清屏子命令，Dew暂无法处理情况，故有诸如 ``webpack -p --progress --hide-modules`` 时应该去掉 ``-p --progress``
+
+* [ ] [Dew DevOps] 为没有继承 ``parent-starter`` 的工程添加 ``parent-starter`` 模块，以实现DevOps功能，此模块没有任何依赖，故引入不会产生副作用
 
   <parent>
       <groupId>ms.dew</groupId>

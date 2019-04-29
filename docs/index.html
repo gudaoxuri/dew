@@ -457,7 +457,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#设计理念">1.1. 设计理念</a>
 <ul class="sectlevel3">
 <li><a href="#微服务架构的尴尬">1.1.1. 微服务架构的尴尬</a></li>
-<li><a href="#dew架构思想">1.1.2. Dew架构思想</a></li>
+<li><a href="#dew设计理念">1.1.2. Dew设计理念</a></li>
 </ul>
 </li>
 <li><a href="#项目结构">1.2. 项目结构</a></li>
@@ -541,7 +541,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#devops-best-practices">4.4. DevOps最佳实践[TBD]</a>
 <ul class="sectlevel3">
 <li><a href="#为什么不用_fabric8">4.4.1. 为什么不用 fabric8</a></li>
-<li><a href="#认证处理">4.4.2. 认证处理</a></li>
+<li><a href="#devops-best-practices-auth">4.4.2. 鉴权处理</a></li>
 <li><a href="#统一配置处理">4.4.3. 统一配置处理</a></li>
 <li><a href="#jvm设置">4.4.4. JVM设置</a></li>
 <li><a href="#spring_cloud_config的部署方式">4.4.5. Spring Cloud Config的部署方式</a></li>
@@ -594,17 +594,23 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#nfs">6.2.9. NFS</a></li>
 </ul>
 </li>
-<li><a href="#内置image与chart">6.3. 内置Image与Chart</a>
+<li><a href="#dew-2-migration-guide">6.3. Dew 2.x Migration guide[TBD]</a>
 <ul class="sectlevel3">
-<li><a href="#dew_docker_image_集成kubectl与helm">6.3.1. Dew Docker Image : 集成Kubectl与Helm</a></li>
-<li><a href="#dew_docker_image_集成ci_cd能力">6.3.2. Dew Docker Image : 集成CI/CD能力</a></li>
-<li><a href="#dew_docker_image_spring_cloud_config">6.3.3. Dew Docker Image : Spring Cloud Config</a></li>
-<li><a href="#helm-chart-spring-cloud-config">6.3.4. Dew Helm Chart : Spring Cloud Config</a></li>
+<li><a href="#初始准备">6.3.1. 初始准备</a></li>
+<li><a href="#迁移步骤">6.3.2. 迁移步骤</a></li>
 </ul>
 </li>
-<li><a href="#支持的ci_cd服务">6.4. 支持的CI/CD服务</a>
+<li><a href="#内置image与chart">6.4. 内置Image与Chart</a>
 <ul class="sectlevel3">
-<li><a href="#dew_ci_cd_gitlab_ci_实现">6.4.1. Dew CI/CD : Gitlab CI 实现</a></li>
+<li><a href="#dew_docker_image_集成kubectl与helm">6.4.1. Dew Docker Image : 集成Kubectl与Helm</a></li>
+<li><a href="#dew_docker_image_集成ci_cd能力">6.4.2. Dew Docker Image : 集成CI/CD能力</a></li>
+<li><a href="#dew_docker_image_spring_cloud_config">6.4.3. Dew Docker Image : Spring Cloud Config</a></li>
+<li><a href="#helm-chart-spring-cloud-config">6.4.4. Dew Helm Chart : Spring Cloud Config</a></li>
+</ul>
+</li>
+<li><a href="#支持的ci_cd服务">6.5. 支持的CI/CD服务</a>
+<ul class="sectlevel3">
+<li><a href="#dew_ci_cd_gitlab_ci_实现">6.5.1. Dew CI/CD : Gitlab CI 实现</a></li>
 </ul>
 </li>
 </ul>
@@ -745,7 +751,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect3">
-<h4 id="dew架构思想"><a class="anchor" href="#dew架构思想"></a>1.1.2. Dew架构思想</h4>
+<h4 id="dew设计理念"><a class="anchor" href="#dew设计理念"></a>1.1.2. Dew设计理念</h4>
 <div class="paragraph">
 <p>上述问题是Dew必须面对的，应对的设计核心理念是：</p>
 </div>
@@ -781,19 +787,73 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>实现上我们选择 <code>Spring Boot</code> 这一业界主流框架，对上兼容 <code>Spring Cloud</code> 与 <code>Istio</code>。</p>
 </div>
-<div class="olist arabic">
+<div class="paragraph">
 <div class="title"><strong>标准化DevOps流程</strong></div>
+<p>目前市场有两种主流的DevOps做法：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>以 <code>Jenkins X</code> 、 <code>Gitlab CI</code> 为代表的CI/CD工具主导的DevOps流程</p>
+</li>
+</ul>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p><strong>集成度低、操作不友好</strong> DevOps是一个系统性工程，想通过传统的CI/CD工具实现难度较大</p>
+</div>
+</blockquote>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>以 <a href="http://https://develop.aliyun.com/devops">阿里云</a> 、 <a href="https://azure.microsoft.com/zh-cn/solutions/devops/">Azure</a>
+为代表的云厂商DevOps方案</p>
+</li>
+</ul>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p><strong>平台依赖，不通用</strong> 厂商方案做了高度集成，弥补了工具型方案的不足，但问题也很明显，各厂商都有自己的一套标准，互不兼容，导致平台绑定，无法迁移</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p><code>Dew</code> 在DevOps上另辟蹊径，以Maven为核心构建，其优点在于：</p>
+</div>
+<div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>CI/CD流程支持，自动化依赖管理、测试、质检、打包与发布</p>
+<p>Maven是行业标准，并且兼容除JVM外的其它语言环境，可支撑所有主流项目</p>
 </li>
 <li>
-<p>全面容器化，所有环境均为容器方案</p>
+<p>可在本地执行完成DevOps开发流程，也可与CI/CD工具整合提供测试/生产等环境的DevOps</p>
+</li>
+<li>
+<p>对CI/CD工具的依赖度低、开源、标准化，无厂商绑定</p>
 </li>
 </ol>
 </div>
 <div class="paragraph">
-<p>实现上我们提供一体化的Maven插件与 <code>Gitlab CI</code> 或其它 CI/CD服务整合，实现针对JVM服务、类库、前端等项目的DevOps支持。</p>
+<p>基于这一思念，我们我们提供一体化的Maven插件，实现了：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>CI/CD流程支持，自动化依赖管理、测试、质检、打包与发布、回滚、远程Debug等</p>
+</li>
+<li>
+<p>全面容器化，所有环境均为容器方案</p>
+</li>
+<li>
+<p>支持与 <code>Gitlab CI</code> 或其它 CI/CD服务整合</p>
+</li>
+<li>
+<p>实现针对JVM服务、类库、前端等主流项目的支撑</p>
+</li>
+</ol>
 </div>
 <div class="exampleblock">
 <div class="content">
@@ -5419,13 +5479,13 @@ dew.devops.scale.auto.cpu.averageUtilization # 自动伸缩条件：CPU平均使
 </div>
 </div>
 <div class="sect3">
-<h4 id="认证处理"><a class="anchor" href="#认证处理"></a>4.4.2. 认证处理</h4>
+<h4 id="devops-best-practices-auth"><a class="anchor" href="#devops-best-practices-auth"></a>4.4.2. 鉴权处理</h4>
 <div class="paragraph">
 <p>在传统的Spring Cloud工程中多使用网关（如 Zuul、Spring Cloud Gateway）做统一的认证处理，但在Kubernetes下使用了 <code>ingress</code> ，如果再加上网关会导致多了一层转发。
 并且Kubernetes使用自身的Service已经实现了网关的服务发现，所以再引入网关就显得累赘了。</p>
 </div>
 <div class="paragraph">
-<p>去掉网关后认证处理会下沉到各业务组件， <code>dew</code> 提供了基础的认证支持 <a href="#framework-user-manual-auth">权限认证</a> 也可使用 Spring Cloud Security 方案实现。</p>
+<p>去掉网关后鉴权处理会下沉到各业务组件， <code>dew</code> 提供了基础的鉴权支持 <a href="#framework-user-manual-auth">权限认证</a> 也可使用 Spring Cloud Security 方案实现。</p>
 </div>
 </div>
 <div class="sect3">
@@ -7343,9 +7403,265 @@ showmount -e localhost</pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="内置image与chart"><a class="anchor" href="#内置image与chart"></a>6.3. 内置Image与Chart</h3>
+<h3 id="dew-2-migration-guide"><a class="anchor" href="#dew-2-migration-guide"></a>6.3. Dew 2.x Migration guide[TBD]</h3>
+<div class="paragraph">
+<p>本手册适用于从原生 Spring Cloud 项目及 Dew 1.x 项目迁移到 Dew 2.x 的操作说明。</p>
+</div>
 <div class="sect3">
-<h4 id="dew_docker_image_集成kubectl与helm"><a class="anchor" href="#dew_docker_image_集成kubectl与helm"></a>6.3.1. Dew Docker Image : 集成Kubectl与Helm</h4>
+<h4 id="初始准备"><a class="anchor" href="#初始准备"></a>6.3.1. 初始准备</h4>
+<div class="ulist checklist">
+<ul class="checklist">
+<li>
+<p><input type="checkbox" data-item-complete="0"> 使用 <code>dew-devops.sh</code> 初始化集群并创建项目</p>
+<div class="literalblock">
+<div class="content">
+<pre>curl -O https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/sh/dew-devops.sh
+sh dew-devops.sh
+# 选择对应操作，根据提示操作即可
+# 选择 1 进行集群初始化和 gitlab-runner 安装
+# 选择 2 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等</pre>
+</div>
+</div>
+</li>
+<li>
+<p><input type="checkbox" data-item-complete="0"> 安装并设置Spring Cloud Config</p>
+<div class="literalblock">
+<div class="content">
+<pre># 添加helm库
+helm repo add helm-dew-spring-cloud-config https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/chart/dew-spring-cloud-config/
+# 安装，注意域名要能被Kubernetes Pod访问
+helm install helm-dew-spring-cloud-config/dew-spring-cloud-config --name dew-spring-cloud-config --namespace devops \
+    --set ingress.hosts={config.dew.ms}
+# 修改配置，修改后需要删除Pod以实现重启获取最新配置
+kubectl -n devops edit cm custom-config
+# e.g.
+# spring:
+#   cloud:
+#     config:
+#       server:
+#         git:
+#           uri: https://rep.360taihe.com/env/csp-message.git
+#           username: cdman
+#           password: cdman123
+#   security:
+#     user:
+#       name: dew
+#       password: dew!123456
+#
+# encrypt:
+#   key: dsffjs%^skeSfS@#</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="迁移步骤"><a class="anchor" href="#迁移步骤"></a>6.3.2. 迁移步骤</h4>
+<div class="ulist checklist">
+<ul class="checklist">
+<li>
+<p><input type="checkbox" data-item-complete="0"> [Spring Boot] Spring boot 1.x 迁移到 Spring boot 2.x</p>
+<div class="literalblock">
+<div class="content">
+<pre># @see https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>######################### 特别注意 ########################</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre># 关系型数据库连接池默认由Tomcat改为Hikari，对应的配置示例：
+spring:
+  datasource:
+    url: jdbc:mysql://...
+    username: ...
+    password: "{cipher}..."
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      ...
+# MySQL默认的client升级到8.x 注意时区设置及驱动名变更(com.mysql.cj.jdbc.Driver)</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre># Redis的客户端默认由Jedis改为Lettuce，对应的配置示例：
+redis:
+  host: ...
+  port: 6379
+  password: "{cipher}..."
+  database: 1
+  lettuce:
+    pool:
+      max-active: 200
+      max-wait: 300
+      max-idle: 50
+      min-idle: 10</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre># actuators被重构，修改见：https://www.baeldung.com/spring-boot-actuators</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre># Cache不再支持Guava，替换为Caffeine，见： https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-caching.html#boot-features-caching-provider-caffeine</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre># 配置值不能为空，e.g.
+csp:
+  sdk:
+    basic:
+      app-secret: "{cipher}..."
+      token-expire-ms:  # 错误，值不能为空</pre>
+</div>
+</div>
+</li>
+<li>
+<p><input type="checkbox" data-item-complete="0"> [Dew Framework] 修改 <code>dew-parent</code> 的版本号到最新版本</p>
+</li>
+<li>
+<p><input type="checkbox" data-item-complete="0"> [Dew Framework] 使用IDE全局查询替换 <code>com.tairanchina.csp.dew</code> 为 <code>ms.dew</code></p>
+</li>
+<li>
+<p><input type="checkbox" data-item-complete="0"> [Dew Framework] 鉴权修改，详见 <a href="#devops-best-practices-auth">鉴权处理</a></p>
+<div class="literalblock">
+<div class="content">
+<pre>由于Dew 2.x 不推荐引入独立的服务网关，故需要对鉴权做一定的修改 。</pre>
+</div>
+</div>
+</li>
+<li>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 删除所有 <code>eureka</code> / <code>zuul</code> 相关的配置</p>
+</li>
+<li>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 修改项目中的 <code>Spring Cloud Config</code> 配置</p>
+<div class="literalblock">
+<div class="content">
+<pre>spring:
+  cloud:
+    config:
+      uri: # 配置中心的URL（见下文 DevOps实现 说明）, e.g. http://config.dew.ms
+      username:  # 配置中心访问用户名
+      password:  # 配置中心访问密码
+      label:  # 加载的Git分支名</pre>
+</div>
+</div>
+</li>
+<li>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 删除或修改 <code>logback-spring.xml</code></p>
+<div class="literalblock">
+<div class="content">
+<pre>日志会由fluentd自动收集，一般情况下无需配置 logback-spring.xml
+更改日志级别使用 application-X.yml e.g.
+logging:
+  level:
+    ROOT: INFO
+    ms.dew: DEBUG                       # Dew目录日志配置
+    org.springframework.jdbc.core: TRACE# Jdbc目录日志配置</pre>
+</div>
+</div>
+</li>
+<li>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 在项目中添加<code>.dew</code>配置</p>
+<div class="literalblock">
+<div class="content">
+<pre># 在根目录添加 .dew ,至少添加 使用到的 profile 及 namespace 信息
+# e.g.
+# -----------------
+# 默认通知配置，详见 Dew的通知处理模块
+# 默认为钉钉通知
+notify:
+  args:
+    # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+    url: xxx
+profiles:
+  test:
+    namespace: dew-test
+  uat:
+    namespace: dew-uat
+  prod:
+    namespace: dew-prod
+# -----------------
+# （可选）根据实际情况为每个项目添加 .dew 文件以添加各项目的特殊配置</pre>
+</div>
+</div>
+</li>
+<li>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 为前端工程添加 <code>pom.xml</code> ,e.g.</p>
+<div class="literalblock">
+<div class="content">
+<pre>-----------------
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+  &lt;parent&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
+    &lt;version&gt;2.0.0-SNAPSHOT&lt;/version&gt;
+  &lt;/parent&gt;
+  &lt;groupId&gt;ms.dew.devops.it&lt;/groupId&gt;
+  &lt;artifactId&gt;todo-frontend&lt;/artifactId&gt;
+  &lt;packaging&gt;pom&lt;/packaging&gt;
+  &lt;repositories&gt;
+    &lt;repository&gt;
+      &lt;id&gt;central&lt;/id&gt;
+      &lt;url&gt;https://repo.maven.apache.org/maven2&lt;/url&gt;
+    &lt;/repository&gt;
+    &lt;repository&gt;
+      &lt;id&gt;oss-public&lt;/id&gt;
+      &lt;url&gt;https://oss.sonatype.org/content/groups/public&lt;/url&gt;
+    &lt;/repository&gt;
+    &lt;repository&gt;
+      &lt;id&gt;oss-snapshot&lt;/id&gt;
+      &lt;url&gt;https://oss.sonatype.org/content/repositories/snapshots&lt;/url&gt;
+      &lt;snapshots&gt;
+        &lt;enabled&gt;true&lt;/enabled&gt;
+        &lt;checksumPolicy&gt;warn&lt;/checksumPolicy&gt;
+      &lt;/snapshots&gt;
+    &lt;/repository&gt;
+  &lt;/repositories&gt;
+&lt;/project&gt;
+-----------------
+将此工程加入到&lt;modules&gt;中</pre>
+</div>
+</div>
+</li>
+<li>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 去掉前端编译时的进度条显示</p>
+<div class="literalblock">
+<div class="content">
+<pre>由于进度条的显示调用了清屏子命令，Dew暂无法处理情况，故有诸如 ``webpack -p --progress --hide-modules`` 时应该去掉 ``-p --progress``</pre>
+</div>
+</div>
+</li>
+<li>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 为没有继承 <code>parent-starter</code> 的工程添加 <code>parent-starter</code> 模块，以实现DevOps功能，此模块没有任何依赖，故引入不会产生副作用</p>
+<div class="literalblock">
+<div class="content">
+<pre>&lt;parent&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
+    &lt;version&gt;&lt;最新的版本&gt;&lt;/version&gt;
+&lt;/parent&gt;</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="内置image与chart"><a class="anchor" href="#内置image与chart"></a>6.4. 内置Image与Chart</h3>
+<div class="sect3">
+<h4 id="dew_docker_image_集成kubectl与helm"><a class="anchor" href="#dew_docker_image_集成kubectl与helm"></a>6.4.1. Dew Docker Image : 集成Kubectl与Helm</h4>
 <div class="paragraph">
 <p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
 </div>
@@ -7372,7 +7688,7 @@ helm list
 </div>
 </div>
 <div class="sect3">
-<h4 id="dew_docker_image_集成ci_cd能力"><a class="anchor" href="#dew_docker_image_集成ci_cd能力"></a>6.3.2. Dew Docker Image : 集成CI/CD能力</h4>
+<h4 id="dew_docker_image_集成ci_cd能力"><a class="anchor" href="#dew_docker_image_集成ci_cd能力"></a>6.4.2. Dew Docker Image : 集成CI/CD能力</h4>
 <div class="paragraph">
 <p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
 </div>
@@ -7397,7 +7713,7 @@ npm version
 </div>
 </div>
 <div class="sect3">
-<h4 id="dew_docker_image_spring_cloud_config"><a class="anchor" href="#dew_docker_image_spring_cloud_config"></a>6.3.3. Dew Docker Image : Spring Cloud Config</h4>
+<h4 id="dew_docker_image_spring_cloud_config"><a class="anchor" href="#dew_docker_image_spring_cloud_config"></a>6.4.3. Dew Docker Image : Spring Cloud Config</h4>
 <div class="paragraph">
 <p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
 </div>
@@ -7416,7 +7732,7 @@ docker run -d --name dew-spring-cloud-config \
 </div>
 </div>
 <div class="sect3">
-<h4 id="helm-chart-spring-cloud-config"><a class="anchor" href="#helm-chart-spring-cloud-config"></a>6.3.4. Dew Helm Chart : Spring Cloud Config</h4>
+<h4 id="helm-chart-spring-cloud-config"><a class="anchor" href="#helm-chart-spring-cloud-config"></a>6.4.4. Dew Helm Chart : Spring Cloud Config</h4>
 <div class="paragraph">
 <p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
 </div>
@@ -7450,9 +7766,9 @@ git add --all</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="支持的ci_cd服务"><a class="anchor" href="#支持的ci_cd服务"></a>6.4. 支持的CI/CD服务</h3>
+<h3 id="支持的ci_cd服务"><a class="anchor" href="#支持的ci_cd服务"></a>6.5. 支持的CI/CD服务</h3>
 <div class="sect3">
-<h4 id="dew_ci_cd_gitlab_ci_实现"><a class="anchor" href="#dew_ci_cd_gitlab_ci_实现"></a>6.4.1. Dew CI/CD : Gitlab CI 实现</h4>
+<h4 id="dew_ci_cd_gitlab_ci_实现"><a class="anchor" href="#dew_ci_cd_gitlab_ci_实现"></a>6.5.1. Dew CI/CD : Gitlab CI 实现</h4>
 <div class="paragraph">
 <p>此为Gitlab CI上的 CI/CD 处理，集成说明参见：https://gudaoxuri.github.io/dew/</p>
 </div>
@@ -7572,7 +7888,7 @@ prod deploy: # 生产环境部署
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-04-15 20:24:03 CST
+Last updated 2019-04-29 12:39:45 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
