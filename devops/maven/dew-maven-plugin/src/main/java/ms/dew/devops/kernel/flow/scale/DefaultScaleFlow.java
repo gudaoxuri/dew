@@ -39,7 +39,6 @@ public class DefaultScaleFlow extends BasicFlow {
     private int minReplicas;
     private int maxReplicas;
     private int cpuAvg;
-    private long tps;
 
     /**
      * Instantiates a new Default scale flow.
@@ -49,15 +48,13 @@ public class DefaultScaleFlow extends BasicFlow {
      * @param minReplicas the min replicas
      * @param maxReplicas the max replicas
      * @param cpuAvg      the cpu avg
-     * @param tps         the tps
      */
-    public DefaultScaleFlow(int replicas, boolean autoScale, int minReplicas, int maxReplicas, int cpuAvg, long tps) {
+    public DefaultScaleFlow(int replicas, boolean autoScale, int minReplicas, int maxReplicas, int cpuAvg) {
         this.replicas = replicas;
         this.autoScale = autoScale;
         this.minReplicas = minReplicas;
         this.maxReplicas = maxReplicas;
         this.cpuAvg = cpuAvg;
-        this.tps = tps;
     }
 
     @Override
@@ -72,7 +69,7 @@ public class DefaultScaleFlow extends BasicFlow {
         } else {
             Dew.log.info("Enabled auto scale between " + minReplicas + " and " + maxReplicas);
             KubeHelper.inst(config.getId()).apply(
-                    new KubeHorizontalPodAutoscalerBuilder().build(config, minReplicas, maxReplicas, cpuAvg, tps));
+                    new KubeHorizontalPodAutoscalerBuilder().build(config, minReplicas, maxReplicas, cpuAvg));
         }
         return true;
     }

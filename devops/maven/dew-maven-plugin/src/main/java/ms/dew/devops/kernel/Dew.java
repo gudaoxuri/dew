@@ -161,10 +161,6 @@ public class Dew {
          * 自动伸缩条件：CPU平均使用率标识.
          */
         public static final String FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG = "dew.devops.scale.auto.cpu.averageUtilization";
-        /**
-         * 自动伸缩条件：TPS标识.
-         */
-        public static final String FLAG_DEW_DEVOPS_SCALE_AUTO_TPS = "dew.devops.scale.auto.tps";
 
         // ============= 测试场景使用 =============
         /**

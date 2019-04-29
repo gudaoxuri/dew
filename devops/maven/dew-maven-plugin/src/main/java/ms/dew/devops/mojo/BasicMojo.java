@@ -140,11 +140,6 @@ public abstract class BasicMojo extends AbstractMojo {
     @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG)
     int cpuAvg;
 
-    /**
-     * The Tps.
-     */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_SCALE_AUTO_TPS)
-    long tps;
 
     // ============= 测试场景使用 =============
     @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_MOCK_CLASS_PATH)
@@ -268,8 +263,6 @@ public abstract class BasicMojo extends AbstractMojo {
                 .ifPresent(obj -> maxReplicas = Integer.valueOf(obj));
         Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG, formattedProperties)
                 .ifPresent(obj -> cpuAvg = Integer.valueOf(obj));
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_SCALE_AUTO_TPS, formattedProperties)
-                .ifPresent(obj -> tps = Long.valueOf(obj));
         Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_MOCK_CLASS_PATH, formattedProperties)
                 .ifPresent(obj -> mockClasspath = obj);
     }
