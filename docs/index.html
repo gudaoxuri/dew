@@ -521,13 +521,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#docker">4.1.3. Docker</a></li>
 <li><a href="#kubernetes">4.1.4. Kubernetes</a></li>
 <li><a href="#helm">4.1.5. Helm</a></li>
-<li><a href="#nginx_ingress_controller">4.1.6. Nginx Ingress Controller</a></li>
-<li><a href="#dashboard">4.1.7. Dashboard</a></li>
-<li><a href="#elasticsearch">4.1.8. Elasticsearch</a></li>
-<li><a href="#kibana">4.1.9. Kibana</a></li>
-<li><a href="#prometheus_grafana">4.1.10. Prometheus &amp;&amp; Grafana</a></li>
-<li><a href="#fluentd">4.1.11. Fluentd</a></li>
-<li><a href="#jaeger">4.1.12. Jaeger</a></li>
+<li><a href="#metrics_server">4.1.6. Metrics Server</a></li>
+<li><a href="#nginx_ingress_controller">4.1.7. Nginx Ingress Controller</a></li>
+<li><a href="#dashboard">4.1.8. Dashboard</a></li>
+<li><a href="#elasticsearch">4.1.9. Elasticsearch</a></li>
+<li><a href="#kibana">4.1.10. Kibana</a></li>
+<li><a href="#prometheus_grafana">4.1.11. Prometheus &amp;&amp; Grafana</a></li>
+<li><a href="#fluentd">4.1.12. Fluentd</a></li>
+<li><a href="#jaeger">4.1.13. Jaeger</a></li>
 </ul>
 </li>
 <li><a href="#devops-user-manual">4.2. DevOps使用手册[TBD]</a></li>
@@ -543,6 +544,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#认证处理">4.4.2. 认证处理</a></li>
 <li><a href="#统一配置处理">4.4.3. 统一配置处理</a></li>
 <li><a href="#jvm设置">4.4.4. JVM设置</a></li>
+<li><a href="#spring_cloud_config的部署方式">4.4.5. Spring Cloud Config的部署方式</a></li>
 </ul>
 </li>
 <li><a href="#devops示例">4.5. DevOps示例</a>
@@ -1657,7 +1659,8 @@ spring:
         port: # redis端口
         database: # redis数据库
         password: # redis密码
-        pool: # 连接池配置
+        lettuce:
+          pool: # 连接池配置
     rabbitmq:
       host: # rabbit主机
       port: # rabbit端口
@@ -2095,6 +2098,45 @@ Dew的缓存默认只实现了String、List、Set、Hash等结构常用的、时
 </td>
 </tr>
 </table>
+</div>
+<div id="framework-user-manual-cluster-redis-mutli-connection" class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">多实例支持</div>
+Redis的Cache实现支持多连接实例，目前只支持Lettuce client。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># 配置
+spring
+    redis:
+        host:       # Redis主机
+        port:       # Redis端口
+        ...
+        multi:      # &lt;- 多实例支持
+          &lt;key&gt;:    # 实例名称
+                    # 可用 Dew.cluster.caches.instance(&lt;key&gt;) 获取
+                    # 同时可以用 @Autowired &lt;Key&gt;RedisTemplate 获取Bean
+            host:   # Redis主机
+            port:   # Redis端口
+            ...
+
+# 使用
+Dew.cluster.caches.instance("&lt;key&gt;").XXX
+
+# 示例
+# 使用key为auth的连接
+Dew.cluster.caches.instance("auth").set("token", "xxxxx");
+# 使用默认连接
+Dew.cluster.cache.set("name", "xxxxx")</pre>
+</div>
 </div>
 </div>
 <div class="sect4">
@@ -3018,14 +3060,18 @@ public class WebController {
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">dew:
   security:
-    token-flag: # Token key的名称
-    token-in-header: # Token key是否在http header中，为false是会从url query中获取
-    token-hash: # Token 值是否做hash（MD5）处理
-    opt-expiration:86400L # Token 过期时间（秒）
-    router: # 路由功能
-      enabled: false # 是否启用
-      black-uri: # URL黑名单，支持ant风格
-        &lt;Http Method&gt;: [&lt;URLs&gt;]</code></pre>
+    token-flag: X-Dew-Token             # Token 标识
+    token-kind-flag: X-Dew-Token-Kind   # Token类型 标识
+    token-in-header: true               # true：token标识在 header 中，反之在url参数中
+    token-hash: false                   # Token值是否需要hash，用于解决token值有特殊字符的情况
+    router:                             # 路由功能
+      enabled: false                    # 是否启用
+      black-uri:                        # URL黑名单，支持ant风格
+        &lt;Http Method&gt;: [&lt;URLs&gt;]         # URL黑名单列表
+    token-kinds:                        # Token类型，可为不同的Token类型设置不同的过期时间、保留的版本
+      &lt;Kind&gt;                            # Token类型名称，比如 PC/Android/...
+        expire-sec: 86400L              # Token 过期时间（秒）
+        revision-history-limit: 0       # Token 保留的历史版本数量， 0表示不保留历史版本，即有新的登录时会删除此类型下之前所有的Token</code></pre>
 </div>
 </div>
 <div class="admonitionblock important">
@@ -3224,7 +3270,9 @@ public interface AuthAdapter {
 </div>
 </div>
 <div class="paragraph">
-<p><code>Dew</code> 默认实现了基于 <code>Dew.cluster.cache</code> 的适配器以支持上述功能，项目中也可以实现自己的适配器。</p>
+<p><code>Dew</code> 默认实现了基于 <code>Dew.cluster.cache</code> 的适配器以支持上述功能，
+对于Redis的Cache实现了 <a href="#framework-user-manual-cluster-redis-mutli-connection">多实例支持</a> ，默认优先获取key = <code><em>auth</em></code> 的连接配置，不存在时使用默认连接配置。
+，项目中也可以实现自己的适配器。</p>
 </div>
 <div class="listingblock">
 <div class="title">自定义认证适配器</div>
@@ -3392,7 +3440,7 @@ Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "x
 management: # 文档生成地址前缀为 /management.endpoints.web.base-path
   endpoints:
     web:
-      base-path: /management</code></pre>
+      base-path: /management # 可修改成自定义路径，默认为 actuator</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3477,95 +3525,99 @@ swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，�
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">dew:                                    # Dew 参数key前缀
-    basic:                              # 基础配置
-        name:                           # 服务名称，用于API文档显示等
-        version: 1.0                    # 服务版本号，用于API文档显示等
-        desc:                           # 服务描述，用于API文档显示等
-        webSite:                        # 官网，用于API文档显示等
-        doc:                            # 文档配置
-            enabled: true               # 是否启用默认文档配置，关闭后可自定义文档管理，默认为true
-            base-package:               # API文档要扫描的根包，多指定到 Controller 包中
-            contact:                    # 联系人信息
-                name:                   # 联系人姓名
-                url:                    # 联系人URL
-                email:                  # 联系人邮箱
-        format:                         # 格式化配置
-            use-unity-error: true       # 是否启用统一响应
-            error-flag: __DEW_ERROR__   # 默认的通知标识
-        error-mapping:                  # 自定义错误映射
-            "[&lt;&gt;]":                     # 异常类名
-                http-code:              # http状态码，不存在时使用实例级http状态码
-                business-code:          # 业务编码，不存在时使用实例级业务编码
-                message:                # 错误描述，不存在时使用实例级错误描述
-    cluster:                            # 集群功能
-        cache: redis                    # 缓存实现
-        lock: redis                     # 分布式锁实现，可选 redis/hazelcast，默认redis
-        map: redis                      # 分布式Map实现，可选 redis/hazelcast，默认redis
-        mq: redis                       # MQ实现，可选 redis/hazelcast/rabbit，默认redis
-        election: redis                 # 领导者选举实现，可选 redis，默认redis
-        config:                         # 集群相关配置
-            election-period-sec: 60     # 领导者选举时间区间，默认60秒
-            ha-enabled: false           # 是否启用HA，默认为false
-    notifies:                           # 通知功能
-        "":                             # 通知的标识
-            type: DD                    # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
-            defaultReceivers:           # 默认接收人列表，钉钉为手机号，邮件为邮箱
-            dndTimeReceivers:           # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
-            args:                       # 不同类型的参数，邮件不需要设置
-              url:                      # type=DD表示钉钉的推送地址
+  basic:                                # 基础配置
+    name:                               # 服务名称，用于API文档显示等
+    version: 1.0                        # 服务版本号，用于API文档显示等
+    desc:                               # 服务描述，用于API文档显示等
+    webSite:                            # 官网，用于API文档显示等
+    doc:                                # 文档配置
+      enabled: true                     # 是否启用默认文档配置，关闭后可自定义文档管理，默认为true
+      base-package:                     # API文档要扫描的根包，多指定到 Controller 包中
+      contact:                          # 联系人信息
+        name:                           # 联系人姓名
+        url:                            # 联系人URL
+        email:                          # 联系人邮箱
+    format:                             # 格式化配置
+      use-unity-error: true             # 是否启用统一响应
+      error-flag: __DEW_ERROR__         # 默认的通知标识
+    error-mapping:                      # 自定义错误映射
+      "[&lt;&gt;]":                           # 异常类名
+        http-code:                      # http状态码，不存在时使用实例级http状态码
+        business-code:                  # 业务编码，不存在时使用实例级业务编码
+        message:                        # 错误描述，不存在时使用实例级错误描述
+  cluster:                              # 集群功能
+    cache: redis                        # 缓存实现
+    lock: redis                         # 分布式锁实现，可选 redis/hazelcast，默认redis
+    map: redis                          # 分布式Map实现，可选 redis/hazelcast，默认redis
+    mq: redis                           # MQ实现，可选 redis/hazelcast/rabbit，默认redis
+    election: redis                     # 领导者选举实现，可选 redis，默认redis
+    config:                             # 集群相关配置
+      election-period-sec: 60           # 领导者选举时间区间，默认60秒
+      ha-enabled: false                 # 是否启用HA，默认为false
+  notifies:                             # 通知功能
+    "":                                 # 通知的标识
+      type: DD                          # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
+      defaultReceivers:                 # 默认接收人列表，钉钉为手机号，邮件为邮箱
+      dndTimeReceivers:                 # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
+      args:                             # 不同类型的参数，邮件不需要设置
+        url:                            # type=DD表示钉钉的推送地址
                                         # 说明详见：https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
                                         # type=HTTP表示HTTP Hook的地址
-              msgType:                  # 仅用于type=DD，支持 text/markdown
-            strategy:                   # 通知策略
-                minIntervalSec: 0       # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
-                dndTime:                # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
+        msgType:                        # 仅用于type=DD，支持 text/markdown
+      strategy:                         # 通知策略
+        minIntervalSec: 0               # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
+        dndTime:                        # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
                                         # HH:mm-HH:mm，如果两个时间相等表示全天免扰，如果后者大于前者表示跨天免扰
-                forceSendTimes: 3       # 同一免扰周期间通知调用达到几次后强制发送
-    security:                           # 安全功能
-        cors:                           # 跨域设置
-            allow-origin: *             # 允许的来源，建议修改
-            allow-methods: POST,GET,OPTIONS,PUT,DELETE,HEAD
+        forceSendTimes: 3               # 同一免扰周期间通知调用达到几次后强制发送
+  security:                             # 安全功能
+    cors:                               # 跨域设置
+      allow-origin: *                   # 允许的来源，建议修改
+      allow-methods: POST,GET,OPTIONS,PUT,DELETE,HEAD
                                         # 允许的方法
-            allow-headers: x-requested-with,content-type
+      allow-headers: x-requested-with,content-type
                                         # 允许的头信息
-        token-flag: X-Dew-Token       # token 标识
-        token-in-header: true           # true：token标识在 header 中，反之在url参数中
-        token-hash: false               # token值是否需要hash，用于解决token值有特殊字符的情况
-        opt-expiration: 86400           # Token 过期时间（秒）
-        router:                         # 路由功能
-            enabled: false              # 是否启用
-            black-uri:                  # URL黑名单，支持ant风格
-                &lt;Http Method&gt;: [&lt;URLs&gt;]
-    cloud:                              # 需要引入 cloud-starter 模块
-        trace-log:                      # 追踪日志配置
-            enabled: true               # 是否启用服务API调用（追踪）日志，默认为true
-        error:                          # 错误配置
-             enabled: false             # 启用降级邮件通知，默认为false
-             notify-flag: __HYSTRIX__   # 默认的通知标识
-             notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED
+    token-flag: X-Dew-Token             # Token 标识
+    token-kind-flag: X-Dew-Token-Kind   # Token类型 标识
+    token-in-header: true               # true：token标识在 header 中，反之在url参数中
+    token-hash: false                   # Token值是否需要hash，用于解决token值有特殊字符的情况
+    router:                             # 路由功能
+      enabled: false                    # 是否启用
+      black-uri:                        # URL黑名单，支持ant风格
+        &lt;Http Method&gt;: [&lt;URLs&gt;]         # URL黑名单列表
+    token-kinds:                        # Token类型，可为不同的Token类型设置不同的过期时间、保留的版本
+      &lt;Kind&gt;                            # Token类型名称，比如 PC/Android/...
+        expire-sec: 86400L              # Token 过期时间（秒）
+        revision-history-limit: 0       # Token 保留的历史版本数量， 0表示不保留历史版本，即有新的登录时会删除此类型下之前所有的Token
+  cloud:                                # 需要引入 cloud-starter 模块
+    trace-log:                          # 追踪日志配置
+      enabled: true                     # 是否启用服务API调用（追踪）日志，默认为true
+    error:                              # 错误配置
+      enabled: false                    # 启用降级邮件通知，默认为false
+      notify-flag: __HYSTRIX__          # 默认的通知标识
+      notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED
                                         # 通知的事件类型
-             notify-include-keys:       # 需监控的方法key值，与notify-exclude-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
-             notify-exclude-keys:       # 不需要监控的方法key值，与notify-include-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
-    idempotent:                         # 需要引入 idempotent-starter 模块
-        default-expire-ms: 3600000      # 设置默认过期时间，1小时
-        default-strategy: item          # 设置默认策略，目前支持item(逐条记录)
-        default-opt-id-flag: __IDEMPOTENT_OPT_ID__
+      notify-include-keys:              # 需监控的方法key值，与notify-exclude-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
+      notify-exclude-keys:              # 不需要监控的方法key值，与notify-include-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
+  idempotent:                           # 需要引入 idempotent-starter 模块
+    default-expire-ms: 3600000          # 设置默认过期时间，1小时
+    default-strategy: item              # 设置默认策略，目前支持item(逐条记录)
+    default-opt-id-flag: __IDEMPOTENT_OPT_ID__
                                         # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
-    component:                          # 各组件配置
-        auth:                           # 需要引入 auth 组件
-          token-expire-sec: 2592000     # token有效期，默认为30天
-          max-login-error-times: 3      # 最大登录错误次数，默认3次
-          clean-error-time-min: 10      # 登录错误限制登录时间，默认为10分钟
-          password-salt:                # 密码加盐
-          email-account:                # 发通知邮件的邮箱账号，比如用来发送用户注册成功邮件
-          sdk:                          # SDK配置
-              server-url:               # 服务器地址
-              white-list:               # 白名单，逗号分隔
+  component:                            # 各组件配置
+    auth:                               # 需要引入 auth 组件
+      token-expire-sec: 2592000         # token有效期，默认为30天
+      max-login-error-times: 3          # 最大登录错误次数，默认3次
+      clean-error-time-min: 10          # 登录错误限制登录时间，默认为10分钟
+      password-salt:                    # 密码加盐
+      email-account:                    # 发通知邮件的邮箱账号，比如用来发送用户注册成功邮件
+      sdk:                              # SDK配置
+          server-url:                   # 服务器地址
+          white-list:                   # 白名单，逗号分隔
 
 
 spring:                                 # 常用 Spring 配置
-    application:
-         name:                          # 项目名称,若使用Dew，请配置
+  application:
+    name:                               # 项目名称,若使用Dew，请配置
   cloud:
     config:                             # 统一配置
       enabled: true                     # 是否启用
@@ -3576,50 +3628,59 @@ spring:                                 # 常用 Spring 配置
       ribbon:                           # 客户端轮询配置
         enabled: true                   # 是否启用
     mail:                               # Mail配置，需要hystrix降级通知需加以下配置
-         host: smtp.163.com
-         username:
-         password:
-         properties:
-           mail:
-             smtp:
-               auth: true
-                 starttls:
-                   enable: true
-                   required: true
+      host: smtp.163.com
+      username:
+      password:
+      properties:
+        mail:
+          smtp:
+            auth: true
+              starttls:
+                enable: true
+                required: true
     redis:
-        host:                           # Redis主机
-        port:                           # Redis端口
-        database:                       # Redis数据库
-        password:                       # Redis密码
-        pool:                           # 连接池配置
+      host:                           # Redis主机
+      port:                           # Redis端口
+      database:                       # Redis数据库
+      password:                       # Redis密码
+      lettuce:
+        pool:                         # 连接池配置
+      multi:                          # 多实例支持（Dew功能）
+        &lt;key&gt;:                        # 实例名称
+                                      # 可用 Dew.cluster.caches.instance(&lt;key&gt;) 获取
+                                      # 同时可以用 @Autowired &lt;Key&gt;RedisTemplate 获取Bean
+          host:                       # Redis主机
+          port:                       # Redis端口
+          ...
     rabbitmq:
-      host:                             # Rabbit主机
-      port:                             # Rabbit端口
-      username:                         # Rabbit用户名
-      password:                         # Rabbit密码
-      virtual-host:                     # Rabbit VH
+      host:                           # Rabbit主机
+      port:                           # Rabbit端口
+      username:                       # Rabbit用户名
+      password:                       # Rabbit密码
+      virtual-host:                   # Rabbit VH
     hazelcast:
-         username:
-         password:
-         addresses: ["127.0.0.1"]
+      username:
+      password:
+      addresses: ["127.0.0.1"]
 
 server:
-  port: 8081                            # 服务端口
+  port: 8081                          # 服务端口
 
-&lt;application name&gt;:                     # 自定义服务列表，使用此功能需要设置 spring.cloud.kubernetes.ribbon.enabled = false
+&lt;application name&gt;:                   # 自定义服务列表，使用此功能需要设置 spring.cloud.kubernetes.ribbon.enabled = false
   ribbon:
     listOfServers: &lt;host&gt;:&lt;port&gt;
 
 management:
   endpoints:
     web:
-      base-path: /management            # 管理路径前缀
+      base-path: /management          # 管理路径前缀
 
 logging:
   level:
     ROOT: INFO
-    ms.dew: DEBUG                       # Dew目录日志配置
-    org.springframework.jdbc.core: TRACE# Jdbc目录日志配置</code></pre>
+    ms.dew: DEBUG                     # Dew目录日志配置
+    org.springframework.jdbc.core: TRACE
+                                      # Jdbc目录日志配置</code></pre>
 </div>
 </div>
 </div>
@@ -4425,7 +4486,45 @@ kubectl get pod -n kube-system -l app=helm</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="nginx_ingress_controller"><a class="anchor" href="#nginx_ingress_controller"></a>4.1.6. Nginx Ingress Controller</h4>
+<h4 id="metrics_server"><a class="anchor" href="#metrics_server"></a>4.1.6. Metrics Server</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+若要使用HPA(Horizontal Pod Autoscaler)，需要安装 resource metrics API,官方推荐 Metrics Server<br>
+@see <a href="https://github.com/kubernetes-incubator/metrics-server" class="bare">https://github.com/kubernetes-incubator/metrics-server</a><br>
+helm chart: <a href="https://github.com/helm/charts/tree/master/stable/metrics-server" class="bare">https://github.com/helm/charts/tree/master/stable/metrics-server</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">git clone https://github.com/kubernetes-incubator/metrics-server.git
+# Kuberneters V1.8以上执行
+kubectl create -f metrics-server/deploy/1.8+/
+# Fix issue: https://github.com/kubernetes-incubator/metrics-server/issues/131
+kubectl patch deploy metrics-server -n kube-system -p "
+spec:
+  template:co
+    spec:
+      containers:
+      - name: metrics-server
+        command:
+        - /metrics-server
+        - --kubelet-insecure-tls
+        - --kubelet-preferred-address-types=InternalIP"
+# 验证安装结果
+kubectl top node
+kubectl top pod</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="nginx_ingress_controller"><a class="anchor" href="#nginx_ingress_controller"></a>4.1.7. Nginx Ingress Controller</h4>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
@@ -4440,7 +4539,7 @@ helm install stable/nginx-ingress --name dew-nginx --namespace ingress-nginx --v
 </div>
 </div>
 <div class="sect3">
-<h4 id="dashboard"><a class="anchor" href="#dashboard"></a>4.1.7. Dashboard</h4>
+<h4 id="dashboard"><a class="anchor" href="#dashboard"></a>4.1.8. Dashboard</h4>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
@@ -4473,7 +4572,7 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | gre
 </div>
 </div>
 <div class="sect3">
-<h4 id="elasticsearch"><a class="anchor" href="#elasticsearch"></a>4.1.8. Elasticsearch</h4>
+<h4 id="elasticsearch"><a class="anchor" href="#elasticsearch"></a>4.1.9. Elasticsearch</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -4555,7 +4654,7 @@ helm install --name dew-elasticsearch elastic/elasticsearch --namespace devops -
 </div>
 </div>
 <div class="sect3">
-<h4 id="kibana"><a class="anchor" href="#kibana"></a>4.1.9. Kibana</h4>
+<h4 id="kibana"><a class="anchor" href="#kibana"></a>4.1.10. Kibana</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -4634,7 +4733,7 @@ helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 
 </div>
 </div>
 <div class="sect3">
-<h4 id="prometheus_grafana"><a class="anchor" href="#prometheus_grafana"></a>4.1.10. Prometheus &amp;&amp; Grafana</h4>
+<h4 id="prometheus_grafana"><a class="anchor" href="#prometheus_grafana"></a>4.1.11. Prometheus &amp;&amp; Grafana</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -4920,7 +5019,7 @@ kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops
 </div>
 </div>
 <div class="sect3">
-<h4 id="fluentd"><a class="anchor" href="#fluentd"></a>4.1.11. Fluentd</h4>
+<h4 id="fluentd"><a class="anchor" href="#fluentd"></a>4.1.12. Fluentd</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -4960,7 +5059,7 @@ helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace de
 </div>
 </div>
 <div class="sect3">
-<h4 id="jaeger"><a class="anchor" href="#jaeger"></a>4.1.12. Jaeger</h4>
+<h4 id="jaeger"><a class="anchor" href="#jaeger"></a>4.1.13. Jaeger</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -5290,16 +5389,18 @@ dew.devops.docker.registry.username          # Docker Registry 用户名
 dew.devops.docker.registry.password          # Docker Registry 密码
 ew.devops.quiet
 dew.devops.version.custom                    # 自定义版本标识，仅用于集成测试，实际场景中慎用！
+# ============= 日志及调试场景使用 =============
+dew.devops.podName                           # 要使用的Pod名称
 # ============= 日志场景使用 =============
-dew.devops.log.podName                       # 要查看日志的Pod名称
 dew.devops.log.follow                        # 是否滚动查看日志
+# ============= 调试场景使用 =============
+dew.devops.debug.forward.port                # 转发端口标识
 # ============= 伸缩场景使用 =============
 dew.devops.scale.replicas                    # 伸缩Pod数量
 dew.devops.scale.auto                        # 是否启用自动伸缩
 dew.devops.scale.auto.minReplicas            # 自动伸缩Pod数下限
 dew.devops.scale.auto.maxReplicas            # 自动伸缩Pod数上限
-dew.devops.scale.auto.cpu.averageUtilization # 自动伸缩条件：CPU平均使用率标识
-dew.devops.scale.auto.tps                    # 自动伸缩条件：TPS标识</code></pre>
+dew.devops.scale.auto.cpu.averageUtilization # 自动伸缩条件：CPU平均使用率标识</code></pre>
 </div>
 </div>
 </div>
@@ -5333,12 +5434,53 @@ dew.devops.scale.auto.tps                    # 自动伸缩条件：TPS标识</c
 <p>Spring Cloud Kubernetes 实现了基于ConfigMap/Secrets的统一配置管理，但由于后者暂未解决版本化管理、自定义密钥的加解密及友好的配置编辑能力，
 故推荐使用Spring Cloud Config， <code>dew</code> 基于Spring Cloud Config封装了Chart，详见 <a href="#helm-chart-spring-cloud-config">Dew Helm Chart : Spring Cloud Config</a> 。</p>
 </div>
+<div class="paragraph">
+<p>统一配置服务建议多个项目共享一套，为方便开发调试，故此服务建议使用URL调用而非ServiceId，e.g:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">原配置</th>
+<th class="tableblock halign-left valign-top">现配置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="listingblock">
+<div class="content">
+<pre>spring:
+   cloud:
+     config:
+       discovery:
+         service-id: config
+         enabled: true</pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="listingblock">
+<div class="content">
+<pre>spring:
+   cloud:
+     config:
+       uri: http://config.dew.ms</pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect3">
 <h4 id="jvm设置"><a class="anchor" href="#jvm设置"></a>4.4.4. JVM设置</h4>
 <div class="paragraph">
 <p>默认情况下 <code>dew</code> 会根据容器环境自行设置JVM参数，规则及自定义配置见 &lt;&lt;&gt;&gt; 。</p>
 </div>
+</div>
+<div class="sect3">
+<h4 id="spring_cloud_config的部署方式"><a class="anchor" href="#spring_cloud_config的部署方式"></a>4.4.5. Spring Cloud Config的部署方式</h4>
+
 </div>
 </div>
 <div class="sect2">
@@ -5356,11 +5498,11 @@ dew.devops.scale.auto.tps                    # 自动伸缩条件：TPS标识</c
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-notify:
+#notify:
   # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
-  args:
+  #args:
     # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+    #url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加测试环境
   test:
@@ -5529,11 +5671,11 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-notify:
+#notify:
   # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
-  args:
+  #args:
     # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+    #url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加uat环境
   uat:

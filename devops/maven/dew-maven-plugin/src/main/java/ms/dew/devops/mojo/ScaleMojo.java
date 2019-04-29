@@ -37,11 +37,11 @@ public class ScaleMojo extends BasicMojo {
             Dew.log.error("Parameter error, When autoScale disabled, dew.devops.scale.replicas can't be 0");
             return false;
         }
-        if (autoScale && (minReplicas == 0 || maxReplicas == 0 || minReplicas >= maxReplicas || (cpuAvg == 0 && tps == 0L))) {
+        if (autoScale && (minReplicas == 0 || maxReplicas == 0 || minReplicas >= maxReplicas || cpuAvg == 0)) {
             Dew.log.error("Parameter error, Current mode is autoScale model");
             return false;
         }
-        return new DefaultScaleFlow(replicas, autoScale, minReplicas, maxReplicas, cpuAvg, tps).exec(getMojoName());
+        return new DefaultScaleFlow(replicas, autoScale, minReplicas, maxReplicas, cpuAvg).exec(getMojoName());
     }
 
 }
