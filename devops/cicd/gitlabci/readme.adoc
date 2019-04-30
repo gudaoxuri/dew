@@ -10,8 +10,6 @@
 
 .核心流程
 
-. 确认Gitlab中的项目已启用CI
-  （勾选 https://<Gitlab Host>/<Group>/<Project>/settings/ci_cd 中的 ``Default to Auto DevOps pipeline``），
 . 配置 ``.gitlab-ci.yml``，配置参见 ``devops/cicd/gilabci/.gitlab-ci-template.yml``
 . 添加 ``.gitlab-ci.yml`` 到项目代码根目录
 

@@ -184,7 +184,7 @@
   # -----------------
   # （可选）根据实际情况为每个项目添加 .dew 文件以添加各项目的特殊配置
 
-* [ ] [Dew DevOps] 在项目中添加``.gitlab``配置，详见 <<devops-cicd-gitlab-template>>， e.g.
+* [ ] [Dew DevOps] 在项目中添加``.gitlab-ci.yml``配置，详见 <<devops-cicd-gitlab-template>>， e.g.
 
   stages:
     - deploy

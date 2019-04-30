@@ -38,6 +38,7 @@ public class JvmServiceBuildFlow extends DockerBuildFlow {
         Files.move(Paths.get(preparePath + "serv.jar"), Paths.get(flowBasePath + "serv.jar"), StandardCopyOption.REPLACE_EXISTING);
         $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/jvm/Dockerfile"), flowBasePath + "Dockerfile");
         $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/jvm/run-java.sh"), flowBasePath + "run-java.sh");
+        $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/jvm/debug-java.sh"), flowBasePath + "debug-java.sh");
         return true;
     }
 

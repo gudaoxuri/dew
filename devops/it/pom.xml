@@ -133,6 +133,10 @@
                         <dew.devops.docker.registry.password>${dew.devops.docker.registry.password}
                         </dew.devops.docker.registry.password>
                         <dew.devops.kube.config>${dew.devops.kube.config}</dew.devops.kube.config>
+                        <dew.devops.it.repository.id>${dew.devops.it.repository.id}
+                        </dew.devops.it.repository.id>
+                        <dew.devops.it.repository.url>${dew.devops.it.repository.url}
+                        </dew.devops.it.repository.url>
                         <dew.devops.it.snapshotRepository.id>${dew.devops.it.snapshotRepository.id}
                         </dew.devops.it.snapshotRepository.id>
                         <dew.devops.it.snapshotRepository.url>${dew.devops.it.snapshotRepository.url}
