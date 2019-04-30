@@ -592,6 +592,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#dnsmasq">6.2.7. Dnsmasq</a></li>
 <li><a href="#minio">6.2.8. Minio</a></li>
 <li><a href="#nfs">6.2.9. NFS</a></li>
+<li><a href="#glusterfs">6.2.10. GlusterFS</a></li>
 </ul>
 </li>
 <li><a href="#dew-2-migration-guide">6.3. Dew 2.x Migration guide[TBD]</a>
@@ -672,7 +673,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>微服务一站式解决方案( <a href="http://dew.ms" class="bare">http://dew.ms</a> )，提供：架构指南、容器优先/兼容Spring Cloud与Istio的框架、最佳实践及DevOps标准化流程。</p>
+<p>微服务一站式解决方案( <a href="http://doc.dew.ms" class="bare">http://doc.dew.ms</a> )，提供：架构指南、容器优先/兼容Spring Cloud与Istio的框架、最佳实践及DevOps标准化流程。</p>
 </div>
 <div class="quoteblock">
 <blockquote>
@@ -3129,8 +3130,8 @@ public class WebController {
       black-uri:                        # URL黑名单，支持ant风格
         &lt;Http Method&gt;: [&lt;URLs&gt;]         # URL黑名单列表
     token-kinds:                        # Token类型，可为不同的Token类型设置不同的过期时间、保留的版本
-      &lt;Kind&gt;:                           # Token类型名称，比如 PC/Android/...
-        expire-sec: 86400L              # Token 过期时间（秒）
+      &lt;Kind&gt;:                           # Token类型名称，比如 PC/Android/... ，默认会创建名为 DEFAULT 的类型
+        expire-sec: 86400               # Token 过期时间（秒）
         revision-history-limit: 0       # Token 保留的历史版本数量， 0表示不保留历史版本，即有新的登录时会删除此类型下之前所有的Token</code></pre>
 </div>
 </div>
@@ -3645,8 +3646,8 @@ swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，�
       black-uri:                        # URL黑名单，支持ant风格
         &lt;Http Method&gt;: [&lt;URLs&gt;]         # URL黑名单列表
     token-kinds:                        # Token类型，可为不同的Token类型设置不同的过期时间、保留的版本
-      &lt;Kind&gt;:                           # Token类型名称，比如 PC/Android/...
-        expire-sec: 86400L              # Token 过期时间（秒）
+      &lt;Kind&gt;:                           # Token类型名称，比如 PC/Android/... ，默认会创建名为 DEFAULT 的类型
+        expire-sec: 86400               # Token 过期时间（秒）
         revision-history-limit: 0       # Token 保留的历史版本数量， 0表示不保留历史版本，即有新的登录时会删除此类型下之前所有的Token
   cloud:                                # 需要引入 cloud-starter 模块
     trace-log:                          # 追踪日志配置
@@ -4250,7 +4251,7 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub root@k8s-X</code></pre>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre>yum install -y yum-utils \
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">yum install -y yum-utils \
   device-mapper-persistent-data \
   lvm2
 
@@ -4286,7 +4287,7 @@ EOF
 
 systemctl daemon-reload
 systemctl restart docker
-systemctl enable docker</pre>
+systemctl enable docker</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4295,7 +4296,7 @@ systemctl enable docker</pre>
 <div class="listingblock">
 <div class="title">暴露DOCKER_HOST</div>
 <div class="content">
-<pre># 详见 https://docs.docker.com/config/daemon/
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 详见 https://docs.docker.com/config/daemon/
 
 mkdir -p /etc/systemd/system/docker.service.d/
 vi /etc/systemd/system/docker.service.d/docker.conf
@@ -4314,7 +4315,7 @@ vi /etc/docker/daemon.json
 }
 systemctl daemon-reload
 systemctl restart docker
--</pre>
+-</code></pre>
 </div>
 </div>
 </div>
@@ -4335,7 +4336,7 @@ systemctl restart docker
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre># 使用阿里云镜像加速下载
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 使用阿里云镜像加速下载
 cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
@@ -4361,7 +4362,7 @@ yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 systemctl enable --now kubelet
 
 # 查看安装的Kubernetes版本
-yum list installed | grep kube</pre>
+yum list installed | grep kube</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -4379,7 +4380,7 @@ yum list installed | grep kube</pre>
 <div class="listingblock">
 <div class="title">Master安装配置</div>
 <div class="content">
-<pre># 安装Git，后续会用到
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 安装Git，后续会用到
 yum install -y git
 
 # 初始化Kubernetes，二选一，使用代理方式
@@ -4410,7 +4411,7 @@ kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be008450
 kubectl get pods --all-namespaces
 
 # 创建命名空间，方便后文使用
-kubectl create ns devops</pre>
+kubectl create ns devops</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -4446,7 +4447,7 @@ kubectl create ns devops</pre>
 <div class="listingblock">
 <div class="title">Node安装配置</div>
 <div class="content">
-<pre># 执行上一步输出的 kubeadm join ...
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 执行上一步输出的 kubeadm join ...
 
 # 完成后在master上执行情况如下（以1.14.1版本为例）
 kubectl get no
@@ -4456,7 +4457,7 @@ k8s-node1     Ready    &lt;none&gt;   11m     v1.14.1
 k8s-node2     Ready    &lt;none&gt;   8m54s   v1.14.1
 k8s-node3     Ready    &lt;none&gt;   8m51s   v1.14.1
 k8s-node4     Ready    &lt;none&gt;   8m49s   v1.14.1
--</pre>
+-</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4475,7 +4476,7 @@ kubectl label nodes k8s-nodeX k8s-nodeX ...  group=devops</pre>
 <div class="listingblock">
 <div class="title">添加外部DNS服务，如dnsmasq</div>
 <div class="content">
-<pre># 编辑Kubernetes的DNS，加上dew.ms的代理
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 编辑Kubernetes的DNS，加上dew.ms的代理
 kubectl -n kube-system edit cm coredns
 -
 data:
@@ -4486,7 +4487,7 @@ data:
         cache 30
         proxy . x.x.x.x
     }
--</pre>
+-</code></pre>
 </div>
 </div>
 </div>
@@ -4507,7 +4508,7 @@ data:
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre>curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
 
 cat &lt;&lt;EOF | kubectl apply -f -
 apiVersion: v1
@@ -4541,7 +4542,7 @@ kubectl set image deployment/tiller-deploy tiller=registry.cn-hangzhou.aliyuncs.
 # 查看helm版本
 helm version
 
-kubectl get pod -n kube-system -l app=helm</pre>
+kubectl get pod -n kube-system -l app=helm</code></pre>
 </div>
 </div>
 </div>
@@ -4562,6 +4563,7 @@ helm chart: <a href="https://github.com/helm/charts/tree/master/stable/metrics-s
 </table>
 </div>
 <div class="listingblock">
+<div class="title">安装配置</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">git clone https://github.com/kubernetes-incubator/metrics-server.git
 # Kuberneters V1.8以上执行
@@ -4588,13 +4590,13 @@ kubectl top pod</code></pre>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre># 使用如下方式将80 443暴露出来
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 使用如下方式将80 443暴露出来
 helm install stable/nginx-ingress --name dew-nginx --namespace ingress-nginx --version=1.4.0 \
     --set controller.kind=DaemonSet \
     --set controller.hostNetwork=true \
     --set controller.stats.enabled=true \
     --set controller.metrics.enabled=true \
-    --set nodeSelector.group=devops</pre>
+    --set nodeSelector.group=devops</code></pre>
 </div>
 </div>
 </div>
@@ -4603,7 +4605,7 @@ helm install stable/nginx-ingress --name dew-nginx --namespace ingress-nginx --v
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre>cat &lt;&lt;EOF | kubectl apply -f -
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">cat &lt;&lt;EOF | kubectl apply -f -
 apiVersion: v1
 kind: Secret
 metadata:
@@ -4627,7 +4629,7 @@ helm install stable/kubernetes-dashboard --name dew-dashboard --namespace kube-s
 # 获取Token
 kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep dew-dashboard-kubernetes-dashboard | awk '{print $1}')
 
-# 添加域名到客户机hosts并访问 https://dashboard.dew.ms</pre>
+# 添加域名到客户机hosts并访问 https://dashboard.dew.ms</code></pre>
 </div>
 </div>
 </div>
@@ -4648,10 +4650,10 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | gre
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre>app=dew-elasticsearch
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">app=dew-elasticsearch
 size=200Gi
 
-# 创建PV
+# 使用NFS存储，创建PV
 
 # 根据replicas的个数来决定下面PV的创建个数
 # 在NFS节点中创建NFS目录
@@ -4684,6 +4686,8 @@ done
 # 使用helm安装
 helm repo add elastic https://helm.elastic.co
 
+# 若使用 StorageClass，只需设置 --set volumeClaimTemplate.storageClassName="yourscname" 无需创建PV
+# TIP : 请注意chart版本及对应参数名的变更
 helm install --name dew-elasticsearch elastic/elasticsearch --namespace devops --version=6.5.0 \
     --set imageTag=6.6.1 \
     --set clusterName=dew-elasticsearch \
@@ -4697,7 +4701,7 @@ helm install --name dew-elasticsearch elastic/elasticsearch --namespace devops -
     --set clusterHealthCheckParams="" \
     --set ingress.enabled=true \
     --set ingress.hosts={es.dew.ms} \
-    --set nodeSelector.group=devops</pre>
+    --set nodeSelector.group=devops</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -4730,7 +4734,7 @@ helm install --name dew-elasticsearch elastic/elasticsearch --namespace devops -
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre># 创建PV &amp; PVC
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 使用NFS存储，创建PV &amp; PVC
 
 # 在NFS节点中创建NFS目录
 mkdir -p /data/nfs/kibana
@@ -4770,6 +4774,10 @@ spec:
       app: kibana
 EOF
 
+# 若使用 StorageClass，则无需创建PV，PVC，需设置以下参数
+# 将existingClaim的值改为false    --set persistentVolumeClaim.existingClaim=false
+# 设置StorageClass的名字    --set persistentVolumeClaim.storageClass="yourscname"
+# 设置size    --set persistentVolumeClaim.size=10Gi
 helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 \
     --set image.tag="6.6.1" \
     --set env."ELASTICSEARCH_URL"="http://dew-elasticsearch-master:9200" \
@@ -4788,7 +4796,7 @@ helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 
     --set securityContext.allowPrivilegeEscalation=true \
     --set securityContext.runAsUser=0 \
     --set securityContext.fsGroup=0 \
-    --set nodeSelector.group=devops</pre>
+    --set nodeSelector.group=devops</code></pre>
 </div>
 </div>
 </div>
@@ -4826,7 +4834,7 @@ helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 
 <div class="listingblock">
 <div class="title">创建prometheus 的 PV</div>
 <div class="content">
-<pre>app=prometheus
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">app=prometheus
 components=("alertmanager" "prometheus")
 size=100Gi
 
@@ -4854,13 +4862,13 @@ spec:
     path: /data/nfs/${app}/${i}
     server: nfs.dew.ms
 EOF
-done</pre>
+done</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">创建grafana 的 PV &amp; PVC</div>
 <div class="content">
-<pre># 在NFS节点中创建NFS目录
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 在NFS节点中创建NFS目录
 mkdir -p /data/nfs/grafana
 
 # 在Kubernetes Master节点中创建PV &amp; PVC
@@ -4896,13 +4904,13 @@ spec:
   selector:
     matchLabels:
       app: grafana
-EOF</pre>
+EOF</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">使用helm安装</div>
 <div class="content">
-<pre># 若需要对etcd进行监控，则需要先创建secret
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 若需要对etcd进行监控，则需要先创建secret
 kubectl -n devops create secret generic dew-prometheus-operator-etcd \
   --from-file=/etc/kubernetes/pki/etcd/ca.crt \
   --from-file=/etc/kubernetes/pki/etcd/peer.crt \
@@ -4911,6 +4919,11 @@ kubectl -n devops create secret generic dew-prometheus-operator-etcd \
 # 安装，不使用代理要加上 --set kube-state-metrics.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kube-state-metrics
 # 若要启用对etcd监控，需设置kubeEtcd相关参数。
 # grafana.'grafana\.ini'为Grafana的配置参数,请安装时自行修改。
+# 若 Grafana 使用StorageClass,需要进行以下配置，无需创建PV，PVC
+#   --set grafana.persistence.storageClassName="yourscname"
+#   --set grafana.persistence.size=10Gi
+#   删去此行配置：    --set grafana.persistence.existingClaim=grafana \
+#   * Alertmanager和Prometheus由于生成的PVC名字长度过长，会造成无法自动创建PV，不建议使用StorageClass
 helm install stable/prometheus-operator --name dew-prometheus-operator --namespace devops --version=5.0.10 \
     --set kubelet.serviceMonitor.https=true \
     --set prometheus.ingress.enabled=true \
@@ -4960,7 +4973,7 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
 # grafana默认用户名：admin
 # 访问 http://prometheus.dew.ms
 # 访问 http://alertmanager.dew.ms
-# 访问 https://grafana.dew.ms</pre>
+# 访问 https://grafana.dew.ms</code></pre>
 </div>
 </div>
 <div class="quoteblock">
@@ -5096,7 +5109,7 @@ kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre>helm repo add kiwigrid https://kiwigrid.github.io
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">helm repo add kiwigrid https://kiwigrid.github.io
 
 # 安装，不使用代理要加上 --set image.tag=v2.4.0 --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/fluentd-elasticsearch
 # 若要启用Prometheus进行监控Fluentd，
@@ -5114,7 +5127,7 @@ helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace de
     --set prometheusRule.labels.release=dew-prometheus-operator \
     --set serviceMonitor.enabled=true \
     --set serviceMonitor.labels.release=dew-prometheus-operator \
-    --set nodeSelector.group=devops</pre>
+    --set nodeSelector.group=devops</code></pre>
 </div>
 </div>
 </div>
@@ -5135,7 +5148,7 @@ helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace de
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre>kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/crds/jaegertracing_v1_jaeger_crd.yaml
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/crds/jaegertracing_v1_jaeger_crd.yaml
 curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/service_account.yaml \
     | sed "s/namespace: observability/namespace: devops/g" \
     | kubectl create -f -
@@ -5186,13 +5199,13 @@ kubectl patch ingress jaeger-query -n devops -p "spec:
 # 目前jaeger-operator暂不支持直接设置，请关注该项目的更新情况。
 # 可以自行给需要调度的pod的deployment添加限制条件。
 # e.g.
- kubectl patch deploy jaeger-operator jaeger-collector jaeger-query -n devops -p '{"spec": {"template": {"spec": {"nodeSelector": {"group": "devops"}}}}}'</pre>
+ kubectl patch deploy jaeger-operator jaeger-collector jaeger-query -n devops -p '{"spec": {"template": {"spec": {"nodeSelector": {"group": "devops"}}}}}'</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">使用</div>
 <div class="content">
-<pre># 在Deployment 和 Service 中添加annotations : sidecar.jaegertracing.io/inject: "true" 即可。
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 在Deployment 和 Service 中添加annotations : sidecar.jaegertracing.io/inject: "true" 即可。
 # 使用Dew的 devops-maven-plugin 部署会自动添加此注解。
 
 # 手工添加示例如下：
@@ -5233,7 +5246,7 @@ spec:
      targetPort: 8080
   selector:
    app: jaeger-demo
-EOF</pre>
+EOF</code></pre>
 </div>
 </div>
 </div>
@@ -5558,11 +5571,11 @@ dew.devops.scale.auto.cpu.averageUtilization # 自动伸缩条件：CPU平均使
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-notify:
+#notify:
   # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
-  args:
+  #args:
     # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+    #url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加测试环境
   test:
@@ -5731,11 +5744,11 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-notify:
+#notify:
   # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
-  args:
+  #args:
     # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+    #url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加uat环境
   uat:
@@ -6179,6 +6192,9 @@ helm list</pre>
 <li>
 <p>独立通知功能到<code>notification</code></p>
 </li>
+<li>
+<p>支持多个Redis连接 <a href="#framework-user-manual-cluster-redis-mutli-connection">多实例支持</a></p>
+</li>
 </ul>
 </div>
 <div class="ulist">
@@ -6192,6 +6208,9 @@ helm list</pre>
 </li>
 <li>
 <p><code>cluster-spi-eureka</code> 被移除，请用 <code>cluster-spi-redis</code> 代替其集群选举功能</p>
+</li>
+<li>
+<p>权限认证Token处理优化 <a href="#framework-user-manual-auth">权限认证</a></p>
 </li>
 </ul>
 </div>
@@ -7074,7 +7093,7 @@ sysctl -n net.ipv4.tcp_congestion_control
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre>wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm
 
 rpm -Uvh pgdg-redhat96-9.6-3.noarch.rpm
 yum install -y postgresql96-server
@@ -7098,7 +7117,7 @@ su - postgres
 psql -U postgres
 -
 ALTER USER postgres WITH PASSWORD 'Dew!123456';
--</pre>
+-</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -7113,7 +7132,7 @@ ALTER USER postgres WITH PASSWORD 'Dew!123456';
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre>yum install -y epel-release
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">yum install -y epel-release
 yum -y install redis
 vi /etc/redis.conf
 -
@@ -7122,7 +7141,7 @@ vi /etc/redis.conf
 # 开启密码
 requirepass Dew!123456
 -
-systemctl start redis</pre>
+systemctl start redis</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -7137,7 +7156,7 @@ systemctl start redis</pre>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre>wget https://repo.mysql.com//mysql57-community-release-el7-11.noarch.rpm
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">wget https://repo.mysql.com//mysql57-community-release-el7-11.noarch.rpm
 rpm -Uvh mysql57-community-release-el7-11.noarch.rpm
 yum install -y mysql-community-server
 
@@ -7164,7 +7183,7 @@ ALTER USER 'root'@'localhost' IDENTIFIED BY 'Dew!123456';
 # 远程访问(仅测试用)
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'Dew!123456' WITH GRANT OPTION;
 exit;
--</pre>
+-</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -7179,7 +7198,7 @@ exit;
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre>cat &gt;&gt;/etc/yum.repos.d/mongodb-org-4.0.repo &lt;&lt;EOF
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">cat &gt;&gt;/etc/yum.repos.d/mongodb-org-4.0.repo &lt;&lt;EOF
 [mongodb-org-4.0]
 name=MongoDB Repository
 baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/4.0/x86_64/
@@ -7214,7 +7233,7 @@ mongod --auth --port 27017 \
     --dbpath /data/mongo \
     --logpath /var/log/mongo \
     --bind_ip 0.0.0.0 \
-    --fork</pre>
+    --fork</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -7241,7 +7260,7 @@ mongod --auth --port 27017 \
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre>curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
 yum install -y gitlab-ce
 
 # 按需修改，可修改说明见: https://docs.gitlab.com/omnibus/settings/
@@ -7252,7 +7271,7 @@ external_url 'http://gitlab.dew.ms'
 -
 gitlab-ctl reconfigure
 
-# 浏览器访问并修改root密码</pre>
+# 浏览器访问并修改root密码</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -7294,7 +7313,7 @@ dnsmasq为轻量级的DNS解析工具，也可用类似的工具替代。
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre>yum install -y dnsmasq
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">yum install -y dnsmasq
 systemctl enable dnsmasq
 systemctl start dnsmasq
 
@@ -7321,7 +7340,7 @@ nameserver x.x.x.x # IP当前节点
 -
 
 # TIP: 以上设置在节点重启后可能被重置，更好的做法见：
-# @see https://unix.stackexchange.com/questions/163831/nameservers-erased-after-systemctl-restart-network-service</pre>
+# @see https://unix.stackexchange.com/questions/163831/nameservers-erased-after-systemctl-restart-network-service</code></pre>
 </div>
 </div>
 </div>
@@ -7330,7 +7349,7 @@ nameserver x.x.x.x # IP当前节点
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre>mkdir -p /opt/minio &amp;&amp; cd /opt/minio
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">mkdir -p /opt/minio &amp;&amp; cd /opt/minio
 wget https://dl.minio.io/server/minio/release/linux-amd64/minio
 chmod +x minio
 ./minio server /mnt/data
@@ -7347,7 +7366,7 @@ nohup ./minio server /mnt/data &amp;
 
 # 添加域名到客户机hosts并访问 http://minio.dew.ms:9000
 # 修改访问AccessKey和SecretKey， e.g. dew / Dew123456
-# 创建名为 app-cache 的bucket用于缓存gitlab ci runner(或其它CI/CD服务）的构建缓存</pre>
+# 创建名为 app-cache 的bucket用于缓存gitlab ci runner(或其它CI/CD服务）的构建缓存</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -7368,7 +7387,7 @@ nohup ./minio server /mnt/data &amp;
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre>yum install -y nfs-utils
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">yum install -y nfs-utils
 mkdir -p /data/nfs
 chmod 755 /data/nfs
 
@@ -7384,20 +7403,76 @@ systemctl enable nfs-server
 systemctl start rpcbind
 systemctl start nfs-server
 
-showmount -e localhost</pre>
+showmount -e localhost</code></pre>
 </div>
 </div>
 <div class="quoteblock">
 <div class="title">常见问题</div>
 <blockquote>
 <div class="paragraph">
-<p>Kubernetes使用NFS做为PV时报 <code>kubernetes mount: wrong fs type, bad option, bad superblock</code></p>
+<p>Kubernetes使用NFS做为PV时，报错 <code>kubernetes mount: wrong fs type, bad option, bad superblock</code></p>
 </div>
 </blockquote>
 </div>
 <div class="literalblock">
 <div class="content">
 <pre>各节点执行 yum install -y nfs-utils</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="glusterfs"><a class="anchor" href="#glusterfs"></a>6.2.10. GlusterFS</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+安装见：https://github.com/gluster/gluster-kubernetes/blob/master/docs/setup-guide.md
+ <a href="https://github.com/gluster/gluster-kubernetes#quickstart" class="bare">https://github.com/gluster/gluster-kubernetes#quickstart</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">使用StorageClass</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 注意在各节点安装 glusterfs-fuse
+yum install glusterfs-fuse
+
+# 创建 StorageClass
+# @See https://kubernetes.io/docs/concepts/storage/storage-classes/#glusterfs
+cat &lt;&lt;EOF | kubectl apply -f -
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: gluster-2replicas-sc
+provisioner: kubernetes.io/glusterfs
+parameters:
+  resturl: "http://gluster.dew.ms"
+  restuser: "dew"
+  restuserkey: "Dew123456"
+  volumetype: "replicate:2"
+allowVolumeExpansion: true
+EOF
+# 创建 PVC
+cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: dew-gluster-pvc
+ annotations:
+   volume.beta.kubernetes.io/storage-class: gluster-2replicas-sc
+spec:
+ accessModes:
+  - ReadWriteOnce
+ resources:
+   requests:
+     storage: 5Gi
+EOF
+# 查看创建结果，会发现PV已自动创建
+kubectl get pv,pvc</code></pre>
 </div>
 </div>
 </div>
@@ -7569,31 +7644,6 @@ logging:
 </div>
 </li>
 <li>
-<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 在项目中添加<code>.dew</code>配置</p>
-<div class="literalblock">
-<div class="content">
-<pre># 在根目录添加 .dew ,至少添加 使用到的 profile 及 namespace 信息
-# e.g.
-# -----------------
-# 默认通知配置，详见 Dew的通知处理模块
-# 默认为钉钉通知
-notify:
-  args:
-    # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-    url: xxx
-profiles:
-  test:
-    namespace: dew-test
-  uat:
-    namespace: dew-uat
-  prod:
-    namespace: dew-prod
-# -----------------
-# （可选）根据实际情况为每个项目添加 .dew 文件以添加各项目的特殊配置</pre>
-</div>
-</div>
-</li>
-<li>
 <p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 为前端工程添加 <code>pom.xml</code> ,e.g.</p>
 <div class="literalblock">
 <div class="content">
@@ -7651,6 +7701,70 @@ profiles:
     &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
     &lt;version&gt;&lt;最新的版本&gt;&lt;/version&gt;
 &lt;/parent&gt;</pre>
+</div>
+</div>
+</li>
+<li>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 在项目中添加<code>.dew</code>配置，详见 <a href="#devops-configuration-dew">.dew 配置</a></p>
+<div class="literalblock">
+<div class="content">
+<pre># 在根目录添加 .dew ,至少添加 使用到的 profile 及 namespace 信息
+# e.g.
+# -----------------
+# 默认通知配置，详见 Dew的通知处理模块
+# 默认为钉钉通知
+notify:
+  args:
+    # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+    url: xxx
+profiles:
+  test:
+    namespace: dew-test
+  uat:
+    namespace: dew-uat
+  prod:
+    namespace: dew-prod
+# -----------------
+# （可选）根据实际情况为每个项目添加 .dew 文件以添加各项目的特殊配置</pre>
+</div>
+</div>
+</li>
+<li>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 在项目中添加<code>.gitlab</code>配置，详见 <a href="#devops-cicd-gitlab-template">gitlab-ci-template.yml</a>， e.g.</p>
+<div class="literalblock">
+<div class="content">
+<pre>stages:
+  - deploy
+cache:
+  paths:
+    - node_modules/
+    - .m2/
+# 测试环境部署
+test deploy:
+  stage: deploy
+  only:
+    - test
+  tags:
+    - test
+  script:
+    - mvn -P devops dew:build dew:release
+# 仿真/预发环境部署
+uat deploy:
+  stage: deploy
+  only:
+    - uat
+  tags:
+    - uat
+  script:
+    - mvn -P devops dew:build dew:release
+prod deploy: # 生产环境部署
+  stage: deploy
+  only:
+    - prod
+  tags:
+    - prod
+  script:
+    - mvn -P devops dew:build dew:release</pre>
 </div>
 </div>
 </li>
@@ -7801,7 +7915,7 @@ git add --all</code></pre>
 </li>
 </ol>
 </div>
-<div class="listingblock">
+<div id="devops-cicd-gitlab-template" class="listingblock">
 <div class="title">gitlab-ci-template.yml</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">#
@@ -7888,7 +8002,7 @@ prod deploy: # 生产环境部署
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-04-29 12:39:45 CST
+Last updated 2019-04-30 13:37:51 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
