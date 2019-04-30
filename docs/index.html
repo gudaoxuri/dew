@@ -673,7 +673,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>微服务一站式解决方案( <a href="http://dew.ms" class="bare">http://dew.ms</a> )，提供：架构指南、容器优先/兼容Spring Cloud与Istio的框架、最佳实践及DevOps标准化流程。</p>
+<p>微服务一站式解决方案( <a href="http://doc.dew.ms" class="bare">http://doc.dew.ms</a> )，提供：架构指南、容器优先/兼容Spring Cloud与Istio的框架、最佳实践及DevOps标准化流程。</p>
 </div>
 <div class="quoteblock">
 <blockquote>
@@ -3130,8 +3130,8 @@ public class WebController {
       black-uri:                        # URL黑名单，支持ant风格
         &lt;Http Method&gt;: [&lt;URLs&gt;]         # URL黑名单列表
     token-kinds:                        # Token类型，可为不同的Token类型设置不同的过期时间、保留的版本
-      &lt;Kind&gt;:                           # Token类型名称，比如 PC/Android/...
-        expire-sec: 86400L              # Token 过期时间（秒）
+      &lt;Kind&gt;:                           # Token类型名称，比如 PC/Android/... ，默认会创建名为 DEFAULT 的类型
+        expire-sec: 86400               # Token 过期时间（秒）
         revision-history-limit: 0       # Token 保留的历史版本数量， 0表示不保留历史版本，即有新的登录时会删除此类型下之前所有的Token</code></pre>
 </div>
 </div>
@@ -3646,8 +3646,8 @@ swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，�
       black-uri:                        # URL黑名单，支持ant风格
         &lt;Http Method&gt;: [&lt;URLs&gt;]         # URL黑名单列表
     token-kinds:                        # Token类型，可为不同的Token类型设置不同的过期时间、保留的版本
-      &lt;Kind&gt;:                           # Token类型名称，比如 PC/Android/...
-        expire-sec: 86400L              # Token 过期时间（秒）
+      &lt;Kind&gt;:                           # Token类型名称，比如 PC/Android/... ，默认会创建名为 DEFAULT 的类型
+        expire-sec: 86400               # Token 过期时间（秒）
         revision-history-limit: 0       # Token 保留的历史版本数量， 0表示不保留历史版本，即有新的登录时会删除此类型下之前所有的Token
   cloud:                                # 需要引入 cloud-starter 模块
     trace-log:                          # 追踪日志配置
@@ -5572,11 +5572,11 @@ dew.devops.scale.auto.cpu.averageUtilization # 自动伸缩条件：CPU平均使
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-notify:
+#notify:
   # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
-  args:
+  #args:
     # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+    #url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加测试环境
   test:
@@ -6193,6 +6193,9 @@ helm list</pre>
 <li>
 <p>独立通知功能到<code>notification</code></p>
 </li>
+<li>
+<p>支持多个Redis连接 <a href="#framework-user-manual-cluster-redis-mutli-connection">多实例支持</a></p>
+</li>
 </ul>
 </div>
 <div class="ulist">
@@ -6206,6 +6209,9 @@ helm list</pre>
 </li>
 <li>
 <p><code>cluster-spi-eureka</code> 被移除，请用 <code>cluster-spi-redis</code> 代替其集群选举功能</p>
+</li>
+<li>
+<p>权限认证Token处理优化 <a href="#framework-user-manual-auth">权限认证</a></p>
 </li>
 </ul>
 </div>
@@ -7636,31 +7642,6 @@ logging:
 </div>
 </li>
 <li>
-<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 在项目中添加<code>.dew</code>配置</p>
-<div class="literalblock">
-<div class="content">
-<pre># 在根目录添加 .dew ,至少添加 使用到的 profile 及 namespace 信息
-# e.g.
-# -----------------
-# 默认通知配置，详见 Dew的通知处理模块
-# 默认为钉钉通知
-notify:
-  args:
-    # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-    url: xxx
-profiles:
-  test:
-    namespace: dew-test
-  uat:
-    namespace: dew-uat
-  prod:
-    namespace: dew-prod
-# -----------------
-# （可选）根据实际情况为每个项目添加 .dew 文件以添加各项目的特殊配置</pre>
-</div>
-</div>
-</li>
-<li>
 <p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 为前端工程添加 <code>pom.xml</code> ,e.g.</p>
 <div class="literalblock">
 <div class="content">
@@ -7718,6 +7699,70 @@ profiles:
     &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
     &lt;version&gt;&lt;最新的版本&gt;&lt;/version&gt;
 &lt;/parent&gt;</pre>
+</div>
+</div>
+</li>
+<li>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 在项目中添加<code>.dew</code>配置，详见 <a href="#devops-configuration-dew">.dew 配置</a></p>
+<div class="literalblock">
+<div class="content">
+<pre># 在根目录添加 .dew ,至少添加 使用到的 profile 及 namespace 信息
+# e.g.
+# -----------------
+# 默认通知配置，详见 Dew的通知处理模块
+# 默认为钉钉通知
+notify:
+  args:
+    # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+    url: xxx
+profiles:
+  test:
+    namespace: dew-test
+  uat:
+    namespace: dew-uat
+  prod:
+    namespace: dew-prod
+# -----------------
+# （可选）根据实际情况为每个项目添加 .dew 文件以添加各项目的特殊配置</pre>
+</div>
+</div>
+</li>
+<li>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 在项目中添加<code>.gitlab</code>配置，详见 <a href="#devops-cicd-gitlab-template">gitlab-ci-template.yml</a>， e.g.</p>
+<div class="literalblock">
+<div class="content">
+<pre>stages:
+  - deploy
+cache:
+  paths:
+    - node_modules/
+    - .m2/
+# 测试环境部署
+test deploy:
+  stage: deploy
+  only:
+    - test
+  tags:
+    - test
+  script:
+    - mvn -P devops dew:build dew:release
+# 仿真/预发环境部署
+uat deploy:
+  stage: deploy
+  only:
+    - uat
+  tags:
+    - uat
+  script:
+    - mvn -P devops dew:build dew:release
+prod deploy: # 生产环境部署
+  stage: deploy
+  only:
+    - prod
+  tags:
+    - prod
+  script:
+    - mvn -P devops dew:build dew:release</pre>
 </div>
 </div>
 </li>
@@ -7868,7 +7913,7 @@ git add --all</code></pre>
 </li>
 </ol>
 </div>
-<div class="listingblock">
+<div id="devops-cicd-gitlab-template" class="listingblock">
 <div class="title">gitlab-ci-template.yml</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">#
@@ -7955,7 +8000,7 @@ prod deploy: # 生产环境部署
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-04-29 12:39:45 CST
+Last updated 2019-04-30 13:37:51 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
