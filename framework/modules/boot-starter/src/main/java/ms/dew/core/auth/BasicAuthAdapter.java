@@ -51,6 +51,9 @@ public class BasicAuthAdapter implements AuthAdapter {
      */
     @PostConstruct
     public void init() {
+        if (Dew.cluster == null || Dew.cluster.caches == null) {
+            return;
+        }
         if (Dew.cluster.caches.exist(AUTH_DS_FLAG)) {
             cache = Dew.cluster.caches.instance(AUTH_DS_FLAG);
         } else {
