@@ -62,6 +62,8 @@ include::_chapter/appendix/proxies.adoc[]
 
 include::_chapter/appendix/middleware.adoc[]
 
+include::_chapter/appendix/2.x-migration-guide.adoc[]
+
 === 内置Image与Chart
 
 include::../../../../devops/docker/dew-k8s-native-client/readme.adoc[]

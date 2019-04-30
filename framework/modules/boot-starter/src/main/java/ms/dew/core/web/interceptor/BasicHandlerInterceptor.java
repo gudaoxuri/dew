@@ -19,6 +19,7 @@ package ms.dew.core.web.interceptor;
 import com.ecfront.dew.common.$;
 import ms.dew.Dew;
 import ms.dew.core.DewContext;
+import ms.dew.core.auth.dto.OptInfo;
 import ms.dew.core.web.error.ErrorController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +78,7 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
             }
         }
         if (tokenKind == null) {
-            tokenKind = "";
+            tokenKind = OptInfo.DEFAULT_TOKEN_KIND_FLAG;
         }
         // 请求黑名单拦截
         if (Dew.dewConfig.getSecurity().getRouter().isEnabled()

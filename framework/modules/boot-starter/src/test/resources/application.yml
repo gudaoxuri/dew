@@ -48,6 +48,8 @@ dew:
       blackUri:
         post: ["/auth/register/*","/auth/re?","/user/**","/tes{t}"]
     token-kinds:
+      DEFAULT:
+        revisionHistoryLimit: 1
       pc:
         revisionHistoryLimit: 0
       mobile:

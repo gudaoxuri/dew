@@ -79,7 +79,7 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=uat
 . 根据模块对应的类型执行不同的编译操作：
 .. JVM服务/前端项目: 执行 ``docker build`` 与 ``docker push`` 发布到 Harbor
 . 根据模块对应的类型执行不同的部署操作：
-.. JVM类库/Pom项目: 执行 ``mvn deploy`` 发布到Maven仓库
+.. JVM类库/Pom项目: 执行 ``mvn deploy`` 发布到Maven仓库，并创建 configmap 打上版本记录
 .. JVM服务/前端项目: 部署 deployment 与 service 到 kuberenetes，并创建 configmap 打上版本记录
 
 

@@ -29,6 +29,8 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value = "操作用户信息")
 public class OptInfo<E> {
 
+    public static final String DEFAULT_TOKEN_KIND_FLAG = "DEFAULT";
+
     /**
      * The Token.
      */
@@ -43,7 +45,7 @@ public class OptInfo<E> {
      * The Token kind.
      */
     @ApiModelProperty(value = "Token类型")
-    protected String tokenKind = "";
+    protected String tokenKind = DEFAULT_TOKEN_KIND_FLAG;
 
     /**
      * Gets token.

@@ -56,9 +56,9 @@ public class BasicAuthAdapter implements AuthAdapter {
         } else {
             cache = Dew.cluster.cache;
         }
-        if (!Dew.dewConfig.getSecurity().getTokenKinds().containsKey("")) {
+        if (!Dew.dewConfig.getSecurity().getTokenKinds().containsKey(OptInfo.DEFAULT_TOKEN_KIND_FLAG)) {
             // 赋值一个默认的kind
-            Dew.dewConfig.getSecurity().getTokenKinds().put("", new DewConfig.Security.TokenKind());
+            Dew.dewConfig.getSecurity().getTokenKinds().put(OptInfo.DEFAULT_TOKEN_KIND_FLAG, new DewConfig.Security.TokenKind());
         }
     }
 
@@ -83,10 +83,13 @@ public class BasicAuthAdapter implements AuthAdapter {
 
     @Override
     public <E extends OptInfo> void setOptInfo(E optInfo) {
+        if (!cache.setnx(TOKEN_INFO_FLAG + optInfo.getToken(), $.json.toJsonString(optInfo),
+                Dew.dewConfig.getSecurity().getTokenKinds().get(optInfo.getTokenKind()).getExpireSec())) {
+            return;
+        }
         cache.hset(TOKEN_ID_REL_FLAG + optInfo.getAccountCode(),
                 optInfo.getTokenKind() + "##" + System.currentTimeMillis(), optInfo.getToken());
-        cache.setex(TOKEN_INFO_FLAG + optInfo.getToken(), $.json.toJsonString(optInfo),
-                Dew.dewConfig.getSecurity().getTokenKinds().get(optInfo.getTokenKind()).getExpireSec());
+
         removeOldToken(optInfo.getAccountCode(), optInfo.getTokenKind());
     }
 

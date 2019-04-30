@@ -72,14 +72,7 @@ public class RedisClusterCache implements ClusterCache {
 
     @Override
     public boolean setnx(String key, String value, long expireSec) {
-        if (redisTemplate.opsForValue().setIfAbsent(key, value)) {
-            if (expireSec != 0) {
-                expire(key, expireSec);
-            }
-            return true;
-        } else {
-            return false;
-        }
+        return redisTemplate.opsForValue().setIfAbsent(key, value, expireSec, TimeUnit.SECONDS);
     }
 
     @Override

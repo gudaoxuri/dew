@@ -25,12 +25,14 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 * 实现兼容Spring Cloud与Istio的部署、监控架构
 * 引入DevOps流程
 * 独立通知功能到``notification``
+* 支持多个Redis连接 <<framework-user-manual-cluster-redis-mutli-connection>>
 
 .Improvement
 
 * 核心模块通过``checkstyle``检查
 * ``dew-jdbc`` 被移除，请直接使用其它数据库管理工具
 * ``cluster-spi-eureka`` 被移除，请用 ``cluster-spi-redis`` 代替其集群选举功能
+* 权限认证Token处理优化 <<framework-user-manual-auth>>
 
 .迁移指南见 <<dew-2-migration-guide>>
 

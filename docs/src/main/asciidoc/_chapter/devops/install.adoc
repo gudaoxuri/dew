@@ -332,7 +332,7 @@ kubectl create -f metrics-server/deploy/1.8+/
 # Fix issue: https://github.com/kubernetes-incubator/metrics-server/issues/131
 kubectl patch deploy metrics-server -n kube-system -p "
 spec:
-  template:co
+  template:
     spec:
       containers:
       - name: metrics-server

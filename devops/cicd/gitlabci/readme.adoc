@@ -15,6 +15,7 @@
 . 配置 ``.gitlab-ci.yml``，配置参见 ``devops/cicd/gilabci/.gitlab-ci-template.yml``
 . 添加 ``.gitlab-ci.yml`` 到项目代码根目录
 
+[[devops-cicd-gitlab-template]]
 [source,yml]
 .gitlab-ci-template.yml
 ----

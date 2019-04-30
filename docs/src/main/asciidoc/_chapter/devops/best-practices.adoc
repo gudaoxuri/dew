@@ -9,12 +9,13 @@ Fabric8的maven插件( https://github.com/fabric8io/docker-maven-plugin )比较�
 比如实现了基于环境的部署流程，自动判断子项目是否需要发布、版本管理、版本重用模式、钉钉通知等，这些差异是导致自研的原因。
 当然在实现上也借鉴了fabric8比较好的做法，比如JVM参数的自动化处理。
 
-==== 认证处理
+[[devops-best-practices-auth]]
+==== 鉴权处理
 
 在传统的Spring Cloud工程中多使用网关（如 Zuul、Spring Cloud Gateway）做统一的认证处理，但在Kubernetes下使用了 ``ingress`` ，如果再加上网关会导致多了一层转发。
 并且Kubernetes使用自身的Service已经实现了网关的服务发现，所以再引入网关就显得累赘了。
 
-去掉网关后认证处理会下沉到各业务组件， ``dew`` 提供了基础的认证支持 <<framework-user-manual-auth>> 也可使用 Spring Cloud Security 方案实现。
+去掉网关后鉴权处理会下沉到各业务组件， ``dew`` 提供了基础的鉴权支持 <<framework-user-manual-auth>> 也可使用 Spring Cloud Security 方案实现。
 
 ==== 统一配置处理
 
