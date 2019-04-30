@@ -287,6 +287,9 @@ TIP: 安装见：https://github.com/gluster/gluster-kubernetes/blob/master/docs/
 .使用StorageClass
 [source,bash]
 ----
+# 注意在各节点安装 glusterfs-fuse
+yum install glusterfs-fuse
+
 # 创建 StorageClass
 # @See https://kubernetes.io/docs/concepts/storage/storage-classes/#glusterfs
 cat <<EOF | kubectl apply -f -

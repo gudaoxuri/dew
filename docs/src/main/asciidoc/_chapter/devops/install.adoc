@@ -505,7 +505,7 @@ EOF
 # 将existingClaim的值改为false    --set persistentVolumeClaim.existingClaim=false
 # 设置StorageClass的名字    --set persistentVolumeClaim.storageClass="yourscname"
 # 设置size    --set persistentVolumeClaim.size=10Gi
-helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0
+helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 \
     --set image.tag="6.6.1" \
     --set env."ELASTICSEARCH_URL"="http://dew-elasticsearch-master:9200" \
     --set service.internalPort=5601 \
@@ -634,12 +634,11 @@ kubectl -n devops create secret generic dew-prometheus-operator-etcd \
 # 安装，不使用代理要加上 --set kube-state-metrics.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kube-state-metrics
 # 若要启用对etcd监控，需设置kubeEtcd相关参数。
 # grafana.'grafana\.ini'为Grafana的配置参数,请安装时自行修改。
-# 若使用StorageClass,需要添加以下配置，无需创建PV，PVC
-#   --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.storageClassName="yourscname"
-#   --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.storageClassName="yourscname"
+# 若 Grafana 使用StorageClass，需要进行以下配置，无需创建PV，PVC
 #   --set grafana.persistence.storageClassName="yourscname"
 #   --set grafana.persistence.size=10Gi
 #   删去此行配置：    --set grafana.persistence.existingClaim=grafana \
+#   * Alertmanager和Prometheus由于生成的PVC名字长度过长，会造成无法自动创建PV，不建议使用StorageClass
 helm install stable/prometheus-operator --name dew-prometheus-operator --namespace devops --version=5.0.10 \
     --set kubelet.serviceMonitor.https=true \
     --set prometheus.ingress.enabled=true \
