@@ -84,6 +84,12 @@ public abstract class BasicMojo extends AbstractMojo {
     boolean quiet;
 
     /**
+     * The ignore exist maven version.
+     */
+    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_MAVEN_VERSION_EXIST_IGNORE, defaultValue = "false")
+    boolean ignoreExistMavenVersion;
+
+    /**
      * The Custom version.
      */
     @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_VERSION_CUST)
@@ -245,6 +251,8 @@ public abstract class BasicMojo extends AbstractMojo {
                 .ifPresent(obj -> dockerRegistryPassword = obj);
         Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_QUIET, formattedProperties)
                 .ifPresent(obj -> quiet = Boolean.valueOf(obj));
+        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_MAVEN_VERSION_EXIST_IGNORE, formattedProperties)
+                .ifPresent(obj -> ignoreExistMavenVersion = Boolean.valueOf(obj));
         Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_VERSION_CUST, formattedProperties)
                 .ifPresent(obj -> customVersion = obj);
         Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_POD_NAME, formattedProperties)

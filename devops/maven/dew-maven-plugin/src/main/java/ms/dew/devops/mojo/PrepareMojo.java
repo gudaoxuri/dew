@@ -39,7 +39,7 @@ public class PrepareMojo extends BasicMojo {
 
     @Override
     protected boolean preExecute() throws IOException, ApiException {
-        NeedProcessChecker.checkNeedProcessProjects(quiet);
+        NeedProcessChecker.checkNeedProcessProjects(quiet,ignoreExistMavenVersion);
         return true;
     }
 

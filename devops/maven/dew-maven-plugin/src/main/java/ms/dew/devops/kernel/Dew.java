@@ -111,11 +111,17 @@ public class Dew {
          */
         public static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD = "dew.devops.docker.registry.password";
         /**
-         * 是否静默标识.
+         * 是否静默处理标识.
          * <p>
          * 仅对发布/回滚有效
          */
         public static final String FLAG_DEW_DEVOPS_QUIET = "dew.devops.quiet";
+        /**
+         * 是否忽略Maven仓库中已存在的版本标识.
+         * <p>
+         * 仅对发布/回滚有效
+         */
+        public static final String FLAG_DEW_DEVOPS_MAVEN_VERSION_EXIST_IGNORE = "dew.devops.maven.version.exist.ignore";
         /**
          * 自定义版本标识.
          * <p>

@@ -154,7 +154,8 @@ dew.devops.docker.host                       # Dockerd的Host e.g. tcp://dockerd
 dew.devops.docker.registry.url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
 dew.devops.docker.registry.username          # Docker Registry 用户名
 dew.devops.docker.registry.password          # Docker Registry 密码
-ew.devops.quiet
+dew.devops.quiet                             # 是否静默处理
+dew.devops.maven.version.exist.ignore        # 是否忽略Maven仓库中已存在的版本
 dew.devops.version.custom                    # 自定义版本标识，仅用于集成测试，实际场景中慎用！
 # ============= 日志及调试场景使用 =============
 dew.devops.podName                           # 要使用的Pod名称

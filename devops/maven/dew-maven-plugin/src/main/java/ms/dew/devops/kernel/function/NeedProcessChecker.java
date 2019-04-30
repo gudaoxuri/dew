@@ -50,11 +50,12 @@ public class NeedProcessChecker {
     /**
      * Check need process projects.
      *
-     * @param quiet the quiet
+     * @param quiet                   the quiet
+     * @param ignoreExistMavenVersion the ignore exist maven version
      * @throws ApiException the api exception
      * @throws IOException  the io exception
      */
-    public static void checkNeedProcessProjects(boolean quiet) throws ApiException, IOException {
+    public static void checkNeedProcessProjects(boolean quiet, boolean ignoreExistMavenVersion) throws ApiException, IOException {
         if (initialized.getAndSet(true)) {
             // 初始化后每次都会调用
             switch (Dew.Config.getCurrentProject().getKind()) {
@@ -78,7 +79,7 @@ public class NeedProcessChecker {
             switch (config.getKind()) {
                 case POM:
                 case JVM_LIB:
-                    checkNeedProcessByMavenRepo(config);
+                    checkNeedProcessByMavenRepo(config, ignoreExistMavenVersion);
                     break;
                 default:
                     checkNeedProcessByGit(config);
@@ -111,7 +112,6 @@ public class NeedProcessChecker {
             if (reader.readLine().trim().equalsIgnoreCase("N")) {
                 Dew.stopped = true;
                 Dew.log.info("Process canceled");
-                return;
             }
         }
     }
@@ -122,11 +122,12 @@ public class NeedProcessChecker {
      * <p>
      * 通过Maven仓库判断是否需要处理，多用于处理 类库 和 pom 类型的项目
      *
-     * @param config the config
+     * @param config                  the config
+     * @param ignoreExistMavenVersion the ignore exist maven version
      * @throws ApiException the api exception
      * @throws IOException  the io exception
      */
-    private static void checkNeedProcessByMavenRepo(FinalProjectConfig config) throws ApiException, IOException {
+    private static void checkNeedProcessByMavenRepo(FinalProjectConfig config, boolean ignoreExistMavenVersion) throws ApiException, IOException {
         MavenProject mavenProject = Dew.Config.getMavenProject(config.getId());
         String version = mavenProject.getVersion();
         if (version.trim().toLowerCase().endsWith("snapshot")) {
@@ -161,6 +162,21 @@ public class NeedProcessChecker {
                 config.skip("No code changes", false);
             }
         }
+        if (ignoreExistMavenVersion) {
+            String repoUrl = mavenProject.getDistributionManagement().getRepository().getUrl().trim();
+            // TBD auth
+            repoUrl = repoUrl.endsWith("/") ? repoUrl : repoUrl + "/";
+            repoUrl += mavenProject.getGroupId().replaceAll("\\.", "/")
+                    + "/"
+                    + mavenProject.getArtifactId()
+                    + "/"
+                    + version;
+            if ($.http.getWrap(repoUrl).statusCode == 200) {
+                config.skip("The current version already exists and '"
+                        + Dew.Constants.FLAG_DEW_DEVOPS_MAVEN_VERSION_EXIST_IGNORE + "' is true", false);
+            }
+        }
+
     }
 
     /**
