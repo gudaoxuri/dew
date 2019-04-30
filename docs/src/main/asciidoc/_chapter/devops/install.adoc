@@ -76,6 +76,7 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub root@k8s-X
 TIP: https://kubernetes.io/docs/setup/cri/#docker
 
 .安装配置
+[source,bash]
 ----
 yum install -y yum-utils \
   device-mapper-persistent-data \
@@ -119,6 +120,7 @@ systemctl enable docker
 dew-maven-plugin 需要调用 docker 服务，推荐使用独立的一个Docker节点，暴露 DockerD 服务。
 
 .暴露DOCKER_HOST
+[source,bash]
 ----
 # 详见 https://docs.docker.com/config/daemon/
 
@@ -147,6 +149,7 @@ systemctl restart docker
 TIP: https://kubernetes.io/docs/setup/independent/install-kubeadm/
 
 .安装配置
+[source,bash]
 ----
 # 使用阿里云镜像加速下载
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
@@ -180,6 +183,7 @@ yum list installed | grep kube
 TIP: https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/
 
 .Master安装配置
+[source,bash]
 ----
 # 安装Git，后续会用到
 yum install -y git
@@ -226,6 +230,7 @@ kubectl create ns devops
 TIP: https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/
 
 .Node安装配置
+[source,bash]
 ----
 # 执行上一步输出的 kubeadm join ...
 
@@ -252,6 +257,7 @@ kubectl label nodes k8s-nodeX k8s-nodeX ...  group=devops
 ----
 
 .添加外部DNS服务，如dnsmasq
+[source,bash]
 ----
 # 编辑Kubernetes的DNS，加上dew.ms的代理
 kubectl -n kube-system edit cm coredns
@@ -272,6 +278,7 @@ data:
 TIP: https://docs.helm.sh/using_helm/#installing-helm
 
 .安装配置
+[source,bash]
 ----
 curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
 
@@ -316,6 +323,7 @@ TIP: 若要使用HPA(Horizontal Pod Autoscaler)，需要安装 resource metrics 
 @see https://github.com/kubernetes-incubator/metrics-server +
 helm chart: https://github.com/helm/charts/tree/master/stable/metrics-server
 
+.安装配置
 [source,bash]
 ----
 git clone https://github.com/kubernetes-incubator/metrics-server.git
@@ -340,6 +348,7 @@ kubectl top pod
 ==== Nginx Ingress Controller
 
 .安装配置
+[source,bash]
 ----
 # 使用如下方式将80 443暴露出来
 helm install stable/nginx-ingress --name dew-nginx --namespace ingress-nginx --version=1.4.0 \
@@ -353,6 +362,7 @@ helm install stable/nginx-ingress --name dew-nginx --namespace ingress-nginx --v
 ==== Dashboard
 
 .安装配置
+[source,bash]
 ----
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
@@ -386,11 +396,12 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | gre
 TIP: https://github.com/elastic/helm-charts/blob/master/elasticsearch 注意仔细查看各参数设值的说明。
 
 .安装配置
+[source,bash]
 ----
 app=dew-elasticsearch
 size=200Gi
 
-# 创建PV
+# 使用NFS存储，创建PV
 
 # 根据replicas的个数来决定下面PV的创建个数
 # 在NFS节点中创建NFS目录
@@ -423,6 +434,8 @@ done
 # 使用helm安装
 helm repo add elastic https://helm.elastic.co
 
+# 若使用 StorageClass，只需设置 --set volumeClaimTemplate.storageClassName="yourscname" 无需创建PV
+# TIP : 请注意chart版本及对应参数名的变更
 helm install --name dew-elasticsearch elastic/elasticsearch --namespace devops --version=6.5.0 \
     --set imageTag=6.6.1 \
     --set clusterName=dew-elasticsearch \
@@ -446,8 +459,9 @@ TIP: 其他Elasticsearch的helm chart : https://github.com/helm/charts/tree/mast
 TIP: https://github.com/helm/charts/tree/master/stable/kibana
 
 .安装配置
+[source,bash]
 ----
-# 创建PV & PVC
+# 使用NFS存储，创建PV & PVC
 
 # 在NFS节点中创建NFS目录
 mkdir -p /data/nfs/kibana
@@ -487,7 +501,11 @@ spec:
       app: kibana
 EOF
 
-helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 \
+# 若使用 StorageClass，则无需创建PV，PVC，需设置以下参数
+# 将existingClaim的值改为false    --set persistentVolumeClaim.existingClaim=false
+# 设置StorageClass的名字    --set persistentVolumeClaim.storageClass="yourscname"
+# 设置size    --set persistentVolumeClaim.size=10Gi
+helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0
     --set image.tag="6.6.1" \
     --set env."ELASTICSEARCH_URL"="http://dew-elasticsearch-master:9200" \
     --set service.internalPort=5601 \
@@ -529,6 +547,7 @@ TIP: https://github.com/helm/charts/tree/master/stable/prometheus-operator
 ----
 
 .创建prometheus 的 PV
+[source,bash]
 ----
 app=prometheus
 components=("alertmanager" "prometheus")
@@ -562,6 +581,7 @@ done
 ----
 
 .创建grafana 的 PV & PVC
+[source,bash]
 ----
 # 在NFS节点中创建NFS目录
 mkdir -p /data/nfs/grafana
@@ -603,6 +623,7 @@ EOF
 ----
 
 .使用helm安装
+[source,bash]
 ----
 # 若需要对etcd进行监控，则需要先创建secret
 kubectl -n devops create secret generic dew-prometheus-operator-etcd \
@@ -613,6 +634,12 @@ kubectl -n devops create secret generic dew-prometheus-operator-etcd \
 # 安装，不使用代理要加上 --set kube-state-metrics.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kube-state-metrics
 # 若要启用对etcd监控，需设置kubeEtcd相关参数。
 # grafana.'grafana\.ini'为Grafana的配置参数,请安装时自行修改。
+# 若使用StorageClass,需要添加以下配置，无需创建PV，PVC
+#   --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.storageClassName="yourscname"
+#   --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.storageClassName="yourscname"
+#   --set grafana.persistence.storageClassName="yourscname"
+#   --set grafana.persistence.size=10Gi
+#   删去此行配置：    --set grafana.persistence.existingClaim=grafana \
 helm install stable/prometheus-operator --name dew-prometheus-operator --namespace devops --version=5.0.10 \
     --set kubelet.serviceMonitor.https=true \
     --set prometheus.ingress.enabled=true \
@@ -747,6 +774,7 @@ TIP: https://github.com/kiwigrid/helm-charts/tree/master/charts/fluentd-elastics
      https://kiwigrid.github.io/
 
 .安装配置
+[source,bash]
 ----
 helm repo add kiwigrid https://kiwigrid.github.io
 
@@ -774,6 +802,7 @@ helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace de
 TIP: https://github.com/jaegertracing/jaeger-operator
 
 .安装配置
+[source,bash]
 ----
 kubectl create -f https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/crds/jaegertracing_v1_jaeger_crd.yaml
 curl https://raw.githubusercontent.com/jaegertracing/jaeger-operator/master/deploy/service_account.yaml \
@@ -830,6 +859,7 @@ kubectl patch ingress jaeger-query -n devops -p "spec:
 ----
 
 .使用
+[source,bash]
 ----
 # 在Deployment 和 Service 中添加annotations : sidecar.jaegertracing.io/inject: "true" 即可。
 # 使用Dew的 devops-maven-plugin 部署会自动添加此注解。
