@@ -27,6 +27,7 @@ import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 import java.io.IOException;
 import java.util.Map;
@@ -188,7 +189,7 @@ public abstract class BasicMojo extends AbstractMojo {
             Dew.log = new DewLog(super.getLog(), "[DEW][" + getMojoName() + "]:");
             formatParameters();
             Dew.log.info("Start...");
-            Dew.Init.init(session, pluginManager, profile,
+            Dew.Init.init(session,pluginManager, profile,
                     dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,
                     customVersion, mockClasspath);
             if (Dew.Config.getCurrentProject() == null) {
@@ -229,9 +230,9 @@ public abstract class BasicMojo extends AbstractMojo {
     }
 
     private void disabledDefaultBehavior() {
-        Dew.Config.getMavenProperties().setProperty("maven.test.skip", "true");
-        Dew.Config.getMavenProperties().setProperty("maven.install.skip", "true");
-        Dew.Config.getMavenProperties().setProperty("maven.deploy.skip", "true");
+        Dew.Config.setCurrentMavenProperty("maven.test.skip", "true");
+        Dew.Config.setCurrentMavenProperty("maven.install.skip", "true");
+        Dew.Config.setCurrentMavenProperty("maven.deploy.skip", "true");
     }
 
     private void formatParameters() {

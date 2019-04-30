@@ -38,7 +38,10 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -433,6 +436,8 @@ public class Dew {
      */
     public static class Config {
 
+        private static final Map<String, Map<String, String>> mavenProps = new HashMap<>();
+
         // 基础配置，全局 .dew 配置对应的当前Profile
         private static DewProfile basicProfileConfig;
 
@@ -459,12 +464,38 @@ public class Dew {
         }
 
         /**
-         * 获取Maven属性.
-         *
-         * @return the maven properties
+         * 初始化当前Maven的属性.
          */
-        public static Properties getMavenProperties() {
-            return Dew.mavenSession.getUserProperties();
+        public static void initCurrentMavenProperty() {
+            if (!mavenProps.containsKey(mavenSession.getCurrentProject().getId())) {
+                mavenProps.put(mavenSession.getCurrentProject().getId(), new HashMap<>());
+            }
+            mavenSession.getCurrentProject().getProperties().putAll(mavenProps.get(mavenSession.getCurrentProject().getId()));
+        }
+
+        /**
+         * 设置当前Maven的属性.
+         *
+         * @param key   属性名
+         * @param value 属性值
+         */
+        public static void setCurrentMavenProperty(String key, String value) {
+            setMavenProperty(mavenSession.getCurrentProject().getId(), key, value);
+        }
+
+        /**
+         * 设置Maven的属性.
+         *
+         * @param mavenId Maven项目Id
+         * @param key     属性名
+         * @param value   属性值
+         */
+        public static void setMavenProperty(String mavenId, String key, String value) {
+            if (!mavenProps.containsKey(mavenId)) {
+                mavenProps.put(mavenId, new HashMap<>());
+            }
+            mavenProps.get(mavenId).put(key, value);
+            getMavenProject(mavenId).getProperties().putAll(mavenProps.get(mavenSession.getCurrentProject().getId()));
         }
 
 

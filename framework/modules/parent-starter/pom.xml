@@ -232,6 +232,7 @@
                         <executions>
                             <execution>
                                 <goals>
+                                    <goal>init</goal>
                                     <goal>prepare</goal>
                                     <goal>build</goal>
                                     <goal>release</goal>

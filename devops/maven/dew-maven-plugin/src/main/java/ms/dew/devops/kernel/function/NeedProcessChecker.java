@@ -57,19 +57,6 @@ public class NeedProcessChecker {
      */
     public static void checkNeedProcessProjects(boolean quiet, boolean ignoreExistMavenVersion) throws ApiException, IOException {
         if (initialized.getAndSet(true)) {
-            // 初始化后每次都会调用
-            switch (Dew.Config.getCurrentProject().getKind()) {
-                case POM:
-                case JVM_LIB:
-                    // 启用 install 与 deploy 由 Maven 自行执行部署
-                    Dew.Config.getMavenProperties().setProperty("maven.install.skip", "false");
-                    Dew.Config.getMavenProperties().setProperty("maven.deploy.skip", "false");
-                    break;
-                default:
-                    // 禁用 install 与 deploy
-                    Dew.Config.getMavenProperties().setProperty("maven.install.skip", "true");
-                    Dew.Config.getMavenProperties().setProperty("maven.deploy.skip", "true");
-            }
             return;
         }
         // 初始化，全局只调用一次
@@ -80,9 +67,13 @@ public class NeedProcessChecker {
                 case POM:
                 case JVM_LIB:
                     checkNeedProcessByMavenRepo(config, ignoreExistMavenVersion);
+                    Dew.Config.setMavenProperty(config.getId(), "maven.install.skip", "false");
+                    Dew.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "false");
                     break;
                 default:
                     checkNeedProcessByGit(config);
+                    Dew.Config.setMavenProperty(config.getId(), "maven.install.skip", "true");
+                    Dew.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "true");
             }
         }
         List<FinalProjectConfig> processingProjects = Dew.Config.getProjects().values().stream()

@@ -16,35 +16,30 @@
 
 package ms.dew.devops.mojo;
 
-import io.kubernetes.client.ApiException;
-import ms.dew.devops.kernel.flow.prepare.PrepareFlowFactory;
-import ms.dew.devops.kernel.function.NeedProcessChecker;
-import org.apache.maven.plugins.annotations.Execute;
+import ms.dew.devops.kernel.Dew;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
-import java.io.IOException;
-
 /**
- * Prepare mojo.
+ * Init mojo.
  * <p>
  * NOTE: 此mojo不能单独调用，仅用于 build 或 release 内部调用
  *
  * @author gudaoxuri
  */
-@Mojo(name = "prepare", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE)
-@Execute(phase = LifecyclePhase.VALIDATE, goal = "init")
-public class PrepareMojo extends BasicMojo {
+@Mojo(name = "init", defaultPhase = LifecyclePhase.VALIDATE, requiresDependencyResolution = ResolutionScope.COMPILE)
+public class InitMojo extends BasicMojo {
 
     @Override
-    protected boolean preExecute() throws IOException, ApiException {
-        NeedProcessChecker.checkNeedProcessProjects(quiet, ignoreExistMavenVersion);
+    protected boolean preExecute() {
+        Dew.Config.initCurrentMavenProperty();
         return true;
     }
 
     @Override
-    protected boolean executeInternal() throws IOException, ApiException {
-        return PrepareFlowFactory.choose().exec(getMojoName());
+    protected boolean executeInternal() {
+        return true;
     }
+
 }
