@@ -45,7 +45,7 @@ public class ExecuteEventProcessor {
             return;
         }
         StringBuilder content = new StringBuilder();
-        content.append("![](http://dew.ms/images/devops-notify/report.png)")
+        content.append("![](http://doc.dew.ms/images/devops-notify/report.png)")
                 .append("\n")
                 .append("### Processing Projects @ [" + processingProjects.get(0).getProfile() + "]\n")
                 .append("\n\n-----------------\n");
@@ -105,9 +105,9 @@ public class ExecuteEventProcessor {
                         || project.getExecuteSuccessfulMojos().contains("unrelease")
                 ).collect(Collectors.toList());
         StringBuilder content = new StringBuilder();
-        content.append("![](http://dew.ms/images/devops-notify/report.png)")
+        content.append("![](http://doc.dew.ms/images/devops-notify/report.png)")
                 .append("\n")
-                .append("![](http://dew.ms/images/devops-notify/successful-split.png)")
+                .append("![](http://doc.dew.ms/images/devops-notify/successful-split.png)")
                 .append("\n")
                 .append("## Execute Successful\n");
         content.append(executionSuccessfulProjects.stream()
@@ -119,7 +119,7 @@ public class ExecuteEventProcessor {
                         .filter(project -> !executionSuccessfulProjects.contains(project))
                         .collect(Collectors.toList());
         content.append("\n\n")
-                .append("![](http://dew.ms/images/devops-notify/failure-split.png)")
+                .append("![](http://doc.dew.ms/images/devops-notify/failure-split.png)")
                 .append("\n")
                 .append("## Execute Failure\n");
         content.append(nonExecutionProjects.stream()
@@ -130,7 +130,7 @@ public class ExecuteEventProcessor {
                 })
                 .collect(Collectors.joining("\n")));
         content.append("\n\n")
-                .append("![](http://dew.ms/images/devops-notify/non-split.png)")
+                .append("![](http://doc.dew.ms/images/devops-notify/non-split.png)")
                 .append("\n")
                 .append("## Non-execution\n");
         content.append(nonExecutionProjects.stream()
@@ -138,7 +138,7 @@ public class ExecuteEventProcessor {
                 .map(project -> "- " + project.getAppShowName() + "\n> " + project.getSkipReason())
                 .collect(Collectors.joining("\n")));
         content.append("\n\n")
-                .append("![](http://dew.ms/images/devops-notify/ignore-split.pngg)")
+                .append("![](http://doc.dew.ms/images/devops-notify/ignore-split.png)")
                 .append("\n")
                 .append("## Ignore execution\n");
         content.append(projects.values().stream()
@@ -155,7 +155,7 @@ public class ExecuteEventProcessor {
             return;
         }
         String content =
-                "![](http://dew.ms/images/devops-notify/" + (throwable != null ? "failure" : "successful") + ".png)"
+                "![](http://doc.dew.ms/images/devops-notify/" + (throwable != null ? "failure" : "successful") + ".png)"
                         + "\n"
                         + "# " + projectConfig.getAppShowName() + "\n"
                         + "> " + projectConfig.getAppGroup() + "\n"
