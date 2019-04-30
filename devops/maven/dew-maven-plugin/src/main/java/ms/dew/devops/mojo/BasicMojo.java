@@ -27,7 +27,6 @@ import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 
 import java.io.IOException;
 import java.util.Map;
@@ -161,6 +160,12 @@ public abstract class BasicMojo extends AbstractMojo {
     private BuildPluginManager pluginManager;
 
     /**
+     * Init execute.
+     */
+    protected void initExecute() {
+    }
+
+    /**
      * Pre execute.
      *
      * @return <b>true</b> if success
@@ -182,6 +187,7 @@ public abstract class BasicMojo extends AbstractMojo {
 
     @Override
     public void execute() {
+        initExecute();
         if (Dew.stopped) {
             return;
         }
@@ -189,7 +195,7 @@ public abstract class BasicMojo extends AbstractMojo {
             Dew.log = new DewLog(super.getLog(), "[DEW][" + getMojoName() + "]:");
             formatParameters();
             Dew.log.info("Start...");
-            Dew.Init.init(session,pluginManager, profile,
+            Dew.Init.init(session, pluginManager, profile,
                     dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,
                     customVersion, mockClasspath);
             if (Dew.Config.getCurrentProject() == null) {

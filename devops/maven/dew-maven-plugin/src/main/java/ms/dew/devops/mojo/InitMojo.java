@@ -32,9 +32,11 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 public class InitMojo extends BasicMojo {
 
     @Override
-    protected boolean preExecute() {
-        Dew.Config.initCurrentMavenProperty();
-        return true;
+    protected void initExecute() {
+        if (Dew.initialized) {
+            // 初始化，确保之前项目的Maven属性不会带入到当前项目
+            Dew.Config.initCurrentMavenProject();
+        }
     }
 
     @Override

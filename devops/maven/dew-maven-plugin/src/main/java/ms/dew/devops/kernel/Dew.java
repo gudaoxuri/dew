@@ -24,6 +24,7 @@ import ms.dew.devops.helper.KubeHelper;
 import ms.dew.devops.helper.YamlHelper;
 import ms.dew.devops.kernel.config.*;
 import ms.dew.devops.kernel.function.ExecuteEventProcessor;
+import ms.dew.devops.util.ExitMonitorProcessor;
 import ms.dew.notification.NotifyConfig;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
@@ -54,6 +55,11 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.*;
  * @author gudaoxuri
  */
 public class Dew {
+
+    /**
+     * 全局已初始化.
+     */
+    public static boolean initialized = false;
 
     /**
      * 全局停止标识，如果为true则表示停止后续各项目的所有操作.
@@ -241,7 +247,7 @@ public class Dew {
      */
     public static class Init {
 
-        private static final AtomicBoolean initialized = new AtomicBoolean(false);
+        private static final AtomicBoolean initializing = new AtomicBoolean(false);
 
         /**
          * Init.
@@ -275,7 +281,7 @@ public class Dew {
             inputProfile = inputProfile.toLowerCase();
             log.info("Active profile : " + inputProfile);
             // 全局只初始化一次
-            if (!initialized.getAndSet(true)) {
+            if (!initializing.getAndSet(true)) {
                 GitHelper.init(log);
                 YamlHelper.init(log);
                 initFinalConfig(inputProfile,
@@ -303,6 +309,7 @@ public class Dew {
                 initNotify();
                 initMock(mockClasspath);
                 shutdownHook();
+                initialized = true;
             }
         }
 
@@ -422,11 +429,12 @@ public class Dew {
          * Init shutdown process.
          */
         private static void shutdownHook() {
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                if (!Dew.stopped) {
-                    ExecuteEventProcessor.onShutdown(Config.getProjects());
+            ExitMonitorProcessor.hook(status -> {
+                if (status != 0) {
+                    Dew.Config.getCurrentProject().skip("Uncaught error", true);
                 }
-            }));
+                ExecuteEventProcessor.onShutdown(Config.getProjects());
+            });
         }
 
     }
@@ -444,13 +452,16 @@ public class Dew {
         // 最终的配置
         private static FinalConfig config = new FinalConfig();
 
+        // 当前项目的配置
+        private static FinalProjectConfig currentProjectConfig = new FinalProjectConfig();
+
         /**
          * 获取当前项目配置.
          *
          * @return the current project
          */
         public static FinalProjectConfig getCurrentProject() {
-            return config.getProjects().get(mavenSession.getCurrentProject().getId());
+            return currentProjectConfig;
         }
 
         /**
@@ -464,13 +475,15 @@ public class Dew {
         }
 
         /**
-         * 初始化当前Maven的属性.
+         * 初始化当前Maven项目.
          */
-        public static void initCurrentMavenProperty() {
+        public static void initCurrentMavenProject() {
             if (!mavenProps.containsKey(mavenSession.getCurrentProject().getId())) {
                 mavenProps.put(mavenSession.getCurrentProject().getId(), new HashMap<>());
             }
             mavenSession.getCurrentProject().getProperties().putAll(mavenProps.get(mavenSession.getCurrentProject().getId()));
+            // 更新当前Maven项目指向，用于shutdown hook时获取出错的项目（如果存在的话）
+            currentProjectConfig = config.getProjects().get(mavenSession.getCurrentProject().getId());
         }
 
         /**
@@ -497,7 +510,6 @@ public class Dew {
             mavenProps.get(mavenId).put(key, value);
             getMavenProject(mavenId).getProperties().putAll(mavenProps.get(mavenSession.getCurrentProject().getId()));
         }
-
 
         /**
          * 获取所有项目配置.

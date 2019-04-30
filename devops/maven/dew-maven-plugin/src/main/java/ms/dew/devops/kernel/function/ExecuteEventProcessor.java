@@ -16,6 +16,7 @@
 
 package ms.dew.devops.kernel.function;
 
+import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.notification.Notify;
 
@@ -30,8 +31,29 @@ import java.util.stream.Collectors;
  */
 public class ExecuteEventProcessor {
 
-    public static void init() {
-        // Do nothing
+    /**
+     * Init.
+     *
+     * @param processingProjects the processing projects
+     */
+    public static void init(List<FinalProjectConfig> processingProjects) {
+        if (!Notify.contains("")) {
+            return;
+        }
+        if (processingProjects.isEmpty()) {
+            Notify.send("", "No projects need to be processed.", "DevOps process report");
+            return;
+        }
+        StringBuilder content = new StringBuilder();
+        content.append("![](http://dew.ms/images/devops-notify/report.png)")
+                .append("\n")
+                .append("### Processing Projects @ [" + processingProjects.get(0).getProfile() + "]\n")
+                .append("\n\n-----------------\n");
+        content.append(processingProjects.stream()
+                .map(project -> "- " + project.getAppShowName())
+                .collect(Collectors.joining("\n")));
+        content.append("\n\n");
+        Notify.send("", content.toString(), "DevOps process report");
     }
 
     /**
@@ -70,8 +92,7 @@ public class ExecuteEventProcessor {
      * @param projects the projects
      */
     public static void onShutdown(Map<String, FinalProjectConfig> projects) {
-        if (projects.size() <= 1) {
-            // 只有0个或1个项目时不用汇总通知
+        if (Dew.stopped) {
             return;
         }
         if (!Notify.contains("")) {
@@ -84,8 +105,10 @@ public class ExecuteEventProcessor {
                         || project.getExecuteSuccessfulMojos().contains("unrelease")
                 ).collect(Collectors.toList());
         StringBuilder content = new StringBuilder();
-        content.append("# The execution result\n")
-                .append("-----------------\n")
+        content.append("![](http://dew.ms/images/devops-notify/report.png)")
+                .append("\n")
+                .append("![](http://dew.ms/images/devops-notify/successful-split.png)")
+                .append("\n")
                 .append("## Execute Successful\n");
         content.append(executionSuccessfulProjects.stream()
                 .map(project -> "- " + project.getAppShowName())
@@ -95,16 +118,9 @@ public class ExecuteEventProcessor {
                 projects.values().stream()
                         .filter(project -> !executionSuccessfulProjects.contains(project))
                         .collect(Collectors.toList());
-        content.append("\n-----------------\n")
-                .append("## Ignore execution\n");
-        content.append(nonExecutionProjects.stream()
-                .filter(project -> !project.isHasError())
-                .map(project -> {
-                    String reason = project.getSkipReason();
-                    return "- " + project.getAppShowName() + "\n> " + reason;
-                })
-                .collect(Collectors.joining("\n")));
-        content.append("\n-----------------\n")
+        content.append("\n\n")
+                .append("![](http://dew.ms/images/devops-notify/failure-split.png)")
+                .append("\n")
                 .append("## Execute Failure\n");
         content.append(nonExecutionProjects.stream()
                 .filter(FinalProjectConfig::isHasError)
@@ -113,7 +129,23 @@ public class ExecuteEventProcessor {
                     return "- " + project.getAppShowName() + "\n> " + reason;
                 })
                 .collect(Collectors.joining("\n")));
-        content.append("\n-----------------\n");
+        content.append("\n\n")
+                .append("![](http://dew.ms/images/devops-notify/non-split.png)")
+                .append("\n")
+                .append("## Non-execution\n");
+        content.append(nonExecutionProjects.stream()
+                .filter(project -> !project.isHasError() && !project.isSkip())
+                .map(project -> "- " + project.getAppShowName() + "\n> " + project.getSkipReason())
+                .collect(Collectors.joining("\n")));
+        content.append("\n\n")
+                .append("![](http://dew.ms/images/devops-notify/ignore-split.pngg)")
+                .append("\n")
+                .append("## Ignore execution\n");
+        content.append(projects.values().stream()
+                .filter(project -> !project.isHasError() && project.isSkip())
+                .map(project -> "- " + project.getAppShowName() + "\n> " + project.getSkipReason())
+                .collect(Collectors.joining("\n")));
+        content.append("\n\n");
         Notify.send("", content.toString(), "DevOps process report");
     }
 
@@ -123,7 +155,7 @@ public class ExecuteEventProcessor {
             return;
         }
         String content =
-                "![](http://dew.ms/images/" + (throwable != null ? "failure" : "successful") + ".png)"
+                "![](http://dew.ms/images/devops-notify/" + (throwable != null ? "failure" : "successful") + ".png)"
                         + "\n"
                         + "# " + projectConfig.getAppShowName() + "\n"
                         + "> " + projectConfig.getAppGroup() + "\n"

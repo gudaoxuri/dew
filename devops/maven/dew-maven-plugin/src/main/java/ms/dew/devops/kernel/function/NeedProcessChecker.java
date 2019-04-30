@@ -83,7 +83,7 @@ public class NeedProcessChecker {
             // 不存在需要处理的项目
             Dew.stopped = true;
             Dew.log.info("No project found to be processed");
-            ExecuteEventProcessor.onShutdown(Dew.Config.getProjects());
+            ExecuteEventProcessor.init(processingProjects);
             return;
         }
         // 提示将要处理的项目
@@ -103,8 +103,10 @@ public class NeedProcessChecker {
             if (reader.readLine().trim().equalsIgnoreCase("N")) {
                 Dew.stopped = true;
                 Dew.log.info("Process canceled");
+                return;
             }
         }
+        ExecuteEventProcessor.init(processingProjects);
     }
 
 
