@@ -18,7 +18,7 @@ package ms.dew.devops.util;
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.ReportHandler;
-import ms.dew.devops.exception.ProcessException;
+import ms.dew.devops.exception.ProjectProcessException;
 import ms.dew.devops.kernel.Dew;
 
 import java.io.IOException;
@@ -74,9 +74,9 @@ public class ShellHelper {
             execF.get();
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
-            throw new ProcessException("[" + flag + "] Exec error : " + cmd, ex);
+            throw new ProjectProcessException("[" + flag + "] Exec error : " + cmd, ex);
         } catch (IOException | ExecutionException ex) {
-            throw new ProcessException("[" + flag + "] Exec error : " + cmd, ex);
+            throw new ProjectProcessException("[" + flag + "] Exec error : " + cmd, ex);
         }
         if (!isSuccess.get()) {
             // 命令执行过程错误，由上层业务判断是否抛异常

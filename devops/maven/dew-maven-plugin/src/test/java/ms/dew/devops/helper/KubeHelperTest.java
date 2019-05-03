@@ -25,7 +25,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,13 +49,14 @@ public class KubeHelperTest extends BasicTest {
         KubeHelper.init("", new SystemStreamLog(), defaultKubeConfig);
     }
 
-    /**
+    /*
+    *//**
      * Test.
      *
      * @throws IOException          the io exception
      * @throws ApiException         the api exception
      * @throws InterruptedException the interrupted exception
-     */
+     *//*
     @Test
     public void test() throws IOException, ApiException, InterruptedException {
         KubeHelper.inst("")
@@ -68,7 +68,7 @@ public class KubeHelperTest extends BasicTest {
         KubeHelper.inst("")
                 .forward("helloworld-backend-79989646f9-bs5r4", "dew-test", 5005, 9999);
         new CountDownLatch(1).await();
-    }
+    }*/
 
     /**
      * Test all.
@@ -180,13 +180,13 @@ public class KubeHelperTest extends BasicTest {
                 });
         Assert.assertEquals("total 8", execResult.get(0));
 
-        Closeable closeable = KubeHelper.inst("").forward(podName, deployment.getMetadata().getNamespace(), 80, 8081);
+        /* Closeable closeable = KubeHelper.inst("").forward(podName, deployment.getMetadata().getNamespace(), 80, 8081);
 
         Assert.assertTrue($.http.get("http://127.0.0.1:8081").contains("Welcome to nginx!"));
         Assert.assertTrue($.http.get("http://127.0.0.1:8081").contains("Welcome to nginx!"));
 
         closeable.close();
-
+        */
         // TODO
         /*
         Ngnix没有日志输出，程序会一直等待

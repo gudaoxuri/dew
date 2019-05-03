@@ -20,6 +20,7 @@ import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.notification.Notify;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,19 +41,23 @@ public class ExecuteEventProcessor {
         if (!Notify.contains("")) {
             return;
         }
+        StringBuilder content = new StringBuilder();
         if (processingProjects.isEmpty()) {
-            Notify.send("", "No projects need to be processed.", "DevOps process report");
+            content.append("![](http://doc.dew.ms/images/devops-notify/report.png)")
+                    .append("\n")
+                    .append("No projects need to be processed.");
+            Notify.send("", content.toString(), "DevOps process report");
             return;
         }
-        StringBuilder content = new StringBuilder();
         content.append("![](http://doc.dew.ms/images/devops-notify/report.png)")
                 .append("\n")
                 .append("### Processing Projects @ [" + processingProjects.get(0).getProfile() + "]\n")
                 .append("\n\n-----------------\n");
         content.append(processingProjects.stream()
                 .map(project -> "- " + project.getAppShowName())
-                .collect(Collectors.joining("\n")));
-        content.append("\n\n");
+                .collect(Collectors.joining("\n")))
+                .append("\n\n")
+                .append(appendCIJobUrl());
         Notify.send("", content.toString(), "DevOps process report");
     }
 
@@ -87,6 +92,30 @@ public class ExecuteEventProcessor {
     }
 
     /**
+     * On global process error.
+     *
+     * @param throwable the throwable
+     */
+    public static void onGloablProcessError(Throwable throwable) {
+        if (!Notify.contains("")) {
+            return;
+        }
+        StringBuilder content = new StringBuilder();
+        content.append("![](http://doc.dew.ms/images/devops-notify/report.png)")
+                .append("\n")
+                .append("Execution error" + (throwable.getMessage() != null ? ": " + throwable.getMessage() : ""))
+                .append("\n")
+                .append(Arrays
+                        .stream(throwable.getStackTrace())
+                        .map(e -> "> " + e.toString())
+                        .limit(20)
+                        .collect(Collectors.joining("\n")))
+                .append("\n\n")
+                .append(appendCIJobUrl());
+        Notify.send("", content.toString(), "DevOps process report");
+    }
+
+    /**
      * On shutdown.
      *
      * @param projects the projects
@@ -107,9 +136,9 @@ public class ExecuteEventProcessor {
         StringBuilder content = new StringBuilder();
         content.append("![](http://doc.dew.ms/images/devops-notify/report.png)")
                 .append("\n")
+                .append("## Execute Successful\n")
                 .append("![](http://doc.dew.ms/images/devops-notify/successful-split.png)")
-                .append("\n")
-                .append("## Execute Successful\n");
+                .append("\n");
         content.append(executionSuccessfulProjects.stream()
                 .map(project -> "- " + project.getAppShowName())
                 .collect(Collectors.joining("\n")));
@@ -119,9 +148,9 @@ public class ExecuteEventProcessor {
                         .filter(project -> !executionSuccessfulProjects.contains(project))
                         .collect(Collectors.toList());
         content.append("\n\n")
+                .append("## Execute Failure\n")
                 .append("![](http://doc.dew.ms/images/devops-notify/failure-split.png)")
-                .append("\n")
-                .append("## Execute Failure\n");
+                .append("\n");
         content.append(nonExecutionProjects.stream()
                 .filter(FinalProjectConfig::isHasError)
                 .map(project -> {
@@ -130,22 +159,23 @@ public class ExecuteEventProcessor {
                 })
                 .collect(Collectors.joining("\n")));
         content.append("\n\n")
+                .append("## Non-execution\n")
                 .append("![](http://doc.dew.ms/images/devops-notify/non-split.png)")
-                .append("\n")
-                .append("## Non-execution\n");
+                .append("\n");
         content.append(nonExecutionProjects.stream()
                 .filter(project -> !project.isHasError() && !project.isSkip())
                 .map(project -> "- " + project.getAppShowName() + "\n> " + project.getSkipReason())
                 .collect(Collectors.joining("\n")));
         content.append("\n\n")
+                .append("## Ignore execution\n")
                 .append("![](http://doc.dew.ms/images/devops-notify/ignore-split.png)")
-                .append("\n")
-                .append("## Ignore execution\n");
+                .append("\n");
         content.append(projects.values().stream()
                 .filter(project -> !project.isHasError() && project.isSkip())
                 .map(project -> "- " + project.getAppShowName() + "\n> " + project.getSkipReason())
                 .collect(Collectors.joining("\n")));
-        content.append("\n\n");
+        content.append("\n\n")
+                .append(appendCIJobUrl());
         Notify.send("", content.toString(), "DevOps process report");
     }
 
@@ -154,25 +184,38 @@ public class ExecuteEventProcessor {
         if (!Notify.contains(flag)) {
             return;
         }
-        String content =
-                "![](http://doc.dew.ms/images/devops-notify/" + (throwable != null ? "failure" : "successful") + ".png)"
-                        + "\n"
-                        + "# " + projectConfig.getAppShowName() + "\n"
-                        + "> " + projectConfig.getAppGroup() + "\n"
-                        + "\n"
-                        + "## " + (throwable != null ? "Failure" : "Successful")
-                        + " : [" + mojoName + "] @ [" + projectConfig.getProfile() + "]\n";
+        StringBuilder content = new StringBuilder();
+        content.append("![](http://doc.dew.ms/images/devops-notify/" + (throwable != null ? "failure" : "successful") + ".png)")
+                .append("\n")
+                .append("# " + projectConfig.getAppShowName() + "\n")
+                .append("> " + projectConfig.getAppGroup() + "\n")
+                .append("\n")
+                .append("## " + (throwable != null ? "Failure" : "Successful"))
+                .append(" : [" + mojoName + "] @ [" + projectConfig.getProfile() + "]\n");
         if (message != null && !message.trim().isEmpty()
                 || throwable != null) {
-            content += "> ---------\n"
-                    + "> " + message + "\n"
-                    + "> " + throwable + "\n";
+            content.append("> ---------\n")
+                    .append("> " + message + "\n")
+                    .append("> " + throwable + "\n");
         }
+        content.append("\n\n")
+                .append(appendCIJobUrl());
         if (throwable != null) {
-            Notify.send(flag, content, "DevOps process failure");
+            Notify.send(flag, content.toString(), "DevOps process failure");
         } else {
-            Notify.send(flag, content, "DevOps process successful");
+            Notify.send(flag, content.toString(), "DevOps process successful");
         }
+    }
+
+    private static String appendCIJobUrl() {
+        String ciJobUrl = null;
+        if (System.getProperties().containsKey("CI_JOB_URL")) {
+            ciJobUrl = System.getProperty("CI_JOB_URL");
+        }
+        if (ciJobUrl != null) {
+            return "\n----------\n> See [CI Job](" + ciJobUrl + ")\n";
+        }
+        return "";
     }
 
 

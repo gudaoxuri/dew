@@ -18,18 +18,18 @@ package ms.dew.devops.exception;
 
 
 /**
- * Process exception.
+ * Global process exception.
  *
  * @author gudaoxuri
  */
-public class ProcessException extends RuntimeException {
+public class GlobalProcessException extends RuntimeException {
 
     /**
      * Instantiates a new Process exception.
      *
      * @param message the message
      */
-    public ProcessException(String message) {
+    public GlobalProcessException(String message) {
         super(message);
     }
 
@@ -39,7 +39,7 @@ public class ProcessException extends RuntimeException {
      * @param message the message
      * @param cause   the cause
      */
-    public ProcessException(String message, Throwable cause) {
+    public GlobalProcessException(String message, Throwable cause) {
         super(message, cause);
     }
 }

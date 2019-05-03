@@ -17,7 +17,7 @@
 package ms.dew.devops.kernel;
 
 import com.ecfront.dew.common.$;
-import ms.dew.devops.exception.ProcessException;
+import ms.dew.devops.exception.ProjectProcessException;
 import ms.dew.devops.helper.DockerHelper;
 import ms.dew.devops.helper.GitHelper;
 import ms.dew.devops.helper.KubeHelper;
@@ -421,7 +421,7 @@ public class Dew {
                     | ClassNotFoundException
                     | IllegalAccessException
                     | InstantiationException e) {
-                throw new ProcessException("Mock invoke error", e);
+                throw new ProjectProcessException("Mock invoke error", e);
             }
         }
 
@@ -559,7 +559,7 @@ public class Dew {
                         )
                 );
             } catch (MojoExecutionException e) {
-                throw new ProcessException("Invoke maven mojo error", e);
+                throw new ProjectProcessException("Invoke maven mojo error", e);
             }
         }
 

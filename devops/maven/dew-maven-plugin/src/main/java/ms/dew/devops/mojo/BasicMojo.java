@@ -17,7 +17,9 @@
 package ms.dew.devops.mojo;
 
 import io.kubernetes.client.ApiException;
-import ms.dew.devops.exception.ProcessException;
+import ms.dew.devops.exception.ConfigException;
+import ms.dew.devops.exception.GlobalProcessException;
+import ms.dew.devops.exception.ProjectProcessException;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.function.ExecuteEventProcessor;
 import ms.dew.devops.util.DewLog;
@@ -226,12 +228,18 @@ public abstract class BasicMojo extends AbstractMojo {
                 disabledDefaultBehavior();
                 Dew.Config.getCurrentProject().skip("Internal execution error", true);
             }
+        } catch (GlobalProcessException | ConfigException e) {
+            // 此错误会中止程序
+            Dew.log.error("Global Process error", e);
+            Dew.stopped = true;
+            ExecuteEventProcessor.onGloablProcessError(e);
+            throw e;
         } catch (Exception e) {
             // 此错误会中止程序
             Dew.log.error("Process error", e);
             Dew.Config.getCurrentProject().skip("Process error : " + e.getMessage(), true);
             ExecuteEventProcessor.onMojoExecuteFailure(getMojoName(), Dew.Config.getCurrentProject(), e);
-            throw new ProcessException("Process error", e);
+            throw new ProjectProcessException("Process error", e);
         }
     }
 
@@ -287,7 +295,7 @@ public abstract class BasicMojo extends AbstractMojo {
      *
      * @return the mojo name
      */
-    protected String getMojoName() {
+    String getMojoName() {
         return this.getClass().getSimpleName().substring(0, this.getClass().getSimpleName().indexOf("Mojo")).toLowerCase();
     }
 

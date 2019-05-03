@@ -19,6 +19,7 @@ package ms.dew.devops.kernel.function;
 import com.ecfront.dew.common.$;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1Service;
+import ms.dew.devops.exception.GlobalProcessException;
 import ms.dew.devops.helper.GitHelper;
 import ms.dew.devops.helper.KubeHelper;
 import ms.dew.devops.helper.KubeRES;
@@ -52,61 +53,63 @@ public class NeedProcessChecker {
      *
      * @param quiet                   the quiet
      * @param ignoreExistMavenVersion the ignore exist maven version
-     * @throws ApiException the api exception
-     * @throws IOException  the io exception
      */
-    public static void checkNeedProcessProjects(boolean quiet, boolean ignoreExistMavenVersion) throws ApiException, IOException {
+    public static void checkNeedProcessProjects(boolean quiet, boolean ignoreExistMavenVersion) {
         if (initialized.getAndSet(true)) {
             return;
         }
         // 初始化，全局只调用一次
         Dew.log.info("Fetch need process projects");
-        for (FinalProjectConfig config : Dew.Config.getProjects().values()) {
-            Dew.log.info("Need process checking for " + config.getAppName());
-            switch (config.getKind()) {
-                case POM:
-                case JVM_LIB:
-                    checkNeedProcessByMavenRepo(config, ignoreExistMavenVersion);
-                    Dew.Config.setMavenProperty(config.getId(), "maven.install.skip", "false");
-                    Dew.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "false");
-                    break;
-                default:
-                    checkNeedProcessByGit(config);
-                    Dew.Config.setMavenProperty(config.getId(), "maven.install.skip", "true");
-                    Dew.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "true");
+        try {
+            for (FinalProjectConfig config : Dew.Config.getProjects().values()) {
+                Dew.log.info("Need process checking for " + config.getAppName());
+                switch (config.getKind()) {
+                    case POM:
+                    case JVM_LIB:
+                        checkNeedProcessByMavenRepo(config, ignoreExistMavenVersion);
+                        Dew.Config.setMavenProperty(config.getId(), "maven.install.skip", "false");
+                        Dew.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "false");
+                        break;
+                    default:
+                        checkNeedProcessByGit(config);
+                        Dew.Config.setMavenProperty(config.getId(), "maven.install.skip", "true");
+                        Dew.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "true");
+                }
             }
-        }
-        List<FinalProjectConfig> processingProjects = Dew.Config.getProjects().values().stream()
-                .filter(config -> !config.isSkip())
-                .collect(Collectors.toList());
-        if (processingProjects.isEmpty()) {
-            // 不存在需要处理的项目
-            Dew.stopped = true;
-            Dew.log.info("No project found to be processed");
-            ExecuteEventProcessor.init(processingProjects);
-            return;
-        }
-        // 提示将要处理的项目
-        StringBuilder sb = new StringBuilder();
-        sb.append("\r\n==================== Processing Projects =====================\r\n\r\n");
-        sb.append(processingProjects.stream().map(config ->
-                "> [" + config.getKind().name() + "] " + config.getMvnGroupId() + ":" + config.getMvnArtifactId())
-                .collect(Collectors.joining("\r\n")));
-        sb.append("\r\n\r\n==============================================================\r\n");
-        if (quiet) {
-            Dew.log.info(sb.toString());
-        } else {
-            // 非静默模式，用户选择是否继续
-            sb.append("\r\n< Y > or < N >");
-            Dew.log.info(sb.toString());
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            if (reader.readLine().trim().equalsIgnoreCase("N")) {
+            List<FinalProjectConfig> processingProjects = Dew.Config.getProjects().values().stream()
+                    .filter(config -> !config.isSkip())
+                    .collect(Collectors.toList());
+            if (processingProjects.isEmpty()) {
+                // 不存在需要处理的项目
                 Dew.stopped = true;
-                Dew.log.info("Process canceled");
+                Dew.log.info("No project found to be processed");
+                ExecuteEventProcessor.init(processingProjects);
                 return;
             }
+            // 提示将要处理的项目
+            StringBuilder sb = new StringBuilder();
+            sb.append("\r\n==================== Processing Projects =====================\r\n\r\n");
+            sb.append(processingProjects.stream().map(config ->
+                    "> [" + config.getKind().name() + "] " + config.getMvnGroupId() + ":" + config.getMvnArtifactId())
+                    .collect(Collectors.joining("\r\n")));
+            sb.append("\r\n\r\n==============================================================\r\n");
+            if (quiet) {
+                Dew.log.info(sb.toString());
+            } else {
+                // 非静默模式，用户选择是否继续
+                sb.append("\r\n< Y > or < N >");
+                Dew.log.info(sb.toString());
+                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                if (reader.readLine().trim().equalsIgnoreCase("N")) {
+                    Dew.stopped = true;
+                    Dew.log.info("Process canceled");
+                    return;
+                }
+            }
+            ExecuteEventProcessor.init(processingProjects);
+        } catch (Throwable e) {
+            throw new GlobalProcessException(e.getMessage(), e);
         }
-        ExecuteEventProcessor.init(processingProjects);
     }
 
 

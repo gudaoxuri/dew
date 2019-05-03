@@ -18,7 +18,7 @@ package ms.dew.devops.kernel.function;
 
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1Pod;
-import ms.dew.devops.exception.ProcessException;
+import ms.dew.devops.exception.ProjectProcessException;
 import ms.dew.devops.helper.KubeHelper;
 import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.Dew;
@@ -76,7 +76,7 @@ public class PodSelector {
         } else if (pods.size() == 1) {
             return pods.get(1).getMetadata().getName();
         } else {
-            throw new ProcessException("Can't found pod with label : " + "app=" + config.getAppName() + ",group=" + config.getAppGroup());
+            throw new ProjectProcessException("Can't found pod with label : " + "app=" + config.getAppName() + ",group=" + config.getAppGroup());
         }
     }
 }

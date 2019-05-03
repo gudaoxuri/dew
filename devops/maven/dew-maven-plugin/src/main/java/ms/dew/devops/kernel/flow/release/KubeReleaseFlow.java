@@ -19,7 +19,7 @@ package ms.dew.devops.kernel.flow.release;
 import com.ecfront.dew.common.$;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.*;
-import ms.dew.devops.exception.ProcessException;
+import ms.dew.devops.exception.ProjectProcessException;
 import ms.dew.devops.helper.DockerHelper;
 import ms.dew.devops.helper.KubeHelper;
 import ms.dew.devops.helper.KubeRES;
@@ -204,7 +204,7 @@ public class KubeReleaseFlow extends BasicFlow {
             KubeHelper.inst(config.getId()).stopWatch(watchId);
             if (!awaitResult) {
                 Dew.log.error("Publish wait timeout");
-                throw new ProcessException("Publish wait timeout");
+                throw new ProjectProcessException("Publish wait timeout");
             }
             // 部署 service
             V1Service service = (V1Service) kubeResources.get(KubeRES.SERVICE.getVal());
@@ -218,7 +218,7 @@ public class KubeReleaseFlow extends BasicFlow {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             Dew.log.error("Publish error", e);
-            throw new ProcessException("Publish error", e);
+            throw new ProjectProcessException("Publish error", e);
         }
     }
 

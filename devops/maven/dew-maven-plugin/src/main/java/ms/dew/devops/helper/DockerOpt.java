@@ -61,7 +61,7 @@ public class DockerOpt {
     /**
      * Log.
      */
-    private Log log;
+    protected Log log;
     /**
      * Docker native client.
      */

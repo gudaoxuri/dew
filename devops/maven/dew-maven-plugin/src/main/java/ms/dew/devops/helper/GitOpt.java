@@ -32,7 +32,7 @@ public class GitOpt {
     /**
      * Log.
      */
-    private Log log;
+    protected Log log;
 
     /**
      * Instantiates a new Git opt.
@@ -51,9 +51,14 @@ public class GitOpt {
      * @return diff list
      */
     public List<String> diff(String startCommitHash, String endCommitHash) {
-        List<String> changedFiles = $.shell.execute("git diff --name-only " + startCommitHash + " " + endCommitHash).getBody();
-        log.info("Found " + changedFiles.size() + " changed files by git diff --name-only " + startCommitHash + " " + endCommitHash);
-        return changedFiles;
+        Resp<List<String>> changedFilesR = $.shell.execute("git diff --name-only " + startCommitHash + " " + endCommitHash);
+        if (changedFilesR.ok()) {
+            List<String> changedFiles = changedFilesR.getBody();
+            log.info("Found " + changedFiles.size() + " changed files by git diff --name-only " + startCommitHash + " " + endCommitHash);
+            return changedFiles;
+        } else {
+            throw new RuntimeException(changedFilesR.getMessage());
+        }
     }
 
     /**

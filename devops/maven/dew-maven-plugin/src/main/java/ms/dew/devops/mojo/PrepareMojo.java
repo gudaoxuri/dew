@@ -38,7 +38,7 @@ import java.io.IOException;
 public class PrepareMojo extends BasicMojo {
 
     @Override
-    protected boolean preExecute() throws IOException, ApiException {
+    protected boolean preExecute() {
         NeedProcessChecker.checkNeedProcessProjects(quiet, ignoreExistMavenVersion);
         return true;
     }

@@ -67,7 +67,7 @@ public class KubeOpt {
     /**
      * Log.
      */
-    private Log log;
+    protected Log log;
     /**
      * kuberentes native API Client.
      */

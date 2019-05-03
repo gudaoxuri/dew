@@ -18,7 +18,7 @@ package ms.dew.devops.kernel.resource;
 
 import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.models.*;
-import ms.dew.devops.exception.ProcessException;
+import ms.dew.devops.exception.ProjectProcessException;
 import ms.dew.devops.helper.KubeRES;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.function.VersionController;
@@ -113,7 +113,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                                 .limits(config.getApp().getContainerResourcesLimits()));
                 break;
             default:
-                throw new ProcessException("Kind " + config.getKind().name() + " does not require deployment");
+                throw new ProjectProcessException("Kind " + config.getKind().name() + " does not require deployment");
         }
 
         ExtensionsV1beta1DeploymentBuilder builder = new ExtensionsV1beta1DeploymentBuilder();
