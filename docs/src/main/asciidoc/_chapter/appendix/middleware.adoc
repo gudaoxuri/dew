@@ -4,6 +4,7 @@
 ==== PostgreSql
 
 .安装配置
+[source,bash]
 ----
 wget https://download.postgresql.org/pub/repos/yum/9.6/redhat/rhel-7-x86_64/pgdg-redhat96-9.6-3.noarch.rpm
 
@@ -40,6 +41,7 @@ ALTER USER postgres WITH PASSWORD 'Dew!123456';
 ==== Redis
 
 .安装配置
+[source,bash]
 ----
 yum install -y epel-release
 yum -y install redis
@@ -61,6 +63,7 @@ systemctl start redis
 ==== MySQL
 
 .安装配置
+[source,bash]
 ----
 wget https://repo.mysql.com//mysql57-community-release-el7-11.noarch.rpm
 rpm -Uvh mysql57-community-release-el7-11.noarch.rpm
@@ -100,6 +103,7 @@ exit;
 ==== Mongo
 
 .安装配置
+[source,bash]
 ----
 cat >>/etc/yum.repos.d/mongodb-org-4.0.repo <<EOF
 [mongodb-org-4.0]
@@ -149,6 +153,7 @@ mongod --auth --port 27017 \
 TIP: https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package
 
 .安装配置
+[source,bash]
 ----
 curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
 yum install -y gitlab-ce
@@ -178,6 +183,7 @@ TIP: https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md
 TIP: dnsmasq为轻量级的DNS解析工具，也可用类似的工具替代。
 
 .安装配置
+[source,bash]
 ----
 yum install -y dnsmasq
 systemctl enable dnsmasq
@@ -212,6 +218,7 @@ nameserver x.x.x.x # IP当前节点
 ==== Minio
 
 .安装配置
+[source,bash]
 ----
 mkdir -p /opt/minio && cd /opt/minio
 wget https://dl.minio.io/server/minio/release/linux-amd64/minio
@@ -246,6 +253,7 @@ nohup ./minio server /mnt/data &
 ==== NFS
 
 .安装配置
+[source,bash]
 ----
 yum install -y nfs-utils
 mkdir -p /data/nfs
@@ -268,10 +276,53 @@ showmount -e localhost
 
 .常见问题
 
-> Kubernetes使用NFS做为PV时报 ``kubernetes mount: wrong fs type, bad option, bad superblock``
+> Kubernetes使用NFS做为PV时，报错 ``kubernetes mount: wrong fs type, bad option, bad superblock``
 
   各节点执行 yum install -y nfs-utils
 
+==== GlusterFS
+TIP: 安装见：https://github.com/gluster/gluster-kubernetes/blob/master/docs/setup-guide.md
+ https://github.com/gluster/gluster-kubernetes#quickstart
+
+.使用StorageClass
+[source,bash]
+----
+# 注意在各节点安装 glusterfs-fuse
+yum install glusterfs-fuse
+
+# 创建 StorageClass
+# @See https://kubernetes.io/docs/concepts/storage/storage-classes/#glusterfs
+cat <<EOF | kubectl apply -f -
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: gluster-2replicas-sc
+provisioner: kubernetes.io/glusterfs
+parameters:
+  resturl: "http://gluster.dew.ms"
+  restuser: "dew"
+  restuserkey: "Dew123456"
+  volumetype: "replicate:2"
+allowVolumeExpansion: true
+EOF
+# 创建 PVC
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+ name: dew-gluster-pvc
+ annotations:
+   volume.beta.kubernetes.io/storage-class: gluster-2replicas-sc
+spec:
+ accessModes:
+  - ReadWriteOnce
+ resources:
+   requests:
+     storage: 5Gi
+EOF
+# 查看创建结果，会发现PV已自动创建
+kubectl get pv,pvc
+----
 
 
 
