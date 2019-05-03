@@ -214,6 +214,9 @@ public class ExecuteEventProcessor {
         if (System.getProperties().containsKey("CI_JOB_URL")) {
             ciJobUrl = System.getProperty("CI_JOB_URL");
         }
+        if (System.getenv().containsKey("CI_JOB_URL")) {
+            ciJobUrl = System.getenv("CI_JOB_URL");
+        }
         if (ciJobUrl != null) {
             return "\n----------\n> See [CI Job](" + ciJobUrl + ")\n";
         }

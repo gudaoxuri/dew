@@ -67,8 +67,13 @@ public class NeedProcessChecker {
                     case POM:
                     case JVM_LIB:
                         checkNeedProcessByMavenRepo(config, ignoreExistMavenVersion);
-                        Dew.Config.setMavenProperty(config.getId(), "maven.install.skip", "false");
-                        Dew.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "false");
+                        if (config.isSkip()) {
+                            Dew.Config.setMavenProperty(config.getId(), "maven.install.skip", "true");
+                            Dew.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "true");
+                        } else {
+                            Dew.Config.setMavenProperty(config.getId(), "maven.install.skip", "false");
+                            Dew.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "false");
+                        }
                         break;
                     default:
                         checkNeedProcessByGit(config);
