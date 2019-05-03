@@ -45,7 +45,9 @@ public class ExecuteEventProcessor {
         if (processingProjects.isEmpty()) {
             content.append("![](http://doc.dew.ms/images/devops-notify/report.png)")
                     .append("\n")
-                    .append("No projects need to be processed.");
+                    .append("No projects need to be processed.")
+                    .append("\n\n")
+                    .append(appendCIJobUrl());
             Notify.send("", content.toString(), "DevOps process report");
             return;
         }
