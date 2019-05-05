@@ -34,12 +34,11 @@ import java.nio.file.StandardCopyOption;
  */
 public class FrontendBuildFlow extends DockerBuildFlow {
 
-    protected boolean preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
+    protected void preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
         String preparePath = config.getMvnTargetDirectory() + "dew_prepare" + File.separator;
         FileUtils.deleteDirectory(new File(flowBasePath + "dist"));
         Files.move(Paths.get(preparePath + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
         $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/frontend/Dockerfile"), flowBasePath + "Dockerfile");
-        return true;
     }
 
 }

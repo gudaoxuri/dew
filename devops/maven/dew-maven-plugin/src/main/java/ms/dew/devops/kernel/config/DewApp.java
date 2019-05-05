@@ -76,10 +76,6 @@ public class DewApp {
     // 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> npm run build:<环境名称>
     // 后端服务默认为空
     private String packageCmd = "";
-    // packageCmd 执行错误时的补偿命令
-    // 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> npm install && npm run build:<环境名称>
-    // 后端服务默认为空
-    private String errorCompensationPackageCmd = "";
     // 运行参数，可指定诸如 JVM 配置等信息
     private String runOptions = "";
     // 容器资源上限，同Kubernetes配置
@@ -428,24 +424,6 @@ public class DewApp {
      */
     public void setPackageCmd(String packageCmd) {
         this.packageCmd = packageCmd;
-    }
-
-    /**
-     * Gets error compensation package cmd.
-     *
-     * @return the error compensation package cmd
-     */
-    public String getErrorCompensationPackageCmd() {
-        return errorCompensationPackageCmd;
-    }
-
-    /**
-     * Sets error compensation package cmd.
-     *
-     * @param errorCompensationPackageCmd the error compensation package cmd
-     */
-    public void setErrorCompensationPackageCmd(String errorCompensationPackageCmd) {
-        this.errorCompensationPackageCmd = errorCompensationPackageCmd;
     }
 
     /**

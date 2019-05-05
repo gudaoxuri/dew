@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class DefaultUnReleaseFlow extends BasicFlow {
 
-    protected boolean process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
+    protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
         // 删除 service
         KubeHelper.inst(config.getId()).delete(config.getAppName(), config.getNamespace(), KubeRES.SERVICE);
         // 删除 deployment
@@ -54,7 +54,6 @@ public class DefaultUnReleaseFlow extends BasicFlow {
         for (V1Pod rs : pods) {
             KubeHelper.inst(config.getId()).delete(rs.getMetadata().getName(), rs.getMetadata().getNamespace(), KubeRES.POD);
         }
-        return true;
     }
 
 }

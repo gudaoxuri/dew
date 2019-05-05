@@ -60,27 +60,9 @@ public class FrontendPrepareFlow extends BasicPrepareFlow {
         return Optional.of(cmd);
     }
 
-    @Override
-    protected Optional<String> getErrorCompensationPackageCmd(FinalProjectConfig config, String currentPath) {
-        String preparePackageCmd = config.getApp().getPreparePackageCmd();
-        String packageCmd = config.getApp().getPackageCmd();
-        String cmd = "";
-        if (preparePackageCmd == null || preparePackageCmd.trim().isEmpty()) {
-            // 使用默认命令
-            cmd = "npm install";
-        }
-        if (packageCmd == null || packageCmd.trim().isEmpty()) {
-            // 使用默认命令
-            cmd += " && npm run build:" + config.getProfile();
-        }
-        cmd = "cd " + currentPath + " && " + cmd;
-        return Optional.of(cmd);
-    }
-
-    protected boolean postPrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
+    protected void postPrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
         FileUtils.deleteDirectory(new File(flowBasePath + "dist"));
         Files.move(Paths.get(config.getMvnDirectory() + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
-        return true;
     }
 
 }

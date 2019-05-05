@@ -77,64 +77,61 @@ reuseLastVersionFromProfile:            # 重用版本的目标环境名称
                                         # 都不存在时需要显式指定
 ignoreChangeFiles: []                   # 忽略变更文件列表，此列表指定的文件不用于是否有变更要部署的判断依据
                                         # 支持 glob , @see https://en.wikipedia.org/wiki/Glob_(programming)
-  app:                                  # 应用配置
-    replicas: 1                         # 部署的副本数
-    revisionHistoryLimit: 3             # 保留的历史版本数
-    port: 8080                          # 端口号，默认情况下前端项目为80(不可修改)，后端服务为8080
-    livenessPath: /actuator/health      # 存活检测HTTP的路径，仅用于后端服务
-    readinessPath: /actuator/health     # 可用检测HTTP的路径，仅用于后端服务
-    livenessInitialDelaySeconds: 60     # 首次存活检测延迟时间，仅用于后端服务
-    livenessPeriodSeconds: 30           # 存活检测周期，仅用于后端服务
-    livenessFailureThreshold: 6         # 存活检测失败次数阈值，超过后销毁当前实例并重启另一个实例，仅用于后端服务
-    readinessInitialDelaySeconds: 10    # 首次可用检测延迟时间，仅用于后端服务
-    readinessPeriodSeconds: 60          # 可用检测周期，仅用于后端服务
-    readinessFailureThreshold: 3        # 可用检测失败次数阈值，超过后当前实例不可用，仅用于后端服务
-    traceLogEnabled: true               # 是否启用追踪日志，仅用于后端服务
-    traceLogSpans: false                # 是否在控制台输出spans日志，仅用于后端服务
-    traceWebSkipPattern: ""             # 设置跳过追踪的接口，为空则使用官方默认值，仅用于后端服务
-    traceProbabilisticSamplingRate: 0.1 # 追踪日志概率采样比率，为1.0则使用全量采样，仅用于后端服务
-    metricsEnabled: true                # 是否启用Prometheus的metrics，仅用于后端服务
-    nodeSelector:                       # 节点亲和性配置
-      group: app                        # 默认选择标签为 group=app 的节点
-    preparePackageCmd:                  # 预打包命令
+app:                                    # 应用配置
+  replicas: 1                           # 部署的副本数
+  revisionHistoryLimit: 3               # 保留的历史版本数
+  port: 8080                            # 端口号，默认情况下前端项目为80(不可修改)，后端服务为8080
+  livenessPath: /actuator/health        # 存活检测HTTP的路径，仅用于后端服务
+  readinessPath: /actuator/health       # 可用检测HTTP的路径，仅用于后端服务
+  livenessInitialDelaySeconds: 60       # 首次存活检测延迟时间，仅用于后端服务
+  livenessPeriodSeconds: 30             # 存活检测周期，仅用于后端服务
+  livenessFailureThreshold: 6           # 存活检测失败次数阈值，超过后销毁当前实例并重启另一个实例，仅用于后端服务
+  readinessInitialDelaySeconds: 10      # 首次可用检测延迟时间，仅用于后端服务
+  readinessPeriodSeconds: 60            # 可用检测周期，仅用于后端服务
+  readinessFailureThreshold: 3          # 可用检测失败次数阈值，超过后当前实例不可用，仅用于后端服务
+  traceLogEnabled: true                 # 是否启用追踪日志，仅用于后端服务
+  traceLogSpans: false                  # 是否在控制台输出spans日志，仅用于后端服务
+  traceWebSkipPattern: ""               # 设置跳过追踪的接口，为空则使用官方默认值，仅用于后端服务
+  traceProbabilisticSamplingRate: 0.1   # 追踪日志概率采样比率，为1.0则使用全量采样，仅用于后端服务
+  metricsEnabled: true                  # 是否启用Prometheus的metrics，仅用于后端服务
+  nodeSelector:                         # 节点亲和性配置
+    group: app                          # 默认选择标签为 group=app 的节点
+  preparePackageCmd:                    # 预打包命令
                                         # 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> && npm install，发现不存在 node_modules 时执行
                                         # 后端服务默认为空
-    packageCmd:                         # 打包命令
+  packageCmd:                           # 打包命令
                                         # 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> npm run build:<环境名称>
                                         # 后端服务默认为空
-    errorCompensationPackageCmd:        # packageCmd 执行错误时的补偿命令
-                                        # 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> npm install && npm run build:<环境名称>
-                                        # 后端服务默认为空
-    runOptions:                         # 运行参数，可指定诸如 JVM 配置等信息
-    containerResourcesLimits:           # 容器资源上限，同Kubernetes配置
+  runOptions:                           # 运行参数，可指定诸如 JVM 配置等信息
+  containerResourcesLimits:             # 容器资源上限，同Kubernetes配置
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-    containerResourcesRequests:         # 容器资源下限，同Kubernetes配置
+  containerResourcesRequests:           # 容器资源下限，同Kubernetes配置
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-  docker:                               # Docker配置
-    host:                               # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-    registryUrl:                        # Docker Registry Url  e.g. https://harbor.dew.ms/v2
-    registryUserName:                   # Docker Registry 用户名，此项建议使用Maven方式配置
-    registryPassword:                   # Docker Registry 密码，此项建议使用Maven方式配置
-    image:                              # Docker 镜像
+docker:                                 # Docker配置
+  host:                                 # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
+  registryUrl:                          # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+  registryUserName:                     # Docker Registry 用户名，此项建议使用Maven方式配置
+  registryPassword:                     # Docker Registry 密码，此项建议使用Maven方式配置
+  image:                                # Docker 镜像
                                         # 前端项目默认使用 nginx:alpine
                                         # 后端服务项目默认使用 openjdk:8-alpine
-  kube:                                 # Kubernetes配置
-    base64Config:                       # Kubernetes Base64 后的配置，此项建议使用Maven方式配置
+kube:                                   # Kubernetes配置
+  base64Config:                         # Kubernetes Base64 后的配置，此项建议使用Maven方式配置
                                         # 使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
-  notify:                               # 通知配置
-    type: DD                            # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
-    defaultReceivers:                   # 默认接收人列表，钉钉为手机号，邮件为邮箱
-    dndTimeReceivers:                   # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
-    args:                               # 不同类型的参数，邮件不需要设置
-        url:                            # type=DD表示钉钉的推送地址
+notify:                                 # 通知配置
+  type: DD                              # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
+  defaultReceivers:                     # 默认接收人列表，钉钉为手机号，邮件为邮箱
+  dndTimeReceivers:                     # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
+  args:                                 # 不同类型的参数，邮件不需要设置
+      url:                              # type=DD表示钉钉的推送地址
                                         # 说明详见：https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
                                         # type=HTTP表示HTTP Hook的地址
-        msgType:                        # 仅用于type=DD，支持 text/markdown
-    strategy:                           # 通知策略
-        minIntervalSec: 0               # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
-        dndTime:                        # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
+      msgType:                          # 仅用于type=DD，支持 text/markdown
+  strategy:                             # 通知策略
+      minIntervalSec: 0                 # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
+      dndTime:                          # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
                                         # HH:mm-HH:mm，如果两个时间相等表示全天免扰，如果后者大于前者表示跨天免扰
-        forceSendTimes: 3               # 同一免扰周期间通知调用达到几次后强制发送
+      forceSendTimes: 3                 # 同一免扰周期间通知调用达到几次后强制发送
 # 其它环境配置
 profiles:
     <name>: # 环境名称，e.g. test uat prod

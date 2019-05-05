@@ -45,12 +45,7 @@ public class JvmServicePrepareFlow extends BasicPrepareFlow {
         return Optional.empty();
     }
 
-    @Override
-    protected Optional<String> getErrorCompensationPackageCmd(FinalProjectConfig config, String currentPath) {
-        return Optional.empty();
-    }
-
-    protected boolean postPrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
+    protected void postPrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
         Dew.Invoke.invoke("org.springframework.boot",
                 "spring-boot-maven-plugin",
                 null,
@@ -61,7 +56,6 @@ public class JvmServicePrepareFlow extends BasicPrepareFlow {
                         put("finalName", "serv");
                     }
                 });
-        return true;
     }
 
 }

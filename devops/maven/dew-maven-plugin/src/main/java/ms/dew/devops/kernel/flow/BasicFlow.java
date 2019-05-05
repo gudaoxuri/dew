@@ -46,16 +46,10 @@ public abstract class BasicFlow {
         // 为每个mojo创建输出目录
         String flowBasePath = config.getMvnTargetDirectory() + "dew_" + mojoName + File.separator;
         Files.createDirectories(Paths.get(flowBasePath));
-        if (!preProcess(config, flowBasePath)) {
-            Dew.log.debug("Finished,because [preProcess] is false");
-            return false;
-        }
-        if (!process(config, flowBasePath)) {
-            Dew.log.debug("Finished,because [process] is false");
-            return false;
-        }
+        preProcess(config, flowBasePath);
+        process(config, flowBasePath);
         if (!postProcess(config, flowBasePath)) {
-            Dew.log.debug("Finished,because [postProcess] is false");
+            Dew.log.debug("Finished,but [postProcess] is false");
             return false;
         }
         return true;
@@ -66,23 +60,20 @@ public abstract class BasicFlow {
      *
      * @param config       the project config
      * @param flowBasePath the flow base path
-     * @return the process result
      * @throws ApiException the api exception
      * @throws IOException  the io exception
      */
-    protected abstract boolean process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException;
+    protected abstract void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException;
 
     /**
      * Pre process.
      *
      * @param config       the project config
      * @param flowBasePath the flow base path
-     * @return the boolean
      * @throws ApiException the api exception
      * @throws IOException  the io exception
      */
-    protected boolean preProcess(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
-        return true;
+    protected void preProcess(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
     }
 
     /**

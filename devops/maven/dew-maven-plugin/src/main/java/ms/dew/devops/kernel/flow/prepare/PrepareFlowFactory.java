@@ -57,11 +57,6 @@ public class PrepareFlowFactory {
                     protected Optional<String> getPackageCmd(FinalProjectConfig config, String currentPath) {
                         return Optional.empty();
                     }
-
-                    @Override
-                    protected Optional<String> getErrorCompensationPackageCmd(FinalProjectConfig config, String currentPath) {
-                        return Optional.empty();
-                    }
                 };
         }
     }

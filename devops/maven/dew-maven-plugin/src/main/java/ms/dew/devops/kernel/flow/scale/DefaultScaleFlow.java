@@ -58,7 +58,7 @@ public class DefaultScaleFlow extends BasicFlow {
     }
 
     @Override
-    protected boolean process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
+    protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
         if (!autoScale) {
             Dew.log.info("Change replicas number is " + replicas);
             KubeHelper.inst(config.getId()).patch(config.getAppName(), new ArrayList<String>() {
@@ -71,7 +71,6 @@ public class DefaultScaleFlow extends BasicFlow {
             KubeHelper.inst(config.getId()).apply(
                     new KubeHorizontalPodAutoscalerBuilder().build(config, minReplicas, maxReplicas, cpuAvg));
         }
-        return true;
     }
 
 }

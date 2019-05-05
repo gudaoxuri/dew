@@ -44,8 +44,7 @@ public class BuildFlowFactory {
             default:
                 return new BasicFlow() {
                     @Override
-                    protected boolean process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
-                        return true;
+                    protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
                     }
                 };
         }

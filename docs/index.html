@@ -4067,7 +4067,7 @@ RedisCacheManager cacheManager() {
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-常规的项目研发多会分 <code>开发(dev)、测试(test)、预发(pre-prod)/仿真(uat)、生产(prod)</code> 等多个环境。
+常规的项目研发多会分 <code>开发(dev)、测试(test)、预发(pre-prod)/用户验收(uat)、生产(prod)</code> 等多个环境。
 </td>
 </tr>
 </table>
@@ -7748,7 +7748,7 @@ test deploy:
     - test
   script:
     - mvn -P devops dew:build dew:release
-# 仿真/预发环境部署
+# 用户验收/预发环境部署
 uat deploy:
   stage: deploy
   only:
@@ -7970,7 +7970,7 @@ test deploy:
     # 可在此处添加代理
     # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.ms" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.ms"
 
-# 仿真/预发环境部署
+# 用户验收/预发环境部署
 uat deploy:
   stage: deploy
   only:

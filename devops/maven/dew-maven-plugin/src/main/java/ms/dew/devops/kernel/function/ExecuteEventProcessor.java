@@ -98,7 +98,7 @@ public class ExecuteEventProcessor {
      *
      * @param throwable the throwable
      */
-    public static void onGloablProcessError(Throwable throwable) {
+    public static void onGlobalProcessError(Throwable throwable) {
         if (!Notify.contains("")) {
             return;
         }

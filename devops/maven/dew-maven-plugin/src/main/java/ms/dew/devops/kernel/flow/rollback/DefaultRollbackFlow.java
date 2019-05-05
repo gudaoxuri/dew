@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
  */
 public class DefaultRollbackFlow extends BasicFlow {
 
-    protected boolean process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
+    protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
         V1Service service = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(), KubeRES.SERVICE, V1Service.class);
         String currentGitCommit = null;
         if (service != null) {
@@ -74,7 +74,6 @@ public class DefaultRollbackFlow extends BasicFlow {
         String rollbackGitCommit = VersionController.getGitCommit(versions.get(selected));
         // 调用部署流程执行重新部署
         new KubeReleaseFlow().release(config, rollbackGitCommit);
-        return true;
     }
 
 }

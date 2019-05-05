@@ -201,7 +201,7 @@
       - test
     script:
       - mvn -P devops dew:build dew:release
-  # 仿真/预发环境部署
+  # 用户验收/预发环境部署
   uat deploy:
     stage: deploy
     only:

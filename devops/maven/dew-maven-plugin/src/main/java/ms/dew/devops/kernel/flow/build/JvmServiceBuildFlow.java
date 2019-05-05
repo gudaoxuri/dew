@@ -33,13 +33,12 @@ import java.nio.file.StandardCopyOption;
  */
 public class JvmServiceBuildFlow extends DockerBuildFlow {
 
-    protected boolean preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
+    protected void preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
         String preparePath = config.getMvnTargetDirectory() + "dew_prepare" + File.separator;
         Files.move(Paths.get(preparePath + "serv.jar"), Paths.get(flowBasePath + "serv.jar"), StandardCopyOption.REPLACE_EXISTING);
         $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/jvm/Dockerfile"), flowBasePath + "Dockerfile");
         $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/jvm/run-java.sh"), flowBasePath + "run-java.sh");
         $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/jvm/debug-java.sh"), flowBasePath + "debug-java.sh");
-        return true;
     }
 
 }

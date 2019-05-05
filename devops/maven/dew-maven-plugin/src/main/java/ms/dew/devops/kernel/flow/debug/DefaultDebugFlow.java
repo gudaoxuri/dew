@@ -49,7 +49,7 @@ public class DefaultDebugFlow extends BasicFlow {
     }
 
     @Override
-    protected boolean process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
+    protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
         podName = PodSelector.select(config, Optional.ofNullable(podName));
         KubeHelper.inst(config.getId())
                 .exec(podName, KubeDeploymentBuilder.FLAG_CONTAINER_NAME, config.getNamespace(),
@@ -67,7 +67,6 @@ public class DefaultDebugFlow extends BasicFlow {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return true;
     }
 
 }

@@ -53,7 +53,7 @@ public class DefaultLogFlow extends BasicFlow {
     }
 
     @Override
-    protected boolean process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
+    protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
         podName = PodSelector.select(config, Optional.ofNullable(podName));
         Dew.log.info("--------- Show pod : " + podName + " logs ---------");
         if (follow) {
@@ -79,7 +79,6 @@ public class DefaultLogFlow extends BasicFlow {
                     });
             Files.write(Paths.get(flowBasePath + "tail.log"), sb.toString().getBytes(StandardCharsets.UTF_8));
         }
-        return true;
     }
 
 }

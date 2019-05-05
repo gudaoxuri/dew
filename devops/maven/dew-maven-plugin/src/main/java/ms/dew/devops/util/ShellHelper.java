@@ -82,7 +82,7 @@ public class ShellHelper {
             // 命令执行过程错误，由上层业务判断是否抛异常
             if (retry < 3) {
                 // 重试一次
-                Dew.log.warn("[" + flag + "] Exec error : " + cmd + " , Retry  : " + retry + 1);
+                Dew.log.warn("[" + flag + "] Exec error : " + cmd + " , Retry  : " + (retry + 1));
                 return doExecCmd(flag, env, cmd, retry + 1);
             } else {
                 Dew.log.warn("[" + flag + "] Exec error : " + cmd);

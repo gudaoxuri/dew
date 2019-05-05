@@ -174,8 +174,7 @@ public abstract class BasicMojo extends AbstractMojo {
      * @throws IOException  the io exception
      * @throws ApiException the api exception
      */
-    protected boolean preExecute() throws IOException, ApiException {
-        return true;
+    protected void preExecute() throws IOException, ApiException {
     }
 
     /**
@@ -211,12 +210,7 @@ public abstract class BasicMojo extends AbstractMojo {
                 Dew.log.info("The current project is manually set to skip");
                 return;
             }
-            if (!preExecute()) {
-                Dew.log.warn("Pre-execution error");
-                disabledDefaultBehavior();
-                Dew.Config.getCurrentProject().skip("Pre-execution error", true);
-                return;
-            }
+            preExecute();
             if (Dew.stopped) {
                 return;
             }
@@ -232,12 +226,12 @@ public abstract class BasicMojo extends AbstractMojo {
             // 此错误会中止程序
             Dew.log.error("Global Process error", e);
             Dew.stopped = true;
-            ExecuteEventProcessor.onGloablProcessError(e);
+            ExecuteEventProcessor.onGlobalProcessError(e);
             throw e;
         } catch (Exception e) {
             // 此错误会中止程序
             Dew.log.error("Process error", e);
-            Dew.Config.getCurrentProject().skip("Process error : " + e.getMessage(), true);
+            Dew.Config.getCurrentProject().skip("Process error [" + e.getClass().getSimpleName() + "]" + e.getMessage(), true);
             ExecuteEventProcessor.onMojoExecuteFailure(getMojoName(), Dew.Config.getCurrentProject(), e);
             throw new ProjectProcessException("Process error", e);
         }

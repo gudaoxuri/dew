@@ -16,6 +16,7 @@
 
 package ms.dew.devops.kernel.flow.prepare;
 
+import ms.dew.devops.exception.ProjectProcessException;
 import ms.dew.devops.helper.DockerHelper;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
@@ -64,64 +65,44 @@ public abstract class BasicPrepareFlow extends BasicFlow {
     protected abstract Optional<String> getPackageCmd(FinalProjectConfig config, String currentPath);
 
     /**
-     * Gets error compensation package cmd.
-     *
-     * @param config      the config
-     * @param currentPath the current path
-     * @return the error process package cmd
-     */
-    protected abstract Optional<String> getErrorCompensationPackageCmd(FinalProjectConfig config, String currentPath);
-
-
-    /**
      * Post prepare build.
      *
      * @param config       the project config
      * @param flowBasePath the flow base path
-     * @return build result
      * @throws IOException the io exception
      */
-    protected boolean postPrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
-        return true;
+    protected void postPrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
     }
 
     @Override
-    protected boolean process(FinalProjectConfig config, String flowBasePath) throws IOException {
+    protected void process(FinalProjectConfig config, String flowBasePath) throws IOException {
         if (!config.getDisableReuseVersion()) {
             // 重用模式下不用再执行准备操作
-            return true;
+            return;
         }
         if (DockerHelper.inst(config.getId()).registry.exist(config.getCurrImageName())) {
             // 镜像已存在不用再执行准备操作
-            return true;
+            return;
         }
         // 镜像不存在时执行准备操作
-        if (!execPackageCmd(config)) {
-            Dew.log.warn("Finished,because [execPackageCmd] is false");
-            return false;
-        }
-        if (!postPrepareBuild(config, flowBasePath)) {
-            Dew.log.warn("Finished,because [postPrepareBuild] is false");
-            return false;
-        }
-        return true;
+        execPackageCmd(config, false);
+        postPrepareBuild(config, flowBasePath);
     }
 
-    private boolean execPackageCmd(FinalProjectConfig config) {
+    private void execPackageCmd(FinalProjectConfig config, boolean retry) {
         String currentPath = Dew.Config.getCurrentProject().getMvnDirectory();
         Optional<String> packageCmdOpt = getPackageCmd(config, currentPath);
         if (!packageCmdOpt.isPresent()) {
             // 不用执行命令
-            return true;
+            return;
         }
-
         boolean result;
-        if (needExecutePreparePackageCmd(config, currentPath)) {
+        if (retry || needExecutePreparePackageCmd(config, currentPath)) {
             Optional<String> preparePackageCmdOpt = getPreparePackageCmd(config, currentPath);
             if (!preparePackageCmdOpt.isPresent()) {
                 // 失败处理命令失败
                 Dew.log.warn("Prepare package command needs to be executed, but the command does not exist");
-                return false;
+                throw new ProjectProcessException("Prepare package command needs to be executed, but the command does not exist");
             }
             result = ShellHelper.execCmd("preparePackageCmd", new HashMap<String, String>() {
                 {
@@ -131,7 +112,7 @@ public abstract class BasicPrepareFlow extends BasicFlow {
             if (!result) {
                 // 预打包命令执行失败
                 Dew.log.warn("Prepare package command execution failed");
-                return false;
+                throw new ProjectProcessException("Prepare package command execution failed");
             }
         }
         result = ShellHelper.execCmd("packageCmd", new HashMap<String, String>() {
@@ -141,22 +122,15 @@ public abstract class BasicPrepareFlow extends BasicFlow {
         }, packageCmdOpt.get());
         if (result) {
             // 命令执行成功
-            return true;
+            return;
         }
-        // 命令执行失败，尝试进行失败处理后重试
-        Optional<String> errorCompensationPackageCmdOpt = getErrorCompensationPackageCmd(config, currentPath);
-        if (!errorCompensationPackageCmdOpt.isPresent()) {
-            // 失败处理命令不存在，无法重试
-            return false;
+        if (!retry) {
+            // 命令执行失败，尝试进行强制执行预打包命令
+            Dew.log.info("Package command execution failed, try to enforce execution prepare package command");
+            execPackageCmd(config, true);
+        } else {
+            throw new ProjectProcessException("Retry package command execution failed");
         }
-        Dew.log.info("Package command execution failed, try exception recovery");
-        // 失败处理操作
-        result = ShellHelper.execCmd("errorCompensationPackageCmd", new HashMap<String, String>() {
-            {
-                put("NODE_ENV", config.getProfile());
-            }
-        }, errorCompensationPackageCmdOpt.get());
-        return result;
     }
 
 }

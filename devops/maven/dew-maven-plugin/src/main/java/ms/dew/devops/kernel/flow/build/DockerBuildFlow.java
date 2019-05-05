@@ -40,25 +40,19 @@ public abstract class DockerBuildFlow extends BasicFlow {
      *
      * @param config       the project config
      * @param flowBasePath the flow base path
-     * @return the build result
      * @throws IOException the io exception
      */
-    protected boolean preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
-        return true;
+    protected void preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
     }
 
     @Override
-    protected boolean process(FinalProjectConfig config, String flowBasePath) throws IOException {
+    protected void process(FinalProjectConfig config, String flowBasePath) throws IOException {
         // 先判断是否存在
         if (!DockerHelper.inst(config.getId()).registry.exist(config.getCurrImageName())) {
-            boolean result;
             if (config.getDisableReuseVersion()) {
-                result = processByNewImage(config, flowBasePath);
+                processByNewImage(config, flowBasePath);
             } else {
-                result = processByReuse(config);
-            }
-            if (!result) {
-                return false;
+                processByReuse(config);
             }
             // push 到 registry
             if (config.getDocker().getRegistryUrl() == null
@@ -71,16 +65,14 @@ public abstract class DockerBuildFlow extends BasicFlow {
         } else {
             Dew.log.info("Ignore build, because image " + config.getCurrImageName() + " already exist");
         }
-        return true;
     }
 
     /**
      * 重用版本模式下的处理.
      *
      * @param config the project config
-     * @return the build result
      */
-    private boolean processByReuse(FinalProjectConfig config) {
+    private void processByReuse(FinalProjectConfig config) {
         String reuseImageName = config.getImageName(
                 config.getAppendProfile().getDocker().getRegistryHost(),
                 config.getAppendProfile().getNamespace(),
@@ -91,7 +83,6 @@ public abstract class DockerBuildFlow extends BasicFlow {
         DockerHelper.inst(config.getId() + "-append").image.pull(reuseImageName, true);
         // 打上当前镜像的Tag
         DockerHelper.inst(config.getId() + "-append").image.copy(reuseImageName, config.getCurrImageName());
-        return true;
     }
 
     /**
@@ -99,15 +90,11 @@ public abstract class DockerBuildFlow extends BasicFlow {
      *
      * @param config       the project config
      * @param flowBasePath the flow base path
-     * @return the build result
      * @throws IOException the io exception
      */
-    private boolean processByNewImage(FinalProjectConfig config, String flowBasePath) throws IOException {
+    private void processByNewImage(FinalProjectConfig config, String flowBasePath) throws IOException {
         Dew.log.info("Building image : " + config.getCurrImageName());
-        if (!preDockerBuild(config, flowBasePath)) {
-            Dew.log.debug("Finished,because [preDockerBuild] is false");
-            return false;
-        }
+        preDockerBuild(config, flowBasePath);
         if (config.getDocker().getImage() != null
                 && !config.getDocker().getImage().trim().isEmpty()) {
             // 如果存在自定义镜像则替换默认的镜像
@@ -121,7 +108,6 @@ public abstract class DockerBuildFlow extends BasicFlow {
                 put("PORT", config.getApp().getPort() + "");
             }
         });
-        return true;
     }
 
 }

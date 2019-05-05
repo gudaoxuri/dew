@@ -430,7 +430,9 @@ public class Dew {
          */
         private static void shutdownHook() {
             ExitMonitorProcessor.hook(status -> {
-                if (status != 0) {
+                if (status != 0
+                        && !Dew.Config.getCurrentProject().isHasError()
+                        && Dew.Config.getCurrentProject().getSkipReason().isEmpty()) {
                     Dew.Config.getCurrentProject().skip("Uncaught error", true);
                 }
                 ExecuteEventProcessor.onShutdown(Config.getProjects());
