@@ -57,6 +57,7 @@ public class AllTest {
 
     @Resource
     private MetricsTest metricsTest;
+
     /**
      * Test all.
      *
@@ -69,8 +70,7 @@ public class AllTest {
         authTest.testAll();
         /*notifyTest.testAll();
         docTest.testAll();*/
-
-//        metricsTest.testMetric();
+        metricsTest.testMetric();
 
     }
 

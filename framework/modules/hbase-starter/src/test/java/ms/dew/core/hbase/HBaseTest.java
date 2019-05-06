@@ -29,24 +29,30 @@ import java.io.IOException;
 @Ignore("Need start hbase server")
 public class HBaseTest {
 
-    private final String TABLE_NAME = "DMP:hbaseDemo";
-    private final String ROW_KEY = "rk001";
-    private final String FAMILY_NAME = "0";
-    private final String QUALIFIER_NAME = "name";
-    private final String VALUE = "zhangsan";
+    private static final String TABLE_NAME = "DMP:hbaseDemo";
+    private static final String ROW_KEY = "rk001";
+    private static final String FAMILY_NAME = "0";
+    private static final String QUALIFIER_NAME = "name";
+    private static final String VALUE = "zhangsan";
     @Autowired
     private HBaseTemplate hbaseTemplate;
 
+    /**
+     * Before.
+     *
+     * @throws Exception the exception
+     */
     @PostConstruct
     public void before() throws Exception {
         if (!hbaseTemplate.getConnection().getAdmin().tableExists(TableName.valueOf(TABLE_NAME))) {
-            TableDescriptorBuilder.ModifyableTableDescriptor tableDesc = new TableDescriptorBuilder.ModifyableTableDescriptor(
-                    TableName.valueOf(TABLE_NAME));
-            ColumnFamilyDescriptorBuilder.ModifyableColumnFamilyDescriptor columnDesc = new ColumnFamilyDescriptorBuilder.ModifyableColumnFamilyDescriptor(Bytes.toBytes(FAMILY_NAME));
+            TableDescriptorBuilder.ModifyableTableDescriptor tableDesc =
+                    new TableDescriptorBuilder.ModifyableTableDescriptor(TableName.valueOf(TABLE_NAME));
+            ColumnFamilyDescriptorBuilder.ModifyableColumnFamilyDescriptor columnDesc =
+                    new ColumnFamilyDescriptorBuilder.ModifyableColumnFamilyDescriptor(Bytes.toBytes(FAMILY_NAME));
             tableDesc.setColumnFamily(columnDesc);
             hbaseTemplate.getConnection().getAdmin().createTable(tableDesc);
         }
-        hbaseTemplate.execute(TABLE_NAME,tb -> {
+        hbaseTemplate.execute(TABLE_NAME, tb -> {
             Put put = new Put(Bytes.toBytes(ROW_KEY));
             put.addColumn(Bytes.toBytes(FAMILY_NAME), Bytes.toBytes(QUALIFIER_NAME), Bytes.toBytes(VALUE));
             tb.put(put);
@@ -54,12 +60,24 @@ public class HBaseTest {
         });
     }
 
+    /**
+     * Hbase test.
+     *
+     * @throws IOException the io exception
+     */
     @Test
     public void hbaseTest() throws IOException {
-        String st = hbaseTemplate.get(TABLE_NAME, ROW_KEY, FAMILY_NAME, QUALIFIER_NAME, (result, row) -> Bytes.toString(result.value()));
+        String st = hbaseTemplate
+                .get(TABLE_NAME, ROW_KEY, FAMILY_NAME, QUALIFIER_NAME,
+                        (result, row) -> Bytes.toString(result.value()));
         Assert.assertEquals(VALUE, st);
     }
 
+    /**
+     * After.
+     *
+     * @throws IOException the io exception
+     */
     @After
     public void after() throws IOException {
         hbaseTemplate.getConnection().getAdmin().disableTable(TableName.valueOf(TABLE_NAME));
