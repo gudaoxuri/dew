@@ -32,6 +32,7 @@ public class MetricsTest {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
+
     /**
      * Test metric.
      *
