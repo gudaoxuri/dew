@@ -1,4 +1,4 @@
 spring:
   application:
-    name: todo-compute
+    name: compute
 

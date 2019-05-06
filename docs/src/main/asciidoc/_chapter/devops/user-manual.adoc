@@ -1,6 +1,71 @@
 [[devops-user-manual]]
 === DevOps使用手册[TBD]
 
+NOTE: ``Dew`` DevOps部分的核心是由 ``dew-maven-plugin`` 实现。
+
+[[devops-user-manual-import]]
+==== 引入方式
+
+===== 使用 ``Dew Framework``
+
+如果您的项目使用 ``Dew Framework`` 构建则只要确保引入了 ``parent-starter`` 即可。
+
+
+
+`Dew` 所有模块均为Maven结构，使用如下：
+
+[source,xml]
+----
+<!--引入Dew父依赖，也可以使用import方式-->
+<parent>
+    <groupId>ms.dew</groupId>
+    <artifactId>parent-starter</artifactId>
+    <!--生产环境请选择合适的版本!-->
+    <version>${dew.version}</version>
+</parent>
+...
+<dependencies>
+    <!--引入需要的模块-->
+    <dependency>
+        <groupId>ms.dew</groupId>
+        <artifactId>对应模块名，见下文</artifactId>
+    </dependency>
+</dependencies>
+...
+<!--开发者介绍-->
+<developers>
+    <developer>
+        <name>...</name>
+        <email>...</email>
+    </developer>
+</developers>
+<!--SCM信息-->
+<scm>
+    <connection>...</connection>
+    <developerConnection>...</developerConnection>
+    <url></url>
+</scm>
+...
+----
+
+TIP: ``parent-starter`` 中已包含各模块的版本，引用模块依赖时可省略版本号。
+
+.功能模块
+
+|===
+|模块名                |核心功能
+
+| parent-starter      | 父Pom模块
+| boot-starter        | 核心模块，包含Spring Boot Web相关依赖
+| cloud-starter       | Cloud模块，包含Spring Cloud Kuberenetes相关依赖
+| cluster-common      | 集群能力接口
+| cluster-hazelcast   | Hazelcast集群能力实现
+| cluster-rabbit      | RabbitMQ集群能力实现
+| cluster-redis       | Redis集群能力实现
+| idempotent-starter  | 幂等处理模块
+| notification        | 通知处理模块
+|===
+
 CI/CD
 
 通过分支变更触发

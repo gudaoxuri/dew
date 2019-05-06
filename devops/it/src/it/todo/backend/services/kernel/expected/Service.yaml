@@ -6,12 +6,12 @@ metadata:
     dew.ms/scm-url: ''
     sidecar.jaegertracing.io/inject: 'true'
   labels:
-    app: todo-kernel
+    app: kernel
     provider: dew
     version: '0001'
     expose: 'true'
     group: ms.dew.devops.it
-  name: todo-kernel
+  name: kernel
   namespace: dew-prod
 spec:
   ports:
@@ -20,5 +20,5 @@ spec:
     protocol: TCP
     targetPort: 8080
   selector:
-    app: todo-kernel
+    app: kernel
     group: ms.dew.devops.it

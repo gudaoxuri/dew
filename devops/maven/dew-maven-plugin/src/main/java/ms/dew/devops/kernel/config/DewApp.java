@@ -45,7 +45,7 @@ public class DewApp {
     // 存活检测失败次数阈值，超过后销毁当前实例并重启另一个实例，仅用于后端服务
     private int livenessFailureThreshold = 6;
     // 首次可用检测延迟时间，仅用于后端服务
-    private int readinessInitialDelaySeconds = 10;
+    private int readinessInitialDelaySeconds = 30;
     // 可用检测周期，仅用于后端服务
     private int readinessPeriodSeconds = 30;
     // 可用检测失败次数阈值，超过后当前实例不可用，仅用于后端服务

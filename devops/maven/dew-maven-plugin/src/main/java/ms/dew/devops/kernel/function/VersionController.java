@@ -41,6 +41,11 @@ public class VersionController {
      */
     public static final String FLAG_KUBE_RESOURCE_GIT_COMMIT = "dew.ms/git-commit";
 
+    /**
+     * The constant FLAG_KUBE_RESOURCE_APP_VERSION.
+     */
+    public static final String FLAG_KUBE_RESOURCE_APP_VERSION = "version";
+
     private static final String FLAG_VERSION_APP = "app";
     private static final String FLAG_VERSION_KIND = "kind";
     private static final String FLAG_VERSION_LAST_UPDATE_TIME = "lastUpdateTime";
@@ -51,18 +56,20 @@ public class VersionController {
      * Add new version.
      *
      * @param config       the config
+     * @param appVersion   the app version
      * @param gitCommit    the git commit
      * @param reRelease    the re release
      * @param data         the data
      * @param appendLabels the append labels
      * @throws ApiException the api exception
      */
-    public static void addNewVersion(FinalProjectConfig config, String gitCommit,
+    public static void addNewVersion(FinalProjectConfig config, String appVersion, String gitCommit,
                                      boolean reRelease, Map<String, String> data, Map<String, String> appendLabels)
             throws ApiException {
         Map<String, String> labels = new HashMap<String, String>() {
             {
                 put(FLAG_VERSION_APP, config.getAppName());
+                put(FLAG_KUBE_RESOURCE_APP_VERSION, appVersion);
                 put(FLAG_KUBE_RESOURCE_GIT_COMMIT, gitCommit);
                 put(FLAG_VERSION_KIND, "version");
                 put(FLAG_VERSION_ENABLED, "true");
@@ -72,7 +79,7 @@ public class VersionController {
         };
         labels.putAll(appendLabels);
         V1ConfigMap currVerConfigMap = new KubeConfigMapBuilder().build(
-                getVersionName(config, gitCommit), config.getNamespace(), labels, data);
+                getVersionName(config, appVersion), config.getNamespace(), labels, data);
         KubeHelper.inst(config.getId()).apply(currVerConfigMap);
     }
 
@@ -80,27 +87,27 @@ public class VersionController {
      * Has version.
      *
      * @param config      the config
-     * @param gitCommit   the git commit
+     * @param appVersion  the app version
      * @param onlyEnabled the only enabled
      * @return the boolean
      * @throws ApiException the api exception
      */
-    public static boolean hasVersion(FinalProjectConfig config, String gitCommit, boolean onlyEnabled) throws ApiException {
-        return getVersion(config, gitCommit, onlyEnabled) != null;
+    public static boolean hasVersion(FinalProjectConfig config, String appVersion, boolean onlyEnabled) throws ApiException {
+        return getVersion(config, appVersion, onlyEnabled) != null;
     }
 
     /**
      * 从kubernetes中获取指定的版本.
      *
      * @param config      the project config
-     * @param gitCommit   the git commit
+     * @param appVersion  the app version
      * @param onlyEnabled the only enabled
      * @return the old version
      * @throws ApiException the api exception
      */
-    public static V1ConfigMap getVersion(FinalProjectConfig config, String gitCommit, boolean onlyEnabled) throws ApiException {
+    public static V1ConfigMap getVersion(FinalProjectConfig config, String appVersion, boolean onlyEnabled) throws ApiException {
         V1ConfigMap oldVersion = KubeHelper.inst(config.getId())
-                .read(getVersionName(config, gitCommit),
+                .read(getVersionName(config, appVersion),
                         config.getNamespace(),
                         KubeRES.CONFIG_MAP, V1ConfigMap.class);
         if (oldVersion != null && (!onlyEnabled || oldVersion.getMetadata().getLabels().get(FLAG_VERSION_ENABLED).equalsIgnoreCase("true"))) {
@@ -157,12 +164,12 @@ public class VersionController {
     /**
      * 从kubernetes中删除版本.
      *
-     * @param config    the project config
-     * @param gitCommit the git commit
+     * @param config     the project config
+     * @param appVersion the app version
      * @throws ApiException the api exception
      */
-    public static void deleteVersion(FinalProjectConfig config, String gitCommit) throws ApiException {
-        V1ConfigMap version = getVersion(config, gitCommit, false);
+    public static void deleteVersion(FinalProjectConfig config, String appVersion) throws ApiException {
+        V1ConfigMap version = getVersion(config, appVersion, false);
         if (version != null) {
             KubeHelper.inst(config.getId()).delete(version.getMetadata().getName(), version.getMetadata().getNamespace(), KubeRES.CONFIG_MAP);
         }
@@ -183,16 +190,29 @@ public class VersionController {
     }
 
     /**
-     * Gets git commit.
+     * Gets app version.
      *
      * @param service the service
-     * @return the git commit
+     * @return the app version
      */
-    public static String getGitCommit(V1Service service) {
+    public static String getAppVersion(V1Service service) {
         if (service == null) {
             return null;
         }
-        return service.getMetadata().getAnnotations().get(FLAG_KUBE_RESOURCE_GIT_COMMIT);
+        return service.getMetadata().getLabels().get(FLAG_KUBE_RESOURCE_APP_VERSION);
+    }
+
+    /**
+     * Gets app version.
+     *
+     * @param versionMap the version
+     * @return the app version
+     */
+    public static String getAppVersion(V1ConfigMap versionMap) {
+        if (versionMap == null) {
+            return null;
+        }
+        return versionMap.getMetadata().getLabels().get(FLAG_KUBE_RESOURCE_APP_VERSION);
     }
 
     /**
@@ -224,12 +244,12 @@ public class VersionController {
     /**
      * Get version name.
      *
-     * @param config    the project config
-     * @param gitCommit the git commit
+     * @param config     the project config
+     * @param appVersion the app version
      * @return the version name
      */
-    public static String getVersionName(FinalProjectConfig config, String gitCommit) {
-        return "ver." + config.getAppName() + "." + gitCommit;
+    public static String getVersionName(FinalProjectConfig config, String appVersion) {
+        return "ver." + config.getAppName() + "." + appVersion;
     }
 
 

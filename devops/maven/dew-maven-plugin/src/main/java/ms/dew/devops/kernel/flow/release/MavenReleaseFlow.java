@@ -37,12 +37,13 @@ public class MavenReleaseFlow extends BasicFlow {
 
     @Override
     protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
-        VersionController.addNewVersion(config, config.getGitCommit(), false, new HashMap<>(), new HashMap<>());
+        VersionController.addNewVersion(config, config.getAppVersion(), config.getGitCommit(), false, new HashMap<>(), new HashMap<>());
         List<V1ConfigMap> versions = VersionController.getVersionHistory(config, false);
         for (V1ConfigMap version : versions) {
-            String gitCommit = VersionController.getGitCommit(version);
-            if (!gitCommit.equalsIgnoreCase(config.getGitCommit())) {
-                VersionController.deleteVersion(config, gitCommit);
+            String appVersion = VersionController.getAppVersion(version);
+            // Maven项目只需要保留一个最新版本
+            if (!appVersion.equalsIgnoreCase(config.getAppVersion())) {
+                VersionController.deleteVersion(config, appVersion);
             }
         }
     }

@@ -37,6 +37,6 @@ public class Constants {
     /**
      * The constant REST_COMPUTE_SERVICE.
      */
-    public static final String REST_COMPUTE_SERVICE = "todo-compute";
+    public static final String REST_COMPUTE_SERVICE = "compute";
 
 }

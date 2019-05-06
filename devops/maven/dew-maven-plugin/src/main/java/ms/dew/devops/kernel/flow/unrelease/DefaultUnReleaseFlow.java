@@ -41,7 +41,7 @@ public class DefaultUnReleaseFlow extends BasicFlow {
         KubeHelper.inst(config.getId()).delete(config.getAppName(), config.getNamespace(), KubeRES.DEPLOYMENT);
         // 删除 ReplicaSet
         List<V1beta1ReplicaSet> rsList = KubeHelper.inst(
-                config.getId()).list("app=" + config.getAppName() + ",group=" + config.getAppGroup() + ",version=" + config.getGitCommit(),
+                config.getId()).list("app=" + config.getAppName() + ",group=" + config.getAppGroup() + ",version=" + config.getAppVersion(),
                 config.getNamespace(), KubeRES.REPLICA_SET, V1beta1ReplicaSet.class);
         for (V1beta1ReplicaSet rs : rsList) {
             KubeHelper.inst(config.getId()).delete(rs.getMetadata().getName(), rs.getMetadata().getNamespace(), KubeRES.REPLICA_SET);
@@ -49,7 +49,7 @@ public class DefaultUnReleaseFlow extends BasicFlow {
         // 删除 pod
         List<V1Pod> pods = KubeHelper.inst(
                 config.getId()).list(
-                "app=" + config.getAppName() + ",group=" + config.getAppGroup() + ",version=" + config.getGitCommit(),
+                "app=" + config.getAppName() + ",group=" + config.getAppGroup() + ",version=" + config.getAppVersion(),
                 config.getNamespace(), KubeRES.POD, V1Pod.class);
         for (V1Pod rs : pods) {
             KubeHelper.inst(config.getId()).delete(rs.getMetadata().getName(), rs.getMetadata().getNamespace(), KubeRES.POD);
