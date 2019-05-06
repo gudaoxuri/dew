@@ -131,12 +131,6 @@ public class Dew {
          * 仅对发布/回滚有效
          */
         public static final String FLAG_DEW_DEVOPS_MAVEN_VERSION_EXIST_IGNORE = "dew.devops.maven.version.exist.ignore";
-        /**
-         * 自定义版本标识.
-         * <p>
-         * NOTE: 仅用于集成测试，实际场景中慎用！
-         */
-        public static final String FLAG_DEW_DEVOPS_VERSION_CUST = "dew.devops.version.custom";
 
         // ============= 日志及调试场景使用 =============
         /**
@@ -260,7 +254,6 @@ public class Dew {
          * @param inputDockerRegistryUserName the input docker registry user name
          * @param inputDockerRegistryPassword the input docker registry password
          * @param inputKubeBase64Config       the input kube base 64 config
-         * @param customVersion               the input custom version, 实际场景慎用
          * @param mockClasspath               the input mock classpath， 仅用于Mock
          * @throws IllegalAccessException    the illegal access exception
          * @throws IOException               the io exception
@@ -270,8 +263,7 @@ public class Dew {
                                 String inputProfile,
                                 String inputDockerHost, String inputDockerRegistryUrl,
                                 String inputDockerRegistryUserName, String inputDockerRegistryPassword,
-                                String inputKubeBase64Config,
-                                String customVersion, String mockClasspath)
+                                String inputKubeBase64Config, String mockClasspath)
                 throws IllegalAccessException, IOException, InvocationTargetException {
             Dew.mavenSession = session;
             Dew.mavenPluginManager = pluginManager;
@@ -286,7 +278,7 @@ public class Dew {
                 YamlHelper.init(log);
                 initFinalConfig(inputProfile,
                         inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
-                        inputKubeBase64Config, customVersion);
+                        inputKubeBase64Config);
                 Config.getProjects().values().forEach(config -> {
                     DockerHelper.init(config.getId(), log,
                             config.getDocker().getHost(),
@@ -323,7 +315,6 @@ public class Dew {
          * @param inputDockerRegistryUserName the input docker registry user name
          * @param inputDockerRegistryPassword the input docker registry password
          * @param inputKubeBase64Config       the input kube base 64 config
-         * @param customVersion               the custom version
          * @throws IOException               the io exception
          * @throws InvocationTargetException the invocation target exception
          * @throws IllegalAccessException    the illegal access exception
@@ -331,7 +322,7 @@ public class Dew {
         private static void initFinalConfig(String inputProfile,
                                             String inputDockerHost, String inputDockerRegistryUrl,
                                             String inputDockerRegistryUserName, String inputDockerRegistryPassword,
-                                            String inputKubeBase64Config, String customVersion)
+                                            String inputKubeBase64Config)
                 throws IOException, InvocationTargetException, IllegalAccessException {
             String basicDirectory = mavenSession.getTopLevelProject().getBasedir().getPath() + File.separator;
             // 基础配置
@@ -367,7 +358,7 @@ public class Dew {
                 }
                 Optional<FinalProjectConfig> finalProjectConfigOpt = ConfigBuilder.buildProject(dewConfig, project, inputProfile,
                         inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
-                        inputKubeBase64Config, customVersion);
+                        inputKubeBase64Config);
                 if (finalProjectConfigOpt.isPresent()) {
                     Config.config.getProjects().put(project.getId(), finalProjectConfigOpt.get());
                     log.debug("[" + project.getGroupId() + ":" + project.getArtifactId() + "] configured");
@@ -390,6 +381,7 @@ public class Dew {
                     config.getArgs().put("msgType", "markdown");
                 }
             });
+            // 对于根项目为 skip 的情况强制启用通知
             DewProfile dewProfile = Config.basicProfileConfig;
             if (dewProfile != null && dewProfile.getNotify() != null) {
                 if (!dewProfile.getNotify().getArgs().containsKey("msgType")) {
@@ -446,6 +438,7 @@ public class Dew {
      */
     public static class Config {
 
+        // e.g. maven.test.skip
         private static final Map<String, Map<String, String>> mavenProps = new HashMap<>();
 
         // 基础配置，全局 .dew 配置对应的当前Profile

@@ -45,35 +45,35 @@ public class DefaultRollbackFlow extends BasicFlow {
 
     protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
         V1Service service = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(), KubeRES.SERVICE, V1Service.class);
-        String currentGitCommit = null;
+        String currentAppVersion = null;
         if (service != null) {
-            currentGitCommit = VersionController.getGitCommit(service);
+            currentAppVersion = VersionController.getAppVersion(service);
         }
         Map<String, V1ConfigMap> versions = VersionController.getVersionHistory(config, true).stream()
                 .collect(Collectors
-                        .toMap(VersionController::getGitCommit, ver -> ver,
+                        .toMap(VersionController::getAppVersion, ver -> ver,
                                 (v1, v2) -> v1, LinkedHashMap::new));
-        String finalCurrentGitCommit = currentGitCommit;
+        String finalCurrentAppVersion = currentAppVersion;
         String sb = "\r\n------------------ Please select rollback version : ------------------\r\n"
                 + versions.entrySet().stream()
                 .map(ver -> " < " + ver.getKey() + " > Last update time : "
                         + $.time().yyyy_MM_dd_HH_mm_ss_SSS.format(
                         new Date(VersionController.getLastUpdateTime(ver.getValue())))
-                        + (finalCurrentGitCommit != null && finalCurrentGitCommit.equalsIgnoreCase(ver.getKey()) ? " [Online]" : ""))
+                        + (finalCurrentAppVersion != null && finalCurrentAppVersion.equalsIgnoreCase(ver.getKey()) ? " [Online]" : ""))
                 .collect(Collectors.joining("\r\n"))
                 + "\r\n---------------------------------------------------------------------\r\n";
         Dew.log.info(sb);
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String selected = reader.readLine().trim();
-        while (!versions.containsKey(selected) || selected.equalsIgnoreCase(finalCurrentGitCommit)) {
+        while (!versions.containsKey(selected) || selected.equalsIgnoreCase(finalCurrentAppVersion)) {
             Dew.log.error("Version number illegal,please re-enter");
             reader = new BufferedReader(new InputStreamReader(System.in));
             selected = reader.readLine().trim();
         }
         // 要回滚的版本
-        String rollbackGitCommit = VersionController.getGitCommit(versions.get(selected));
+        String rollbackAppVersion = VersionController.getAppVersion(versions.get(selected));
         // 调用部署流程执行重新部署
-        new KubeReleaseFlow().release(config, rollbackGitCommit);
+        new KubeReleaseFlow().release(config, rollbackAppVersion);
     }
 
 }

@@ -25,8 +25,8 @@ import org.junit.Test;
  */
 public class SomeTest {
 
-    @Test
+    /*@Test
     public void testAll() throws Exception {
         throw new Exception("Has error.");
-    }
+    }*/
 }

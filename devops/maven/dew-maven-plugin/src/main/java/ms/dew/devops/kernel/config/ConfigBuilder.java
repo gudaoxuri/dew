@@ -17,6 +17,7 @@
 package ms.dew.devops.kernel.config;
 
 import com.ecfront.dew.common.$;
+import com.fasterxml.jackson.databind.JsonNode;
 import ms.dew.devops.exception.ConfigException;
 import ms.dew.devops.helper.GitHelper;
 import ms.dew.devops.helper.YamlHelper;
@@ -24,6 +25,8 @@ import ms.dew.devops.kernel.Dew;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -98,7 +101,6 @@ public class ConfigBuilder {
      * @param inputDockerRegistryUserName the input docker registry user name
      * @param inputDockerRegistryPassword the input docker registry password
      * @param inputKubeBase64Config       the input kube base 64 config
-     * @param customVersion               the custom version
      * @return the final project config
      * @throws InvocationTargetException the invocation target exception
      * @throws IllegalAccessException    the illegal access exception
@@ -107,7 +109,7 @@ public class ConfigBuilder {
                                                             String inputProfile,
                                                             String inputDockerHost, String inputDockerRegistryUrl,
                                                             String inputDockerRegistryUserName, String inputDockerRegistryPassword,
-                                                            String inputKubeBase64Config, String customVersion)
+                                                            String inputKubeBase64Config)
             throws InvocationTargetException, IllegalAccessException {
         // 格式化
         inputProfile = inputProfile.toLowerCase();
@@ -158,7 +160,7 @@ public class ConfigBuilder {
         FinalProjectConfig finalProjectConfig = doBuildProject(dewConfig, mavenProject,
                 inputProfile, inputDockerHost, inputDockerRegistryUrl,
                 inputDockerRegistryUserName, inputDockerRegistryPassword,
-                inputKubeBase64Config, customVersion);
+                inputKubeBase64Config);
         if (finalProjectConfig.getKube().getBase64Config().isEmpty()) {
             throw new ConfigException("[" + mavenProject.getArtifactId() + "] Kubernetes config can't be empty");
         }
@@ -169,7 +171,7 @@ public class ConfigBuilder {
                                                      String inputProfile,
                                                      String inputDockerHost, String inputDockerRegistryUrl,
                                                      String inputDockerRegistryUserName, String inputDockerRegistryPassword,
-                                                     String inputKubeBase64Config, String customVersion)
+                                                     String inputKubeBase64Config)
             throws InvocationTargetException, IllegalAccessException {
         FinalProjectConfig finalProjectConfig = new FinalProjectConfig();
         if (inputProfile.equalsIgnoreCase(Dew.Constants.FLAG_DEW_DEVOPS_DEFAULT_PROFILE)) {
@@ -198,7 +200,7 @@ public class ConfigBuilder {
         // 执行各插件
         Plugin.fillMaven(finalProjectConfig, mavenProject);
         Plugin.fillApp(finalProjectConfig, mavenProject);
-        Plugin.fillGit(finalProjectConfig, customVersion);
+        Plugin.fillGit(finalProjectConfig);
         Plugin.fillReuseVersionInfo(finalProjectConfig, dewConfig);
         return finalProjectConfig;
     }
@@ -254,8 +256,6 @@ public class ConfigBuilder {
          * @param mavenProject       the maven project
          */
         static void fillMaven(FinalProjectConfig finalProjectConfig, MavenProject mavenProject) {
-            finalProjectConfig.setMvnGroupId(mavenProject.getGroupId());
-            finalProjectConfig.setMvnArtifactId(mavenProject.getArtifactId());
             finalProjectConfig.setMvnDirectory(mavenProject.getBasedir().getPath() + File.separator);
             finalProjectConfig.setMvnTargetDirectory(finalProjectConfig.getMvnDirectory() + "target" + File.separator);
         }
@@ -274,29 +274,64 @@ public class ConfigBuilder {
             } else {
                 finalProjectConfig.setAppShowName(mavenProject.getArtifactId());
             }
-            if (finalProjectConfig.getKind() == AppKind.FRONTEND) {
-                finalProjectConfig.getApp().setPort(80);
-                finalProjectConfig.getApp().setTraceLogEnabled(false);
-                finalProjectConfig.getApp().setMetricsEnabled(false);
+            switch (finalProjectConfig.getKind()) {
+                case FRONTEND:
+                    finalProjectConfig.getApp().setPort(80);
+                    finalProjectConfig.getApp().setTraceLogEnabled(false);
+                    finalProjectConfig.getApp().setMetricsEnabled(false);
+                    break;
+                case JVM_SERVICE:
+                    Arrays.stream(new File(mavenProject.getBasedir().getPath() + File.separator
+                            + "src" + File.separator
+                            + "main" + File.separator
+                            + "resources").listFiles())
+                            .filter((res -> res.getName().toLowerCase().contains("application")
+                                    || res.getName().toLowerCase().contains("bootstrap")))
+                            .map(file -> {
+                                try {
+                                    if (file.getName().toLowerCase().endsWith("yaml") || file.getName().toLowerCase().endsWith("yml")) {
+                                        Map config = YamlHelper.toObject($.file.readAllByFile(file, "UTF-8"));
+                                        if (config.containsKey("spring")
+                                                && ((Map) config.get("spring")).containsKey("application")
+                                                && ((Map) ((Map) config.get("spring")).get("application")).containsKey("name")) {
+                                            return ((Map) ((Map) config.get("spring")).get("application")).get("name").toString();
+                                        }
+                                    } else if (file.getName().toLowerCase().endsWith("properties")) {
+                                        Properties properties = new Properties();
+                                        properties.load(new FileInputStream(file));
+                                        if (properties.containsKey("spring.application.name")) {
+                                            return properties.getProperty("spring.application.name");
+                                        }
+                                    } else if (file.getName().toLowerCase().endsWith("json")) {
+                                        JsonNode config = $.json.toJson($.file.readAllByFile(file, "UTF-8"));
+                                        if (config.has("spring")
+                                                && config.get("spring").has("application")
+                                                && config.get("spring").get("application").has("name")) {
+                                            return config.get("spring").get("application").get("name").asText();
+                                        }
+                                    }
+                                    return null;
+                                } catch (IOException e) {
+                                    return null;
+                                }
+                            })
+                            .filter(Objects::nonNull)
+                            .findFirst()
+                            .ifPresent(finalProjectConfig::setAppName);
+                    break;
+                default:
             }
-
         }
 
         /**
          * Fill git.
          *
          * @param finalProjectConfig the final project config
-         * @param customVersion      the custom version
          */
-        static void fillGit(FinalProjectConfig finalProjectConfig, String customVersion) {
-            if (customVersion != null && !customVersion.trim().isEmpty()) {
-                Dew.log.warn("Currently in custom version mode, git check is ignored, custom version is " + customVersion);
-                finalProjectConfig.setGitCommit(customVersion);
-                finalProjectConfig.setScmUrl("");
-            } else {
-                finalProjectConfig.setScmUrl(GitHelper.inst().getScmUrl());
-                finalProjectConfig.setGitCommit(GitHelper.inst().getCurrentCommit());
-            }
+        static void fillGit(FinalProjectConfig finalProjectConfig) {
+            finalProjectConfig.setScmUrl(GitHelper.inst().getScmUrl());
+            finalProjectConfig.setGitCommit(GitHelper.inst().getCurrentCommit());
+            finalProjectConfig.setAppVersion(finalProjectConfig.getGitCommit());
         }
 
         /**
@@ -413,8 +448,6 @@ public class ConfigBuilder {
                         + "OR '.dew' profile configuration file");
             }
             finalProjectConfig.setAppendProfile(appendProfile);
-            // 重用版本时Git信息后续会重用目标Git信息
-            finalProjectConfig.setGitCommit("");
         }
     }
 }

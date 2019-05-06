@@ -6,12 +6,12 @@ metadata:
     dew.ms/scm-url: ''
     sidecar.jaegertracing.io/inject: 'true'
   labels:
-    app: todo-notifier
+    app: notifier
     provider: dew
     version: '0001'
     expose: 'true'
     group: ms.dew.devops.it
-  name: todo-notifier
+  name: notifier
   namespace: dew-prod
 spec:
   ports:
@@ -20,5 +20,5 @@ spec:
     protocol: TCP
     targetPort: 8080
   selector:
-    app: todo-notifier
+    app: notifier
     group: ms.dew.devops.it

@@ -65,13 +65,12 @@ public class AllTest {
      */
     @Test
     public void testAll() throws Exception {
-        /*clusterTest.testAll();
-        webTest.testAll();*/
+        clusterTest.testAll();
+        webTest.testAll();
         authTest.testAll();
-        /*notifyTest.testAll();
-        docTest.testAll();*/
+        notifyTest.testAll();
+        docTest.testAll();
         metricsTest.testMetric();
-
     }
 
 }

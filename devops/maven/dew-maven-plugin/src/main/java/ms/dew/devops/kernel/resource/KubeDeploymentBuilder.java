@@ -47,7 +47,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
 
         Map<String, String> labels = new HashMap<>();
         labels.put("app", config.getAppName());
-        labels.put("version", config.getGitCommit());
+        labels.put(VersionController.FLAG_KUBE_RESOURCE_APP_VERSION, config.getAppVersion());
         labels.put("group", config.getAppGroup());
         labels.put("provider", "dew");
 
@@ -65,10 +65,10 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                         .withImage(config.getCurrImageName())
                         .withImagePullPolicy("IfNotPresent")
                         .withPorts(new V1ContainerPortBuilder()
-                                        .withContainerPort(config.getApp().getPort())
-                                        .withName("http")
-                                        .withProtocol("TCP")
-                                        .build())
+                                .withContainerPort(config.getApp().getPort())
+                                .withName("http")
+                                .withProtocol("TCP")
+                                .build())
                         .withEnv(new V1EnvVarBuilder()
                                 .withName("JAVA_OPTIONS")
                                 // 附加spring boot的环境信息

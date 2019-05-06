@@ -56,7 +56,7 @@ public class KubeReleaseFlow extends BasicFlow {
     @Override
     protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
         this.flowBasePath = flowBasePath;
-        release(config, config.getGitCommit());
+        release(config, config.getAppVersion());
         if (config.getApp().getRevisionHistoryLimit() > 0) {
             Dew.log.debug("Delete old version from kubernetes resources and docker images");
             removeOldVersions(config);
@@ -66,23 +66,23 @@ public class KubeReleaseFlow extends BasicFlow {
     /**
      * Release.
      *
-     * @param config    the project config
-     * @param gitCommit the git commit
+     * @param config     the project config
+     * @param appVersion the app version
      * @throws ApiException the api exception
      * @throws IOException  the io exception
      */
-    public void release(FinalProjectConfig config, String gitCommit) throws ApiException, IOException {
+    public void release(FinalProjectConfig config, String appVersion) throws ApiException, IOException {
         Map<String, Object> deployResult;
-        V1ConfigMap oldVersion = VersionController.getVersion(config, gitCommit, true);
+        V1ConfigMap oldVersion = VersionController.getVersion(config, appVersion, true);
         if (oldVersion != null) {
             deployResult = fetchOldVersionResources(config, oldVersion);
-            Dew.log.info("Rollback version to : " + VersionController.getVersionName(config, gitCommit));
-            release(config, deployResult, gitCommit, true);
-        } else {
-            Dew.log.info("Deploy new version : " + VersionController.getVersionName(config, gitCommit));
-            deployResult = buildNewVersionResources(config, flowBasePath);
-            release(config, deployResult, gitCommit, false);
+            Dew.log.info("Rollback version to : " + VersionController.getVersionName(config, appVersion));
+            release(config, deployResult, appVersion, VersionController.getGitCommit(oldVersion), true);
+            return;
         }
+        Dew.log.info("Deploy new version : " + VersionController.getVersionName(config, config.getAppVersion()));
+        deployResult = buildNewVersionResources(config, flowBasePath);
+        release(config, deployResult, config.getAppVersion(), config.getGitCommit(), false);
     }
 
     /**
@@ -90,17 +90,18 @@ public class KubeReleaseFlow extends BasicFlow {
      *
      * @param config       the project config
      * @param deployResult the deploy result
+     * @param appVersion   the app version
      * @param gitCommit    the git commit
      * @param reRelease    the re-release
      * @throws ApiException the api exception
      * @throws IOException  the io exception
      */
-    private void release(FinalProjectConfig config, Map<String, Object> deployResult, String gitCommit, boolean reRelease)
+    private void release(FinalProjectConfig config, Map<String, Object> deployResult, String appVersion, String gitCommit, boolean reRelease)
             throws ApiException, IOException {
         Dew.log.info("Publishing kubernetes resources");
         deployResources(config, deployResult);
         Dew.log.debug("Add version to ConfigMap");
-        appendVersionInfo(config, deployResult, gitCommit, reRelease);
+        appendVersionInfo(config, deployResult, appVersion, gitCommit, reRelease);
     }
 
     /**
@@ -226,11 +227,13 @@ public class KubeReleaseFlow extends BasicFlow {
      *
      * @param config        the project config
      * @param kubeResources the kube resources
+     * @param appVersion    the app version
      * @param gitCommit     the git commit
      * @param reRelease     the re-release
      * @throws ApiException the api exception
      */
-    private void appendVersionInfo(FinalProjectConfig config, Map<String, Object> kubeResources, String gitCommit, boolean reRelease)
+    private void appendVersionInfo(FinalProjectConfig config, Map<String, Object> kubeResources,
+                                   String appVersion, String gitCommit, boolean reRelease)
             throws ApiException {
         Map<String, String> resources = kubeResources.entrySet()
                 .stream().collect(Collectors.toMap(Map.Entry::getKey,
@@ -241,7 +244,7 @@ public class KubeReleaseFlow extends BasicFlow {
                                 return "";
                             }
                         }));
-        VersionController.addNewVersion(config, gitCommit, reRelease, resources, new HashMap<>());
+        VersionController.addNewVersion(config, appVersion, gitCommit, reRelease, resources, new HashMap<>());
     }
 
     /**

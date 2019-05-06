@@ -80,6 +80,12 @@ public class NeedProcessChecker {
                         Dew.Config.setMavenProperty(config.getId(), "maven.install.skip", "true");
                         Dew.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "true");
                 }
+                if (config.getDisableReuseVersion() != null && !config.getDisableReuseVersion()) {
+                    // 重用版本模式下强制跳过单元测试，不需要部署
+                    Dew.Config.setMavenProperty(config.getId(), "maven.test.skip", "true");
+                    Dew.Config.setMavenProperty(config.getId(), "maven.install.skip", "true");
+                    Dew.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "true");
+                }
             }
             List<FinalProjectConfig> processingProjects = Dew.Config.getProjects().values().stream()
                     .filter(config -> !config.isSkip())
@@ -95,7 +101,7 @@ public class NeedProcessChecker {
             StringBuilder sb = new StringBuilder();
             sb.append("\r\n==================== Processing Projects =====================\r\n\r\n");
             sb.append(processingProjects.stream().map(config ->
-                    "> [" + config.getKind().name() + "] " + config.getMvnGroupId() + ":" + config.getMvnArtifactId())
+                    "> [" + config.getKind().name() + "] " + config.getAppGroup() + ":" + config.getAppName())
                     .collect(Collectors.joining("\r\n")));
             sb.append("\r\n\r\n==============================================================\r\n");
             if (quiet) {
@@ -150,14 +156,11 @@ public class NeedProcessChecker {
             config.skip("Maven distribution repository not found", false);
             return;
         }
-        if (config.isCustomVersion()) {
-            return;
-        }
-        String lastVersionDeployCommit = VersionController.getGitCommit(VersionController.getLastVersion(config, true));
-        Dew.log.debug("Latest version is " + lastVersionDeployCommit);
+        String lastDeployedVersion = VersionController.getAppVersion(VersionController.getLastVersion(config, true));
+        Dew.log.debug("Latest version is " + lastDeployedVersion);
         // 判断有没有发过版本
-        if (lastVersionDeployCommit != null) {
-            List<String> changedFiles = fetchGitDiff(lastVersionDeployCommit);
+        if (lastDeployedVersion != null) {
+            List<String> changedFiles = fetchGitDiff(lastDeployedVersion);
             // 判断有没有代码变更
             if (!hasUnDeployFiles(changedFiles, config)) {
                 config.skip("No code changes", false);
@@ -202,7 +205,7 @@ public class NeedProcessChecker {
                 Dew.log.info("Reuse last version " + lastVersionDeployCommitFromProfile + " from " + config.getReuseLastVersionFromProfile());
                 config.setGitCommit(lastVersionDeployCommitFromProfile);
             }
-        } else if (!config.isCustomVersion()) {
+        } else {
             Dew.log.debug("Latest version is " + lastVersionDeployCommit);
             // 判断有没有发过版本
             if (lastVersionDeployCommit != null) {
@@ -213,20 +216,19 @@ public class NeedProcessChecker {
                 }
             }
         }
-        // 自定义版本时不判断Git
     }
 
     /**
-     * 获取kubernetes上部署的最新的commit版本.
+     * 获取kubernetes上部署的最新的版本.
      *
      * @param configId  the config id
      * @param appName   the app name
      * @param namespace the namespace
-     * @return 最新的commit版本
+     * @return 最新的版本
      * @throws ApiException the api exception
      */
     private static String fetchLastVersionDeployCommit(String configId, String appName, String namespace) throws ApiException {
-        return VersionController.getGitCommit(KubeHelper.inst(configId).read(appName, namespace, KubeRES.SERVICE, V1Service.class));
+        return VersionController.getAppVersion(KubeHelper.inst(configId).read(appName, namespace, KubeRES.SERVICE, V1Service.class));
     }
 
     /**

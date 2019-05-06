@@ -18,7 +18,6 @@ package ms.dew.devops.kernel.config;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * Final project config.
@@ -29,17 +28,20 @@ import java.util.regex.Pattern;
  */
 public class FinalProjectConfig extends DewProfile {
 
-    private static final Pattern GIT_HASH = Pattern.compile("[0-9a-f]{40}");
-
     // 项目Id,对应于maven project id
     private String id;
+    // 用于指定 docker的版本
+    // 当前的git commit 或是 重用版本下被重用的git commit
     private String gitCommit = "";
     private String scmUrl = "";
     private String appName = "";
     private String appShowName = "";
     private String appGroup = "";
-    private String mvnGroupId;
-    private String mvnArtifactId;
+    // 用于指定应用的版本
+    // app version 对应于当前的 git commit
+    // 如果在非重用版本模式下等同于 git commit
+    // 如果在重用版本模式下git commit 指向被重用的 git commit
+    private String appVersion = "";
     private String mvnDirectory;
     private String mvnTargetDirectory;
     private String skipReason = "";
@@ -47,15 +49,6 @@ public class FinalProjectConfig extends DewProfile {
     private Set<String> executeSuccessfulMojos = new HashSet<>();
 
     private DewProfile appendProfile;
-
-    /**
-     * 是否是自定义版本.
-     *
-     * @return 是否是自定义版本 boolean
-     */
-    public boolean isCustomVersion() {
-        return !GIT_HASH.matcher(this.getGitCommit()).matches();
-    }
 
     /**
      * Gets id.
@@ -166,39 +159,21 @@ public class FinalProjectConfig extends DewProfile {
     }
 
     /**
-     * Gets mvn group id.
+     * Gets app version.
      *
-     * @return the mvn group id
+     * @return the app version
      */
-    public String getMvnGroupId() {
-        return mvnGroupId;
+    public String getAppVersion() {
+        return appVersion;
     }
 
     /**
-     * Sets mvn group id.
+     * Sets app version.
      *
-     * @param mvnGroupId the mvn group id
+     * @param appVersion the app version
      */
-    public void setMvnGroupId(String mvnGroupId) {
-        this.mvnGroupId = mvnGroupId;
-    }
-
-    /**
-     * Gets mvn artifact id.
-     *
-     * @return the mvn artifact id
-     */
-    public String getMvnArtifactId() {
-        return mvnArtifactId;
-    }
-
-    /**
-     * Sets mvn artifact id.
-     *
-     * @param mvnArtifactId the mvn artifact id
-     */
-    public void setMvnArtifactId(String mvnArtifactId) {
-        this.mvnArtifactId = mvnArtifactId;
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
     }
 
     /**
@@ -276,19 +251,10 @@ public class FinalProjectConfig extends DewProfile {
     /**
      * Is has error.
      *
-     * @return result
+     * @return result boolean
      */
     public boolean isHasError() {
         return hasError;
-    }
-
-    /**
-     * Sets has error.
-     *
-     * @param hasError the has error
-     */
-    public void setHasError(boolean hasError) {
-        this.hasError = hasError;
     }
 
     /**

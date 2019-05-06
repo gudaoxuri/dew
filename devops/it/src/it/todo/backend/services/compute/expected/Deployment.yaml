@@ -17,7 +17,7 @@ spec:
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: todo-compute
+      app: compute
       group: ms.dew.devops.it
   template:
     metadata:
@@ -26,7 +26,7 @@ spec:
         dew.ms/scm-url: ''
         sidecar.jaegertracing.io/inject: 'true'
       labels:
-        app: todo-compute
+        app: compute
         provider: dew
         version: '0001'
         group: ms.dew.devops.it
@@ -37,7 +37,7 @@ spec:
           value: ' -Dspring.profiles.active=prod -Dserver.port=8080 -Dopentracing.jaeger.log-spans=false
             -Dopentracing.jaeger.probabilistic-sampler.sampling-rate=0.1 -Dmanagement.endpoints.web.exposure.include=*
             -Dmetrics.tags:application=${spring.application.name}'
-        image: harbor.trc.com/dew-prod/todo-compute:0001
+        image: harbor.trc.com/dew-prod/compute:0001
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 6

@@ -91,13 +91,6 @@ public abstract class BasicMojo extends AbstractMojo {
     @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_MAVEN_VERSION_EXIST_IGNORE, defaultValue = "false")
     boolean ignoreExistMavenVersion;
 
-    /**
-     * The Custom version.
-     */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_VERSION_CUST)
-    private String customVersion;
-
-
     // ============= 日志及调试场景使用 =============
     /**
      * The Pod name.
@@ -197,8 +190,8 @@ public abstract class BasicMojo extends AbstractMojo {
             formatParameters();
             Dew.log.info("Start...");
             Dew.Init.init(session, pluginManager, profile,
-                    dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,
-                    customVersion, mockClasspath);
+                    dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword,
+                    kubeBase64Config, mockClasspath);
             if (Dew.Config.getCurrentProject() == null) {
                 // 这多半是正常的行为
                 Dew.log.info("The current project kind does not match");
@@ -262,8 +255,6 @@ public abstract class BasicMojo extends AbstractMojo {
                 .ifPresent(obj -> quiet = Boolean.valueOf(obj));
         Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_MAVEN_VERSION_EXIST_IGNORE, formattedProperties)
                 .ifPresent(obj -> ignoreExistMavenVersion = Boolean.valueOf(obj));
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_VERSION_CUST, formattedProperties)
-                .ifPresent(obj -> customVersion = obj);
         Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_POD_NAME, formattedProperties)
                 .ifPresent(obj -> podName = obj);
         Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_LOG_FOLLOW, formattedProperties)

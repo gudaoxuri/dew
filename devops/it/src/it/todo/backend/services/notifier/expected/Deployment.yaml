@@ -6,18 +6,18 @@ metadata:
     dew.ms/scm-url: ''
     sidecar.jaegertracing.io/inject: 'true'
   labels:
-    app: todo-notifier
+    app: notifier
     provider: dew
     version: '0001'
     group: ms.dew.devops.it
-  name: todo-notifier
+  name: notifier
   namespace: dew-prod
 spec:
   replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
-      app: todo-notifier
+      app: notifier
       group: ms.dew.devops.it
   template:
     metadata:
@@ -26,7 +26,7 @@ spec:
         dew.ms/scm-url: ''
         sidecar.jaegertracing.io/inject: 'true'
       labels:
-        app: todo-notifier
+        app: notifier
         provider: dew
         version: '0001'
         group: ms.dew.devops.it
@@ -37,7 +37,7 @@ spec:
           value: ' -Dspring.profiles.active=prod -Dserver.port=8080 -Dopentracing.jaeger.log-spans=false
             -Dopentracing.jaeger.probabilistic-sampler.sampling-rate=0.1 -Dmanagement.endpoints.web.exposure.include=*
             -Dmetrics.tags:application=${spring.application.name}'
-        image: harbor.trc.com/dew-prod/todo-notifier:0001
+        image: harbor.trc.com/dew-prod/notifier:0001
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 6

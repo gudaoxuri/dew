@@ -1,6 +1,6 @@
 spring:
   application:
-    name: todo-kernel
+    name: kernel
 
 dew:
   cluster:
