@@ -50,6 +50,7 @@
         <dew.version>2.0.0-SNAPSHOT</dew.version>
 
         <guava.version>20.0</guava.version>
+        <hbase.version>2.0.0</hbase.version>
 
         <spring-cloud.version>2.1.1.RELEASE</spring-cloud.version>
         <dew-common.version>1.4.13</dew-common.version>
@@ -154,6 +155,11 @@
                 <artifactId>cluster-spi-kafka</artifactId>
                 <version>${dew.version}</version>
             </dependency>
+            <dependency>
+                <groupId>ms.dew</groupId>
+                <artifactId>hbase-starter</artifactId>
+                <version>${dew.version}</version>
+            </dependency>
             <!-- Doc -->
             <dependency>
                 <groupId>io.springfox</groupId>
@@ -188,6 +194,17 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hbase</groupId>
+                <artifactId>hbase-client</artifactId>
+                <version>${hbase.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-aws</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>

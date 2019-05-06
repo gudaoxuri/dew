@@ -41,6 +41,7 @@
         <module>cloud-example</module>
         <module>tracing-invoke1-example</module>
         <module>tracing-invoke2-example</module>
+        <module>hbase-example</module>
     </modules>
 
 </project>

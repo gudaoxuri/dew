@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: hbase-example
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    password: 123456
+    lettuce:
+      pool:
+        max-active: 10
+        max-wait: -1
+        max-idle: 1
+        min-idle: 0
+  hbase:
+    zkQuorum: localhost
+    znodeParent: /hbase-secure
+    auth:
+      type: kerberos
+      principal:
+      keytab:
+      hbaseMasterPrincipal:
+      hbaseRegionServerPrincipal:
+
+
+
+dew:
+  cluster:
+    cache: redis
+    map: redis # 可选 redis/hazelcast
+    lock: redis # 可选 redis/hazelcast
+    mq: redis # 可选 redis/hazelcast/rabbit
+    election: redis # 可选 redis/eureka
