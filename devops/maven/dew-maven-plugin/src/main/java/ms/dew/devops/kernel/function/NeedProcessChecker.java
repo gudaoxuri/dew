@@ -80,6 +80,10 @@ public class NeedProcessChecker {
                         Dew.Config.setMavenProperty(config.getId(), "maven.install.skip", "true");
                         Dew.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "true");
                 }
+                if (config.getDisableReuseVersion() != null && !config.getDisableReuseVersion()) {
+                    // 重用版本模式下强制跳过单元测试
+                    Dew.Config.setMavenProperty(config.getId(), "maven.test.skip", "true");
+                }
             }
             List<FinalProjectConfig> processingProjects = Dew.Config.getProjects().values().stream()
                     .filter(config -> !config.isSkip())
