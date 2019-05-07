@@ -10,83 +10,71 @@ NOTE: ``Dew`` DevOps部分的核心是由 ``dew-maven-plugin`` 实现。
 
 如果您的项目使用 ``Dew Framework`` 构建则只要确保引入了 ``parent-starter`` 即可。
 
-`Dew` 所有模块均为Maven结构，使用如下：
+===== 不使用 ``Dew Framework``
+
+``Dew DevOps`` 完全可以独立于 ``Dew Framework`` 使用，只需要在项目的父POM中加上如下配置即可。
 
 [source,xml]
 ----
-<!--引入Dew父依赖，也可以使用import方式-->
-<parent>
-    <groupId>ms.dew</groupId>
-    <artifactId>parent-starter</artifactId>
-    <!--生产环境请选择合适的版本!-->
-    <version>${dew.version}</version>
-</parent>
-...
-<dependencies>
-    <!--引入需要的模块-->
-    <dependency>
-        <groupId>ms.dew</groupId>
-        <artifactId>对应模块名，见下文</artifactId>
-    </dependency>
-</dependencies>
-...
-<!--开发者介绍-->
-<developers>
-    <developer>
-        <name>...</name>
-        <email>...</email>
-    </developer>
-</developers>
-<!--SCM信息-->
-<scm>
-    <connection>...</connection>
-    <developerConnection>...</developerConnection>
-    <url></url>
-</scm>
-...
+<profile>
+    <id>devops</id>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>ms.dew</groupId>
+                <artifactId>dew-maven-plugin</artifactId>
+                <!--生产环境请选择合适的版本!-->
+                <version>${dew.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>init</goal>
+                            <goal>prepare</goal>
+                            <goal>build</goal>
+                            <goal>release</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</profile>
 ----
 
-TIP: ``parent-starter`` 中已包含各模块的版本，引用模块依赖时可省略版本号。
+==== 支持的项目类型
 
-.功能模块
-
-|===
-|模块名                |核心功能
-
-| parent-starter      | 父Pom模块
-| boot-starter        | 核心模块，包含Spring Boot Web相关依赖
-| cloud-starter       | Cloud模块，包含Spring Cloud Kuberenetes相关依赖
-| cluster-common      | 集群能力接口
-| cluster-hazelcast   | Hazelcast集群能力实现
-| cluster-rabbit      | RabbitMQ集群能力实现
-| cluster-redis       | Redis集群能力实现
-| idempotent-starter  | 幂等处理模块
-| notification        | 通知处理模块
-|===
-
-CI/CD
-
-通过分支变更触发
-
-初始化
-
-发布
-
-回滚
-
-删除
-
-日志查看
-
-伸缩扩展
+==== 项目配置
 
 Maven配置
 
-重用版本
-
 脚本使用
 
-支持的项目类型
+==== 打包与部署
+
+重用版本
+
+==== 版本回滚
+
+==== 版本卸载
+
+==== 日志查看
+
+==== 伸缩扩展
+
+==== CI/CD工具支持-Gitlab CI
+
+通过分支变更触发
+
+删除
+
+==== 执行通知
+
+
+
+
+
+
+
 
 
 
