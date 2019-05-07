@@ -19,8 +19,10 @@ package ms.dew.core.cluster.spi.redis;
 import com.ecfront.dew.common.$;
 import ms.dew.core.cluster.AbsClusterElection;
 import ms.dew.core.cluster.Cluster;
+import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.types.Expiration;
 
 /**
  * 领导者选举服务 Redis 实现.
@@ -57,6 +59,13 @@ public class RedisClusterElection extends AbsClusterElection {
         this.electionPeriodSec = electionPeriodSec;
         this.redisTemplate = redisTemplate;
         election();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            String value = redisTemplate.opsForValue().get(key);
+            if (value != null && value.equals(Cluster.instanceId)) {
+                // 如果当前是领导者则执行销毁
+                redisTemplate.delete(key);
+            }
+        }));
     }
 
     @Override
@@ -69,9 +78,9 @@ public class RedisClusterElection extends AbsClusterElection {
         byte[] rawKey = redisTemplate.getStringSerializer().serialize(key);
         byte[] rawValue = redisTemplate.getStringSerializer().serialize(Cluster.instanceId);
         boolean finish = redisTemplate.execute((RedisCallback<Boolean>) connection -> {
-            if (connection.setNX(rawKey, rawValue)) {
+            if (connection.set(rawKey, rawValue, Expiration.seconds(electionPeriodSec * 2 + 2),
+                    RedisStringCommands.SetOption.ifAbsent())) {
                 leader.set(FLAG_LEADER);
-                connection.expire(rawKey, electionPeriodSec * 2 + 2);
                 return true;
             }
             byte[] v = connection.get(rawKey);
@@ -80,7 +89,7 @@ public class RedisClusterElection extends AbsClusterElection {
             }
             if (redisTemplate.getStringSerializer().deserialize(v).equals(Cluster.instanceId)) {
                 leader.set(FLAG_LEADER);
-                // 默认2个选举周期过期
+                // 被调用后续租，2个选举周期过期
                 connection.expire(rawKey, electionPeriodSec * 2 + 2);
             } else {
                 leader.set(FLAG_FOLLOWER);
