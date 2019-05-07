@@ -220,12 +220,14 @@ public abstract class BasicMojo extends AbstractMojo {
             Dew.log.error("Global Process error", e);
             Dew.stopped = true;
             ExecuteEventProcessor.onGlobalProcessError(e);
+            e.printStackTrace();
             throw e;
         } catch (Exception e) {
             // 此错误会中止程序
             Dew.log.error("Process error", e);
             Dew.Config.getCurrentProject().skip("Process error [" + e.getClass().getSimpleName() + "]" + e.getMessage(), true);
             ExecuteEventProcessor.onMojoExecuteFailure(getMojoName(), Dew.Config.getCurrentProject(), e);
+            e.printStackTrace();
             throw new ProjectProcessException("Process error", e);
         }
     }
