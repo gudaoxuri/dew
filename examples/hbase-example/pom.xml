@@ -20,11 +20,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ms.dew</groupId>
-    <artifactId>build-framework</artifactId>
-    <name>1 Dew Framework Build</name>
-    <packaging>pom</packaging>
-    <version>2.0.0-SNAPSHOT</version>
+    <parent>
+        <groupId>ms.dew</groupId>
+        <artifactId>parent-starter</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+        <relativePath>../../framework/modules/parent-starter</relativePath>
+    </parent>
+
+    <artifactId>hbase-example</artifactId>
+    <name>3.7 spring boot hbase 示例</name>
+    <description>spring boot hbase 示例</description>
+    <packaging>jar</packaging>
 
     <properties>
         <maven.install.skip>true</maven.install.skip>
@@ -32,22 +38,15 @@
         <sonar.skip>true</sonar.skip>
     </properties>
 
-    <modules>
-        <module>modules/parent-starter</module>
-        <module>modules/cluster-common</module>
-        <module>modules/cluster-common-test</module>
-        <module>modules/cluster-redis</module>
-        <module>modules/cluster-hazelcast</module>
-        <module>modules/cluster-rabbit</module>
-        <module>modules/hbase-starter</module>
-        <module>modules/notification</module>
-        <module>modules/boot-starter</module>
-        <module>modules/idempotent-starter</module>
-        <module>modules/cloud-starter</module>
-        <module>modules/test-starter</module>
-        <module>components/auth-sdk-starter</module>
-        <module>components/auth</module>
-        <module>components/config</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>ms.dew</groupId>
+            <artifactId>boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ms.dew</groupId>
+            <artifactId>hbase-starter</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

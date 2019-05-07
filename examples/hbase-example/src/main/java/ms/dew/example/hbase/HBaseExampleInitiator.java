@@ -14,35 +14,41 @@
  * limitations under the License.
  */
 
-package com.trc.test.web;
+package ms.dew.example.hbase;
 
+import ms.dew.core.hbase.HBaseTemplate;
+import org.apache.hadoop.hbase.util.Bytes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
+import javax.annotation.PostConstruct;
 
 /**
- * Metrics test.
+ * Cluster example initiator.
  *
- * @author gudaoxuri
+ * @author 迹_Jason
  */
 @Component
-public class MetricsTest {
+public class HBaseExampleInitiator {
+
+    private static final Logger logger = LoggerFactory.getLogger(HBaseExampleInitiator.class);
 
     @Autowired
-    private TestRestTemplate testRestTemplate;
+    private HBaseTemplate hbaseTemplate;
 
     /**
-     * Test metric.
+     * Init.
      *
-     * @throws IOException          the io exception
-     * @throws InterruptedException the interrupted exception
+     * @throws Exception the exception
      */
-    public void testMetric() throws IOException, InterruptedException {
-        for (int i = 0; i < 100; i++) {
-            testRestTemplate.getForObject("/test/valid-method-spring/2", String.class);
-            Thread.sleep(5);
-        }
+    @PostConstruct
+    public void init() throws Exception {
+        String st = hbaseTemplate.get("DMP:D10_DOP.FDN.V2.T_APP_USER", "0002093140000000",
+                "0", "reg_platform", (result, row) -> Bytes.toString(result.value()));
+        logger.info("result:{}", st);
     }
+
+
 }

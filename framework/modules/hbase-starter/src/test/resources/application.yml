@@ -1,0 +1,26 @@
+dew:
+  cluster:
+    cache: redis
+    mq: redis
+    lock: redis
+    map: redis
+    election: redis
+
+spring:
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    multi:
+      auth:
+        host: 127.0.0.1
+        port: 6379
+        database: 10
+  hbase:
+    zkQuorum:
+    znodeParent: /hbase-secure
+    auth:
+      type: kerberos
+      principal:
+      keytab:
+      hbaseMasterPrincipal:
+      hbaseRegionServerPrincipal:

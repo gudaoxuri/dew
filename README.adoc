@@ -113,6 +113,7 @@ ____
 |-  |-  |- idempotent-starter              // 幂等处理模块
 |-  |-  |- notification                    // 通知处理模块
 |-  |-  |- test-starter                    // 单元测试模块
+|-  |-  |- hbase-starter                   // Spring Boot HBase Starter 模块
 |-  |- components                          // 集成的服务
 |-  |-  |- auth                            // 认证服务
 |-  |-  |- auth-sdk-starter                // 认证服务SDK

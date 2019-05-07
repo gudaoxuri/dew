@@ -67,7 +67,6 @@ spring:
     lettuce:
       pool:
         max-active: 10
-        max-wait: -1
         max-idle: 1
         min-idle: 0
 

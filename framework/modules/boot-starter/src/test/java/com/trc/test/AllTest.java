@@ -21,6 +21,7 @@ import com.trc.test.auth.AuthTest;
 import com.trc.test.cluster.ClusterTest;
 import com.trc.test.doc.DocTest;
 import com.trc.test.notify.NotifyTest;
+import com.trc.test.web.MetricsTest;
 import com.trc.test.web.WebTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -54,6 +55,9 @@ public class AllTest {
     @Resource
     private DocTest docTest;
 
+    @Resource
+    private MetricsTest metricsTest;
+
     /**
      * Test all.
      *
@@ -66,6 +70,7 @@ public class AllTest {
         authTest.testAll();
         notifyTest.testAll();
         docTest.testAll();
+        metricsTest.testMetric();
     }
 
 }

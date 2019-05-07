@@ -53,7 +53,7 @@ public class IntAndCleanIT extends BasicProcessor {
                 dockerRegistryUrl,
                 dockerRegistryUserName,
                 dockerRegistryPassword);
-        String registryHost = new URL(dockerRegistryUrl).getHost();
+        final String registryHost = new URL(dockerRegistryUrl).getHost();
         logger.info("Clean kubernetes ns by dew-test");
         cleanResources("dew-test");
         logger.info("Clean kubernetes ns by dew-uat");
