@@ -18,6 +18,8 @@ package ms.dew.devops.mojo;
 
 import io.kubernetes.client.ApiException;
 import ms.dew.devops.kernel.flow.debug.DefaultDebugFlow;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import java.io.IOException;
@@ -28,6 +30,7 @@ import java.io.IOException;
  * @author gudaoxuri
  */
 @Mojo(name = "debug")
+@Execute(phase = LifecyclePhase.VALIDATE, goal = "init")
 public class DebugMojo extends BasicMojo {
 
     @Override

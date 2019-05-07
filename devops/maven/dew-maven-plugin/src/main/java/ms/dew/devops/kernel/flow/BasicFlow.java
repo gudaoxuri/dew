@@ -41,6 +41,7 @@ public abstract class BasicFlow {
      * @throws IOException  the io exception
      */
     public final boolean exec(String mojoName) throws ApiException, IOException {
+        Dew.Config.initCurrentMavenProject();
         FinalProjectConfig config = Dew.Config.getCurrentProject();
         Dew.log.debug("Executing " + this.getClass().getSimpleName());
         // 为每个mojo创建输出目录
