@@ -187,7 +187,7 @@ public class KubeReleaseFlow extends BasicFlow {
                                                     && pod.getStatus().getContainerStatuses().stream().allMatch(V1ContainerStatus::isReady)
                                     )
                                     .count();
-                            if (resp.object.getSpec().getReplicas() != runningPodSize) {
+                            while (resp.object.getSpec().getReplicas() != runningPodSize) {
                                 // 之前版本没有销毁
                                 Thread.sleep(1000);
                             }
