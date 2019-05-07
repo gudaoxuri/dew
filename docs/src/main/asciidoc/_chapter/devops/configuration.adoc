@@ -118,8 +118,8 @@ docker:                                 # Docker配置
 kube:                                   # Kubernetes配置
   base64Config:                         # Kubernetes Base64 后的配置，此项建议使用Maven方式配置
                                         # 使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
-notify:                                 # 通知配置
-  type: DD                              # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
+notifies:                               # 通知配置
+- type: DD                              # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
   defaultReceivers:                     # 默认接收人列表，钉钉为手机号，邮件为邮箱
   dndTimeReceivers:                     # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
   args:                                 # 不同类型的参数，邮件不需要设置

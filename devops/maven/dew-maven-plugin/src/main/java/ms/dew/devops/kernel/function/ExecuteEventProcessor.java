@@ -16,11 +16,14 @@
 
 package ms.dew.devops.kernel.function;
 
+import com.ecfront.dew.common.$;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.notification.Notify;
+import ms.dew.notification.NotifyConfig;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -41,26 +44,14 @@ public class ExecuteEventProcessor {
         if (!Notify.contains("")) {
             return;
         }
-        StringBuilder content = new StringBuilder();
         if (processingProjects.isEmpty()) {
-            content.append("![](http://doc.dew.ms/images/devops-notify/report.png)")
-                    .append("\n")
-                    .append("No projects need to be processed.")
-                    .append("\n\n")
-                    .append(appendCIJobUrl());
-            Notify.send("", content.toString(), "DevOps process report");
+            SendFactory.initWithEmpty();
             return;
         }
-        content.append("![](http://doc.dew.ms/images/devops-notify/report.png)")
-                .append("\n")
-                .append("### Processing Projects @ [" + processingProjects.get(0).getProfile() + "]\n")
-                .append("\n\n-----------------\n");
-        content.append(processingProjects.stream()
-                .map(project -> "- " + project.getAppShowName())
-                .collect(Collectors.joining("\n")))
-                .append("\n\n")
-                .append(appendCIJobUrl());
-        Notify.send("", content.toString(), "DevOps process report");
+        SendFactory.init(processingProjects.get(0).getProfile(),
+                processingProjects.stream()
+                        .map(FinalProjectConfig::getAppShowName)
+                        .collect(Collectors.toList()));
     }
 
     /**
@@ -209,18 +200,118 @@ public class ExecuteEventProcessor {
         }
     }
 
-    private static String appendCIJobUrl() {
-        String ciJobUrl = null;
-        if (System.getProperties().containsKey("CI_JOB_URL")) {
-            ciJobUrl = System.getProperty("CI_JOB_URL");
+    private static class SendFactory {
+
+        private static SendToDD sendToDD = new SendToDD();
+        private static SendToHttp sendToHttp = new SendToHttp();
+
+        static void initWithEmpty() {
+            sendToDD.initWithEmpty();
+            sendToHttp.initWithEmpty();
         }
-        if (System.getenv().containsKey("CI_JOB_URL")) {
-            ciJobUrl = System.getenv("CI_JOB_URL");
+
+        static void init(String profile, List<String> appShowNames) {
+            sendToDD.init(profile, appShowNames);
+            sendToHttp.init(profile, appShowNames);
         }
-        if (ciJobUrl != null) {
-            return "\n----------\n> See [CI Job](" + ciJobUrl + ")\n";
+    }
+
+    private interface Send {
+
+        String appendCIJobUrl();
+
+        default void doSend(String flag, String type, String content, String title) {
+            Notify.send(flag + "_" + type, content, title);
         }
-        return "";
+
+        void initWithEmpty();
+
+        void init(String profile, List<String> appShowNames);
+
+        default String getCIJobUrl() {
+            String ciJobUrl = null;
+            if (System.getProperties().containsKey("CI_JOB_URL")) {
+                ciJobUrl = System.getProperty("CI_JOB_URL");
+            }
+            if (System.getenv().containsKey("CI_JOB_URL")) {
+                ciJobUrl = System.getenv("CI_JOB_URL");
+            }
+            if (ciJobUrl != null) {
+                return ciJobUrl;
+            }
+            return "";
+        }
+
+    }
+
+    private static class SendToDD implements Send {
+
+        @Override
+        public String appendCIJobUrl() {
+            return "\n----------\n> See [CI Job](" + getCIJobUrl() + ")\n";
+        }
+
+        @Override
+        public void initWithEmpty() {
+            StringBuilder content = new StringBuilder();
+            content.append("![](http://doc.dew.ms/images/devops-notify/report.png)")
+                    .append("\n")
+                    .append("No projects need to be processed.")
+                    .append("\n\n")
+                    .append(appendCIJobUrl());
+            doSend("", NotifyConfig.TYPE_DD, content.toString(), "DevOps process report");
+        }
+
+        @Override
+        public void init(String profile, List<String> appShowNames) {
+            StringBuilder content = new StringBuilder();
+            content.append("![](http://doc.dew.ms/images/devops-notify/report.png)")
+                    .append("\n")
+                    .append("### Processing Projects @ [" + profile + "]\n")
+                    .append("\n\n-----------------\n");
+            content.append(appShowNames.stream()
+                    .map(name -> "- " + name)
+                    .collect(Collectors.joining("\n")))
+                    .append("\n\n")
+                    .append(appendCIJobUrl());
+            doSend("", NotifyConfig.TYPE_DD, content.toString(), "DevOps process report");
+        }
+
+
+    }
+
+    private static class SendToHttp implements Send {
+
+        private static final String PROCESS_EMPTY_FLAG = "PROCESS_EMPTY";
+        private static final String PROCESS_START_FLAG = "PROCESS_START";
+
+        @Override
+        public String appendCIJobUrl() {
+            return getCIJobUrl();
+        }
+
+        @Override
+        public void initWithEmpty() {
+            doSend("", NotifyConfig.TYPE_HTTP, build(PROCESS_EMPTY_FLAG, new HashMap<>()), "DevOps process report");
+        }
+
+        @Override
+        public void init(String profile, List<String> appShowNames) {
+            Map<String, Object> message = new HashMap<String, Object>() {
+                {
+                    put("profile", profile);
+                    put("projects", appShowNames);
+                }
+            };
+            doSend("", NotifyConfig.TYPE_HTTP, build(PROCESS_EMPTY_FLAG, message), "DevOps process report");
+        }
+
+        private String build(String kind, Map<String, Object> message) {
+            return $.json.toJsonString($.json.createObjectNode()
+                    .put("kind", kind)
+                    .put("ci", appendCIJobUrl())
+                    .set("message", $.json.toJson(message)));
+        }
     }
 
 

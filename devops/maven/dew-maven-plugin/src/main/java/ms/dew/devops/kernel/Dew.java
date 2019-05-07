@@ -372,25 +372,35 @@ public class Dew {
          * Init notify.
          */
         private static void initNotify() {
-            Map<String, NotifyConfig> configMap = Config.getProjects().entrySet().stream()
-                    .filter(config -> config.getValue().getNotify() != null)
-                    .collect(Collectors.toMap(Map.Entry::getKey, config -> config.getValue().getNotify()));
-            configMap.values().forEach(config -> {
-                if (!config.getArgs().containsKey("msgType")) {
-                    // 默认使用Markdown格式
-                    config.getArgs().put("msgType", "markdown");
-                }
-            });
+            Map<String, NotifyConfig> configMap = new HashMap<>();
+            Config.getProjects().entrySet().stream()
+                    .filter(config -> config.getValue().getNotifies() != null
+                            && !config.getValue().getNotifies().isEmpty())
+                    .forEach(config ->
+                            config.getValue().getNotifies().forEach(notifyConfig -> {
+                                if (notifyConfig.getType() == null) {
+                                    notifyConfig.setType(NotifyConfig.TYPE_DD);
+                                }
+                                configMap.put(config.getKey() + "_" + notifyConfig.getType(), notifyConfig);
+                            }));
             // 对于根项目为 skip 的情况强制启用通知
             DewProfile dewProfile = Config.basicProfileConfig;
-            if (dewProfile != null && dewProfile.getNotify() != null) {
-                if (!dewProfile.getNotify().getArgs().containsKey("msgType")) {
-                    // 默认使用Markdown格式
-                    dewProfile.getNotify().getArgs().put("msgType", "markdown");
-                }
-                // 添加key为空的全局通知配置
-                configMap.put("", dewProfile.getNotify());
+            if (dewProfile != null && dewProfile.getNotifies() != null) {
+                dewProfile.getNotifies().forEach(notifyConfig -> {
+                    if (notifyConfig.getType() == null) {
+                        notifyConfig.setType(NotifyConfig.TYPE_DD);
+                    }
+                    // 添加key为空的全局通知配置
+                    configMap.put("" + "_" + notifyConfig.getType(), notifyConfig);
+                });
             }
+            configMap.values().forEach(notifyConfig -> {
+                if (notifyConfig.getType().equalsIgnoreCase(NotifyConfig.TYPE_DD)
+                        && !notifyConfig.getArgs().containsKey("msgType")) {
+                    // 默认使用Markdown格式
+                    notifyConfig.getArgs().put("msgType", "markdown");
+                }
+            });
             ms.dew.notification.Notify.init(configMap, flag -> "");
         }
 

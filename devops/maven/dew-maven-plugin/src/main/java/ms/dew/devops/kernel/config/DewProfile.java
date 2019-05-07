@@ -19,6 +19,7 @@ package ms.dew.devops.kernel.config;
 import ms.dew.notification.NotifyConfig;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -50,7 +51,7 @@ public class DewProfile {
     // Kubernetes配置
     private DewKube kube = new DewKube();
     // 通知配置
-    private NotifyConfig notify = null;
+    private List<NotifyConfig> notifies = null;
 
     /**
      * Gets profile.
@@ -232,21 +233,11 @@ public class DewProfile {
         this.kube = kube;
     }
 
-    /**
-     * Gets notify.
-     *
-     * @return the notify
-     */
-    public NotifyConfig getNotify() {
-        return notify;
+    public List<NotifyConfig> getNotifies() {
+        return notifies;
     }
 
-    /**
-     * Sets notify.
-     *
-     * @param notify the notify
-     */
-    public void setNotify(NotifyConfig notify) {
-        this.notify = notify;
+    public void setNotifies(List<NotifyConfig> notifies) {
+        this.notifies = notifies;
     }
 }
