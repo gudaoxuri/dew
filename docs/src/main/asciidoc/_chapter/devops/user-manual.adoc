@@ -10,8 +10,6 @@ NOTE: ``Dew`` DevOps部分的核心是由 ``dew-maven-plugin`` 实现。
 
 如果您的项目使用 ``Dew Framework`` 构建则只要确保引入了 ``parent-starter`` 即可。
 
-
-
 `Dew` 所有模块均为Maven结构，使用如下：
 
 [source,xml]

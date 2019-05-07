@@ -69,9 +69,9 @@ public class TodoVerify extends BasicProcessor implements Verify {
         Assert.assertFalse("kernel | exist serv.jar", new File(buildPath + "dew_build" + File.separator + "serv.jar").exists());
         Assert.assertTrue("kernel | exist Deployment.yaml", new File(buildPath + "dew_release" + File.separator + "Deployment.yaml").exists());
         Assert.assertTrue("kernel | exist Service.yaml", new File(buildPath + "dew_release" + File.separator + "Service.yaml").exists());
-        Assert.assertEquals("kernel | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),
+        verifyResourceDescriptors("kernel | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),
                 $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Deployment.yaml", "UTF-8"));
-        Assert.assertEquals("kernel | match Service.yaml", $.file.readAllByPathName(expectedResPath + "Service.yaml", "UTF-8"),
+        verifyResourceDescriptors("kernel | match Service.yaml", $.file.readAllByPathName(expectedResPath + "Service.yaml", "UTF-8"),
                 $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Service.yaml", "UTF-8"));
         // verify compute
         expectedResPath = basePath
@@ -85,9 +85,9 @@ public class TodoVerify extends BasicProcessor implements Verify {
         Assert.assertFalse("compute | exist serv.jar", new File(buildPath + "dew_build" + File.separator + "serv.jar").exists());
         Assert.assertTrue("compute | exist Deployment.yaml", new File(buildPath + "dew_release" + File.separator + "Deployment.yaml").exists());
         Assert.assertTrue("compute | exist Service.yaml", new File(buildPath + "dew_release" + File.separator + "Service.yaml").exists());
-        Assert.assertEquals("compute | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),
+        verifyResourceDescriptors("compute | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),
                 $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Deployment.yaml", "UTF-8"));
-        Assert.assertEquals("compute | match Service.yaml", $.file.readAllByPathName(expectedResPath + "Service.yaml", "UTF-8"),
+        verifyResourceDescriptors("compute | match Service.yaml", $.file.readAllByPathName(expectedResPath + "Service.yaml", "UTF-8"),
                 $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Service.yaml", "UTF-8"));
         // verify notifier
         expectedResPath = basePath
@@ -101,9 +101,9 @@ public class TodoVerify extends BasicProcessor implements Verify {
         Assert.assertFalse("notifier | exist serv.jar", new File(buildPath + "dew_build" + File.separator + "serv.jar").exists());
         Assert.assertTrue("notifier | exist Deployment.yaml", new File(buildPath + "dew_release" + File.separator + "Deployment.yaml").exists());
         Assert.assertTrue("notifier | exist Service.yaml", new File(buildPath + "dew_release" + File.separator + "Service.yaml").exists());
-        Assert.assertEquals("notifier | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),
+        verifyResourceDescriptors("notifier | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),
                 $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Deployment.yaml", "UTF-8"));
-        Assert.assertEquals("notifier | match Service.yaml", $.file.readAllByPathName(expectedResPath + "Service.yaml", "UTF-8"),
+        verifyResourceDescriptors("notifier | match Service.yaml", $.file.readAllByPathName(expectedResPath + "Service.yaml", "UTF-8"),
                 $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Service.yaml", "UTF-8"));
         // verify frontend
         expectedResPath = basePath
@@ -114,9 +114,9 @@ public class TodoVerify extends BasicProcessor implements Verify {
         Assert.assertTrue("frontend | exist dist", new File(buildPath + "dew_build" + File.separator + "dist").exists());
         Assert.assertTrue("frontend | exist Deployment.yaml", new File(buildPath + "dew_release" + File.separator + "Deployment.yaml").exists());
         Assert.assertTrue("frontend | exist Service.yaml", new File(buildPath + "dew_release" + File.separator + "Service.yaml").exists());
-        Assert.assertEquals("frontend | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),
+        verifyResourceDescriptors("frontend | match Deployment.yaml", $.file.readAllByPathName(expectedResPath + "Deployment.yaml", "UTF-8"),
                 $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Deployment.yaml", "UTF-8"));
-        Assert.assertEquals("frontend | match Service.yaml", $.file.readAllByPathName(expectedResPath + "Service.yaml", "UTF-8"),
+        verifyResourceDescriptors("frontend | match Service.yaml", $.file.readAllByPathName(expectedResPath + "Service.yaml", "UTF-8"),
                 $.file.readAllByPathName(buildPath + "dew_release" + File.separator + "Service.yaml", "UTF-8"));
     }
 }

@@ -2,13 +2,13 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   annotations:
-    dew.ms/git-commit: '0001'
-    dew.ms/scm-url: ''
+    dew.ms/git-commit: "@ignore@"
+    dew.ms/scm-url: "@ignore@"
     sidecar.jaegertracing.io/inject: 'true'
   labels:
     app: helloworld-backend
     provider: dew
-    version: '0001'
+    version: "@ignore@"
     group: ms.dew.devops.it
   name: helloworld-backend
   namespace: dew-test
@@ -22,46 +22,46 @@ spec:
   template:
     metadata:
       annotations:
-        dew.ms/git-commit: '0001'
-        dew.ms/scm-url: ''
+        dew.ms/git-commit: "@ignore@"
+        dew.ms/scm-url: "@ignore@"
         sidecar.jaegertracing.io/inject: 'true'
       labels:
         app: helloworld-backend
         provider: dew
-        version: '0001'
+        version: "@ignore@"
         group: ms.dew.devops.it
     spec:
       containers:
-      - env:
-        - name: JAVA_OPTIONS
-          value: ' -Dspring.profiles.active=test -Dserver.port=8080 -Dopentracing.jaeger.log-spans=false
+        - env:
+            - name: JAVA_OPTIONS
+              value: ' -Dspring.profiles.active=test -Dserver.port=8080 -Dopentracing.jaeger.log-spans=false
             -Dopentracing.jaeger.probabilistic-sampler.sampling-rate=0.1 -Dmanagement.endpoints.web.exposure.include=*
             -Dmetrics.tags:application=${spring.application.name}'
-        image: harbor.trc.com/dew-test/helloworld-backend:0001
-        imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 6
-          httpGet:
-            path: /actuator/health
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 30
-          periodSeconds: 30
-        name: dew-app
-        ports:
-        - containerPort: 8080
-          name: http
-          protocol: TCP
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /actuator/health
-            port: 8080
-            scheme: HTTP
-          initialDelaySeconds: 10
-          periodSeconds: 30
-        resources:
-          limits: {}
-          requests: {}
+          image: "@ignore@"
+          imagePullPolicy: IfNotPresent
+          livenessProbe:
+            failureThreshold: 6
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          name: dew-app
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /actuator/health
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          resources:
+            limits: {}
+            requests: {}
       nodeSelector:
         group: app

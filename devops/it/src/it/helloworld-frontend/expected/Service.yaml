@@ -2,12 +2,12 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    dew.ms/git-commit: '0001'
-    dew.ms/scm-url: ''
+    dew.ms/git-commit: "@ignore@"
+    dew.ms/scm-url: "@ignore@"
   labels:
     app: helloworld-frontend
     provider: dew
-    version: '0001'
+    version: "@ignore@"
     expose: 'true'
     group: ms.dew.devops.it
   name: helloworld-frontend

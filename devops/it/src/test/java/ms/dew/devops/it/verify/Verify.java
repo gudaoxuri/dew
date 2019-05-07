@@ -16,7 +16,19 @@
 
 package ms.dew.devops.it.verify;
 
+import com.consol.citrus.context.TestContext;
+import com.consol.citrus.validation.json.JsonMessageValidationContext;
+import com.consol.citrus.validation.json.JsonTextMessageValidator;
+import com.consol.citrus.validation.matcher.ValidationMatcherConfig;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.jayway.jsonpath.JsonPath;
+import net.minidev.json.JSONObject;
+import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
+
 import java.io.File;
+import java.io.IOException;
 
 
 /**
@@ -46,5 +58,27 @@ public interface Verify {
      * @throws Exception the exception
      */
     void doVerify(String buildPath, String expectedResPath) throws Exception;
+
+    default void verifyResourceDescriptors(String message, String expectedText, String actualText) throws IOException, ParseException {
+        JsonTextMessageValidator validator = new JsonTextMessageValidator();
+        validator.setStrict(false);
+
+        TestContext context = new TestContext();
+        context.getValidationMatcherRegistry()
+                .getValidationMatcherLibraries()
+                .add(new ValidationMatcherConfig().getValidationMatcherLibrary());
+
+        validator.validateJson(message,
+                (JSONObject) new JSONParser(JSONParser.DEFAULT_PERMISSIVE_MODE).parse(toJson(actualText)),
+                (JSONObject) new JSONParser(JSONParser.DEFAULT_PERMISSIVE_MODE).parse(toJson(expectedText)),
+                new JsonMessageValidationContext(),
+                context,
+                JsonPath.parse(actualText));
+    }
+
+    default String toJson(String yaml) throws IOException {
+        Object obj = new ObjectMapper(new YAMLFactory()).readValue(yaml, Object.class);
+        return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+    }
 
 }

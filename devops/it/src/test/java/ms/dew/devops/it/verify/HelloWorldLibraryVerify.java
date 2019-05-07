@@ -44,4 +44,5 @@ public class HelloWorldLibraryVerify extends BasicProcessor implements Verify {
         long offsetMinutes = (System.currentTimeMillis() - sdf.parse(lastUpdateTime).getTime()) / 1000 / 60 / 60;
         Assert.assertTrue("last deploy time check", offsetMinutes < 5);
     }
+
 }
