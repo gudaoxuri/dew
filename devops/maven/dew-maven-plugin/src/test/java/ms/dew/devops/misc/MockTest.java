@@ -17,7 +17,7 @@
 package ms.dew.devops.misc;
 
 import ms.dew.devops.BasicTest;
-import ms.dew.devops.helper.GitHelper;
+import ms.dew.devops.kernel.helper.GitHelper;
 import ms.dew.devops.kernel.Dew;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Assert;

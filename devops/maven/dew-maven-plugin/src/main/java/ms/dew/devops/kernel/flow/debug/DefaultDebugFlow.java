@@ -17,7 +17,7 @@
 package ms.dew.devops.kernel.flow.debug;
 
 import io.kubernetes.client.ApiException;
-import ms.dew.devops.helper.KubeHelper;
+import ms.dew.devops.kernel.helper.KubeHelper;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.function.PodSelector;

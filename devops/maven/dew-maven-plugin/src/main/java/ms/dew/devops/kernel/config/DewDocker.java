@@ -16,7 +16,7 @@
 
 package ms.dew.devops.kernel.config;
 
-import ms.dew.devops.exception.ConfigException;
+import ms.dew.devops.kernel.exception.ConfigException;
 
 import java.net.MalformedURLException;
 import java.net.URL;

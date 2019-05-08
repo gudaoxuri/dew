@@ -18,10 +18,10 @@ package ms.dew.devops.it;
 
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.*;
-import ms.dew.devops.helper.DockerHelper;
-import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.helper.KubeRES;
-import ms.dew.devops.helper.YamlHelper;
+import ms.dew.devops.kernel.helper.DockerHelper;
+import ms.dew.devops.kernel.helper.KubeHelper;
+import ms.dew.devops.kernel.helper.KubeRES;
+import ms.dew.devops.kernel.helper.YamlHelper;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
 

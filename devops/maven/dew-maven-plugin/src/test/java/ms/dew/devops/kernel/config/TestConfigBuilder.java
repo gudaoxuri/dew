@@ -17,7 +17,7 @@
 package ms.dew.devops.kernel.config;
 
 import ms.dew.devops.BasicTest;
-import ms.dew.devops.helper.YamlHelper;
+import ms.dew.devops.kernel.helper.YamlHelper;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Assert;
 import org.junit.Test;

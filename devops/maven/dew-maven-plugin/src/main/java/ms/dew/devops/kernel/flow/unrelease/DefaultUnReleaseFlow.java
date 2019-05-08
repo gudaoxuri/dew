@@ -19,8 +19,8 @@ package ms.dew.devops.kernel.flow.unrelease;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1Pod;
 import io.kubernetes.client.models.V1beta1ReplicaSet;
-import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.helper.KubeRES;
+import ms.dew.devops.kernel.helper.KubeHelper;
+import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
 

@@ -14,20 +14,32 @@
  * limitations under the License.
  */
 
-package mock;
+package ms.dew.devops.kernel.exception;
 
-import ms.dew.devops.kernel.helper.GitHelper;
-import org.apache.maven.plugin.logging.SystemStreamLog;
 
 /**
- * Mock.
+ * Config exception.
  *
  * @author gudaoxuri
  */
-public class Mock {
+public class ConfigException extends RuntimeException {
 
-    public Mock() {
-        GitHelper.forceInit("GIT", "", new MockGitOpt(new SystemStreamLog()));
+    /**
+     * Instantiates a new Config exception.
+     *
+     * @param message the message
+     */
+    public ConfigException(String message) {
+        super(message);
     }
 
+    /**
+     * Instantiates a new Config exception.
+     *
+     * @param message the message
+     * @param cause   the cause
+     */
+    public ConfigException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

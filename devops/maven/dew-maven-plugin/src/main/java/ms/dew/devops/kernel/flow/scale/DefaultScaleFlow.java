@@ -17,8 +17,8 @@
 package ms.dew.devops.kernel.flow.scale;
 
 import io.kubernetes.client.ApiException;
-import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.helper.KubeRES;
+import ms.dew.devops.kernel.helper.KubeHelper;
+import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;

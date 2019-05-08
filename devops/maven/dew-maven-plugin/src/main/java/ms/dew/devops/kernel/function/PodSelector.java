@@ -18,9 +18,9 @@ package ms.dew.devops.kernel.function;
 
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1Pod;
-import ms.dew.devops.exception.ProjectProcessException;
-import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.helper.KubeRES;
+import ms.dew.devops.kernel.exception.ProjectProcessException;
+import ms.dew.devops.kernel.helper.KubeHelper;
+import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.resource.KubeDeploymentBuilder;

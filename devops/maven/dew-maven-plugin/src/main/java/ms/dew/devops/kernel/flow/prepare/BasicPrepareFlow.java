@@ -16,12 +16,12 @@
 
 package ms.dew.devops.kernel.flow.prepare;
 
-import ms.dew.devops.exception.ProjectProcessException;
-import ms.dew.devops.helper.DockerHelper;
+import ms.dew.devops.kernel.exception.ProjectProcessException;
+import ms.dew.devops.kernel.helper.DockerHelper;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
-import ms.dew.devops.util.ShellHelper;
+import ms.dew.devops.kernel.util.ShellHelper;
 
 import java.io.IOException;
 import java.util.HashMap;
