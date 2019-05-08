@@ -33,7 +33,7 @@ import java.io.IOException;
  *
  * @author gudaoxuri
  */
-@Mojo(name = "prepare", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "prepare", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 @Execute(phase = LifecyclePhase.VALIDATE, goal = "init")
 public class PrepareMojo extends BasicMojo {
 

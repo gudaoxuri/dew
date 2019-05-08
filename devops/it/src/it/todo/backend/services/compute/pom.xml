@@ -39,6 +39,11 @@
             <groupId>ms.dew.devops.it</groupId>
             <artifactId>todo-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
 </project>
