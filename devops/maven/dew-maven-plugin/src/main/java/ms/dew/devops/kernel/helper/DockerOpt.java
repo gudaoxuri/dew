@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit;
  * Docker操作函数类.
  *
  * @author gudaoxuri
- * @link https ://github.com/docker-java/docker-java/wiki
+ * @link https://github.com/docker-java/docker-java/wiki
  */
 public class DockerOpt {
 
@@ -91,7 +91,7 @@ public class DockerOpt {
      * @param registryUrl      registry地址， e.g. https://harbor.dew.env/v2
      * @param registryUsername registry用户名
      * @param registryPassword registry密码
-     * @link https ://docs.docker.com/install/linux/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections
+     * @link https://docs.docker.com/install/linux/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections
      */
     protected DockerOpt(Log log, String host, String registryUrl, String registryUsername, String registryPassword) {
         this.log = log;

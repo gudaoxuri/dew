@@ -76,6 +76,8 @@ public class DewApp {
     // 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> npm run build:<环境名称>
     // 后端服务默认为空
     private String packageCmd = "";
+    // 服务配置，多为Nginx配置
+    private String serverConfig = "";
     // 运行参数，可指定诸如 JVM 配置等信息
     private String runOptions = "";
     // 容器资源上限，同Kubernetes配置
@@ -375,6 +377,7 @@ public class DewApp {
 
     /**
      * Gets node selector.
+     *
      * @return the node selector
      */
     public Map<String, String> getNodeSelector() {
@@ -424,6 +427,24 @@ public class DewApp {
      */
     public void setPackageCmd(String packageCmd) {
         this.packageCmd = packageCmd;
+    }
+
+    /**
+     * Gets server config.
+     *
+     * @return the server config
+     */
+    public String getServerConfig() {
+        return serverConfig;
+    }
+
+    /**
+     * Sets server config.
+     *
+     * @param serverConfig the server config
+     */
+    public void setServerConfig(String serverConfig) {
+        this.serverConfig = serverConfig;
     }
 
     /**

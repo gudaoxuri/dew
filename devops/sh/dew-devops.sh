@@ -517,6 +517,11 @@ EOF
     GITLAB_RUNNER_PROFILE=${GENERAL_INPUT_ANSWER}
 
     echo
+    echo "# Default container image to use for builds when none is specified."
+    waiting_input "Please Input your runner image" ${GITLAB_RUNNER_IMAGE}
+    GITLAB_RUNNER_IMAGE=${GENERAL_INPUT_ANSWER}
+
+    echo
     echo "# The DockerD url is used for dew-maven-plugin."
     echo "# e.g. ${DOCKERD_URL}"
     waiting_input "Please input your DockerD service url" "" "Y"
