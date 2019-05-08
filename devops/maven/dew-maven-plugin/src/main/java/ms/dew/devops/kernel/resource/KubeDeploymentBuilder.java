@@ -18,8 +18,8 @@ package ms.dew.devops.kernel.resource;
 
 import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.models.*;
-import ms.dew.devops.exception.ProjectProcessException;
-import ms.dew.devops.helper.KubeRES;
+import ms.dew.devops.kernel.exception.ProjectProcessException;
+import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.function.VersionController;
 

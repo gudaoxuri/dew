@@ -17,7 +17,7 @@
 package ms.dew.devops.kernel.resource;
 
 import io.kubernetes.client.models.*;
-import ms.dew.devops.helper.KubeRES;
+import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 
 import java.util.ArrayList;

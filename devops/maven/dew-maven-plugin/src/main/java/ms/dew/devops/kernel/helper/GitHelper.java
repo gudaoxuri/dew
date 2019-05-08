@@ -14,20 +14,36 @@
  * limitations under the License.
  */
 
-package mock;
+package ms.dew.devops.kernel.helper;
 
-import ms.dew.devops.kernel.helper.GitHelper;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.apache.maven.plugin.logging.Log;
 
 /**
- * Mock.
+ * Git辅助类.
+ * <p>
+ * 使用多实例支持是为方便替换GitOpt为Mock对象以进行集成测试，详见测试实现
  *
  * @author gudaoxuri
  */
-public class Mock {
+public class GitHelper extends MultiInstProcessor {
 
-    public Mock() {
-        GitHelper.forceInit("GIT", "", new MockGitOpt(new SystemStreamLog()));
+    /**
+     * Init.
+     *
+     * @param log the log
+     */
+    public static void init(Log log) {
+        multiInit("GIT", "",
+                () -> new GitOpt(log), "");
+    }
+
+    /**
+     * Fetch GitOpt instance.
+     *
+     * @return GitOpt instance
+     */
+    public static GitOpt inst() {
+        return multiInst("GIT", "");
     }
 
 }

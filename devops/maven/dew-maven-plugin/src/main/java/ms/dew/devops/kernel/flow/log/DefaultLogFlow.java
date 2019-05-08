@@ -17,7 +17,7 @@
 package ms.dew.devops.kernel.flow.log;
 
 import io.kubernetes.client.ApiException;
-import ms.dew.devops.helper.KubeHelper;
+import ms.dew.devops.kernel.helper.KubeHelper;
 import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;

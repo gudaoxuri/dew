@@ -14,20 +14,28 @@
  * limitations under the License.
  */
 
-package mock;
+package ms.dew.devops.maven.mojo;
 
-import ms.dew.devops.kernel.helper.GitHelper;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import io.kubernetes.client.ApiException;
+import ms.dew.devops.kernel.flow.log.DefaultLogFlow;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+
+import java.io.IOException;
 
 /**
- * Mock.
+ * Log view mojo.
  *
  * @author gudaoxuri
  */
-public class Mock {
+@Mojo(name = "log")
+@Execute(phase = LifecyclePhase.VALIDATE, goal = "init")
+public class LogMojo extends BasicMojo {
 
-    public Mock() {
-        GitHelper.forceInit("GIT", "", new MockGitOpt(new SystemStreamLog()));
+    @Override
+    protected boolean executeInternal() throws IOException, ApiException {
+        return new DefaultLogFlow(podName, follow).exec(getMojoName());
     }
 
 }

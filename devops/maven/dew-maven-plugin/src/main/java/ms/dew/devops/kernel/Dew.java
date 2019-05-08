@@ -17,14 +17,14 @@
 package ms.dew.devops.kernel;
 
 import com.ecfront.dew.common.$;
-import ms.dew.devops.exception.ProjectProcessException;
-import ms.dew.devops.helper.DockerHelper;
-import ms.dew.devops.helper.GitHelper;
-import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.helper.YamlHelper;
+import ms.dew.devops.kernel.exception.ProjectProcessException;
+import ms.dew.devops.kernel.helper.DockerHelper;
+import ms.dew.devops.kernel.helper.GitHelper;
+import ms.dew.devops.kernel.helper.KubeHelper;
+import ms.dew.devops.kernel.helper.YamlHelper;
 import ms.dew.devops.kernel.config.*;
 import ms.dew.devops.kernel.function.ExecuteEventProcessor;
-import ms.dew.devops.util.ExitMonitorProcessor;
+import ms.dew.devops.kernel.util.ExitMonitorProcessor;
 import ms.dew.notification.NotifyConfig;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
@@ -70,7 +70,7 @@ public class Dew {
     /**
      * 日志类.
      *
-     * @see ms.dew.devops.util.DewLog
+     * @see ms.dew.devops.kernel.util.DewLog
      */
     public static Log log;
 

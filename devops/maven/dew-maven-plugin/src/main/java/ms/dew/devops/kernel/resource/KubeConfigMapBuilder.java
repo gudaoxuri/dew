@@ -19,7 +19,7 @@ package ms.dew.devops.kernel.resource;
 import io.kubernetes.client.models.V1ConfigMap;
 import io.kubernetes.client.models.V1ConfigMapBuilder;
 import io.kubernetes.client.models.V1ObjectMetaBuilder;
-import ms.dew.devops.helper.KubeRES;
+import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 
 import java.util.Map;

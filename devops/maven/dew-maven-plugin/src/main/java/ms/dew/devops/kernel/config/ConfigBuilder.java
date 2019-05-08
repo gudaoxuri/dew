@@ -18,9 +18,9 @@ package ms.dew.devops.kernel.config;
 
 import com.ecfront.dew.common.$;
 import com.fasterxml.jackson.databind.JsonNode;
-import ms.dew.devops.exception.ConfigException;
-import ms.dew.devops.helper.GitHelper;
-import ms.dew.devops.helper.YamlHelper;
+import ms.dew.devops.kernel.exception.ConfigException;
+import ms.dew.devops.kernel.helper.GitHelper;
+import ms.dew.devops.kernel.helper.YamlHelper;
 import ms.dew.devops.kernel.Dew;
 import org.apache.maven.project.MavenProject;
 

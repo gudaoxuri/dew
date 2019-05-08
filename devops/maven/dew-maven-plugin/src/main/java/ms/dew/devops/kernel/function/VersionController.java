@@ -19,8 +19,8 @@ package ms.dew.devops.kernel.function;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1ConfigMap;
 import io.kubernetes.client.models.V1Service;
-import ms.dew.devops.helper.KubeHelper;
-import ms.dew.devops.helper.KubeRES;
+import ms.dew.devops.kernel.helper.KubeHelper;
+import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.resource.KubeConfigMapBuilder;
 

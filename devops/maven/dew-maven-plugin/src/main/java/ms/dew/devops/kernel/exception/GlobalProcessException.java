@@ -14,20 +14,32 @@
  * limitations under the License.
  */
 
-package mock;
+package ms.dew.devops.kernel.exception;
 
-import ms.dew.devops.kernel.helper.GitHelper;
-import org.apache.maven.plugin.logging.SystemStreamLog;
 
 /**
- * Mock.
+ * Global process exception.
  *
  * @author gudaoxuri
  */
-public class Mock {
+public class GlobalProcessException extends RuntimeException {
 
-    public Mock() {
-        GitHelper.forceInit("GIT", "", new MockGitOpt(new SystemStreamLog()));
+    /**
+     * Instantiates a new Process exception.
+     *
+     * @param message the message
+     */
+    public GlobalProcessException(String message) {
+        super(message);
     }
 
+    /**
+     * Instantiates a new Process exception.
+     *
+     * @param message the message
+     * @param cause   the cause
+     */
+    public GlobalProcessException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

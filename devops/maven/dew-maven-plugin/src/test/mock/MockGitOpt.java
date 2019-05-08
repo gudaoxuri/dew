@@ -16,7 +16,7 @@
 
 package mock;
 
-import ms.dew.devops.helper.GitOpt;
+import ms.dew.devops.kernel.helper.GitOpt;
 import org.apache.maven.plugin.logging.Log;
 
 import java.util.ArrayList;
