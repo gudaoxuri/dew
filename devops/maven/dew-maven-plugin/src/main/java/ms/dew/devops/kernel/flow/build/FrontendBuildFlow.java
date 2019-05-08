@@ -38,6 +38,11 @@ public class FrontendBuildFlow extends DockerBuildFlow {
         String preparePath = config.getMvnTargetDirectory() + "dew_prepare" + File.separator;
         FileUtils.deleteDirectory(new File(flowBasePath + "dist"));
         Files.move(Paths.get(preparePath + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
+        if (config.getApp().getServerConfig() != null && !config.getApp().getServerConfig().isEmpty()) {
+            Files.write(Paths.get(flowBasePath + "custom.conf"), config.getApp().getServerConfig().getBytes());
+        } else {
+            Files.write(Paths.get(flowBasePath + "custom.conf"), "".getBytes());
+        }
         $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/frontend/Dockerfile"), flowBasePath + "Dockerfile");
     }
 

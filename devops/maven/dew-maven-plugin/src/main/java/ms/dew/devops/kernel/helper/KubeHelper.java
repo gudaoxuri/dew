@@ -22,7 +22,7 @@ import org.apache.maven.plugin.logging.Log;
  * Kubernetes操作函数类.
  *
  * @author gudaoxuri
- * @link https ://github.com/kubernetes-client/java
+ * @link https://github.com/kubernetes-client/java
  */
 public class KubeHelper extends MultiInstProcessor {
 

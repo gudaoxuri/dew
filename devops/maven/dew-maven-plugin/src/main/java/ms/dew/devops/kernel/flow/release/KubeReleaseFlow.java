@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
  */
 public class KubeReleaseFlow extends BasicFlow {
 
-    private static final int WAIT_ITMEOUT_MINUTES = 20;
+    private static final int WAIT_TIMEOUT_MINUTES = 20;
 
     private String flowBasePath;
 
@@ -188,6 +188,13 @@ public class KubeReleaseFlow extends BasicFlow {
                                     )
                                     .count();
                             while (resp.object.getSpec().getReplicas() != runningPodSize) {
+                                runningPodSize = KubeHelper.inst(config.getId())
+                                        .list(select, deploymentRes.getMetadata().getNamespace(), KubeRES.POD, V1Pod.class)
+                                        .stream().filter(pod ->
+                                                pod.getStatus().getPhase().equalsIgnoreCase("Running")
+                                                        && pod.getStatus().getContainerStatuses().stream().allMatch(V1ContainerStatus::isReady)
+                                        )
+                                        .count();
                                 // 之前版本没有销毁
                                 Thread.sleep(1000);
                             }
@@ -200,7 +207,7 @@ public class KubeReleaseFlow extends BasicFlow {
                 ExtensionsV1beta1Deployment.class);
         try {
             // 等待 deployment 部署完成
-            boolean awaitResult = cdl.await(WAIT_ITMEOUT_MINUTES, TimeUnit.MINUTES);
+            boolean awaitResult = cdl.await(WAIT_TIMEOUT_MINUTES, TimeUnit.MINUTES);
             KubeHelper.inst(config.getId()).stopWatch(watchId);
             if (!awaitResult) {
                 Dew.log.error("Publish wait timeout");
