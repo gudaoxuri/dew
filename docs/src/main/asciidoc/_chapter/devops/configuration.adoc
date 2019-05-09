@@ -103,6 +103,7 @@ app:                                    # 应用配置
                                         # 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> npm run build:<环境名称>
                                         # 后端服务默认为空
   runOptions:                           # 运行参数，可指定诸如 JVM 配置等信息
+  serverConfig: |-                      # 服务配置，多为Nginx配置
   containerResourcesLimits:             # 容器资源上限，同Kubernetes配置
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
   containerResourcesRequests:           # 容器资源下限，同Kubernetes配置
@@ -119,19 +120,19 @@ kube:                                   # Kubernetes配置
   base64Config:                         # Kubernetes Base64 后的配置，此项建议使用Maven方式配置
                                         # 使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 notifies:                               # 通知配置
-- type: DD                              # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
-  defaultReceivers:                     # 默认接收人列表，钉钉为手机号，邮件为邮箱
-  dndTimeReceivers:                     # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
-  args:                                 # 不同类型的参数，邮件不需要设置
-      url:                              # type=DD表示钉钉的推送地址
+  - type: DD                            # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
+    defaultReceivers:                   # 默认接收人列表，钉钉为手机号，邮件为邮箱
+    dndTimeReceivers:                   # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
+    args:                               # 不同类型的参数，邮件不需要设置
+        url:                            # type=DD表示钉钉的推送地址
                                         # 说明详见：https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
                                         # type=HTTP表示HTTP Hook的地址
-      msgType:                          # 仅用于type=DD，支持 text/markdown
-  strategy:                             # 通知策略
-      minIntervalSec: 0                 # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
-      dndTime:                          # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
+        msgType:                        # 仅用于type=DD，支持 text/markdown
+    strategy:                           # 通知策略
+        minIntervalSec: 0               # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
+        dndTime:                        # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
                                         # HH:mm-HH:mm，如果两个时间相等表示全天免扰，如果后者大于前者表示跨天免扰
-      forceSendTimes: 3                 # 同一免扰周期间通知调用达到几次后强制发送
+        forceSendTimes: 3               # 同一免扰周期间通知调用达到几次后强制发送
 # 其它环境配置
 profiles:
     <name>: # 环境名称，e.g. test uat prod

@@ -6,6 +6,7 @@ COPY ./serv.jar ./
 
 RUN chmod 777 ./run-java.sh
 RUN chmod 777 ./debug-java.sh
+RUN echo 'Asia/Shanghai' >/etc/timezone
 
 ARG PORT=8080
 
