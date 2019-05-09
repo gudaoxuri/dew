@@ -17,10 +17,9 @@
 package ms.dew.devops.kernel.flow.build;
 
 import com.ecfront.dew.common.$;
-import ms.dew.devops.kernel.helper.DockerHelper;
-import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
+import ms.dew.devops.kernel.helper.DockerHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,13 +56,13 @@ public abstract class DockerBuildFlow extends BasicFlow {
             // push 到 registry
             if (config.getDocker().getRegistryUrl() == null
                     || config.getDocker().getRegistryUrl().isEmpty()) {
-                Dew.log.warn("Not found docker registry url and push is ignored, which is mostly used for stand-alone testing");
+                logger.warn("Not found docker registry url and push is ignored, which is mostly used for stand-alone testing");
             } else {
-                Dew.log.info("Pushing image : " + config.getCurrImageName());
+                logger.info("Pushing image : " + config.getCurrImageName());
                 DockerHelper.inst(config.getId()).image.push(config.getCurrImageName(), true);
             }
         } else {
-            Dew.log.info("Ignore build, because image " + config.getCurrImageName() + " already exist");
+            logger.info("Ignore build, because image " + config.getCurrImageName() + " already exist");
         }
     }
 
@@ -77,8 +76,8 @@ public abstract class DockerBuildFlow extends BasicFlow {
                 config.getAppendProfile().getDocker().getRegistryHost(),
                 config.getAppendProfile().getNamespace(),
                 config.getAppName(),
-                config.getGitCommit());
-        Dew.log.info("Reuse image : " + reuseImageName);
+                config.getImageVersion());
+        logger.info("Reuse image : " + reuseImageName);
         // 从目标环境的镜像仓库拉取镜像到本地
         DockerHelper.inst(config.getId() + "-append").image.pull(reuseImageName, true);
         // 打上当前镜像的Tag
@@ -93,12 +92,12 @@ public abstract class DockerBuildFlow extends BasicFlow {
      * @throws IOException the io exception
      */
     private void processByNewImage(FinalProjectConfig config, String flowBasePath) throws IOException {
-        Dew.log.info("Building image : " + config.getCurrImageName());
+        logger.info("Building image : " + config.getCurrImageName());
         preDockerBuild(config, flowBasePath);
         if (config.getDocker().getImage() != null
                 && !config.getDocker().getImage().trim().isEmpty()) {
             // 如果存在自定义镜像则替换默认的镜像
-            Dew.log.debug("Using custom image : " + config.getDocker().getImage().trim());
+            logger.debug("Using custom image : " + config.getDocker().getImage().trim());
             String dockerFileContent = $.file.readAllByFile(new File(flowBasePath + "Dockerfile"), "UTF-8");
             dockerFileContent = dockerFileContent.replaceAll("FROM .*", "FROM " + config.getDocker().getImage().trim());
             Files.write(Paths.get(flowBasePath + "Dockerfile"), dockerFileContent.getBytes());

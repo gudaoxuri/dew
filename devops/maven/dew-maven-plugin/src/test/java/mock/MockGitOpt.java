@@ -17,7 +17,7 @@
 package mock;
 
 import ms.dew.devops.kernel.helper.GitOpt;
-import org.apache.maven.plugin.logging.Log;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class MockGitOpt extends GitOpt {
 
-    protected MockGitOpt(Log log) {
+    protected MockGitOpt(Logger log) {
         super(log);
     }
 

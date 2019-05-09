@@ -16,9 +16,10 @@
 
 package ms.dew.devops.kernel.util;
 
-import org.apache.maven.plugin.logging.Log;
 import org.fusesource.jansi.Ansi;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
 
 import static org.fusesource.jansi.Ansi.Color.*;
 
@@ -27,10 +28,32 @@ import static org.fusesource.jansi.Ansi.Color.*;
  *
  * @author gudaoxuri
  */
-public class DewLog implements Log {
+public class DewLog implements Logger {
 
     private Logger log;
     private String prefix;
+
+
+    /**
+     * Build logger.
+     *
+     * @param clazz the clazz
+     * @return the logger
+     */
+    public static Logger build(Class clazz) {
+        return new DewLog(LoggerFactory.getLogger(clazz), "[DEW]");
+    }
+
+    /**
+     * Build logger.
+     *
+     * @param clazz  the clazz
+     * @param prefix the prefix
+     * @return the logger
+     */
+    public static Logger build(Class clazz, String prefix) {
+        return new DewLog(LoggerFactory.getLogger(clazz), prefix);
+    }
 
     /**
      * Instantiates a new Dew log.
@@ -38,9 +61,74 @@ public class DewLog implements Log {
      * @param log    the log
      * @param prefix the prefix
      */
-    public DewLog(Logger log, String prefix) {
+    private DewLog(Logger log, String prefix) {
         this.log = log;
         this.prefix = prefix;
+    }
+
+    @Override
+    public String getName() {
+        return log.getName();
+    }
+
+    @Override
+    public boolean isTraceEnabled() {
+        return log.isTraceEnabled();
+    }
+
+    @Override
+    public boolean isTraceEnabled(Marker marker) {
+        return log.isTraceEnabled(marker);
+    }
+
+    @Override
+    public void trace(String msg) {
+        log.trace(ansi(msg, DEFAULT));
+    }
+
+    @Override
+    public void trace(String format, Object arg) {
+        log.trace(ansi(format, DEFAULT, arg));
+    }
+
+    @Override
+    public void trace(String format, Object arg1, Object arg2) {
+        log.trace(ansi(format, DEFAULT, arg1, arg2));
+    }
+
+    @Override
+    public void trace(String format, Object... arguments) {
+        log.trace(ansi(format, DEFAULT, arguments));
+    }
+
+    @Override
+    public void trace(String msg, Throwable t) {
+        log.trace(ansi(msg, DEFAULT, t));
+    }
+
+    @Override
+    public void trace(Marker marker, String msg) {
+        log.trace(marker, ansi(msg, DEFAULT));
+    }
+
+    @Override
+    public void trace(Marker marker, String format, Object arg) {
+        log.trace(marker, ansi(format, DEFAULT, arg));
+    }
+
+    @Override
+    public void trace(Marker marker, String format, Object arg1, Object arg2) {
+        log.trace(marker, ansi(format, DEFAULT, arg1, arg2));
+    }
+
+    @Override
+    public void trace(Marker marker, String format, Object... argArray) {
+        log.trace(marker, ansi(format, DEFAULT, argArray));
+    }
+
+    @Override
+    public void trace(Marker marker, String msg, Throwable t) {
+        log.trace(marker, ansi(msg, DEFAULT, t));
     }
 
     @Override
@@ -49,18 +137,58 @@ public class DewLog implements Log {
     }
 
     @Override
-    public void debug(CharSequence content) {
-        log.debug(ansi(content.toString(), WHITE));
+    public boolean isDebugEnabled(Marker marker) {
+        return log.isDebugEnabled(marker);
     }
 
     @Override
-    public void debug(CharSequence content, Throwable error) {
-        log.debug(ansi(content.toString(), WHITE, error));
+    public void debug(String msg) {
+        log.debug(ansi(msg, CYAN));
     }
 
     @Override
-    public void debug(Throwable error) {
-        log.debug(ansi("", WHITE, error));
+    public void debug(String format, Object arg) {
+        log.debug(ansi(format, CYAN, arg));
+    }
+
+    @Override
+    public void debug(String format, Object arg1, Object arg2) {
+        log.debug(ansi(format, CYAN, arg1, arg2));
+    }
+
+    @Override
+    public void debug(String format, Object... arguments) {
+        log.debug(ansi(format, CYAN, arguments));
+    }
+
+    @Override
+    public void debug(String msg, Throwable t) {
+        log.debug(ansi(msg, CYAN, t));
+    }
+
+    @Override
+    public void debug(Marker marker, String msg) {
+        log.debug(marker, ansi(msg, CYAN));
+    }
+
+    @Override
+    public void debug(Marker marker, String format, Object arg) {
+        log.debug(marker, ansi(format, CYAN, arg));
+    }
+
+    @Override
+    public void debug(Marker marker, String format, Object arg1, Object arg2) {
+        log.debug(marker, ansi(format, CYAN, arg1, arg2));
+    }
+
+    @Override
+    public void debug(Marker marker, String format, Object... arguments) {
+        log.debug(marker, ansi(format, CYAN, arguments));
+    }
+
+    @Override
+    public void debug(Marker marker, String msg, Throwable t) {
+        log.debug(marker, ansi(msg, CYAN, t));
     }
 
     @Override
@@ -69,18 +197,58 @@ public class DewLog implements Log {
     }
 
     @Override
-    public void info(CharSequence content) {
-        log.info(ansi(content.toString(), GREEN));
+    public boolean isInfoEnabled(Marker marker) {
+        return log.isInfoEnabled(marker);
     }
 
     @Override
-    public void info(CharSequence content, Throwable error) {
-        log.info(ansi(content.toString(), GREEN, error));
+    public void info(String msg) {
+        log.info(ansi(msg, BLUE));
     }
 
     @Override
-    public void info(Throwable error) {
-        log.info(ansi("", GREEN, error));
+    public void info(String format, Object arg) {
+        log.info(ansi(format, BLUE, arg));
+    }
+
+    @Override
+    public void info(String format, Object arg1, Object arg2) {
+        log.info(ansi(format, BLUE, arg1, arg2));
+    }
+
+    @Override
+    public void info(String format, Object... arguments) {
+        log.info(ansi(format, BLUE, arguments));
+    }
+
+    @Override
+    public void info(String msg, Throwable t) {
+        log.info(ansi(msg, BLUE, t));
+    }
+
+    @Override
+    public void info(Marker marker, String msg) {
+        log.info(marker, ansi(msg, BLUE));
+    }
+
+    @Override
+    public void info(Marker marker, String format, Object arg) {
+        log.info(marker, ansi(format, BLUE, arg));
+    }
+
+    @Override
+    public void info(Marker marker, String format, Object arg1, Object arg2) {
+        log.info(marker, ansi(format, BLUE, arg1, arg2));
+    }
+
+    @Override
+    public void info(Marker marker, String format, Object... arguments) {
+        log.info(marker, ansi(format, BLUE, arguments));
+    }
+
+    @Override
+    public void info(Marker marker, String msg, Throwable t) {
+        log.info(marker, ansi(msg, BLUE, t));
     }
 
     @Override
@@ -89,18 +257,58 @@ public class DewLog implements Log {
     }
 
     @Override
-    public void warn(CharSequence content) {
-        log.warn(ansi(content.toString(), YELLOW));
+    public boolean isWarnEnabled(Marker marker) {
+        return log.isWarnEnabled(marker);
     }
 
     @Override
-    public void warn(CharSequence content, Throwable error) {
-        log.warn(ansi(content.toString(), YELLOW, error));
+    public void warn(String msg) {
+        log.warn(ansi(msg, YELLOW));
     }
 
     @Override
-    public void warn(Throwable error) {
-        log.warn(ansi("", YELLOW, error));
+    public void warn(String format, Object arg) {
+        log.warn(ansi(format, YELLOW, arg));
+    }
+
+    @Override
+    public void warn(String format, Object... arguments) {
+        log.warn(ansi(format, YELLOW, arguments));
+    }
+
+    @Override
+    public void warn(String format, Object arg1, Object arg2) {
+        log.warn(ansi(format, YELLOW, arg1, arg2));
+    }
+
+    @Override
+    public void warn(String msg, Throwable t) {
+        log.warn(ansi(msg, YELLOW, t));
+    }
+
+    @Override
+    public void warn(Marker marker, String msg) {
+        log.warn(marker, ansi(msg, YELLOW));
+    }
+
+    @Override
+    public void warn(Marker marker, String format, Object arg) {
+        log.warn(marker, ansi(format, YELLOW, arg));
+    }
+
+    @Override
+    public void warn(Marker marker, String format, Object arg1, Object arg2) {
+        log.warn(marker, ansi(format, YELLOW, arg1, arg2));
+    }
+
+    @Override
+    public void warn(Marker marker, String format, Object... arguments) {
+        log.warn(marker, ansi(format, YELLOW, arguments));
+    }
+
+    @Override
+    public void warn(Marker marker, String msg, Throwable t) {
+        log.warn(marker, ansi(msg, YELLOW, t));
     }
 
     @Override
@@ -109,18 +317,58 @@ public class DewLog implements Log {
     }
 
     @Override
-    public void error(CharSequence content) {
-        log.error(ansi(content.toString(), RED));
+    public boolean isErrorEnabled(Marker marker) {
+        return log.isErrorEnabled(marker);
     }
 
     @Override
-    public void error(CharSequence content, Throwable error) {
-        log.error(ansi(content.toString(), RED, error));
+    public void error(String msg) {
+        log.error(ansi(msg, RED));
     }
 
     @Override
-    public void error(Throwable error) {
-        log.error(ansi("", RED, error));
+    public void error(String format, Object arg) {
+        log.error(ansi(format, RED, arg));
+    }
+
+    @Override
+    public void error(String format, Object arg1, Object arg2) {
+        log.error(ansi(format, RED, arg1, arg2));
+    }
+
+    @Override
+    public void error(String format, Object... arguments) {
+        log.error(ansi(format, RED, arguments));
+    }
+
+    @Override
+    public void error(String msg, Throwable t) {
+        log.error(ansi(msg, RED, t));
+    }
+
+    @Override
+    public void error(Marker marker, String msg) {
+        log.error(marker, ansi(msg, RED));
+    }
+
+    @Override
+    public void error(Marker marker, String format, Object arg) {
+        log.error(marker, ansi(format, RED, arg));
+    }
+
+    @Override
+    public void error(Marker marker, String format, Object arg1, Object arg2) {
+        log.error(marker, ansi(format, RED, arg1, arg2));
+    }
+
+    @Override
+    public void error(Marker marker, String format, Object... arguments) {
+        log.error(marker, ansi(format, RED, arguments));
+    }
+
+    @Override
+    public void error(Marker marker, String msg, Throwable t) {
+        log.error(marker, ansi(msg, RED, t));
     }
 
     private String ansi(String message, Ansi.Color color, Object... params) {

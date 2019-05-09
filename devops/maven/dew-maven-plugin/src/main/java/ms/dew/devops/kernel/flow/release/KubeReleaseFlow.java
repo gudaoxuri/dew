@@ -19,14 +19,13 @@ package ms.dew.devops.kernel.flow.release;
 import com.ecfront.dew.common.$;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.*;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.exception.ProjectProcessException;
+import ms.dew.devops.kernel.flow.BasicFlow;
+import ms.dew.devops.kernel.function.VersionController;
 import ms.dew.devops.kernel.helper.DockerHelper;
 import ms.dew.devops.kernel.helper.KubeHelper;
 import ms.dew.devops.kernel.helper.KubeRES;
-import ms.dew.devops.kernel.Dew;
-import ms.dew.devops.kernel.config.FinalProjectConfig;
-import ms.dew.devops.kernel.flow.BasicFlow;
-import ms.dew.devops.kernel.function.VersionController;
 import ms.dew.devops.kernel.resource.KubeDeploymentBuilder;
 import ms.dew.devops.kernel.resource.KubeServiceBuilder;
 
@@ -58,7 +57,7 @@ public class KubeReleaseFlow extends BasicFlow {
         this.flowBasePath = flowBasePath;
         release(config, config.getAppVersion());
         if (config.getApp().getRevisionHistoryLimit() > 0) {
-            Dew.log.debug("Delete old version from kubernetes resources and docker images");
+            logger.debug("Delete old version from kubernetes resources and docker images");
             removeOldVersions(config);
         }
     }
@@ -76,11 +75,11 @@ public class KubeReleaseFlow extends BasicFlow {
         V1ConfigMap oldVersion = VersionController.getVersion(config, appVersion, true);
         if (oldVersion != null) {
             deployResult = fetchOldVersionResources(config, oldVersion);
-            Dew.log.info("Rollback version to : " + VersionController.getVersionName(config, appVersion));
+            logger.info("Rollback version to : " + VersionController.getVersionName(config, appVersion));
             release(config, deployResult, appVersion, VersionController.getGitCommit(oldVersion), true);
             return;
         }
-        Dew.log.info("Deploy new version : " + VersionController.getVersionName(config, config.getAppVersion()));
+        logger.info("Deploy new version : " + VersionController.getVersionName(config, config.getAppVersion()));
         deployResult = buildNewVersionResources(config, flowBasePath);
         release(config, deployResult, config.getAppVersion(), config.getGitCommit(), false);
     }
@@ -98,9 +97,9 @@ public class KubeReleaseFlow extends BasicFlow {
      */
     private void release(FinalProjectConfig config, Map<String, Object> deployResult, String appVersion, String gitCommit, boolean reRelease)
             throws ApiException, IOException {
-        Dew.log.info("Publishing kubernetes resources");
+        logger.info("Publishing kubernetes resources");
         deployResources(config, deployResult);
-        Dew.log.debug("Add version to ConfigMap");
+        logger.debug("Add version to ConfigMap");
         appendVersionInfo(config, deployResult, appVersion, gitCommit, reRelease);
     }
 
@@ -210,7 +209,7 @@ public class KubeReleaseFlow extends BasicFlow {
             boolean awaitResult = cdl.await(WAIT_TIMEOUT_MINUTES, TimeUnit.MINUTES);
             KubeHelper.inst(config.getId()).stopWatch(watchId);
             if (!awaitResult) {
-                Dew.log.error("Publish wait timeout");
+                logger.error("Publish wait timeout");
                 throw new ProjectProcessException("Publish wait timeout");
             }
             // 部署 service
@@ -224,7 +223,7 @@ public class KubeReleaseFlow extends BasicFlow {
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            Dew.log.error("Publish error", e);
+            logger.error("Publish error", e);
             throw new ProjectProcessException("Publish error", e);
         }
     }
@@ -263,7 +262,7 @@ public class KubeReleaseFlow extends BasicFlow {
      */
     private void removeOldVersions(FinalProjectConfig config) throws ApiException, IOException {
         // 获取所有历史版本
-        List<V1ConfigMap> verConfigMaps = VersionController.getVersionHistory(config, false);
+        List<V1ConfigMap> verConfigMaps = VersionController.getVersionHistory(config.getId(), config.getAppName(), config.getNamespace(), false);
         int offset = config.getApp().getRevisionHistoryLimit();
         for (V1ConfigMap configMap : verConfigMaps) {
             boolean enabled = VersionController.isVersionEnabled(configMap);
@@ -273,7 +272,7 @@ public class KubeReleaseFlow extends BasicFlow {
             }
             if (!enabled || offset <= 0) {
                 String oldGitCommit = VersionController.getGitCommit(configMap);
-                Dew.log.debug("Remove old version : " + configMap.getMetadata().getName());
+                logger.debug("Remove old version : " + configMap.getMetadata().getName());
                 // 删除 config map
                 KubeHelper.inst(config.getId()).delete(configMap.getMetadata().getName(), config.getNamespace(), KubeRES.CONFIG_MAP);
                 // 删除本地 image (不包含其它节点)

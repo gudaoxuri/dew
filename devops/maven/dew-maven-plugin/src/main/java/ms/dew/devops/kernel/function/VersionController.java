@@ -19,14 +19,15 @@ package ms.dew.devops.kernel.function;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1ConfigMap;
 import io.kubernetes.client.models.V1Service;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.helper.KubeHelper;
 import ms.dew.devops.kernel.helper.KubeRES;
-import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.resource.KubeConfigMapBuilder;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -117,18 +118,21 @@ public class VersionController {
         }
     }
 
+
     /**
      * 从kubernetes中获取历史版本列表.
      *
-     * @param config      the project config
+     * @param projectId   the project id
+     * @param appName     the app name
+     * @param namespace   the namespace
      * @param onlyEnabled the only enabled
      * @return the version history
      * @throws ApiException the api exception
      */
-    public static List<V1ConfigMap> getVersionHistory(FinalProjectConfig config, boolean onlyEnabled) throws ApiException {
-        List<V1ConfigMap> versions = KubeHelper.inst(config.getId()).list(
-                FLAG_VERSION_APP + "=" + config.getAppName() + "," + FLAG_VERSION_KIND + "=version",
-                config.getNamespace(),
+    public static List<V1ConfigMap> getVersionHistory(String projectId, String appName, String namespace, boolean onlyEnabled) throws ApiException {
+        List<V1ConfigMap> versions = KubeHelper.inst(projectId).list(
+                FLAG_VERSION_APP + "=" + appName + "," + FLAG_VERSION_KIND + "=version",
+                namespace,
                 KubeRES.CONFIG_MAP, V1ConfigMap.class);
         if (onlyEnabled) {
             versions = versions.stream()
@@ -147,17 +151,19 @@ public class VersionController {
     /**
      * 从kubernetes中获取最新版本.
      *
-     * @param config      the project config
+     * @param projectId   the project id
+     * @param appName     the app name
+     * @param namespace   the namespace
      * @param onlyEnabled the only enabled
      * @return the version
      * @throws ApiException the api exception
      */
-    public static V1ConfigMap getLastVersion(FinalProjectConfig config, boolean onlyEnabled) throws ApiException {
-        List<V1ConfigMap> versions = getVersionHistory(config, onlyEnabled);
+    public static Optional<V1ConfigMap> getLastVersion(String projectId, String appName, String namespace, boolean onlyEnabled) throws ApiException {
+        List<V1ConfigMap> versions = getVersionHistory(projectId, appName, namespace, onlyEnabled);
         if (versions.size() == 0) {
-            return null;
+            return Optional.empty();
         } else {
-            return versions.get(0);
+            return Optional.of(versions.get(0));
         }
     }
 
@@ -196,9 +202,6 @@ public class VersionController {
      * @return the app version
      */
     public static String getAppVersion(V1Service service) {
-        if (service == null) {
-            return null;
-        }
         return service.getMetadata().getLabels().get(FLAG_KUBE_RESOURCE_APP_VERSION);
     }
 
@@ -209,9 +212,6 @@ public class VersionController {
      * @return the app version
      */
     public static String getAppVersion(V1ConfigMap versionMap) {
-        if (versionMap == null) {
-            return null;
-        }
         return versionMap.getMetadata().getLabels().get(FLAG_KUBE_RESOURCE_APP_VERSION);
     }
 
@@ -222,9 +222,6 @@ public class VersionController {
      * @return the git commit
      */
     public static String getGitCommit(V1ConfigMap versionMap) {
-        if (versionMap == null) {
-            return null;
-        }
         return versionMap.getMetadata().getLabels().get(FLAG_KUBE_RESOURCE_GIT_COMMIT);
     }
 
@@ -235,9 +232,6 @@ public class VersionController {
      * @return the last update time
      */
     public static Long getLastUpdateTime(V1ConfigMap versionMap) {
-        if (versionMap == null) {
-            return null;
-        }
         return Long.valueOf(versionMap.getMetadata().getLabels().get(FLAG_VERSION_LAST_UPDATE_TIME));
     }
 

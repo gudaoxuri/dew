@@ -14,28 +14,37 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.config;
+package ms.dew.devops.kernel.plugin.deploy;
+
+import com.ecfront.dew.common.Resp;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
+
+import java.util.Optional;
 
 /**
- * App kind.
+ * 部署插件定义.
  *
  * @author gudaoxuri
  */
-public enum AppKind {
+public interface DeployPlugin {
+
     /**
-     * Jvm service app kind.
+     * 是否可以部署判断.
+     *
+     * @param projectConfig the project config
+     * @return the resp
      */
-    JVM_SERVICE,
+    Resp<String> deployAble(FinalProjectConfig projectConfig);
+
     /**
-     * Jvm lib app kind.
+     * 获取部署的最新的版本.
+     *
+     * @param projectId the project id
+     * @param appName   the app name
+     * @param namespace the namespace
+     * @return the optional
      */
-    JVM_LIB,
-    /**
-     * Frontend app kind.
-     */
-    FRONTEND,
-    /**
-     * Pom app kind.
-     */
-    POM
+    Optional<String> fetchLastDeployedVersion(String projectId, String appName, String namespace);
+
+
 }

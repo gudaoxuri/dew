@@ -17,9 +17,8 @@
 package ms.dew.devops.misc;
 
 import ms.dew.devops.BasicTest;
+import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.helper.GitHelper;
-import ms.dew.devops.kernel.Dew;
-import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -48,12 +47,11 @@ public class MockTest extends BasicTest {
     public void testAll()
             throws ClassNotFoundException, NoSuchMethodException, MalformedURLException,
             IllegalAccessException, InvocationTargetException, InstantiationException {
-        Dew.log = new SystemStreamLog();
-        Dew.Mock.loadClass(
+        DevOps.Mock.loadClass(
                 new File(this.getClass().getResource("/").getPath()).getParentFile().getParentFile().getPath() + File.separator
                         + "src" + File.separator
                         + "test");
-        Dew.Mock.invokeMock();
+        DevOps.Mock.invokeMock();
         Assert.assertEquals("mock", GitHelper.inst().getCurrentBranch());
     }
 }

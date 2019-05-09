@@ -14,31 +14,51 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.flow.release;
+package ms.dew.devops.kernel.plugin.appkind;
 
-import ms.dew.devops.kernel.Dew;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
 
 /**
- * Release flow factory.
+ * App类型插件定义.
  *
  * @author gudaoxuri
  */
-public class ReleaseFlowFactory {
+public interface AppKindPlugin {
 
     /**
-     * Choose basic flow.
+     * Gets name.
+     *
+     * @return the name
+     */
+    String getName();
+
+    /**
+     * Custom config.
+     *
+     * @param projectConfig the project config
+     */
+    void customConfig(FinalProjectConfig projectConfig);
+
+    /**
+     * Prepare flow basic flow.
      *
      * @return the basic flow
      */
-    public static BasicFlow choose() {
-        switch (Dew.Config.getCurrentProject().getKind()) {
-            case JVM_LIB:
-            case POM:
-                return new MavenReleaseFlow();
-            default:
-                return new KubeReleaseFlow();
-        }
-    }
+    BasicFlow prepareFlow();
+
+    /**
+     * Build flow basic flow.
+     *
+     * @return the basic flow
+     */
+    BasicFlow buildFlow();
+
+    /**
+     * Release flow basic flow.
+     *
+     * @return the basic flow
+     */
+    BasicFlow releaseFlow();
 
 }

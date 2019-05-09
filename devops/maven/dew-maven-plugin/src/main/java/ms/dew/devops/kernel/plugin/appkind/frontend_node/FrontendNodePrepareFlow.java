@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.flow.prepare;
+package ms.dew.devops.kernel.plugin.appkind.frontend_node;
 
 import ms.dew.devops.kernel.config.FinalProjectConfig;
+import ms.dew.devops.kernel.flow.prepare.BasicPrepareFlow;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -27,12 +28,11 @@ import java.nio.file.StandardCopyOption;
 import java.util.Optional;
 
 /**
- * Frontend prepare flow.
+ * Node frontend prepare flow.
  *
  * @author gudaoxuri
  */
-public class FrontendPrepareFlow extends BasicPrepareFlow {
-
+public class FrontendNodePrepareFlow extends BasicPrepareFlow {
     @Override
     protected boolean needExecutePreparePackageCmd(FinalProjectConfig config, String currentPath) {
         return new File(currentPath).listFiles((dir, name) -> "node_modules".equals(name)).length == 0;
@@ -62,7 +62,6 @@ public class FrontendPrepareFlow extends BasicPrepareFlow {
 
     protected void postPrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
         FileUtils.deleteDirectory(new File(flowBasePath + "dist"));
-        Files.move(Paths.get(config.getMvnDirectory() + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
+        Files.move(Paths.get(config.getDirectory() + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
     }
-
 }

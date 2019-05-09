@@ -20,7 +20,7 @@ import com.ecfront.dew.common.$;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.*;
 import ms.dew.devops.BasicTest;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import ms.dew.devops.kernel.util.DewLog;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,11 +46,11 @@ public class KubeHelperTest extends BasicTest {
      */
     @Before
     public void before() throws IOException {
-        KubeHelper.init("", new SystemStreamLog(), defaultKubeConfig);
+        KubeHelper.init("", DewLog.build(this.getClass()), defaultKubeConfig);
     }
 
     /*
-    *//**
+     *//**
      * Test.
      *
      * @throws IOException          the io exception

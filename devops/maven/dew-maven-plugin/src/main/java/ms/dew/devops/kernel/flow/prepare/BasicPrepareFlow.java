@@ -16,11 +16,10 @@
 
 package ms.dew.devops.kernel.flow.prepare;
 
-import ms.dew.devops.kernel.exception.ProjectProcessException;
-import ms.dew.devops.kernel.helper.DockerHelper;
-import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
+import ms.dew.devops.kernel.exception.ProjectProcessException;
 import ms.dew.devops.kernel.flow.BasicFlow;
+import ms.dew.devops.kernel.helper.DockerHelper;
 import ms.dew.devops.kernel.util.ShellHelper;
 
 import java.io.IOException;
@@ -33,7 +32,6 @@ import java.util.Optional;
  * @author gudaoxuri
  */
 public abstract class BasicPrepareFlow extends BasicFlow {
-
 
     /**
      * Need execute prepare package cmd.
@@ -90,7 +88,7 @@ public abstract class BasicPrepareFlow extends BasicFlow {
     }
 
     private void execPackageCmd(FinalProjectConfig config, boolean retry) {
-        String currentPath = Dew.Config.getCurrentProject().getMvnDirectory();
+        String currentPath = config.getDirectory();
         Optional<String> packageCmdOpt = getPackageCmd(config, currentPath);
         if (!packageCmdOpt.isPresent()) {
             // 不用执行命令
@@ -101,7 +99,7 @@ public abstract class BasicPrepareFlow extends BasicFlow {
             Optional<String> preparePackageCmdOpt = getPreparePackageCmd(config, currentPath);
             if (!preparePackageCmdOpt.isPresent()) {
                 // 失败处理命令失败
-                Dew.log.warn("Prepare package command needs to be executed, but the command does not exist");
+                logger.warn("Prepare package command needs to be executed, but the command does not exist");
                 throw new ProjectProcessException("Prepare package command needs to be executed, but the command does not exist");
             }
             result = ShellHelper.execCmd("preparePackageCmd", new HashMap<String, String>() {
@@ -111,7 +109,7 @@ public abstract class BasicPrepareFlow extends BasicFlow {
             }, preparePackageCmdOpt.get());
             if (!result) {
                 // 预打包命令执行失败
-                Dew.log.warn("Prepare package command execution failed");
+                logger.warn("Prepare package command execution failed");
                 throw new ProjectProcessException("Prepare package command execution failed");
             }
         }
@@ -126,7 +124,7 @@ public abstract class BasicPrepareFlow extends BasicFlow {
         }
         if (!retry) {
             // 命令执行失败，尝试进行强制执行预打包命令
-            Dew.log.info("Package command execution failed, try to enforce execution prepare package command");
+            logger.info("Package command execution failed, try to enforce execution prepare package command");
             execPackageCmd(config, true);
         } else {
             throw new ProjectProcessException("Retry package command execution failed");

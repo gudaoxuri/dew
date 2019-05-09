@@ -14,40 +14,21 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.flow.build;
+package ms.dew.devops.kernel.flow;
 
 import io.kubernetes.client.ApiException;
-import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
-import ms.dew.devops.kernel.flow.BasicFlow;
 
 import java.io.IOException;
 
 /**
- * Build flow factory.
+ * 不需要执行的缺省流程定义.
  *
  * @author gudaoxuri
  */
-public class BuildFlowFactory {
+public class NoNeedProcessFLow extends BasicFlow {
+    @Override
+    protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
 
-    /**
-     * Choose basic flow.
-     *
-     * @return the basic flow
-     */
-    public static BasicFlow choose() {
-        switch (Dew.Config.getCurrentProject().getKind()) {
-            case JVM_SERVICE:
-                return new JvmServiceBuildFlow();
-            case FRONTEND:
-                return new FrontendBuildFlow();
-            default:
-                return new BasicFlow() {
-                    @Override
-                    protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
-                    }
-                };
-        }
     }
-
 }

@@ -68,7 +68,6 @@ profile:
 ----
 # 默认环境配置
 namespace: default                      # 命名空间，强烈建议修改为特定的命名空间
-kind:                                   # 项目类型，默认自动探测，也可以显式指定为 JVM_SERVICE/JVM_LIB/FRONTEND/POM
 skip: false                             # 是否跳过，为true时表示
 disableReuseVersion:                    # 是否禁用重用版本，e.g. 生产环境重用预发环境的最后一个版本（不用重新打包Docker image)
                                         # 默认情况前端工程为true（node编译期会混入环境信息导致无法重用），其它工程为false
@@ -153,7 +152,6 @@ dew.devops.docker.registry.url               # Docker Registry Url  e.g. https:/
 dew.devops.docker.registry.username          # Docker Registry 用户名
 dew.devops.docker.registry.password          # Docker Registry 密码
 dew.devops.quiet                             # 是否静默处理
-dew.devops.maven.version.exist.ignore        # 是否忽略Maven仓库中已存在的版本
 # ============= 日志及调试场景使用 =============
 dew.devops.podName                           # 要使用的Pod名称
 # ============= 日志场景使用 =============

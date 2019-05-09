@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.flow.prepare;
+package ms.dew.devops.kernel.plugin.appkind.jvmservice_springboot;
 
-import ms.dew.devops.kernel.Dew;
+import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
+import ms.dew.devops.kernel.flow.prepare.BasicPrepareFlow;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 
 /**
- * Jvm service prepare flow.
+ * Spring boot prepare flow.
  *
  * @author gudaoxuri
  */
-public class JvmServicePrepareFlow extends BasicPrepareFlow {
-
+public class JvmServiceSpringBootPrepareFlow extends BasicPrepareFlow {
     @Override
     protected boolean needExecutePreparePackageCmd(FinalProjectConfig config, String currentPath) {
         return false;
@@ -45,8 +44,8 @@ public class JvmServicePrepareFlow extends BasicPrepareFlow {
         return Optional.empty();
     }
 
-    protected void postPrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
-        Dew.Invoke.invoke("org.springframework.boot",
+    protected void postPrepareBuild(FinalProjectConfig config, String flowBasePath) {
+        DevOps.Invoke.invoke("org.springframework.boot",
                 "spring-boot-maven-plugin",
                 null,
                 "repackage",
@@ -55,7 +54,6 @@ public class JvmServicePrepareFlow extends BasicPrepareFlow {
                         put("outputDirectory", flowBasePath);
                         put("finalName", "serv");
                     }
-                });
+                }, DevOps.Config.getFinalConfig(), config);
     }
-
 }

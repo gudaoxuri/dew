@@ -33,7 +33,7 @@ import io.kubernetes.client.util.Config;
 import io.kubernetes.client.util.KubeConfig;
 import io.kubernetes.client.util.Watch;
 import io.kubernetes.client.util.Yaml;
-import org.apache.maven.plugin.logging.Log;
+import org.slf4j.Logger;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -67,7 +67,7 @@ public class KubeOpt {
     /**
      * Log.
      */
-    protected Log log;
+    protected Logger log;
     /**
      * kuberentes native API Client.
      */
@@ -99,7 +99,7 @@ public class KubeOpt {
      * @param log              the log
      * @param base64KubeConfig the base64 kube config
      */
-    protected KubeOpt(Log log, String base64KubeConfig) {
+    protected KubeOpt(Logger log, String base64KubeConfig) {
         this.log = log;
         YamlHelper.init(log);
         try {

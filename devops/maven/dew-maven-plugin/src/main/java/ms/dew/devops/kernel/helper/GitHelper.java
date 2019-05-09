@@ -16,7 +16,7 @@
 
 package ms.dew.devops.kernel.helper;
 
-import org.apache.maven.plugin.logging.Log;
+import org.slf4j.Logger;
 
 /**
  * Git辅助类.
@@ -32,7 +32,7 @@ public class GitHelper extends MultiInstProcessor {
      *
      * @param log the log
      */
-    public static void init(Log log) {
+    public static void init(Logger log) {
         multiInit("GIT", "",
                 () -> new GitOpt(log), "");
     }

@@ -35,7 +35,7 @@ public class UnReleaseMojo extends BasicMojo {
 
     @Override
     protected boolean executeInternal() throws IOException, ApiException {
-        return new DefaultUnReleaseFlow().exec(getMojoName());
+        return new DefaultUnReleaseFlow().exec(mavenProject.getId(), getMojoName());
     }
 
 }

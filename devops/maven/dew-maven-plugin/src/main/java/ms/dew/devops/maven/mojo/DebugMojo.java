@@ -35,7 +35,7 @@ public class DebugMojo extends BasicMojo {
 
     @Override
     protected boolean executeInternal() throws IOException, ApiException {
-        return new DefaultDebugFlow(podName, forwardPort).exec(getMojoName());
+        return new DefaultDebugFlow(podName, forwardPort).exec(mavenProject.getId(), getMojoName());
     }
 
 }
