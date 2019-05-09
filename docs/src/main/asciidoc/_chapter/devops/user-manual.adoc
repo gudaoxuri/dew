@@ -69,6 +69,99 @@ Maven配置
 
 ==== 执行通知
 
+. 钉钉 只支持markdown格式的钉钉消息
+
+. HTTP 数据结构分为以下几种情况
+
+PROCESS_EMPTY(空项目)
+----
+{
+	"title": "DevOps process successful",      # 消息标题
+	"content": {                               # 消息内容
+		"kind": "PROCESS_EMPTY",               # 过程处理类型
+		"ci": "",                              # ci操作
+		"message": {}                          # 消息结果内容
+	}
+}
+----
+PROCESS_INIT(初始化)
+----
+{
+	"title": "DevOps process successful",      # 消息标题
+	"content": {                               # 消息内容
+		"kind": "PROCESS_INIT",               # 过程处理类型
+		"ci": "",                              # ci操作
+		"message": {                           # 消息结果内容
+			"profile": "uat",                  # 分支或者环境
+			"project": "todo-parent",          # 项目名称
+		}
+	}
+}
+----
+PROCESS_EXECUTE_SUCCESS(成功)/PROCESS_EXECUTE_FAILURE(失败)
+----
+{
+	"title": "DevOps process successful",         # 消息标题
+	"content": {                                  # 消息内容
+		"kind": "PROCESS_EXECUTE_SUCCESS",        # 过程处理类型
+		"ci": "",                                 # ci操作
+		"message": {                              # 消息结果内容
+			"mojoName": "release",                # mvn操作步骤
+            "profile": "uat",                     # 分支或者环境
+            "project": "todo-parent",             # 项目名称
+            "successfulFlag": "Successful",       # 成功标识
+            "group": "ms.dew.devops.it",          # 项目group名称
+            "message":"***",                      # 错误信息
+            "throwable":"**"                      # 错误
+		}
+	}
+}
+----
+PROCESS_GLOBAL_ERROR(全局错误)
+----
+{
+	"title": "DevOps process successful",         # 消息标题
+	"content": {                                  # 消息内容
+		"kind": "PROCESS_GLOBAL_ERROR",           # 过程处理类型
+		"ci": "",                                 # ci操作
+		"message": {                              # 消息结果内容
+			"error": "release",                   # 错误信息
+            "errorStackTrace": "uat"              # 错误堆栈信息
+		}
+	}
+}
+----
+PROCESS_SHUTDOWN(关闭)
+----
+{
+	"title": "DevOps process successful",         # 消息标题
+	"content": {                                  # 消息内容
+		"kind": "PROCESS_SHUTDOWN",               # 过程处理类型
+		"ci": "",                                 # ci操作
+		"message": {                              # 消息结果内容
+			"successfulExecProjects": [{          # 成功项目
+			    "project":"todo-kernel",          # 项目名称
+			    "reason":""
+			}],
+			"failureExecProjects": [{             # 失败项目
+			    "project":"todo-kernel",          # 项目名称
+			    "reason":"**"                     # 失败原因
+			}],
+			"noneExecProjects": [{                # 未执行项目
+			    "project":"todo-kernel",          # 项目名称
+			    "reason":"**"                     # 未执行原因
+			}],
+			"ignoreExecProjects": [{              # 忽略执行项目
+			    "project":"todo-kernel",          # 项目名称
+			    "reason":"**"                     # 忽略原因
+			}],
+		}
+	}
+}
+----
+
+
+
 
 
 
