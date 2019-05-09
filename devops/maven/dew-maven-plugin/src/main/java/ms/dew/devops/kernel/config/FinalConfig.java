@@ -16,6 +16,9 @@
 
 package ms.dew.devops.kernel.config;
 
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.BuildPluginManager;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -30,6 +33,9 @@ public class FinalConfig {
 
     private Map<String, FinalProjectConfig> projects = new LinkedHashMap<>();
 
+    private MavenSession mavenSession;
+    private BuildPluginManager pluginManager;
+
     /**
      * Gets projects.
      *
@@ -40,12 +46,38 @@ public class FinalConfig {
     }
 
     /**
-     * Sets projects.
+     * Gets maven session.
      *
-     * @param projects the projects
+     * @return the maven session
      */
-    public void setProjects(Map<String, FinalProjectConfig> projects) {
-        this.projects = projects;
+    public MavenSession getMavenSession() {
+        return mavenSession;
     }
 
+    /**
+     * Sets maven session.
+     *
+     * @param mavenSession the maven session
+     */
+    public void setMavenSession(MavenSession mavenSession) {
+        this.mavenSession = mavenSession;
+    }
+
+    /**
+     * Gets plugin manager.
+     *
+     * @return the plugin manager
+     */
+    public BuildPluginManager getPluginManager() {
+        return pluginManager;
+    }
+
+    /**
+     * Sets plugin manager.
+     *
+     * @param pluginManager the plugin manager
+     */
+    public void setPluginManager(BuildPluginManager pluginManager) {
+        this.pluginManager = pluginManager;
+    }
 }

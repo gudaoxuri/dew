@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package mock;
+package ms.dew.devops.kernel.util;
 
-import ms.dew.devops.kernel.helper.GitHelper;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Mock.
+ * 只执行一次的处理器.
  *
  * @author gudaoxuri
  */
-public class Mock {
+public class ExecuteOnceProcessor {
 
-    public Mock() {
-        GitHelper.forceInit("GIT", "", new MockGitOpt(new SystemStreamLog()));
+    private static final Map<String, AtomicBoolean> initialized = new ConcurrentHashMap<>();
+
+    public static synchronized boolean executedCheck(Class clazz) {
+        initialized.putIfAbsent(clazz.getName(), new AtomicBoolean());
+        return initialized.get(clazz.getName()).getAndSet(true);
     }
 
 }

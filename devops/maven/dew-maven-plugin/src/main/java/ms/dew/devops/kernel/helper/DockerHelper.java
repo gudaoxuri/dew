@@ -16,7 +16,7 @@
 
 package ms.dew.devops.kernel.helper;
 
-import org.apache.maven.plugin.logging.Log;
+import org.slf4j.Logger;
 
 /**
  * Docker操作函数类.
@@ -37,7 +37,7 @@ public class DockerHelper extends MultiInstProcessor {
      * @param registryPassword registry密码
      * @link https://docs.docker.com/install/linux/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections
      */
-    public static void init(String instanceId, Log log, String host, String registryUrl, String registryUsername, String registryPassword) {
+    public static void init(String instanceId, Logger log, String host, String registryUrl, String registryUsername, String registryPassword) {
         multiInit("DOCKER", instanceId,
                 () -> new DockerOpt(log, host, registryUrl, registryUsername, registryPassword),
                 host, registryUrl, registryUsername);

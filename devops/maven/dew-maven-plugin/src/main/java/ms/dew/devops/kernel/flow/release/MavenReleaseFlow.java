@@ -38,7 +38,7 @@ public class MavenReleaseFlow extends BasicFlow {
     @Override
     protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
         VersionController.addNewVersion(config, config.getAppVersion(), config.getGitCommit(), false, new HashMap<>(), new HashMap<>());
-        List<V1ConfigMap> versions = VersionController.getVersionHistory(config, false);
+        List<V1ConfigMap> versions = VersionController.getVersionHistory(config.getId(), config.getAppName(), config.getNamespace(), false);
         for (V1ConfigMap version : versions) {
             String appVersion = VersionController.getAppVersion(version);
             // Maven项目只需要保留一个最新版本

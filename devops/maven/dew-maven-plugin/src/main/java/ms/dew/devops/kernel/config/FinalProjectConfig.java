@@ -16,6 +16,10 @@
 
 package ms.dew.devops.kernel.config;
 
+import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
+import ms.dew.devops.kernel.plugin.deploy.DeployPlugin;
+import org.apache.maven.project.MavenProject;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,25 +34,30 @@ public class FinalProjectConfig extends DewProfile {
 
     // 项目Id,对应于maven project id
     private String id;
-    // 用于指定 docker的版本
     // 当前的git commit 或是 重用版本下被重用的git commit
-    private String gitCommit = "";
-    private String scmUrl = "";
-    private String appName = "";
-    private String appShowName = "";
-    private String appGroup = "";
+    private String gitCommit;
+    private String scmUrl;
+    private String appName;
+    private String appShowName;
+    private String appGroup;
     // 用于指定应用的版本
     // app version 对应于当前的 git commit
-    // 如果在非重用版本模式下等同于 git commit
-    // 如果在重用版本模式下git commit 指向被重用的 git commit
-    private String appVersion = "";
-    private String mvnDirectory;
-    private String mvnTargetDirectory;
+    private String appVersion;
+    // 用于指定 docker的版本
+    // 如果在重用版本模式下指向被重用的 git commit
+    private String imageVersion;
     private String skipReason = "";
     private boolean hasError = false;
     private Set<String> executeSuccessfulMojos = new HashSet<>();
 
+    private String directory;
+    private String targetDirectory;
+
     private DewProfile appendProfile;
+
+    private MavenProject mavenProject;
+    private AppKindPlugin appKindPlugin;
+    private DeployPlugin deployPlugin;
 
     /**
      * Gets id.
@@ -176,40 +185,20 @@ public class FinalProjectConfig extends DewProfile {
         this.appVersion = appVersion;
     }
 
-    /**
-     * Gets mvn directory.
-     *
-     * @return the mvn directory
-     */
-    public String getMvnDirectory() {
-        return mvnDirectory;
+    public String getDirectory() {
+        return directory;
     }
 
-    /**
-     * Sets mvn directory.
-     *
-     * @param mvnDirectory the mvn directory
-     */
-    public void setMvnDirectory(String mvnDirectory) {
-        this.mvnDirectory = mvnDirectory;
+    public void setDirectory(String directory) {
+        this.directory = directory;
     }
 
-    /**
-     * Gets mvn target directory.
-     *
-     * @return the mvn target directory
-     */
-    public String getMvnTargetDirectory() {
-        return mvnTargetDirectory;
+    public String getTargetDirectory() {
+        return targetDirectory;
     }
 
-    /**
-     * Sets mvn target directory.
-     *
-     * @param mvnTargetDirectory the mvn target directory
-     */
-    public void setMvnTargetDirectory(String mvnTargetDirectory) {
-        this.mvnTargetDirectory = mvnTargetDirectory;
+    public void setTargetDirectory(String targetDirectory) {
+        this.targetDirectory = targetDirectory;
     }
 
     /**
@@ -276,12 +265,84 @@ public class FinalProjectConfig extends DewProfile {
     }
 
     /**
+     * Gets maven project.
+     *
+     * @return the maven project
+     */
+    public MavenProject getMavenProject() {
+        return mavenProject;
+    }
+
+    /**
+     * Sets maven project.
+     *
+     * @param mavenProject the maven project
+     */
+    public void setMavenProject(MavenProject mavenProject) {
+        this.mavenProject = mavenProject;
+    }
+
+    /**
+     * Gets image version.
+     *
+     * @return the image version
+     */
+    public String getImageVersion() {
+        return imageVersion;
+    }
+
+    /**
+     * Sets image version.
+     *
+     * @param imageVersion the image version
+     */
+    public void setImageVersion(String imageVersion) {
+        this.imageVersion = imageVersion;
+    }
+
+    /**
+     * Gets app kind plugin.
+     *
+     * @return the app kind plugin
+     */
+    public AppKindPlugin getAppKindPlugin() {
+        return appKindPlugin;
+    }
+
+    /**
+     * Sets app kind plugin.
+     *
+     * @param appKindPlugin the app kind plugin
+     */
+    public void setAppKindPlugin(AppKindPlugin appKindPlugin) {
+        this.appKindPlugin = appKindPlugin;
+    }
+
+    /**
+     * Gets deploy plugin.
+     *
+     * @return the deploy plugin
+     */
+    public DeployPlugin getDeployPlugin() {
+        return deployPlugin;
+    }
+
+    /**
+     * Sets deploy plugin.
+     *
+     * @param deployPlugin the deploy plugin
+     */
+    public void setDeployPlugin(DeployPlugin deployPlugin) {
+        this.deployPlugin = deployPlugin;
+    }
+
+    /**
      * Get current image name.
      *
      * @return the current image name
      */
     public String getCurrImageName() {
-        return getImageName(getGitCommit());
+        return getImageName(getImageVersion());
     }
 
     /**

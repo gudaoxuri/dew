@@ -35,7 +35,7 @@ public class LogMojo extends BasicMojo {
 
     @Override
     protected boolean executeInternal() throws IOException, ApiException {
-        return new DefaultLogFlow(podName, follow).exec(getMojoName());
+        return new DefaultLogFlow(podName, follow).exec(mavenProject.getId(), getMojoName());
     }
 
 }

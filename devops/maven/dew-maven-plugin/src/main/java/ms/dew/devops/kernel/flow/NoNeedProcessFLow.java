@@ -14,28 +14,21 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.config;
+package ms.dew.devops.kernel.flow;
+
+import io.kubernetes.client.ApiException;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
+
+import java.io.IOException;
 
 /**
- * App kind.
+ * 不需要执行的缺省流程定义.
  *
  * @author gudaoxuri
  */
-public enum AppKind {
-    /**
-     * Jvm service app kind.
-     */
-    JVM_SERVICE,
-    /**
-     * Jvm lib app kind.
-     */
-    JVM_LIB,
-    /**
-     * Frontend app kind.
-     */
-    FRONTEND,
-    /**
-     * Pom app kind.
-     */
-    POM
+public class NoNeedProcessFLow extends BasicFlow {
+    @Override
+    protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
+
+    }
 }

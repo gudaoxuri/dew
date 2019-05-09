@@ -22,7 +22,7 @@ import ms.dew.devops.kernel.helper.DockerHelper;
 import ms.dew.devops.kernel.helper.KubeHelper;
 import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.helper.YamlHelper;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import ms.dew.devops.kernel.util.DewLog;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -44,11 +44,11 @@ public class IntAndCleanIT extends BasicProcessor {
     @Test
     public void initAndClean() throws IOException, ApiException {
         logger.info("Init YamlHelper");
-        YamlHelper.init(new SystemStreamLog());
+        YamlHelper.init(DewLog.build(this.getClass()));
         logger.info("Init KubeHelper");
-        KubeHelper.init("", new SystemStreamLog(), kubeConfig);
+        KubeHelper.init("", DewLog.build(this.getClass()), kubeConfig);
         logger.info("Init DockerHelper");
-        DockerHelper.init("", new SystemStreamLog(),
+        DockerHelper.init("", DewLog.build(this.getClass()),
                 dockerHost,
                 dockerRegistryUrl,
                 dockerRegistryUserName,
@@ -64,7 +64,7 @@ public class IntAndCleanIT extends BasicProcessor {
         DockerHelper.inst("").image.list().stream()
                 .filter(image -> image.getRepoTags() != null
                         && image.getRepoTags().length > 0
-                        && image.getRepoTags()[0].startsWith(registryHost))
+                        && image.getRepoTags()[0].startsWith(registryHost + "/dew-"))
                 .forEach(image -> {
                     DockerHelper.inst("").image.remove(image.getRepoTags()[0]);
                     try {

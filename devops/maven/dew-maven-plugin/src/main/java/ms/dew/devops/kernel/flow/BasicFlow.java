@@ -17,8 +17,10 @@
 package ms.dew.devops.kernel.flow;
 
 import io.kubernetes.client.ApiException;
-import ms.dew.devops.kernel.Dew;
+import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
+import ms.dew.devops.kernel.util.DewLog;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +34,8 @@ import java.nio.file.Paths;
  */
 public abstract class BasicFlow {
 
+    protected Logger logger = DewLog.build(this.getClass());
+
     /**
      * 执行流程.
      *
@@ -40,17 +44,16 @@ public abstract class BasicFlow {
      * @throws ApiException the api exception
      * @throws IOException  the io exception
      */
-    public final boolean exec(String mojoName) throws ApiException, IOException {
-        Dew.Config.initCurrentMavenProject();
-        FinalProjectConfig config = Dew.Config.getCurrentProject();
-        Dew.log.debug("Executing " + this.getClass().getSimpleName());
+    public final boolean exec(String projectId, String mojoName) throws ApiException, IOException {
+        FinalProjectConfig config = DevOps.Config.getProjectConfig(projectId);
+        logger.debug("Executing " + this.getClass().getSimpleName());
         // 为每个mojo创建输出目录
-        String flowBasePath = config.getMvnTargetDirectory() + "dew_" + mojoName + File.separator;
+        String flowBasePath = config.getTargetDirectory() + "dew_" + mojoName + File.separator;
         Files.createDirectories(Paths.get(flowBasePath));
         preProcess(config, flowBasePath);
         process(config, flowBasePath);
         if (!postProcess(config, flowBasePath)) {
-            Dew.log.debug("Finished,but [postProcess] is false");
+            logger.debug("Finished,but [postProcess] is false");
             return false;
         }
         return true;

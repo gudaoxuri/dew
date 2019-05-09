@@ -18,7 +18,6 @@ package ms.dew.devops.kernel.flow.log;
 
 import io.kubernetes.client.ApiException;
 import ms.dew.devops.kernel.helper.KubeHelper;
-import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.function.PodSelector;
@@ -55,14 +54,14 @@ public class DefaultLogFlow extends BasicFlow {
     @Override
     protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
         podName = PodSelector.select(config, Optional.ofNullable(podName));
-        Dew.log.info("--------- Show pod : " + podName + " logs ---------");
+        logger.info("--------- Show pod : " + podName + " logs ---------");
         if (follow) {
             new Thread(() -> {
                 try {
                     KubeHelper.inst(config.getId()).log(podName, KubeDeploymentBuilder.FLAG_CONTAINER_NAME, config.getNamespace(),
                             System.out::println);
                 } catch (ApiException e) {
-                    Dew.log.error("Log error", e);
+                    logger.error("Log error", e);
                 }
             }).start();
             try {

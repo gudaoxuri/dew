@@ -17,24 +17,23 @@
 package ms.dew.devops.kernel.function;
 
 import com.ecfront.dew.common.$;
-import io.kubernetes.client.ApiException;
-import io.kubernetes.client.models.V1Service;
+import com.ecfront.dew.common.Resp;
+import ms.dew.devops.kernel.DevOps;
+import ms.dew.devops.kernel.config.DewProfile;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.exception.GlobalProcessException;
 import ms.dew.devops.kernel.helper.GitHelper;
-import ms.dew.devops.kernel.helper.KubeHelper;
-import ms.dew.devops.kernel.helper.KubeRES;
-import ms.dew.devops.kernel.Dew;
-import ms.dew.devops.kernel.config.FinalProjectConfig;
-import org.apache.maven.project.MavenProject;
+import ms.dew.devops.kernel.util.DewLog;
+import ms.dew.devops.kernel.util.ExecuteOnceProcessor;
+import org.slf4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -46,54 +45,62 @@ import java.util.stream.Collectors;
  */
 public class NeedProcessChecker {
 
-    private static final AtomicBoolean initialized = new AtomicBoolean(false);
+    private static Logger logger = DewLog.build(NeedProcessChecker.class);
 
     /**
      * Check need process projects.
      *
-     * @param quiet                   the quiet
-     * @param ignoreExistMavenVersion the ignore exist maven version
+     * @param quiet the quiet
      */
-    public static void checkNeedProcessProjects(boolean quiet, boolean ignoreExistMavenVersion) {
-        if (initialized.getAndSet(true)) {
+    public static void checkNeedProcessProjects(boolean quiet) {
+        if (ExecuteOnceProcessor.executedCheck(NeedProcessChecker.class)) {
             return;
         }
         // 初始化，全局只调用一次
-        Dew.log.info("Fetch need process projects");
+        logger.info("Fetch need process projects");
         try {
-            for (FinalProjectConfig config : Dew.Config.getProjects().values()) {
-                Dew.log.info("Need process checking for " + config.getAppName());
-                switch (config.getKind()) {
-                    case POM:
-                    case JVM_LIB:
-                        checkNeedProcessByMavenRepo(config, ignoreExistMavenVersion);
-                        if (config.isSkip()) {
-                            Dew.Config.setMavenProperty(config.getId(), "maven.install.skip", "true");
-                            Dew.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "true");
-                        } else {
-                            Dew.Config.setMavenProperty(config.getId(), "maven.install.skip", "false");
-                            Dew.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "false");
-                        }
-                        break;
-                    default:
-                        checkNeedProcessByGit(config);
-                        Dew.Config.setMavenProperty(config.getId(), "maven.install.skip", "true");
-                        Dew.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "true");
+            for (FinalProjectConfig projectConfig : DevOps.Config.getFinalConfig().getProjects().values()) {
+                logger.info("Need process checking for " + projectConfig.getAppName());
+                Resp<String> deployAble = projectConfig.getDeployPlugin().deployAble(projectConfig);
+                if (!deployAble.ok()) {
+                    projectConfig.skip(deployAble.getMessage(), false);
+                    continue;
                 }
-                if (config.getDisableReuseVersion() != null && !config.getDisableReuseVersion()) {
-                    // 重用版本模式下强制跳过单元测试，不需要部署
-                    Dew.Config.setMavenProperty(config.getId(), "maven.test.skip", "true");
-                    Dew.Config.setMavenProperty(config.getId(), "maven.install.skip", "true");
-                    Dew.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "true");
-                }
+                projectConfig.getDeployPlugin()
+                        .fetchLastDeployedVersion(projectConfig.getId(), projectConfig.getAppName(), projectConfig.getNamespace())
+                        .ifPresent(lastDeployedVersion -> {
+                            logger.debug("Latest version is " + lastDeployedVersion);
+                            if (!projectConfig.getDisableReuseVersion()) {
+                                // 重用版本
+                                projectConfig.getDeployPlugin().fetchLastDeployedVersion(projectConfig.getId() + "-append",
+                                        projectConfig.getAppName(), projectConfig.getNamespace()).ifPresent(lastVersionDeployCommitFromProfile -> {
+                                    if (lastDeployedVersion.equals(lastVersionDeployCommitFromProfile)) {
+                                        projectConfig.skip("Reuse last version " + lastDeployedVersion + " has been deployed", false);
+                                    } else {
+                                        logger.info("Reuse last version " + lastVersionDeployCommitFromProfile
+                                                + " from " + projectConfig.getReuseLastVersionFromProfile());
+                                        projectConfig.setGitCommit(lastVersionDeployCommitFromProfile);
+                                        projectConfig.setImageVersion(lastVersionDeployCommitFromProfile);
+                                    }
+                                });
+                            }
+                            List<String> changedFiles = fetchGitDiff(lastDeployedVersion);
+                            // 判断有没有代码变更
+                            if (!hasUnDeployFiles(changedFiles, projectConfig)) {
+                                projectConfig.skip("No code changes", false);
+                            }
+                        });
             }
-            List<FinalProjectConfig> processingProjects = Dew.Config.getProjects().values().stream()
-                    .filter(config -> !config.isSkip())
+            // 依赖分析
+            dependencyProcess(DevOps.Config.getFinalConfig().getProjects().values());
+
+            List<FinalProjectConfig> processingProjects = DevOps.Config.getFinalConfig().getProjects().values().stream()
+                    .filter(config -> !config.getSkip())
                     .collect(Collectors.toList());
             if (processingProjects.isEmpty()) {
                 // 不存在需要处理的项目
-                Dew.stopped = true;
-                Dew.log.info("No project found to be processed");
+                DevOps.stopped = true;
+                logger.info("No project found to be processed");
                 ExecuteEventProcessor.init(processingProjects);
                 return;
             }
@@ -101,19 +108,19 @@ public class NeedProcessChecker {
             StringBuilder sb = new StringBuilder();
             sb.append("\r\n==================== Processing Projects =====================\r\n\r\n");
             sb.append(processingProjects.stream().map(config ->
-                    "> [" + config.getKind().name() + "] " + config.getAppGroup() + ":" + config.getAppName())
+                    "> [" + config.getAppKindPlugin().getName() + "] " + config.getAppGroup() + ":" + config.getAppName())
                     .collect(Collectors.joining("\r\n")));
             sb.append("\r\n\r\n==============================================================\r\n");
             if (quiet) {
-                Dew.log.info(sb.toString());
+                logger.info(sb.toString());
             } else {
                 // 非静默模式，用户选择是否继续
                 sb.append("\r\n< Y > or < N >");
-                Dew.log.info(sb.toString());
+                logger.info(sb.toString());
                 BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                 if (reader.readLine().trim().equalsIgnoreCase("N")) {
-                    Dew.stopped = true;
-                    Dew.log.info("Process canceled");
+                    DevOps.stopped = true;
+                    logger.info("Process canceled");
                     return;
                 }
             }
@@ -121,114 +128,6 @@ public class NeedProcessChecker {
         } catch (Throwable e) {
             throw new GlobalProcessException(e.getMessage(), e);
         }
-    }
-
-
-    /**
-     * Check need process by maven repo.
-     * <p>
-     * 通过Maven仓库判断是否需要处理，多用于处理 类库 和 pom 类型的项目
-     *
-     * @param config                  the config
-     * @param ignoreExistMavenVersion the ignore exist maven version
-     * @throws ApiException the api exception
-     * @throws IOException  the io exception
-     */
-    private static void checkNeedProcessByMavenRepo(FinalProjectConfig config, boolean ignoreExistMavenVersion) throws ApiException, IOException {
-        MavenProject mavenProject = Dew.Config.getMavenProject(config.getId());
-        String version = mavenProject.getVersion();
-        if (version.trim().toLowerCase().endsWith("snapshot")) {
-            // 如果快照仓库存在
-            if (mavenProject.getDistributionManagement() == null
-                    || mavenProject.getDistributionManagement().getSnapshotRepository() == null
-                    || mavenProject.getDistributionManagement().getSnapshotRepository().getUrl() == null
-                    || mavenProject.getDistributionManagement().getSnapshotRepository().getUrl().trim().isEmpty()) {
-                Dew.log.warn("Maven distribution snapshot repository not found");
-                config.skip("Maven distribution snapshot repository not found", false);
-                return;
-            }
-        } else if (mavenProject.getDistributionManagement() == null
-                || mavenProject.getDistributionManagement().getRepository() == null
-                || mavenProject.getDistributionManagement().getRepository().getUrl() == null
-                || mavenProject.getDistributionManagement().getRepository().getUrl().trim().isEmpty()) {
-            // 处理非快照版
-            Dew.log.warn("Maven distribution repository not found");
-            config.skip("Maven distribution repository not found", false);
-            return;
-        }
-        String lastDeployedVersion = VersionController.getAppVersion(VersionController.getLastVersion(config, true));
-        Dew.log.debug("Latest version is " + lastDeployedVersion);
-        // 判断有没有发过版本
-        if (lastDeployedVersion != null) {
-            List<String> changedFiles = fetchGitDiff(lastDeployedVersion);
-            // 判断有没有代码变更
-            if (!hasUnDeployFiles(changedFiles, config)) {
-                config.skip("No code changes", false);
-            }
-        }
-        if (ignoreExistMavenVersion) {
-            String repoUrl = mavenProject.getDistributionManagement().getRepository().getUrl().trim();
-            // TBD auth
-            repoUrl = repoUrl.endsWith("/") ? repoUrl : repoUrl + "/";
-            repoUrl += mavenProject.getGroupId().replaceAll("\\.", "/")
-                    + "/"
-                    + mavenProject.getArtifactId()
-                    + "/"
-                    + version;
-            if ($.http.getWrap(repoUrl).statusCode == 200) {
-                config.skip("The current version already exists and '"
-                        + Dew.Constants.FLAG_DEW_DEVOPS_MAVEN_VERSION_EXIST_IGNORE + "' is true", false);
-            }
-        }
-
-    }
-
-    /**
-     * Check need process by git.
-     * <p>
-     * 通过当前Git commit版本与kubernetes上部署的最新的commit版本判断是否需要处理
-     *
-     * @param config the config
-     * @throws ApiException the api exception
-     */
-    private static void checkNeedProcessByGit(FinalProjectConfig config) throws ApiException {
-        // kubernetes上部署的最新的commit版本
-        String lastVersionDeployCommit = fetchLastVersionDeployCommit(config.getId(), config.getAppName(), config.getNamespace());
-        if (!config.getDisableReuseVersion()) {
-            // 重用版本
-            String lastVersionDeployCommitFromProfile =
-                    fetchLastVersionDeployCommit(config.getId() + "-append", config.getAppName(), config.getAppendProfile().getNamespace());
-            if (lastVersionDeployCommit != null && lastVersionDeployCommit.equals(lastVersionDeployCommitFromProfile)) {
-                Dew.log.warn("Reuse last version " + lastVersionDeployCommit + " has been deployed");
-                config.skip("Reuse last version " + lastVersionDeployCommit + " has been deployed", false);
-            } else {
-                Dew.log.info("Reuse last version " + lastVersionDeployCommitFromProfile + " from " + config.getReuseLastVersionFromProfile());
-                config.setGitCommit(lastVersionDeployCommitFromProfile);
-            }
-        } else {
-            Dew.log.debug("Latest version is " + lastVersionDeployCommit);
-            // 判断有没有发过版本
-            if (lastVersionDeployCommit != null) {
-                List<String> changedFiles = fetchGitDiff(lastVersionDeployCommit);
-                // 判断有没有代码变更
-                if (!hasUnDeployFiles(changedFiles, config)) {
-                    config.skip("No code changes", false);
-                }
-            }
-        }
-    }
-
-    /**
-     * 获取kubernetes上部署的最新的版本.
-     *
-     * @param configId  the config id
-     * @param appName   the app name
-     * @param namespace the namespace
-     * @return 最新的版本
-     * @throws ApiException the api exception
-     */
-    private static String fetchLastVersionDeployCommit(String configId, String appName, String namespace) throws ApiException {
-        return VersionController.getAppVersion(KubeHelper.inst(configId).read(appName, namespace, KubeRES.SERVICE, V1Service.class));
     }
 
     /**
@@ -239,10 +138,9 @@ public class NeedProcessChecker {
      */
     private static List<String> fetchGitDiff(String lastVersionDeployCommit) {
         List<String> changedFiles = GitHelper.inst().diff(lastVersionDeployCommit, "HEAD");
-        Dew.log.debug("Change files:");
-        Dew.log.debug("-------------------");
-        changedFiles.forEach(file -> Dew.log.debug(">>" + file));
-        Dew.log.debug("-------------------");
+        logger.debug("Change files:\n-------------------");
+        changedFiles.forEach(file -> logger.debug(">>" + file));
+        logger.debug("-------------------");
         return changedFiles;
     }
 
@@ -258,26 +156,56 @@ public class NeedProcessChecker {
      * @return 是否存在未部署的文件
      */
     private static boolean hasUnDeployFiles(List<String> changedFiles, FinalProjectConfig projectConfig) {
-        File basePath = new File(projectConfig.getMvnDirectory());
+        File basePath = new File(projectConfig.getDirectory());
         // 找到git根目录
         while (!Arrays.asList(basePath.list()).contains(".git")) {
             basePath = basePath.getParentFile();
         }
-        String projectPath = projectConfig.getMvnDirectory().substring(basePath.getPath().length() + 1).replaceAll("\\\\", "/");
+        String projectPath = projectConfig.getDirectory().substring(basePath.getPath().length() + 1).replaceAll("\\\\", "/");
         // 找到当前项目变更的文件列表
         changedFiles = changedFiles.stream()
                 .filter(file -> file.startsWith(projectPath))
                 .collect(Collectors.toList());
-        Dew.log.info("Found " + changedFiles.size() + " changed files for " + projectConfig.getAppName());
+        logger.info("Found " + changedFiles.size() + " changed files for " + projectConfig.getAppName());
         if (changedFiles.isEmpty()) {
             return false;
         } else if (!projectConfig.getIgnoreChangeFiles().isEmpty()
                 && !$.file.noneMath(changedFiles, new ArrayList<>(projectConfig.getIgnoreChangeFiles()))) {
             // 排除忽略的文件后是否存在未部署的文件
-            Dew.log.info("Found 0 changed files filtered ignore files for " + projectConfig.getAppName());
+            logger.info("Found 0 changed files filtered ignore files for " + projectConfig.getAppName());
             return false;
         }
         return true;
     }
 
+    private static void dependencyProcess(Collection<FinalProjectConfig> projectConfigs) {
+        List<String> needProcessSnapshotProjects = projectConfigs.stream()
+                // 找到需要处理的快照项目
+                .filter(projectConfig -> !projectConfig.getSkip()
+                        && projectConfig.getAppVersion().toUpperCase().endsWith("SNAPSHOT"))
+                .map(FinalProjectConfig::getId)
+                .collect(Collectors.toList());
+        dependencyProcess(projectConfigs, needProcessSnapshotProjects);
+    }
+
+    private static void dependencyProcess(Collection<FinalProjectConfig> projectConfigs, List<String> needProcessSnapshotProjects) {
+        projectConfigs.stream()
+                // 所有跳过的项目
+                .filter(DewProfile::getSkip)
+                // 找到有依赖于需要处理的快照项目
+                .filter(projectConfig ->
+                        projectConfig.getMavenProject().getArtifacts().stream()
+                                .anyMatch(artifact -> needProcessSnapshotProjects.contains(artifact.getId())))
+                .forEach(projectConfig -> {
+                    // 这些项目不能跳过
+                    projectConfig.setSkip(false);
+                    projectConfig.setSkipReason("");
+                    // 递归依赖于此项目的各项目，这些项目也不能跳过
+                    dependencyProcess(projectConfigs, new ArrayList<String>() {
+                        {
+                            add(projectConfig.getId());
+                        }
+                    });
+                });
+    }
 }

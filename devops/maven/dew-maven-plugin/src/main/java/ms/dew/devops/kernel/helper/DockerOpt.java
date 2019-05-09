@@ -31,7 +31,7 @@ import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.BuildImageResultCallback;
 import com.github.dockerjava.core.command.PullImageResultCallback;
 import com.github.dockerjava.core.command.PushImageResultCallback;
-import org.apache.maven.plugin.logging.Log;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,7 +61,7 @@ public class DockerOpt {
     /**
      * Log.
      */
-    protected Log log;
+    protected Logger log;
     /**
      * Docker native client.
      */
@@ -93,7 +93,7 @@ public class DockerOpt {
      * @param registryPassword registry密码
      * @link https://docs.docker.com/install/linux/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections
      */
-    protected DockerOpt(Log log, String host, String registryUrl, String registryUsername, String registryPassword) {
+    protected DockerOpt(Logger log, String host, String registryUrl, String registryUsername, String registryPassword) {
         this.log = log;
         this.registryUsername = registryUsername;
         this.registryPassword = registryPassword;

@@ -34,13 +34,11 @@ public class DewProfile {
     // 命名空间
     private String namespace = "default";
     // 是否跳过
-    private boolean skip = false;
-    // 项目类型
-    private AppKind kind;
+    private Boolean skip = false;
     // 是否禁用重用版本，默认情况前端工程为true（node编译期会混入环境信息导致无法重用），其它工程为false
     private Boolean disableReuseVersion;
     // 重用版本的目标环境名称，默认会尝试使用 pre-prod/pre-production/uat 为名称（找到当前项目第一个存在的环境），都不存在时需要显式指定
-    private String reuseLastVersionFromProfile = "";
+    private String reuseLastVersionFromProfile;
     // 忽略变更文件列表，此列表指定的文件不用于是否有变更要部署的判断依据
     // 支持 glob , @see https://en.wikipedia.org/wiki/Glob_(programming)
     private Set<String> ignoreChangeFiles = new HashSet<>();
@@ -72,11 +70,11 @@ public class DewProfile {
     }
 
     /**
-     * Is skip boolean.
+     * Gets skip.
      *
-     * @return the boolean
+     * @return the skip
      */
-    public boolean isSkip() {
+    public Boolean getSkip() {
         return skip;
     }
 
@@ -85,26 +83,8 @@ public class DewProfile {
      *
      * @param skip the skip
      */
-    public void setSkip(boolean skip) {
+    public void setSkip(Boolean skip) {
         this.skip = skip;
-    }
-
-    /**
-     * Gets kind.
-     *
-     * @return the kind
-     */
-    public AppKind getKind() {
-        return kind;
-    }
-
-    /**
-     * Sets kind.
-     *
-     * @param kind the kind
-     */
-    public void setKind(AppKind kind) {
-        this.kind = kind;
     }
 
     /**
@@ -233,10 +213,20 @@ public class DewProfile {
         this.kube = kube;
     }
 
+    /**
+     * Gets notifies.
+     *
+     * @return the notifies
+     */
     public List<NotifyConfig> getNotifies() {
         return notifies;
     }
 
+    /**
+     * Sets notifies.
+     *
+     * @param notifies the notifies
+     */
     public void setNotifies(List<NotifyConfig> notifies) {
         this.notifies = notifies;
     }

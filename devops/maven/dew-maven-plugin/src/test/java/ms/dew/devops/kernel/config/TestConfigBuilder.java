@@ -18,7 +18,7 @@ package ms.dew.devops.kernel.config;
 
 import ms.dew.devops.BasicTest;
 import ms.dew.devops.kernel.helper.YamlHelper;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import ms.dew.devops.kernel.util.DewLog;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -34,9 +34,8 @@ public class TestConfigBuilder extends BasicTest {
      */
     @Test
     public void testAll() {
-        YamlHelper.init(new SystemStreamLog());
+        YamlHelper.init(DewLog.build(this.getClass()));
         String basicConfigStr = "namespace: dew\n"
-                + "kind: JVM_SERVICE\n"
                 + "ignoreChangeFiles:\n"
                 + "- '*.txt'\n"
                 + "app:\n"
@@ -57,11 +56,10 @@ public class TestConfigBuilder extends BasicTest {
         basicConfigStr = ConfigBuilder.mergeProfiles(basicConfigStr);
         DewConfig basicConfig = YamlHelper.toObject(DewConfig.class, basicConfigStr);
         Assert.assertEquals("dew-test", basicConfig.getProfiles().get("test").getNamespace());
-        Assert.assertTrue(basicConfig.getProfiles().get("test").isSkip());
-        Assert.assertEquals(AppKind.JVM_SERVICE, basicConfig.getProfiles().get("test").getKind());
-        Assert.assertEquals(2, basicConfig.getProfiles().get("test").getApp().getReplicas());
-        Assert.assertEquals(2, basicConfig.getProfiles().get("test").getApp().getRevisionHistoryLimit());
-        Assert.assertEquals(8080, basicConfig.getProfiles().get("test").getApp().getPort());
+        Assert.assertTrue(basicConfig.getProfiles().get("test").getSkip());
+        Assert.assertEquals(2, basicConfig.getProfiles().get("test").getApp().getReplicas().intValue());
+        Assert.assertEquals(2, basicConfig.getProfiles().get("test").getApp().getRevisionHistoryLimit().intValue());
+        Assert.assertEquals(8080, basicConfig.getProfiles().get("test").getApp().getPort().intValue());
         Assert.assertEquals("*.yaml", basicConfig.getProfiles().get("test").getIgnoreChangeFiles().iterator().next());
         Assert.assertEquals("127.0.0.1", basicConfig.getProfiles().get("test").getDocker().getHost());
 
@@ -88,12 +86,10 @@ public class TestConfigBuilder extends BasicTest {
 
         Assert.assertEquals("dew-spec", projectConfig.getNamespace());
         Assert.assertEquals("dew-test-spec", projectConfig.getProfiles().get("test").getNamespace());
-        Assert.assertEquals(AppKind.JVM_SERVICE, projectConfig.getKind());
-        Assert.assertEquals(AppKind.JVM_SERVICE, projectConfig.getProfiles().get("test").getKind());
-        Assert.assertFalse(projectConfig.getProfiles().get("test").isSkip());
-        Assert.assertEquals(4, projectConfig.getProfiles().get("test").getApp().getReplicas());
-        Assert.assertEquals(5, projectConfig.getProfiles().get("test").getApp().getRevisionHistoryLimit());
-        Assert.assertEquals(8080, projectConfig.getProfiles().get("test").getApp().getPort());
+        Assert.assertFalse(projectConfig.getProfiles().get("test").getSkip());
+        Assert.assertEquals(4, projectConfig.getProfiles().get("test").getApp().getReplicas().intValue());
+        Assert.assertEquals(5, projectConfig.getProfiles().get("test").getApp().getRevisionHistoryLimit().intValue());
+        Assert.assertEquals(8080, projectConfig.getProfiles().get("test").getApp().getPort().intValue());
         Assert.assertEquals("*.yaml", projectConfig.getProfiles().get("test").getIgnoreChangeFiles().iterator().next());
         Assert.assertEquals("127.0.0.2", projectConfig.getProfiles().get("test").getDocker().getHost());
         Assert.assertEquals("sunisle", projectConfig.getProfiles().get("test").getDocker().getRegistryUserName());

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.flow.build;
+package ms.dew.devops.kernel.plugin.appkind.frontend_node;
 
 import com.ecfront.dew.common.$;
-import ms.dew.devops.kernel.Dew;
+import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
+import ms.dew.devops.kernel.flow.build.DockerBuildFlow;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -28,14 +29,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 /**
- * Frontend build flow.
+ * Node frontend build flow.
  *
  * @author gudaoxuri
  */
-public class FrontendBuildFlow extends DockerBuildFlow {
+public class FrontendNodeBuildFlow extends DockerBuildFlow {
 
     protected void preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
-        String preparePath = config.getMvnTargetDirectory() + "dew_prepare" + File.separator;
+        String preparePath = config.getTargetDirectory() + "dew_prepare" + File.separator;
         FileUtils.deleteDirectory(new File(flowBasePath + "dist"));
         Files.move(Paths.get(preparePath + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
         if (config.getApp().getServerConfig() != null && !config.getApp().getServerConfig().isEmpty()) {
@@ -43,7 +44,7 @@ public class FrontendBuildFlow extends DockerBuildFlow {
         } else {
             Files.write(Paths.get(flowBasePath + "custom.conf"), "".getBytes());
         }
-        $.file.copyStreamToPath(Dew.class.getResourceAsStream("/dockerfile/frontend/Dockerfile"), flowBasePath + "Dockerfile");
+        $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/frontend_node/Dockerfile"), flowBasePath + "Dockerfile");
     }
 
 }

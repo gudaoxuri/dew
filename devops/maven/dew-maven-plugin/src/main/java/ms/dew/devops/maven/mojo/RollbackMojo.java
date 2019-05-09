@@ -35,7 +35,7 @@ public class RollbackMojo extends BasicMojo {
 
     @Override
     protected boolean executeInternal() throws IOException, ApiException {
-        return new DefaultRollbackFlow().exec(getMojoName());
+        return new DefaultRollbackFlow().exec(mavenProject.getId(), getMojoName());
     }
 
 }

@@ -4,10 +4,6 @@ notifies:
     args:
       # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
       url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
-  - type: HTTP
-    args:
-      # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-      url: http://localhost:8080/
 profiles:
   # 添加测试环境
   test:

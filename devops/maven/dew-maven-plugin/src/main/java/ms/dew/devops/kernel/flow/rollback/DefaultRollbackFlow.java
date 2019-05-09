@@ -20,13 +20,12 @@ import com.ecfront.dew.common.$;
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1ConfigMap;
 import io.kubernetes.client.models.V1Service;
-import ms.dew.devops.kernel.helper.KubeHelper;
-import ms.dew.devops.kernel.helper.KubeRES;
-import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.flow.release.KubeReleaseFlow;
 import ms.dew.devops.kernel.function.VersionController;
+import ms.dew.devops.kernel.helper.KubeHelper;
+import ms.dew.devops.kernel.helper.KubeRES;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -49,7 +48,8 @@ public class DefaultRollbackFlow extends BasicFlow {
         if (service != null) {
             currentAppVersion = VersionController.getAppVersion(service);
         }
-        Map<String, V1ConfigMap> versions = VersionController.getVersionHistory(config, true).stream()
+        Map<String, V1ConfigMap> versions = VersionController
+                .getVersionHistory(config.getId(), config.getAppName(), config.getNamespace(), true).stream()
                 .collect(Collectors
                         .toMap(VersionController::getAppVersion, ver -> ver,
                                 (v1, v2) -> v1, LinkedHashMap::new));
@@ -62,11 +62,11 @@ public class DefaultRollbackFlow extends BasicFlow {
                         + (finalCurrentAppVersion != null && finalCurrentAppVersion.equalsIgnoreCase(ver.getKey()) ? " [Online]" : ""))
                 .collect(Collectors.joining("\r\n"))
                 + "\r\n---------------------------------------------------------------------\r\n";
-        Dew.log.info(sb);
+        logger.info(sb);
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String selected = reader.readLine().trim();
         while (!versions.containsKey(selected) || selected.equalsIgnoreCase(finalCurrentAppVersion)) {
-            Dew.log.error("Version number illegal,please re-enter");
+            logger.error("Version number illegal,please re-enter");
             reader = new BufferedReader(new InputStreamReader(System.in));
             selected = reader.readLine().trim();
         }

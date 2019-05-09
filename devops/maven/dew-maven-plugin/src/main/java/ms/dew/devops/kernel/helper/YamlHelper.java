@@ -16,7 +16,7 @@
 
 package ms.dew.devops.kernel.helper;
 
-import org.apache.maven.plugin.logging.Log;
+import org.slf4j.Logger;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.representer.Representer;
@@ -28,7 +28,7 @@ import org.yaml.snakeyaml.representer.Representer;
  */
 public class YamlHelper {
 
-    private static Log log;
+    private static Logger log;
     private static Yaml yaml;
 
     /**
@@ -36,9 +36,8 @@ public class YamlHelper {
      *
      * @param log the log
      */
-    public static void init(Log log) {
+    public static void init(Logger log) {
         if (yaml == null) {
-            log.info("Init YamlHelper");
             YamlHelper.log = log;
             DumperOptions options = new DumperOptions();
             options.setCanonical(false);

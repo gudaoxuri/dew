@@ -59,6 +59,15 @@ public interface Verify {
      */
     void doVerify(String buildPath, String expectedResPath) throws Exception;
 
+    /**
+     * Verify resource descriptors.
+     *
+     * @param message      the message
+     * @param expectedText the expected text
+     * @param actualText   the actual text
+     * @throws IOException    the io exception
+     * @throws ParseException the parse exception
+     */
     default void verifyResourceDescriptors(String message, String expectedText, String actualText) throws IOException, ParseException {
         JsonTextMessageValidator validator = new JsonTextMessageValidator();
         validator.setStrict(false);
@@ -76,6 +85,13 @@ public interface Verify {
                 JsonPath.parse(actualText));
     }
 
+    /**
+     * To json string.
+     *
+     * @param yaml the yaml
+     * @return the string
+     * @throws IOException the io exception
+     */
     default String toJson(String yaml) throws IOException {
         Object obj = new ObjectMapper(new YAMLFactory()).readValue(yaml, Object.class);
         return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(obj);

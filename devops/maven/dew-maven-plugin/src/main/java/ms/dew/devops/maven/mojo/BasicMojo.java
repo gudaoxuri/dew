@@ -17,22 +17,28 @@
 package ms.dew.devops.maven.mojo;
 
 import io.kubernetes.client.ApiException;
+import ms.dew.devops.kernel.DevOps;
+import ms.dew.devops.kernel.config.ConfigBuilder;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.exception.ConfigException;
 import ms.dew.devops.kernel.exception.GlobalProcessException;
 import ms.dew.devops.kernel.exception.ProjectProcessException;
-import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.function.ExecuteEventProcessor;
 import ms.dew.devops.kernel.util.DewLog;
+import ms.dew.devops.maven.MavenDevOps;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.BuildPluginManager;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.slf4j.LoggerFactory;
+import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Basic mojo.
@@ -41,135 +47,207 @@ import java.util.Map;
  */
 public abstract class BasicMojo extends AbstractMojo {
 
+    protected Logger logger = DewLog.build(this.getClass());
+
+    // ========================== 常量定义 ==========================
+
+    // ============= 公共场景使用 =============
+    /**
+     * 环境标识.
+     */
+    private static final String FLAG_DEW_DEVOPS_PROFILE = "dew.devops.profile";
+    /**
+     * Kubernetes Base64 配置标识.
+     */
+    private static final String FLAG_DEW_DEVOPS_KUBE_CONFIG = "dew.devops.kube.config";
+
+    // ============= 发布与回滚使用 =============
+
+    /**
+     * Docker Host标识.
+     * <p>
+     * e.g. tcp://10.200.131.182:2375.
+     */
+    private static final String FLAG_DEW_DEVOPS_DOCKER_HOST = "dew.devops.docker.host";
+    /**
+     * Docker registry url标识.
+     * <p>
+     * e.g. https://harbor.dew.env/v2
+     */
+    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL = "dew.devops.docker.registry.url";
+    /**
+     * Docker registry 用户名标识.
+     */
+    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME = "dew.devops.docker.registry.username";
+    /**
+     * Docker registry 密码标识.
+     */
+    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD = "dew.devops.docker.registry.password";
+    /**
+     * 是否静默处理标识.
+     * <p>
+     * 仅对发布/回滚有效
+     */
+    private static final String FLAG_DEW_DEVOPS_QUIET = "dew.devops.quiet";
+
+    // ============= 日志及调试场景使用 =============
+    /**
+     * 要使用的Pod名称标识.
+     */
+    private static final String FLAG_DEW_DEVOPS_POD_NAME = "dew.devops.podName";
+    // ============= 日志场景使用 =============
+    /**
+     * 是否滚动查看日志标识.
+     */
+    private static final String FLAG_DEW_DEVOPS_LOG_FOLLOW = "dew.logger.follow";
+    // ============= 调试场景使用 =============
+    /**
+     * 转发端口标识.
+     */
+    private static final String FLAG_DEW_DEVOPS_DEBUG_FORWARD_PORT = "dew.devops.debug.forward.port";
+
+    // ============= 伸缩场景使用 =============
+
+    /**
+     * 伸缩Pod数量标识.
+     */
+    private static final String FLAG_DEW_DEVOPS_SCALE_REPLICAS = "dew.devops.scale.replicas";
+    /**
+     * 是否启用自动伸缩标识.
+     */
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO = "dew.devops.scale.auto";
+    /**
+     * 自动伸缩Pod数下限标识.
+     */
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN = "dew.devops.scale.auto.minReplicas";
+    /**
+     * 自动伸缩Pod数上限标识.
+     */
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX = "dew.devops.scale.auto.maxReplicas";
+    /**
+     * 自动伸缩条件：CPU平均使用率标识.
+     */
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG = "dew.devops.scale.auto.cpu.averageUtilization";
+
+    // ============= 测试场景使用 =============
+    /**
+     * Mock场景下加载外部class的路径标识.
+     */
+    private static final String FLAG_DEW_DEVOPS_MOCK_CLASS_PATH = "dew.devops.mock.classpath";
+
+
+    // ========================== 接收参数 ==========================
+
     // ============= 公共场景使用 =============
 
     /**
      * The Profile.
      */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_PROFILE, defaultValue = Dew.Constants.FLAG_DEW_DEVOPS_DEFAULT_PROFILE)
+    @Parameter(property = FLAG_DEW_DEVOPS_PROFILE, defaultValue = ConfigBuilder.FLAG_DEW_DEVOPS_DEFAULT_PROFILE)
     private String profile;
 
     /**
      * The Kubernetes base64 config.
      */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_KUBE_CONFIG)
+    @Parameter(property = FLAG_DEW_DEVOPS_KUBE_CONFIG)
     private String kubeBase64Config;
 
     // ============= 发布与回滚使用 =============
     /**
      * The Docker host.
      */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_HOST)
+    @Parameter(property = FLAG_DEW_DEVOPS_DOCKER_HOST)
     private String dockerHost;
 
     /**
      * The Docker registry url.
      */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL)
+    @Parameter(property = FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL)
     private String dockerRegistryUrl;
 
     /**
      * The Docker registry user name.
      */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME)
+    @Parameter(property = FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME)
     private String dockerRegistryUserName;
 
     /**
      * The Docker registry password.
      */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD)
+    @Parameter(property = FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD)
     private String dockerRegistryPassword;
 
     /**
      * The Quiet.
      */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_QUIET)
+    @Parameter(property = FLAG_DEW_DEVOPS_QUIET)
     boolean quiet;
-
-    /**
-     * The ignore exist maven version.
-     */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_MAVEN_VERSION_EXIST_IGNORE, defaultValue = "false")
-    boolean ignoreExistMavenVersion;
 
     // ============= 日志及调试场景使用 =============
     /**
      * The Pod name.
      */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_POD_NAME)
+    @Parameter(property = FLAG_DEW_DEVOPS_POD_NAME)
     String podName;
     // ============= 日志场景使用 =============
     /**
      * The Follow.
      */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_LOG_FOLLOW)
+    @Parameter(property = FLAG_DEW_DEVOPS_LOG_FOLLOW)
     boolean follow;
     // ============= 调试场景使用 =============
     /**
      * The Forward Port.
      */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_DEBUG_FORWARD_PORT, defaultValue = "9999")
+    @Parameter(property = FLAG_DEW_DEVOPS_DEBUG_FORWARD_PORT, defaultValue = "9999")
     int forwardPort;
 
     // ============= 伸缩场景使用 =============
     /**
      * The Replicas.
      */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_SCALE_REPLICAS)
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_REPLICAS)
     protected int replicas;
 
     /**
      * The Auto scale.
      */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_SCALE_AUTO)
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO)
     boolean autoScale;
 
     /**
      * The Min replicas.
      */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN)
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN)
     int minReplicas;
 
     /**
      * The Max replicas.
      */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX)
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX)
     int maxReplicas;
 
     /**
      * The Cpu avg.
      */
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG)
+    @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG)
     int cpuAvg;
 
 
     // ============= 测试场景使用 =============
-    @Parameter(property = Dew.Constants.FLAG_DEW_DEVOPS_MOCK_CLASS_PATH)
+    @Parameter(property = FLAG_DEW_DEVOPS_MOCK_CLASS_PATH)
     private String mockClasspath;
 
     // ============= 其它参数 =============
 
-    @Component
+    @Parameter(defaultValue = "${session}", readonly = true)
     private MavenSession session;
+
+    @Parameter(defaultValue = "${project}", readonly = true)
+    protected MavenProject mavenProject;
 
     @Component
     private BuildPluginManager pluginManager;
-
-    /**
-     * Init execute.
-     */
-    protected void initExecute() {
-    }
-
-    /**
-     * Pre execute.
-     *
-     * @return <b>true</b> if success
-     * @throws IOException  the io exception
-     * @throws ApiException the api exception
-     */
-    protected void preExecute() throws IOException, ApiException {
-    }
 
     /**
      * Execute internal.
@@ -182,100 +260,160 @@ public abstract class BasicMojo extends AbstractMojo {
 
     @Override
     public void execute() {
-        initExecute();
-        if (Dew.stopped) {
+        if (DevOps.stopped) {
             return;
         }
+        Map<String, String> formattedProperties = getMavenProperties(session);
+        formatParameters(session, formattedProperties);
+        Optional<String> dockerHostAppendOpt =
+                formatParameters(FLAG_DEW_DEVOPS_DOCKER_HOST + "-append", formattedProperties);
+        Optional<String> dockerRegistryUrlAppendOpt =
+                formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL + "-append", formattedProperties);
+        Optional<String> dockerRegistryUserNameAppendOpt =
+                formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME + "-append", formattedProperties);
+        Optional<String> dockerRegistryPasswordAppendOpt =
+                formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD + "-append", formattedProperties);
+        Optional<String> kubeBase64ConfigAppendOpt =
+                formatParameters(FLAG_DEW_DEVOPS_KUBE_CONFIG + "-append", formattedProperties);
         try {
-            Dew.log = new DewLog(LoggerFactory.getLogger(this.getClass()), "[DEW][" + getMojoName() + "]:");
-            formatParameters();
-            Dew.log.info("Start...");
-            Dew.Init.init(session, pluginManager, profile,
-                    dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword,
-                    kubeBase64Config, mockClasspath);
-            if (Dew.Config.getCurrentProject() == null) {
+            MavenDevOps.init(session, pluginManager, profile,
+                    dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,
+                    dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
+                    kubeBase64ConfigAppendOpt,
+                    mockClasspath);
+        } catch (ConfigException e) {
+            // 此错误会中止程序
+            logger.error("Init Process error", e);
+            e.printStackTrace();
+            ExecuteEventProcessor.onGlobalProcessError(e);
+            throw e;
+        }
+        FinalProjectConfig projectConfig = DevOps.Config.getProjectConfig(session.getCurrentProject().getId());
+        try {
+            if (projectConfig == null) {
                 // 这多半是正常的行为
-                Dew.log.info("The current project kind does not match");
+                logger.info("The current project kind does not match");
                 return;
             }
-            if (Dew.Config.getCurrentProject().isSkip()) {
+            if (projectConfig.getSkip()) {
                 // 这多半是正常的行为
                 disabledDefaultBehavior();
-                Dew.log.info("The current project is manually set to skip");
-                return;
-            }
-            preExecute();
-            if (Dew.stopped) {
+                logger.info("The current project is manually set to skip");
                 return;
             }
             if (executeInternal()) {
-                Dew.log.info("Successful");
-                ExecuteEventProcessor.onMojoExecuteSuccessful(getMojoName(), Dew.Config.getCurrentProject(), "");
+                logger.info("Successful");
+                ExecuteEventProcessor.onMojoExecuteSuccessful(getMojoName(), projectConfig, "");
             } else {
                 // 此错误不会中止程序
                 disabledDefaultBehavior();
-                Dew.Config.getCurrentProject().skip("Internal execution error", true);
+                projectConfig.skip("Internal execution error", true);
             }
-        } catch (GlobalProcessException | ConfigException e) {
+        } catch (GlobalProcessException e) {
             // 此错误会中止程序
-            Dew.log.error("Global Process error", e);
-            Dew.stopped = true;
-            ExecuteEventProcessor.onGlobalProcessError(e);
+            logger.error("Global Process error", e);
             e.printStackTrace();
+            ExecuteEventProcessor.onGlobalProcessError(e);
             throw e;
         } catch (Exception e) {
             // 此错误会中止程序
-            Dew.log.error("Process error", e);
-            Dew.Config.getCurrentProject().skip("Process error [" + e.getClass().getSimpleName() + "]" + e.getMessage(), true);
-            ExecuteEventProcessor.onMojoExecuteFailure(getMojoName(), Dew.Config.getCurrentProject(), e);
+            logger.error("Process error", e);
             e.printStackTrace();
+            assert projectConfig != null;
+            projectConfig.skip("Process error [" + e.getClass().getSimpleName() + "]" + e.getMessage(), true);
+            ExecuteEventProcessor.onMojoExecuteFailure(getMojoName(), projectConfig, e);
             throw new ProjectProcessException("Process error", e);
         }
     }
 
-    private void disabledDefaultBehavior() {
-        Dew.Config.setCurrentMavenProperty("maven.test.skip", "true");
-        Dew.Config.setCurrentMavenProperty("maven.install.skip", "true");
-        Dew.Config.setCurrentMavenProperty("maven.deploy.skip", "true");
+    private void formatParameters(MavenSession session, Map<String, String> formattedProperties) {
+        logger.info("Parsing parameters with standard underline and short");
+        formatParameters(FLAG_DEW_DEVOPS_PROFILE, formattedProperties)
+                .ifPresent(obj -> profile = obj);
+        formatParameters(FLAG_DEW_DEVOPS_KUBE_CONFIG, formattedProperties)
+                .ifPresent(obj -> kubeBase64Config = obj);
+        formatParameters(FLAG_DEW_DEVOPS_DOCKER_HOST, formattedProperties)
+                .ifPresent(obj -> dockerHost = obj);
+        formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL, formattedProperties)
+                .ifPresent(obj -> dockerRegistryUrl = obj);
+        formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME, formattedProperties)
+                .ifPresent(obj -> dockerRegistryUserName = obj);
+        formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD, formattedProperties)
+                .ifPresent(obj -> dockerRegistryPassword = obj);
+        formatParameters(FLAG_DEW_DEVOPS_QUIET, formattedProperties)
+                .ifPresent(obj -> quiet = Boolean.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_POD_NAME, formattedProperties)
+                .ifPresent(obj -> podName = obj);
+        formatParameters(FLAG_DEW_DEVOPS_LOG_FOLLOW, formattedProperties)
+                .ifPresent(obj -> follow = Boolean.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_DEBUG_FORWARD_PORT, formattedProperties)
+                .ifPresent(obj -> forwardPort = Integer.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_REPLICAS, formattedProperties)
+                .ifPresent(obj -> replicas = Integer.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO, formattedProperties)
+                .ifPresent(obj -> autoScale = Boolean.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN, formattedProperties)
+                .ifPresent(obj -> minReplicas = Integer.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX, formattedProperties)
+                .ifPresent(obj -> maxReplicas = Integer.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG, formattedProperties)
+                .ifPresent(obj -> cpuAvg = Integer.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_MOCK_CLASS_PATH, formattedProperties)
+                .ifPresent(obj -> mockClasspath = obj);
     }
 
-    private void formatParameters() {
-        Dew.log.info("Parsing parameters with standard underline and short");
-        Map<String, String> formattedProperties = Dew.Constants.getMavenProperties(session);
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_PROFILE, formattedProperties)
-                .ifPresent(obj -> profile = obj);
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_KUBE_CONFIG, formattedProperties)
-                .ifPresent(obj -> kubeBase64Config = obj);
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_HOST, formattedProperties)
-                .ifPresent(obj -> dockerHost = obj);
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL, formattedProperties)
-                .ifPresent(obj -> dockerRegistryUrl = obj);
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME, formattedProperties)
-                .ifPresent(obj -> dockerRegistryUserName = obj);
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD, formattedProperties)
-                .ifPresent(obj -> dockerRegistryPassword = obj);
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_QUIET, formattedProperties)
-                .ifPresent(obj -> quiet = Boolean.valueOf(obj));
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_MAVEN_VERSION_EXIST_IGNORE, formattedProperties)
-                .ifPresent(obj -> ignoreExistMavenVersion = Boolean.valueOf(obj));
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_POD_NAME, formattedProperties)
-                .ifPresent(obj -> podName = obj);
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_LOG_FOLLOW, formattedProperties)
-                .ifPresent(obj -> follow = Boolean.valueOf(obj));
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_DEBUG_FORWARD_PORT, formattedProperties)
-                .ifPresent(obj -> forwardPort = Integer.valueOf(obj));
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_SCALE_REPLICAS, formattedProperties)
-                .ifPresent(obj -> replicas = Integer.valueOf(obj));
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_SCALE_AUTO, formattedProperties)
-                .ifPresent(obj -> autoScale = Boolean.valueOf(obj));
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN, formattedProperties)
-                .ifPresent(obj -> minReplicas = Integer.valueOf(obj));
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX, formattedProperties)
-                .ifPresent(obj -> maxReplicas = Integer.valueOf(obj));
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG, formattedProperties)
-                .ifPresent(obj -> cpuAvg = Integer.valueOf(obj));
-        Dew.Constants.formatParameters(Dew.Constants.FLAG_DEW_DEVOPS_MOCK_CLASS_PATH, formattedProperties)
-                .ifPresent(obj -> mockClasspath = obj);
+    /**
+     * 获取格式化后的Maven属性值.
+     * <p>
+     * 此方法从Maven属性获取对应标标识的值，标识会被解析成
+     * 标准标识
+     * 替换 '.'为 '_' 的标识
+     * 去掉 'dew.devops.' 前缀的标识
+     * 替换 '.'为 '_' 并去掉 'dew_devops_' 前缀的标识
+     *
+     * @param standardFlag        标准标识
+     * @param formattedProperties Maven属性
+     * @return 格式化后的Maven属性值 optional
+     */
+    private static Optional<String> formatParameters(String standardFlag, Map<String, String> formattedProperties) {
+        standardFlag = standardFlag.toLowerCase();
+        if (formattedProperties.containsKey(standardFlag)) {
+            return Optional.of(formattedProperties.get(standardFlag));
+        }
+        String underlineFlag = standardFlag.replaceAll("\\.", "_");
+        if (formattedProperties.containsKey(underlineFlag)) {
+            return Optional.of(formattedProperties.get(underlineFlag));
+        }
+        String shortStandardFlag = standardFlag.substring("dew.devops.".length());
+        if (formattedProperties.containsKey(shortStandardFlag)) {
+            return Optional.of(formattedProperties.get(shortStandardFlag));
+        }
+        String shortUnderlineFlag = underlineFlag.substring("dew_devops_".length());
+        if (formattedProperties.containsKey(shortUnderlineFlag)) {
+            return Optional.of(formattedProperties.get(shortUnderlineFlag));
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * 获取Maven属性.
+     *
+     * @param session maven session
+     * @return properties maven properties
+     */
+    private static Map<String, String> getMavenProperties(MavenSession session) {
+        Map<String, String> props = new HashMap<>();
+        props.putAll(session.getSystemProperties().entrySet().stream()
+                .collect(Collectors.toMap(prop ->
+                        prop.getKey().toString().toLowerCase().trim(), prop -> prop.getValue().toString().trim())));
+        props.putAll(session.getUserProperties().entrySet().stream()
+                .collect(Collectors.toMap(prop ->
+                        prop.getKey().toString().toLowerCase().trim(), prop -> prop.getValue().toString().trim())));
+        // Support gitlab ci runner by chart.
+        props.putAll(props.entrySet().stream()
+                .filter(prop -> prop.getKey().startsWith("env."))
+                .collect(Collectors.toMap(prop -> prop.getKey().substring("env.".length()), Map.Entry::getValue)));
+        return props;
     }
 
     /**
@@ -287,9 +425,11 @@ public abstract class BasicMojo extends AbstractMojo {
         return this.getClass().getSimpleName().substring(0, this.getClass().getSimpleName().indexOf("Mojo")).toLowerCase();
     }
 
-    @Override
-    public Log getLog() {
-        return Dew.log;
+    private void disabledDefaultBehavior() {
+        MavenDevOps.Config.setMavenProperty(session.getCurrentProject().getId(), "maven.test.skip", "true");
+        MavenDevOps.Config.setMavenProperty(session.getCurrentProject().getId(), "maven.install.skip", "true");
+        MavenDevOps.Config.setMavenProperty(session.getCurrentProject().getId(), "maven.deploy.skip", "true");
     }
+
 
 }

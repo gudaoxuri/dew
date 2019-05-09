@@ -17,7 +17,6 @@
 package ms.dew.devops.kernel.function;
 
 import com.ecfront.dew.common.$;
-import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.notification.Notify;
 import ms.dew.notification.NotifyConfig;
@@ -34,6 +33,8 @@ import java.util.stream.Collectors;
  * @author gudaoxuri
  */
 public class ExecuteEventProcessor {
+
+    private static boolean hasGlobalError = false;
 
     /**
      * Init.
@@ -87,9 +88,7 @@ public class ExecuteEventProcessor {
      * @param throwable the throwable
      */
     public static void onGlobalProcessError(Throwable throwable) {
-        if (!Notify.contains("")) {
-            return;
-        }
+        hasGlobalError = true;
         SendFactory.onGlobalProcessError(throwable);
     }
 
@@ -99,7 +98,7 @@ public class ExecuteEventProcessor {
      * @param projects the projects
      */
     public static void onShutdown(Map<String, FinalProjectConfig> projects) {
-        if (Dew.stopped) {
+        if (hasGlobalError) {
             return;
         }
         SendFactory.onShutdown(projects);
@@ -310,7 +309,7 @@ public class ExecuteEventProcessor {
                     .append("![](http://doc.dew.ms/images/devops-notify/non-split.png)")
                     .append("\n");
             content.append(nonExecutionProjects.stream()
-                    .filter(project -> !project.isHasError() && !project.isSkip())
+                    .filter(project -> !project.isHasError() && !project.getSkip())
                     .map(project -> "- " + project.getAppShowName() + "\n> " + project.getSkipReason())
                     .collect(Collectors.joining("\n")));
             content.append("\n\n")
@@ -318,7 +317,7 @@ public class ExecuteEventProcessor {
                     .append("![](http://doc.dew.ms/images/devops-notify/ignore-split.png)")
                     .append("\n");
             content.append(projects.values().stream()
-                    .filter(project -> !project.isHasError() && project.isSkip())
+                    .filter(project -> !project.isHasError() && project.getSkip())
                     .map(project -> "- " + project.getAppShowName() + "\n> " + project.getSkipReason())
                     .collect(Collectors.joining("\n")));
             content.append("\n\n")
@@ -435,7 +434,7 @@ public class ExecuteEventProcessor {
                 return result;
             }).collect(Collectors.toList()));
             message.put("failureExecProjects", nonExecutionProjects.stream()
-                    .filter(project -> !project.isHasError() && !project.isSkip())
+                    .filter(project -> !project.isHasError() && !project.getSkip())
                     .map(project -> {
                         Map<String, Object> result = new HashMap<>();
                         result.put("groupId", project.getAppGroup());
@@ -447,7 +446,7 @@ public class ExecuteEventProcessor {
                         return result;
                     }).collect(Collectors.toList()));
             message.put("noneExecProjects", nonExecutionProjects.stream()
-                    .filter(project -> !project.isHasError() && !project.isSkip())
+                    .filter(project -> !project.isHasError() && !project.getSkip())
                     .map(project -> {
                         Map<String, Object> result = new HashMap<>();
                         result.put("groupId", project.getAppGroup());
@@ -458,7 +457,7 @@ public class ExecuteEventProcessor {
                         return result;
                     }).collect(Collectors.toList()));
             message.put("ignoreExecProjects", projects.values().stream()
-                    .filter(project -> !project.isHasError() && project.isSkip())
+                    .filter(project -> !project.isHasError() && project.getSkip())
                     .map(project -> {
                         Map<String, Object> result = new HashMap<>();
                         result.put("groupId", project.getAppGroup());

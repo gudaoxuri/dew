@@ -16,7 +16,6 @@
 
 package ms.dew.devops.maven.mojo;
 
-import ms.dew.devops.kernel.Dew;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -30,14 +29,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  */
 @Mojo(name = "init", defaultPhase = LifecyclePhase.VALIDATE, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class InitMojo extends BasicMojo {
-
-    @Override
-    protected void initExecute() {
-        if (Dew.initialized) {
-            // 初始化，确保之前项目的Maven属性不会带入到当前项目
-            Dew.Config.initCurrentMavenProject();
-        }
-    }
 
     @Override
     protected boolean executeInternal() {
