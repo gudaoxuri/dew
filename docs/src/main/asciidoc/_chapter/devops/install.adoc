@@ -473,7 +473,7 @@ kind: PersistentVolume
 metadata:
   labels:
     app: kibana
-  name: kibana
+  name: dew-kibana
 spec:
   capacity:
     storage: 10Gi
@@ -778,6 +778,8 @@ TIP: https://github.com/kiwigrid/helm-charts/tree/master/charts/fluentd-elastics
 helm repo add kiwigrid https://kiwigrid.github.io
 
 # 安装，不使用代理要加上 --set image.tag=v2.4.0 --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/fluentd-elasticsearch
+# 请根据需要进行节点亲和性相关设置，但请保证需要收集日志的节点有Fluentd部署。
+# e.g. 只收集部署了应用的节点的日志，设置 --set nodeSelector.group=app
 # 若要启用Prometheus进行监控Fluentd，
 # 需要先将Fluentd通过设置service暴露出来，然后设置prometheusRule和serviceMonitor。
 # 此配置需结合Prometheus-operator使用。
@@ -793,7 +795,6 @@ helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace de
     --set prometheusRule.labels.release=dew-prometheus-operator \
     --set serviceMonitor.enabled=true \
     --set serviceMonitor.labels.release=dew-prometheus-operator \
-    --set nodeSelector.group=devops
 ----
 
 ==== Jaeger
