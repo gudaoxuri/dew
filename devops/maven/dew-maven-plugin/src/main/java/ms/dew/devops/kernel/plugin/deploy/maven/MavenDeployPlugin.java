@@ -80,7 +80,10 @@ public class MavenDeployPlugin implements DeployPlugin {
         } catch (ApiException e) {
             throw new ProjectProcessException(e.getMessage(), e);
         }
+    }
 
-
+    @Override
+    public boolean useMavenProcessingMode() {
+        return true;
     }
 }

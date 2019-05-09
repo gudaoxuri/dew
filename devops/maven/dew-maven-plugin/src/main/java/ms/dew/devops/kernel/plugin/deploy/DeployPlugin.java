@@ -47,4 +47,13 @@ public interface DeployPlugin {
     Optional<String> fetchLastDeployedVersion(String projectId, String appName, String namespace);
 
 
+    /**
+     * 是否使用Maven自身的处理机制.
+     * <p>
+     * 比如自身的 install deploy 方式
+     *
+     * @return the result
+     */
+    boolean useMavenProcessingMode();
+
 }

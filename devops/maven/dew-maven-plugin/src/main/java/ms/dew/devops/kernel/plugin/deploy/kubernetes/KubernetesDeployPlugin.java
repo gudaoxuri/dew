@@ -59,4 +59,9 @@ public class KubernetesDeployPlugin implements DeployPlugin {
 
     }
 
+    @Override
+    public boolean useMavenProcessingMode() {
+        return false;
+    }
+
 }

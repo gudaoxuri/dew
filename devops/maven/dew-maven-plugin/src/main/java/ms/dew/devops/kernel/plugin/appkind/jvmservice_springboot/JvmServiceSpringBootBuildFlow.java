@@ -35,7 +35,7 @@ import java.nio.file.StandardCopyOption;
 public class JvmServiceSpringBootBuildFlow extends DockerBuildFlow {
 
     protected void preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
-        String preparePath = config.getDirectory() + "dew_prepare" + File.separator;
+        String preparePath = config.getTargetDirectory() + "dew_prepare" + File.separator;
         Files.move(Paths.get(preparePath + "serv.jar"), Paths.get(flowBasePath + "serv.jar"), StandardCopyOption.REPLACE_EXISTING);
         $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/jvmservice_springboot/Dockerfile"), flowBasePath + "Dockerfile");
         $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/jvmservice_springboot/run-java.sh"), flowBasePath + "run-java.sh");

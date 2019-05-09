@@ -36,7 +36,7 @@ import java.nio.file.StandardCopyOption;
 public class FrontendNodeBuildFlow extends DockerBuildFlow {
 
     protected void preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
-        String preparePath = config.getDirectory() + "dew_prepare" + File.separator;
+        String preparePath = config.getTargetDirectory() + "dew_prepare" + File.separator;
         FileUtils.deleteDirectory(new File(flowBasePath + "dist"));
         Files.move(Paths.get(preparePath + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
         if (config.getApp().getServerConfig() != null && !config.getApp().getServerConfig().isEmpty()) {

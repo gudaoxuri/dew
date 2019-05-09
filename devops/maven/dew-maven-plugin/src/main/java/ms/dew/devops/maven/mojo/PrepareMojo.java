@@ -19,6 +19,7 @@ package ms.dew.devops.maven.mojo;
 import io.kubernetes.client.ApiException;
 import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.function.NeedProcessChecker;
+import ms.dew.devops.maven.function.MavenSkipProcessor;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -40,6 +41,7 @@ public class PrepareMojo extends BasicMojo {
     @Override
     protected boolean executeInternal() throws IOException, ApiException {
         NeedProcessChecker.checkNeedProcessProjects(quiet);
+        MavenSkipProcessor.process();
         return DevOps.Config.getProjectConfig(mavenProject.getId()).getAppKindPlugin()
                 .prepareFlow().exec(mavenProject.getId(), getMojoName());
     }
