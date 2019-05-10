@@ -89,7 +89,7 @@ PROCESS_INIT(初始化)
 {
 	"title": "DevOps process successful",      # 消息标题
 	"content": {                               # 消息内容
-		"kind": "PROCESS_INIT",               # 过程处理类型
+		"kind": "PROCESS_INIT",                # 过程处理类型
 		"ci": "",                              # ci操作
 		"message": {                           # 消息结果内容
 			"profile": "uat",                  # 分支或者环境
@@ -140,20 +140,32 @@ PROCESS_SHUTDOWN(关闭)
 		"ci": "",                                 # ci操作
 		"message": {                              # 消息结果内容
 			"successfulExecProjects": [{          # 成功项目
-			    "project":"todo-kernel",          # 项目名称
-			    "reason":""
+			    "groupId":"com.terran.message",   # maven groupId
+			    "artifactId":"dingtalk",          # maven artifactId
+			    "execMojos":["release"],          # 执行成功的操作， 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
+			    "name":"dingtalk"                 # maven项目名称
+			    "reason":null
 			}],
-			"failureExecProjects": [{             # 失败项目
-			    "project":"todo-kernel",          # 项目名称
-			    "reason":"**"                     # 失败原因
+			"failureExecProjects": [{             # 成功项目
+                "groupId":"com.terran.message",   # maven groupId
+                "artifactId":"dingtalk",          # maven artifactId
+                "execMojos":["release"],          # 执行成功的操作， 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
+                "name":"dingtalk",                # maven项目名称
+                "reason":"***"                    # 失败原因
+            }],
+			"noneExecProjects": [{                # 成功项目
+                "groupId":"com.terran.message",   # maven groupId
+                "artifactId":"dingtalk",          # maven artifactId
+                "execMojos":["release"],          # 执行成功的操作， 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
+                "name":"dingtalk",                # maven项目名称
+                "reason":"***"                    # 未执行原因
 			}],
-			"noneExecProjects": [{                # 未执行项目
-			    "project":"todo-kernel",          # 项目名称
-			    "reason":"**"                     # 未执行原因
-			}],
-			"ignoreExecProjects": [{              # 忽略执行项目
-			    "project":"todo-kernel",          # 项目名称
-			    "reason":"**"                     # 忽略原因
+			"ignoreExecProjects": [{              # 成功项目
+                "groupId":"com.terran.message",   # maven groupId
+                "artifactId":"dingtalk",          # maven artifactId
+                "execMojos":["release"],          # 执行成功的操作， 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
+                "name":"dingtalk",                # maven项目名称
+                "reason":"***"                    # 忽略原因
 			}],
 		}
 	}

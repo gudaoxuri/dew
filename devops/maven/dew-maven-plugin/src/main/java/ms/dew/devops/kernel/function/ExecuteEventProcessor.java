@@ -42,9 +42,6 @@ public class ExecuteEventProcessor {
      * @param processingProjects the processing projects
      */
     public static void init(List<FinalProjectConfig> processingProjects) {
-        if (!Notify.contains("")) {
-            return;
-        }
         if (processingProjects.isEmpty()) {
             SendFactory.initWithEmpty();
             return;
@@ -92,9 +89,6 @@ public class ExecuteEventProcessor {
      */
     public static void onGlobalProcessError(Throwable throwable) {
         hasGlobalError = true;
-        if (!Notify.contains("")) {
-            return;
-        }
         SendFactory.onGlobalProcessError(throwable);
     }
 
@@ -105,9 +99,6 @@ public class ExecuteEventProcessor {
      */
     public static void onShutdown(Map<String, FinalProjectConfig> projects) {
         if (hasGlobalError) {
-            return;
-        }
-        if (!Notify.contains("")) {
             return;
         }
         SendFactory.onShutdown(projects);
@@ -160,6 +151,8 @@ public class ExecuteEventProcessor {
 
         String appendCIJobUrl();
 
+        boolean skipNotify();
+
         default void doSend(String flag, String type, String content, String title) {
             Notify.send(flag + "_" + type, content, title);
         }
@@ -200,7 +193,15 @@ public class ExecuteEventProcessor {
         }
 
         @Override
+        public boolean skipNotify() {
+            return !Notify.contains("_" + NotifyConfig.TYPE_DD);
+        }
+
+        @Override
         public void initWithEmpty() {
+            if (skipNotify()) {
+                return;
+            }
             StringBuilder content = new StringBuilder();
             content.append("![](http://doc.dew.ms/images/devops-notify/report.png)")
                     .append("\n")
@@ -212,6 +213,9 @@ public class ExecuteEventProcessor {
 
         @Override
         public void init(String profile, List<String> appShowNames) {
+            if (skipNotify()) {
+                return;
+            }
             StringBuilder content = new StringBuilder();
             content.append("![](http://doc.dew.ms/images/devops-notify/report.png)")
                     .append("\n")
@@ -229,9 +233,6 @@ public class ExecuteEventProcessor {
         public void onMojoExecute(String mojoName, String flag, String profile,
                                   String appShowName, String appGroup,
                                   String message, Throwable throwable) {
-            if (!Notify.contains(flag + "_" + NotifyConfig.TYPE_DD)) {
-                return;
-            }
             StringBuilder content = new StringBuilder();
             content.append("![](http://doc.dew.ms/images/devops-notify/" + (throwable != null ? "failure" : "successful") + ".png)")
                     .append("\n")
@@ -257,6 +258,9 @@ public class ExecuteEventProcessor {
 
         @Override
         public void onGlobalProcessError(Throwable throwable) {
+            if (skipNotify()) {
+                return;
+            }
             StringBuilder content = new StringBuilder();
             content.append("![](http://doc.dew.ms/images/devops-notify/report.png)")
                     .append("\n")
@@ -276,6 +280,9 @@ public class ExecuteEventProcessor {
         public void onShutdown(Map<String, FinalProjectConfig> projects,
                                List<FinalProjectConfig> executionSuccessfulProjects,
                                List<FinalProjectConfig> nonExecutionProjects) {
+            if (skipNotify()) {
+                return;
+            }
             StringBuilder content = new StringBuilder();
             content.append("![](http://doc.dew.ms/images/devops-notify/report.png)")
                     .append("\n")
@@ -336,12 +343,23 @@ public class ExecuteEventProcessor {
         }
 
         @Override
+        public boolean skipNotify() {
+            return !Notify.contains("_" + NotifyConfig.TYPE_HTTP);
+        }
+
+        @Override
         public void initWithEmpty() {
+            if (skipNotify()) {
+                return;
+            }
             doSend("", NotifyConfig.TYPE_HTTP, build(PROCESS_EMPTY_FLAG, new HashMap<>()), "DevOps process report");
         }
 
         @Override
         public void init(String profile, List<String> appShowNames) {
+            if (skipNotify()) {
+                return;
+            }
             Map<String, Object> message = new HashMap<String, Object>() {
                 {
                     put("profile", profile);
@@ -355,7 +373,7 @@ public class ExecuteEventProcessor {
         public void onMojoExecute(String mojoName, String flag,
                                   String profile, String appShowName,
                                   String appGroup, String message, Throwable throwable) {
-            if (!Notify.contains(flag + "_" + NotifyConfig.TYPE_HTTP)) {
+            if (skipNotify()) {
                 return;
             }
             Map<String, Object> messageMap = new HashMap<String, Object>() {
@@ -382,6 +400,9 @@ public class ExecuteEventProcessor {
 
         @Override
         public void onGlobalProcessError(Throwable throwable) {
+            if (skipNotify()) {
+                return;
+            }
             Map<String, Object> message = new HashMap<String, Object>() {
                 {
                     put("error", throwable.getMessage() != null ? ": " + throwable.getMessage() : "");
@@ -399,52 +420,53 @@ public class ExecuteEventProcessor {
         public void onShutdown(Map<String, FinalProjectConfig> projects,
                                List<FinalProjectConfig> executionSuccessfulProjects,
                                List<FinalProjectConfig> nonExecutionProjects) {
-            Map<String, Object> message = new HashMap<String, Object>() {
-                {
-                    put("successfulExecProjects", executionSuccessfulProjects.stream().map(project -> {
-                        Map<String, String> result = new HashMap<String, String>() {
-                            {
-                                put("project", project.getAppShowName());
-                                put("reason", null);
-                            }
-                        };
+            if (skipNotify()) {
+                return;
+            }
+            Map<String, Object> message = new HashMap<>();
+            message.put("successfulExecProjects", executionSuccessfulProjects.stream().map(project -> {
+                Map<String, Object> result = new HashMap<>();
+                result.put("groupId", project.getAppGroup());
+                result.put("artifactId", project.getAppShowName());
+                result.put("execMojos", project.getExecuteSuccessfulMojos());
+                result.put("name", project.getAppName());
+                result.put("reason", null);
+                return result;
+            }).collect(Collectors.toList()));
+            message.put("failureExecProjects", nonExecutionProjects.stream()
+                    .filter(project -> !project.isHasError() && !project.getSkip())
+                    .map(project -> {
+                        Map<String, Object> result = new HashMap<>();
+                        result.put("groupId", project.getAppGroup());
+                        result.put("artifactId", project.getAppShowName());
+                        result.put("execMojos", project.getExecuteSuccessfulMojos());
+                        result.put("name", project.getAppName());
+                        result.put("reason", project.getSkipReason().isEmpty() ? "unknown error"
+                                : project.getSkipReason());
                         return result;
                     }).collect(Collectors.toList()));
-                    put("failureExecProjects", nonExecutionProjects.stream().filter(FinalProjectConfig::isHasError)
-                            .map(project -> {
-                                Map<String, String> result = new HashMap<String, String>() {
-                                    {
-                                        put("project", project.getAppShowName());
-                                        put("reason", project.getSkipReason().isEmpty() ? "unknown error"
-                                                : project.getSkipReason());
-                                    }
-                                };
-                                return result;
-                            }).collect(Collectors.toList()));
-                    put("noneExecProjects", nonExecutionProjects.stream()
-                            .filter(project -> !project.isHasError() && !project.getSkip())
-                            .map(project -> {
-                                Map<String, String> result = new HashMap<String, String>() {
-                                    {
-                                        put("project", project.getAppShowName());
-                                        put("reason", project.getSkipReason());
-                                    }
-                                };
-                                return result;
-                            }).collect(Collectors.toList()));
-                    put("ignoreExecProjects", projects.values().stream()
-                            .filter(project -> !project.isHasError() && project.getSkip())
-                            .map(project -> {
-                                Map<String, String> result = new HashMap<String, String>() {
-                                    {
-                                        put("project", project.getAppShowName());
-                                        put("reason", project.getSkipReason());
-                                    }
-                                };
-                                return result;
-                            }).collect(Collectors.toList()));
-                }
-            };
+            message.put("noneExecProjects", nonExecutionProjects.stream()
+                    .filter(project -> !project.isHasError() && !project.getSkip())
+                    .map(project -> {
+                        Map<String, Object> result = new HashMap<>();
+                        result.put("groupId", project.getAppGroup());
+                        result.put("artifactId", project.getAppShowName());
+                        result.put("execMojos", project.getExecuteSuccessfulMojos());
+                        result.put("name", project.getAppName());
+                        result.put("reason", project.getSkipReason());
+                        return result;
+                    }).collect(Collectors.toList()));
+            message.put("ignoreExecProjects", projects.values().stream()
+                    .filter(project -> !project.isHasError() && project.getSkip())
+                    .map(project -> {
+                        Map<String, Object> result = new HashMap<>();
+                        result.put("groupId", project.getAppGroup());
+                        result.put("artifactId", project.getAppShowName());
+                        result.put("execMojos", project.getExecuteSuccessfulMojos());
+                        result.put("name", project.getAppName());
+                        result.put("reason", project.getSkipReason());
+                        return result;
+                    }).collect(Collectors.toList()));
             doSend("", NotifyConfig.TYPE_HTTP, build(PROCESS_SHUTDOWN_FLAG, message), "DevOps process report");
         }
 
