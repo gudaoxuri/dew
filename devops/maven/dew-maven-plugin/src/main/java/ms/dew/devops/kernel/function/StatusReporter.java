@@ -35,6 +35,9 @@ public class StatusReporter {
 
     private static Logger logger = DewLog.build(StatusReporter.class);
 
+    /**
+     * Report.
+     */
     public static void report() {
         if (ExecuteOnceProcessor.executedCheck(StatusReporter.class)) {
             return;

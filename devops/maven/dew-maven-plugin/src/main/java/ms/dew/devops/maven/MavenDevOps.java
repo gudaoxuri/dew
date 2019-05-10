@@ -163,7 +163,8 @@ public class MavenDevOps {
                 }
                 Optional<FinalProjectConfig> finalProjectConfigOpt =
                         ConfigBuilder.buildProject(dewConfig, appKindPluginOpt.get(), deployPlugin, project, inputProfile,
-                                inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword, inputKubeBase64Config,
+                                inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
+                                inputKubeBase64Config,
                                 dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
                                 kubeBase64ConfigAppendOpt);
                 if (finalProjectConfigOpt.isPresent()) {
