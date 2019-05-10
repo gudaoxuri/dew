@@ -31,7 +31,7 @@ public class MavenSkipProcessor {
     /**
      * Process.
      */
-    public static void process() {
+    public static synchronized void process() {
         if (ExecuteOnceProcessor.executedCheck(MavenSkipProcessor.class)) {
             return;
         }

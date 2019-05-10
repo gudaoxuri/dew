@@ -27,10 +27,7 @@ import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Spring boot app kind plugin.
@@ -127,6 +124,37 @@ public class JvmServiceSpringBootAppKindPlugin implements AppKindPlugin {
     @Override
     public BasicFlow releaseFlow() {
         return new KubeReleaseFlow();
+    }
+
+    @Override
+    public Map<String, String> getEnv(FinalProjectConfig projectConfig) {
+        return new HashMap<String, String>() {
+            {
+                put("JAVA_OPTIONS", setJavaOptionsValue(projectConfig));
+            }
+        };
+    }
+
+    private String setJavaOptionsValue(FinalProjectConfig config) {
+        String containerEnvJavaOptionsValue =
+                (config.getApp().getRunOptions() == null ? "" : config.getApp().getRunOptions())
+                        + " -Dspring.profiles.active=" + config.getProfile()
+                        + " -Dserver.port=" + config.getApp().getPort();
+        if (config.getApp().getTraceLogEnabled()) {
+            containerEnvJavaOptionsValue += " -Dopentracing.jaeger.log-spans=" + config.getApp().getTraceLogSpans();
+            if (!config.getApp().getTraceProbabilisticSamplingRate().equals(1.0)) {
+                containerEnvJavaOptionsValue += " -Dopentracing.jaeger.probabilistic-sampler.sampling-rate="
+                        + config.getApp().getTraceProbabilisticSamplingRate();
+            }
+            if (!config.getApp().getTraceWebSkipPattern().isEmpty()) {
+                containerEnvJavaOptionsValue += " -Dopentracing.spring.web.skip-pattern=" + config.getApp().getTraceWebSkipPattern();
+            }
+        }
+        if (config.getApp().getMetricsEnabled()) {
+            containerEnvJavaOptionsValue += " -Dmanagement.endpoints.web.exposure.include=*"
+                    + " -Dmetrics.tags:application=${spring.application.name}";
+        }
+        return containerEnvJavaOptionsValue;
     }
 
 }

@@ -47,8 +47,6 @@ import java.util.stream.Collectors;
  */
 public abstract class BasicMojo extends AbstractMojo {
 
-    protected Logger logger = DewLog.build(this.getClass());
-
     // ========================== 常量定义 ==========================
 
     // ============= 公共场景使用 =============
@@ -241,13 +239,15 @@ public abstract class BasicMojo extends AbstractMojo {
     // ============= 其它参数 =============
 
     @Parameter(defaultValue = "${session}", readonly = true)
-    private MavenSession session;
+    protected MavenSession mavenSession;
 
     @Parameter(defaultValue = "${project}", readonly = true)
     protected MavenProject mavenProject;
 
     @Component
     private BuildPluginManager pluginManager;
+
+    protected Logger logger = null;
 
     /**
      * Execute internal.
@@ -260,11 +260,12 @@ public abstract class BasicMojo extends AbstractMojo {
 
     @Override
     public void execute() {
+        logger = DewLog.build(this.getClass(), mavenProject.getName(), getMojoName());
         if (DevOps.stopped) {
             return;
         }
-        Map<String, String> formattedProperties = getMavenProperties(session);
-        formatParameters(session, formattedProperties);
+        Map<String, String> formattedProperties = getMavenProperties(mavenSession);
+        formatParameters(mavenSession, formattedProperties);
         Optional<String> dockerHostAppendOpt =
                 formatParameters(FLAG_DEW_DEVOPS_DOCKER_HOST + "-append", formattedProperties);
         Optional<String> dockerRegistryUrlAppendOpt =
@@ -276,7 +277,7 @@ public abstract class BasicMojo extends AbstractMojo {
         Optional<String> kubeBase64ConfigAppendOpt =
                 formatParameters(FLAG_DEW_DEVOPS_KUBE_CONFIG + "-append", formattedProperties);
         try {
-            MavenDevOps.init(session, pluginManager, profile,
+            MavenDevOps.Init.init(mavenSession, pluginManager, profile,
                     dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,
                     dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
                     kubeBase64ConfigAppendOpt,
@@ -288,7 +289,7 @@ public abstract class BasicMojo extends AbstractMojo {
             ExecuteEventProcessor.onGlobalProcessError(e);
             throw e;
         }
-        FinalProjectConfig projectConfig = DevOps.Config.getProjectConfig(session.getCurrentProject().getId());
+        FinalProjectConfig projectConfig = DevOps.Config.getProjectConfig(mavenSession.getCurrentProject().getId());
         try {
             if (projectConfig == null) {
                 // 这多半是正常的行为
@@ -327,7 +328,6 @@ public abstract class BasicMojo extends AbstractMojo {
     }
 
     private void formatParameters(MavenSession session, Map<String, String> formattedProperties) {
-        logger.info("Parsing parameters with standard underline and short");
         formatParameters(FLAG_DEW_DEVOPS_PROFILE, formattedProperties)
                 .ifPresent(obj -> profile = obj);
         formatParameters(FLAG_DEW_DEVOPS_KUBE_CONFIG, formattedProperties)
@@ -398,7 +398,7 @@ public abstract class BasicMojo extends AbstractMojo {
     /**
      * 获取Maven属性.
      *
-     * @param session maven session
+     * @param session maven mavenSession
      * @return properties maven properties
      */
     private static Map<String, String> getMavenProperties(MavenSession session) {
@@ -426,9 +426,9 @@ public abstract class BasicMojo extends AbstractMojo {
     }
 
     private void disabledDefaultBehavior() {
-        MavenDevOps.Config.setMavenProperty(session.getCurrentProject().getId(), "maven.test.skip", "true");
-        MavenDevOps.Config.setMavenProperty(session.getCurrentProject().getId(), "maven.install.skip", "true");
-        MavenDevOps.Config.setMavenProperty(session.getCurrentProject().getId(), "maven.deploy.skip", "true");
+        MavenDevOps.Config.setMavenProperty(mavenSession.getCurrentProject().getId(), "maven.test.skip", "true");
+        MavenDevOps.Config.setMavenProperty(mavenSession.getCurrentProject().getId(), "maven.install.skip", "true");
+        MavenDevOps.Config.setMavenProperty(mavenSession.getCurrentProject().getId(), "maven.deploy.skip", "true");
     }
 
 

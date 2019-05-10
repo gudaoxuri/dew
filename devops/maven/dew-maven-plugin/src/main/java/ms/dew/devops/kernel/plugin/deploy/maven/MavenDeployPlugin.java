@@ -26,6 +26,8 @@ import ms.dew.devops.kernel.plugin.deploy.DeployPlugin;
 import org.apache.maven.project.MavenProject;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -80,6 +82,11 @@ public class MavenDeployPlugin implements DeployPlugin {
         } catch (ApiException e) {
             throw new ProjectProcessException(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public Map<String, String> getEnv(FinalProjectConfig projectConfig) {
+        return new HashMap<>();
     }
 
     @Override

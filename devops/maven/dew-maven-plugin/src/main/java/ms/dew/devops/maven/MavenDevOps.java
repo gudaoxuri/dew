@@ -22,6 +22,7 @@ import ms.dew.devops.kernel.config.ConfigBuilder;
 import ms.dew.devops.kernel.config.DewConfig;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.exception.ConfigException;
+import ms.dew.devops.kernel.function.NeedProcessChecker;
 import ms.dew.devops.kernel.helper.GitHelper;
 import ms.dew.devops.kernel.helper.YamlHelper;
 import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
@@ -31,6 +32,7 @@ import ms.dew.devops.kernel.util.ExecuteOnceProcessor;
 import ms.dew.devops.maven.function.AppKindPluginSelector;
 import ms.dew.devops.maven.function.DependenciesResolver;
 import ms.dew.devops.maven.function.DeployPluginSelector;
+import ms.dew.devops.maven.function.MavenSkipProcessor;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.project.MavenProject;
@@ -53,121 +55,125 @@ public class MavenDevOps {
 
     private static Logger logger = DewLog.build(MavenDevOps.class);
 
-
     /**
      * Init.
-     *
-     * @param session                         the session
-     * @param pluginManager                   the plugin manager
-     * @param inputProfile                    the input profile
-     * @param inputDockerHost                 the input docker host
-     * @param inputDockerRegistryUrl          the input docker registry url
-     * @param inputDockerRegistryUserName     the input docker registry user name
-     * @param inputDockerRegistryPassword     the input docker registry password
-     * @param inputKubeBase64Config           the input kube base 64 config
-     * @param dockerHostAppendOpt             the docker host append opt
-     * @param dockerRegistryUrlAppendOpt      the docker registry url append opt
-     * @param dockerRegistryUserNameAppendOpt the docker registry user name append opt
-     * @param dockerRegistryPasswordAppendOpt the docker registry password append opt
-     * @param kubeBase64ConfigAppendOpt       the kube base 64 config append opt
-     * @param mockClasspath                   the mock classpath
      */
-    public static synchronized void init(MavenSession session, BuildPluginManager pluginManager,
-                                         String inputProfile,
-                                         String inputDockerHost, String inputDockerRegistryUrl,
-                                         String inputDockerRegistryUserName, String inputDockerRegistryPassword,
-                                         String inputKubeBase64Config,
-                                         Optional<String> dockerHostAppendOpt, Optional<String> dockerRegistryUrlAppendOpt,
-                                         Optional<String> dockerRegistryUserNameAppendOpt, Optional<String> dockerRegistryPasswordAppendOpt,
-                                         Optional<String> kubeBase64ConfigAppendOpt,
-                                         String mockClasspath) {
-        try {
-            Config.initMavenProject(session.getCurrentProject().getId());
-            DevOps.Config.getFinalConfig().setMavenSession(session);
-            DevOps.Config.getFinalConfig().setPluginManager(pluginManager);
-            if (ExecuteOnceProcessor.executedCheck(MavenDevOps.class)) {
-                return;
-            }
-            logger.info("Start init ...");
-            logger.info("Dependencies resolver ...");
-            DependenciesResolver.init(session);
-            inputProfile = inputProfile.toLowerCase();
-            logger.info("Active profile : " + inputProfile);
-            // 全局只初始化一次
-            GitHelper.init(logger);
-            YamlHelper.init(logger);
-            initFinalConfig(inputProfile,
-                    inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
-                    inputKubeBase64Config,
-                    dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
-                    kubeBase64ConfigAppendOpt);
-            DevOps.Init.init(mockClasspath);
-            Config.initMavenProject(session.getCurrentProject().getId());
-        } catch (Exception e) {
-            throw new ConfigException(e.getMessage(), e);
-        }
-    }
+    public static class Init {
 
-    private static void initFinalConfig(String inputProfile,
-                                        String inputDockerHost, String inputDockerRegistryUrl,
-                                        String inputDockerRegistryUserName, String inputDockerRegistryPassword,
-                                        String inputKubeBase64Config, Optional<String> dockerHostAppendOpt,
-                                        Optional<String> dockerRegistryUrlAppendOpt,
-                                        Optional<String> dockerRegistryUserNameAppendOpt,
-                                        Optional<String> dockerRegistryPasswordAppendOpt,
-                                        Optional<String> kubeBase64ConfigAppendOpt)
-            throws IOException, InvocationTargetException, IllegalAccessException {
-        logger.info("Init final config ...");
-        String basicDirectory = DevOps.Config.getFinalConfig().getMavenSession().getTopLevelProject().getBasedir().getPath() + File.separator;
-        // 基础配置
-        String basicConfig = "";
-        if (new File(basicDirectory + ".dew").exists()) {
-            basicConfig = ConfigBuilder.mergeProfiles($.file.readAllByPathName(basicDirectory + ".dew", "UTF-8")) + "\r\n";
-            DewConfig dewConfig = YamlHelper.toObject(DewConfig.class, basicConfig);
-            if (inputProfile.equalsIgnoreCase(ConfigBuilder.FLAG_DEW_DEVOPS_DEFAULT_PROFILE)) {
-                dewConfig.getProfiles().clear();
-                DevOps.Config.basicProfileConfig = dewConfig;
-            } else {
-                DevOps.Config.basicProfileConfig = dewConfig.getProfiles().get(inputProfile);
+        /**
+         * Init.
+         *
+         * @param session                         the session
+         * @param pluginManager                   the plugin manager
+         * @param inputProfile                    the input profile
+         * @param inputDockerHost                 the input docker host
+         * @param inputDockerRegistryUrl          the input docker registry url
+         * @param inputDockerRegistryUserName     the input docker registry user name
+         * @param inputDockerRegistryPassword     the input docker registry password
+         * @param inputKubeBase64Config           the input kube base 64 config
+         * @param dockerHostAppendOpt             the docker host append opt
+         * @param dockerRegistryUrlAppendOpt      the docker registry url append opt
+         * @param dockerRegistryUserNameAppendOpt the docker registry user name append opt
+         * @param dockerRegistryPasswordAppendOpt the docker registry password append opt
+         * @param kubeBase64ConfigAppendOpt       the kube base 64 config append opt
+         * @param mockClasspath                   the mock classpath
+         */
+        public static synchronized void init(MavenSession session, BuildPluginManager pluginManager,
+                                             String inputProfile,
+                                             String inputDockerHost, String inputDockerRegistryUrl,
+                                             String inputDockerRegistryUserName, String inputDockerRegistryPassword,
+                                             String inputKubeBase64Config,
+                                             Optional<String> dockerHostAppendOpt, Optional<String> dockerRegistryUrlAppendOpt,
+                                             Optional<String> dockerRegistryUserNameAppendOpt, Optional<String> dockerRegistryPasswordAppendOpt,
+                                             Optional<String> kubeBase64ConfigAppendOpt,
+                                             String mockClasspath) {
+            try {
+                Config.initMavenProject(session, pluginManager);
+                if (ExecuteOnceProcessor.executedCheck(MavenDevOps.class)) {
+                    return;
+                }
+                logger.info("Start init ...");
+                logger.info("Dependencies resolver ...");
+                DependenciesResolver.init(session);
+                inputProfile = inputProfile.toLowerCase();
+                logger.info("Active profile : " + inputProfile);
+                // 全局只初始化一次
+                GitHelper.init(logger);
+                YamlHelper.init(logger);
+                initFinalConfig(session, inputProfile,
+                        inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
+                        inputKubeBase64Config,
+                        dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
+                        kubeBase64ConfigAppendOpt);
+                DevOps.Init.init(mockClasspath);
+                Config.initMavenProject(session, pluginManager);
+            } catch (Exception e) {
+                throw new ConfigException(e.getMessage(), e);
             }
         }
-        for (MavenProject project : DevOps.Config.getFinalConfig().getMavenSession().getProjectDependencyGraph().getSortedProjects()) {
-            Optional<AppKindPlugin> appKindPluginOpt = AppKindPluginSelector.select(project);
-            if (!appKindPluginOpt.isPresent()) {
-                continue;
-            }
-            DeployPlugin deployPlugin = DeployPluginSelector.select(appKindPluginOpt.get(), project);
 
-            String projectDirectory = project.getBasedir().getPath() + File.separator;
-            // 每个项目自定义的配置
-            String projectConfig;
-            if (!basicDirectory.equals(projectDirectory) && new File(projectDirectory + ".dew").exists()) {
-                // 合并基础配置与项目自定义配置
-                projectConfig = ConfigBuilder.mergeProject(basicConfig,
-                        $.file.readAllByPathName(projectDirectory + ".dew", "UTF-8"));
-                // basicConfig 有 Profile(s) 而 projectConfig 没有配置的情况
-                // 通过上一步合并后需要再次执行 default profile merge 到各 profile操作
-                projectConfig = ConfigBuilder.mergeProfiles(projectConfig);
-            } else {
-                projectConfig = basicConfig;
+        private static void initFinalConfig(MavenSession session, String inputProfile,
+                                            String inputDockerHost, String inputDockerRegistryUrl,
+                                            String inputDockerRegistryUserName, String inputDockerRegistryPassword,
+                                            String inputKubeBase64Config, Optional<String> dockerHostAppendOpt,
+                                            Optional<String> dockerRegistryUrlAppendOpt,
+                                            Optional<String> dockerRegistryUserNameAppendOpt,
+                                            Optional<String> dockerRegistryPasswordAppendOpt,
+                                            Optional<String> kubeBase64ConfigAppendOpt)
+                throws IOException, InvocationTargetException, IllegalAccessException {
+            logger.info("Init final config ...");
+            String basicDirectory = session.getTopLevelProject().getBasedir().getPath() + File.separator;
+            // 基础配置
+            String basicConfig = "";
+            if (new File(basicDirectory + ".dew").exists()) {
+                basicConfig = ConfigBuilder.mergeProfiles($.file.readAllByPathName(basicDirectory + ".dew", "UTF-8")) + "\r\n";
+                DewConfig dewConfig = YamlHelper.toObject(DewConfig.class, basicConfig);
+                if (inputProfile.equalsIgnoreCase(ConfigBuilder.FLAG_DEW_DEVOPS_DEFAULT_PROFILE)) {
+                    dewConfig.getProfiles().clear();
+                    DevOps.Config.basicProfileConfig = dewConfig;
+                } else {
+                    DevOps.Config.basicProfileConfig = dewConfig.getProfiles().get(inputProfile);
+                }
             }
-            DewConfig dewConfig;
-            if (!projectConfig.isEmpty()) {
-                dewConfig = YamlHelper.toObject(DewConfig.class, projectConfig);
-            } else {
-                dewConfig = new DewConfig();
-            }
-            Optional<FinalProjectConfig> finalProjectConfigOpt =
-                    ConfigBuilder.buildProject(dewConfig, appKindPluginOpt.get(), deployPlugin, project, inputProfile,
-                            inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword, inputKubeBase64Config,
-                            dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
-                            kubeBase64ConfigAppendOpt);
-            if (finalProjectConfigOpt.isPresent()) {
-                finalProjectConfigOpt.get().setMavenProject(project);
-                DevOps.Config.getFinalConfig().getProjects().put(project.getId(), finalProjectConfigOpt.get());
-                logger.debug("[" + project.getGroupId() + ":" + project.getArtifactId() + "] configured");
-            } else {
-                logger.debug("[" + project.getGroupId() + ":" + project.getArtifactId() + "] skipped");
+            for (MavenProject project : session.getProjectDependencyGraph().getSortedProjects()) {
+                Optional<AppKindPlugin> appKindPluginOpt = AppKindPluginSelector.select(project);
+                if (!appKindPluginOpt.isPresent()) {
+                    continue;
+                }
+                DeployPlugin deployPlugin = DeployPluginSelector.select(appKindPluginOpt.get(), project);
+
+                String projectDirectory = project.getBasedir().getPath() + File.separator;
+                // 每个项目自定义的配置
+                String projectConfig;
+                if (!basicDirectory.equals(projectDirectory) && new File(projectDirectory + ".dew").exists()) {
+                    // 合并基础配置与项目自定义配置
+                    projectConfig = ConfigBuilder.mergeProject(basicConfig,
+                            $.file.readAllByPathName(projectDirectory + ".dew", "UTF-8"));
+                    // basicConfig 有 Profile(s) 而 projectConfig 没有配置的情况
+                    // 通过上一步合并后需要再次执行 default profile merge 到各 profile操作
+                    projectConfig = ConfigBuilder.mergeProfiles(projectConfig);
+                } else {
+                    projectConfig = basicConfig;
+                }
+                DewConfig dewConfig;
+                if (!projectConfig.isEmpty()) {
+                    dewConfig = YamlHelper.toObject(DewConfig.class, projectConfig);
+                } else {
+                    dewConfig = new DewConfig();
+                }
+                Optional<FinalProjectConfig> finalProjectConfigOpt =
+                        ConfigBuilder.buildProject(dewConfig, appKindPluginOpt.get(), deployPlugin, project, inputProfile,
+                                inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword, inputKubeBase64Config,
+                                dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
+                                kubeBase64ConfigAppendOpt);
+                if (finalProjectConfigOpt.isPresent()) {
+                    finalProjectConfigOpt.get().setMavenSession(session);
+                    finalProjectConfigOpt.get().setMavenProject(project);
+                    DevOps.Config.getFinalConfig().getProjects().put(project.getId(), finalProjectConfigOpt.get());
+                    logger.debug("[" + project.getGroupId() + ":" + project.getArtifactId() + "] configured");
+                } else {
+                    logger.debug("[" + project.getGroupId() + ":" + project.getArtifactId() + "] skipped");
+                }
             }
         }
     }
@@ -190,21 +196,6 @@ public class MavenDevOps {
         }
 
         /**
-         * 初始化当前Maven项目.
-         */
-        private static void initMavenProject(String projectId) {
-            if (!DevOps.Config.getFinalConfig().getProjects().containsKey(projectId)) {
-                // 尚未初始化
-                return;
-            }
-            if (!mavenProps.containsKey(projectId)) {
-                mavenProps.put(projectId, new HashMap<>());
-            }
-            getMavenProject(projectId).getProperties().putAll(mavenProps.get(projectId));
-            DevOps.Config.setCurrentProjectId(projectId);
-        }
-
-        /**
          * 设置Maven的属性.
          *
          * @param projectId Maven项目Id
@@ -219,7 +210,47 @@ public class MavenDevOps {
             getMavenProject(projectId).getProperties().putAll(mavenProps.get(projectId));
         }
 
+        /**
+         * 初始化当前Maven项目.
+         *
+         * @param session       the session
+         * @param pluginManager this plugin manager
+         */
+        private static void initMavenProject(MavenSession session, BuildPluginManager pluginManager) {
+            String projectId = session.getCurrentProject().getId();
+            if (!DevOps.Config.getFinalConfig().getProjects().containsKey(projectId)) {
+                // 尚未初始化
+                return;
+            }
+            if (!mavenProps.containsKey(projectId)) {
+                mavenProps.put(projectId, new HashMap<>());
+            }
+            // 更新 session project plugin
+            FinalProjectConfig projectConfig = DevOps.Config.getFinalConfig().getProjects().get(projectId);
+            projectConfig.setMavenSession(session);
+            projectConfig.setPluginManager(pluginManager);
+            projectConfig.setMavenProject(session.getCurrentProject());
+            // 更新maven prop
+            projectConfig.getMavenProject().getProperties().putAll(mavenProps.get(projectId));
+            // 设置为当前项目
+            DevOps.Config.setCurrentProjectId(projectId);
+        }
+    }
 
+    /**
+     * Process.
+     */
+    public static class Process {
+
+        /**
+         * Need process check.
+         *
+         * @param quiet the quiet
+         */
+        public static synchronized void needProcessCheck(boolean quiet) {
+            NeedProcessChecker.checkNeedProcessProjects(quiet);
+            MavenSkipProcessor.process();
+        }
     }
 }
 

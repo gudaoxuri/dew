@@ -212,7 +212,7 @@ public class KubeOpt {
         watchMap.remove(watchId);
         try {
             watch.close();
-        } catch (IOException ignore) {
+        } catch (Exception ignore) {
             log.warn("Stop watch error.", ignore);
         }
     }

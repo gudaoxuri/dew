@@ -22,6 +22,9 @@ import ms.dew.devops.kernel.flow.NoNeedProcessFLow;
 import ms.dew.devops.kernel.flow.release.MavenReleaseFlow;
 import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * POM app kind plugin.
  *
@@ -57,5 +60,10 @@ public class PomAppKindPlugin implements AppKindPlugin {
     @Override
     public BasicFlow releaseFlow() {
         return new MavenReleaseFlow();
+    }
+
+    @Override
+    public Map<String, String> getEnv(FinalProjectConfig projectConfig) {
+        return new HashMap<>();
     }
 }

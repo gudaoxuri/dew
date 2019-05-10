@@ -19,6 +19,7 @@ package ms.dew.devops.kernel.plugin.deploy;
 import com.ecfront.dew.common.Resp;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -46,6 +47,13 @@ public interface DeployPlugin {
      */
     Optional<String> fetchLastDeployedVersion(String projectId, String appName, String namespace);
 
+    /**
+     * 获取环境变量.
+     *
+     * @param projectConfig the project config
+     * @return the env
+     */
+    Map<String, String> getEnv(FinalProjectConfig projectConfig);
 
     /**
      * 是否使用Maven自身的处理机制.

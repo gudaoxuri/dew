@@ -30,9 +30,11 @@ import static org.fusesource.jansi.Ansi.Color.*;
  */
 public class DewLog implements Logger {
 
+    private static final ThreadLocal<String> CONTEXT = new ThreadLocal<>();
+
+
     private Logger log;
     private String prefix;
-
 
     /**
      * Build logger.
@@ -41,18 +43,16 @@ public class DewLog implements Logger {
      * @return the logger
      */
     public static Logger build(Class clazz) {
-        return new DewLog(LoggerFactory.getLogger(clazz), "[DEW]");
+        String context = CONTEXT.get();
+        if (context == null) {
+            context = "";
+        }
+        return new DewLog(LoggerFactory.getLogger(clazz), "[DEW]" + context);
     }
 
-    /**
-     * Build logger.
-     *
-     * @param clazz  the clazz
-     * @param prefix the prefix
-     * @return the logger
-     */
-    public static Logger build(Class clazz, String prefix) {
-        return new DewLog(LoggerFactory.getLogger(clazz), prefix);
+    public static Logger build(Class clazz, String appName, String mojoName) {
+        CONTEXT.set(String.format("> [%-20s][%-10s]", appName, mojoName));
+        return new DewLog(LoggerFactory.getLogger(clazz), "[DEW]" + CONTEXT.get());
     }
 
     /**

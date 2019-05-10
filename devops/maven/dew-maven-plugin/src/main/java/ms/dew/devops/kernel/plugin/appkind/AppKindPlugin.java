@@ -19,6 +19,8 @@ package ms.dew.devops.kernel.plugin.appkind;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
 
+import java.util.Map;
+
 /**
  * App类型插件定义.
  *
@@ -60,5 +62,13 @@ public interface AppKindPlugin {
      * @return the basic flow
      */
     BasicFlow releaseFlow();
+
+    /**
+     * 获取环境变量.
+     *
+     * @param projectConfig the project config
+     * @return the env
+     */
+    Map<String, String> getEnv(FinalProjectConfig projectConfig);
 
 }

@@ -18,9 +18,11 @@ package ms.dew.devops.kernel.config;
 
 import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
 import ms.dew.devops.kernel.plugin.deploy.DeployPlugin;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.project.MavenProject;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -48,16 +50,19 @@ public class FinalProjectConfig extends DewProfile {
     private String imageVersion;
     private String skipReason = "";
     private boolean hasError = false;
-    private Set<String> executeSuccessfulMojos = new HashSet<>();
+    private Set<String> executeSuccessfulMojos = new LinkedHashSet<>();
 
     private String directory;
     private String targetDirectory;
 
     private DewProfile appendProfile;
 
-    private MavenProject mavenProject;
     private AppKindPlugin appKindPlugin;
     private DeployPlugin deployPlugin;
+
+    private MavenProject mavenProject;
+    private MavenSession mavenSession;
+    private BuildPluginManager pluginManager;
 
     /**
      * Gets id.
@@ -185,18 +190,38 @@ public class FinalProjectConfig extends DewProfile {
         this.appVersion = appVersion;
     }
 
+    /**
+     * Gets directory.
+     *
+     * @return the directory
+     */
     public String getDirectory() {
         return directory;
     }
 
+    /**
+     * Sets directory.
+     *
+     * @param directory the directory
+     */
     public void setDirectory(String directory) {
         this.directory = directory;
     }
 
+    /**
+     * Gets target directory.
+     *
+     * @return the target directory
+     */
     public String getTargetDirectory() {
         return targetDirectory;
     }
 
+    /**
+     * Sets target directory.
+     *
+     * @param targetDirectory the target directory
+     */
     public void setTargetDirectory(String targetDirectory) {
         this.targetDirectory = targetDirectory;
     }
@@ -280,6 +305,42 @@ public class FinalProjectConfig extends DewProfile {
      */
     public void setMavenProject(MavenProject mavenProject) {
         this.mavenProject = mavenProject;
+    }
+
+    /**
+     * Gets maven session.
+     *
+     * @return the maven session
+     */
+    public MavenSession getMavenSession() {
+        return mavenSession;
+    }
+
+    /**
+     * Sets maven session.
+     *
+     * @param mavenSession the maven session
+     */
+    public void setMavenSession(MavenSession mavenSession) {
+        this.mavenSession = mavenSession;
+    }
+
+    /**
+     * Gets plugin manager.
+     *
+     * @return the plugin manager
+     */
+    public BuildPluginManager getPluginManager() {
+        return pluginManager;
+    }
+
+    /**
+     * Sets plugin manager.
+     *
+     * @param pluginManager the plugin manager
+     */
+    public void setPluginManager(BuildPluginManager pluginManager) {
+        this.pluginManager = pluginManager;
     }
 
     /**

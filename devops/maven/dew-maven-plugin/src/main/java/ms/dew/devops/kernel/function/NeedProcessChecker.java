@@ -52,7 +52,7 @@ public class NeedProcessChecker {
      *
      * @param quiet the quiet
      */
-    public static void checkNeedProcessProjects(boolean quiet) {
+    public static synchronized void checkNeedProcessProjects(boolean quiet) {
         if (ExecuteOnceProcessor.executedCheck(NeedProcessChecker.class)) {
             return;
         }
@@ -108,7 +108,7 @@ public class NeedProcessChecker {
             StringBuilder sb = new StringBuilder();
             sb.append("\r\n==================== Processing Projects =====================\r\n\r\n");
             sb.append(processingProjects.stream().map(config ->
-                    "> [" + config.getAppKindPlugin().getName() + "] " + config.getAppGroup() + ":" + config.getAppName())
+                    String.format("> [%-25s] %s:%s", config.getAppKindPlugin().getName(), config.getAppGroup(), config.getAppName()))
                     .collect(Collectors.joining("\r\n")));
             sb.append("\r\n\r\n==============================================================\r\n");
             if (quiet) {

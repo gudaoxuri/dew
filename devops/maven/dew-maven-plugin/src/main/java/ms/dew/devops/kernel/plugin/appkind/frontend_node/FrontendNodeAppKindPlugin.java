@@ -21,6 +21,9 @@ import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.flow.release.KubeReleaseFlow;
 import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * Node frontend app kind plugin.
@@ -60,6 +63,11 @@ public class FrontendNodeAppKindPlugin implements AppKindPlugin {
     @Override
     public BasicFlow releaseFlow() {
         return new KubeReleaseFlow();
+    }
+
+    @Override
+    public Map<String, String> getEnv(FinalProjectConfig projectConfig) {
+        return new HashMap<>();
     }
 
 }

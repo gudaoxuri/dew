@@ -26,6 +26,8 @@ import ms.dew.devops.kernel.helper.KubeHelper;
 import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.plugin.deploy.DeployPlugin;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -57,6 +59,11 @@ public class KubernetesDeployPlugin implements DeployPlugin {
             throw new ProjectProcessException(e.getMessage(), e);
         }
 
+    }
+
+    @Override
+    public Map<String, String> getEnv(FinalProjectConfig projectConfig) {
+        return new HashMap<>();
     }
 
     @Override

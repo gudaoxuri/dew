@@ -16,6 +16,8 @@
 
 package ms.dew.devops.maven.mojo;
 
+import ms.dew.devops.kernel.function.StatusReporter;
+import ms.dew.devops.maven.MavenDevOps;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -32,6 +34,15 @@ public class InitMojo extends BasicMojo {
 
     @Override
     protected boolean executeInternal() {
+        if (mavenSession.isParallel()) {
+            StatusReporter.report();
+        }
+        if (mavenSession.getGoals().stream().map(String::toLowerCase)
+                .anyMatch(s ->
+                        s.contains("ms.dew:dew-maven-plugin:release")
+                                || s.contains("dew:release"))) {
+            MavenDevOps.Process.needProcessCheck(quiet);
+        }
         return true;
     }
 

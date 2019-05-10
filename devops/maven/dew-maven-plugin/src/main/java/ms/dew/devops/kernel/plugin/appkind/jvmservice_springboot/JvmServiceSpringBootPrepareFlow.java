@@ -54,6 +54,6 @@ public class JvmServiceSpringBootPrepareFlow extends BasicPrepareFlow {
                         put("outputDirectory", flowBasePath);
                         put("finalName", "serv");
                     }
-                }, DevOps.Config.getFinalConfig(), config);
+                }, config);
     }
 }

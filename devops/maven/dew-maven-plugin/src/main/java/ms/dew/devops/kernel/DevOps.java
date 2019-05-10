@@ -72,7 +72,7 @@ public class DevOps {
          *
          * @param mockClasspath the mock classpath
          */
-        public static void init(String mockClasspath) {
+        public static synchronized void init(String mockClasspath) {
             if (ExecuteOnceProcessor.executedCheck(DevOps.class)) {
                 return;
             }
@@ -238,12 +238,11 @@ public class DevOps {
          * @param version       the version
          * @param goal          the goal
          * @param configuration the configuration
-         * @param finalConfig   the final config
          * @param projectConfig the final project config
          */
         public static void invoke(String groupId, String artifactId, String version,
                                   String goal, Map<String, String> configuration,
-                                  FinalConfig finalConfig, FinalProjectConfig projectConfig
+                                  FinalProjectConfig projectConfig
         ) {
             logger.debug("invoke groupId = " + groupId + " ,artifactId = " + artifactId + " ,version = " + version);
             List<MojoExecutor.Element> config = configuration.entrySet().stream()
@@ -262,8 +261,8 @@ public class DevOps {
                         configuration(config.toArray(new Element[]{})),
                         executionEnvironment(
                                 projectConfig.getMavenProject(),
-                                finalConfig.getMavenSession(),
-                                finalConfig.getPluginManager()
+                                projectConfig.getMavenSession(),
+                                projectConfig.getPluginManager()
                         )
                 );
             } catch (MojoExecutionException e) {

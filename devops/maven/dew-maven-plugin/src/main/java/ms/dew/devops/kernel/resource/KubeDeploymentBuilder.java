@@ -24,6 +24,7 @@ import ms.dew.devops.kernel.helper.KubeRES;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Kubernetes deployment builder.
@@ -68,6 +69,23 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                 .withResources(new V1ResourceRequirements()
                         .requests(config.getApp().getContainerResourcesRequests())
                         .limits(config.getApp().getContainerResourcesLimits()));
+        Map<String, String> env = config.getAppKindPlugin().getEnv(config);
+        config.getDeployPlugin().getEnv(config).forEach((k, v) -> {
+            if (env.containsKey(k)) {
+                env.put(k, env.get(k) + " " + v);
+            } else {
+                env.put(k, v);
+            }
+        });
+        env.putAll(config.getDeployPlugin().getEnv(config));
+        if (!env.isEmpty()) {
+            containerBuilder.withEnv(env.entrySet().stream().map(e ->
+                    new V1EnvVarBuilder()
+                            .withName(e.getKey())
+                            .withValue(e.getValue())
+                            .build()
+            ).collect(Collectors.toList()));
+        }
         if (config.getApp().getHealthCheckEnabled()) {
             containerBuilder.withLivenessProbe(new V1ProbeBuilder()
                     .withHttpGet(new V1HTTPGetActionBuilder()
@@ -120,24 +138,4 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         return builder.build();
     }
 
-    private String setContainerEnvJavaOptionsValue(FinalProjectConfig config) {
-        String containerEnvJavaOptionsValue = config.getApp().getRunOptions()
-                + " -Dspring.profiles.active=" + config.getProfile()
-                + " -Dserver.port=" + config.getApp().getPort();
-        if (config.getApp().getTraceLogEnabled()) {
-            containerEnvJavaOptionsValue += " -Dopentracing.jaeger.log-spans=" + config.getApp().getTraceLogSpans();
-            if (!config.getApp().getTraceProbabilisticSamplingRate().equals(1.0)) {
-                containerEnvJavaOptionsValue += " -Dopentracing.jaeger.probabilistic-sampler.sampling-rate="
-                        + config.getApp().getTraceProbabilisticSamplingRate();
-            }
-            if (!config.getApp().getTraceWebSkipPattern().isEmpty()) {
-                containerEnvJavaOptionsValue += " -Dopentracing.spring.web.skip-pattern=" + config.getApp().getTraceWebSkipPattern();
-            }
-        }
-        if (config.getApp().getMetricsEnabled()) {
-            containerEnvJavaOptionsValue += " -Dmanagement.endpoints.web.exposure.include=*"
-                    + " -Dmetrics.tags:application=${spring.application.name}";
-        }
-        return containerEnvJavaOptionsValue;
-    }
 }
