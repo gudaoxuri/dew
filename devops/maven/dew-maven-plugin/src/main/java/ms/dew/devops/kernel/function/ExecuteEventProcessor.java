@@ -428,7 +428,7 @@ public class ExecuteEventProcessor {
                 Map<String, Object> result = new HashMap<>();
                 result.put("groupId", project.getAppGroup());
                 result.put("artifactId", project.getAppShowName());
-                result.put("execMojos", project.getExecuteSuccessfulMojos());
+                result.put("execMojos", String.join(",", project.getExecuteSuccessfulMojos()));
                 result.put("name", project.getAppName());
                 result.put("reason", null);
                 return result;
@@ -439,7 +439,7 @@ public class ExecuteEventProcessor {
                         Map<String, Object> result = new HashMap<>();
                         result.put("groupId", project.getAppGroup());
                         result.put("artifactId", project.getAppShowName());
-                        result.put("execMojos", project.getExecuteSuccessfulMojos());
+                        result.put("execMojos", String.join(",", project.getExecuteSuccessfulMojos()));
                         result.put("name", project.getAppName());
                         result.put("reason", project.getSkipReason().isEmpty() ? "unknown error"
                                 : project.getSkipReason());
@@ -451,7 +451,7 @@ public class ExecuteEventProcessor {
                         Map<String, Object> result = new HashMap<>();
                         result.put("groupId", project.getAppGroup());
                         result.put("artifactId", project.getAppShowName());
-                        result.put("execMojos", project.getExecuteSuccessfulMojos());
+                        result.put("execMojos", String.join(",", project.getExecuteSuccessfulMojos()));
                         result.put("name", project.getAppName());
                         result.put("reason", project.getSkipReason());
                         return result;
@@ -462,7 +462,7 @@ public class ExecuteEventProcessor {
                         Map<String, Object> result = new HashMap<>();
                         result.put("groupId", project.getAppGroup());
                         result.put("artifactId", project.getAppShowName());
-                        result.put("execMojos", project.getExecuteSuccessfulMojos());
+                        result.put("execMojos", String.join(",", project.getExecuteSuccessfulMojos()));
                         result.put("name", project.getAppName());
                         result.put("reason", project.getSkipReason());
                         return result;
@@ -477,6 +477,5 @@ public class ExecuteEventProcessor {
                     .set("message", $.json.toJson(message)));
         }
     }
-
 
 }
