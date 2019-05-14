@@ -18,7 +18,12 @@ package ms.dew.devops.kernel.plugin.appkind.frontend_node;
 
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
+import ms.dew.devops.kernel.flow.NoNeedProcessFLow;
+import ms.dew.devops.kernel.flow.log.DefaultLogFlow;
 import ms.dew.devops.kernel.flow.release.KubeReleaseFlow;
+import ms.dew.devops.kernel.flow.rollback.DefaultRollbackFlow;
+import ms.dew.devops.kernel.flow.scale.DefaultScaleFlow;
+import ms.dew.devops.kernel.flow.unrelease.DefaultUnReleaseFlow;
 import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
 
 import java.util.HashMap;
@@ -63,6 +68,31 @@ public class FrontendNodeAppKindPlugin implements AppKindPlugin {
     @Override
     public BasicFlow releaseFlow() {
         return new KubeReleaseFlow();
+    }
+
+    @Override
+    public BasicFlow unReleaseFlow() {
+        return new DefaultUnReleaseFlow();
+    }
+
+    @Override
+    public BasicFlow rollbackFlow() {
+        return new DefaultRollbackFlow();
+    }
+
+    @Override
+    public BasicFlow scaleFlow(int replicas, boolean autoScale, int minReplicas, int maxReplicas, int cpuAvg) {
+        return new DefaultScaleFlow(replicas, autoScale, minReplicas, maxReplicas, cpuAvg);
+    }
+
+    @Override
+    public BasicFlow logFlow(String podName, boolean follow) {
+        return new DefaultLogFlow(podName, follow);
+    }
+
+    @Override
+    public BasicFlow debugFlow(String podName, int forwardPort) {
+        return new NoNeedProcessFLow();
     }
 
     @Override

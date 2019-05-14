@@ -17,7 +17,7 @@
 package ms.dew.devops.maven.mojo;
 
 import io.kubernetes.client.ApiException;
-import ms.dew.devops.kernel.flow.debug.DefaultDebugFlow;
+import ms.dew.devops.kernel.DevOps;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -35,7 +35,8 @@ public class DebugMojo extends BasicMojo {
 
     @Override
     protected boolean executeInternal() throws IOException, ApiException {
-        return new DefaultDebugFlow(podName, forwardPort).exec(mavenProject.getId(), getMojoName());
+        return DevOps.Config.getProjectConfig(mavenProject.getId()).getAppKindPlugin()
+                .debugFlow(podName, forwardPort).exec(mavenProject.getId(), getMojoName());
     }
 
 }

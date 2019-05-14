@@ -63,6 +63,31 @@ public class JvmLibAppKindPlugin implements AppKindPlugin {
     }
 
     @Override
+    public BasicFlow unReleaseFlow() {
+        return new NoNeedProcessFLow();
+    }
+
+    @Override
+    public BasicFlow rollbackFlow() {
+        return new NoNeedProcessFLow();
+    }
+
+    @Override
+    public BasicFlow scaleFlow(int replicas, boolean autoScale, int minReplicas, int maxReplicas, int cpuAvg) {
+        return new NoNeedProcessFLow();
+    }
+
+    @Override
+    public BasicFlow logFlow(String podName, boolean follow) {
+        return new NoNeedProcessFLow();
+    }
+
+    @Override
+    public BasicFlow debugFlow(String podName, int forwardPort) {
+        return new NoNeedProcessFLow();
+    }
+
+    @Override
     public Map<String, String> getEnv(FinalProjectConfig projectConfig) {
         return new HashMap<>();
     }
