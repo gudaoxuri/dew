@@ -142,28 +142,28 @@ PROCESS_SHUTDOWN(关闭)
 			"successfulExecProjects": [{          # 成功项目
 			    "groupId":"com.terran.message",   # maven groupId
 			    "artifactId":"dingtalk",          # maven artifactId
-			    "execMojos":["release"],          # 执行成功的操作， 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
+			    "execMojos":"release",            # 执行成功的操作，多个以逗号分隔 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
 			    "name":"dingtalk"                 # maven项目名称
 			    "reason":null
 			}],
 			"failureExecProjects": [{             # 成功项目
                 "groupId":"com.terran.message",   # maven groupId
                 "artifactId":"dingtalk",          # maven artifactId
-                "execMojos":["release"],          # 执行成功的操作， 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
+                "execMojos":"release",            # 执行成功的操作，多个以逗号分隔 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
                 "name":"dingtalk",                # maven项目名称
                 "reason":"***"                    # 失败原因
             }],
 			"noneExecProjects": [{                # 成功项目
                 "groupId":"com.terran.message",   # maven groupId
                 "artifactId":"dingtalk",          # maven artifactId
-                "execMojos":["release"],          # 执行成功的操作， 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
+                "execMojos":"release",            # 执行成功的操作，多个以逗号分隔 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
                 "name":"dingtalk",                # maven项目名称
                 "reason":"***"                    # 未执行原因
 			}],
 			"ignoreExecProjects": [{              # 成功项目
                 "groupId":"com.terran.message",   # maven groupId
                 "artifactId":"dingtalk",          # maven artifactId
-                "execMojos":["release"],          # 执行成功的操作， 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
+                "execMojos":"release",            # 执行成功的操作，多个以逗号分隔 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
                 "name":"dingtalk",                # maven项目名称
                 "reason":"***"                    # 忽略原因
 			}],
