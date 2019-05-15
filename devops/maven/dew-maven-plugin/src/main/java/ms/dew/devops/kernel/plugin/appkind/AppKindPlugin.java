@@ -64,6 +64,41 @@ public interface AppKindPlugin {
     BasicFlow releaseFlow();
 
     /**
+     * Release flow basic flow.
+     *
+     * @return the basic flow
+     */
+    BasicFlow unReleaseFlow();
+
+    /**
+     * Release flow basic flow.
+     *
+     * @return the basic flow
+     */
+    BasicFlow rollbackFlow();
+
+    /**
+     * Release flow basic flow.
+     *
+     * @return the basic flow
+     */
+    BasicFlow scaleFlow(int replicas, boolean autoScale, int minReplicas, int maxReplicas, int cpuAvg);
+
+    /**
+     * Release flow basic flow.
+     *
+     * @return the basic flow
+     */
+    BasicFlow logFlow(String podName, boolean follow);
+
+    /**
+     * Release flow basic flow.
+     *
+     * @return the basic flow
+     */
+    BasicFlow debugFlow(String podName, int forwardPort);
+
+    /**
      * 获取环境变量.
      *
      * @param projectConfig the project config

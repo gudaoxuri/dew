@@ -35,9 +35,7 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -58,6 +56,10 @@ public abstract class BasicMojo extends AbstractMojo {
      * Kubernetes Base64 配置标识.
      */
     private static final String FLAG_DEW_DEVOPS_KUBE_CONFIG = "dew.devops.kube.config";
+    /**
+     * 指定发布项目名称.
+     */
+    private static final String FLAG_DEW_DEVOPS_ASSIGNATION_PROJECTS = "dew.devops.assignation.projects";
 
     // ============= 发布与回滚使用 =============
 
@@ -149,6 +151,13 @@ public abstract class BasicMojo extends AbstractMojo {
      */
     @Parameter(property = FLAG_DEW_DEVOPS_KUBE_CONFIG)
     private String kubeBase64Config;
+
+
+    /**
+     * Assign deploy projects.
+     */
+    @Parameter(property = FLAG_DEW_DEVOPS_ASSIGNATION_PROJECTS)
+    private String assignationProjects;
 
     // ============= 发布与回滚使用 =============
     /**
@@ -278,7 +287,7 @@ public abstract class BasicMojo extends AbstractMojo {
                 formatParameters(FLAG_DEW_DEVOPS_KUBE_CONFIG + "-append", formattedProperties);
         try {
             MavenDevOps.Init.init(mavenSession, pluginManager, profile,
-                    dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,
+                    dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config, assignationProjects,
                     dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
                     kubeBase64ConfigAppendOpt,
                     mockClasspath);
@@ -332,6 +341,8 @@ public abstract class BasicMojo extends AbstractMojo {
                 .ifPresent(obj -> profile = obj);
         formatParameters(FLAG_DEW_DEVOPS_KUBE_CONFIG, formattedProperties)
                 .ifPresent(obj -> kubeBase64Config = obj);
+        formatParameters(FLAG_DEW_DEVOPS_ASSIGNATION_PROJECTS, formattedProperties)
+                .ifPresent(obj -> assignationProjects = obj);
         formatParameters(FLAG_DEW_DEVOPS_DOCKER_HOST, formattedProperties)
                 .ifPresent(obj -> dockerHost = obj);
         formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL, formattedProperties)

@@ -17,7 +17,7 @@
 package ms.dew.devops.maven.mojo;
 
 import io.kubernetes.client.ApiException;
-import ms.dew.devops.kernel.flow.scale.DefaultScaleFlow;
+import ms.dew.devops.kernel.DevOps;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -35,15 +35,9 @@ public class ScaleMojo extends BasicMojo {
 
     @Override
     protected boolean executeInternal() throws IOException, ApiException {
-        if (!autoScale && replicas == 0) {
-            logger.error("Parameter error, When autoScale disabled, dew.devops.scale.replicas can't be 0");
-            return false;
-        }
-        if (autoScale && (minReplicas == 0 || maxReplicas == 0 || minReplicas >= maxReplicas || cpuAvg == 0)) {
-            logger.error("Parameter error, Current mode is autoScale model");
-            return false;
-        }
-        return new DefaultScaleFlow(replicas, autoScale, minReplicas, maxReplicas, cpuAvg).exec(mavenProject.getId(), getMojoName());
+        return DevOps.Config.getProjectConfig(mavenProject.getId()).getAppKindPlugin()
+                .scaleFlow(replicas, autoScale, minReplicas, maxReplicas, cpuAvg)
+                .exec(mavenProject.getId(), getMojoName());
     }
 
 }
