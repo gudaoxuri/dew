@@ -531,7 +531,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#jaeger">4.1.13. Jaeger</a></li>
 </ul>
 </li>
-<li><a href="#devops-user-manual">4.2. DevOps使用手册[TBD]</a></li>
+<li><a href="#devops-user-manual">4.2. DevOps使用手册[TBD]</a>
+<ul class="sectlevel3">
+<li><a href="#devops-user-manual-import">4.2.1. 引入方式</a></li>
+<li><a href="#支持的项目类型">4.2.2. 支持的项目类型</a></li>
+<li><a href="#项目配置">4.2.3. 项目配置</a></li>
+<li><a href="#打包与部署">4.2.4. 打包与部署</a></li>
+<li><a href="#版本回滚">4.2.5. 版本回滚</a></li>
+<li><a href="#版本卸载">4.2.6. 版本卸载</a></li>
+<li><a href="#日志查看">4.2.7. 日志查看</a></li>
+<li><a href="#伸缩扩展">4.2.8. 伸缩扩展</a></li>
+<li><a href="#ci_cd工具支持_gitlab_ci">4.2.9. CI/CD工具支持-Gitlab CI</a></li>
+<li><a href="#执行通知">4.2.10. 执行通知</a></li>
+</ul>
+</li>
 <li><a href="#devops-configuration">4.3. DevOps配置速查</a>
 <ul class="sectlevel3">
 <li><a href="#devops-configuration-dew">4.3.1. .dew 配置</a></li>
@@ -590,9 +603,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#gitlab">6.2.5. Gitlab</a></li>
 <li><a href="#harbor">6.2.6. Harbor</a></li>
 <li><a href="#dnsmasq">6.2.7. Dnsmasq</a></li>
-<li><a href="#minio">6.2.8. Minio</a></li>
-<li><a href="#nfs">6.2.9. NFS</a></li>
-<li><a href="#glusterfs">6.2.10. GlusterFS</a></li>
+<li><a href="#ntpdate">6.2.8. NTPDate</a></li>
+<li><a href="#minio">6.2.9. Minio</a></li>
+<li><a href="#nfs">6.2.10. NFS</a></li>
+<li><a href="#glusterfs">6.2.11. GlusterFS</a></li>
 </ul>
 </li>
 <li><a href="#dew-2-migration-guide">6.3. Dew 2.x Migration guide[TBD]</a>
@@ -882,6 +896,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 |-  |-  |- idempotent-starter              // 幂等处理模块
 |-  |-  |- notification                    // 通知处理模块
 |-  |-  |- test-starter                    // 单元测试模块
+|-  |-  |- hbase-starter                   // Spring Boot HBase Starter 模块
 |-  |- components                          // 集成的服务
 |-  |-  |- auth                            // 认证服务
 |-  |-  |- auth-sdk-starter                // 认证服务SDK
@@ -1388,6 +1403,10 @@ public class NotifierController {
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">cluster-redis</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Redis集群能力实现</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">hbase-starter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HBase Spring Boot 实现</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">idempotent-starter</p></td>
@@ -3577,6 +3596,62 @@ swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，�
 </tr>
 </table>
 </div>
+<div class="sect4">
+<h5 id="spring_boot_hbase"><a class="anchor" href="#spring_boot_hbase"></a>Spring Boot HBase</h5>
+<div class="paragraph">
+<p>在集成 HBase 客户端能力的基础之上，支持 Spring Boot 配置管理、支持 Kerberos 认证。</p>
+</div>
+<div class="listingblock">
+<div class="title">依赖</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;artifactId&gt;hbase-starter&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">配置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">spring:
+  hbase:
+    zkQuorum: localhost  # zookeeper url
+    znodeParent: /hbase-secure # zookeeper znode parent
+    auth:
+      type: kerberos # 认证类型，默认是 simple，可选：simple 和 kerberos
+      principal: # kerberos 下 principal
+      keytab: # kerberos 下 keytab 路径
+      hbaseMasterPrincipal: # kerberos 下 hbase master principal
+      hbaseRegionServerPrincipal: # kerberos 下 hbase region server principal
+      hbaseClientRetriesNumber: # hbase 客户端重试次数，默认：5
+      hbaseClientOperationTimeout: # hbase 客户端超时时间，默认：300000
+      hbaseClientScannerTimeoutPeriod: # hbase 客户端 scan 超时时间，默认：60000
+      hbaseClientPause: # hbase 重试的休眠时间，默认：30</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">使用</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Autowired
+private HBaseTemplate hbaseTemplate;
+
+hbaseTemplate.get("table_hbase", "0002093140000000",
+                "0", "reg_platform", (result, row) -&gt; Bytes.toString(result.value()));</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+HBaseTemplate 其他使用方法可以详见 hbase-starter 模块下的 test 内容。
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -4746,7 +4821,7 @@ kind: PersistentVolume
 metadata:
   labels:
     app: kibana
-  name: kibana
+  name: dew-kibana
 spec:
   capacity:
     storage: 10Gi
@@ -4919,7 +4994,7 @@ kubectl -n devops create secret generic dew-prometheus-operator-etcd \
 # 安装，不使用代理要加上 --set kube-state-metrics.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kube-state-metrics
 # 若要启用对etcd监控，需设置kubeEtcd相关参数。
 # grafana.'grafana\.ini'为Grafana的配置参数,请安装时自行修改。
-# 若 Grafana 使用StorageClass,需要进行以下配置，无需创建PV，PVC
+# 若 Grafana 使用StorageClass，需要进行以下配置，无需创建PV，PVC
 #   --set grafana.persistence.storageClassName="yourscname"
 #   --set grafana.persistence.size=10Gi
 #   删去此行配置：    --set grafana.persistence.existingClaim=grafana \
@@ -5112,6 +5187,8 @@ kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">helm repo add kiwigrid https://kiwigrid.github.io
 
 # 安装，不使用代理要加上 --set image.tag=v2.4.0 --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/fluentd-elasticsearch
+# 请根据需要进行节点亲和性相关设置，但请保证需要收集日志的节点有Fluentd部署。
+# e.g. 只收集部署了应用的节点的日志，设置 --set nodeSelector.group=app
 # 若要启用Prometheus进行监控Fluentd，
 # 需要先将Fluentd通过设置service暴露出来，然后设置prometheusRule和serviceMonitor。
 # 此配置需结合Prometheus-operator使用。
@@ -5126,8 +5203,7 @@ helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace de
     --set prometheusRule.labels.app=prometheus-operator \
     --set prometheusRule.labels.release=dew-prometheus-operator \
     --set serviceMonitor.enabled=true \
-    --set serviceMonitor.labels.release=dew-prometheus-operator \
-    --set nodeSelector.group=devops</code></pre>
+    --set serviceMonitor.labels.release=dew-prometheus-operator \</code></pre>
 </div>
 </div>
 </div>
@@ -5178,22 +5254,33 @@ spec:
     options:
       es:
         server-urls: http://dew-elasticsearch-master:9200
+  ingress:
+    enabled: false # 用于使用下面自定义的Ingress
 EOF
 
 # Jaeger实例可在不同namespace下创建使用，使用中请注意namespace的问题。
 # 使用sidecar的方式部署项目：https://github.com/jaegertracing/jaeger-operator#auto-injection-of-jaeger-agent-sidecars
 # 使用daemonset的方式部署项目：https://github.com/jaegertracing/jaeger-operator#agent-as-daemonset
 
-# 添加Host，修改Jaeger实例的Ingress
-kubectl patch ingress jaeger-query -n devops -p "spec:
- rules:
-   - host: jaeger.dew.ms
-     http:
-       paths:
-         - backend:
-             serviceName: jaeger-query
-             servicePort: 16686
-           path: /"
+# 添加Host，为Jaeger实例创建Ingress
+# 注意serviceName与Jaeger实例创建的service名称保持一致
+cat &lt;&lt;EOF | kubectl -n devops apply -f -
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: jaeger-query
+spec:
+  rules:
+    - host: jaeger.dew.ms
+      http:
+        paths:
+          - backend:
+              serviceName: jaeger-query
+              servicePort: 16686
+            path: /
+EOF
 
 # Pod的调度
 # 目前jaeger-operator暂不支持直接设置，请关注该项目的更新情况。
@@ -5253,41 +5340,234 @@ EOF</code></pre>
 </div>
 <div class="sect2">
 <h3 id="devops-user-manual"><a class="anchor" href="#devops-user-manual"></a>4.2. DevOps使用手册[TBD]</h3>
-<div class="paragraph">
-<p>CI/CD</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>Dew</code> DevOps部分的核心是由 <code>dew-maven-plugin</code> 实现。
+</td>
+</tr>
+</table>
 </div>
+<div class="sect3">
+<h4 id="devops-user-manual-import"><a class="anchor" href="#devops-user-manual-import"></a>4.2.1. 引入方式</h4>
+<div class="sect4">
+<h5 id="使用_code_dew_framework_code"><a class="anchor" href="#使用_code_dew_framework_code"></a>使用 <code>Dew Framework</code></h5>
 <div class="paragraph">
-<p>通过分支变更触发</p>
+<p>如果您的项目使用 <code>Dew Framework</code> 构建则只要确保引入了 <code>parent-starter</code> 即可。</p>
 </div>
+</div>
+<div class="sect4">
+<h5 id="不使用_code_dew_framework_code"><a class="anchor" href="#不使用_code_dew_framework_code"></a>不使用 <code>Dew Framework</code></h5>
 <div class="paragraph">
-<p>初始化</p>
+<p><code>Dew DevOps</code> 完全可以独立于 <code>Dew Framework</code> 使用，只需要在项目的父POM中加上如下配置即可。</p>
 </div>
-<div class="paragraph">
-<p>发布</p>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;profile&gt;
+    &lt;id&gt;devops&lt;/id&gt;
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+                &lt;artifactId&gt;dew-maven-plugin&lt;/artifactId&gt;
+                &lt;!--生产环境请选择合适的版本!--&gt;
+                &lt;version&gt;${dew.version}&lt;/version&gt;
+                &lt;executions&gt;
+                    &lt;execution&gt;
+                        &lt;goals&gt;
+                            &lt;goal&gt;init&lt;/goal&gt;
+                            &lt;goal&gt;prepare&lt;/goal&gt;
+                            &lt;goal&gt;build&lt;/goal&gt;
+                            &lt;goal&gt;release&lt;/goal&gt;
+                        &lt;/goals&gt;
+                    &lt;/execution&gt;
+                &lt;/executions&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/profile&gt;</code></pre>
 </div>
-<div class="paragraph">
-<p>回滚</p>
 </div>
-<div class="paragraph">
-<p>删除</p>
 </div>
-<div class="paragraph">
-<p>日志查看</p>
 </div>
-<div class="paragraph">
-<p>伸缩扩展</p>
+<div class="sect3">
+<h4 id="支持的项目类型"><a class="anchor" href="#支持的项目类型"></a>4.2.2. 支持的项目类型</h4>
+
 </div>
+<div class="sect3">
+<h4 id="项目配置"><a class="anchor" href="#项目配置"></a>4.2.3. 项目配置</h4>
 <div class="paragraph">
 <p>Maven配置</p>
 </div>
 <div class="paragraph">
-<p>重用版本</p>
-</div>
-<div class="paragraph">
 <p>脚本使用</p>
 </div>
+</div>
+<div class="sect3">
+<h4 id="打包与部署"><a class="anchor" href="#打包与部署"></a>4.2.4. 打包与部署</h4>
 <div class="paragraph">
-<p>支持的项目类型</p>
+<p>重用版本</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="版本回滚"><a class="anchor" href="#版本回滚"></a>4.2.5. 版本回滚</h4>
+
+</div>
+<div class="sect3">
+<h4 id="版本卸载"><a class="anchor" href="#版本卸载"></a>4.2.6. 版本卸载</h4>
+
+</div>
+<div class="sect3">
+<h4 id="日志查看"><a class="anchor" href="#日志查看"></a>4.2.7. 日志查看</h4>
+
+</div>
+<div class="sect3">
+<h4 id="伸缩扩展"><a class="anchor" href="#伸缩扩展"></a>4.2.8. 伸缩扩展</h4>
+
+</div>
+<div class="sect3">
+<h4 id="ci_cd工具支持_gitlab_ci"><a class="anchor" href="#ci_cd工具支持_gitlab_ci"></a>4.2.9. CI/CD工具支持-Gitlab CI</h4>
+<div class="paragraph">
+<p>通过分支变更触发</p>
+</div>
+<div class="paragraph">
+<p>删除</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="执行通知"><a class="anchor" href="#执行通知"></a>4.2.10. 执行通知</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>钉钉 只支持markdown格式的钉钉消息</p>
+</li>
+<li>
+<p>HTTP 数据结构分为以下几种情况</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>PROCESS_EMPTY(空项目)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+	"title": "DevOps process successful",      # 消息标题
+	"content": {                               # 消息内容
+		"kind": "PROCESS_EMPTY",               # 过程处理类型
+		"ci": "",                              # ci操作
+		"message": {}                          # 消息结果内容
+	}
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>PROCESS_INIT(初始化)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+	"title": "DevOps process successful",      # 消息标题
+	"content": {                               # 消息内容
+		"kind": "PROCESS_INIT",                # 过程处理类型
+		"ci": "",                              # ci操作
+		"message": {                           # 消息结果内容
+			"profile": "uat",                  # 分支或者环境
+			"project": "todo-parent",          # 项目名称
+		}
+	}
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>PROCESS_EXECUTE_SUCCESS(成功)/PROCESS_EXECUTE_FAILURE(失败)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+	"title": "DevOps process successful",         # 消息标题
+	"content": {                                  # 消息内容
+		"kind": "PROCESS_EXECUTE_SUCCESS",        # 过程处理类型
+		"ci": "",                                 # ci操作
+		"message": {                              # 消息结果内容
+			"mojoName": "release",                # mvn操作步骤
+            "profile": "uat",                     # 分支或者环境
+            "project": "todo-parent",             # 项目名称
+            "successfulFlag": "Successful",       # 成功标识
+            "group": "ms.dew.devops.it",          # 项目group名称
+            "message":"***",                      # 错误信息
+            "throwable":"**"                      # 错误
+		}
+	}
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>PROCESS_GLOBAL_ERROR(全局错误)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+	"title": "DevOps process successful",         # 消息标题
+	"content": {                                  # 消息内容
+		"kind": "PROCESS_GLOBAL_ERROR",           # 过程处理类型
+		"ci": "",                                 # ci操作
+		"message": {                              # 消息结果内容
+			"error": "release",                   # 错误信息
+            "errorStackTrace": "uat"              # 错误堆栈信息
+		}
+	}
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>PROCESS_SHUTDOWN(关闭)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+	"title": "DevOps process successful",         # 消息标题
+	"content": {                                  # 消息内容
+		"kind": "PROCESS_SHUTDOWN",               # 过程处理类型
+		"ci": "",                                 # ci操作
+		"message": {                              # 消息结果内容
+			"successfulExecProjects": [{          # 成功项目
+			    "groupId":"com.terran.message",   # maven groupId
+			    "artifactId":"dingtalk",          # maven artifactId
+			    "execMojos":["release"],          # 执行成功的操作， 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
+			    "name":"dingtalk"                 # maven项目名称
+			    "reason":null
+			}],
+			"failureExecProjects": [{             # 成功项目
+                "groupId":"com.terran.message",   # maven groupId
+                "artifactId":"dingtalk",          # maven artifactId
+                "execMojos":["release"],          # 执行成功的操作， 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
+                "name":"dingtalk",                # maven项目名称
+                "reason":"***"                    # 失败原因
+            }],
+			"noneExecProjects": [{                # 成功项目
+                "groupId":"com.terran.message",   # maven groupId
+                "artifactId":"dingtalk",          # maven artifactId
+                "execMojos":["release"],          # 执行成功的操作， 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
+                "name":"dingtalk",                # maven项目名称
+                "reason":"***"                    # 未执行原因
+			}],
+			"ignoreExecProjects": [{              # 成功项目
+                "groupId":"com.terran.message",   # maven groupId
+                "artifactId":"dingtalk",          # maven artifactId
+                "execMojos":["release"],          # 执行成功的操作， 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
+                "name":"dingtalk",                # maven项目名称
+                "reason":"***"                    # 忽略原因
+			}],
+		}
+	}
+}</pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -5341,8 +5621,8 @@ app:
 profile:
   test:
     namespace: todo-test
-  prod:
-    namespace: todo-prod
+  uat:
+    namespace: todo-uat
 -
 # 项目A配置的.dew 内容:
 -
@@ -5361,8 +5641,8 @@ profile:
     namespace: todo-test    # 继承全局配置
     app:
       replicas: 1           # 继承全局配置的默认环境配置
-  prod:
-    namespace: todo-prod
+  uat:
+    namespace: todo-uat
     app:
       replicas: 2           # 使用项目A的覆写配置
 -</pre>
@@ -5373,7 +5653,6 @@ profile:
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml"># 默认环境配置
 namespace: default                      # 命名空间，强烈建议修改为特定的命名空间
-kind:                                   # 项目类型，默认自动探测，也可以显式指定为 JVM_SERVICE/JVM_LIB/FRONTEND/POM
 skip: false                             # 是否跳过，为true时表示
 disableReuseVersion:                    # 是否禁用重用版本，e.g. 生产环境重用预发环境的最后一个版本（不用重新打包Docker image)
                                         # 默认情况前端工程为true（node编译期会混入环境信息导致无法重用），其它工程为false
@@ -5382,52 +5661,50 @@ reuseLastVersionFromProfile:            # 重用版本的目标环境名称
                                         # 都不存在时需要显式指定
 ignoreChangeFiles: []                   # 忽略变更文件列表，此列表指定的文件不用于是否有变更要部署的判断依据
                                         # 支持 glob , @see https://en.wikipedia.org/wiki/Glob_(programming)
-  app:                                  # 应用配置
-    replicas: 1                         # 部署的副本数
-    revisionHistoryLimit: 3             # 保留的历史版本数
-    port: 8080                          # 端口号，默认情况下前端项目为80(不可修改)，后端服务为8080
-    livenessPath: /actuator/health      # 存活检测HTTP的路径，仅用于后端服务
-    readinessPath: /actuator/health     # 可用检测HTTP的路径，仅用于后端服务
-    livenessInitialDelaySeconds: 60     # 首次存活检测延迟时间，仅用于后端服务
-    livenessPeriodSeconds: 30           # 存活检测周期，仅用于后端服务
-    livenessFailureThreshold: 6         # 存活检测失败次数阈值，超过后销毁当前实例并重启另一个实例，仅用于后端服务
-    readinessInitialDelaySeconds: 10    # 首次可用检测延迟时间，仅用于后端服务
-    readinessPeriodSeconds: 60          # 可用检测周期，仅用于后端服务
-    readinessFailureThreshold: 3        # 可用检测失败次数阈值，超过后当前实例不可用，仅用于后端服务
-    traceLogEnabled: true               # 是否启用追踪日志，仅用于后端服务
-    traceLogSpans: false                # 是否在控制台输出spans日志，仅用于后端服务
-    traceWebSkipPattern: ""             # 设置跳过追踪的接口，为空则使用官方默认值，仅用于后端服务
-    traceProbabilisticSamplingRate: 0.1 # 追踪日志概率采样比率，为1.0则使用全量采样，仅用于后端服务
-    metricsEnabled: true                # 是否启用Prometheus的metrics，仅用于后端服务
-    nodeSelector:                       # 节点亲和性配置
-      group: app                        # 默认选择标签为 group=app 的节点
-    preparePackageCmd:                  # 预打包命令
+app:                                    # 应用配置
+  replicas: 1                           # 部署的副本数
+  revisionHistoryLimit: 3               # 保留的历史版本数
+  port: 8080                            # 端口号，默认情况下前端项目为80(不可修改)，后端服务为8080
+  livenessPath: /actuator/health        # 存活检测HTTP的路径，仅用于后端服务
+  readinessPath: /actuator/health       # 可用检测HTTP的路径，仅用于后端服务
+  livenessInitialDelaySeconds: 60       # 首次存活检测延迟时间，仅用于后端服务
+  livenessPeriodSeconds: 30             # 存活检测周期，仅用于后端服务
+  livenessFailureThreshold: 6           # 存活检测失败次数阈值，超过后销毁当前实例并重启另一个实例，仅用于后端服务
+  readinessInitialDelaySeconds: 10      # 首次可用检测延迟时间，仅用于后端服务
+  readinessPeriodSeconds: 60            # 可用检测周期，仅用于后端服务
+  readinessFailureThreshold: 3          # 可用检测失败次数阈值，超过后当前实例不可用，仅用于后端服务
+  traceLogEnabled: true                 # 是否启用追踪日志，仅用于后端服务
+  traceLogSpans: false                  # 是否在控制台输出spans日志，仅用于后端服务
+  traceWebSkipPattern: ""               # 设置跳过追踪的接口，为空则使用官方默认值，仅用于后端服务
+  traceProbabilisticSamplingRate: 0.1   # 追踪日志概率采样比率，为1.0则使用全量采样，仅用于后端服务
+  metricsEnabled: true                  # 是否启用Prometheus的metrics，仅用于后端服务
+  nodeSelector:                         # 节点亲和性配置
+    group: app                          # 默认选择标签为 group=app 的节点
+  preparePackageCmd:                    # 预打包命令
                                         # 前端项目默认为 cd &lt;项目目录&gt; &amp;&amp; set NODE_ENV=&lt;环境名称&gt; &amp;&amp; npm install，发现不存在 node_modules 时执行
                                         # 后端服务默认为空
-    packageCmd:                         # 打包命令
+  packageCmd:                           # 打包命令
                                         # 前端项目默认为 cd &lt;项目目录&gt; &amp;&amp; set NODE_ENV=&lt;环境名称&gt; npm run build:&lt;环境名称&gt;
                                         # 后端服务默认为空
-    errorCompensationPackageCmd:        # packageCmd 执行错误时的补偿命令
-                                        # 前端项目默认为 cd &lt;项目目录&gt; &amp;&amp; set NODE_ENV=&lt;环境名称&gt; npm install &amp;&amp; npm run build:&lt;环境名称&gt;
-                                        # 后端服务默认为空
-    runOptions:                         # 运行参数，可指定诸如 JVM 配置等信息
-    containerResourcesLimits:           # 容器资源上限，同Kubernetes配置
+  runOptions:                           # 运行参数，可指定诸如 JVM 配置等信息
+  serverConfig: |-                      # 服务配置，多为Nginx配置
+  containerResourcesLimits:             # 容器资源上限，同Kubernetes配置
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-    containerResourcesRequests:         # 容器资源下限，同Kubernetes配置
+  containerResourcesRequests:           # 容器资源下限，同Kubernetes配置
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-  docker:                               # Docker配置
-    host:                               # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-    registryUrl:                        # Docker Registry Url  e.g. https://harbor.dew.ms/v2
-    registryUserName:                   # Docker Registry 用户名，此项建议使用Maven方式配置
-    registryPassword:                   # Docker Registry 密码，此项建议使用Maven方式配置
-    image:                              # Docker 镜像
+docker:                                 # Docker配置
+  host:                                 # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
+  registryUrl:                          # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+  registryUserName:                     # Docker Registry 用户名，此项建议使用Maven方式配置
+  registryPassword:                     # Docker Registry 密码，此项建议使用Maven方式配置
+  image:                                # Docker 镜像
                                         # 前端项目默认使用 nginx:alpine
                                         # 后端服务项目默认使用 openjdk:8-alpine
-  kube:                                 # Kubernetes配置
-    base64Config:                       # Kubernetes Base64 后的配置，此项建议使用Maven方式配置
+kube:                                   # Kubernetes配置
+  base64Config:                         # Kubernetes Base64 后的配置，此项建议使用Maven方式配置
                                         # 使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
-  notify:                               # 通知配置
-    type: DD                            # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
+notifies:                               # 通知配置
+  - type: DD                            # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
     defaultReceivers:                   # 默认接收人列表，钉钉为手机号，邮件为邮箱
     dndTimeReceivers:                   # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
     args:                               # 不同类型的参数，邮件不需要设置
@@ -5460,7 +5737,7 @@ dew.devops.docker.host                       # Dockerd的Host e.g. tcp://dockerd
 dew.devops.docker.registry.url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
 dew.devops.docker.registry.username          # Docker Registry 用户名
 dew.devops.docker.registry.password          # Docker Registry 密码
-ew.devops.quiet
+dew.devops.quiet                             # 是否静默处理
 # ============= 日志及调试场景使用 =============
 dew.devops.podName                           # 要使用的Pod名称
 # ============= 日志场景使用 =============
@@ -5570,11 +5847,11 @@ dew.devops.scale.auto.cpu.averageUtilization # 自动伸缩条件：CPU平均使
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-#notify:
-  # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
-  #args:
-    # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-    #url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+notifies:
+  - type: DD
+    args:
+      # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+      url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加测试环境
   test:
@@ -5669,7 +5946,21 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test \
   # 添加测试环境
   test:
     # 指定测试环境的namespace
-    namespace: dew-test</code></pre>
+    namespace: dew-test
+    app:
+      serverConfig: |-
+          server {
+            listen       80;
+            server_name  localhost;
+            location / {
+              root   /usr/share/nginx/html;
+              index  index.html index.htm;
+            }
+            if ( $http_host ~* "^(.*)") {
+              set $domain $1;
+              rewrite ^(.*) http://www.baidu.com break;
+            }
+          }</code></pre>
 </div>
 </div>
 <div class="olist arabic">
@@ -5743,11 +6034,11 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-#notify:
-  # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
-  #args:
-    # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-    #url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+notifies:
+  - type: DD
+    args:
+      # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+      url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加uat环境
   uat:
@@ -5860,6 +6151,11 @@ dew.devops.docker.registry.username=dew
 dew.devops.docker.registry.password=Dew123456
 # Kubernetes base64 configuration
 dew.devops.kube.config=YXBpVmVyc2lvbjogdjEKY2x1c3RlcnM6Ci0gY2x1c3RlcjoKICAgIGNlcnRpZmljYXRlLWF1dGhvcml0eS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VONVJFTkRRV0pEWjBGM1NVSkJaMGxDUVVSQlRrSm5hM0ZvYTJsSE9YY3dRa0ZSYzBaQlJFRldUVkpOZDBWUldVUldVVkZFUlhkd2NtUlhTbXdLWTIwMWJHUkhWbnBOUWpSWVJGUkZOVTFFVVhoTlZFRXpUVlJCZUU0eGIxaEVWRWsxVFVSUmQwOUVRVE5OVkVGNFRqRnZkMFpVUlZSTlFrVkhRVEZWUlFwQmVFMUxZVE5XYVZwWVNuVmFXRkpzWTNwRFEwRlRTWGRFVVZsS1MyOWFTV2gyWTA1QlVVVkNRbEZCUkdkblJWQkJSRU5EUVZGdlEyZG5SVUpCU3pWbENqUkpLekJrVG5RNVFsWm1OMWhOZWxWM2FIZGtTRlZ0WmsxWGFHdGlkelU1YVVGbmFVY3lSRGcyTTNkamNWWXhhRGswTjJ4c01rVlNRM0puWlRkM1prVUtWRklyY0ZOcVJUZGlPRWhNUlRaNE5VZEhXbkkyUkhKa1kwVnhhRFZSYzNoeUwyODVOVGxrYVNzeldYTmFNR3AwYVRSalFVNURjMGR2T0RkaFZpOUNOQXAzUmpBMmEyOXJVVU5yYlZSYVNXbG1kRWQwYW5CWlJWUkljV0phVlhwMlpYTnNRamRhY0daeWVXY3ZhWHBWVjI0M0x6VXhkVTVhZEdaclZtSkRhR0pCQ2psS1ozSnlXVFJqYTBZck1XdG5VVmxrTjFKMlRsRnVkMDQwTm5WbGJsUklhVlJaYWpONGVYVnVkbU5GYTNZd1RVNU1WV2haUXpOQ2JWcDNlVmxtTWxZS1IwaHJZbWt4VEZWa01WSlNSWFJVUTNKdWIydExPRUZ3UVV0NE4yaGpaVFpETm5OYVEwWTNWVEpvYXpWSk1qTlVUa2xJUkZGb1dGUkZka3BhTlZCbFpncFNNMDlWY0Zaak0wVkliREJPVDFGMFZ6Tk5RMEYzUlVGQllVMXFUVU5GZDBSbldVUldVakJRUVZGSUwwSkJVVVJCWjB0clRVRTRSMEV4VldSRmQwVkNDaTkzVVVaTlFVMUNRV1k0ZDBSUldVcExiMXBKYUhaalRrRlJSVXhDVVVGRVoyZEZRa0ZKZVdab1JqTmljMkZIWlRSeGQwMVdhRE14VjNCT1NTOU9URUVLZEZCc01VWkllbWxNYW5BcldVMW9MMjlyZDFKcmQzaERUbU5QWVhwRGVVUnlSbkozYVhkbE0ydG9USEExYVZwak5WTnVRMlJWUjBobVNsTjZPVEJwZWdwamNDdEViRXhQWnpKWGNUbFFObk5qTkZCV2JsaEhNRTVZUjBZMU1sSmtkRWw2Y205UE5ESkVVVWRDVTBSUGFVbHlTM2RpY25Bdk1HUTRLMWs1ZHl0WkNrSnVXVGxZZEVWNlNtOVdRMkp0YTFock5UTXlTa04xU0ZaSlVtOWpURGxUYjI1UVpIVjRNWFo0YjFJcmNuQTJRWE5VTkN0cloxRTFXbkJaVVZreVQzVUthVVJMTnpGWlFrbzBjbWxSZDBNNWJWRnJaV2RSYXpsdWFFUk9ORWhxYzIxMWJIQmFiemRJU0ZCTVZtVXZNa3BEZEhaRFUzUnVkVTFFYjNOQ1ZWRnJNZ292Ykd0b05uZzNkRlF2YWpKSU4wRldXalZMTlc5NE5FMHhPVFZ4ZEhrMFlsTmFjbmhoTWpVek5FTnpSblpJTTA1M1REZE1hMGhTYW5Sc2N6MEtMUzB0TFMxRlRrUWdRMFZTVkVsR1NVTkJWRVV0TFMwdExRbz0KICAgIHNlcnZlcjogaHR0cHM6Ly8xMC4yMDAuMTMxLjE4OjY0NDMKICBuYW1lOiBrdWJlcm5ldGVzCmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBrdWJlcm5ldGVzCiAgICB1c2VyOiBrdWJlcm5ldGVzLWFkbWluCiAgbmFtZToga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmN1cnJlbnQtY29udGV4dDoga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmtpbmQ6IENvbmZpZwpwcmVmZXJlbmNlczoge30KdXNlcnM6Ci0gbmFtZToga3ViZXJuZXRlcy1hZG1pbgogIHVzZXI6CiAgICBjbGllbnQtY2VydGlmaWNhdGUtZGF0YTogTFMwdExTMUNSVWRKVGlCRFJWSlVTVVpKUTBGVVJTMHRMUzB0Q2sxSlNVTTRha05EUVdSeFowRjNTVUpCWjBsSlJWUlZjbE5SV21kblowRjNSRkZaU2t0dldrbG9kbU5PUVZGRlRFSlJRWGRHVkVWVVRVSkZSMEV4VlVVS1FYaE5TMkV6Vm1sYVdFcDFXbGhTYkdONlFXVkdkekI0VDFSQk1FMVVSWGRPZWtWM1RWUmtZVVozTUhsTlJFRXdUVlJCZDA1NlJYZE5ha1poVFVSUmVBcEdla0ZXUW1kT1ZrSkJiMVJFYms0MVl6TlNiR0pVY0hSWldFNHdXbGhLZWsxU2EzZEdkMWxFVmxGUlJFVjRRbkprVjBwc1kyMDFiR1JIVm5wTVYwWnJDbUpYYkhWTlNVbENTV3BCVGtKbmEzRm9hMmxIT1hjd1FrRlJSVVpCUVU5RFFWRTRRVTFKU1VKRFowdERRVkZGUVhSdmFXOHdjbWxTU2k5QlkzQXhlVE1LUjBKbVkxaGhRbWhMTlRWek1EWk1ibEI2TmpCWGVEQnlkalZ6SzNWeVdVaFliWFYyU2pWVGNrVlpRbEpIWWtWdlRIcDVVemhYVW1KU01HdDFjbEJOUlFvMVpWUlpUR012UnpaeGNuVnVka1p4UjNSak4xaFJSMGN6VkVzdlJUSnNLMkkxZVdJeGEwTnliM2htTTNOelVFeFVVbVZDT0hFd1NrWm5iRmRpZEdjeUNsZElWVFJhUlZrNE1sbzVObkVyWkV4clZHaFJNRUV4YlZWMlUxRjZWMFlyU2xOaVNYbHNkVTV4VWxBMGExaHdZME16U1hKQlozcEdPWEZITkV0R1V6Z0tkM2xuUm5sRU9VUlJja3cyWkRGcE5qaDFVazR6YW10bFZYTTBNMHRDTlc4cldGcEhka05KY2tsR1owaDNXRUZhVkRkVE1ub3ZaRVJRZG5vcmFVaFdVQXBZYzFaUlIweEVkRGx4YWtwR2JYRk1WazlRZVVGelFuWlhWM0Z6VFZaTFpWSXJWbGhYYkRoSll6bG9iMFZWVkdOcmEyMXhRV0YzWkdNMlEzcEplbFJ5Q21FelNqRTRVVWxFUVZGQlFtOTVZM2RLVkVGUFFtZE9Wa2hST0VKQlpqaEZRa0ZOUTBKaFFYZEZkMWxFVmxJd2JFSkJkM2REWjFsSlMzZFpRa0pSVlVnS1FYZEpkMFJSV1VwTGIxcEphSFpqVGtGUlJVeENVVUZFWjJkRlFrRkRSVmRUYTB3MFkwRmFhekJsVnpScVMzTlhhVEV6YTAxSmJ5ODNMM3BZZG1aRWFBcGpTR05YYVdONlRqUndNRGs1T0RoVmVtbHdVak54YUZCMmVHaHhXR0pwTlRKS09WVlJOVkFyVUUxS05IRjJOamRSU1VGM1pHMXhlRXRzZFVORldqWk1DazVoYmtWRGNtZDVaek5QZW1kQ1dtaElUa3N4YUhob2VtdzBMME54YTBKTmNGbEJNSEprWWpKVlpUTlhiV05wV1hkc1EyUk9Ramw2ZVhKV01VUXZVa2tLZW5aTFYwUnJUMU5xV2pjMFVGWlpXbWh5VVdkWFJWVllPVWRGYlVsSlZXcFFZbXhsYTNKV1kyOXVTbmxpT1ZwV2VqZDNNbFZNVUVkTFkxcG1iMHBMYkFwWUt5OWhhVk5SYWs0NWRFazRRelEyYUd0aWFtTlFkalJwVHpJMmNtcFZSRTB2VDJsRWFuVlBLMnRFTjFaTlFqZHpWMjFTVFZkUWVGbFhTWE5rZG5wNUNtRk5Semd3VnpsMk9FMUpSbFJ4TjBsVVNVTTJjelowVld0aWFsUjVNMlZwVUhSM1ozUlFLMU5aZG1GRFVWRndiVFl6WnowS0xTMHRMUzFGVGtRZ1EwVlNWRWxHU1VOQlZFVXRMUzB0TFFvPQogICAgY2xpZW50LWtleS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJTVTBFZ1VGSkpWa0ZVUlNCTFJWa3RMUzB0TFFwTlNVbEZiMmRKUWtGQlMwTkJVVVZCZEc5cGJ6QnlhVkpLTDBGamNERjVNMGRDWm1OWVlVSm9TelUxY3pBMlRHNVFlall3VjNnd2NuWTFjeXQxY2xsSUNsaHRkWFpLTlZOeVJWbENVa2RpUlc5TWVubFRPRmRTWWxJd2EzVnlVRTFGTldWVVdVeGpMMGMyY1hKMWJuWkdjVWQwWXpkWVVVZEhNMVJMTDBVeWJDc0tZalY1WWpGclEzSnZlR1l6YzNOUVRGUlNaVUk0Y1RCS1JtZHNWMkowWnpKWFNGVTBXa1ZaT0RKYU9UWnhLMlJNYTFSb1VUQkJNVzFWZGxOUmVsZEdLd3BLVTJKSmVXeDFUbkZTVURScldIQmpRek5KY2tGbmVrWTVjVWMwUzBaVE9IZDVaMFo1UkRsRVVYSk1ObVF4YVRZNGRWSk9NMnByWlZWek5ETkxRalZ2Q2l0WVdrZDJRMGx5U1VablNIZFlRVnBVTjFNeWVpOWtSRkIyZWl0cFNGWlFXSE5XVVVkTVJIUTVjV3BLUm0xeFRGWlBVSGxCYzBKMlYxZHhjMDFXUzJVS1VpdFdXRmRzT0Vsak9XaHZSVlZVWTJ0cmJYRkJZWGRrWXpaRGVrbDZWSEpoTTBveE9GRkpSRUZSUVVKQmIwbENRVVV2SzJGbldWaEVjalI1T0RCMlFncFVVbWhKT1V4RmRscFJXa3B2Y1ZoS1NWcEVUU3RTZEhCSFJrRmlVMEV4Y0ZWeFpHeG9PV2hRZUdaNVoyZEhjRVJCYW5CYVZVbG9jbXMzYTFVNFJtbHdDa1V2T1hkSUwwWk1kVzlCUkUxNGIwTTRTalJqY25jMVpXRmxNSE51VTBwNmRrRTFUREIwZFRsalluSkRLMVJIYkhKeldERlNSMVJIZDJ4SFpTc3ZjMDRLTVVKMFIwYzVWMDlHYjB4Rk5tMTZSbkUwT1ZRek9EWmtORXhpTDJFMmRIbGFRV1pOZEVGYWNFaGhjRnBHZEVwYVZXOTJlRXRFZVVkWE56Rk9UMElyWWdwdWN6WlRaV2hRV1VZMU0wbGFXRGswYWk5NVJFeDNXRTVYT0ZNMmFGbEdORVpwY1RReVMyRkxlU3RFZVhKNVFrMTRVVzV4UzJaU1RsaDRRMlE0ZEhkeENuSjZWRGQwUldaQk1qVlljRllyU0hOemNVWjJVMVZEZDA1eFptbGxZbFprV25oSFdVc3dlbU5ZYnl0WWFuWlVVRlp3VTBkMlVrbHFaRlpOZFN0elNEQUtSak55VkZKNlZVTm5XVVZCTWpZeE5sTnRjbXhGWW1OTFIzbFFWRFJOUVVOVldFNVRabFJHU1RBMWJGWnRiVmRXU1RaTlRXRXlVSHBoWVRNeU4xcDFPUXBESzBwQlFYcFhTQ3RYVmpaaVZEQjVXbnBCU1Vwa05rY3JZbUZCZVhGMFVHaEdka1p6Y20xNWRXTk9lV2xzZURobVl6UkpVMHRLU3l0a2FrcHFOR0ZLQ2xKUlJsRk5UbkZ2VlhSblZXZHFVbE54WkRKNVkzcGFWRGcyTlM5VGJtWktRVVZ6U213dk9VdDBhSFpCZGpWWWIwdHBPWFJ1Tm5ORFoxbEZRVEZNWWpBS0syeE1kbWgwZVRWQmMwTkZZMGRNWTNKSlZTOWxTMUYyVHk5alJWbDNZMllyTjJ0aFZHZDJVMHN6Y0ZaVFUzcDZXWGhSUVVwa1NEYzNRWHBsWlVOT1RBcEphVlJoY1M5U2QweHlTalJrYlVkeVRYWmFhVVJZZVVWNFlUZDRjR1U0VldkQlpEQjFUV1pIYlRGbFIwdHBUelp6VmpKWFlrTkljME5EVm5sdmQyaHZDbUpLVGxwbVMwOUxObHBvVkZwaVUwZE9kSFJqVVdkaVRDdG1SM2t3U2s5amJqVmFZbXhPVFVObldVRTRaMjVvWnpkNmFsSjJSakZ2VWtkSmExVnFPVklLVDBSaVRXcFVja2RNYTBwTFIxSnJVR2tyV0hJemMyYzFiamxYV1dSWlIwcFBTRlI0WWxac1lUbFFlbGxCYW1SVUwxRk5RbWt4TkdGbmJ6ZFFVa2xxVHdweFNXazBVbXBhV1haUFJtTkJNRmN6VlZnd2RYQkxWMHRXU2tOUmJrUndUR0UyVlhaRU9IVXhjR2hrWjBab1JpOUJURmxoZW1sbmNIZDZUVVY2UTBoMENteHlNalY0U0ZKTU0xUkZiV3hMUVhsdWIxaFFjVkZMUW1kQ2JsWXZkblJKYURNNVFqTTVZazUxTUdoTVQySktZVzVPVEhsWWFYQlRXR3cwU1hnMFIzb0taMlJhYnpaVFdVOTJZakJrYTBwS1FVazJVakJXVEhwbE9EQmFNRkYyVUhGMFoxTmpjeXRPTkVka2JVaEZNWGRzVVU1UFUyaERNMlZwWTNNeGRIRXJNZ3BQUWpoYVdrczBTbVV5YjNrelRVbGxUVGszSzFnNFV6bG9ObUl4Y0c1c1NtcEdlblpKUkdkMlNVUkpRMDE1YzBkcFlsbGlWRlJ6VjJWRWJVNU9SVVJPQ2padFIzaEJiMGRCUVc5TVZEUmpOMGRJYkRaWlV6SjVRazlJWTJ4UU9FTTNZMnMwVDBFNE0xcFFRbmhGVkVzeGVua3hSblphVlcxb1ZGcDNlbmRJUlVFS1JEWTFUbWhVTW1SWlUwcFNXV3hKZFd0S1ptcEpTV0ZXWjNobVZHdGtTa0lyWlhOYWVtcHNXVkJFYTNWbVEzRmphWEY2UkZSNlptSlZSa29yYWpGMVpBcGhNbU00UlZCV2QyWTJRMWxLV2taYU1FZEpMMkp6VVN0Vk5XVnZZemN3ZW1FeVNtMUlhRVl5YTNocmRIUjZSME0zVTNNOUNpMHRMUzB0UlU1RUlGSlRRU0JRVWtsV1FWUkZJRXRGV1MwdExTMHRDZz09Cg==
+# Repository id, must be filled out in version replacement mode
+# If the repository needs authentication, the authentication information corresponding to this Id should be added to settings.xml
+dew.devops.it.repository.id=trc-releases
+# Snapshot  repository url, must be filled out in version replacement mode
+dew.devops.it.repository.url=http://121.41.17.205:18081/nexus/content/repositories/releases/
 # Snapshot repository id, must be filled out in version replacement mode
 # If the repository needs authentication, the authentication information corresponding to this Id should be added to settings.xml
 dew.devops.it.snapshotRepository.id=trc-snapshots
@@ -7344,7 +7640,31 @@ nameserver x.x.x.x # IP当前节点
 </div>
 </div>
 <div class="sect3">
-<h4 id="minio"><a class="anchor" href="#minio"></a>6.2.8. Minio</h4>
+<h4 id="ntpdate"><a class="anchor" href="#ntpdate"></a>6.2.8. NTPDate</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+ntpdate用于服务器间时间同步。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 在各节点安装
+yum install -y ntp
+# 修改个节点/etc/crontab文件
+echo '*/1 * * * * root ntpdate cn.pool.ntp.org' &gt;&gt; /etc/crontab</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="minio"><a class="anchor" href="#minio"></a>6.2.9. Minio</h4>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
@@ -7382,7 +7702,7 @@ nohup ./minio server /mnt/data &amp;
 </div>
 </div>
 <div class="sect3">
-<h4 id="nfs"><a class="anchor" href="#nfs"></a>6.2.9. NFS</h4>
+<h4 id="nfs"><a class="anchor" href="#nfs"></a>6.2.10. NFS</h4>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
@@ -7420,7 +7740,7 @@ showmount -e localhost</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="glusterfs"><a class="anchor" href="#glusterfs"></a>6.2.10. GlusterFS</h4>
+<h4 id="glusterfs"><a class="anchor" href="#glusterfs"></a>6.2.11. GlusterFS</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -7729,7 +8049,7 @@ profiles:
 </div>
 </li>
 <li>
-<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 在项目中添加<code>.gitlab</code>配置，详见 <a href="#devops-cicd-gitlab-template">gitlab-ci-template.yml</a>， e.g.</p>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 在项目中添加<code>.gitlab-ci.yml</code>配置，详见 <a href="#devops-cicd-gitlab-template">gitlab-ci-template.yml</a>， e.g.</p>
 <div class="literalblock">
 <div class="content">
 <pre>stages:
@@ -7903,10 +8223,6 @@ git add --all</code></pre>
 <div class="title">核心流程</div>
 <ol class="arabic">
 <li>
-<p>确认Gitlab中的项目已启用CI
-（勾选 <a href="https://&lt;Gitlab" class="bare">https://&lt;Gitlab</a> Host&gt;/&lt;Group&gt;/&lt;Project&gt;/settings/ci_cd 中的 <code>Default to Auto DevOps pipeline</code>），</p>
-</li>
-<li>
 <p>配置 <code>.gitlab-ci.yml</code>，配置参见 <code>devops/cicd/gilabci/.gitlab-ci-template.yml</code></p>
 </li>
 <li>
@@ -8001,7 +8317,7 @@ prod deploy: # 生产环境部署
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-04-30 13:37:51 CST
+Last updated 2019-05-04 18:00:13 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

@@ -7,9 +7,9 @@ profiles:
       serverConfig: |-
           server {
             listen       80;
-            server_name  brian.com;
+            server_name  localhost;
             location / {
-              root   html/brian;
+              root   /usr/share/nginx/html;
               index  index.html index.htm;
             }
             if ( $http_host ~* "^(.*)") {

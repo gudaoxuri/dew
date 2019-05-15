@@ -32,36 +32,36 @@ spec:
         group: ms.dew.devops.it
     spec:
       containers:
-        - env:
-            - name: JAVA_OPTIONS
-              value: ' -Dspring.profiles.active=test -Dserver.port=8080 -Dopentracing.jaeger.log-spans=false
-            -Dopentracing.jaeger.probabilistic-sampler.sampling-rate=0.1 -Dmanagement.endpoints.web.exposure.include=*
-            -Dmetrics.tags:application=${spring.application.name}'
-          image: "@ignore@"
-          imagePullPolicy: IfNotPresent
-          livenessProbe:
-            failureThreshold: 6
-            httpGet:
-              path: /actuator/health
-              port: 8080
-              scheme: HTTP
-            initialDelaySeconds: 30
-            periodSeconds: 30
-          name: dew-app
-          ports:
-            - containerPort: 8080
-              name: http
-              protocol: TCP
-          readinessProbe:
-            failureThreshold: 3
-            httpGet:
-              path: /actuator/health
-              port: 8080
-              scheme: HTTP
-            initialDelaySeconds: 30
-            periodSeconds: 30
-          resources:
-            limits: {}
-            requests: {}
+      - env:
+        - name: JAVA_OPTIONS
+          value: ' -Dspring.profiles.active=test -Dserver.port=8080 -Dopentracing.jaeger.log-spans=false
+            -Dopentracing.jaeger.probabilistic-sampler.sampling-rate=0.1 -Dopentracing.spring.web.skip-pattern=/api-docs.*|/swagger.*|.*\\.png|.*\\.css|.*\\.js|.*\\.html|/favicon.ico|/hystrix.stream|/actuator.*
+            -Dmanagement.endpoints.web.exposure.include=* -Dmanagement.metrics.tags.application=helloworld-backend'
+        image: "@ignore@"
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 6
+          httpGet:
+            path: /actuator/health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        name: dew-app
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /actuator/health
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        resources:
+          limits: {}
+          requests: {}
       nodeSelector:
         group: app
