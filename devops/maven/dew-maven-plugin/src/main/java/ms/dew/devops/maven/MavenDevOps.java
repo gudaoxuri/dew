@@ -33,7 +33,6 @@ import ms.dew.devops.maven.function.AppKindPluginSelector;
 import ms.dew.devops.maven.function.DependenciesResolver;
 import ms.dew.devops.maven.function.DeployPluginSelector;
 import ms.dew.devops.maven.function.MavenSkipProcessor;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.project.MavenProject;
@@ -42,8 +41,10 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -137,8 +138,6 @@ public class MavenDevOps {
                     DevOps.Config.basicProfileConfig = dewConfig.getProfiles().get(inputProfile);
                 }
             }
-            Set<String> noDeploymentProjects = getNoDeploymentProjects(inputAssignationProjects,
-                    session.getProjectDependencyGraph().getSortedProjects());
             for (MavenProject project : session.getProjectDependencyGraph().getSortedProjects()) {
                 Optional<AppKindPlugin> appKindPluginOpt = AppKindPluginSelector.select(project);
                 if (!appKindPluginOpt.isPresent()) {
@@ -172,10 +171,6 @@ public class MavenDevOps {
                                 dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
                                 kubeBase64ConfigAppendOpt);
                 if (finalProjectConfigOpt.isPresent()) {
-                    if (CollectionUtils.isNotEmpty(noDeploymentProjects)
-                            && noDeploymentProjects.contains(finalProjectConfigOpt.get().getAppShowName())) {
-                        finalProjectConfigOpt.get().setSkip(true);
-                    }
                     finalProjectConfigOpt.get().setMavenSession(session);
                     finalProjectConfigOpt.get().setMavenProject(project);
                     DevOps.Config.getFinalConfig().getProjects().put(project.getId(), finalProjectConfigOpt.get());
@@ -184,29 +179,30 @@ public class MavenDevOps {
                     logger.debug("[" + project.getGroupId() + ":" + project.getArtifactId() + "] skipped");
                 }
             }
+            initAssignDeploymentProjects(inputAssignationProjects, session.getProjectDependencyGraph().getSortedProjects());
         }
 
-        private static Set<String> getNoDeploymentProjects(String assignationProjects, List<MavenProject> projects) {
+        private static void initAssignDeploymentProjects(String assignationProjects, List<MavenProject> projects) {
             if (null != assignationProjects) {
-                Set<String> noDeploymentProjects = projects.stream().map(MavenProject::getArtifactId).collect(Collectors.toSet());
-                Set<String> deployProjects = new HashSet<>();
                 projects.forEach(project -> {
-                    getDeployProjects(assignationProjects, deployProjects, project, false);
+                    if (assignationProjects.contains(project.getArtifactId())) {
+                        notSkip(DevOps.Config.getProjectConfig(project.getId()), project, false);
+                    } else {
+                        DevOps.Config.getProjectConfig(project.getId()).skip("Not assign to release", false);
+                    }
                 });
-                noDeploymentProjects.removeAll(deployProjects);
-                return noDeploymentProjects;
             }
-            return null;
         }
 
-        private static void getDeployProjects(String assignationProjects, Set<String> deployProjects, MavenProject project, Boolean isParent) {
-            if (assignationProjects.contains(project.getArtifactId()) || isParent) {
-                deployProjects.add(project.getArtifactId());
-                if (!project.isExecutionRoot()) {
-                    getDeployProjects(assignationProjects, deployProjects, project.getParent(), true);
-                }
-
+        private static void notSkip(FinalProjectConfig projectConfig, MavenProject project, Boolean isParent) {
+            if (isParent) {
+                projectConfig.setSkip(false);
+                projectConfig.setSkipReason("");
             }
+            if (project.isExecutionRoot()) {
+                return;
+            }
+            notSkip(DevOps.Config.getProjectConfig(project.getParent().getId()), project.getParent(), true);
         }
     }
 
