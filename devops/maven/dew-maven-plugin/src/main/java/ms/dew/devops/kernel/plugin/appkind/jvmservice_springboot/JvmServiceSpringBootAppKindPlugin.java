@@ -182,7 +182,7 @@ public class JvmServiceSpringBootAppKindPlugin implements AppKindPlugin {
         }
         if (config.getApp().getMetricsEnabled()) {
             containerEnvJavaOptionsValue += " -Dmanagement.endpoints.web.exposure.include=*"
-                    + " -Dmetrics.tags:application=${spring.application.name}";
+                    + " -Dmanagement.metrics.tags.application=" + config.getAppName();
         }
         return containerEnvJavaOptionsValue;
     }

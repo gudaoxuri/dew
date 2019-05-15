@@ -215,6 +215,18 @@ nameserver x.x.x.x # IP当前节点
 # @see https://unix.stackexchange.com/questions/163831/nameservers-erased-after-systemctl-restart-network-service
 ----
 
+==== NTPDate
+TIP: ntpdate用于服务器间时间同步。
+
+.安装配置
+[source,bash]
+----
+# 在各节点安装
+yum install -y ntp
+# 修改个节点/etc/crontab文件
+echo '*/1 * * * * root ntpdate cn.pool.ntp.org' >> /etc/crontab
+----
+
 ==== Minio
 
 .安装配置
