@@ -182,7 +182,7 @@
     prod:
       namespace: dew-prod
   # -----------------
-  # （可选）根据实际情况为每个项目添加 .dew 文件以添加各项目的特殊配置
+  # （可选）根据实际情况为每个应用添加 .dew 文件以添加各应用的特殊配置
 
 * [ ] [Dew DevOps] 在项目中添加``.gitlab-ci.yml``配置，详见 <<devops-cicd-gitlab-template>>， e.g.
 
@@ -200,7 +200,7 @@
     tags:
       - test
     script:
-      - mvn -P devops dew:build dew:release
+      - mvn -P devops dew:release
   # 用户验收/预发环境部署
   uat deploy:
     stage: deploy
@@ -209,7 +209,7 @@
     tags:
       - uat
     script:
-      - mvn -P devops dew:build dew:release
+      - mvn -P devops dew:release
   prod deploy: # 生产环境部署
     stage: deploy
     only:
@@ -217,4 +217,4 @@
     tags:
       - prod
     script:
-      - mvn -P devops dew:build dew:release
+      - mvn -P devops dew:release

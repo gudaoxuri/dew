@@ -28,7 +28,7 @@ cd devops-example-todo
 # 执行安装
 mvn install -Dmaven.test.skip=true
 # 部署到Kubernetes
-mvn -P devops dew:build dew:release -Ddew.devops.profile=uat
+mvn -P devops dew:release -Ddew_devops_profile=uat
 
 # 打开浏览器，输入 http://todo-uat.dew.ms，切换到移动模式体验
 ----
@@ -67,7 +67,7 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=uat
           path: /
 
 
-当执行 ``mvn -P devops dew:build dew:release -Ddew.devops.profile=uat`` 时实际上做了：
+当执行 ``mvn -P devops dew:release -Ddew_devops_profile=uat`` 时实际上做了：
 
 . 根据根目录的 ``pom.xml`` 配置找到所有的Maven模块并按依赖排序
 . 对比当前的Git版本(git commit)与已部署的服务版本找到之间变更的文件
@@ -75,12 +75,12 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=uat
 . 提示用户是否部署
 . 根据模块对应的类型执行不同的准备操作：
 .. JVM服务(Spring Boot): 执行 ``mvn package spring-boot-maven-plugin:repackage`` 打出fatjar
-.. 前端项目: 执行``cd ./frontend && npm install && npm install -g @tarojs/cli && set NODE_ENV=test && npm run build:h5`` 打出dist文件
+.. 前端工程: 执行``cd ./frontend && npm install && npm install -g @tarojs/cli && set NODE_ENV=test && npm run build:h5`` 打出dist文件
 . 根据模块对应的类型执行不同的编译操作：
-.. JVM服务/前端项目: 执行 ``docker build`` 与 ``docker push`` 发布到 Harbor
+.. JVM服务/前端工程: 执行 ``docker build`` 与 ``docker push`` 发布到 Harbor
 . 根据模块对应的类型执行不同的部署操作：
-.. JVM类库/Pom项目: 执行 ``mvn deploy`` 发布到Maven仓库，并创建 configmap 打上版本记录
-.. JVM服务/前端项目: 部署 deployment 与 service 到 kuberenetes，并创建 configmap 打上版本记录
+.. JVM类库/Pom工程: 执行 ``mvn deploy`` 发布到Maven仓库，并创建 configmap 打上版本记录
+.. JVM服务/前端工程: 部署 deployment 与 service 到 kuberenetes，并创建 configmap 打上版本记录
 
 
 

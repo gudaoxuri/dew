@@ -5730,26 +5730,26 @@ profiles:
 <div class="title">配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># ============= 公共场景使用 =============
-dew.devops.profile                           # 默认环境
-dew.devops.kube.config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
+dew_devops_profile                           # 默认环境
+dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 # ============= 发布与回滚使用 =============
-dew.devops.docker.host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-dew.devops.docker.registry.url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
-dew.devops.docker.registry.username          # Docker Registry 用户名
-dew.devops.docker.registry.password          # Docker Registry 密码
-dew.devops.quiet                             # 是否静默处理
+dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
+dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+dew_devops_docker_registry_username          # Docker Registry 用户名
+dew_devops_docker_registry_password          # Docker Registry 密码
+dew_devops_quiet                             # 是否静默处理
 # ============= 日志及调试场景使用 =============
-dew.devops.podName                           # 要使用的Pod名称
+dew_devops_podName                           # 要使用的Pod名称
 # ============= 日志场景使用 =============
 dew.devops.log.follow                        # 是否滚动查看日志
 # ============= 调试场景使用 =============
-dew.devops.debug.forward.port                # 转发端口标识
+dew_devops_debug_forward_port                # 转发端口标识
 # ============= 伸缩场景使用 =============
-dew.devops.scale.replicas                    # 伸缩Pod数量
-dew.devops.scale.auto                        # 是否启用自动伸缩
-dew.devops.scale.auto.minReplicas            # 自动伸缩Pod数下限
-dew.devops.scale.auto.maxReplicas            # 自动伸缩Pod数上限
-dew.devops.scale.auto.cpu.averageUtilization # 自动伸缩条件：CPU平均使用率标识</code></pre>
+dew_devops_scale_replicas                    # 伸缩Pod数量
+dew_devops_scale_auto                        # 是否启用自动伸缩
+dew_devops_scale_auto_minReplicas            # 自动伸缩Pod数下限
+dew_devops_scale_auto_maxReplicas            # 自动伸缩Pod数上限
+dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使用率标识</code></pre>
 </div>
 </div>
 </div>
@@ -5871,7 +5871,7 @@ profiles:
 <div class="title">手工执行</div>
 <div class="content">
 <pre># 执行如下maven命令(发布到test环境)
-mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
+mvn -P devops dew:release -Ddew_devops_profile=test</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -5904,9 +5904,9 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
 <div class="title">手工执行</div>
 <div class="content">
 <pre># 执行如下maven命令(发布到test环境)
-mvn -P devops dew:build dew:release -Ddew.devops.profile=test \
-    -Ddew.devops.it.snapshotRepository.id=&lt;私库Id，如私库需要认证则此Id对应的认证信息要添加到 settings.xml中&gt; \
-    -Ddew.devops.it.snapshotRepository.url=&lt;私库Url&gt; \</pre>
+mvn -P devops dew:release -Ddew_devops_profile=test \
+    -Ddew_devops_it_snapshotRepository_id=&lt;私库Id，如私库需要认证则此Id对应的认证信息要添加到 settings.xml中&gt; \
+    -Ddew_devops_it_snapshotRepository_url=&lt;私库Url&gt; \</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -5975,7 +5975,7 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test \
 <div class="title">手工执行</div>
 <div class="content">
 <pre># 执行如下maven命令(发布到test环境)
-mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
+mvn -P devops dew:release -Ddew_devops_profile=test</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -6083,9 +6083,9 @@ app:
 <div class="title">手工执行</div>
 <div class="content">
 <pre># 执行如下maven命令(发布到uat环境)
-mvn -P devops dew:build dew:release -Ddew.devops.profile=uat
+mvn -P devops dew:release -Ddew_devops_profile=uat
 # 执行如下maven命令(发布到prod环境)
-mvn -P devops dew:build dew:release -Ddew.devops.profile=prod</pre>
+mvn -P devops dew:release -Ddew_devops_profile=prod</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -6142,25 +6142,25 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=prod</pre>
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-dew.devops.docker.host=tcp://10.200.131.215:2375
+dew_devops_docker_host=tcp://10.200.131.215:2375
 # Docker registry url, nullable
-dew.devops.docker.registry.url=https://harbor.trc.com/v2
+dew_devops_docker_registry_url=https://harbor.trc.com/v2
 # Docker registry user name, nullable
-dew.devops.docker.registry.username=dew
+dew_devops_docker_registry_username=dew
 # Docker registry password, nullable
-dew.devops.docker.registry.password=Dew123456
+dew_devops_docker_registry_password=Dew123456
 # Kubernetes base64 configuration
-dew.devops.kube.config=YXBpVmVyc2lvbjogdjEKY2x1c3RlcnM6Ci0gY2x1c3RlcjoKICAgIGNlcnRpZmljYXRlLWF1dGhvcml0eS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VONVJFTkRRV0pEWjBGM1NVSkJaMGxDUVVSQlRrSm5hM0ZvYTJsSE9YY3dRa0ZSYzBaQlJFRldUVkpOZDBWUldVUldVVkZFUlhkd2NtUlhTbXdLWTIwMWJHUkhWbnBOUWpSWVJGUkZOVTFFVVhoTlZFRXpUVlJCZUU0eGIxaEVWRWsxVFVSUmQwOUVRVE5OVkVGNFRqRnZkMFpVUlZSTlFrVkhRVEZWUlFwQmVFMUxZVE5XYVZwWVNuVmFXRkpzWTNwRFEwRlRTWGRFVVZsS1MyOWFTV2gyWTA1QlVVVkNRbEZCUkdkblJWQkJSRU5EUVZGdlEyZG5SVUpCU3pWbENqUkpLekJrVG5RNVFsWm1OMWhOZWxWM2FIZGtTRlZ0WmsxWGFHdGlkelU1YVVGbmFVY3lSRGcyTTNkamNWWXhhRGswTjJ4c01rVlNRM0puWlRkM1prVUtWRklyY0ZOcVJUZGlPRWhNUlRaNE5VZEhXbkkyUkhKa1kwVnhhRFZSYzNoeUwyODVOVGxrYVNzeldYTmFNR3AwYVRSalFVNURjMGR2T0RkaFZpOUNOQXAzUmpBMmEyOXJVVU5yYlZSYVNXbG1kRWQwYW5CWlJWUkljV0phVlhwMlpYTnNRamRhY0daeWVXY3ZhWHBWVjI0M0x6VXhkVTVhZEdaclZtSkRhR0pCQ2psS1ozSnlXVFJqYTBZck1XdG5VVmxrTjFKMlRsRnVkMDQwTm5WbGJsUklhVlJaYWpONGVYVnVkbU5GYTNZd1RVNU1WV2haUXpOQ2JWcDNlVmxtTWxZS1IwaHJZbWt4VEZWa01WSlNSWFJVUTNKdWIydExPRUZ3UVV0NE4yaGpaVFpETm5OYVEwWTNWVEpvYXpWSk1qTlVUa2xJUkZGb1dGUkZka3BhTlZCbFpncFNNMDlWY0Zaak0wVkliREJPVDFGMFZ6Tk5RMEYzUlVGQllVMXFUVU5GZDBSbldVUldVakJRUVZGSUwwSkJVVVJCWjB0clRVRTRSMEV4VldSRmQwVkNDaTkzVVVaTlFVMUNRV1k0ZDBSUldVcExiMXBKYUhaalRrRlJSVXhDVVVGRVoyZEZRa0ZKZVdab1JqTmljMkZIWlRSeGQwMVdhRE14VjNCT1NTOU9URUVLZEZCc01VWkllbWxNYW5BcldVMW9MMjlyZDFKcmQzaERUbU5QWVhwRGVVUnlSbkozYVhkbE0ydG9USEExYVZwak5WTnVRMlJWUjBobVNsTjZPVEJwZWdwamNDdEViRXhQWnpKWGNUbFFObk5qTkZCV2JsaEhNRTVZUjBZMU1sSmtkRWw2Y205UE5ESkVVVWRDVTBSUGFVbHlTM2RpY25Bdk1HUTRLMWs1ZHl0WkNrSnVXVGxZZEVWNlNtOVdRMkp0YTFock5UTXlTa04xU0ZaSlVtOWpURGxUYjI1UVpIVjRNWFo0YjFJcmNuQTJRWE5VTkN0cloxRTFXbkJaVVZreVQzVUthVVJMTnpGWlFrbzBjbWxSZDBNNWJWRnJaV2RSYXpsdWFFUk9ORWhxYzIxMWJIQmFiemRJU0ZCTVZtVXZNa3BEZEhaRFUzUnVkVTFFYjNOQ1ZWRnJNZ292Ykd0b05uZzNkRlF2YWpKSU4wRldXalZMTlc5NE5FMHhPVFZ4ZEhrMFlsTmFjbmhoTWpVek5FTnpSblpJTTA1M1REZE1hMGhTYW5Sc2N6MEtMUzB0TFMxRlRrUWdRMFZTVkVsR1NVTkJWRVV0TFMwdExRbz0KICAgIHNlcnZlcjogaHR0cHM6Ly8xMC4yMDAuMTMxLjE4OjY0NDMKICBuYW1lOiBrdWJlcm5ldGVzCmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBrdWJlcm5ldGVzCiAgICB1c2VyOiBrdWJlcm5ldGVzLWFkbWluCiAgbmFtZToga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmN1cnJlbnQtY29udGV4dDoga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmtpbmQ6IENvbmZpZwpwcmVmZXJlbmNlczoge30KdXNlcnM6Ci0gbmFtZToga3ViZXJuZXRlcy1hZG1pbgogIHVzZXI6CiAgICBjbGllbnQtY2VydGlmaWNhdGUtZGF0YTogTFMwdExTMUNSVWRKVGlCRFJWSlVTVVpKUTBGVVJTMHRMUzB0Q2sxSlNVTTRha05EUVdSeFowRjNTVUpCWjBsSlJWUlZjbE5SV21kblowRjNSRkZaU2t0dldrbG9kbU5PUVZGRlRFSlJRWGRHVkVWVVRVSkZSMEV4VlVVS1FYaE5TMkV6Vm1sYVdFcDFXbGhTYkdONlFXVkdkekI0VDFSQk1FMVVSWGRPZWtWM1RWUmtZVVozTUhsTlJFRXdUVlJCZDA1NlJYZE5ha1poVFVSUmVBcEdla0ZXUW1kT1ZrSkJiMVJFYms0MVl6TlNiR0pVY0hSWldFNHdXbGhLZWsxU2EzZEdkMWxFVmxGUlJFVjRRbkprVjBwc1kyMDFiR1JIVm5wTVYwWnJDbUpYYkhWTlNVbENTV3BCVGtKbmEzRm9hMmxIT1hjd1FrRlJSVVpCUVU5RFFWRTRRVTFKU1VKRFowdERRVkZGUVhSdmFXOHdjbWxTU2k5QlkzQXhlVE1LUjBKbVkxaGhRbWhMTlRWek1EWk1ibEI2TmpCWGVEQnlkalZ6SzNWeVdVaFliWFYyU2pWVGNrVlpRbEpIWWtWdlRIcDVVemhYVW1KU01HdDFjbEJOUlFvMVpWUlpUR012UnpaeGNuVnVka1p4UjNSak4xaFJSMGN6VkVzdlJUSnNLMkkxZVdJeGEwTnliM2htTTNOelVFeFVVbVZDT0hFd1NrWm5iRmRpZEdjeUNsZElWVFJhUlZrNE1sbzVObkVyWkV4clZHaFJNRUV4YlZWMlUxRjZWMFlyU2xOaVNYbHNkVTV4VWxBMGExaHdZME16U1hKQlozcEdPWEZITkV0R1V6Z0tkM2xuUm5sRU9VUlJja3cyWkRGcE5qaDFVazR6YW10bFZYTTBNMHRDTlc4cldGcEhka05KY2tsR1owaDNXRUZhVkRkVE1ub3ZaRVJRZG5vcmFVaFdVQXBZYzFaUlIweEVkRGx4YWtwR2JYRk1WazlRZVVGelFuWlhWM0Z6VFZaTFpWSXJWbGhYYkRoSll6bG9iMFZWVkdOcmEyMXhRV0YzWkdNMlEzcEplbFJ5Q21FelNqRTRVVWxFUVZGQlFtOTVZM2RLVkVGUFFtZE9Wa2hST0VKQlpqaEZRa0ZOUTBKaFFYZEZkMWxFVmxJd2JFSkJkM2REWjFsSlMzZFpRa0pSVlVnS1FYZEpkMFJSV1VwTGIxcEphSFpqVGtGUlJVeENVVUZFWjJkRlFrRkRSVmRUYTB3MFkwRmFhekJsVnpScVMzTlhhVEV6YTAxSmJ5ODNMM3BZZG1aRWFBcGpTR05YYVdONlRqUndNRGs1T0RoVmVtbHdVak54YUZCMmVHaHhXR0pwTlRKS09WVlJOVkFyVUUxS05IRjJOamRSU1VGM1pHMXhlRXRzZFVORldqWk1DazVoYmtWRGNtZDVaek5QZW1kQ1dtaElUa3N4YUhob2VtdzBMME54YTBKTmNGbEJNSEprWWpKVlpUTlhiV05wV1hkc1EyUk9Ramw2ZVhKV01VUXZVa2tLZW5aTFYwUnJUMU5xV2pjMFVGWlpXbWh5VVdkWFJWVllPVWRGYlVsSlZXcFFZbXhsYTNKV1kyOXVTbmxpT1ZwV2VqZDNNbFZNVUVkTFkxcG1iMHBMYkFwWUt5OWhhVk5SYWs0NWRFazRRelEyYUd0aWFtTlFkalJwVHpJMmNtcFZSRTB2VDJsRWFuVlBLMnRFTjFaTlFqZHpWMjFTVFZkUWVGbFhTWE5rZG5wNUNtRk5Semd3VnpsMk9FMUpSbFJ4TjBsVVNVTTJjelowVld0aWFsUjVNMlZwVUhSM1ozUlFLMU5aZG1GRFVWRndiVFl6WnowS0xTMHRMUzFGVGtRZ1EwVlNWRWxHU1VOQlZFVXRMUzB0TFFvPQogICAgY2xpZW50LWtleS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJTVTBFZ1VGSkpWa0ZVUlNCTFJWa3RMUzB0TFFwTlNVbEZiMmRKUWtGQlMwTkJVVVZCZEc5cGJ6QnlhVkpLTDBGamNERjVNMGRDWm1OWVlVSm9TelUxY3pBMlRHNVFlall3VjNnd2NuWTFjeXQxY2xsSUNsaHRkWFpLTlZOeVJWbENVa2RpUlc5TWVubFRPRmRTWWxJd2EzVnlVRTFGTldWVVdVeGpMMGMyY1hKMWJuWkdjVWQwWXpkWVVVZEhNMVJMTDBVeWJDc0tZalY1WWpGclEzSnZlR1l6YzNOUVRGUlNaVUk0Y1RCS1JtZHNWMkowWnpKWFNGVTBXa1ZaT0RKYU9UWnhLMlJNYTFSb1VUQkJNVzFWZGxOUmVsZEdLd3BLVTJKSmVXeDFUbkZTVURScldIQmpRek5KY2tGbmVrWTVjVWMwUzBaVE9IZDVaMFo1UkRsRVVYSk1ObVF4YVRZNGRWSk9NMnByWlZWek5ETkxRalZ2Q2l0WVdrZDJRMGx5U1VablNIZFlRVnBVTjFNeWVpOWtSRkIyZWl0cFNGWlFXSE5XVVVkTVJIUTVjV3BLUm0xeFRGWlBVSGxCYzBKMlYxZHhjMDFXUzJVS1VpdFdXRmRzT0Vsak9XaHZSVlZVWTJ0cmJYRkJZWGRrWXpaRGVrbDZWSEpoTTBveE9GRkpSRUZSUVVKQmIwbENRVVV2SzJGbldWaEVjalI1T0RCMlFncFVVbWhKT1V4RmRscFJXa3B2Y1ZoS1NWcEVUU3RTZEhCSFJrRmlVMEV4Y0ZWeFpHeG9PV2hRZUdaNVoyZEhjRVJCYW5CYVZVbG9jbXMzYTFVNFJtbHdDa1V2T1hkSUwwWk1kVzlCUkUxNGIwTTRTalJqY25jMVpXRmxNSE51VTBwNmRrRTFUREIwZFRsalluSkRLMVJIYkhKeldERlNSMVJIZDJ4SFpTc3ZjMDRLTVVKMFIwYzVWMDlHYjB4Rk5tMTZSbkUwT1ZRek9EWmtORXhpTDJFMmRIbGFRV1pOZEVGYWNFaGhjRnBHZEVwYVZXOTJlRXRFZVVkWE56Rk9UMElyWWdwdWN6WlRaV2hRV1VZMU0wbGFXRGswYWk5NVJFeDNXRTVYT0ZNMmFGbEdORVpwY1RReVMyRkxlU3RFZVhKNVFrMTRVVzV4UzJaU1RsaDRRMlE0ZEhkeENuSjZWRGQwUldaQk1qVlljRllyU0hOemNVWjJVMVZEZDA1eFptbGxZbFprV25oSFdVc3dlbU5ZYnl0WWFuWlVVRlp3VTBkMlVrbHFaRlpOZFN0elNEQUtSak55VkZKNlZVTm5XVVZCTWpZeE5sTnRjbXhGWW1OTFIzbFFWRFJOUVVOVldFNVRabFJHU1RBMWJGWnRiVmRXU1RaTlRXRXlVSHBoWVRNeU4xcDFPUXBESzBwQlFYcFhTQ3RYVmpaaVZEQjVXbnBCU1Vwa05rY3JZbUZCZVhGMFVHaEdka1p6Y20xNWRXTk9lV2xzZURobVl6UkpVMHRLU3l0a2FrcHFOR0ZLQ2xKUlJsRk5UbkZ2VlhSblZXZHFVbE54WkRKNVkzcGFWRGcyTlM5VGJtWktRVVZ6U213dk9VdDBhSFpCZGpWWWIwdHBPWFJ1Tm5ORFoxbEZRVEZNWWpBS0syeE1kbWgwZVRWQmMwTkZZMGRNWTNKSlZTOWxTMUYyVHk5alJWbDNZMllyTjJ0aFZHZDJVMHN6Y0ZaVFUzcDZXWGhSUVVwa1NEYzNRWHBsWlVOT1RBcEphVlJoY1M5U2QweHlTalJrYlVkeVRYWmFhVVJZZVVWNFlUZDRjR1U0VldkQlpEQjFUV1pIYlRGbFIwdHBUelp6VmpKWFlrTkljME5EVm5sdmQyaHZDbUpLVGxwbVMwOUxObHBvVkZwaVUwZE9kSFJqVVdkaVRDdG1SM2t3U2s5amJqVmFZbXhPVFVObldVRTRaMjVvWnpkNmFsSjJSakZ2VWtkSmExVnFPVklLVDBSaVRXcFVja2RNYTBwTFIxSnJVR2tyV0hJemMyYzFiamxYV1dSWlIwcFBTRlI0WWxac1lUbFFlbGxCYW1SVUwxRk5RbWt4TkdGbmJ6ZFFVa2xxVHdweFNXazBVbXBhV1haUFJtTkJNRmN6VlZnd2RYQkxWMHRXU2tOUmJrUndUR0UyVlhaRU9IVXhjR2hrWjBab1JpOUJURmxoZW1sbmNIZDZUVVY2UTBoMENteHlNalY0U0ZKTU0xUkZiV3hMUVhsdWIxaFFjVkZMUW1kQ2JsWXZkblJKYURNNVFqTTVZazUxTUdoTVQySktZVzVPVEhsWWFYQlRXR3cwU1hnMFIzb0taMlJhYnpaVFdVOTJZakJrYTBwS1FVazJVakJXVEhwbE9EQmFNRkYyVUhGMFoxTmpjeXRPTkVka2JVaEZNWGRzVVU1UFUyaERNMlZwWTNNeGRIRXJNZ3BQUWpoYVdrczBTbVV5YjNrelRVbGxUVGszSzFnNFV6bG9ObUl4Y0c1c1NtcEdlblpKUkdkMlNVUkpRMDE1YzBkcFlsbGlWRlJ6VjJWRWJVNU9SVVJPQ2padFIzaEJiMGRCUVc5TVZEUmpOMGRJYkRaWlV6SjVRazlJWTJ4UU9FTTNZMnMwVDBFNE0xcFFRbmhGVkVzeGVua3hSblphVlcxb1ZGcDNlbmRJUlVFS1JEWTFUbWhVTW1SWlUwcFNXV3hKZFd0S1ptcEpTV0ZXWjNobVZHdGtTa0lyWlhOYWVtcHNXVkJFYTNWbVEzRmphWEY2UkZSNlptSlZSa29yYWpGMVpBcGhNbU00UlZCV2QyWTJRMWxLV2taYU1FZEpMMkp6VVN0Vk5XVnZZemN3ZW1FeVNtMUlhRVl5YTNocmRIUjZSME0zVTNNOUNpMHRMUzB0UlU1RUlGSlRRU0JRVWtsV1FWUkZJRXRGV1MwdExTMHRDZz09Cg==
+dew_devops_kube_config=YXBpVmVyc2lvbjogdjEKY2x1c3RlcnM6Ci0gY2x1c3RlcjoKICAgIGNlcnRpZmljYXRlLWF1dGhvcml0eS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VONVJFTkRRV0pEWjBGM1NVSkJaMGxDUVVSQlRrSm5hM0ZvYTJsSE9YY3dRa0ZSYzBaQlJFRldUVkpOZDBWUldVUldVVkZFUlhkd2NtUlhTbXdLWTIwMWJHUkhWbnBOUWpSWVJGUkZOVTFFVVhoTlZFRXpUVlJCZUU0eGIxaEVWRWsxVFVSUmQwOUVRVE5OVkVGNFRqRnZkMFpVUlZSTlFrVkhRVEZWUlFwQmVFMUxZVE5XYVZwWVNuVmFXRkpzWTNwRFEwRlRTWGRFVVZsS1MyOWFTV2gyWTA1QlVVVkNRbEZCUkdkblJWQkJSRU5EUVZGdlEyZG5SVUpCU3pWbENqUkpLekJrVG5RNVFsWm1OMWhOZWxWM2FIZGtTRlZ0WmsxWGFHdGlkelU1YVVGbmFVY3lSRGcyTTNkamNWWXhhRGswTjJ4c01rVlNRM0puWlRkM1prVUtWRklyY0ZOcVJUZGlPRWhNUlRaNE5VZEhXbkkyUkhKa1kwVnhhRFZSYzNoeUwyODVOVGxrYVNzeldYTmFNR3AwYVRSalFVNURjMGR2T0RkaFZpOUNOQXAzUmpBMmEyOXJVVU5yYlZSYVNXbG1kRWQwYW5CWlJWUkljV0phVlhwMlpYTnNRamRhY0daeWVXY3ZhWHBWVjI0M0x6VXhkVTVhZEdaclZtSkRhR0pCQ2psS1ozSnlXVFJqYTBZck1XdG5VVmxrTjFKMlRsRnVkMDQwTm5WbGJsUklhVlJaYWpONGVYVnVkbU5GYTNZd1RVNU1WV2haUXpOQ2JWcDNlVmxtTWxZS1IwaHJZbWt4VEZWa01WSlNSWFJVUTNKdWIydExPRUZ3UVV0NE4yaGpaVFpETm5OYVEwWTNWVEpvYXpWSk1qTlVUa2xJUkZGb1dGUkZka3BhTlZCbFpncFNNMDlWY0Zaak0wVkliREJPVDFGMFZ6Tk5RMEYzUlVGQllVMXFUVU5GZDBSbldVUldVakJRUVZGSUwwSkJVVVJCWjB0clRVRTRSMEV4VldSRmQwVkNDaTkzVVVaTlFVMUNRV1k0ZDBSUldVcExiMXBKYUhaalRrRlJSVXhDVVVGRVoyZEZRa0ZKZVdab1JqTmljMkZIWlRSeGQwMVdhRE14VjNCT1NTOU9URUVLZEZCc01VWkllbWxNYW5BcldVMW9MMjlyZDFKcmQzaERUbU5QWVhwRGVVUnlSbkozYVhkbE0ydG9USEExYVZwak5WTnVRMlJWUjBobVNsTjZPVEJwZWdwamNDdEViRXhQWnpKWGNUbFFObk5qTkZCV2JsaEhNRTVZUjBZMU1sSmtkRWw2Y205UE5ESkVVVWRDVTBSUGFVbHlTM2RpY25Bdk1HUTRLMWs1ZHl0WkNrSnVXVGxZZEVWNlNtOVdRMkp0YTFock5UTXlTa04xU0ZaSlVtOWpURGxUYjI1UVpIVjRNWFo0YjFJcmNuQTJRWE5VTkN0cloxRTFXbkJaVVZreVQzVUthVVJMTnpGWlFrbzBjbWxSZDBNNWJWRnJaV2RSYXpsdWFFUk9ORWhxYzIxMWJIQmFiemRJU0ZCTVZtVXZNa3BEZEhaRFUzUnVkVTFFYjNOQ1ZWRnJNZ292Ykd0b05uZzNkRlF2YWpKSU4wRldXalZMTlc5NE5FMHhPVFZ4ZEhrMFlsTmFjbmhoTWpVek5FTnpSblpJTTA1M1REZE1hMGhTYW5Sc2N6MEtMUzB0TFMxRlRrUWdRMFZTVkVsR1NVTkJWRVV0TFMwdExRbz0KICAgIHNlcnZlcjogaHR0cHM6Ly8xMC4yMDAuMTMxLjE4OjY0NDMKICBuYW1lOiBrdWJlcm5ldGVzCmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBrdWJlcm5ldGVzCiAgICB1c2VyOiBrdWJlcm5ldGVzLWFkbWluCiAgbmFtZToga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmN1cnJlbnQtY29udGV4dDoga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmtpbmQ6IENvbmZpZwpwcmVmZXJlbmNlczoge30KdXNlcnM6Ci0gbmFtZToga3ViZXJuZXRlcy1hZG1pbgogIHVzZXI6CiAgICBjbGllbnQtY2VydGlmaWNhdGUtZGF0YTogTFMwdExTMUNSVWRKVGlCRFJWSlVTVVpKUTBGVVJTMHRMUzB0Q2sxSlNVTTRha05EUVdSeFowRjNTVUpCWjBsSlJWUlZjbE5SV21kblowRjNSRkZaU2t0dldrbG9kbU5PUVZGRlRFSlJRWGRHVkVWVVRVSkZSMEV4VlVVS1FYaE5TMkV6Vm1sYVdFcDFXbGhTYkdONlFXVkdkekI0VDFSQk1FMVVSWGRPZWtWM1RWUmtZVVozTUhsTlJFRXdUVlJCZDA1NlJYZE5ha1poVFVSUmVBcEdla0ZXUW1kT1ZrSkJiMVJFYms0MVl6TlNiR0pVY0hSWldFNHdXbGhLZWsxU2EzZEdkMWxFVmxGUlJFVjRRbkprVjBwc1kyMDFiR1JIVm5wTVYwWnJDbUpYYkhWTlNVbENTV3BCVGtKbmEzRm9hMmxIT1hjd1FrRlJSVVpCUVU5RFFWRTRRVTFKU1VKRFowdERRVkZGUVhSdmFXOHdjbWxTU2k5QlkzQXhlVE1LUjBKbVkxaGhRbWhMTlRWek1EWk1ibEI2TmpCWGVEQnlkalZ6SzNWeVdVaFliWFYyU2pWVGNrVlpRbEpIWWtWdlRIcDVVemhYVW1KU01HdDFjbEJOUlFvMVpWUlpUR012UnpaeGNuVnVka1p4UjNSak4xaFJSMGN6VkVzdlJUSnNLMkkxZVdJeGEwTnliM2htTTNOelVFeFVVbVZDT0hFd1NrWm5iRmRpZEdjeUNsZElWVFJhUlZrNE1sbzVObkVyWkV4clZHaFJNRUV4YlZWMlUxRjZWMFlyU2xOaVNYbHNkVTV4VWxBMGExaHdZME16U1hKQlozcEdPWEZITkV0R1V6Z0tkM2xuUm5sRU9VUlJja3cyWkRGcE5qaDFVazR6YW10bFZYTTBNMHRDTlc4cldGcEhka05KY2tsR1owaDNXRUZhVkRkVE1ub3ZaRVJRZG5vcmFVaFdVQXBZYzFaUlIweEVkRGx4YWtwR2JYRk1WazlRZVVGelFuWlhWM0Z6VFZaTFpWSXJWbGhYYkRoSll6bG9iMFZWVkdOcmEyMXhRV0YzWkdNMlEzcEplbFJ5Q21FelNqRTRVVWxFUVZGQlFtOTVZM2RLVkVGUFFtZE9Wa2hST0VKQlpqaEZRa0ZOUTBKaFFYZEZkMWxFVmxJd2JFSkJkM2REWjFsSlMzZFpRa0pSVlVnS1FYZEpkMFJSV1VwTGIxcEphSFpqVGtGUlJVeENVVUZFWjJkRlFrRkRSVmRUYTB3MFkwRmFhekJsVnpScVMzTlhhVEV6YTAxSmJ5ODNMM3BZZG1aRWFBcGpTR05YYVdONlRqUndNRGs1T0RoVmVtbHdVak54YUZCMmVHaHhXR0pwTlRKS09WVlJOVkFyVUUxS05IRjJOamRSU1VGM1pHMXhlRXRzZFVORldqWk1DazVoYmtWRGNtZDVaek5QZW1kQ1dtaElUa3N4YUhob2VtdzBMME54YTBKTmNGbEJNSEprWWpKVlpUTlhiV05wV1hkc1EyUk9Ramw2ZVhKV01VUXZVa2tLZW5aTFYwUnJUMU5xV2pjMFVGWlpXbWh5VVdkWFJWVllPVWRGYlVsSlZXcFFZbXhsYTNKV1kyOXVTbmxpT1ZwV2VqZDNNbFZNVUVkTFkxcG1iMHBMYkFwWUt5OWhhVk5SYWs0NWRFazRRelEyYUd0aWFtTlFkalJwVHpJMmNtcFZSRTB2VDJsRWFuVlBLMnRFTjFaTlFqZHpWMjFTVFZkUWVGbFhTWE5rZG5wNUNtRk5Semd3VnpsMk9FMUpSbFJ4TjBsVVNVTTJjelowVld0aWFsUjVNMlZwVUhSM1ozUlFLMU5aZG1GRFVWRndiVFl6WnowS0xTMHRMUzFGVGtRZ1EwVlNWRWxHU1VOQlZFVXRMUzB0TFFvPQogICAgY2xpZW50LWtleS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJTVTBFZ1VGSkpWa0ZVUlNCTFJWa3RMUzB0TFFwTlNVbEZiMmRKUWtGQlMwTkJVVVZCZEc5cGJ6QnlhVkpLTDBGamNERjVNMGRDWm1OWVlVSm9TelUxY3pBMlRHNVFlall3VjNnd2NuWTFjeXQxY2xsSUNsaHRkWFpLTlZOeVJWbENVa2RpUlc5TWVubFRPRmRTWWxJd2EzVnlVRTFGTldWVVdVeGpMMGMyY1hKMWJuWkdjVWQwWXpkWVVVZEhNMVJMTDBVeWJDc0tZalY1WWpGclEzSnZlR1l6YzNOUVRGUlNaVUk0Y1RCS1JtZHNWMkowWnpKWFNGVTBXa1ZaT0RKYU9UWnhLMlJNYTFSb1VUQkJNVzFWZGxOUmVsZEdLd3BLVTJKSmVXeDFUbkZTVURScldIQmpRek5KY2tGbmVrWTVjVWMwUzBaVE9IZDVaMFo1UkRsRVVYSk1ObVF4YVRZNGRWSk9NMnByWlZWek5ETkxRalZ2Q2l0WVdrZDJRMGx5U1VablNIZFlRVnBVTjFNeWVpOWtSRkIyZWl0cFNGWlFXSE5XVVVkTVJIUTVjV3BLUm0xeFRGWlBVSGxCYzBKMlYxZHhjMDFXUzJVS1VpdFdXRmRzT0Vsak9XaHZSVlZVWTJ0cmJYRkJZWGRrWXpaRGVrbDZWSEpoTTBveE9GRkpSRUZSUVVKQmIwbENRVVV2SzJGbldWaEVjalI1T0RCMlFncFVVbWhKT1V4RmRscFJXa3B2Y1ZoS1NWcEVUU3RTZEhCSFJrRmlVMEV4Y0ZWeFpHeG9PV2hRZUdaNVoyZEhjRVJCYW5CYVZVbG9jbXMzYTFVNFJtbHdDa1V2T1hkSUwwWk1kVzlCUkUxNGIwTTRTalJqY25jMVpXRmxNSE51VTBwNmRrRTFUREIwZFRsalluSkRLMVJIYkhKeldERlNSMVJIZDJ4SFpTc3ZjMDRLTVVKMFIwYzVWMDlHYjB4Rk5tMTZSbkUwT1ZRek9EWmtORXhpTDJFMmRIbGFRV1pOZEVGYWNFaGhjRnBHZEVwYVZXOTJlRXRFZVVkWE56Rk9UMElyWWdwdWN6WlRaV2hRV1VZMU0wbGFXRGswYWk5NVJFeDNXRTVYT0ZNMmFGbEdORVpwY1RReVMyRkxlU3RFZVhKNVFrMTRVVzV4UzJaU1RsaDRRMlE0ZEhkeENuSjZWRGQwUldaQk1qVlljRllyU0hOemNVWjJVMVZEZDA1eFptbGxZbFprV25oSFdVc3dlbU5ZYnl0WWFuWlVVRlp3VTBkMlVrbHFaRlpOZFN0elNEQUtSak55VkZKNlZVTm5XVVZCTWpZeE5sTnRjbXhGWW1OTFIzbFFWRFJOUVVOVldFNVRabFJHU1RBMWJGWnRiVmRXU1RaTlRXRXlVSHBoWVRNeU4xcDFPUXBESzBwQlFYcFhTQ3RYVmpaaVZEQjVXbnBCU1Vwa05rY3JZbUZCZVhGMFVHaEdka1p6Y20xNWRXTk9lV2xzZURobVl6UkpVMHRLU3l0a2FrcHFOR0ZLQ2xKUlJsRk5UbkZ2VlhSblZXZHFVbE54WkRKNVkzcGFWRGcyTlM5VGJtWktRVVZ6U213dk9VdDBhSFpCZGpWWWIwdHBPWFJ1Tm5ORFoxbEZRVEZNWWpBS0syeE1kbWgwZVRWQmMwTkZZMGRNWTNKSlZTOWxTMUYyVHk5alJWbDNZMllyTjJ0aFZHZDJVMHN6Y0ZaVFUzcDZXWGhSUVVwa1NEYzNRWHBsWlVOT1RBcEphVlJoY1M5U2QweHlTalJrYlVkeVRYWmFhVVJZZVVWNFlUZDRjR1U0VldkQlpEQjFUV1pIYlRGbFIwdHBUelp6VmpKWFlrTkljME5EVm5sdmQyaHZDbUpLVGxwbVMwOUxObHBvVkZwaVUwZE9kSFJqVVdkaVRDdG1SM2t3U2s5amJqVmFZbXhPVFVObldVRTRaMjVvWnpkNmFsSjJSakZ2VWtkSmExVnFPVklLVDBSaVRXcFVja2RNYTBwTFIxSnJVR2tyV0hJemMyYzFiamxYV1dSWlIwcFBTRlI0WWxac1lUbFFlbGxCYW1SVUwxRk5RbWt4TkdGbmJ6ZFFVa2xxVHdweFNXazBVbXBhV1haUFJtTkJNRmN6VlZnd2RYQkxWMHRXU2tOUmJrUndUR0UyVlhaRU9IVXhjR2hrWjBab1JpOUJURmxoZW1sbmNIZDZUVVY2UTBoMENteHlNalY0U0ZKTU0xUkZiV3hMUVhsdWIxaFFjVkZMUW1kQ2JsWXZkblJKYURNNVFqTTVZazUxTUdoTVQySktZVzVPVEhsWWFYQlRXR3cwU1hnMFIzb0taMlJhYnpaVFdVOTJZakJrYTBwS1FVazJVakJXVEhwbE9EQmFNRkYyVUhGMFoxTmpjeXRPTkVka2JVaEZNWGRzVVU1UFUyaERNMlZwWTNNeGRIRXJNZ3BQUWpoYVdrczBTbVV5YjNrelRVbGxUVGszSzFnNFV6bG9ObUl4Y0c1c1NtcEdlblpKUkdkMlNVUkpRMDE1YzBkcFlsbGlWRlJ6VjJWRWJVNU9SVVJPQ2padFIzaEJiMGRCUVc5TVZEUmpOMGRJYkRaWlV6SjVRazlJWTJ4UU9FTTNZMnMwVDBFNE0xcFFRbmhGVkVzeGVua3hSblphVlcxb1ZGcDNlbmRJUlVFS1JEWTFUbWhVTW1SWlUwcFNXV3hKZFd0S1ptcEpTV0ZXWjNobVZHdGtTa0lyWlhOYWVtcHNXVkJFYTNWbVEzRmphWEY2UkZSNlptSlZSa29yYWpGMVpBcGhNbU00UlZCV2QyWTJRMWxLV2taYU1FZEpMMkp6VVN0Vk5XVnZZemN3ZW1FeVNtMUlhRVl5YTNocmRIUjZSME0zVTNNOUNpMHRMUzB0UlU1RUlGSlRRU0JRVWtsV1FWUkZJRXRGV1MwdExTMHRDZz09Cg==
 # Repository id, must be filled out in version replacement mode
 # If the repository needs authentication, the authentication information corresponding to this Id should be added to settings.xml
-dew.devops.it.repository.id=trc-releases
+dew_devops_it_repository_id=trc-releases
 # Snapshot  repository url, must be filled out in version replacement mode
-dew.devops.it.repository.url=http://121.41.17.205:18081/nexus/content/repositories/releases/
+dew_devops_it_repository_url=http://121.41.17.205:18081/nexus/content/repositories/releases/
 # Snapshot repository id, must be filled out in version replacement mode
 # If the repository needs authentication, the authentication information corresponding to this Id should be added to settings.xml
-dew.devops.it.snapshotRepository.id=trc-snapshots
+dew_devops_it_snapshotRepository_id=trc-snapshots
 # Snapshot  repository url, must be filled out in version replacement mode
-dew.devops.it.snapshotRepository.url=http://121.41.17.205:18081/nexus/content/repositories/snapshots/</code></pre>
+dew_devops_it_snapshotRepository_url=http://121.41.17.205:18081/nexus/content/repositories/snapshots/</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -8066,7 +8066,7 @@ test deploy:
   tags:
     - test
   script:
-    - mvn -P devops dew:build dew:release
+    - mvn -P devops dew:release
 # 用户验收/预发环境部署
 uat deploy:
   stage: deploy
@@ -8075,7 +8075,7 @@ uat deploy:
   tags:
     - uat
   script:
-    - mvn -P devops dew:build dew:release
+    - mvn -P devops dew:release
 prod deploy: # 生产环境部署
   stage: deploy
   only:
@@ -8083,7 +8083,7 @@ prod deploy: # 生产环境部署
   tags:
     - prod
   script:
-    - mvn -P devops dew:build dew:release</pre>
+    - mvn -P devops dew:release</pre>
 </div>
 </div>
 </li>
@@ -8281,7 +8281,7 @@ test deploy:
     - test
   script:
     # 执行的操作，可以扩展，但要保留以下代码
-    - mvn -P devops dew:build dew:release
+    - mvn -P devops dew:release
     # 可在此处添加代理
     # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.ms" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.ms"
 
@@ -8293,7 +8293,7 @@ uat deploy:
   tags:
     - uat
   script:
-    - mvn -P devops dew:build dew:release
+    - mvn -P devops dew:release
 
 prod deploy: # 生产环境部署
   stage: deploy
@@ -8305,7 +8305,7 @@ prod deploy: # 生产环境部署
     - prod
   script:
     # 执行的操作，可以扩展，但要保留以下代码
-    - mvn -P devops dew:build dew:release
+    - mvn -P devops dew:release
     # 可在此处添加代理
     # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.ms" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.ms"</code></pre>
 </div>

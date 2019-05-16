@@ -17,6 +17,7 @@
 package ms.dew.devops.kernel.flow.build;
 
 import com.ecfront.dew.common.$;
+import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.helper.DockerHelper;
@@ -79,9 +80,9 @@ public abstract class DockerBuildFlow extends BasicFlow {
                 config.getImageVersion());
         logger.info("Reuse image : " + reuseImageName);
         // 从目标环境的镜像仓库拉取镜像到本地
-        DockerHelper.inst(config.getId() + "-append").image.pull(reuseImageName, true);
+        DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).image.pull(reuseImageName, true);
         // 打上当前镜像的Tag
-        DockerHelper.inst(config.getId() + "-append").image.copy(reuseImageName, config.getCurrImageName());
+        DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).image.copy(reuseImageName, config.getCurrImageName());
     }
 
     /**

@@ -34,6 +34,7 @@ import java.util.Set;
  */
 public class FinalProjectConfig extends DewProfile {
 
+
     // 项目Id,对应于maven project id
     private String id;
     // 当前的git commit 或是 重用版本下被重用的git commit
@@ -442,6 +443,7 @@ public class FinalProjectConfig extends DewProfile {
         super.setSkip(true);
         hasError = isError;
         this.setSkipReason(reason);
+        logger.info("Skipped : " + reason);
     }
 
 }

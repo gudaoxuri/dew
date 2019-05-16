@@ -6,7 +6,7 @@
 Fabric8的maven插件( https://github.com/fabric8io/docker-maven-plugin )比较成熟，并且被 Spring Cloud Kubernetes 官方推荐( https://github.com/fabric8-quickstarts/spring-boot-ribbon )。
 
 ``dew`` 之所以没有使用fabric8是因为设计理念有一定差异，``dew`` 追求 ``轻量化、在一定规范下的可定制化、集成化`` ，
-比如实现了基于环境的部署流程，自动判断子项目是否需要发布、版本管理、版本重用模式、钉钉通知等，这些差异是导致自研的原因。
+比如实现了基于环境的部署流程，自动判断应用是否需要发布、版本管理、版本重用模式、钉钉通知等，这些差异是导致自研的原因。
 当然在实现上也借鉴了fabric8比较好的做法，比如JVM参数的自动化处理。
 
 [[devops-best-practices-auth]]

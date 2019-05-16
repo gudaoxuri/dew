@@ -1,6 +1,6 @@
 ==== DevOps示例 : Helloworld前端
 
-本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/
+本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.ms
 
 .说明
 此示例用于演示前端服务的自动化部署到Kubernetes。
@@ -18,12 +18,19 @@ include::.dew[]
 
 .前置准备
 
-. 执行 ``dew-devops.sh`` 初始化项目对应的test环境（详见 <<devops-user-manual>>）
+. 执行 ``dew-devops.sh`` 初始化项目对应的test环境（详见 http://doc.dew.ms/#devops-user-manual ）
 
 .手工执行
 ----
+# 参数设置 (win/unix)
+SET/export dew_devops_kube_config=...
+SET/export dew_devops_docker_host=...
+SET/export dew_devops_docker_registry_url=...
+SET/export dew_devops_docker_registry_username=...
+SET/export dew_devops_docker_registry_password=...
+
 # 执行如下maven命令(发布到test环境)
-mvn -P devops dew:build dew:release -Ddew.devops.profile=test
+mvn -P devops dew:release -Ddew_devops_profile=test
 ----
 
 .Gitlab CI执行

@@ -72,7 +72,7 @@ public class NeedProcessChecker {
                             logger.debug("Latest version is " + lastDeployedVersion);
                             if (!projectConfig.getDisableReuseVersion()) {
                                 // 重用版本
-                                projectConfig.getDeployPlugin().fetchLastDeployedVersion(projectConfig.getId() + "-append",
+                                projectConfig.getDeployPlugin().fetchLastDeployedVersion(projectConfig.getId() + DevOps.APPEND_FLAG,
                                         projectConfig.getAppName(), projectConfig.getNamespace()).ifPresent(lastVersionDeployCommitFromProfile -> {
                                     if (lastDeployedVersion.equals(lastVersionDeployCommitFromProfile)) {
                                         projectConfig.skip("Reuse last version " + lastDeployedVersion + " has been deployed", false);

@@ -35,7 +35,9 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -51,15 +53,11 @@ public abstract class BasicMojo extends AbstractMojo {
     /**
      * 环境标识.
      */
-    private static final String FLAG_DEW_DEVOPS_PROFILE = "dew.devops.profile";
+    private static final String FLAG_DEW_DEVOPS_PROFILE = "dew_devops_profile";
     /**
      * Kubernetes Base64 配置标识.
      */
-    private static final String FLAG_DEW_DEVOPS_KUBE_CONFIG = "dew.devops.kube.config";
-    /**
-     * 指定发布项目名称.
-     */
-    private static final String FLAG_DEW_DEVOPS_ASSIGNATION_PROJECTS = "dew.devops.assignation.projects";
+    private static final String FLAG_DEW_DEVOPS_KUBE_CONFIG = "dew_devops_kube_config";
 
     // ============= 发布与回滚使用 =============
 
@@ -68,72 +66,76 @@ public abstract class BasicMojo extends AbstractMojo {
      * <p>
      * e.g. tcp://10.200.131.182:2375.
      */
-    private static final String FLAG_DEW_DEVOPS_DOCKER_HOST = "dew.devops.docker.host";
+    private static final String FLAG_DEW_DEVOPS_DOCKER_HOST = "dew_devops_docker_host";
     /**
      * Docker registry url标识.
      * <p>
      * e.g. https://harbor.dew.env/v2
      */
-    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL = "dew.devops.docker.registry.url";
+    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL = "dew_devops_docker_registry_url";
     /**
      * Docker registry 用户名标识.
      */
-    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME = "dew.devops.docker.registry.username";
+    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME = "dew_devops_docker_registry_username";
     /**
      * Docker registry 密码标识.
      */
-    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD = "dew.devops.docker.registry.password";
+    private static final String FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD = "dew_devops_docker_registry_password";
+    /**
+     * 指定发布项目名称.
+     */
+    private static final String FLAG_DEW_DEVOPS_ASSIGNATION_PROJECTS = "dew_devops_assignation_projects";
     /**
      * 是否静默处理标识.
      * <p>
      * 仅对发布/回滚有效
      */
-    private static final String FLAG_DEW_DEVOPS_QUIET = "dew.devops.quiet";
+    private static final String FLAG_DEW_DEVOPS_QUIET = "dew_devops_quiet";
 
     // ============= 日志及调试场景使用 =============
     /**
      * 要使用的Pod名称标识.
      */
-    private static final String FLAG_DEW_DEVOPS_POD_NAME = "dew.devops.podName";
+    private static final String FLAG_DEW_DEVOPS_POD_NAME = "dew_devops_podName";
     // ============= 日志场景使用 =============
     /**
      * 是否滚动查看日志标识.
      */
-    private static final String FLAG_DEW_DEVOPS_LOG_FOLLOW = "dew.logger.follow";
+    private static final String FLAG_DEW_DEVOPS_LOG_FOLLOW = "dew_logger_follow";
     // ============= 调试场景使用 =============
     /**
      * 转发端口标识.
      */
-    private static final String FLAG_DEW_DEVOPS_DEBUG_FORWARD_PORT = "dew.devops.debug.forward.port";
+    private static final String FLAG_DEW_DEVOPS_DEBUG_FORWARD_PORT = "dew_devops_debug_forward_port";
 
     // ============= 伸缩场景使用 =============
 
     /**
      * 伸缩Pod数量标识.
      */
-    private static final String FLAG_DEW_DEVOPS_SCALE_REPLICAS = "dew.devops.scale.replicas";
+    private static final String FLAG_DEW_DEVOPS_SCALE_REPLICAS = "dew_devops_scale_replicas";
     /**
      * 是否启用自动伸缩标识.
      */
-    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO = "dew.devops.scale.auto";
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO = "dew_devops_scale_auto";
     /**
      * 自动伸缩Pod数下限标识.
      */
-    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN = "dew.devops.scale.auto.minReplicas";
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN = "dew_devops_scale_auto_minReplicas";
     /**
      * 自动伸缩Pod数上限标识.
      */
-    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX = "dew.devops.scale.auto.maxReplicas";
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX = "dew_devops_scale_auto_maxReplicas";
     /**
      * 自动伸缩条件：CPU平均使用率标识.
      */
-    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG = "dew.devops.scale.auto.cpu.averageUtilization";
+    private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG = "dew_devops_scale_auto_cpu_averageUtilization";
 
     // ============= 测试场景使用 =============
     /**
      * Mock场景下加载外部class的路径标识.
      */
-    private static final String FLAG_DEW_DEVOPS_MOCK_CLASS_PATH = "dew.devops.mock.classpath";
+    private static final String FLAG_DEW_DEVOPS_MOCK_CLASS_PATH = "dew_devops_mock_classpath";
 
 
     // ========================== 接收参数 ==========================
@@ -151,13 +153,6 @@ public abstract class BasicMojo extends AbstractMojo {
      */
     @Parameter(property = FLAG_DEW_DEVOPS_KUBE_CONFIG)
     private String kubeBase64Config;
-
-
-    /**
-     * Assign deploy projects.
-     */
-    @Parameter(property = FLAG_DEW_DEVOPS_ASSIGNATION_PROJECTS)
-    private String assignationProjects;
 
     // ============= 发布与回滚使用 =============
     /**
@@ -183,6 +178,12 @@ public abstract class BasicMojo extends AbstractMojo {
      */
     @Parameter(property = FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD)
     private String dockerRegistryPassword;
+
+    /**
+     * Assign deploy projects.
+     */
+    @Parameter(property = FLAG_DEW_DEVOPS_ASSIGNATION_PROJECTS)
+    private String assignationProjects;
 
     /**
      * The Quiet.
@@ -274,17 +275,17 @@ public abstract class BasicMojo extends AbstractMojo {
             return;
         }
         Map<String, String> formattedProperties = getMavenProperties(mavenSession);
-        formatParameters(mavenSession, formattedProperties);
+        formatParameters(formattedProperties);
         Optional<String> dockerHostAppendOpt =
-                formatParameters(FLAG_DEW_DEVOPS_DOCKER_HOST + "-append", formattedProperties);
+                formatParameters(FLAG_DEW_DEVOPS_DOCKER_HOST + DevOps.APPEND_FLAG, formattedProperties);
         Optional<String> dockerRegistryUrlAppendOpt =
-                formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL + "-append", formattedProperties);
+                formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_URL + DevOps.APPEND_FLAG, formattedProperties);
         Optional<String> dockerRegistryUserNameAppendOpt =
-                formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME + "-append", formattedProperties);
+                formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME + DevOps.APPEND_FLAG, formattedProperties);
         Optional<String> dockerRegistryPasswordAppendOpt =
-                formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD + "-append", formattedProperties);
+                formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD + DevOps.APPEND_FLAG, formattedProperties);
         Optional<String> kubeBase64ConfigAppendOpt =
-                formatParameters(FLAG_DEW_DEVOPS_KUBE_CONFIG + "-append", formattedProperties);
+                formatParameters(FLAG_DEW_DEVOPS_KUBE_CONFIG + DevOps.APPEND_FLAG, formattedProperties);
         try {
             MavenDevOps.Init.init(mavenSession, pluginManager, profile,
                     dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config, assignationProjects,
@@ -336,7 +337,7 @@ public abstract class BasicMojo extends AbstractMojo {
         }
     }
 
-    private void formatParameters(MavenSession session, Map<String, String> formattedProperties) {
+    private void formatParameters(Map<String, String> formattedProperties) {
         formatParameters(FLAG_DEW_DEVOPS_PROFILE, formattedProperties)
                 .ifPresent(obj -> profile = obj);
         formatParameters(FLAG_DEW_DEVOPS_KUBE_CONFIG, formattedProperties)
@@ -375,12 +376,6 @@ public abstract class BasicMojo extends AbstractMojo {
 
     /**
      * 获取格式化后的Maven属性值.
-     * <p>
-     * 此方法从Maven属性获取对应标标识的值，标识会被解析成
-     * 标准标识
-     * 替换 '.'为 '_' 的标识
-     * 去掉 'dew.devops.' 前缀的标识
-     * 替换 '.'为 '_' 并去掉 'dew_devops_' 前缀的标识
      *
      * @param standardFlag        标准标识
      * @param formattedProperties Maven属性
@@ -390,18 +385,6 @@ public abstract class BasicMojo extends AbstractMojo {
         standardFlag = standardFlag.toLowerCase();
         if (formattedProperties.containsKey(standardFlag)) {
             return Optional.of(formattedProperties.get(standardFlag));
-        }
-        String underlineFlag = standardFlag.replaceAll("\\.", "_");
-        if (formattedProperties.containsKey(underlineFlag)) {
-            return Optional.of(formattedProperties.get(underlineFlag));
-        }
-        String shortStandardFlag = standardFlag.substring("dew.devops.".length());
-        if (formattedProperties.containsKey(shortStandardFlag)) {
-            return Optional.of(formattedProperties.get(shortStandardFlag));
-        }
-        String shortUnderlineFlag = underlineFlag.substring("dew_devops_".length());
-        if (formattedProperties.containsKey(shortUnderlineFlag)) {
-            return Optional.of(formattedProperties.get(shortUnderlineFlag));
         }
         return Optional.empty();
     }

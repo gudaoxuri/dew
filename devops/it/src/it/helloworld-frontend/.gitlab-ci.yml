@@ -4,7 +4,6 @@ stages:
 cache:
   paths:
     - node_modules/
-    - .m2/
 
 test deploy:
   stage: deploy
@@ -13,4 +12,4 @@ test deploy:
   tags:
     - test
   script:
-    - mvn -P devops ms.dew:dew-maven-plugin:build ms.dew:dew-maven-plugin:release
+    - mvn -P devops dew:release

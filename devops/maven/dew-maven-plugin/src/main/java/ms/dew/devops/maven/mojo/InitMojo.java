@@ -47,7 +47,7 @@ public class InitMojo extends BasicMojo {
                 .anyMatch(s -> s.contains("ms.dew:dew-maven-plugin:scale")
                         || s.contains("dew:scale"))) {
             if (!autoScale && replicas == 0) {
-                logger.error("Parameter error, When autoScale disabled, dew.devops.scale.replicas can't be 0");
+                logger.error("Parameter error, When autoScale disabled, dew_devops_scale_replicas can't be 0");
                 return false;
             }
             if (autoScale && (minReplicas == 0 || maxReplicas == 0 || minReplicas >= maxReplicas || cpuAvg == 0)) {

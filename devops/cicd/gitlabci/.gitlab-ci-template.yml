@@ -46,7 +46,7 @@ test deploy:
     - test
   script:
     # 执行的操作，可以扩展，但要保留以下代码
-    - mvn -P devops dew:build dew:release
+    - mvn -P devops dew:release
     # 可在此处添加代理
     # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.ms" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.ms"
 
@@ -58,7 +58,7 @@ uat deploy:
   tags:
     - uat
   script:
-    - mvn -P devops dew:build dew:release
+    - mvn -P devops dew:release
 
 prod deploy: # 生产环境部署
   stage: deploy
@@ -70,7 +70,7 @@ prod deploy: # 生产环境部署
     - prod
   script:
     # 执行的操作，可以扩展，但要保留以下代码
-    - mvn -P devops dew:build dew:release
+    - mvn -P devops dew:release
     # 可在此处添加代理
     # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.ms" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.ms"
 

@@ -1,6 +1,6 @@
 ==== DevOps示例 : To-Do
 
-本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/
+本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.ms
 
 .说明
 此示例用于演示以下功能：
@@ -9,6 +9,7 @@
 * 有类库、JVM服务、前端等多种类型
 * 生产环境版本重用
 * 自定义.dew文件
+* 自定义Docker Image
 * 自动化部署到Kubernetes
 * 完成后推送钉钉通知
 
@@ -37,14 +38,23 @@ include::./backend/services/notifier/.dew[]
 
 .前置准备
 
-. 执行 ``dew-devops.sh`` 初始化项目对应的uat和prod环境（详见 <<devops-user-manual>>）
+. 执行 ``dew-devops.sh`` 初始化项目对应的uat和prod环境（详见 http://doc.dew.ms/#devops-user-manual ）
 
 .手工执行
 ----
+# 参数设置 (win/unix)
+SET/export dew_devops_kube_config=...
+SET/export dew_devops_docker_host=...
+SET/export dew_devops_docker_registry_url=...
+SET/export dew_devops_docker_registry_username=...
+SET/export dew_devops_docker_registry_password=...
+SET/export dew_devops_it_snapshotRepository_id=<私库Id，如私库需要认证则此Id对应的认证信息要添加到 settings.xml中>
+SET/export dew_devops_it_snapshotRepository_url=<私库Url>
+
 # 执行如下maven命令(发布到uat环境)
-mvn -P devops dew:build dew:release -Ddew.devops.profile=uat
+mvn -P devops dew:release -Ddew_devops_profile=uat
 # 执行如下maven命令(发布到prod环境)
-mvn -P devops dew:build dew:release -Ddew.devops.profile=prod
+mvn -P devops dew:release -Ddew_devops_profile=prod
 ----
 
 .Gitlab CI执行
