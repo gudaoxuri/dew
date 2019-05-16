@@ -427,7 +427,7 @@ public class ExecuteEventProcessor {
             message.put("successfulExecProjects", executionSuccessfulProjects.stream().map(project -> {
                 Map<String, Object> result = new HashMap<>();
                 result.put("groupId", project.getAppGroup());
-                result.put("artifactId", project.getAppName());
+                result.put("artifactId", project.getMavenProject().getArtifactId());
                 result.put("execMojos", String.join(",", project.getExecuteSuccessfulMojos()));
                 result.put("name", project.getAppShowName());
                 result.put("reason", null);
@@ -438,7 +438,7 @@ public class ExecuteEventProcessor {
                     .map(project -> {
                         Map<String, Object> result = new HashMap<>();
                         result.put("groupId", project.getAppGroup());
-                        result.put("artifactId", project.getAppName());
+                        result.put("artifactId", project.getMavenProject().getArtifactId());
                         result.put("execMojos", String.join(",", project.getExecuteSuccessfulMojos()));
                         result.put("name", project.getAppShowName());
                         result.put("reason", project.getSkipReason().isEmpty() ? "unknown error"
@@ -450,7 +450,7 @@ public class ExecuteEventProcessor {
                     .map(project -> {
                         Map<String, Object> result = new HashMap<>();
                         result.put("groupId", project.getAppGroup());
-                        result.put("artifactId", project.getAppName());
+                        result.put("artifactId", project.getMavenProject().getArtifactId());
                         result.put("execMojos", String.join(",", project.getExecuteSuccessfulMojos()));
                         result.put("name", project.getAppShowName());
                         result.put("reason", project.getSkipReason());
@@ -461,7 +461,7 @@ public class ExecuteEventProcessor {
                     .map(project -> {
                         Map<String, Object> result = new HashMap<>();
                         result.put("groupId", project.getAppGroup());
-                        result.put("artifactId", project.getAppName());
+                        result.put("artifactId", project.getMavenProject().getArtifactId());
                         result.put("execMojos", String.join(",", project.getExecuteSuccessfulMojos()));
                         result.put("name", project.getAppShowName());
                         result.put("reason", project.getSkipReason());
