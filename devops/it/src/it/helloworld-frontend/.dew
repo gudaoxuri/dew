@@ -3,17 +3,3 @@ profiles:
   test:
     # 指定测试环境的namespace
     namespace: dew-test
-    app:
-      serverConfig: |-
-          server {
-            listen       80;
-            server_name  localhost;
-            location / {
-              root   /usr/share/nginx/html;
-              index  index.html index.htm;
-            }
-            if ( $http_host ~* "^(.*)") {
-              set $domain $1;
-              rewrite ^(.*) http://www.baidu.com break;
-            }
-          }

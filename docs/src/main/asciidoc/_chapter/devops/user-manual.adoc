@@ -107,6 +107,8 @@ sh dew-devops.sh
 
 用于部署一个项目下的多个应用，此命令多在项目根目录下执行。
 
+image::./images/deploy-example.gif[]
+
 .命令
 
 [source,bash]
@@ -131,15 +133,15 @@ IMPORTANT: 在CI/CD工具中附加参数的kubernetes、docker相关参数应作
 
 * 依赖排序，使用Maven自身的Reactor机制为项目中的各应用（模块）做依赖排序
 * 配置装配，根据 <<devops-configuration-dew-inheritance-rules>> 完成配置组装
-* 应用探测，用于确定要部署哪些应用
+* 部署探测，用于确定要部署哪些应用
 **  命令优先，如指定部署应用( ``dew_devops_assignation_projects`` ) 则短路后续探测
-**  配置次之，如配置中指定了 ``skip`` 为 ``true`` 则视之为不需要部署的应用
+**  配置次之，如配置中指定了 ``skip: true`` 则视之为不需要部署的应用
 **  版本比对，比对已部署的各应用版本与当前各应用的代码，找到有代码变更的应用，视之为要部署的应用
 **  依赖传递分析，分析没有代码变更的应用，如其依赖包有变更（比如依赖了某些SNAPSHOT的模块）时这些应用也被视为要部署的应用
 * 编译准备，根据配置装配时分析到的应用类型，为不同应用类型执行不同的编译方案
 ** ``Spring Boot/Cloud`` 应用需要执行 ``repackage`` 以打出 ``fatjar``
 ** ``NodeJS`` 应用需要执行对应的 ``node`` 命令完成打包
-* 执行单元测试（可通过 ``-Dmaven.test.skip=true`` 跳过）
+* 单元测试（可通过 ``-Dmaven.test.skip=true`` 跳过）
 * 发布部署，根据配置装配时分析到的部署类型，为不同部署类型执行不同的发布方案
 ** ``Maven`` 方式直接使用 ``mvn deploy``
 ** ``Kubernetes`` 方式先编译 ``Docker Image`` 并上传到 ``Registry`` ，再部署到 ``Kubernetes``
@@ -182,7 +184,7 @@ mvn dew:rollback
 
 IMPORTANT: 在CI/CD工具中附加参数的kubernetes、docker相关参数应作为变量配置到执行器中，对应用本身不可见。
 
-==== 版本卸载
+==== 应用卸载
 
 用于卸载某一个应用，但不会删除其对应的版本信息，此命令在要卸载的应用目录下执行。
 
@@ -213,7 +215,7 @@ mvn dew:log
 # dew_devops_profile                           # 指定的环境
 # dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 # dew_devops_podName                           # 要使用的Pod名称，如不填写当存在多个Pod时会要求用户选择
-# dew.devops.log.follow                        # 是否滚动查看日志
+# dew_devops_log_follow                        # 是否滚动查看日志
 ----
 
 ==== 伸缩扩展

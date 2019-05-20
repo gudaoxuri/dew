@@ -48,7 +48,19 @@ spring:
 
 ==== JVM设置
 
-默认情况下 ``dew`` 会根据容器环境自行设置JVM参数，规则及自定义配置见 <<>> 。
+在 ``app.runOptions`` 配置中可以指定 JVM 的参数（比如 ``-Xms -Xmx``），但同时也可以通过 ``app.containerResourcesLimits`` 和 ``app.containerResourcesRequests`` 指定容器资源的上下限，两者如何配合？
+
+``dew`` 推荐用户设置容器的资源限定，部署时 ``dew`` 会根据容器环境自行设置JVM参数，规则如下：
+
+----
+* 如果系统内存资源 <= 300M 则 设置 -Xmx 为其 25%
+* 如果系统内存资源 > 300M 则 设置 -Xmx 为其 50%
+* 如果JDK版本 < 10 设置 -XX:ParallelGCThreads=<可用CPU核数> -XX:ConcGCThreads=<可用CPU核数> -Djava.util.concurrent.ForkJoinPool.common.parallelism=<可用CPU核数>
+* 如果JDK版本 < 10 设置 -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40
+* 如果JDK版本 >= 10 设置 -XX:+ExitOnOutOfMemoryError
+
+以上规则参考于： https://github.com/fabric8io-images/run-java-sh
+----
 
 ==== Spring Cloud Config的部署方式
 

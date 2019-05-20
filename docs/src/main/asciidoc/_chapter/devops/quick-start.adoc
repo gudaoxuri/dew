@@ -5,7 +5,7 @@ ifndef::imagesdir[:imagesdir: ../../../../../]
 
 NOTE: 本文以 To-Do 项目为示例讲解 ``Dew`` DevOps部分的入门操作，项目地址： https://github.com/dew-ms/devops-example-todo 。
 
-TIP: 关于 TO-Do 项目的介绍请先阅读 <<framework-quick-start>>
+TIP: 关于 To-Do 项目的介绍请先阅读 <<framework-quick-start>>
 
 ==== 功能体验
 

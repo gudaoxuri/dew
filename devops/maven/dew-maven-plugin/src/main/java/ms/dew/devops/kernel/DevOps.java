@@ -55,7 +55,7 @@ public class DevOps {
 
     private static Logger logger = DewLog.build(DevOps.class);
 
-    public final static String APPEND_FLAG = "_append";
+    public static final String APPEND_FLAG = "_append";
 
     /**
      * 全局停止标识，如果为true则表示停止后续各项目的所有操作.

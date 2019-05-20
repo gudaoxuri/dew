@@ -157,7 +157,7 @@ dew_devops_quiet                             # 是否静默处理
 # ============= 日志及调试场景使用 =============
 dew_devops_podName                           # 要使用的Pod名称，如不填写当存在多个Pod时会要求用户选择
 # ============= 日志场景使用 =============
-dew.devops.log.follow                        # 是否滚动查看日志
+dew_devops_log_follow                        # 是否滚动查看日志
 # ============= 调试场景使用 =============
 dew_devops_debug_forward_port                # 转发端口标识
 # ============= 伸缩场景使用 =============

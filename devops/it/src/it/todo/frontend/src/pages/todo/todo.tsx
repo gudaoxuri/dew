@@ -48,9 +48,9 @@ export default class Todo extends Component {
     this.fetchItems();
   }
 
-  onPullDownRefresh() {
+ /* onPullDownRefresh() {
     this.fetchItems();
-  }
+  }*/
 
   onReachBottom() {
     this.fetchItems(true);
