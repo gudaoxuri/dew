@@ -19,7 +19,6 @@ package ms.dew.devops.maven.mojo;
 import io.kubernetes.client.ApiException;
 import ms.dew.devops.kernel.DevOps;
 import org.apache.maven.plugins.annotations.Execute;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import java.io.IOException;
@@ -30,7 +29,7 @@ import java.io.IOException;
  * @author gudaoxuri
  */
 @Mojo(name = "unrelease")
-@Execute(phase = LifecyclePhase.VALIDATE, goal = "init")
+@Execute(goal = "init")
 public class UnReleaseMojo extends BasicMojo {
 
     @Override
