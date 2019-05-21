@@ -1,7 +1,7 @@
 ifndef::imagesdir[:imagesdir: ../../../../../]
 
 [[devops-user-manual]]
-=== DevOps使用手册[TBD]
+=== DevOps使用手册
 
 NOTE: ``Dew`` DevOps部分的核心是由 ``dew-maven-plugin`` 实现。
 
@@ -107,7 +107,10 @@ sh dew-devops.sh
 
 用于部署一个项目下的多个应用，此命令多在项目根目录下执行。
 
-image::./images/deploy-example.gif[]
+++++
+<div style='position:relative; padding-bottom:calc(64.51% + 44px)'><iframe src='https://gfycat.com/ifr/WellwornAmbitiousBalloonfish' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+++++
+
 
 .命令
 

@@ -29,9 +29,11 @@ include::_chapter/framework/best-practices.adoc[]
 
 == 部署运维 DevOps Chapter
 
-include::_chapter/devops/install.adoc[]
+include::_chapter/devops/quick-start.adoc[]
 
 include::_chapter/devops/user-manual.adoc[]
+
+include::_chapter/devops/install.adoc[]
 
 include::_chapter/devops/configuration.adoc[]
 

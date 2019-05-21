@@ -1,5 +1,5 @@
 [[devops-best-practices]]
-=== DevOps最佳实践[TBD]
+=== DevOps最佳实践
 
 ==== 为什么不用 fabric8
 
@@ -62,5 +62,8 @@ spring:
 以上规则参考于： https://github.com/fabric8io-images/run-java-sh
 ----
 
-==== Spring Cloud Config的部署方式
+==== 配置中心选择
+
+由于 ``spring-cloud-kubernetes`` 使用的配置方案并不直观、无法实现版本留存、修改审计、配置加密（非摘要），
+所以 ``dew`` 建议使用 ``Spring Cloud Config`` ，``dew`` 提供了其 helm 版本，详见 <<helm-chart-spring-cloud-config>> 。
 
