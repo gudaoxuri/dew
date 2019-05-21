@@ -32,7 +32,7 @@ import java.io.IOException;
  *
  * @author gudaoxuri
  */
-@Mojo(name = "build", defaultPhase = LifecyclePhase.DEPLOY, requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "build", requiresDependencyResolution = ResolutionScope.COMPILE)
 @Execute(phase = LifecyclePhase.PACKAGE, goal = "prepare")
 public class BuildMojo extends BasicMojo {
 
