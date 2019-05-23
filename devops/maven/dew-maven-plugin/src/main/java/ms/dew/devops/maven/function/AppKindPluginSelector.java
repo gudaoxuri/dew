@@ -58,7 +58,6 @@ public class AppKindPluginSelector {
                 + "resources").listFiles())
                 .anyMatch((res -> res.getName().toLowerCase().contains("application")
                         || res.getName().toLowerCase().contains("bootstrap")))
-                // 包含DependencyManagement内容，不精确
                 && mavenProject.getArtifacts().stream()
                 .map(artifact -> artifact.getGroupId() + ":" + artifact.getArtifactId())
                 .anyMatch("org.springframework.boot:spring-boot-starter-web"::equalsIgnoreCase)

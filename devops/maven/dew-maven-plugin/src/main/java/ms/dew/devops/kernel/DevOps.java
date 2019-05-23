@@ -55,6 +55,8 @@ public class DevOps {
 
     private static Logger logger = DewLog.build(DevOps.class);
 
+    public static final String APPEND_FLAG = "_append";
+
     /**
      * 全局停止标识，如果为true则表示停止后续各项目的所有操作.
      * <p>
@@ -95,12 +97,12 @@ public class DevOps {
                         config.getKube().getBase64Config());
                 if (config.getAppendProfile() != null) {
                     // 初始化附加环境，多用于版本重用模式
-                    DockerHelper.init(config.getId() + "-append", logger,
+                    DockerHelper.init(config.getId() + APPEND_FLAG, logger,
                             config.getAppendProfile().getDocker().getHost(),
                             config.getAppendProfile().getDocker().getRegistryUrl(),
                             config.getAppendProfile().getDocker().getRegistryUserName(),
                             config.getAppendProfile().getDocker().getRegistryPassword());
-                    KubeHelper.init(config.getId() + "-append", logger,
+                    KubeHelper.init(config.getId() + APPEND_FLAG, logger,
                             config.getAppendProfile().getKube().getBase64Config());
                 }
             });

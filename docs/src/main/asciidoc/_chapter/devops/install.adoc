@@ -834,22 +834,33 @@ spec:
     options:
       es:
         server-urls: http://dew-elasticsearch-master:9200
+  ingress:
+    enabled: false # 用于使用下面自定义的Ingress
 EOF
 
 # Jaeger实例可在不同namespace下创建使用，使用中请注意namespace的问题。
 # 使用sidecar的方式部署项目：https://github.com/jaegertracing/jaeger-operator#auto-injection-of-jaeger-agent-sidecars
 # 使用daemonset的方式部署项目：https://github.com/jaegertracing/jaeger-operator#agent-as-daemonset
 
-# 添加Host，修改Jaeger实例的Ingress
-kubectl patch ingress jaeger-query -n devops -p "spec:
- rules:
-   - host: jaeger.dew.ms
-     http:
-       paths:
-         - backend:
-             serviceName: jaeger-query
-             servicePort: 16686
-           path: /"
+# 添加Host，为Jaeger实例创建Ingress
+# 注意serviceName与Jaeger实例创建的service名称保持一致
+cat <<EOF | kubectl -n devops apply -f -
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: jaeger-query
+spec:
+  rules:
+    - host: jaeger.dew.ms
+      http:
+        paths:
+          - backend:
+              serviceName: jaeger-query
+              servicePort: 16686
+            path: /
+EOF
 
 # Pod的调度
 # 目前jaeger-operator暂不支持直接设置，请关注该项目的更新情况。

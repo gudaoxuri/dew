@@ -162,23 +162,23 @@
                         <groupId>${project.groupId}</groupId>
                     </scriptVariables>
                     <properties>
-                        <dew.devops.quiet>true</dew.devops.quiet>
-                        <dew.devops.docker.host>${dew.devops.docker.host}</dew.devops.docker.host>
-                        <dew.devops.docker.registry.url>${dew.devops.docker.registry.url}
-                        </dew.devops.docker.registry.url>
-                        <dew.devops.docker.registry.username>${dew.devops.docker.registry.username}
-                        </dew.devops.docker.registry.username>
-                        <dew.devops.docker.registry.password>${dew.devops.docker.registry.password}
-                        </dew.devops.docker.registry.password>
-                        <dew.devops.kube.config>${dew.devops.kube.config}</dew.devops.kube.config>
-                        <dew.devops.it.repository.id>${dew.devops.it.repository.id}
-                        </dew.devops.it.repository.id>
-                        <dew.devops.it.repository.url>${dew.devops.it.repository.url}
-                        </dew.devops.it.repository.url>
-                        <dew.devops.it.snapshotRepository.id>${dew.devops.it.snapshotRepository.id}
-                        </dew.devops.it.snapshotRepository.id>
-                        <dew.devops.it.snapshotRepository.url>${dew.devops.it.snapshotRepository.url}
-                        </dew.devops.it.snapshotRepository.url>
+                        <dew_devops_quiet>true</dew_devops_quiet>
+                        <dew_devops_docker_host>${dew_devops_docker_host}</dew_devops_docker_host>
+                        <dew_devops_docker_registry_url>${dew_devops_docker_registry_url}
+                        </dew_devops_docker_registry_url>
+                        <dew_devops_docker_registry_username>${dew_devops_docker_registry_username}
+                        </dew_devops_docker_registry_username>
+                        <dew_devops_docker_registry_password>${dew_devops_docker_registry_password}
+                        </dew_devops_docker_registry_password>
+                        <dew_devops_kube_config>${dew_devops_kube_config}</dew_devops_kube_config>
+                        <dew_devops_it_repository_id>${dew_devops_it_repository_id}
+                        </dew_devops_it_repository_id>
+                        <dew_devops_it_repository_url>${dew_devops_it_repository_url}
+                        </dew_devops_it_repository_url>
+                        <dew_devops_it_snapshotRepository_id>${dew_devops_it_snapshotRepository_id}
+                        </dew_devops_it_snapshotRepository_id>
+                        <dew_devops_it_snapshotRepository_url>${dew_devops_it_snapshotRepository_url}
+                        </dew_devops_it_snapshotRepository_url>
                     </properties>
                 </configuration>
                 <executions>

@@ -1,6 +1,6 @@
 ==== DevOps示例 : Helloworld类库
 
-本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/
+本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.ms
 
 .说明
 此示例用于演示类库的自动化部署到Maven。
@@ -13,10 +13,12 @@ include::.dew[]
 
 .手工执行
 ----
+# 参数设置 (win/unix)
+SET/export dew_devops_it_snapshotRepository_id=<私库Id，如私库需要认证则此Id对应的认证信息要添加到 settings.xml中>
+SET/export dew_devops_it_snapshotRepository_url=<私库Url>
+
 # 执行如下maven命令(发布到test环境)
-mvn -P devops dew:build dew:release -Ddew.devops.profile=test \
-    -Ddew.devops.it.snapshotRepository.id=<私库Id，如私库需要认证则此Id对应的认证信息要添加到 settings.xml中> \
-    -Ddew.devops.it.snapshotRepository.url=<私库Url> \
+mvn -P devops dew:release -Ddew_devops_profile=test
 ----
 
 .Gitlab CI执行

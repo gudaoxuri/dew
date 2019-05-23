@@ -34,10 +34,10 @@
 
     <properties>
         <sonar.skip>true</sonar.skip>
-        <dew.devops.it.repository.id>trc-releases</dew.devops.it.repository.id>
-        <dew.devops.it.repository.url>http://121.41.17.205:18081/nexus/content/repositories/releases/</dew.devops.it.repository.url>
-        <dew.devops.it.snapshotRepository.id>trc-snapshots</dew.devops.it.snapshotRepository.id>
-        <dew.devops.it.snapshotRepository.url>http://121.41.17.205:18081/nexus/content/repositories/snapshots/</dew.devops.it.snapshotRepository.url>
+        <dew_devops_it_repository_id>trc-releases</dew_devops_it_repository_id>
+        <dew_devops_it_repository_url>http://121.41.17.205:18081/nexus/content/repositories/releases/</dew_devops_it_repository_url>
+        <dew_devops_it_snapshotRepository_id>trc-snapshots</dew_devops_it_snapshotRepository_id>
+        <dew_devops_it_snapshotRepository_url>http://121.41.17.205:18081/nexus/content/repositories/snapshots/</dew_devops_it_snapshotRepository_url>
     </properties>
 
     <modules>
@@ -64,19 +64,19 @@
 
     <distributionManagement>
         <repository>
-            <id>${dew.devops.it.repository.id}</id>
-            <url>${dew.devops.it.repository.url}</url>
+            <id>${dew_devops_it_repository_id}</id>
+            <url>${dew_devops_it_repository_url}</url>
         </repository>
         <snapshotRepository>
-            <id>${dew.devops.it.snapshotRepository.id}</id>
-            <url>${dew.devops.it.snapshotRepository.url}</url>
+            <id>${dew_devops_it_snapshotRepository_id}</id>
+            <url>${dew_devops_it_snapshotRepository_url}</url>
         </snapshotRepository>
     </distributionManagement>
 
     <repositories>
         <repository>
-            <id>${dew.devops.it.snapshotRepository.id}</id>
-            <url>${dew.devops.it.snapshotRepository.url}</url>
+            <id>${dew_devops_it_snapshotRepository_id}</id>
+            <url>${dew_devops_it_snapshotRepository_url}</url>
         </repository>
         <repository>
             <id>central</id>

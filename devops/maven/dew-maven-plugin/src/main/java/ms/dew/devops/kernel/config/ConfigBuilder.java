@@ -335,8 +335,8 @@ public class ConfigBuilder {
             throw new ConfigException("In reuse version mode, "
                     + "'kubernetes base64 config' and 'docker host' must be specified by "
                     + "command-line arguments '"
-                    + "dew.devops.kube.config-append'/ "
-                    + "dew.devops.docker.host-append'"
+                    + "dew_devops_kube_config-append'/ "
+                    + "dew_devops_docker_host-append'"
                     + "OR '.dew' profile configuration file");
         }
         finalProjectConfig.setAppendProfile(appendProfile);

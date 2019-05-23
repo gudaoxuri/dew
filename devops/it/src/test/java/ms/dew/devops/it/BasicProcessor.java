@@ -80,12 +80,12 @@ public abstract class BasicProcessor {
         logger.info("Load config from " + configPath);
         Properties properties = new Properties();
         properties.load(new FileInputStream(configPath));
-        kubeConfig = properties.getProperty("dew.devops.kube.config");
-        dockerHost = properties.getProperty("dew.devops.docker.host");
-        dockerRegistryUrl = properties.getProperty("dew.devops.docker.registry.url");
-        dockerRegistryUserName = properties.getProperty("dew.devops.docker.registry.username");
-        dockerRegistryPassword = properties.getProperty("dew.devops.docker.registry.password");
-        itSnapshotRepositoryId = properties.getProperty("dew.devops.it.snapshotRepository.id");
-        itSnapshotRepositoryUrl = properties.getProperty("dew.devops.it.snapshotRepository.url");
+        kubeConfig = properties.getProperty("dew_devops_kube_config");
+        dockerHost = properties.getProperty("dew_devops_docker_host");
+        dockerRegistryUrl = properties.getProperty("dew_devops_docker_registry_url");
+        dockerRegistryUserName = properties.getProperty("dew_devops_docker_registry_username");
+        dockerRegistryPassword = properties.getProperty("dew_devops_docker_registry_password");
+        itSnapshotRepositoryId = properties.getProperty("dew_devops_it_snapshotRepository_id");
+        itSnapshotRepositoryUrl = properties.getProperty("dew_devops_it_snapshotRepository_url");
     }
 }

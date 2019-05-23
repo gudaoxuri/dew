@@ -9,8 +9,8 @@
 X Build Project                 // 构建工程
 |- sources                      // 源码目录
 |-  |- basics                   // 基础源码，为各服务工程的依赖，要求deploy到Maven仓库
-|-  |-  |- parent               // 父工程，所有服务端项目的根POM
-|-  |-  |- common               // 公共工程，所有服务端项目的基础依赖
+|-  |-  |- parent               // 父工程，所有服务端应用的根POM
+|-  |-  |- common               // 公共工程，所有服务端应用的基础依赖
 |-  |-  |- common-service       // 公共服务工程，所有服务工程的根POM，自身依赖于common
 |-  |-  |- <...>                // 其它基础工程，比如common-spark，大数据服务的基础依赖
 |-  |- services                 // 服务源码，对应于一个个微服务

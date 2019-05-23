@@ -32,7 +32,6 @@ import javax.annotation.PostConstruct;
 @RestController
 public class NotifierController {
 
-
     private static final Logger logger = LoggerFactory.getLogger(NotifierController.class);
 
     /**

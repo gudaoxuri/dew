@@ -18,7 +18,6 @@ package ms.dew.devops.maven.mojo;
 
 import ms.dew.devops.kernel.function.StatusReporter;
 import ms.dew.devops.maven.MavenDevOps;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
@@ -29,7 +28,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  *
  * @author gudaoxuri
  */
-@Mojo(name = "init", defaultPhase = LifecyclePhase.VALIDATE, requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "init", requiresDependencyResolution = ResolutionScope.COMPILE)
 public class InitMojo extends BasicMojo {
 
     @Override
@@ -42,6 +41,18 @@ public class InitMojo extends BasicMojo {
                         s.contains("ms.dew:dew-maven-plugin:release")
                                 || s.contains("dew:release"))) {
             MavenDevOps.Process.needProcessCheck(quiet);
+        }
+        if (mavenSession.getGoals().stream().map(String::toLowerCase)
+                .anyMatch(s -> s.contains("ms.dew:dew-maven-plugin:scale")
+                        || s.contains("dew:scale"))) {
+            if (!autoScale && replicas == 0) {
+                logger.error("Parameter error, When autoScale disabled, dew_devops_scale_replicas can't be 0");
+                return false;
+            }
+            if (autoScale && (minReplicas == 0 || maxReplicas == 0 || minReplicas >= maxReplicas || cpuAvg == 0)) {
+                logger.error("Parameter error, Current mode is autoScale model");
+                return false;
+            }
         }
         return true;
     }

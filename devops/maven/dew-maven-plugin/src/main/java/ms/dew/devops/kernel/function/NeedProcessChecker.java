@@ -72,7 +72,7 @@ public class NeedProcessChecker {
                             logger.debug("Latest version is " + lastDeployedVersion);
                             if (!projectConfig.getDisableReuseVersion()) {
                                 // 重用版本
-                                projectConfig.getDeployPlugin().fetchLastDeployedVersion(projectConfig.getId() + "-append",
+                                projectConfig.getDeployPlugin().fetchLastDeployedVersion(projectConfig.getId() + DevOps.APPEND_FLAG,
                                         projectConfig.getAppName(), projectConfig.getNamespace()).ifPresent(lastVersionDeployCommitFromProfile -> {
                                     if (lastDeployedVersion.equals(lastVersionDeployCommitFromProfile)) {
                                         projectConfig.skip("Reuse last version " + lastDeployedVersion + " has been deployed", false);
@@ -188,14 +188,14 @@ public class NeedProcessChecker {
         dependencyProcess(projectConfigs, needProcessSnapshotProjects);
     }
 
-    private static void dependencyProcess(Collection<FinalProjectConfig> projectConfigs, List<String> needProcessSnapshotProjects) {
+    private static void dependencyProcess(Collection<FinalProjectConfig> projectConfigs, List<String> needProcessProjects) {
         projectConfigs.stream()
                 // 所有跳过的项目
                 .filter(DewProfile::getSkip)
                 // 找到有依赖于需要处理的快照项目
                 .filter(projectConfig ->
                         projectConfig.getMavenProject().getArtifacts().stream()
-                                .anyMatch(artifact -> needProcessSnapshotProjects.contains(artifact.getId())))
+                                .anyMatch(artifact -> needProcessProjects.contains(artifact.getId())))
                 .forEach(projectConfig -> {
                     // 这些项目不能跳过
                     projectConfig.setSkip(false);

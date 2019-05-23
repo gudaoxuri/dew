@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -71,6 +72,7 @@ public class MavenDevOps {
          * @param inputDockerRegistryUserName     the input docker registry user name
          * @param inputDockerRegistryPassword     the input docker registry password
          * @param inputKubeBase64Config           the input kube base 64 config
+         * @param inputAssignationProjects        the assignation projects
          * @param dockerHostAppendOpt             the docker host append opt
          * @param dockerRegistryUrlAppendOpt      the docker registry url append opt
          * @param dockerRegistryUserNameAppendOpt the docker registry user name append opt
@@ -82,7 +84,7 @@ public class MavenDevOps {
                                              String inputProfile,
                                              String inputDockerHost, String inputDockerRegistryUrl,
                                              String inputDockerRegistryUserName, String inputDockerRegistryPassword,
-                                             String inputKubeBase64Config,
+                                             String inputKubeBase64Config, String inputAssignationProjects,
                                              Optional<String> dockerHostAppendOpt, Optional<String> dockerRegistryUrlAppendOpt,
                                              Optional<String> dockerRegistryUserNameAppendOpt, Optional<String> dockerRegistryPasswordAppendOpt,
                                              Optional<String> kubeBase64ConfigAppendOpt,
@@ -102,7 +104,7 @@ public class MavenDevOps {
                 YamlHelper.init(logger);
                 initFinalConfig(session, inputProfile,
                         inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
-                        inputKubeBase64Config,
+                        inputKubeBase64Config, inputAssignationProjects,
                         dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
                         kubeBase64ConfigAppendOpt);
                 DevOps.Init.init(mockClasspath);
@@ -115,7 +117,8 @@ public class MavenDevOps {
         private static void initFinalConfig(MavenSession session, String inputProfile,
                                             String inputDockerHost, String inputDockerRegistryUrl,
                                             String inputDockerRegistryUserName, String inputDockerRegistryPassword,
-                                            String inputKubeBase64Config, Optional<String> dockerHostAppendOpt,
+                                            String inputKubeBase64Config, String inputAssignationProjects,
+                                            Optional<String> dockerHostAppendOpt,
                                             Optional<String> dockerRegistryUrlAppendOpt,
                                             Optional<String> dockerRegistryUserNameAppendOpt,
                                             Optional<String> dockerRegistryPasswordAppendOpt,
@@ -176,6 +179,30 @@ public class MavenDevOps {
                     logger.debug("[" + project.getGroupId() + ":" + project.getArtifactId() + "] skipped");
                 }
             }
+            initAssignDeploymentProjects(inputAssignationProjects, session.getProjectDependencyGraph().getSortedProjects());
+        }
+
+        private static void initAssignDeploymentProjects(String assignationProjects, List<MavenProject> projects) {
+            if (null != assignationProjects) {
+                projects.forEach(project -> {
+                    if (assignationProjects.contains(project.getArtifactId())) {
+                        notSkip(DevOps.Config.getProjectConfig(project.getId()), project, false);
+                    } else {
+                        DevOps.Config.getProjectConfig(project.getId()).skip("Not assign to release", false);
+                    }
+                });
+            }
+        }
+
+        private static void notSkip(FinalProjectConfig projectConfig, MavenProject project, Boolean isParent) {
+            if (isParent) {
+                projectConfig.setSkip(false);
+                projectConfig.setSkipReason("");
+            }
+            if (project.isExecutionRoot()) {
+                return;
+            }
+            notSkip(DevOps.Config.getProjectConfig(project.getParent().getId()), project.getParent(), true);
         }
     }
 

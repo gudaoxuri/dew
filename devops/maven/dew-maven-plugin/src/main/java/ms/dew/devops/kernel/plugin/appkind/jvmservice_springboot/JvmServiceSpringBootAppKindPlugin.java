@@ -20,7 +20,12 @@ import com.ecfront.dew.common.$;
 import com.fasterxml.jackson.databind.JsonNode;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
+import ms.dew.devops.kernel.flow.debug.DefaultDebugFlow;
+import ms.dew.devops.kernel.flow.log.DefaultLogFlow;
 import ms.dew.devops.kernel.flow.release.KubeReleaseFlow;
+import ms.dew.devops.kernel.flow.rollback.DefaultRollbackFlow;
+import ms.dew.devops.kernel.flow.scale.DefaultScaleFlow;
+import ms.dew.devops.kernel.flow.unrelease.DefaultUnReleaseFlow;
 import ms.dew.devops.kernel.helper.YamlHelper;
 import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
 
@@ -127,6 +132,31 @@ public class JvmServiceSpringBootAppKindPlugin implements AppKindPlugin {
     }
 
     @Override
+    public BasicFlow unReleaseFlow() {
+        return new DefaultUnReleaseFlow();
+    }
+
+    @Override
+    public BasicFlow rollbackFlow() {
+        return new DefaultRollbackFlow();
+    }
+
+    @Override
+    public BasicFlow scaleFlow(int replicas, boolean autoScale, int minReplicas, int maxReplicas, int cpuAvg) {
+        return new DefaultScaleFlow(replicas, autoScale, minReplicas, maxReplicas, cpuAvg);
+    }
+
+    @Override
+    public BasicFlow logFlow(String podName, boolean follow) {
+        return new DefaultLogFlow(podName, follow);
+    }
+
+    @Override
+    public BasicFlow debugFlow(String podName, int forwardPort) {
+        return new DefaultDebugFlow(podName, forwardPort);
+    }
+
+    @Override
     public Map<String, String> getEnv(FinalProjectConfig projectConfig) {
         return new HashMap<String, String>() {
             {
@@ -152,7 +182,7 @@ public class JvmServiceSpringBootAppKindPlugin implements AppKindPlugin {
         }
         if (config.getApp().getMetricsEnabled()) {
             containerEnvJavaOptionsValue += " -Dmanagement.endpoints.web.exposure.include=*"
-                    + " -Dmetrics.tags:application=${spring.application.name}";
+                    + " -Dmanagement.metrics.tags.application=" + config.getAppName();
         }
         return containerEnvJavaOptionsValue;
     }

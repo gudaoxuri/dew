@@ -16,7 +16,9 @@
 
 package ms.dew.devops.kernel.config;
 
+import ms.dew.devops.kernel.util.DewLog;
 import ms.dew.notification.NotifyConfig;
+import org.slf4j.Logger;
 
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +30,8 @@ import java.util.Set;
  * @author gudaoxuri
  */
 public class DewProfile {
+
+    protected static final Logger logger = DewLog.build(DewProfile.class);
 
     // 环境名称，内部使用，不需要显式指定
     private String profile;

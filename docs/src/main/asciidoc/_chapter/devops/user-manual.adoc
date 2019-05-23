@@ -1,5 +1,7 @@
+ifndef::imagesdir[:imagesdir: ../../../../../]
+
 [[devops-user-manual]]
-=== DevOps使用手册[TBD]
+=== DevOps使用手册
 
 NOTE: ``Dew`` DevOps部分的核心是由 ``dew-maven-plugin`` 实现。
 
@@ -43,134 +45,324 @@ NOTE: ``Dew`` DevOps部分的核心是由 ``dew-maven-plugin`` 实现。
 
 ==== 支持的项目类型
 
+目前支持以下项目类型：
+
+* ``Spring Boot/Cloud`` 发布到 ``Kubernetes``
+* ``NodeJS`` 发布到 ``Kubernetes``
+* ``JVM Libraries`` 发布到 ``Maven Repository``
+* ``POM`` 发布到 ``Maven Repository``
+
+==== NodeJS项目的特殊处理
+
+NodeJS项目需要添加Maven项目。
+
+[source,xml]
+.处理步骤
+----
+<!-- 1. 添加pom.xml文件，格式如下 -->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- parent要最终指向带有 profile为 devops 的父pom，比如 parent-starter -->
+  <parent>
+    ...
+  </parent>
+
+  <groupId>...</groupId>
+  <artifactId>...</artifactId>
+  <packaging>pom</packaging>
+
+  ...
+</project>
+
+<!-- 2. 将此项目做为module引入 -->
+----
+
+[source,xml]
+.pom.xml示例
+----
+include::../../../../../../devops/it/src/it/todo/frontend/pom.xml[]
+----
+
 ==== 项目配置
 
-Maven配置
+.项目初始化
 
-脚本使用
+[source,bash]
+----
+curl -O https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/sh/dew-devops.sh
+sh dew-devops.sh
+# 选择对应操作，根据提示操作即可
+# 选择 1 进行集群初始化和 gitlab-runner 安装
+# 选择 2 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等
+----
 
-==== 打包与部署
+.Dew和Maven的配置
 
-重用版本
+见：<<devops-configuration>>
+
+==== 打包部署
+
+用于部署一个项目下的多个应用，此命令多在项目根目录下执行。
+
+++++
+<div style='position:relative; padding-bottom:calc(64.51% + 44px)'><iframe src='https://gfycat.com/ifr/WellwornAmbitiousBalloonfish' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+++++
+
+
+.命令
+
+[source,bash]
+----
+# 基础命令
+mvn dew:release
+
+# ====================== 附加参数 ======================
+# dew_devops_profile                           # 指定的环境
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
+# dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
+# dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+# dew_devops_docker_registry_username          # Docker Registry 用户名
+# dew_devops_docker_registry_password          # Docker Registry 密码
+# dew_devops_assignation_projects              # 指定部署应用artifactId  多个以逗号分隔
+# dew_devops_quiet                             # 是否静默处理
+----
+
+IMPORTANT: 在CI/CD工具中附加参数的kubernetes、docker相关参数应作为变量配置到执行器中，对应用本身不可见。
+
+.核心流程
+
+* 依赖排序，使用Maven自身的Reactor机制为项目中的各应用（模块）做依赖排序
+* 配置装配，根据 <<devops-configuration-dew-inheritance-rules>> 完成配置组装
+* 部署探测，用于确定要部署哪些应用
+**  命令优先，如指定部署应用( ``dew_devops_assignation_projects`` ) 则短路后续探测
+**  配置次之，如配置中指定了 ``skip: true`` 则视之为不需要部署的应用
+**  版本比对，比对已部署的各应用版本与当前各应用的代码，找到有代码变更的应用，视之为要部署的应用
+**  依赖传递分析，分析没有代码变更的应用，如其依赖包有变更（比如依赖了某些SNAPSHOT的模块）时这些应用也被视为要部署的应用
+* 编译准备，根据配置装配时分析到的应用类型，为不同应用类型执行不同的编译方案
+** ``Spring Boot/Cloud`` 应用需要执行 ``repackage`` 以打出 ``fatjar``
+** ``NodeJS`` 应用需要执行对应的 ``node`` 命令完成打包
+* 单元测试（可通过 ``-Dmaven.test.skip=true`` 跳过）
+* 发布部署，根据配置装配时分析到的部署类型，为不同部署类型执行不同的发布方案
+** ``Maven`` 方式直接使用 ``mvn deploy``
+** ``Kubernetes`` 方式先编译 ``Docker Image`` 并上传到 ``Registry`` ，再部署到 ``Kubernetes``
+* 版本处理，部署完成后打上当前版本号
+* 结果通知，发送钉钉或HTTP请求完成结果通知
+
+.版本重用模式
+
+一般项目都会要求生产环境的代码要与预发/UAT环境最后一次验收通过的代码保持一致，具体到容器中即要保证两者的 ``Docker Image`` 相同。
+
+版本重用模式可以实现部署时重用某一环境 ``Docker Image`` 的要求。其核心流程如下：
+
+* 重用判定，以一套规则判断当前是否在重用模式下，也可使用 ``disableReuseVersion: true/false , reuseLastVersionFromProfile: <目标环境名称>`` 指定是否是重用模式
+* 镜像获取，从目标环境获取镜像并上传到当前环境的 ``Registry`` 中
+* 后续操作同普通模式的流程
+
+.并行部署
+
+``Dew`` 支持使用Maven的 ``-T `` 实现并行编译部署，例如： ``mvn -T 1C dew:release``
 
 ==== 版本回滚
 
-==== 版本卸载
+用于回滚某一个应用，此命令在要回滚的应用目录下执行。
+
+.命令
+
+[source,bash]
+----
+# 基础命令
+mvn dew:rollback
+
+# ====================== 附加参数 ======================
+# dew_devops_profile                           # 指定的环境
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
+# dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
+# dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+# dew_devops_docker_registry_username          # Docker Registry 用户名
+# dew_devops_docker_registry_password          # Docker Registry 密码
+----
+
+IMPORTANT: 在CI/CD工具中附加参数的kubernetes、docker相关参数应作为变量配置到执行器中，对应用本身不可见。
+
+==== 应用卸载
+
+用于卸载某一个应用，但不会删除其对应的版本信息，此命令在要卸载的应用目录下执行。
+
+.命令
+
+[source,bash]
+----
+# 基础命令
+mvn dew:unrelease
+
+# ====================== 附加参数 ======================
+# dew_devops_profile                           # 指定的环境
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
+----
 
 ==== 日志查看
 
+用于查看某一个应用的日志，此命令在要查看日志的应用目录下执行。
+
+.命令
+
+[source,bash]
+----
+# 基础命令
+mvn dew:log
+
+# ====================== 附加参数 ======================
+# dew_devops_profile                           # 指定的环境
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
+# dew_devops_podName                           # 要使用的Pod名称，如不填写当存在多个Pod时会要求用户选择
+# dew_devops_log_follow                        # 是否滚动查看日志
+----
+
 ==== 伸缩扩展
+
+用于伸缩某一个应用，此命令在要伸缩的应用目录下执行。
+
+.命令
+
+[source,bash]
+----
+# 基础命令
+mvn dew:scale
+
+# ====================== 附加参数 ======================
+# dew_devops_scale_replicas                    # 伸缩Pod数量
+# dew_devops_scale_auto                        # 是否启用自动伸缩
+# dew_devops_scale_auto_minReplicas            # 自动伸缩Pod数下限
+# dew_devops_scale_auto_maxReplicas            # 自动伸缩Pod数上限
+# dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使用率标识
+----
+
+NOTE: ``dew_devops_scale_auto: false``（默认情况） 时 ``dew_devops_scale_replicas`` 为必要参数，反之另几个参数为必要参数。
 
 ==== CI/CD工具支持-Gitlab CI
 
-通过分支变更触发
+应用的部署与回滚为 ``DevOps`` 的核心操作，这些操作应该与 ``CI/CD`` 工具集成使用。
 
-删除
+``Dew`` 官方支持与 ``Gitlab CI`` 集成，步骤如下：
+
+* 使用 ``dew-devops.sh`` 初始化项目时填写 ``Gitlab CI`` 相关信息
+* 在项目根目录下添加 ``.gitlab-ci.yml`` 即可，格式如下：
+
+[source,yaml]
+----
+include::../../../../../../devops/it/src/it/todo/.gitlab-ci.yml[]
+----
+
+.自动化部署
+
+当对应的分支有commit时即可触发部署。
+
+.版本回滚
+
+在 ``Gitlab CI Pipelines`` 中进入要回滚的 ``Pipeline`` ，点击 ``Retry`` 即可。
+
+image::./images/gitlab-ci-rollback.png[]
 
 ==== 执行通知
 
-. 钉钉 只支持markdown格式的钉钉消息
+目前支持 ``钉钉`` 与 ``HTTP`` 两种方式：
 
-. HTTP 数据结构分为以下几种情况
+* 钉钉支持markdown格式的钉钉消息
+* HTTP数据结构分为以下几种情况
 
-PROCESS_EMPTY(空项目)
+[source,js]
 ----
+// PROCESS_EMPTY(空项目)
 {
-	"title": "DevOps process successful",      # 消息标题
-	"content": {                               # 消息内容
-		"kind": "PROCESS_EMPTY",               # 过程处理类型
-		"ci": "",                              # ci操作
-		"message": {}                          # 消息结果内容
+	"title": "DevOps process successful",         // 消息标题
+	"content": {                                  // 消息内容
+		"kind": "PROCESS_EMPTY",                  // 过程处理类型
+		"ci": "",                                 // CI操作
+		"message": {}                             // 消息结果内容
 	}
 }
-----
-PROCESS_INIT(初始化)
-----
+// PROCESS_INIT(初始化)
 {
-	"title": "DevOps process successful",      # 消息标题
-	"content": {                               # 消息内容
-		"kind": "PROCESS_INIT",                # 过程处理类型
-		"ci": "",                              # ci操作
-		"message": {                           # 消息结果内容
-			"profile": "uat",                  # 分支或者环境
-			"project": "todo-parent",          # 项目名称
+	"title": "DevOps process successful",         // 消息标题
+	"content": {                                  // 消息内容
+		"kind": "PROCESS_INIT",                   // 过程处理类型
+		"ci": "",                                 // CI操作
+		"message": {                              // 消息结果内容
+			"profile": "uat",                     // 分支或者环境
+			"project": "todo-parent",             // 应用名称
 		}
 	}
 }
-----
-PROCESS_EXECUTE_SUCCESS(成功)/PROCESS_EXECUTE_FAILURE(失败)
-----
+// PROCESS_EXECUTE_SUCCESS(成功)/PROCESS_EXECUTE_FAILURE(失败)
 {
-	"title": "DevOps process successful",         # 消息标题
-	"content": {                                  # 消息内容
-		"kind": "PROCESS_EXECUTE_SUCCESS",        # 过程处理类型
-		"ci": "",                                 # ci操作
-		"message": {                              # 消息结果内容
-			"mojoName": "release",                # mvn操作步骤
-            "profile": "uat",                     # 分支或者环境
-            "project": "todo-parent",             # 项目名称
-            "successfulFlag": "Successful",       # 成功标识
-            "group": "ms.dew.devops.it",          # 项目group名称
-            "message":"***",                      # 错误信息
-            "throwable":"**"                      # 错误
+	"title": "DevOps process successful",         // 消息标题
+	"content": {                                  // 消息内容
+		"kind": "PROCESS_EXECUTE_SUCCESS",        // 过程处理类型
+		"ci": "",                                 // CI操作
+		"message": {                              // 消息结果内容
+			"mojoName": "release",                // mvn操作步骤
+            "profile": "uat",                     // 分支或者环境
+            "project": "todo-parent",             // 应用名称
+            "successfulFlag": "Successful",       // 成功标识
+            "group": "ms.dew.devops.it",          // 应用group名称
+            "message":"***",                      // 错误信息
+            "throwable":"**"                      // 错误
 		}
 	}
 }
-----
-PROCESS_GLOBAL_ERROR(全局错误)
-----
+// PROCESS_GLOBAL_ERROR(全局错误)
 {
-	"title": "DevOps process successful",         # 消息标题
-	"content": {                                  # 消息内容
-		"kind": "PROCESS_GLOBAL_ERROR",           # 过程处理类型
-		"ci": "",                                 # ci操作
-		"message": {                              # 消息结果内容
-			"error": "release",                   # 错误信息
-            "errorStackTrace": "uat"              # 错误堆栈信息
+	"title": "DevOps process successful",         // 消息标题
+	"content": {                                  // 消息内容
+		"kind": "PROCESS_GLOBAL_ERROR",           // 过程处理类型
+		"ci": "",                                 // CI操作
+		"message": {                              // 消息结果内容
+			"error": "release",                   // 错误信息
+            "errorStackTrace": "uat"              // 错误堆栈信息
 		}
 	}
 }
-----
-PROCESS_SHUTDOWN(关闭)
-----
+// PROCESS_SHUTDOWN(关闭)
 {
-	"title": "DevOps process successful",         # 消息标题
-	"content": {                                  # 消息内容
-		"kind": "PROCESS_SHUTDOWN",               # 过程处理类型
-		"ci": "",                                 # ci操作
-		"message": {                              # 消息结果内容
-			"successfulExecProjects": [{          # 成功项目
-			    "groupId":"com.terran.message",   # maven groupId
-			    "artifactId":"dingtalk",          # maven artifactId
-			    "execMojos":["release"],          # 执行成功的操作， 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
-			    "name":"dingtalk"                 # maven项目名称
+	"title": "DevOps process successful",         // 消息标题
+	"content": {                                  // 消息内容
+		"kind": "PROCESS_SHUTDOWN",               // 过程处理类型
+		"ci": "",                                 // ci操作
+		"message": {                              // 消息结果内容
+			"successfulExecProjects": [{          // 成功的应用
+			    "groupId":"com.terran.message",   // maven groupId
+			    "artifactId":"dingtalk",          // maven artifactId
+			    "execMojos":"release",            // 执行成功的操作，多个以逗号分隔 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
+			    "name":"dingtalk"                 // maven应用名称
 			    "reason":null
 			}],
-			"failureExecProjects": [{             # 成功项目
-                "groupId":"com.terran.message",   # maven groupId
-                "artifactId":"dingtalk",          # maven artifactId
-                "execMojos":["release"],          # 执行成功的操作， 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
-                "name":"dingtalk",                # maven项目名称
-                "reason":"***"                    # 失败原因
+			"failureExecProjects": [{             // 失败的应用
+                "groupId":"com.terran.message",   // maven groupId
+                "artifactId":"dingtalk",          // maven artifactId
+                "name":"dingtalk",                // maven应用名称
+                "reason":"***"                    // 失败原因
             }],
-			"noneExecProjects": [{                # 成功项目
-                "groupId":"com.terran.message",   # maven groupId
-                "artifactId":"dingtalk",          # maven artifactId
-                "execMojos":["release"],          # 执行成功的操作， 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
-                "name":"dingtalk",                # maven项目名称
-                "reason":"***"                    # 未执行原因
+			"noneExecProjects": [{                // 没有执行的应用，在某一应用处理失败后后续的应用都不会被执行
+                "groupId":"com.terran.message",   // maven groupId
+                "artifactId":"dingtalk",          // maven artifactId
+                "name":"dingtalk"                 // maven应用名称
 			}],
-			"ignoreExecProjects": [{              # 成功项目
-                "groupId":"com.terran.message",   # maven groupId
-                "artifactId":"dingtalk",          # maven artifactId
-                "execMojos":["release"],          # 执行成功的操作， 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
-                "name":"dingtalk",                # maven项目名称
-                "reason":"***"                    # 忽略原因
-			}],
+			"ignoreExecProjects": [{              // 忽略的应用
+                "groupId":"com.terran.message",   // maven groupId
+                "artifactId":"dingtalk",          // maven artifactId
+                "name":"dingtalk",                // maven应用名称
+                "reason":"***"                    // 忽略原因
+			}]
 		}
 	}
 }
 ----
+
+==== 监控管理
+
 
 
 

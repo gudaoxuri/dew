@@ -427,9 +427,9 @@ public class ExecuteEventProcessor {
             message.put("successfulExecProjects", executionSuccessfulProjects.stream().map(project -> {
                 Map<String, Object> result = new HashMap<>();
                 result.put("groupId", project.getAppGroup());
-                result.put("artifactId", project.getAppShowName());
-                result.put("execMojos", project.getExecuteSuccessfulMojos());
-                result.put("name", project.getAppName());
+                result.put("artifactId", project.getMavenProject().getArtifactId());
+                result.put("execMojos", String.join(",", project.getExecuteSuccessfulMojos()));
+                result.put("name", project.getAppShowName());
                 result.put("reason", null);
                 return result;
             }).collect(Collectors.toList()));
@@ -438,9 +438,9 @@ public class ExecuteEventProcessor {
                     .map(project -> {
                         Map<String, Object> result = new HashMap<>();
                         result.put("groupId", project.getAppGroup());
-                        result.put("artifactId", project.getAppShowName());
-                        result.put("execMojos", project.getExecuteSuccessfulMojos());
-                        result.put("name", project.getAppName());
+                        result.put("artifactId", project.getMavenProject().getArtifactId());
+                        result.put("execMojos", String.join(",", project.getExecuteSuccessfulMojos()));
+                        result.put("name", project.getAppShowName());
                         result.put("reason", project.getSkipReason().isEmpty() ? "unknown error"
                                 : project.getSkipReason());
                         return result;
@@ -450,9 +450,9 @@ public class ExecuteEventProcessor {
                     .map(project -> {
                         Map<String, Object> result = new HashMap<>();
                         result.put("groupId", project.getAppGroup());
-                        result.put("artifactId", project.getAppShowName());
-                        result.put("execMojos", project.getExecuteSuccessfulMojos());
-                        result.put("name", project.getAppName());
+                        result.put("artifactId", project.getMavenProject().getArtifactId());
+                        result.put("execMojos", String.join(",", project.getExecuteSuccessfulMojos()));
+                        result.put("name", project.getAppShowName());
                         result.put("reason", project.getSkipReason());
                         return result;
                     }).collect(Collectors.toList()));
@@ -461,9 +461,9 @@ public class ExecuteEventProcessor {
                     .map(project -> {
                         Map<String, Object> result = new HashMap<>();
                         result.put("groupId", project.getAppGroup());
-                        result.put("artifactId", project.getAppShowName());
-                        result.put("execMojos", project.getExecuteSuccessfulMojos());
-                        result.put("name", project.getAppName());
+                        result.put("artifactId", project.getMavenProject().getArtifactId());
+                        result.put("execMojos", String.join(",", project.getExecuteSuccessfulMojos()));
+                        result.put("name", project.getAppShowName());
                         result.put("reason", project.getSkipReason());
                         return result;
                     }).collect(Collectors.toList()));
@@ -477,6 +477,5 @@ public class ExecuteEventProcessor {
                     .set("message", $.json.toJson(message)));
         }
     }
-
 
 }
