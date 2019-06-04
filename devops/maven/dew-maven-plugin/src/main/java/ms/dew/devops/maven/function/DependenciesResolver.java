@@ -23,11 +23,14 @@ import org.apache.maven.ProjectDependenciesResolver;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.MultipleArtifactsNotFoundException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -50,10 +53,37 @@ public class DependenciesResolver {
             DefaultProjectDependenciesResolver resolver = (DefaultProjectDependenciesResolver) mavenSession.getContainer()
                     .lookup(ProjectDependenciesResolver.class.getName());
             for (MavenProject mavenProject : mavenSession.getProjectDependencyGraph().getSortedProjects()) {
-                Set<Artifact> result = resolver.resolve(mavenProject, Collections.singleton(Artifact.SCOPE_COMPILE), mavenSession);
-                mavenProject.setArtifacts(result);
+                mavenProject.setArtifacts(resolve(resolver, mavenProject, mavenSession));
             }
-        } catch (ArtifactResolutionException | ArtifactNotFoundException | ComponentLookupException e) {
+        } catch (ComponentLookupException e) {
+            throw new GlobalProcessException(e.getMessage(), e);
+        }
+    }
+
+    private static Set<Artifact> resolve(DefaultProjectDependenciesResolver resolver,
+                                         MavenProject mavenProject, MavenSession mavenSession) {
+        try {
+            return resolver.resolve(mavenProject, Collections.singleton(Artifact.SCOPE_COMPILE), mavenSession);
+        } catch (MultipleArtifactsNotFoundException e) {
+            Set<Artifact> result = new HashSet<>();
+            for (Artifact missArtifact : e.getMissingArtifacts()) {
+                Optional<MavenProject> innerProjectOpt = mavenSession.getProjects()
+                        .stream().filter(project -> project.getId().equalsIgnoreCase(missArtifact.getId()))
+                        .findAny();
+                if (innerProjectOpt.isPresent()) {
+                    result.addAll(innerProjectOpt.get().getArtifacts());
+                } else {
+                    throw new GlobalProcessException(e.getMessage(), e);
+                }
+            }
+            try {
+                result.addAll(resolver.resolve(mavenProject, null,
+                        Collections.singleton(Artifact.SCOPE_COMPILE), mavenSession, new HashSet<>(e.getMissingArtifacts())));
+                return result;
+            } catch (ArtifactResolutionException | ArtifactNotFoundException ex) {
+                throw new GlobalProcessException(e.getMessage(), e);
+            }
+        } catch (ArtifactNotFoundException | ArtifactResolutionException e) {
             throw new GlobalProcessException(e.getMessage(), e);
         }
     }
