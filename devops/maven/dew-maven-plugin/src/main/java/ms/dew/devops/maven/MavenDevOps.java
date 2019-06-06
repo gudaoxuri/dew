@@ -129,8 +129,8 @@ public class MavenDevOps {
             // 基础配置
             String basicConfig = "";
             if (new File(basicDirectory + ".dew").exists()) {
-                basicConfig = ConfigBuilder.mergeProfiles($.file.readAllByPathName(basicDirectory + ".dew", "UTF-8")) + "\r\n";
-                DewConfig dewConfig = YamlHelper.toObject(DewConfig.class, basicConfig);
+                basicConfig = $.file.readAllByPathName(basicDirectory + ".dew", "UTF-8") + "\r\n";
+                DewConfig dewConfig = YamlHelper.toObject(DewConfig.class, ConfigBuilder.mergeProfiles(basicConfig));
                 if (inputProfile.equalsIgnoreCase(ConfigBuilder.FLAG_DEW_DEVOPS_DEFAULT_PROFILE)) {
                     dewConfig.getProfiles().clear();
                     DevOps.Config.basicProfileConfig = dewConfig;
@@ -156,7 +156,7 @@ public class MavenDevOps {
                     // 通过上一步合并后需要再次执行 default profile merge 到各 profile操作
                     projectConfig = ConfigBuilder.mergeProfiles(projectConfig);
                 } else {
-                    projectConfig = basicConfig;
+                    projectConfig = ConfigBuilder.mergeProfiles(basicConfig);
                 }
                 DewConfig dewConfig;
                 if (!projectConfig.isEmpty()) {
