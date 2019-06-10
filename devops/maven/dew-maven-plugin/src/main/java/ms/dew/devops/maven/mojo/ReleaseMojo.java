@@ -19,6 +19,7 @@ package ms.dew.devops.maven.mojo;
 import io.kubernetes.client.ApiException;
 import ms.dew.devops.kernel.DevOps;
 import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 
@@ -32,7 +33,7 @@ import java.io.IOException;
  * @author gudaoxuri
  */
 @Mojo(name = "release", requiresDependencyResolution = ResolutionScope.COMPILE)
-@Execute(goal = "build")
+@Execute(phase = LifecyclePhase.DEPLOY, goal = "build")
 public class ReleaseMojo extends BasicMojo {
 
     @Override
