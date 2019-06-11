@@ -31,8 +31,6 @@ NOTE: ``Dew`` DevOps部分的核心是由 ``dew-maven-plugin`` 实现。
                     <execution>
                         <goals>
                             <goal>init</goal>
-                            <goal>prepare</goal>
-                            <goal>build</goal>
                             <goal>release</goal>
                         </goals>
                     </execution>
@@ -117,7 +115,7 @@ sh dew-devops.sh
 [source,bash]
 ----
 # 基础命令
-mvn dew:release
+mvn deploy
 
 # ====================== 附加参数 ======================
 # dew_devops_profile                           # 指定的环境
@@ -163,7 +161,7 @@ IMPORTANT: 在CI/CD工具中附加参数的kubernetes、docker相关参数应作
 
 .并行部署
 
-``Dew`` 支持使用Maven的 ``-T `` 实现并行编译部署，例如： ``mvn -T 1C dew:release``
+``Dew`` 支持使用Maven的 ``-T `` 实现并行编译部署，例如： ``mvn -T 1C deploy``
 
 ==== 版本回滚
 

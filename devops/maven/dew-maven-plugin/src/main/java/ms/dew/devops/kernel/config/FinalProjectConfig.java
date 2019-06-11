@@ -443,7 +443,7 @@ public class FinalProjectConfig extends DewProfile {
         super.setSkip(true);
         hasError = isError;
         this.setSkipReason(reason);
-        logger.info("Skipped : " + reason);
+        logger.info("[" + getAppName() + "] Skipped : " + reason);
     }
 
 }

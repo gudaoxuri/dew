@@ -116,20 +116,20 @@ public class ConfigBuilder {
      * @param dockerRegistryUserNameAppendOpt the docker registry user name append opt
      * @param dockerRegistryPasswordAppendOpt the docker registry password append opt
      * @param kubeBase64ConfigAppendOpt       the kube base 64 config append opt
-     * @return the optional
+     * @return the result
      * @throws InvocationTargetException the invocation target exception
      * @throws IllegalAccessException    the illegal access exception
      */
-    public static Optional<FinalProjectConfig> buildProject(DewConfig dewConfig, AppKindPlugin appKindPlugin, DeployPlugin deployPlugin,
-                                                            MavenProject mavenProject,
-                                                            String inputProfile,
-                                                            String inputDockerHost, String inputDockerRegistryUrl,
-                                                            String inputDockerRegistryUserName, String inputDockerRegistryPassword,
-                                                            String inputKubeBase64Config, Optional<String> dockerHostAppendOpt,
-                                                            Optional<String> dockerRegistryUrlAppendOpt,
-                                                            Optional<String> dockerRegistryUserNameAppendOpt,
-                                                            Optional<String> dockerRegistryPasswordAppendOpt,
-                                                            Optional<String> kubeBase64ConfigAppendOpt)
+    public static FinalProjectConfig buildProject(DewConfig dewConfig, AppKindPlugin appKindPlugin, DeployPlugin deployPlugin,
+                                                  MavenProject mavenProject,
+                                                  String inputProfile,
+                                                  String inputDockerHost, String inputDockerRegistryUrl,
+                                                  String inputDockerRegistryUserName, String inputDockerRegistryPassword,
+                                                  String inputKubeBase64Config, Optional<String> dockerHostAppendOpt,
+                                                  Optional<String> dockerRegistryUrlAppendOpt,
+                                                  Optional<String> dockerRegistryUserNameAppendOpt,
+                                                  Optional<String> dockerRegistryPasswordAppendOpt,
+                                                  Optional<String> kubeBase64ConfigAppendOpt)
             throws InvocationTargetException, IllegalAccessException {
         // 格式化
         inputProfile = inputProfile.toLowerCase();
@@ -154,22 +154,15 @@ public class ConfigBuilder {
         if (!inputProfile.equals(FLAG_DEW_DEVOPS_DEFAULT_PROFILE) && !dewConfig.getProfiles().containsKey(inputProfile)) {
             throw new ConfigException("[" + mavenProject.getArtifactId() + "] Can't be found [" + inputProfile + "] profile");
         }
-        // 是否配置为skip
-        if (inputProfile.equals(FLAG_DEW_DEVOPS_DEFAULT_PROFILE) && dewConfig.getSkip() != null && dewConfig.getSkip()
-                || !inputProfile.equals(FLAG_DEW_DEVOPS_DEFAULT_PROFILE)
-                && dewConfig.getProfiles().get(inputProfile).getSkip() != null
-                && dewConfig.getProfiles().get(inputProfile).getSkip()) {
-            return Optional.empty();
-        }
         FinalProjectConfig finalProjectConfig = doBuildProject(dewConfig, appKindPlugin, deployPlugin, mavenProject,
                 inputProfile, inputDockerHost, inputDockerRegistryUrl,
                 inputDockerRegistryUserName, inputDockerRegistryPassword, inputKubeBase64Config,
                 dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
                 kubeBase64ConfigAppendOpt);
-        if (finalProjectConfig.getKube().getBase64Config().isEmpty()) {
+        if (!finalProjectConfig.getSkip() && finalProjectConfig.getKube().getBase64Config().isEmpty()) {
             throw new ConfigException("[" + mavenProject.getArtifactId() + "] Kubernetes config can't be empty");
         }
-        return Optional.of(finalProjectConfig);
+        return finalProjectConfig;
     }
 
     private static FinalProjectConfig doBuildProject(DewConfig dewConfig, AppKindPlugin appKindPlugin, DeployPlugin deployPlugin,
@@ -196,11 +189,14 @@ public class ConfigBuilder {
         finalProjectConfig.setProfile(inputProfile);
         finalProjectConfig.setAppGroup(mavenProject.getGroupId());
         finalProjectConfig.setAppName(mavenProject.getArtifactId());
-        finalProjectConfig.setSkip(false);
         if (mavenProject.getName() != null && !mavenProject.getName().trim().isEmpty()) {
             finalProjectConfig.setAppShowName(mavenProject.getName());
         } else {
             finalProjectConfig.setAppShowName(mavenProject.getArtifactId());
+        }
+        if (finalProjectConfig.getSkip()) {
+            finalProjectConfig.skip("Configured to skip", false);
+            return finalProjectConfig;
         }
         // 优先使用命令行参数
         if (inputDockerHost != null && !inputDockerHost.trim().isEmpty()) {

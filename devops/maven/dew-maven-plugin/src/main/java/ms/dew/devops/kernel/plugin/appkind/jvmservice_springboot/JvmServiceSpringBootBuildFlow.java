@@ -19,13 +19,9 @@ package ms.dew.devops.kernel.plugin.appkind.jvmservice_springboot;
 import com.ecfront.dew.common.$;
 import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
-import ms.dew.devops.kernel.flow.build.DockerBuildFlow;
+import ms.dew.devops.kernel.flow.release.DockerBuildFlow;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 /**
  * Spring boot build flow.
@@ -35,8 +31,6 @@ import java.nio.file.StandardCopyOption;
 public class JvmServiceSpringBootBuildFlow extends DockerBuildFlow {
 
     protected void preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
-        String preparePath = config.getTargetDirectory() + "dew_prepare" + File.separator;
-        Files.move(Paths.get(preparePath + "serv.jar"), Paths.get(flowBasePath + "serv.jar"), StandardCopyOption.REPLACE_EXISTING);
         $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/jvmservice_springboot/Dockerfile"), flowBasePath + "Dockerfile");
         $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/jvmservice_springboot/run-java.sh"), flowBasePath + "run-java.sh");
         $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/jvmservice_springboot/debug-java.sh"), flowBasePath + "debug-java.sh");

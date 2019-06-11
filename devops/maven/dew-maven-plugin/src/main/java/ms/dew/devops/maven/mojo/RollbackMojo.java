@@ -18,7 +18,6 @@ package ms.dew.devops.maven.mojo;
 
 import io.kubernetes.client.ApiException;
 import ms.dew.devops.kernel.DevOps;
-import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import java.io.IOException;
@@ -29,7 +28,6 @@ import java.io.IOException;
  * @author gudaoxuri
  */
 @Mojo(name = "rollback")
-@Execute(goal = "init")
 public class RollbackMojo extends BasicMojo {
 
     @Override

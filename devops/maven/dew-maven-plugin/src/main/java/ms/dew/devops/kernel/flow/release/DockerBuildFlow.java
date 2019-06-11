@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.flow.build;
+package ms.dew.devops.kernel.flow.release;
 
 import com.ecfront.dew.common.$;
 import ms.dew.devops.kernel.DevOps;

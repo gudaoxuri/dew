@@ -20,6 +20,8 @@ import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.util.ExecuteOnceProcessor;
 import ms.dew.devops.maven.MavenDevOps;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Maven跳过处理器.
@@ -30,22 +32,27 @@ public class MavenSkipProcessor {
 
     /**
      * Process.
+     *
+     * @param mavenSession the mavenSession
      */
-    public static synchronized void process() {
+    public static synchronized void process(MavenSession mavenSession) {
         if (ExecuteOnceProcessor.executedCheck(MavenSkipProcessor.class)) {
             return;
         }
+        // 跳过未被装配的模块
+        mavenSession.getProjects()
+                .stream()
+                .filter(project -> !DevOps.Config.getFinalConfig().getProjects().containsKey(project.getId()))
+                .forEach(MavenSkipProcessor::disabledDefaultBehavior);
+        // 已装配模块是否处理判断
         for (FinalProjectConfig config : DevOps.Config.getFinalConfig().getProjects().values()) {
             if (config.getDisableReuseVersion() != null && !config.getDisableReuseVersion()) {
                 // 重用版本模式下强制跳过单元测试，不需要部署
-                MavenDevOps.Config.setMavenProperty(config.getId(), "maven.test.skip", "true");
-                MavenDevOps.Config.setMavenProperty(config.getId(), "maven.install.skip", "true");
-                MavenDevOps.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "true");
+                disabledDefaultBehavior(config.getId());
                 continue;
             }
             if (config.getSkip()) {
-                MavenDevOps.Config.setMavenProperty(config.getId(), "maven.install.skip", "true");
-                MavenDevOps.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "true");
+                disabledDefaultBehavior(config.getId());
                 continue;
             }
             if (config.getDeployPlugin().useMavenProcessingMode()) {
@@ -56,6 +63,34 @@ public class MavenSkipProcessor {
                 MavenDevOps.Config.setMavenProperty(config.getId(), "maven.deploy.skip", "true");
             }
         }
+    }
+
+    /**
+     * Disabled default behavior.
+     *
+     * @param projectId the project id
+     */
+    public static void disabledDefaultBehavior(String projectId) {
+        MavenDevOps.Config.setMavenProperty(projectId, "dew.jar.phase", "none");
+        MavenDevOps.Config.setMavenProperty(projectId, "maven.main.skip", "true");
+        MavenDevOps.Config.setMavenProperty(projectId, "maven.resources.skip", "true");
+        MavenDevOps.Config.setMavenProperty(projectId, "maven.test.skip", "true");
+        MavenDevOps.Config.setMavenProperty(projectId, "maven.install.skip", "true");
+        MavenDevOps.Config.setMavenProperty(projectId, "maven.deploy.skip", "true");
+    }
+
+    /**
+     * Disabled default behavior.
+     *
+     * @param project the project
+     */
+    public static void disabledDefaultBehavior(MavenProject project) {
+        project.getProperties().put("dew.jar.phase", "none");
+        project.getProperties().put("maven.main.skip", "true");
+        project.getProperties().put("maven.resources.skip", "true");
+        project.getProperties().put("maven.test.skip", "true");
+        project.getProperties().put("maven.install.skip", "true");
+        project.getProperties().put("maven.deploy.skip", "true");
     }
 
 }

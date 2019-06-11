@@ -87,25 +87,27 @@ public class DevOps {
         }
 
         private static void initEnv() {
-            Config.getFinalConfig().getProjects().values().forEach(config -> {
-                DockerHelper.init(config.getId(), logger,
-                        config.getDocker().getHost(),
-                        config.getDocker().getRegistryUrl(),
-                        config.getDocker().getRegistryUserName(),
-                        config.getDocker().getRegistryPassword());
-                KubeHelper.init(config.getId(), logger,
-                        config.getKube().getBase64Config());
-                if (config.getAppendProfile() != null) {
-                    // 初始化附加环境，多用于版本重用模式
-                    DockerHelper.init(config.getId() + APPEND_FLAG, logger,
-                            config.getAppendProfile().getDocker().getHost(),
-                            config.getAppendProfile().getDocker().getRegistryUrl(),
-                            config.getAppendProfile().getDocker().getRegistryUserName(),
-                            config.getAppendProfile().getDocker().getRegistryPassword());
-                    KubeHelper.init(config.getId() + APPEND_FLAG, logger,
-                            config.getAppendProfile().getKube().getBase64Config());
-                }
-            });
+            Config.getFinalConfig().getProjects().values()
+                    .stream().filter(project -> !project.getSkip())
+                    .forEach(project -> {
+                        DockerHelper.init(project.getId(), logger,
+                                project.getDocker().getHost(),
+                                project.getDocker().getRegistryUrl(),
+                                project.getDocker().getRegistryUserName(),
+                                project.getDocker().getRegistryPassword());
+                        KubeHelper.init(project.getId(), logger,
+                                project.getKube().getBase64Config());
+                        if (project.getAppendProfile() != null) {
+                            // 初始化附加环境，多用于版本重用模式
+                            DockerHelper.init(project.getId() + APPEND_FLAG, logger,
+                                    project.getAppendProfile().getDocker().getHost(),
+                                    project.getAppendProfile().getDocker().getRegistryUrl(),
+                                    project.getAppendProfile().getDocker().getRegistryUserName(),
+                                    project.getAppendProfile().getDocker().getRegistryPassword());
+                            KubeHelper.init(project.getId() + APPEND_FLAG, logger,
+                                    project.getAppendProfile().getKube().getBase64Config());
+                        }
+                    });
         }
 
         /**
@@ -114,14 +116,15 @@ public class DevOps {
         private static void initNotify() {
             Map<String, NotifyConfig> configMap = new HashMap<>();
             Config.getFinalConfig().getProjects().entrySet().stream()
-                    .filter(config -> config.getValue().getNotifies() != null
-                            && !config.getValue().getNotifies().isEmpty())
-                    .forEach(config ->
-                            config.getValue().getNotifies().forEach(notifyConfig -> {
+                    .filter(project -> !project.getValue().getSkip())
+                    .filter(project -> project.getValue().getNotifies() != null
+                            && !project.getValue().getNotifies().isEmpty())
+                    .forEach(project ->
+                            project.getValue().getNotifies().forEach(notifyConfig -> {
                                 if (notifyConfig.getType() == null) {
                                     notifyConfig.setType(NotifyConfig.TYPE_DD);
                                 }
-                                configMap.put(config.getKey() + "_" + notifyConfig.getType(), notifyConfig);
+                                configMap.put(project.getKey() + "_" + notifyConfig.getType(), notifyConfig);
                             }));
             // 对于根项目为 skip 的情况强制启用通知
             DewProfile dewProfile = Config.basicProfileConfig;

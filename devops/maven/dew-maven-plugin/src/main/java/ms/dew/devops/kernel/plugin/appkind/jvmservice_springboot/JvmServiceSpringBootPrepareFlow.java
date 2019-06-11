@@ -18,7 +18,7 @@ package ms.dew.devops.kernel.plugin.appkind.jvmservice_springboot;
 
 import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
-import ms.dew.devops.kernel.flow.prepare.BasicPrepareFlow;
+import ms.dew.devops.kernel.flow.release.BasicPrepareFlow;
 
 import java.util.HashMap;
 import java.util.Optional;

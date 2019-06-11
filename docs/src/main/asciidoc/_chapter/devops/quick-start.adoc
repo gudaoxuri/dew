@@ -28,7 +28,7 @@ cd devops-example-todo
 # 执行安装
 mvn install -Dmaven.test.skip=true
 # 部署到Kubernetes
-mvn -P devops dew:release -Ddew_devops_profile=uat
+mvn -P devops deploy -Ddew_devops_profile=uat
 
 # 打开浏览器，输入 http://todo-uat.dew.ms，切换到移动模式体验
 ----

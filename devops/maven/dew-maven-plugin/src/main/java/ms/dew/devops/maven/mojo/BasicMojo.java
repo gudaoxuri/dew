@@ -26,6 +26,7 @@ import ms.dew.devops.kernel.exception.ProjectProcessException;
 import ms.dew.devops.kernel.function.ExecuteEventProcessor;
 import ms.dew.devops.kernel.util.DewLog;
 import ms.dew.devops.maven.MavenDevOps;
+import ms.dew.devops.maven.function.MavenSkipProcessor;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.BuildPluginManager;
@@ -301,14 +302,8 @@ public abstract class BasicMojo extends AbstractMojo {
         }
         FinalProjectConfig projectConfig = DevOps.Config.getProjectConfig(mavenSession.getCurrentProject().getId());
         try {
-            if (projectConfig == null) {
+            if (projectConfig == null || projectConfig.getSkip()) {
                 // 这多半是正常的行为
-                logger.info("The current project kind does not match");
-                return;
-            }
-            if (projectConfig.getSkip()) {
-                // 这多半是正常的行为
-                disabledDefaultBehavior();
                 logger.info("The current project is manually set to skip");
                 return;
             }
@@ -317,7 +312,7 @@ public abstract class BasicMojo extends AbstractMojo {
                 ExecuteEventProcessor.onMojoExecuteSuccessful(getMojoName(), projectConfig, "");
             } else {
                 // 此错误不会中止程序
-                disabledDefaultBehavior();
+                MavenSkipProcessor.disabledDefaultBehavior(mavenSession.getCurrentProject().getId());
                 projectConfig.skip("Internal execution error", true);
             }
         } catch (GlobalProcessException e) {
@@ -418,12 +413,5 @@ public abstract class BasicMojo extends AbstractMojo {
     String getMojoName() {
         return this.getClass().getSimpleName().substring(0, this.getClass().getSimpleName().indexOf("Mojo")).toLowerCase();
     }
-
-    private void disabledDefaultBehavior() {
-        MavenDevOps.Config.setMavenProperty(mavenSession.getCurrentProject().getId(), "maven.test.skip", "true");
-        MavenDevOps.Config.setMavenProperty(mavenSession.getCurrentProject().getId(), "maven.install.skip", "true");
-        MavenDevOps.Config.setMavenProperty(mavenSession.getCurrentProject().getId(), "maven.deploy.skip", "true");
-    }
-
 
 }

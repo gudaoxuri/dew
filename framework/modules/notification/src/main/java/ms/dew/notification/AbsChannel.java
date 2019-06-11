@@ -45,7 +45,7 @@ public abstract class AbsChannel implements Channel {
         isWork = innerInit(notifyConfig);
         if (isWork) {
             this.notifyConfig = notifyConfig;
-            logger.info("Init Notify channel:" + this.getClass().getSimpleName());
+            logger.debug("Init Notify channel:" + this.getClass().getSimpleName());
         }
     }
 
@@ -62,7 +62,7 @@ public abstract class AbsChannel implements Channel {
     @Override
     public void destroy() {
         if (isWork) {
-            logger.info("Destroy Notify channel:" + this.getClass().getSimpleName());
+            logger.debug("Destroy Notify channel:" + this.getClass().getSimpleName());
             innerDestroy(notifyConfig);
         }
     }

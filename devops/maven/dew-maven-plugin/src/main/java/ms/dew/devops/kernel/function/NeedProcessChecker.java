@@ -60,6 +60,9 @@ public class NeedProcessChecker {
         logger.info("Fetch need process projects");
         try {
             for (FinalProjectConfig projectConfig : DevOps.Config.getFinalConfig().getProjects().values()) {
+                if (projectConfig.getSkip()) {
+                    continue;
+                }
                 logger.info("Need process checking for " + projectConfig.getAppName());
                 Resp<String> deployAble = projectConfig.getDeployPlugin().deployAble(projectConfig);
                 if (!deployAble.ok()) {

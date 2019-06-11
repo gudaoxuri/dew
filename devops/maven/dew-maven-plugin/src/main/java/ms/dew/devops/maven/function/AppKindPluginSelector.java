@@ -16,6 +16,7 @@
 
 package ms.dew.devops.maven.function;
 
+import ms.dew.devops.kernel.exception.ConfigException;
 import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
 import ms.dew.devops.kernel.plugin.appkind.frontend_node.FrontendNodeAppKindPlugin;
 import ms.dew.devops.kernel.plugin.appkind.jvmlib.JvmLibAppKindPlugin;
@@ -42,7 +43,7 @@ public class AppKindPluginSelector {
      */
     public static Optional<AppKindPlugin> select(MavenProject mavenProject) {
         if (mavenProject.getPackaging().equalsIgnoreCase("maven-plugin")) {
-            return Optional.empty();
+            return Optional.of(new JvmLibAppKindPlugin());
         }
         if (new File(mavenProject.getBasedir().getPath() + File.separator + "package.json").exists()) {
             return Optional.of(new FrontendNodeAppKindPlugin());
@@ -70,7 +71,7 @@ public class AppKindPluginSelector {
         if (mavenProject.getPackaging().equalsIgnoreCase("pom")) {
             return Optional.of(new PomAppKindPlugin());
         }
-        return Optional.empty();
+        throw new ConfigException("The project [" + mavenProject.getId() + "] kind does not supported");
     }
 
 }

@@ -109,6 +109,15 @@ public class MavenDevOps {
                         kubeBase64ConfigAppendOpt);
                 DevOps.Init.init(mockClasspath);
                 Config.initMavenProject(session, pluginManager);
+                // 特殊Mojo处理
+                if (session.getGoals().stream().map(String::toLowerCase)
+                        .anyMatch(s ->
+                                s.contains("ms.dew:dew-maven-plugin:release")
+                                        || s.contains("dew:release")
+                                        || s.contains("deploy"))) {
+                    NeedProcessChecker.checkNeedProcessProjects(false);
+                    MavenSkipProcessor.process(session);
+                }
             } catch (Exception e) {
                 throw new ConfigException(e.getMessage(), e);
             }
@@ -164,20 +173,16 @@ public class MavenDevOps {
                 } else {
                     dewConfig = new DewConfig();
                 }
-                Optional<FinalProjectConfig> finalProjectConfigOpt =
+                FinalProjectConfig finalProjectConfig =
                         ConfigBuilder.buildProject(dewConfig, appKindPluginOpt.get(), deployPlugin, project, inputProfile,
                                 inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
                                 inputKubeBase64Config,
                                 dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
                                 kubeBase64ConfigAppendOpt);
-                if (finalProjectConfigOpt.isPresent()) {
-                    finalProjectConfigOpt.get().setMavenSession(session);
-                    finalProjectConfigOpt.get().setMavenProject(project);
-                    DevOps.Config.getFinalConfig().getProjects().put(project.getId(), finalProjectConfigOpt.get());
-                    logger.debug("[" + project.getGroupId() + ":" + project.getArtifactId() + "] configured");
-                } else {
-                    logger.debug("[" + project.getGroupId() + ":" + project.getArtifactId() + "] skipped");
-                }
+                finalProjectConfig.setMavenSession(session);
+                finalProjectConfig.setMavenProject(project);
+                DevOps.Config.getFinalConfig().getProjects().put(project.getId(), finalProjectConfig);
+                logger.debug("[" + project.getId() + "] configured");
             }
             initAssignDeploymentProjects(inputAssignationProjects, session.getProjectDependencyGraph().getSortedProjects());
         }
@@ -265,21 +270,6 @@ public class MavenDevOps {
         }
     }
 
-    /**
-     * Process.
-     */
-    public static class Process {
-
-        /**
-         * Need process check.
-         *
-         * @param quiet the quiet
-         */
-        public static synchronized void needProcessCheck(boolean quiet) {
-            NeedProcessChecker.checkNeedProcessProjects(quiet);
-            MavenSkipProcessor.process();
-        }
-    }
 }
 
 

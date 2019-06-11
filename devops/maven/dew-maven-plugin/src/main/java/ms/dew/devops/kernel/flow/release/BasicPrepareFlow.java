@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.flow.prepare;
+package ms.dew.devops.kernel.flow.release;
 
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.exception.ProjectProcessException;

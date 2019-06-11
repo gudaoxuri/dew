@@ -19,14 +19,11 @@ package ms.dew.devops.kernel.plugin.appkind.frontend_node;
 import com.ecfront.dew.common.$;
 import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
-import ms.dew.devops.kernel.flow.build.DockerBuildFlow;
-import org.apache.commons.io.FileUtils;
+import ms.dew.devops.kernel.flow.release.DockerBuildFlow;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 
 /**
  * Node frontend build flow.
@@ -36,9 +33,6 @@ import java.nio.file.StandardCopyOption;
 public class FrontendNodeBuildFlow extends DockerBuildFlow {
 
     protected void preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
-        String preparePath = config.getTargetDirectory() + "dew_prepare" + File.separator;
-        FileUtils.deleteDirectory(new File(flowBasePath + "dist"));
-        Files.move(Paths.get(preparePath + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
         if (config.getApp().getServerConfig() != null && !config.getApp().getServerConfig().isEmpty()) {
             Files.write(Paths.get(flowBasePath + "custom.conf"), config.getApp().getServerConfig().getBytes());
         } else {
