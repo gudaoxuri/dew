@@ -188,7 +188,7 @@ cpu_options() {
 #-XX:MinHeapFreeRatio=20  These parameters tell the heap to shrink aggressively and to grow conservatively.
 #-XX:MaxHeapFreeRatio=40  Thereby optimizing the amount of memory available to the operating system.
 heap_ratio() {
-  echo "-XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40"
+  echo "-XX:MinHeapFreeRatio=40 -XX:MaxHeapFreeRatio=70"
 }
 
 # These parameters are necessary when running parallel GC if you want to use the Min and Max Heap Free ratios.

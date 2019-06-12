@@ -271,7 +271,7 @@ public abstract class BasicMojo extends AbstractMojo {
 
     @Override
     public void execute() {
-        logger = DewLog.build(this.getClass(), mavenProject.getName(), getMojoName());
+        logger = DewLog.build(this.getClass(), mavenProject.getName());
         if (DevOps.stopped) {
             return;
         }
@@ -288,7 +288,7 @@ public abstract class BasicMojo extends AbstractMojo {
         Optional<String> kubeBase64ConfigAppendOpt =
                 formatParameters(FLAG_DEW_DEVOPS_KUBE_CONFIG + DevOps.APPEND_FLAG, formattedProperties);
         try {
-            MavenDevOps.Init.init(mavenSession, pluginManager, profile,
+            MavenDevOps.Init.init(mavenSession, pluginManager, profile,quiet,
                     dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config, assignationProjects,
                     dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
                     kubeBase64ConfigAppendOpt,

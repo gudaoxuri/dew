@@ -18,10 +18,12 @@ package ms.dew.devops.kernel.function;
 
 import com.ecfront.dew.common.$;
 import ms.dew.devops.kernel.DevOps;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.util.DewLog;
 import ms.dew.devops.kernel.util.ExecuteOnceProcessor;
 import org.slf4j.Logger;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -43,20 +45,23 @@ public class StatusReporter {
             return;
         }
         $.timer.periodic(5, 30, true, () -> {
-            String msg = DevOps.Config.getFinalConfig().getProjects().values().stream()
+            List<FinalProjectConfig> processProjects = DevOps.Config.getFinalConfig().getProjects().values().stream()
                     .filter(config -> !config.getSkip())
-                    .map(config -> {
-                        String status = "";
-                        if (config.getExecuteSuccessfulMojos().contains("release")) {
-                            status += "[*]";
-                        } else {
-                            status += "[ ]";
-                        }
-                        status += String.format(" %-30s | ", config.getAppShowName());
-                        status += String.join(" > ", config.getExecuteSuccessfulMojos());
-                        return status;
-                    })
-                    .collect(Collectors.joining("\n", "Status Report:\n----------------------\n", "\n----------------------\n\n"));
+                    .collect(Collectors.toList());
+            List<String> finishedProjects = processProjects.stream()
+                    .filter(projectConfig -> projectConfig.getExecuteSuccessfulMojos().contains("release"))
+                    .map(FinalProjectConfig::getAppShowName)
+                    .collect(Collectors.toList());
+            List<String> processingProjects = processProjects.stream()
+                    .filter(projectConfig -> !projectConfig.getExecuteSuccessfulMojos().contains("release"))
+                    .map(FinalProjectConfig::getAppShowName)
+                    .collect(Collectors.toList());
+            String msg = "\nStatus Report ["
+                    + finishedProjects.size() + "/" + processProjects.size()
+                    + "]\n----------------------\n";
+            msg += "\n >>>> Finished <<<<\n" + String.join(",", finishedProjects);
+            msg += "\n >>>> Processing <<<<\n" + String.join(",", processingProjects);
+            msg += "\n----------------------\n\n";
             logger.info(msg);
         });
     }

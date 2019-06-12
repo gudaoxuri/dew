@@ -67,6 +67,7 @@ public class MavenDevOps {
          * @param session                         the session
          * @param pluginManager                   the plugin manager
          * @param inputProfile                    the input profile
+         * @param quiet                           the quiet
          * @param inputDockerHost                 the input docker host
          * @param inputDockerRegistryUrl          the input docker registry url
          * @param inputDockerRegistryUserName     the input docker registry user name
@@ -81,7 +82,7 @@ public class MavenDevOps {
          * @param mockClasspath                   the mock classpath
          */
         public static synchronized void init(MavenSession session, BuildPluginManager pluginManager,
-                                             String inputProfile,
+                                             String inputProfile, boolean quiet,
                                              String inputDockerHost, String inputDockerRegistryUrl,
                                              String inputDockerRegistryUserName, String inputDockerRegistryPassword,
                                              String inputKubeBase64Config, String inputAssignationProjects,
@@ -115,7 +116,7 @@ public class MavenDevOps {
                                 s.contains("ms.dew:dew-maven-plugin:release")
                                         || s.contains("dew:release")
                                         || s.contains("deploy"))) {
-                    NeedProcessChecker.checkNeedProcessProjects(false);
+                    NeedProcessChecker.checkNeedProcessProjects(quiet);
                     MavenSkipProcessor.process(session);
                 }
             } catch (Exception e) {

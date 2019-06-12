@@ -32,7 +32,6 @@ public class DewLog implements Logger {
 
     private static final ThreadLocal<String> CONTEXT = new ThreadLocal<>();
 
-
     private Logger log;
     private String prefix;
 
@@ -50,8 +49,8 @@ public class DewLog implements Logger {
         return new DewLog(LoggerFactory.getLogger(clazz), "[DEW]" + context);
     }
 
-    public static Logger build(Class clazz, String appName, String mojoName) {
-        CONTEXT.set(String.format("> [%-20s][%-10s]", appName, mojoName));
+    public static Logger build(Class clazz, String appName) {
+        CONTEXT.set(String.format("> [%-20s]", appName));
         return new DewLog(LoggerFactory.getLogger(clazz), "[DEW]" + CONTEXT.get());
     }
 

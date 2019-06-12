@@ -163,6 +163,61 @@ IMPORTANT: 在CI/CD工具中附加参数的kubernetes、docker相关参数应作
 
 ``Dew`` 支持使用Maven的 ``-T `` 实现并行编译部署，例如： ``mvn -T 1C deploy``
 
+.不需要部署的应用处理
+
+``Dew`` 会自行判断应用是否需要部署，对于不需要部署的应用为加速执行会设置一系列的skip，
+部署执行的是"Default Lifecycle (https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html)"，
+默认包含了如下插件的skip：
+
+. Core plugins（clean、compiler、deploy、failsafe、install、resources、site、surefire）
+. Packaging types/tools（war、jar、source）
+. Reporting plugins（checkstyle）
+. Tools（assembly、dependency、gpg）
+
+同时 ``Dew`` 提供了 ``dew.devops.skip`` ，用户可自行添加到其它插件、环境中。
+
+[source,xml]
+.dew.devops.skip使用示例
+----
+<!-- 动态跳过特定插件 -->
+<plugin>
+     <groupId>org.apache.maven.plugins</groupId>
+     <artifactId>maven-antrun-plugin</artifactId>
+     <configuration>
+         <skip>${dew.devops.skip}</skip>
+     </configuration>
+</plugin>
+
+<!--
+  并不是所有插件都提供了skip配置（比如maven-shade-plugin），这时可以使用profile + activation的方式解决
+
+  1. 定义一个profile，id随意
+  2. activation > property 中添加 name 为 dew.devops.skip , value 为 !true 的属性
+  3. 添加需要动态skip的内容，可以是插件、依赖、属性等
+-->
+<profile>
+    <id>devops-ext</id>
+    <activation>
+        <property>
+            <name>dew.devops.skip</name>
+            <value>!true</value>
+        </property>
+    </activation>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                ...
+            </plugin>
+        </plugins>
+    </build>
+</profile>
+----
+
+
+
+
 ==== 版本回滚
 
 用于回滚某一个应用，此命令在要回滚的应用目录下执行。

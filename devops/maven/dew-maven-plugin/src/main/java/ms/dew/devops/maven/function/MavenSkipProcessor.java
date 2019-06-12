@@ -71,12 +71,20 @@ public class MavenSkipProcessor {
      * @param projectId the project id
      */
     public static void disabledDefaultBehavior(String projectId) {
-        MavenDevOps.Config.setMavenProperty(projectId, "dew.jar.phase", "none");
+        MavenDevOps.Config.setMavenProperty(projectId, "dew.devops.skip", "true");
+        MavenDevOps.Config.setMavenProperty(projectId, "maven.javadoc.skip", "true");
+        MavenDevOps.Config.setMavenProperty(projectId, "maven.source.skip", "true");
+        MavenDevOps.Config.setMavenProperty(projectId, "checkstyle.skip", "true");
+        MavenDevOps.Config.setMavenProperty(projectId, "assembly.skipAssembly", "true");
+        MavenDevOps.Config.setMavenProperty(projectId, "mdep.analyze.skip", "true");
         MavenDevOps.Config.setMavenProperty(projectId, "maven.main.skip", "true");
+        MavenDevOps.Config.setMavenProperty(projectId, "gpg.skip", "true");
+        MavenDevOps.Config.setMavenProperty(projectId, "maven.war.skip", "true");
         MavenDevOps.Config.setMavenProperty(projectId, "maven.resources.skip", "true");
         MavenDevOps.Config.setMavenProperty(projectId, "maven.test.skip", "true");
         MavenDevOps.Config.setMavenProperty(projectId, "maven.install.skip", "true");
         MavenDevOps.Config.setMavenProperty(projectId, "maven.deploy.skip", "true");
+        MavenDevOps.Config.setMavenProperty(projectId, "maven.site.skip", "true");
     }
 
     /**
@@ -85,12 +93,20 @@ public class MavenSkipProcessor {
      * @param project the project
      */
     public static void disabledDefaultBehavior(MavenProject project) {
-        project.getProperties().put("dew.jar.phase", "none");
+        project.getProperties().put("dew.devops.skip", "true");
+        project.getProperties().put("maven.javadoc.skip", "true");
+        project.getProperties().put("maven.source.skip", "true");
+        project.getProperties().put("checkstyle.skip", "true");
+        project.getProperties().put("assembly.skipAssembly", "true");
+        project.getProperties().put("mdep.analyze.skip", "true");
         project.getProperties().put("maven.main.skip", "true");
+        project.getProperties().put("gpg.skip", "true");
+        project.getProperties().put("maven.war.skip", "true");
         project.getProperties().put("maven.resources.skip", "true");
         project.getProperties().put("maven.test.skip", "true");
         project.getProperties().put("maven.install.skip", "true");
         project.getProperties().put("maven.deploy.skip", "true");
+        project.getProperties().put("maven.site.skip", "true");
     }
 
 }
