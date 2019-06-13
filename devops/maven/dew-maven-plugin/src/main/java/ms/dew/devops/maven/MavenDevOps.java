@@ -201,6 +201,9 @@ public class MavenDevOps {
         }
 
         private static void notSkip(FinalProjectConfig projectConfig, MavenProject project, Boolean isParent) {
+            if (null == projectConfig) {
+                return;
+            }
             if (isParent) {
                 projectConfig.setSkip(false);
                 projectConfig.setSkipReason("");

@@ -25,6 +25,7 @@ import ms.dew.devops.kernel.exception.GlobalProcessException;
 import ms.dew.devops.kernel.helper.GitHelper;
 import ms.dew.devops.kernel.util.DewLog;
 import ms.dew.devops.kernel.util.ExecuteOnceProcessor;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 
 import java.io.BufferedReader;
@@ -159,16 +160,34 @@ public class NeedProcessChecker {
      * @return 是否存在未部署的文件
      */
     private static boolean hasUnDeployFiles(List<String> changedFiles, FinalProjectConfig projectConfig) {
-        File basePath = new File(projectConfig.getDirectory());
+        File basePathFile = new File(projectConfig.getDirectory());
         // 找到git根目录
-        while (!Arrays.asList(basePath.list()).contains(".git")) {
-            basePath = basePath.getParentFile();
+        while (!Arrays.asList(basePathFile.list()).contains(".git")) {
+            basePathFile = basePathFile.getParentFile();
         }
-        String projectPath = projectConfig.getDirectory().substring(basePath.getPath().length() + 1).replaceAll("\\\\", "/");
+        String projectPath = projectConfig.getDirectory().substring(basePathFile.getPath().length() + 1).replaceAll("\\\\", "/");
+        final String basePath = basePathFile.getPath();
+        // 获取当前项目目录下的工程路径
+        List<String> collectedProjectPaths = projectConfig.getMavenSession().getProjects().stream()
+                .filter(project -> project.getBasedir().getPath().startsWith(projectConfig.getDirectory()))
+                .map(project -> project.getBasedir().getPath().substring(basePath.length() + 1).replaceAll("\\\\", "/"))
+                .collect(Collectors.toList());
         // 找到当前项目变更的文件列表
         changedFiles = changedFiles.stream()
-                .filter(file -> file.startsWith(projectPath))
+                .filter(path -> path.startsWith(projectPath))
                 .collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(collectedProjectPaths)) {
+            changedFiles = changedFiles.stream()
+                    .filter(path -> {
+                        for (String collectedProjectPath : collectedProjectPaths) {
+                            if (path.startsWith(collectedProjectPath)) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    })
+                    .collect(Collectors.toList());
+        }
         logger.info("Found " + changedFiles.size() + " changed files for " + projectConfig.getAppName());
         if (changedFiles.isEmpty()) {
             return false;
