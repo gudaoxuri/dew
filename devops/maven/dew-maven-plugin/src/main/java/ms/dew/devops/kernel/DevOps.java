@@ -28,6 +28,7 @@ import ms.dew.devops.kernel.util.ExecuteOnceProcessor;
 import ms.dew.devops.kernel.util.ExitMonitorProcessor;
 import ms.dew.notification.NotifyConfig;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 import org.twdata.maven.mojoexecutor.MojoExecutor;
 
@@ -178,7 +179,8 @@ public class DevOps {
                 if (status != 0
                         && !Config.getProjectConfig(Config.getCurrentProjectId()).isHasError()
                         && Config.getProjectConfig(Config.getCurrentProjectId()).getSkipReason().isEmpty()) {
-                    Config.getProjectConfig(Config.getCurrentProjectId()).skip("Uncaught error", true);
+                    DevOps.SkipProcess
+                            .skip(Config.getProjectConfig(Config.getCurrentProjectId()), "Uncaught error", true);
                 }
                 ExecuteEventProcessor.onShutdown(Config.getFinalConfig().getProjects());
             });
@@ -228,6 +230,62 @@ public class DevOps {
         public static void setCurrentProjectId(String currentProjectId) {
             Config.currentProjectId = currentProjectId;
         }
+    }
+
+
+    public static class SkipProcess {
+
+        /**
+         * Skip this project.
+         *
+         * @param config  the config
+         * @param reason  the reason
+         * @param isError the is error
+         */
+        public static void skip(FinalProjectConfig config, String reason, boolean isError) {
+            config.setSkip(true);
+            config.setHasError(isError);
+            config.setSkipReason(reason);
+            skip(config.getMavenProject());
+            logger.info("[" + config.getAppName() + "] Skipped : " + reason);
+        }
+
+        /**
+         * Skip this project.
+         *
+         * @param project the maven project
+         */
+        public static void skip(MavenProject project) {
+            File skipFile = new File(project.getBasedir().getPath() + File.separator + "target" + File.separator + ".dew_skip_flag");
+            if (!skipFile.exists()) {
+                skipFile.mkdirs();
+            }
+        }
+
+        /**
+         * UnSkip this project.
+         *
+         * @param config the config
+         */
+        public static void unSkip(FinalProjectConfig config) {
+            config.setSkip(false);
+            config.setHasError(false);
+            config.setSkipReason("");
+            logger.info("[" + config.getAppName() + "] UnSkipped");
+        }
+
+        /**
+         * UnSkip this project.
+         *
+         * @param project the maven project
+         */
+        public static void unSkip(MavenProject project) {
+            File skipFile = new File(project.getBasedir().getPath() + File.separator + "target" + File.separator + ".dew_skip_flag");
+            if (skipFile.exists()) {
+                skipFile.delete();
+            }
+        }
+
     }
 
     /**

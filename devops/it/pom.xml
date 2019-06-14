@@ -22,7 +22,7 @@
 
     <groupId>ms.dew</groupId>
     <artifactId>devops-it</artifactId>
-    <name>2.1 Dew Devops Integration Tests Build</name>
+    <name>2.2 Dew Devops Integration Tests Build</name>
     <packaging>jar</packaging>
     <version>2.0.0-SNAPSHOT</version>
 

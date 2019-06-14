@@ -67,7 +67,7 @@ public class NeedProcessChecker {
                 logger.info("Need process checking for " + projectConfig.getAppName());
                 Resp<String> deployAble = projectConfig.getDeployPlugin().deployAble(projectConfig);
                 if (!deployAble.ok()) {
-                    projectConfig.skip(deployAble.getMessage(), false);
+                    DevOps.SkipProcess.skip(projectConfig, deployAble.getMessage(), false);
                     continue;
                 }
                 projectConfig.getDeployPlugin()
@@ -79,7 +79,7 @@ public class NeedProcessChecker {
                                 projectConfig.getDeployPlugin().fetchLastDeployedVersion(projectConfig.getId() + DevOps.APPEND_FLAG,
                                         projectConfig.getAppName(), projectConfig.getNamespace()).ifPresent(lastVersionDeployCommitFromProfile -> {
                                     if (lastDeployedVersion.equals(lastVersionDeployCommitFromProfile)) {
-                                        projectConfig.skip("Reuse last version " + lastDeployedVersion + " has been deployed", false);
+                                        DevOps.SkipProcess.skip(projectConfig, "Reuse last version " + lastDeployedVersion + " has been deployed", false);
                                     } else {
                                         logger.info("Reuse last version " + lastVersionDeployCommitFromProfile
                                                 + " from " + projectConfig.getReuseLastVersionFromProfile());
@@ -91,7 +91,7 @@ public class NeedProcessChecker {
                             List<String> changedFiles = fetchGitDiff(lastDeployedVersion);
                             // 判断有没有代码变更
                             if (!hasUnDeployFiles(changedFiles, projectConfig)) {
-                                projectConfig.skip("No code changes", false);
+                                DevOps.SkipProcess.skip(projectConfig, "No code changes", false);
                             }
                         });
             }
@@ -220,8 +220,7 @@ public class NeedProcessChecker {
                                 .anyMatch(artifact -> needProcessProjects.contains(artifact.getId())))
                 .forEach(projectConfig -> {
                     // 这些项目不能跳过
-                    projectConfig.setSkip(false);
-                    projectConfig.setSkipReason("");
+                    DevOps.SkipProcess.unSkip(projectConfig);
                     // 递归依赖于此项目的各项目，这些项目也不能跳过
                     dependencyProcess(projectConfigs, new ArrayList<String>() {
                         {
