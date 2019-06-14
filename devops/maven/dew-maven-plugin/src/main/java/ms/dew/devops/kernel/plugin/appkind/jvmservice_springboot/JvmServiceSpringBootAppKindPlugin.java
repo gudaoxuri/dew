@@ -170,8 +170,8 @@ public class JvmServiceSpringBootAppKindPlugin implements AppKindPlugin {
                 (config.getApp().getRunOptions() == null ? "" : config.getApp().getRunOptions())
                         + " -Dspring.profiles.active=" + config.getProfile()
                         + " -Dserver.port=" + config.getApp().getPort();
+        containerEnvJavaOptionsValue += " -Dopentracing.jaeger.log-spans=" + config.getApp().getTraceLogSpans();
         if (config.getApp().getTraceLogEnabled()) {
-            containerEnvJavaOptionsValue += " -Dopentracing.jaeger.log-spans=" + config.getApp().getTraceLogSpans();
             if (!config.getApp().getTraceProbabilisticSamplingRate().equals(1.0)) {
                 containerEnvJavaOptionsValue += " -Dopentracing.jaeger.probabilistic-sampler.sampling-rate="
                         + config.getApp().getTraceProbabilisticSamplingRate();
