@@ -52,15 +52,19 @@ spring:
 
 ``dew`` 推荐用户设置容器的资源限定，部署时 ``dew`` 会根据容器环境自行设置JVM参数，规则如下：
 
-----
-* 如果系统内存资源 <= 300M 则 设置 -Xmx 为其 25%
-* 如果系统内存资源 > 300M 则 设置 -Xmx 为其 50%
-* 如果JDK版本 < 10 设置 -XX:ParallelGCThreads=<可用CPU核数> -XX:ConcGCThreads=<可用CPU核数> -Djava.util.concurrent.ForkJoinPool.common.parallelism=<可用CPU核数>
-* 如果JDK版本 < 10 设置 -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40
-* 如果JDK版本 >= 10 设置 -XX:+ExitOnOutOfMemoryError
+* ``-Xmx`` 或 ``-Xms`` 设置
+** 如果传入的 ``JAVA_OPTIONS`` 带有 ``-Xmx`` 或 ``-Xms`` 则优先使用传入设置
+** 如果传入了 ``JAVA_MAX_MEM_RATIO`` 则设置 ``-Xmx`` 为 ``最大可用内存``/``JAVA_MAX_MEM_RATIO``， 当 ``JAVA_MAX_MEM_RATIO``=50 时表示 ``-Xmx`` 为最大可用内存的50%
+** 如果没有指定 ``JAVA_MAX_MEM_RATIO`` 且 ``系统内存资源`` <= 300M 则 设置 ``-Xmx`` 为其25%
+** 如果没有指定 ``JAVA_MAX_MEM_RATIO`` 且 ``系统内存资源`` > 300M 则 设置 ``-Xmx`` 为其50%
+** 如果传入了 ``JAVA_INIT_MEM_RATIO`` 并且 ``JAVA_INIT_MEM_RATIO``=0 则不设置 ``-Xms``
+** 如果传入了 ``JAVA_INIT_MEM_RATIO`` 并且 ``JAVA_INIT_MEM_RATIO``!=0 & ``-Xmx`` 不为空 则 设置 ``-Xms`` 为 ``-Xmx``/``JAVA_INIT_MEM_RATIO``，当 ``JAVA_INIT_MEM_RATIO``=50 时表示 ``-Xms`` 为 ``-Xmx``的50%
+** 如果没有传入 ``JAVA_INIT_MEM_RATIO`` 则 设置 ``JAVA_INIT_MEM_RATIO``=100，执行同上一步的 ``-Xms`` 设置规则
+* 如果JDK版本 < 10 设置 ``-XX:ParallelGCThreads``=<可用CPU核数> ``-XX:ConcGCThreads``=<可用CPU核数> ``-Djava.util.concurrent.ForkJoinPool.common.parallelism``=<可用CPU核数>
+* 如果JDK版本 < 10 设置 ``-XX:+UseParallelGC`` ``-XX:GCTimeRatio``=4 ``-XX:AdaptiveSizePolicyWeight``=90 ``-XX:MinHeapFreeRatio``=40 ``-XX:MaxHeapFreeRatio``=70
+* 如果JDK版本 >= 10 设置 ``-XX:+ExitOnOutOfMemoryError``
 
 以上规则参考于： https://github.com/fabric8io-images/run-java-sh
-----
 
 ==== 配置中心选择
 
