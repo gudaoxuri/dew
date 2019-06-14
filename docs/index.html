@@ -548,7 +548,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#dashboard">4.3.8. Dashboard</a></li>
 <li><a href="#elasticsearch">4.3.9. Elasticsearch</a></li>
 <li><a href="#kibana">4.3.10. Kibana</a></li>
-<li><a href="#prometheus_grafana">4.3.11. Prometheus &amp;&amp; Grafana</a></li>
+<li><a href="#prometheus_grafana">4.3.11. Prometheus &amp; Grafana</a></li>
 <li><a href="#fluentd">4.3.12. Fluentd</a></li>
 <li><a href="#jaeger">4.3.13. Jaeger</a></li>
 </ul>
@@ -860,7 +860,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ol>
 </div>
 <div class="paragraph">
-<p>基于这一思念，我们我们提供一体化的Maven插件，实现了：</p>
+<p>基于这一理念，我们我们提供一体化的Maven插件，实现了：</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -4170,7 +4170,7 @@ cd devops-example-todo
 # 执行安装
 mvn install -Dmaven.test.skip=true
 # 部署到Kubernetes
-mvn -P devops dew:release -Ddew_devops_profile=uat
+mvn -P devops deploy -Ddew_devops_profile=uat
 
 # 打开浏览器，输入 http://todo-uat.dew.ms，切换到移动模式体验</pre>
 </div>
@@ -4325,8 +4325,6 @@ spec:
                     &lt;execution&gt;
                         &lt;goals&gt;
                             &lt;goal&gt;init&lt;/goal&gt;
-                            &lt;goal&gt;prepare&lt;/goal&gt;
-                            &lt;goal&gt;build&lt;/goal&gt;
                             &lt;goal&gt;release&lt;/goal&gt;
                         &lt;/goals&gt;
                     &lt;/execution&gt;
@@ -4479,7 +4477,7 @@ sh dew-devops.sh
 <div class="title">命令</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 基础命令
-mvn dew:release
+mvn deploy
 
 # ====================== 附加参数 ======================
 # dew_devops_profile                           # 指定的环境
@@ -4591,7 +4589,71 @@ mvn dew:release
 </div>
 <div class="paragraph">
 <div class="title">并行部署</div>
-<p><code>Dew</code> 支持使用Maven的 <code>-T </code> 实现并行编译部署，例如： <code>mvn -T 1C dew:release</code></p>
+<p><code>Dew</code> 支持使用Maven的 <code>-T </code> 实现并行编译部署，例如： <code>mvn -T 1C deploy</code></p>
+</div>
+<div class="paragraph">
+<div class="title">不需要部署的应用处理</div>
+<p><code>Dew</code> 会自行判断应用是否需要部署，对于不需要部署的应用为加速执行会设置一系列的skip，
+部署执行的是"Default Lifecycle (<a href="https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html)"，" class="bare">https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html)"，</a>
+默认包含了如下插件的skip：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Core plugins（clean、compiler、deploy、failsafe、install、resources、site、surefire）</p>
+</li>
+<li>
+<p>Packaging types/tools（war、jar、source）</p>
+</li>
+<li>
+<p>Reporting plugins（checkstyle）</p>
+</li>
+<li>
+<p>Tools（assembly、dependency、gpg）</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>同时 <code>Dew</code> 提供了 <code>dew.devops.skip</code> ，用户可自行添加到其它插件、环境中。</p>
+</div>
+<div class="listingblock">
+<div class="title">dew.devops.skip使用示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;!-- 动态跳过特定插件 --&gt;
+&lt;plugin&gt;
+     &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+     &lt;artifactId&gt;maven-antrun-plugin&lt;/artifactId&gt;
+     &lt;configuration&gt;
+         &lt;skip&gt;${dew.devops.skip}&lt;/skip&gt;
+     &lt;/configuration&gt;
+&lt;/plugin&gt;
+
+&lt;!--
+  并不是所有插件都提供了skip配置（比如maven-shade-plugin），这时可以使用profile + activation的方式解决
+
+  1. 定义一个profile，id随意
+  2. activation &gt; property 中添加 name 为 dew.devops.skip , value 为 !true 的属性
+  3. 添加需要动态skip的内容，可以是插件、依赖、属性等
+--&gt;
+&lt;profile&gt;
+    &lt;id&gt;devops-ext&lt;/id&gt;
+    &lt;activation&gt;
+        &lt;property&gt;
+            &lt;name&gt;dew.devops.skip&lt;/name&gt;
+            &lt;value&gt;!true&lt;/value&gt;
+        &lt;/property&gt;
+    &lt;/activation&gt;
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+                &lt;artifactId&gt;maven-shade-plugin&lt;/artifactId&gt;
+                ...
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/profile&gt;</code></pre>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -5427,8 +5489,9 @@ kubectl top pod</code></pre>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 使用如下方式将80 443暴露出来
-helm install stable/nginx-ingress --name dew-nginx --namespace ingress-nginx --version=1.4.0 \
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 不使用代理，添加 --set defaultBackend.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/defaultbackend
+# 使用如下方式将80 443暴露出来
+helm install stable/nginx-ingress --name dew-nginx --namespace nginx-ingress --version=1.4.0 \
     --set controller.kind=DaemonSet \
     --set controller.hostNetwork=true \
     --set controller.stats.enabled=true \
@@ -5480,6 +5543,7 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | gre
 </td>
 <td class="content">
 <a href="https://github.com/elastic/helm-charts/blob/master/elasticsearch" class="bare">https://github.com/elastic/helm-charts/blob/master/elasticsearch</a> 注意仔细查看各参数设值的说明。
+     * 暂不推荐Elasticsearch使用容器化。
 </td>
 </tr>
 </table>
@@ -5620,9 +5684,6 @@ helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 
     --set env."ELASTICSEARCH_URL"="http://dew-elasticsearch-master:9200" \
     --set service.internalPort=5601 \
     --set ingress.enabled=true,ingress.hosts={kibana.dew.ms} \
-    --set-string ingress.annotations."kubernetes\.io/ingress\.class"=nginx \
-    --set-string ingress.annotations."kubernetes\.io/tls-acme"="true" \
-    --set ingress.tls[0].hosts={kibana.dew.ms},ingress.tls[0].secretName=kibana-certs \
     --set dashboardImport.enabled=true \
     --set dashboardImport.dashboards."k8s"="https://raw.githubusercontent.com/monotek/kibana-dashboards/master/k8s-fluentd-elasticsearch.json" \
     --set serviceAccount.create=true,serviceAccountName=kibana \
@@ -5638,7 +5699,7 @@ helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 
 </div>
 </div>
 <div class="sect3">
-<h4 id="prometheus_grafana"><a class="anchor" href="#prometheus_grafana"></a>4.3.11. Prometheus &amp;&amp; Grafana</h4>
+<h4 id="prometheus_grafana"><a class="anchor" href="#prometheus_grafana"></a>4.3.11. Prometheus &amp; Grafana</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -5753,14 +5814,21 @@ kubectl -n devops create secret generic dew-prometheus-operator-etcd \
   --from-file=/etc/kubernetes/pki/etcd/peer.crt \
   --from-file=/etc/kubernetes/pki/etcd/peer.key
 
-# 安装，不使用代理要加上 --set kube-state-metrics.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kube-state-metrics
-# 若要启用对etcd监控，需设置kubeEtcd相关参数。
-# grafana.'grafana\.ini'为Grafana的配置参数,请安装时自行修改。
-# 若 Grafana 使用StorageClass，需要进行以下配置，无需创建PV，PVC
-#   --set grafana.persistence.storageClassName="yourscname"
-#   --set grafana.persistence.size=10Gi
-#   删去此行配置：    --set grafana.persistence.existingClaim=grafana \
-#   * Alertmanager和Prometheus由于生成的PVC名字长度过长，会造成无法自动创建PV，不建议使用StorageClass
+# 安装
+# · 不使用代理要加上 --set kube-state-metrics.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kube-state-metrics
+# · 若要启用对etcd监控，需设置kubeEtcd相关参数。
+# · grafana.'grafana\.ini'为Grafana的配置参数,请安装时自行修改。
+# · 使用StorageClass
+#    - 若 Grafana 使用StorageClass，需要进行以下配置，无需创建PV，PVC
+#      --set grafana.persistence.storageClassName="yourscname"
+#      --set grafana.persistence.size=10Gi
+#      删去此行配置：    --set grafana.persistence.existingClaim=grafana \
+#    - Prometheus使用StorageClass,需要添加以下配置，无需创建PV，PVC
+#      --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.storageClassName="yourscname" \
+#    - Alertmanager和Prometheus使用StorageClass,需要添加以下配置，无需创建PVC，但因为自动生成的PVC名称过长，
+#      而无法动态创建PV，所以需要自行修改chart相关配置或指定已创建好的PV名称：
+#      --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.volumeName=prometheus-alertmanager \
+#      --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.storageClassName="yourscname" \
 helm install stable/prometheus-operator --name dew-prometheus-operator --namespace devops --version=5.0.10 \
     --set kubelet.serviceMonitor.https=true \
     --set prometheus.ingress.enabled=true \
@@ -5770,8 +5838,8 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     --set prometheusOperator.securityContext.runAsNonRoot=false \
     --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
     --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
-    --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.selector.matchLabels."component"="alertmanager" \
     --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.selector.matchLabels."component"="prometheus" \
+    --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.selector.matchLabels."component"="alertmanager" \
     --set prometheus.prometheusSpec.secrets[0]=dew-prometheus-operator-etcd \
     --set kubeEtcd.serviceMonitor.scheme=https \
     --set kubeEtcd.serviceMonitor.insecureSkipVerify=true \
@@ -5783,7 +5851,6 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     --set grafana.defaultDashboardsEnabled=true \
     --set grafana.ingress.enabled=true \
     --set grafana.ingress.hosts={grafana.dew.ms} \
-    --set grafana.ingress.tls[0].host={grafana.dew.ms},ingress.tls[0].secretName=dew-grafana \
     --set grafana.sidecar.dashboards.enabled=true \
     --set grafana.sidecar.dashboards.searchNamespace="devops"\
     --set grafana.sidecar.dashboards.label=grafana_dashboard \
@@ -5796,7 +5863,7 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     --set grafana.'grafana\.ini'.smtp.password=XXXXX \
     --set grafana.'grafana\.ini'.smtp.from_address="XXXXX@163.com" \
     --set grafana.'grafana\.ini'.smtp.skip_verify=true \
-    --set grafana.'grafana\.ini'.server.root_url="https://grafana.dew.ms" \
+    --set grafana.'grafana\.ini'.server.root_url="http://grafana.dew.ms" \
     --set grafana.persistence.enabled=true \
     --set grafana.persistence.existingClaim=grafana \
     --set prometheusOperator.nodeSelector.group=devops \
@@ -5810,7 +5877,7 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
 # grafana默认用户名：admin
 # 访问 http://prometheus.dew.ms
 # 访问 http://alertmanager.dew.ms
-# 访问 https://grafana.dew.ms</code></pre>
+# 访问 http://grafana.dew.ms</code></pre>
 </div>
 </div>
 <div class="quoteblock">
@@ -5898,6 +5965,7 @@ kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops
 2.部署项目及创建进行监控的ServiceMonitor
   注意ServiceMonitor的labels要含有Prometheus-operator创建的Prometheus的serviceMonitorSelector的label。
   详细文章：https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources
+            https://coreos.com/operators/prometheus/docs/latest/user-guides/getting-started.html
 3.Demo
   以devops-example-todo的compute模块为例创建ServiceMonitor
   link: https://github.com/dew-ms/devops-example-todo
@@ -5948,14 +6016,21 @@ kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">helm repo add kiwigrid https://kiwigrid.github.io
 
-# 安装，不使用代理要加上 --set image.tag=v2.4.0 --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/fluentd-elasticsearch
-# 请根据需要进行节点亲和性相关设置，但请保证需要收集日志的节点有Fluentd部署。
-# e.g. 只收集部署了应用的节点的日志，设置 --set nodeSelector.group=app
-# 若要启用Prometheus进行监控Fluentd，
-# 需要先将Fluentd通过设置service暴露出来，然后设置prometheusRule和serviceMonitor。
-# 此配置需结合Prometheus-operator使用。
-helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace devops --version=2.8.3 \
+# 安装
+# · 不使用代理要加上 --set image.tag=v2.4.0 --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/fluentd-elasticsearch
+#    如需使用最新版本镜像，可自行下载镜像源文件制作镜像
+#    地址：https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch/fluentd-es-image
+# · 镜像版本建议使用v2.5.2以上，避免一些bug。
+# · 请根据需要进行节点亲和性相关设置，但请保证需要收集日志的节点有Fluentd部署。
+#    e.g. 若只需收集部署了应用的节点的日志，设置 --set nodeSelector.group=app
+# · 通过启用configMaps.useDefaults各类型的日志配置文件，来实现各类日志的收集，默认为全部启用。
+#    更多的日志收集配置，请见：https://docs.fluentd.org
+# · 若要启用Prometheus进行监控Fluentd，
+#    需要先将Fluentd通过设置service暴露出来，然后设置prometheusRule和serviceMonitor。
+#    此配置需结合Prometheus-operator使用。
+helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace devops --version=3.0.0 \
     --set elasticsearch.host=dew-elasticsearch-master \
+    --set elasticsearch.port=9200 \
     --set elasticsearch.logstash_prefix=logstash \
     --set service.type=ClusterIP \
     --set service.ports[0].name="monitor-agent" \
@@ -5965,7 +6040,13 @@ helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace de
     --set prometheusRule.labels.app=prometheus-operator \
     --set prometheusRule.labels.release=dew-prometheus-operator \
     --set serviceMonitor.enabled=true \
-    --set serviceMonitor.labels.release=dew-prometheus-operator \</code></pre>
+    --set serviceMonitor.labels.release=dew-prometheus-operator \
+    --set configMaps.useDefaults.outputConf=true \
+    --set configMaps.useDefaults.containersInputConf=true \
+    --set configMaps.useDefaults.systemConf=false \
+    --set configMaps.useDefaults.systemInputConf=false \
+    --set configMaps.useDefaults.forwardInputConf=false \
+    --set configMaps.useDefaults.monitoringConf=false</code></pre>
 </div>
 </div>
 </div>
@@ -6218,9 +6299,9 @@ app:                                    # 应用配置
                                         # 后端服务默认为空
   runOptions:                           # 运行参数，可指定诸如 JVM 配置等信息
   serverConfig: |-                      # 服务配置，多为Nginx配置
-  containerResourcesLimits:             # 容器资源上限，同Kubernetes配置
+  containerResourcesLimits:             # 容器资源上限，同Kubernetes配置，值应大于等于containerResourcesRequests
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-  containerResourcesRequests:           # 容器资源下限，同Kubernetes配置
+  containerResourcesRequests:           # 容器资源下限，同Kubernetes配置，值应小于等于containerResourcesLimits
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
 docker:                                 # Docker配置
   host:                                 # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
@@ -6366,7 +6447,7 @@ dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使
 * 如果系统内存资源 &gt; 300M 则 设置 -Xmx 为其 50%
 * 如果JDK版本 &lt; 10 设置 -XX:ParallelGCThreads=&lt;可用CPU核数&gt; -XX:ConcGCThreads=&lt;可用CPU核数&gt; -Djava.util.concurrent.ForkJoinPool.common.parallelism=&lt;可用CPU核数&gt;
 * 如果JDK版本 &lt; 10 设置 -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40
-* 如果JDK版本 &gt;= 10 设置 -XX:+ExitOnOutOfMemoryError
+* 如果JDK版本 != 7 设置 -XX:+ExitOnOutOfMemoryError
 
 以上规则参考于： https://github.com/fabric8io-images/run-java-sh</pre>
 </div>
@@ -6395,16 +6476,20 @@ dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-notifies:
-  - type: DD
-    args:
+#notifies:
+ # - type: DD
+ #   args:
       # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-      url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+  #    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加测试环境
   test:
     # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
-    namespace: dew-test</code></pre>
+    namespace: message-dev
+
+app:
+  containerResourcesLimits:
+    cpu: "200M"</code></pre>
 </div>
 </div>
 <div class="olist arabic">
@@ -6587,8 +6672,12 @@ mvn -P devops dew:release -Ddew_devops_profile=test</pre>
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
+docker:
+  image: openjdk:9
 notifies:
   - type: DD
+    defaultReceivers:
+      - 15670950484
     args:
       # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
       url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
@@ -6619,7 +6708,8 @@ app:
 <div class="listingblock">
 <div class="title">/notifier/.dew配置说明</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">docker:
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">skip: true
+docker:
   # 使用自定义的Image，默认JVM类型项目的Image为openjdk:8-alpine
   image: openjdk:8</code></pre>
 </div>
@@ -8152,6 +8242,18 @@ gitlab-ctl reconfigure
 </tr>
 </table>
 </div>
+<div class="listingblock">
+<div class="title">镜像存储</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># Harbor安装步骤略过
+# 登录Harbor docker login &lt;host&gt; -u &lt;user&gt; -p &lt;password&gt;
+docker login harbor.dew.ms -u admin -p Harbor12345
+# e.g. 上传镜像
+docker pull dewms/devops:latest
+docker tag dewms/devops:latest harbor.dew.ms/dewms/devops:latest
+docker push harbor.dew.ms/dewms/devops:latest</code></pre>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="dnsmasq"><a class="anchor" href="#dnsmasq"></a>6.2.7. Dnsmasq</h4>
@@ -8193,11 +8295,17 @@ x.x.x.x jaeger.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
 # 编辑所有容器服务节点，加上dnsmasq节点的IP
 vi /etc/resolv.conf
 -
-nameserver x.x.x.x # IP当前节点
+nameserver x.x.x.x # IP当前节点 应放在所有nameserver的最上面
 -
 
 # TIP: 以上设置在节点重启后可能被重置，更好的做法见：
-# @see https://unix.stackexchange.com/questions/163831/nameservers-erased-after-systemctl-restart-network-service</code></pre>
+# @see https://unix.stackexchange.com/questions/163831/nameservers-erased-after-systemctl-restart-network-service
+# 方法一：
+#   修改/etc/resolv.conf之后，执行
+#   sudo chattr +i /etc/resolv.conf
+#   可以通过重启网络查看是否被重置
+#   service network restart
+#   cat /etc/resolv.conf</code></pre>
 </div>
 </div>
 </div>
@@ -8879,7 +8987,7 @@ prod deploy: # 生产环境部署
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-05-21 19:02:51 CST
+Last updated 2019-05-22 14:35:33 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

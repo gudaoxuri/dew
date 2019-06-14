@@ -57,7 +57,7 @@ spring:
 * 如果系统内存资源 > 300M 则 设置 -Xmx 为其 50%
 * 如果JDK版本 < 10 设置 -XX:ParallelGCThreads=<可用CPU核数> -XX:ConcGCThreads=<可用CPU核数> -Djava.util.concurrent.ForkJoinPool.common.parallelism=<可用CPU核数>
 * 如果JDK版本 < 10 设置 -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40
-* 如果JDK版本 >= 10 设置 -XX:+ExitOnOutOfMemoryError
+* 如果JDK版本 != 7 设置 -XX:+ExitOnOutOfMemoryError
 
 以上规则参考于： https://github.com/fabric8io-images/run-java-sh
 ----
