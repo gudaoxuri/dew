@@ -163,6 +163,7 @@ IMPORTANT: 在CI/CD工具中附加参数的kubernetes、docker相关参数应作
 
 ``Dew`` 支持使用Maven的 ``-T `` 实现并行编译部署，例如： ``mvn -T 1C deploy``
 
+[[devops-user-manual-release-skip]]
 .不需要部署的应用处理
 
 ``Dew`` 会自行判断应用是否需要部署，对于不需要部署的应用为加速执行会设置一系列的skip，
@@ -215,7 +216,9 @@ IMPORTANT: 在CI/CD工具中附加参数的kubernetes、docker相关参数应作
 </profile>
 ----
 
+.使用 ``javaagent`` 动态跳过不需要部署的应用
 
+详见 <<dew-devops-maven-agent>>
 
 
 ==== 版本回滚

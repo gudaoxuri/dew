@@ -17,11 +17,13 @@
 package ms.dew.devops.kernel.config;
 
 import com.ecfront.dew.common.$;
+import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.exception.ConfigException;
 import ms.dew.devops.kernel.helper.GitHelper;
 import ms.dew.devops.kernel.helper.YamlHelper;
 import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
 import ms.dew.devops.kernel.plugin.deploy.DeployPlugin;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
@@ -104,6 +106,7 @@ public class ConfigBuilder {
      * @param dewConfig                       the dew config
      * @param appKindPlugin                   the app kind plugin
      * @param deployPlugin                    the deploy plugin
+     * @param mavenSession                    the maven session
      * @param mavenProject                    the maven project
      * @param inputProfile                    the input profile
      * @param inputDockerHost                 the input docker host
@@ -121,7 +124,7 @@ public class ConfigBuilder {
      * @throws IllegalAccessException    the illegal access exception
      */
     public static FinalProjectConfig buildProject(DewConfig dewConfig, AppKindPlugin appKindPlugin, DeployPlugin deployPlugin,
-                                                  MavenProject mavenProject,
+                                                  MavenSession mavenSession, MavenProject mavenProject,
                                                   String inputProfile,
                                                   String inputDockerHost, String inputDockerRegistryUrl,
                                                   String inputDockerRegistryUserName, String inputDockerRegistryPassword,
@@ -154,7 +157,7 @@ public class ConfigBuilder {
         if (!inputProfile.equals(FLAG_DEW_DEVOPS_DEFAULT_PROFILE) && !dewConfig.getProfiles().containsKey(inputProfile)) {
             throw new ConfigException("[" + mavenProject.getArtifactId() + "] Can't be found [" + inputProfile + "] profile");
         }
-        FinalProjectConfig finalProjectConfig = doBuildProject(dewConfig, appKindPlugin, deployPlugin, mavenProject,
+        FinalProjectConfig finalProjectConfig = doBuildProject(dewConfig, appKindPlugin, deployPlugin, mavenSession, mavenProject,
                 inputProfile, inputDockerHost, inputDockerRegistryUrl,
                 inputDockerRegistryUserName, inputDockerRegistryPassword, inputKubeBase64Config,
                 dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
@@ -166,7 +169,7 @@ public class ConfigBuilder {
     }
 
     private static FinalProjectConfig doBuildProject(DewConfig dewConfig, AppKindPlugin appKindPlugin, DeployPlugin deployPlugin,
-                                                     MavenProject mavenProject,
+                                                     MavenSession mavenSession, MavenProject mavenProject,
                                                      String inputProfile,
                                                      String inputDockerHost, String inputDockerRegistryUrl,
                                                      String inputDockerRegistryUserName, String inputDockerRegistryPassword,
@@ -194,8 +197,16 @@ public class ConfigBuilder {
         } else {
             finalProjectConfig.setAppShowName(mavenProject.getArtifactId());
         }
+
+        finalProjectConfig.setMavenSession(mavenSession);
+        finalProjectConfig.setMavenProject(mavenProject);
+
+        // setting path
+        finalProjectConfig.setDirectory(mavenProject.getBasedir().getPath() + File.separator);
+        finalProjectConfig.setTargetDirectory(finalProjectConfig.getDirectory() + "target" + File.separator);
+
         if (finalProjectConfig.getSkip()) {
-            finalProjectConfig.skip("Configured to skip", false);
+            DevOps.SkipProcess.skip(finalProjectConfig, "Configured to skip", false);
             return finalProjectConfig;
         }
         // 优先使用命令行参数
@@ -214,10 +225,6 @@ public class ConfigBuilder {
         if (inputKubeBase64Config != null && !inputKubeBase64Config.trim().isEmpty()) {
             finalProjectConfig.getKube().setBase64Config(inputKubeBase64Config.trim());
         }
-
-        // setting path
-        finalProjectConfig.setDirectory(mavenProject.getBasedir().getPath() + File.separator);
-        finalProjectConfig.setTargetDirectory(finalProjectConfig.getDirectory() + "target" + File.separator);
 
         // setting git info
         finalProjectConfig.setScmUrl(GitHelper.inst().getScmUrl());

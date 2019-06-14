@@ -154,13 +154,18 @@ calc_init_memory() {
     return
   fi
 
-  # Check if value set
-  if [ -z "${JAVA_INIT_MEM_RATIO:-}" ] || [ -z "${CONTAINER_MAX_MEMORY:-}" ] || [ "${JAVA_INIT_MEM_RATIO}" -eq 0 ]; then
-    return
+   # Check for the 'real memory size' and calculate Xms from the ratio
+  if [ -n "${JAVA_INIT_MEM_RATIO:-}" ]; then
+    if [ "${JAVA_INIT_MEM_RATIO}" -eq 0 ]; then
+      # Explicitely switched off
+      return
+    fi
+  else
+    JAVA_INIT_MEM_RATIO=100
   fi
 
-  # Calculate Xms from the ratio given
-  calc_mem_opt "${CONTAINER_MAX_MEMORY}" "${JAVA_INIT_MEM_RATIO}" "ms"
+  local xmx=`echo  $(calc_max_memory) | tr -cd "[0-9]"`
+  calc_mem_opt $(($xmx*1048576)) "${JAVA_INIT_MEM_RATIO}" "ms"
 }
 
 calc_mem_opt() {

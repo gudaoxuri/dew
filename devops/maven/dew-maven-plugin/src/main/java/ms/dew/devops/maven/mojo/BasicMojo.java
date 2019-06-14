@@ -288,7 +288,7 @@ public abstract class BasicMojo extends AbstractMojo {
         Optional<String> kubeBase64ConfigAppendOpt =
                 formatParameters(FLAG_DEW_DEVOPS_KUBE_CONFIG + DevOps.APPEND_FLAG, formattedProperties);
         try {
-            MavenDevOps.Init.init(mavenSession, pluginManager, profile,quiet,
+            MavenDevOps.Init.init(mavenSession, pluginManager, profile, quiet,
                     dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config, assignationProjects,
                     dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
                     kubeBase64ConfigAppendOpt,
@@ -313,7 +313,7 @@ public abstract class BasicMojo extends AbstractMojo {
             } else {
                 // 此错误不会中止程序
                 MavenSkipProcessor.disabledDefaultBehavior(mavenSession.getCurrentProject().getId());
-                projectConfig.skip("Internal execution error", true);
+                DevOps.SkipProcess.skip(projectConfig, "Internal execution error", true);
             }
         } catch (GlobalProcessException e) {
             // 此错误会中止程序
@@ -326,7 +326,8 @@ public abstract class BasicMojo extends AbstractMojo {
             logger.error("Process error", e);
             e.printStackTrace();
             assert projectConfig != null;
-            projectConfig.skip("Process error [" + e.getClass().getSimpleName() + "]" + e.getMessage(), true);
+            DevOps.SkipProcess.skip(projectConfig,
+                    "Process error [" + e.getClass().getSimpleName() + "]" + e.getMessage(), true);
             ExecuteEventProcessor.onMojoExecuteFailure(getMojoName(), projectConfig, e);
             throw new ProjectProcessException("Process error", e);
         }

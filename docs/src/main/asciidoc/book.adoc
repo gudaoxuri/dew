@@ -78,5 +78,7 @@ include::../../../../devops/chart/dew-spring-cloud-config/readme.adoc[]
 
 === 支持的CI/CD服务
 
+include::../../../../devops/maven/dew-maven-agent/readme.adoc[]
+
 include::../../../../devops/cicd/gitlabci/readme.adoc[]
 

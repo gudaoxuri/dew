@@ -273,6 +273,15 @@ public class FinalProjectConfig extends DewProfile {
     }
 
     /**
+     * Sets has error.
+     *
+     * @param hasError the has error
+     */
+    public void setHasError(boolean hasError) {
+        this.hasError = hasError;
+    }
+
+    /**
      * Gets execute successful mojos.
      *
      * @return the execute successful mojos
@@ -430,20 +439,6 @@ public class FinalProjectConfig extends DewProfile {
         return registryHost + "/"
                 + namespace + "/"
                 + appName + ":" + specTag;
-    }
-
-
-    /**
-     * Skip this project.
-     *
-     * @param reason  the reason
-     * @param isError the is error
-     */
-    public void skip(String reason, boolean isError) {
-        super.setSkip(true);
-        hasError = isError;
-        this.setSkipReason(reason);
-        logger.info("[" + getAppName() + "] Skipped : " + reason);
     }
 
 }

@@ -18,6 +18,7 @@ package ms.dew.devops.kernel.plugin.appkind.frontend_node;
 
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.release.BasicPrepareFlow;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,6 +61,7 @@ public class FrontendNodePrepareFlow extends BasicPrepareFlow {
     }
 
     protected void postPrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
+        FileUtils.deleteDirectory(new File(flowBasePath + "dist"));
         Files.move(Paths.get(config.getDirectory() + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
     }
 }

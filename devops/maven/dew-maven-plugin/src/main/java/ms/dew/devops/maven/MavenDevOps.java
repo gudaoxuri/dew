@@ -149,8 +149,10 @@ public class MavenDevOps {
                 }
             }
             for (MavenProject project : session.getProjectDependencyGraph().getSortedProjects()) {
+                DevOps.SkipProcess.unSkip(project);
                 Optional<AppKindPlugin> appKindPluginOpt = AppKindPluginSelector.select(project);
                 if (!appKindPluginOpt.isPresent()) {
+                    DevOps.SkipProcess.skip(project);
                     continue;
                 }
                 DeployPlugin deployPlugin = DeployPluginSelector.select(appKindPluginOpt.get(), project);
@@ -175,13 +177,11 @@ public class MavenDevOps {
                     dewConfig = new DewConfig();
                 }
                 FinalProjectConfig finalProjectConfig =
-                        ConfigBuilder.buildProject(dewConfig, appKindPluginOpt.get(), deployPlugin, project, inputProfile,
+                        ConfigBuilder.buildProject(dewConfig, appKindPluginOpt.get(), deployPlugin, session, project, inputProfile,
                                 inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
                                 inputKubeBase64Config,
                                 dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
                                 kubeBase64ConfigAppendOpt);
-                finalProjectConfig.setMavenSession(session);
-                finalProjectConfig.setMavenProject(project);
                 DevOps.Config.getFinalConfig().getProjects().put(project.getId(), finalProjectConfig);
                 logger.debug("[" + project.getId() + "] configured");
             }
@@ -194,7 +194,8 @@ public class MavenDevOps {
                     if (assignationProjects.contains(project.getArtifactId())) {
                         notSkip(DevOps.Config.getProjectConfig(project.getId()), project, false);
                     } else {
-                        DevOps.Config.getProjectConfig(project.getId()).skip("Not assign to release", false);
+                        DevOps.SkipProcess
+                                .skip(DevOps.Config.getProjectConfig(project.getId()), "Not assign to release", false);
                     }
                 });
             }
@@ -205,8 +206,7 @@ public class MavenDevOps {
                 return;
             }
             if (isParent) {
-                projectConfig.setSkip(false);
-                projectConfig.setSkipReason("");
+                DevOps.SkipProcess.unSkip(projectConfig);
             }
             if (project.isExecutionRoot()) {
                 return;
