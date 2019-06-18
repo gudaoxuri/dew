@@ -633,7 +633,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#支持的ci_cd服务">6.5. 支持的CI/CD服务</a>
 <ul class="sectlevel3">
-<li><a href="#dew_ci_cd_gitlab_ci_实现">6.5.1. Dew CI/CD : Gitlab CI 实现</a></li>
+<li><a href="#dew-devops-maven-agent">6.5.1. Dew DevOps Maven Agent</a></li>
+<li><a href="#dew_ci_cd_gitlab_ci_实现">6.5.2. Dew CI/CD : Gitlab CI 实现</a></li>
 </ul>
 </li>
 </ul>
@@ -4591,7 +4592,7 @@ mvn deploy
 <div class="title">并行部署</div>
 <p><code>Dew</code> 支持使用Maven的 <code>-T </code> 实现并行编译部署，例如： <code>mvn -T 1C deploy</code></p>
 </div>
-<div class="paragraph">
+<div id="devops-user-manual-release-skip" class="paragraph">
 <div class="title">不需要部署的应用处理</div>
 <p><code>Dew</code> 会自行判断应用是否需要部署，对于不需要部署的应用为加速执行会设置一系列的skip，
 部署执行的是"Default Lifecycle (<a href="https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html)"，" class="bare">https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html)"，</a>
@@ -4654,6 +4655,10 @@ mvn deploy
     &lt;/build&gt;
 &lt;/profile&gt;</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<div class="title">使用 <code>javaagent</code> 动态跳过不需要部署的应用</div>
+<p>详见 <a href="#dew-devops-maven-agent">Dew DevOps Maven Agent</a></p>
 </div>
 </div>
 <div class="sect3">
@@ -6441,16 +6446,49 @@ dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使
 <div class="paragraph">
 <p><code>dew</code> 推荐用户设置容器的资源限定，部署时 <code>dew</code> 会根据容器环境自行设置JVM参数，规则如下：</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre>* 如果系统内存资源 &lt;= 300M 则 设置 -Xmx 为其 25%
-* 如果系统内存资源 &gt; 300M 则 设置 -Xmx 为其 50%
-* 如果JDK版本 &lt; 10 设置 -XX:ParallelGCThreads=&lt;可用CPU核数&gt; -XX:ConcGCThreads=&lt;可用CPU核数&gt; -Djava.util.concurrent.ForkJoinPool.common.parallelism=&lt;可用CPU核数&gt;
-* 如果JDK版本 &lt; 10 设置 -XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40
-* 如果JDK版本 != 7 设置 -XX:+ExitOnOutOfMemoryError
-
-以上规则参考于： https://github.com/fabric8io-images/run-java-sh</pre>
+<div class="ulist">
+<ul>
+<li>
+<p><code>-Xmx</code> 或 <code>-Xms</code> 设置</p>
+<div class="ulist">
+<ul>
+<li>
+<p>如果传入的 <code>JAVA_OPTIONS</code> 带有 <code>-Xmx</code> 或 <code>-Xms</code> 则优先使用传入设置</p>
+</li>
+<li>
+<p>如果传入了 <code>JAVA_MAX_MEM_RATIO</code> 则设置 <code>-Xmx</code> 为 <code>最大可用内存</code>/<code>JAVA_MAX_MEM_RATIO</code>， 当 <code>JAVA_MAX_MEM_RATIO</code>=50 时表示 <code>-Xmx</code> 为最大可用内存的50%</p>
+</li>
+<li>
+<p>如果没有指定 <code>JAVA_MAX_MEM_RATIO</code> 且 <code>系统内存资源</code> &#8656; 300M 则 设置 <code>-Xmx</code> 为其25%</p>
+</li>
+<li>
+<p>如果没有指定 <code>JAVA_MAX_MEM_RATIO</code> 且 <code>系统内存资源</code> &gt; 300M 则 设置 <code>-Xmx</code> 为其50%</p>
+</li>
+<li>
+<p>如果传入了 <code>JAVA_INIT_MEM_RATIO</code> 并且 <code>JAVA_INIT_MEM_RATIO</code>=0 则不设置 <code>-Xms</code></p>
+</li>
+<li>
+<p>如果传入了 <code>JAVA_INIT_MEM_RATIO</code> 并且 <code>JAVA_INIT_MEM_RATIO</code>!=0 &amp; <code>-Xmx</code> 不为空 则 设置 <code>-Xms</code> 为 <code>-Xmx</code>/<code>JAVA_INIT_MEM_RATIO</code>，当 <code>JAVA_INIT_MEM_RATIO</code>=50 时表示 <code>-Xms</code> 为 <code>-Xmx</code>的50%</p>
+</li>
+<li>
+<p>如果没有传入 <code>JAVA_INIT_MEM_RATIO</code> 则 设置 <code>JAVA_INIT_MEM_RATIO</code>=100，执行同上一步的 <code>-Xms</code> 设置规则</p>
+</li>
+</ul>
 </div>
+</li>
+<li>
+<p>如果JDK版本 &lt; 10 设置 <code>-XX:ParallelGCThreads</code>=&lt;可用CPU核数&gt; <code>-XX:ConcGCThreads</code>=&lt;可用CPU核数&gt; <code>-Djava.util.concurrent.ForkJoinPool.common.parallelism</code>=&lt;可用CPU核数&gt;</p>
+</li>
+<li>
+<p>如果JDK版本 &lt; 10 设置 <code>-XX:+UseParallelGC</code> <code>-XX:GCTimeRatio</code>=4 <code>-XX:AdaptiveSizePolicyWeight</code>=90 <code>-XX:MinHeapFreeRatio</code>=40 <code>-XX:MaxHeapFreeRatio</code>=70</p>
+</li>
+<li>
+<p>如果JDK版本 !=7 设置 <code>-XX:+ExitOnOutOfMemoryError</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>以上规则参考于： <a href="https://github.com/fabric8io-images/run-java-sh" class="bare">https://github.com/fabric8io-images/run-java-sh</a></p>
 </div>
 </div>
 <div class="sect3">
@@ -6476,20 +6514,16 @@ dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-#notifies:
- # - type: DD
- #   args:
+notifies:
+  - type: DD
+    args:
       # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-  #    url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+      url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加测试环境
   test:
     # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
-    namespace: message-dev
-
-app:
-  containerResourcesLimits:
-    cpu: "200M"</code></pre>
+    namespace: dew-test</code></pre>
 </div>
 </div>
 <div class="olist arabic">
@@ -6672,12 +6706,8 @@ mvn -P devops dew:release -Ddew_devops_profile=test</pre>
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-docker:
-  image: openjdk:9
 notifies:
   - type: DD
-    defaultReceivers:
-      - 15670950484
     args:
       # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
       url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
@@ -8799,6 +8829,10 @@ helm list
 <div class="content">
 <pre># 直接使用docker hub镜像或手工打包：
 docker build -t dewms/devops .
+或
+docker build -t dewms/devops --build-arg MAVEN_AGENT_URL=&lt;&gt; .
+
+
 
 # 测试
 docker run -it dewms/devops
@@ -8871,7 +8905,27 @@ git add --all</code></pre>
 <div class="sect2">
 <h3 id="支持的ci_cd服务"><a class="anchor" href="#支持的ci_cd服务"></a>6.5. 支持的CI/CD服务</h3>
 <div class="sect3">
-<h4 id="dew_ci_cd_gitlab_ci_实现"><a class="anchor" href="#dew_ci_cd_gitlab_ci_实现"></a>6.5.1. Dew CI/CD : Gitlab CI 实现</h4>
+<h4 id="dew-devops-maven-agent"><a class="anchor" href="#dew-devops-maven-agent"></a>6.5.1. Dew DevOps Maven Agent</h4>
+<div class="paragraph">
+<p>本插件为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+</div>
+<div class="paragraph">
+<p>Dew会动态判定应用（子模块）是否需要部署，但Maven无法在启动后动态处理应用是否跳过，
+Dew的maven插件为此做了一定要处理，但这一做法只是跳过了执行插件，并没有彻底跳过应用，详见 <a href="#devops-user-manual-release-skip">不需要部署的应用处理</a> 。</p>
+</div>
+<div class="paragraph">
+<p>本插件使用 <code>javaagent</code> 可实现彻底的跳过不需要部署的应用。</p>
+</div>
+<div class="listingblock">
+<div class="title">使用</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">SET MAVEN_OPTS=-javaagent:&lt;本插件的jar&gt;
+mvn -P devops deploy &lt;其它命令&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="dew_ci_cd_gitlab_ci_实现"><a class="anchor" href="#dew_ci_cd_gitlab_ci_实现"></a>6.5.2. Dew CI/CD : Gitlab CI 实现</h4>
 <div class="paragraph">
 <p>此为Gitlab CI上的 CI/CD 处理，集成说明参见：https://gudaoxuri.github.io/dew/</p>
 </div>
@@ -8987,7 +9041,7 @@ prod deploy: # 生产环境部署
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-05-22 14:35:33 CST
+Last updated 2019-06-14 15:01:55 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

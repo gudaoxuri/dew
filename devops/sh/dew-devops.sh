@@ -574,7 +574,6 @@ EOF
     fi
 
     if [[ "${answer_maven_setting}" == "Y" ]]; then
-        echo '    --set runners.env.MAVEN_OPTS="-Dmaven.repo.local=.m2 -Dorg.apache.maven.user-settings=/opt/maven/settings.xml"' >> gitlab-runner/gitlab-runner-helm-installation.sh
         kubectl apply -f dew-maven-settings.yaml
     fi
 
