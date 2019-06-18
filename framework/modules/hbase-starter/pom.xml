@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>hbase-starter</artifactId>
-    <name>1.1.5 Spring Boot Starter HBase</name>
+    <name>1.2.5 Spring Boot Starter HBase</name>
     <description>HBase spring boot 实现</description>
     <packaging>jar</packaging>
 

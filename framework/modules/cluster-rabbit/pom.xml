@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>cluster-spi-rabbit</artifactId>
-    <name>1.1.3 Dew Cluster Rabbit</name>
+    <name>1.1.4 Dew Cluster Rabbit</name>
     <description>Dew 集群 Rabbit 实现</description>
     <packaging>jar</packaging>
 

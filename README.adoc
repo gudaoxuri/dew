@@ -110,6 +110,7 @@ ____
 |-  |-  |- cluster-hazelcast               // Hazelcast集群能力实现
 |-  |-  |- cluster-rabbit                  // RabbitMQ集群能力实现
 |-  |-  |- cluster-redis                   // Redis集群能力实现
+|-  |-  |- cluster-mqtt                    // MQTT集群能力实现
 |-  |-  |- idempotent-starter              // 幂等处理模块
 |-  |-  |- notification                    // 通知处理模块
 |-  |-  |- test-starter                    // 单元测试模块

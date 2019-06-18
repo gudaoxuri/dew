@@ -18,10 +18,13 @@ package ms.dew.core.cluster.spi.rabbit;
 
 import com.rabbitmq.client.*;
 import ms.dew.core.cluster.AbsClusterMQ;
+import ms.dew.core.cluster.dto.MessageWrap;
 import org.springframework.amqp.rabbit.connection.Connection;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
@@ -115,25 +118,12 @@ public class RabbitClusterMQ extends AbsClusterMQ {
      *
      * @param topic   主题
      * @param message 消息内容
-     * @return 是否发布成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
+     * @param header  消息头
+     * @param confirm 是否需要确认
+     * @return 是否发布成功，此返回值仅在 confirm 模式下才能保证严格准确！
      */
     @Override
-    public boolean doPublish(String topic, String message) {
-        return doPublish(topic, message, true);
-    }
-
-    /**
-     * MQ 发布订阅模式 之 发布.
-     * <p>
-     * exchange = fanout
-     * 请确保发布之前 topic 已经存在
-     *
-     * @param topic   主题
-     * @param message 消息内容
-     * @param confirm 是否需要确认
-     * @return 是否发布成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
-     */
-    public boolean doPublish(String topic, String message, boolean confirm) {
+    public boolean doPublish(String topic, String message, Optional<Map<String, Object>> header, boolean confirm) {
         Connection connection = rabbitAdapter.getConnection();
         Channel channel = connection.createChannel(false);
         Object funResult = null;
@@ -142,9 +132,11 @@ public class RabbitClusterMQ extends AbsClusterMQ {
                 channel.confirmSelect();
             }
             channel.exchangeDeclare(topic, BuiltinExchangeType.FANOUT, true);
+            Map<String, Object> sendHeader = getMQHeader(topic);
+            header.ifPresent(sendHeader::putAll);
             AMQP.BasicProperties properties = new AMQP.BasicProperties("text/plain",
                     null,
-                    getMQHeader(topic),
+                    sendHeader,
                     2,
                     0, null, null, null,
                     null, null, null, null,
@@ -188,7 +180,7 @@ public class RabbitClusterMQ extends AbsClusterMQ {
      * @param consumer 订阅处理方法
      */
     @Override
-    protected void doSubscribe(String topic, Consumer<String> consumer) {
+    protected void doSubscribe(String topic, Consumer<MessageWrap> consumer) {
         Channel channel = rabbitAdapter.getConnection().createChannel(false);
         try {
             channel.exchangeDeclare(topic, BuiltinExchangeType.FANOUT, true);
@@ -208,24 +200,11 @@ public class RabbitClusterMQ extends AbsClusterMQ {
      *
      * @param address 请求地址
      * @param message 消息内容
-     * @return 是否请求成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
-     */
-    @Override
-    protected boolean doRequest(String address, String message) {
-        return doRequest(address, message, true);
-    }
-
-    /**
-     * MQ 请求响应模式 之 请求.
-     * <p>
-     * exchange = fanout
-     *
-     * @param address 请求地址
-     * @param message 消息内容
+     * @param header  消息头
      * @param confirm 是否需要确认
-     * @return 是否请求成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
+     * @return 是否发布成功，此返回值仅在 confirm 模式下才能保证严格准确！
      */
-    public boolean doRequest(String address, String message, boolean confirm) {
+    public boolean doRequest(String address, String message, Optional<Map<String, Object>> header, boolean confirm) {
         Connection connection = rabbitAdapter.getConnection();
         Channel channel = connection.createChannel(false);
         Object funResult = null;
@@ -234,9 +213,11 @@ public class RabbitClusterMQ extends AbsClusterMQ {
                 channel.confirmSelect();
             }
             channel.queueDeclare(address, true, false, false, null);
+            Map<String, Object> sendHeader = getMQHeader(address);
+            header.ifPresent(sendHeader::putAll);
             AMQP.BasicProperties properties = new AMQP.BasicProperties("text/plain",
                     null,
-                    getMQHeader(address),
+                    sendHeader,
                     2,
                     0, null, null, null,
                     null, null, null, null,
@@ -279,10 +260,12 @@ public class RabbitClusterMQ extends AbsClusterMQ {
      * @param routingKey 路由Key
      * @param queueName  队列名
      * @param message    消息内容
+     * @param header     消息头
      * @param confirm    是否需要确认
      * @return 是否发布成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
      */
-    public boolean publishWithTopic(String topic, String routingKey, String queueName, String message, boolean confirm) {
+    public boolean publishWithTopic(String topic, String routingKey, String queueName, String message,
+                                    Optional<Map<String, Object>> header, boolean confirm) {
         logger.trace("[MQ] publishWithTopic {}:{}", topic, message);
         Connection connection = rabbitAdapter.getConnection();
         Channel channel = connection.createChannel(false);
@@ -293,9 +276,11 @@ public class RabbitClusterMQ extends AbsClusterMQ {
             }
             channel.queueDeclare(queueName, true, false, false, null);
             channel.exchangeDeclare(topic, BuiltinExchangeType.TOPIC, true);
+            Map<String, Object> sendHeader = getMQHeader(topic);
+            header.ifPresent(sendHeader::putAll);
             AMQP.BasicProperties properties = new AMQP.BasicProperties("text/plain",
                     null,
-                    getMQHeader(topic),
+                    sendHeader,
                     2,
                     0, null, null, null,
                     null, null, null, null,
@@ -340,7 +325,7 @@ public class RabbitClusterMQ extends AbsClusterMQ {
      * @param queueName  队列名
      * @param consumer   订阅处理方法
      */
-    public void subscribeWithTopic(String topic, String routingKey, String queueName, Consumer<String> consumer) {
+    public void subscribeWithTopic(String topic, String routingKey, String queueName, Consumer<MessageWrap> consumer) {
         Channel channel = rabbitAdapter.getConnection().createChannel(false);
         try {
             channel.queueDeclare(queueName, true, false, false, null);
@@ -354,7 +339,7 @@ public class RabbitClusterMQ extends AbsClusterMQ {
     }
 
     @Override
-    protected void doResponse(String address, Consumer<String> consumer) {
+    protected void doResponse(String address, Consumer<MessageWrap> consumer) {
         Channel channel = rabbitAdapter.getConnection().createChannel(false);
         try {
             channel.queueDeclare(address, true, false, false, null);
@@ -366,15 +351,15 @@ public class RabbitClusterMQ extends AbsClusterMQ {
     }
 
     private DefaultConsumer getDefaultConsumer(Channel channel, String flag, String exchange, String routingKey, String queueName,
-                                               Consumer<String> consumer) {
+                                               Consumer<MessageWrap> consumer) {
         return new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
-                setMQHeader(flag, properties.getHeaders());
-                String message = new String(body, StandardCharsets.UTF_8);
                 Object funResult = receiveBeforeFun.invoke(exchange, routingKey, queueName, properties);
                 try {
-                    consumer.accept(message);
+                    Map<String, Object> receiveHeader = setMQHeader(flag, properties.getHeaders());
+                    String message = new String(body, StandardCharsets.UTF_8);
+                    consumer.accept(new MessageWrap(flag, Optional.of(receiveHeader), message));
                 } catch (RuntimeException e) {
                     receiveErrorFun.invoke(e, funResult);
                     throw e;
@@ -386,4 +371,8 @@ public class RabbitClusterMQ extends AbsClusterMQ {
         };
     }
 
+    @Override
+    public boolean supportHeader() {
+        return true;
+    }
 }

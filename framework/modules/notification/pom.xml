@@ -28,7 +28,7 @@
     </parent>
 
     <artifactId>notification</artifactId>
-    <name>1.1.4 Dew Notification</name>
+    <name>1.2.4 Dew Notification</name>
     <version>${dew.version}</version>
     <description>通知处理</description>
     <packaging>jar</packaging>

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package ms.dew.core.cluster.spi.rabbit;
+package ms.dew.core.cluster.spi.mqtt;
 
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
@@ -27,16 +28,17 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 
 /**
- * Rabbit auto configuration.
+ * Mqtt auto configuration.
  *
  * @author gudaoxuri
  */
 @Configuration
-@ConditionalOnClass(RabbitTemplate.class)
-@ConditionalOnExpression("#{'${dew.cluster.mq}'=='rabbit'}")
-public class RabbitAutoConfiguration {
+@ConditionalOnClass(MqttClient.class)
+@ConditionalOnExpression("#{'${dew.cluster.mq}'=='mqtt'}")
 
-    private static final Logger logger = LoggerFactory.getLogger(RabbitAutoConfiguration.class);
+public class MqttAutoConfiguration {
+
+    private static final Logger logger = LoggerFactory.getLogger(MqttAutoConfiguration.class);
 
     @PostConstruct
     public void init() {
@@ -44,26 +46,26 @@ public class RabbitAutoConfiguration {
     }
 
     /**
-     * Rabbit adapter.
+     * Mqtt adapter.
      *
-     * @param rabbitTemplate the rabbit template
-     * @return the rabbit adapter
+     * @param mqttConfig the mqtt config
+     * @return the mqtt adapter
      */
     @Bean
-    public RabbitAdapter rabbitAdapter(RabbitTemplate rabbitTemplate) {
-        return new RabbitAdapter(rabbitTemplate);
+    public MqttAdapter mqttAdapter(MqttConfig mqttConfig) throws MqttException {
+        return new MqttAdapter(mqttConfig);
     }
 
     /**
-     * Rabbit cluster mq.
+     * Mqtt cluster mq.
      *
-     * @param rabbitAdapter the rabbit adapter
-     * @return the rabbit cluster mq
+     * @param mqttAdapter the mqtt adapter
+     * @return the mqtt cluster mq
      */
     @Bean
-    @ConditionalOnExpression("'${dew.cluster.mq}'=='rabbit'")
-    public RabbitClusterMQ rabbitClusterMQ(RabbitAdapter rabbitAdapter) {
-        return new RabbitClusterMQ(rabbitAdapter);
+    @ConditionalOnExpression("'${dew.cluster.mq}'=='mqtt'")
+    public MqttClusterMQ mqttClusterMQ(MqttAdapter mqttAdapter) {
+        return new MqttClusterMQ(mqttAdapter);
     }
 
 }

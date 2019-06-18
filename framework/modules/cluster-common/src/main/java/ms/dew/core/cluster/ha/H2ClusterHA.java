@@ -17,6 +17,7 @@
 package ms.dew.core.cluster.ha;
 
 import com.ecfront.dew.common.$;
+import ms.dew.core.cluster.dto.MessageWrap;
 import ms.dew.core.cluster.ha.dto.HAConfig;
 import ms.dew.core.cluster.ha.entity.PrepareCommitMsg;
 import org.h2.jdbcx.JdbcConnectionPool;
@@ -73,7 +74,7 @@ public class H2ClusterHA implements ClusterHA {
             PrepareCommitMsg prepareCommitMsg = new PrepareCommitMsg();
             prepareCommitMsg.setAddr(rs.getString(1));
             prepareCommitMsg.setMsgId(rs.getString(2));
-            prepareCommitMsg.setMsg(rs.getString(3));
+            prepareCommitMsg.setMsg($.json.toObject(rs.getString(3), MessageWrap.class));
             prepareCommitMsg.setCreatedTime(rs.getDate(4));
             jobs.add(prepareCommitMsg);
         }
@@ -99,12 +100,12 @@ public class H2ClusterHA implements ClusterHA {
     }
 
     @Override
-    public String mq_afterPollMsg(String addr, String msg) {
+    public String mq_afterPollMsg(String addr, MessageWrap msg) {
         String sql = "INSERT INTO MQ_MSG VALUES(?,?,?,?)";
         Date date = new Date(System.currentTimeMillis());
         try {
             String uuid = $.field.createUUID();
-            update(sql, addr, uuid, msg, date);
+            update(sql, addr, uuid, $.json.toJsonString(msg), date);
             return uuid;
         } catch (SQLException e) {
             logger.error("Create HA job error.", e);

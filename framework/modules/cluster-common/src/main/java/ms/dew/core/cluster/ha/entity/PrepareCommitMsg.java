@@ -17,6 +17,7 @@
 package ms.dew.core.cluster.ha.entity;
 
 import com.ecfront.dew.common.$;
+import ms.dew.core.cluster.dto.MessageWrap;
 
 import java.util.Date;
 
@@ -28,7 +29,7 @@ import java.util.Date;
 public class PrepareCommitMsg {
     private String addr;
     private String msgId;
-    private String msg;
+    private MessageWrap msg;
     private Date createdTime;
 
     /**
@@ -72,7 +73,7 @@ public class PrepareCommitMsg {
      *
      * @return the msg
      */
-    public String getMsg() {
+    public MessageWrap getMsg() {
         return msg;
     }
 
@@ -81,7 +82,7 @@ public class PrepareCommitMsg {
      *
      * @param msg the msg
      */
-    public void setMsg(String msg) {
+    public void setMsg(MessageWrap msg) {
         this.msg = msg;
     }
 
