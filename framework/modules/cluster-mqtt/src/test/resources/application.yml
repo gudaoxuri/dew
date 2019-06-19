@@ -1,0 +1,7 @@
+dew:
+  cluster:
+    mq: mqtt
+  mw:
+    mqtt:
+      broker: tcp://127.0.0.1:1883
+      persistence: memory
