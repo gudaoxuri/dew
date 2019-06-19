@@ -42,8 +42,8 @@ class AuthInitiator @Autowired()(
   def init(): Unit = {
     initData()
     basicService.cacheAll()
-    Dew.cluster.mq.subscribe(AuthConfig.MQ_PUB_ACCESS_TOKEN, tenantId => {
-      basicService.cacheAccessToken(tenantId)
+    Dew.cluster.mq.subscribe(AuthConfig.MQ_PUB_ACCESS_TOKEN, tenantInfo => {
+      basicService.cacheAccessToken(tenantInfo.getBody)
     })
     Dew.cluster.mq.subscribe(AuthConfig.MQ_PUB_ALL_CACHE, _ => {
       basicService.cacheAll()
