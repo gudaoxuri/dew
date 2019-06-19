@@ -79,7 +79,8 @@ public class NeedProcessChecker {
                                 projectConfig.getDeployPlugin().fetchLastDeployedVersion(projectConfig.getId() + DevOps.APPEND_FLAG,
                                         projectConfig.getAppName(), projectConfig.getNamespace()).ifPresent(lastVersionDeployCommitFromProfile -> {
                                     if (lastDeployedVersion.equals(lastVersionDeployCommitFromProfile)) {
-                                        DevOps.SkipProcess.skip(projectConfig, "Reuse last version " + lastDeployedVersion + " has been deployed", false);
+                                        DevOps.SkipProcess.skip(projectConfig,
+                                                "Reuse last version " + lastDeployedVersion + " has been deployed", false);
                                     } else {
                                         logger.info("Reuse last version " + lastVersionDeployCommitFromProfile
                                                 + " from " + projectConfig.getReuseLastVersionFromProfile());

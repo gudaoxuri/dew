@@ -902,6 +902,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 |-  |-  |- cluster-hazelcast               // Hazelcast集群能力实现
 |-  |-  |- cluster-rabbit                  // RabbitMQ集群能力实现
 |-  |-  |- cluster-redis                   // Redis集群能力实现
+|-  |-  |- cluster-mqtt                    // MQTT集群能力实现
 |-  |-  |- idempotent-starter              // 幂等处理模块
 |-  |-  |- notification                    // 通知处理模块
 |-  |-  |- test-starter                    // 单元测试模块
@@ -1414,6 +1415,10 @@ public class NotifierController {
 <td class="tableblock halign-left valign-top"><p class="tableblock">Redis集群能力实现</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cluster-mqtt</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT集群能力实现</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">hbase-starter</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">HBase Spring Boot 实现</p></td>
 </tr>
@@ -1639,10 +1644,11 @@ $.field.validateMobile("18657120000")
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
 </colgroup>
 <thead>
 <tr>
@@ -1650,38 +1656,44 @@ $.field.validateMobile("18657120000")
 <th class="tableblock halign-left valign-top">Redis</th>
 <th class="tableblock halign-left valign-top">Hazelcast</th>
 <th class="tableblock halign-left valign-top">Rabbit</th>
+<th class="tableblock halign-left valign-top">MQTT</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">分布式缓存</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">分布式Map</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">分布式锁</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">MQ</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">*(只支持pub-sub)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">领导者选举</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 </tbody>
 </table>
@@ -1700,6 +1712,9 @@ $.field.validateMobile("18657120000")
 </li>
 <li>
 <p>只有Rabbit的MQ支持跟踪日志（见跟踪日志章节）</p>
+</li>
+<li>
+<p>MQTT多用于IoT环境</p>
 </li>
 </ul>
 </div>
@@ -1728,6 +1743,10 @@ $.field.validateMobile("18657120000")
 &lt;dependency&gt;
     &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;cluster-spi-rabbit&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;artifactId&gt;cluster-spi-mqtt&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -1735,29 +1754,41 @@ $.field.validateMobile("18657120000")
 <div class="title">增加配置</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">dew:
-    cluster: # 集群功能
-        cache: # 分布式缓存实现，默认为 redis
-        map: # 分布式Map实现，默认为 redis
-        lock: # 分布式锁实现，默认为 redis
-        mq: # MQ实现，默认为 redis
-        election: # 领导者选举实现，默认为 redis
+    cluster:                            # 集群功能
+        cache:                          # 分布式缓存实现，默认为 redis
+        map:                            # 分布式Map实现，默认为 redis
+        lock:                           # 分布式锁实现，默认为 redis
+        mq:                             # MQ实现，默认为 redis
+        election:                       # 领导者选举实现，默认为 redis
 
 spring:
     redis:
-        host: # redis主机
-        port: # redis端口
-        database: # redis数据库
-        password: # redis密码
+        host:                           # redis主机
+        port:                           # redis端口
+        database:                       # redis数据库
+        password:                       # redis密码
         lettuce:
-          pool: # 连接池配置
+          pool:                         # 连接池配置
     rabbitmq:
-      host: # rabbit主机
-      port: # rabbit端口
-      username: # rabbit用户名
-      password: # rabbit密码
-      virtual-host: # rabbit VH
+      host:                             # rabbit主机
+      port:                             # rabbit端口
+      username:                         # rabbit用户名
+      password:                         # rabbit密码
+      virtual-host:                     # rabbit VH
     hazelcast:
-        addresses: [] # hazelcast地址，端口可选</code></pre>
+        addresses: []                   # hazelcast地址，端口可选
+dew:
+  mw:                                   # 中间件
+    mqtt:                               # MQTT集群实现
+      broker:                           # Broker地址，e.g. tcp://127.0.0.1:1883
+      clientId: Dew_Cluster_&lt;Cluster.instanceId&gt;
+                                        # 连接客户端ID，注意一个集群内客户端ID必须唯一
+      persistence:                      # 存储，默认为File，可选 memory
+      userName:                         # 用户名
+      password:                         # 密码
+      timeoutSec:                       # 连接超时时间
+      keepAliveIntervalSec:             # 心跳间隔时间
+      cleanSession: true                # 是否消除Session</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -2610,6 +2641,8 @@ lock.tryLockWithFun(0, 1000, () -&gt; {
 
 package ms.dew.core.cluster;
 
+import ms.dew.core.cluster.dto.MessageWrap;
+
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -2627,9 +2660,36 @@ public interface ClusterMQ {
      *
      * @param topic   主题
      * @param message 消息内容
-     * @return 是否发布成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
+     * @param header  消息头
+     * @param confirm 是否需要确认
+     * @return 是否发布成功 ，此返回值仅在 confirm 模式下才能保证严格准确！
      */
-    boolean publish(String topic, String message);
+    boolean publish(String topic, String message, Map&lt;String, Object&gt; header, boolean confirm);
+
+    /**
+     * MQ 发布订阅模式 之 发布.
+     * &lt;p&gt;
+     * 请确保发布之前 topic 已经存在
+     *
+     * @param topic   主题
+     * @param message 消息内容
+     * @param header  消息头
+     */
+    default void publish(String topic, String message, Map&lt;String, Object&gt; header) {
+        publish(topic, message, header, false);
+    }
+
+    /**
+     * MQ 发布订阅模式 之 发布.
+     * &lt;p&gt;
+     * 请确保发布之前 topic 已经存在
+     *
+     * @param topic   主题
+     * @param message 消息内容
+     */
+    default void publish(String topic, String message) {
+        publish(topic, message, null);
+    }
 
 
     /**
@@ -2640,7 +2700,29 @@ public interface ClusterMQ {
      * @param topic    主题
      * @param consumer 订阅处理方法
      */
-    void subscribe(String topic, Consumer&lt;String&gt; consumer);
+    void subscribe(String topic, Consumer&lt;MessageWrap&gt; consumer);
+
+    /**
+     * MQ 请求响应模式 之 请求.
+     *
+     * @param address 请求地址
+     * @param message 消息内容
+     * @param header  消息头
+     * @param confirm 是否需要确认
+     * @return 是否发布成功 ，此返回值仅在 confirm 模式下才能保证严格准确！
+     */
+    boolean request(String address, String message, Map&lt;String, Object&gt; header, boolean confirm);
+
+    /**
+     * MQ 请求响应模式 之 请求.
+     *
+     * @param address 请求地址
+     * @param message 消息内容
+     * @param header  消息头
+     */
+    default void request(String address, String message, Map&lt;String, Object&gt; header) {
+        request(address, message, header, false);
+    }
 
 
     /**
@@ -2648,9 +2730,11 @@ public interface ClusterMQ {
      *
      * @param address 请求地址
      * @param message 消息内容
-     * @return 是否请求成功
      */
-    boolean request(String address, String message);
+    default void request(String address, String message) {
+        request(address, message, null);
+    }
+
 
     /**
      * MQ 请求响应模式 之 响应.
@@ -2660,16 +2744,35 @@ public interface ClusterMQ {
      * @param address  请求对应的地址
      * @param consumer 响应处理方法
      */
-    void response(String address, Consumer&lt;String&gt; consumer);
+    void response(String address, Consumer&lt;MessageWrap&gt; consumer);
 
+    /**
+     * Gets mq header.
+     *
+     * @param name the name
+     * @return the mq header
+     */
     default Map&lt;String, Object&gt; getMQHeader(String name) {
         return Cluster.getMQHeader(name);
     }
 
-    default void setMQHeader(String name, Map&lt;String, Object&gt; header) {
-        Cluster.setMQHeader(name, header);
+    /**
+     * Sets mq header.
+     *
+     * @param name   the name
+     * @param header the header
+     * @return the mq header
+     */
+    default Map&lt;String, Object&gt; setMQHeader(String name, Map&lt;String, Object&gt; header) {
+        return Cluster.setMQHeader(name, header);
     }
 
+    /**
+     * Is header support.
+     *
+     * @return the result
+     */
+    boolean supportHeader();
 }</code></pre>
 </div>
 </div>
@@ -2678,19 +2781,22 @@ public interface ClusterMQ {
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">// pub-sub
 Dew.cluster.mq.subscribe("test_pub_sub", message -&gt;
-        logger.info("pub_sub&gt;&gt;" + message));
-Dew.cluster.mq.publish("test_pub_sub", "msgA");
+        logger.info("pub_sub&gt;&gt;" + message.getBody()));
+Dew.cluster.mq.publish("test_pub_sub", "msgA",new HashMap&lt;String, Object&gt;() {
+      {
+          put("h", "001");
+      }
+  });
 Dew.cluster.mq.publish("test_pub_sub", "msgB");
 // req-resp
 Dew.cluster.mq.response("test_rep_resp", message -&gt;
-        logger.info("req_resp&gt;&gt;" + message));
-Dew.cluster.mq.request("test_rep_resp", "msg1");
-Dew.cluster.mq.request("test_rep_resp", "msg2");
-// rabbit confirm
-if (Dew.cluster.mq instanceof RabbitClusterMQ) {
-    boolean success = Dew.cluster.mq.publish("test_pub_sub", "confirm message");
-    success = Dew.cluster.mq.request("test_rep_resp", "confirm message");
-}</code></pre>
+        logger.info("req_resp&gt;&gt;" + message.getBody()));
+Dew.cluster.mq.request("test_rep_resp", "msg1",new HashMap&lt;String, Object&gt;() {
+      {
+          put("h", "001");
+      }
+  });
+Dew.cluster.mq.request("test_rep_resp", "msg2");</code></pre>
 </div>
 </div>
 <div class="admonitionblock important">
@@ -3758,7 +3864,17 @@ HBaseTemplate 其他使用方法可以详见 hbase-starter 模块下的 test 内
       sdk:                              # SDK配置
           server-url:                   # 服务器地址
           white-list:                   # 白名单，逗号分隔
-
+  mw:                                   # 中间件
+    mqtt:                               # MQTT集群实现
+      broker:                           # Broker地址，e.g. tcp://127.0.0.1:1883
+      clientId: Dew_Cluster_&lt;Cluster.instanceId&gt;
+                                        # 连接客户端ID，注意一个集群内客户端ID必须唯一
+      persistence:                      # 存储，默认为File，可选 memory
+      userName:                         # 用户名
+      password:                         # 密码
+      timeoutSec:                       # 连接超时时间
+      keepAliveIntervalSec:             # 心跳间隔时间
+      cleanSession: true                # 是否消除Session
 
 spring:                                 # 常用 Spring 配置
   application:
@@ -7168,6 +7284,9 @@ helm list</pre>
 </li>
 <li>
 <p>独立通知功能到<code>notification</code></p>
+</li>
+<li>
+<p>支持kafka、MQTT的MQ实现</p>
 </li>
 <li>
 <p>支持多个Redis连接 <a href="#framework-user-manual-cluster-redis-mutli-connection">多实例支持</a></p>

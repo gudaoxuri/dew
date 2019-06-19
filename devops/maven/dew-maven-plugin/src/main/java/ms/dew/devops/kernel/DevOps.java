@@ -56,6 +56,9 @@ public class DevOps {
 
     private static Logger logger = DewLog.build(DevOps.class);
 
+    /**
+     * The constant APPEND_FLAG.
+     */
     public static final String APPEND_FLAG = "_append";
 
     /**
@@ -193,7 +196,9 @@ public class DevOps {
      */
     public static class Config {
 
-        // TODO
+        /**
+         * The constant basicProfileConfig.
+         */
         // 基础配置，全局 .dew 配置对应的当前Profile
         public static DewProfile basicProfileConfig;
 
@@ -223,16 +228,29 @@ public class DevOps {
             return finalConfig;
         }
 
+        /**
+         * Gets current project id.
+         *
+         * @return the current project id
+         */
         public static String getCurrentProjectId() {
             return currentProjectId;
         }
 
+        /**
+         * Sets current project id.
+         *
+         * @param currentProjectId the current project id
+         */
         public static void setCurrentProjectId(String currentProjectId) {
             Config.currentProjectId = currentProjectId;
         }
     }
 
 
+    /**
+     * The type Skip process.
+     */
     public static class SkipProcess {
 
         /**
