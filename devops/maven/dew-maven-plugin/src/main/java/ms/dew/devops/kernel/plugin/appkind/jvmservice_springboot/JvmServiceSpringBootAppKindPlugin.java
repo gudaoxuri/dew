@@ -22,6 +22,7 @@ import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.flow.debug.DefaultDebugFlow;
 import ms.dew.devops.kernel.flow.log.DefaultLogFlow;
+import ms.dew.devops.kernel.flow.refresh.DefaultRefreshFlow;
 import ms.dew.devops.kernel.flow.release.KubeReleaseFlow;
 import ms.dew.devops.kernel.flow.rollback.DefaultRollbackFlow;
 import ms.dew.devops.kernel.flow.scale.DefaultScaleFlow;
@@ -144,6 +145,11 @@ public class JvmServiceSpringBootAppKindPlugin implements AppKindPlugin {
     @Override
     public BasicFlow scaleFlow(int replicas, boolean autoScale, int minReplicas, int maxReplicas, int cpuAvg) {
         return new DefaultScaleFlow(replicas, autoScale, minReplicas, maxReplicas, cpuAvg);
+    }
+
+    @Override
+    public BasicFlow refreshFlow() {
+        return new DefaultRefreshFlow();
     }
 
     @Override

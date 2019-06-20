@@ -78,6 +78,11 @@ public class JvmLibAppKindPlugin implements AppKindPlugin {
     }
 
     @Override
+    public BasicFlow refreshFlow() {
+        return new NoNeedProcessFLow();
+    }
+
+    @Override
     public BasicFlow logFlow(String podName, boolean follow) {
         return new NoNeedProcessFLow();
     }

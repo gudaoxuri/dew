@@ -298,6 +298,18 @@ mvn dew:scale
 
 NOTE: ``dew_devops_scale_auto: false``（默认情况） 时 ``dew_devops_scale_replicas`` 为必要参数，反之另几个参数为必要参数。
 
+==== 应用刷新
+
+用于刷新重启某一个应用，此命令在要重启的应用目录下执行。
+
+.命令
+
+[source,bash]
+----
+# 基础命令
+mvn dew:refresh
+----
+
 ==== CI/CD工具支持-Gitlab CI
 
 应用的部署与回滚为 ``DevOps`` 的核心操作，这些操作应该与 ``CI/CD`` 工具集成使用。
