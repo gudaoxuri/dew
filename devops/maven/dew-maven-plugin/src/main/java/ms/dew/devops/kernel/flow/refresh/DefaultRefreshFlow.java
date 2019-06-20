@@ -27,6 +27,11 @@ import ms.dew.devops.kernel.resource.KubeDeploymentBuilder;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Default refresh flow.
+ *
+ * @author Sun
+ */
 public class DefaultRefreshFlow extends BasicFlow {
 
     @Override
@@ -44,11 +49,11 @@ public class DefaultRefreshFlow extends BasicFlow {
                         deployment.getSpec().getTemplate().getSpec().getContainers().forEach(c -> {
                                     if (c.getName().equals(KubeDeploymentBuilder.FLAG_CONTAINER_NAME)) {
                                         if (c.getEnv() == null || c.getEnv().isEmpty()) {
-                                            add("{ \"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/env\", " +
-                                                    "\"value\": [{\"name\":\"DEW_RESTART_DATE\",\"value\":\"" + new Date() + "\"}] }");
+                                            add("{ \"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/env\", "
+                                                    + "\"value\": [{\"name\":\"DEW_RESTART_DATE\",\"value\":\"" + new Date() + "\"}] }");
                                         } else {
-                                            add("{ \"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/env/0\", " +
-                                                    "\"value\": {\"name\":\"DEW_RESTART_DATE\",\"value\":\"" + new Date() + "\"} }");
+                                            add("{ \"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/env/0\", "
+                                                    + "\"value\": {\"name\":\"DEW_RESTART_DATE\",\"value\":\"" + new Date() + "\"} }");
                                         }
                                     }
                                 }
