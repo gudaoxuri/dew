@@ -687,7 +687,7 @@ public class KubeOpt {
      * @param namespace the namespace
      * @param res       the res
      * @throws ApiException the api exception
-     * @link http ://jsonpatch.com/
+     * @link http://jsonpatch.com/
      */
     public void patch(String name, List<String> patchers, String namespace, KubeRES res) throws ApiException {
         List<JsonObject> jsonPatchers = patchers.stream()
@@ -961,63 +961,63 @@ public class KubeOpt {
             switch (res) {
                 case NAME_SPACE:
                     coreApi.deleteNamespace(
-                            name, deleteOptions, null, null, null, null, null);
+                            name, "true", deleteOptions, null, null, null, null);
                     break;
                 case INGRESS:
                     extensionsApi.deleteNamespacedIngress(
-                            name, namespace, deleteOptions, "true", null, null, null, null);
+                            name, namespace, "true", deleteOptions, null, null, null, null);
                     break;
                 case SERVICE:
                     coreApi.deleteNamespacedService(
-                            name, namespace, deleteOptions, "true", null, null, null, null);
+                            name, namespace, "true", deleteOptions, null, null, null, null);
                     break;
                 case DEPLOYMENT:
                     extensionsApi.deleteNamespacedDeployment(
-                            name, namespace, deleteOptions, "true", null, null, null, null);
+                            name, namespace, "true", deleteOptions, null, null, null, null);
                     break;
                 case REPLICA_SET:
                     extensionsApi.deleteNamespacedReplicaSet(
-                            name, namespace, deleteOptions, "true", null, null, null, null);
+                            name, namespace, "true", deleteOptions, null, null, null, null);
                     break;
                 case POD:
                     coreApi.deleteNamespacedPod(
-                            name, namespace, deleteOptions, "true", null, null, null, null);
+                            name, namespace, "true", deleteOptions, null, null, null, null);
                     break;
                 case SECRET:
                     coreApi.deleteNamespacedSecret(
-                            name, namespace, deleteOptions, "true", null, null, null, null);
+                            name, namespace, "true", deleteOptions, null, null, null, null);
                     break;
                 case CONFIG_MAP:
                     coreApi.deleteNamespacedConfigMap(
-                            name, namespace, deleteOptions, "true", null, null, null, null);
+                            name, namespace, "true", deleteOptions, null, null, null, null);
                     break;
                 case SERVICE_ACCOUNT:
                     coreApi.deleteNamespacedServiceAccount(
-                            name, namespace, deleteOptions, "true", null, null, null, null);
+                            name, namespace, "true", deleteOptions, null, null, null, null);
                     break;
                 case DAEMON_SET:
                     extensionsApi.deleteNamespacedDaemonSet(
-                            name, namespace, deleteOptions, "true", null, null, null, null);
+                            name, namespace, "true", deleteOptions, null, null, null, null);
                     break;
                 case ROLE:
                     rbacAuthorizationApi.deleteNamespacedRole(
-                            name, namespace, deleteOptions, "true", null, null, null, null);
+                            name, namespace, "true", deleteOptions, null, null, null, null);
                     break;
                 case ROLE_BINDING:
                     rbacAuthorizationApi.deleteNamespacedRoleBinding(
-                            name, namespace, deleteOptions, "true", null, null, null, null);
+                            name, namespace, "true", deleteOptions, null, null, null, null);
                     break;
                 case CLUSTER_ROLE:
                     rbacAuthorizationApi.deleteClusterRole(
-                            name, deleteOptions, "true", null, null, null, null);
+                            name, "true", deleteOptions, null, null, null, null);
                     break;
                 case CLUSTER_ROLE_BINDING:
                     rbacAuthorizationApi.deleteClusterRoleBinding(
-                            name, deleteOptions, "true", null, null, null, null);
+                            name, "true", deleteOptions, null, null, null, null);
                     break;
                 case HORIZONTAL_POD_AUTOSCALER:
                     autoscalingApi.deleteNamespacedHorizontalPodAutoscaler(
-                            name, namespace, deleteOptions, "true", null, null, null, null);
+                            name, namespace, "true", deleteOptions, null, null, null, null);
                     break;
                 default:
                     throw new ApiException("The resource [" + res.getVal() + "] operation NOT implementation");
