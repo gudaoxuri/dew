@@ -60,6 +60,7 @@ public class KubeReleaseFlow extends BasicFlow {
             logger.debug("Delete old version from kubernetes resources and docker images");
             removeOldVersions(config);
         }
+        new DockerBuildFlow().new ReuseVersionProcessorFactory().processAfterReleaseSuccessful(config);
     }
 
     /**

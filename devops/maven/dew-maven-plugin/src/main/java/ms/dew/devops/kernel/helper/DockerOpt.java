@@ -31,6 +31,10 @@ import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.BuildImageResultCallback;
 import com.github.dockerjava.core.command.PullImageResultCallback;
 import com.github.dockerjava.core.command.PushImageResultCallback;
+import ms.dew.devops.kernel.config.DewDockerLabel;
+import ms.dew.devops.kernel.model.DockerImageTag;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -346,6 +350,116 @@ public class DockerOpt {
                 throw new RuntimeException(ignore);
             }
             return header;
+        }
+
+        /**
+         * Get labels.
+         *
+         * @param labelName the label name
+         * @return labelId
+         * @throws IOException the io exception
+         */
+        public Integer getLabelsByName(String labelName) throws IOException {
+            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(registryApiUrl + "/labels?scope=g&name=" + labelName, wrapHeader());
+            boolean result = responseWrap.statusCode == 200;
+            Integer labelId = null;
+            if (result) {
+                log.debug("Registry get labels result [" + responseWrap.statusCode + "]" + responseWrap.result);
+                List<DewDockerLabel> data = $.json.toList(responseWrap.result, DewDockerLabel.class);
+                if (CollectionUtils.isNotEmpty(data)) {
+                    labelId = data.get(0).getId();
+                }
+            } else {
+                log.error("Registry get labels result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            }
+            return labelId;
+        }
+
+        /**
+         * Add label.
+         *
+         * @param labelName the label name
+         * @return <b>true</b> if success
+         * @throws IOException the io exception
+         */
+        public boolean addLabel(String labelName) throws IOException {
+            Map<String, Object> data = new HashMap<String, Object>() {{
+                put("description", labelName);
+                put("name", labelName);
+                put("project_id", 0);
+                put("scope", "g");
+            }};
+            HttpHelper.ResponseWrap responseWrap = $.http.postWrap(registryApiUrl + "/labels", $.json.toJsonString(data), wrapHeader());
+            boolean result = responseWrap.statusCode == 201 || responseWrap.statusCode == 409;
+            if (result) {
+                log.debug("Registry add label result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            } else {
+                log.error("Registry add label result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            }
+            return result;
+        }
+
+        /**
+         * Add label to image.
+         *
+         * @param imageName the label name
+         * @param labelId   the label id
+         * @return <b>true</b> if success
+         * @throws IOException the io exception
+         */
+        public boolean addLabelToImage(String imageName, Integer labelId) throws IOException {
+            String[] item = parseImageInfo(imageName);
+            Map<String, Integer> data = new HashMap<String, Integer>() {{
+                put("id", labelId);
+            }};
+            HttpHelper.ResponseWrap responseWrap = $.http.postWrap(registryApiUrl + "/repositories/" + item[0] + "/tags/" + item[1] + "/labels",
+                    $.json.toJsonString(data), wrapHeader());
+            boolean result = responseWrap.statusCode == 200 || responseWrap.statusCode == 409;
+            if (result) {
+                log.debug("Registry add label to image result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            } else {
+                log.error("Registry add label to image result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            }
+            return result;
+        }
+
+        /**
+         * Remove label to image.
+         *
+         * @param imageName the label name
+         * @param labelId   the label id
+         * @return <b>true</b> if success
+         * @throws IOException the io exception
+         */
+        public boolean removeLabelFromImage(String imageName, Integer labelId) throws IOException {
+            String[] item = parseImageInfo(imageName);
+            HttpHelper.ResponseWrap responseWrap = $.http.deleteWrap(registryApiUrl + "/repositories/" + item[0] + "/tags/"
+                            + item[1] + "/labels/" + labelId,
+                    wrapHeader());
+            boolean result = responseWrap.statusCode == 200;
+            if (result) {
+                log.debug("Registry remove label to image result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            } else {
+                log.error("Registry remove label to image result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            }
+            return result;
+        }
+
+        /**
+         * list tags.
+         *
+         * @param imageRepoName the image repository name
+         * @return the list of image tags
+         * @throws IOException the io exception
+         */
+        public List<DockerImageTag> listTags(String imageRepoName) throws IOException {
+            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(registryApiUrl + "/repositories/" + imageRepoName + "/tags", wrapHeader());
+            boolean result = responseWrap.statusCode == 200;
+            List<DockerImageTag> dockerImageTags = null;
+            if (result && StringUtils.isNotEmpty(responseWrap.result)) {
+                dockerImageTags = $.json.toList(responseWrap.result, DockerImageTag.class);
+            }
+            return dockerImageTags;
         }
 
     }

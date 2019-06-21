@@ -46,7 +46,6 @@ public class ConfigBuilder {
      */
     public static final String FLAG_DEW_DEVOPS_DEFAULT_PROFILE = "default";
 
-
     /**
      * 将default环境的配置合并到其它环境中.
      *
@@ -132,7 +131,8 @@ public class ConfigBuilder {
                                                   Optional<String> dockerRegistryUrlAppendOpt,
                                                   Optional<String> dockerRegistryUserNameAppendOpt,
                                                   Optional<String> dockerRegistryPasswordAppendOpt,
-                                                  Optional<String> kubeBase64ConfigAppendOpt)
+                                                  Optional<String> kubeBase64ConfigAppendOpt,
+                                                  String mojoName)
             throws InvocationTargetException, IllegalAccessException {
         // 格式化
         inputProfile = inputProfile.toLowerCase();
@@ -161,7 +161,7 @@ public class ConfigBuilder {
                 inputProfile, inputDockerHost, inputDockerRegistryUrl,
                 inputDockerRegistryUserName, inputDockerRegistryPassword, inputKubeBase64Config,
                 dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
-                kubeBase64ConfigAppendOpt);
+                kubeBase64ConfigAppendOpt, mojoName);
         if (!finalProjectConfig.getSkip() && finalProjectConfig.getKube().getBase64Config().isEmpty()) {
             throw new ConfigException("[" + mavenProject.getArtifactId() + "] Kubernetes config can't be empty");
         }
@@ -177,7 +177,7 @@ public class ConfigBuilder {
                                                      Optional<String> dockerHostAppendOpt, Optional<String> dockerRegistryUrlAppendOpt,
                                                      Optional<String> dockerRegistryUserNameAppendOpt,
                                                      Optional<String> dockerRegistryPasswordAppendOpt,
-                                                     Optional<String> kubeBase64ConfigAppendOpt)
+                                                     Optional<String> kubeBase64ConfigAppendOpt, String mojoName)
             throws InvocationTargetException, IllegalAccessException {
         FinalProjectConfig finalProjectConfig = new FinalProjectConfig();
         if (inputProfile.equalsIgnoreCase(FLAG_DEW_DEVOPS_DEFAULT_PROFILE)) {
@@ -234,10 +234,12 @@ public class ConfigBuilder {
 
         // setting custom config by app kind
         finalProjectConfig.getAppKindPlugin().customConfig(finalProjectConfig);
-        // setting reuse version
-        fillReuseVersionInfo(finalProjectConfig, dewConfig,
-                dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
-                kubeBase64ConfigAppendOpt);
+        if (!mojoName.equals("unrelease")) {
+            // setting reuse version
+            fillReuseVersionInfo(finalProjectConfig, dewConfig,
+                    dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
+                    kubeBase64ConfigAppendOpt);
+        }
         return finalProjectConfig;
     }
 
@@ -255,17 +257,27 @@ public class ConfigBuilder {
         // 配置没有指明，按默认逻辑执行
         // 先设置默认启用
         finalProjectConfig.setDisableReuseVersion(false);
-        if ((finalProjectConfig.getReuseLastVersionFromProfile() == null || finalProjectConfig.getReuseLastVersionFromProfile().isEmpty())
-                && (finalProjectConfig.getProfile().equals("production") || finalProjectConfig.getProfile().equals("prod"))) {
+        if ((finalProjectConfig.getReuseLastVersionFromProfile() == null || finalProjectConfig.getReuseLastVersionFromProfile().isEmpty())) {
             // 如果当前是生产环境则自动填充
             // 猜测填充的来源环境
             String guessFromProfile = null;
-            if (dewConfig.getProfiles().containsKey("pre-prod")) {
-                guessFromProfile = "pre-prod";
-            } else if (dewConfig.getProfiles().containsKey("pre-production")) {
-                guessFromProfile = "pre-production";
-            } else if (dewConfig.getProfiles().containsKey("uat")) {
-                guessFromProfile = "uat";
+            if (finalProjectConfig.getProfile().equals("production") || finalProjectConfig.getProfile().equals("prod")) {
+                if (dewConfig.getProfiles().containsKey("pre-prod")) {
+                    guessFromProfile = "pre-prod";
+                } else if (dewConfig.getProfiles().containsKey("pre-production")) {
+                    guessFromProfile = "pre-production";
+                } else if (dewConfig.getProfiles().containsKey("uat")) {
+                    guessFromProfile = "uat";
+                }
+            } else if (finalProjectConfig.getProfile().equals("pre-production") || finalProjectConfig.getProfile().equals("pre-prod")
+                    || finalProjectConfig.getProfile().equals("uat")) {
+                if (dewConfig.getProfiles().containsKey("test")) {
+                    guessFromProfile = "test";
+                }
+            } else if (finalProjectConfig.getProfile().equals("test")) {
+                if (dewConfig.getProfiles().containsKey("dev")) {
+                    guessFromProfile = "dev";
+                }
             }
             if (guessFromProfile != null) {
                 finalProjectConfig.setReuseLastVersionFromProfile(guessFromProfile);

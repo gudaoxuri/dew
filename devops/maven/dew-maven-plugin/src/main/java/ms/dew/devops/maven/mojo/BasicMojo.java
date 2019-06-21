@@ -291,7 +291,7 @@ public abstract class BasicMojo extends AbstractMojo {
             MavenDevOps.Init.init(mavenSession, pluginManager, profile, quiet,
                     dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config, assignationProjects,
                     dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
-                    kubeBase64ConfigAppendOpt,
+                    kubeBase64ConfigAppendOpt, getMojoName(),
                     mockClasspath);
         } catch (ConfigException e) {
             // 此错误会中止程序

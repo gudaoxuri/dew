@@ -18,11 +18,10 @@ package ms.dew.devops.maven;
 
 import com.ecfront.dew.common.$;
 import ms.dew.devops.kernel.DevOps;
-import ms.dew.devops.kernel.config.ConfigBuilder;
-import ms.dew.devops.kernel.config.DewConfig;
-import ms.dew.devops.kernel.config.FinalProjectConfig;
+import ms.dew.devops.kernel.config.*;
 import ms.dew.devops.kernel.exception.ConfigException;
 import ms.dew.devops.kernel.function.NeedProcessChecker;
+import ms.dew.devops.kernel.helper.DockerHelper;
 import ms.dew.devops.kernel.helper.GitHelper;
 import ms.dew.devops.kernel.helper.YamlHelper;
 import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
@@ -45,6 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -55,6 +55,11 @@ import java.util.Optional;
 public class MavenDevOps {
 
     private static Logger logger = DewLog.build(MavenDevOps.class);
+
+    /**
+     * docker label map.
+     */
+    private static final ConcurrentHashMap<String, DewDockerLabel> DEW_DOCKER_LABEL_MAP = new ConcurrentHashMap<>();
 
     /**
      * Init.
@@ -88,7 +93,7 @@ public class MavenDevOps {
                                              String inputKubeBase64Config, String inputAssignationProjects,
                                              Optional<String> dockerHostAppendOpt, Optional<String> dockerRegistryUrlAppendOpt,
                                              Optional<String> dockerRegistryUserNameAppendOpt, Optional<String> dockerRegistryPasswordAppendOpt,
-                                             Optional<String> kubeBase64ConfigAppendOpt,
+                                             Optional<String> kubeBase64ConfigAppendOpt, String mojoName,
                                              String mockClasspath) {
             try {
                 Config.initMavenProject(session, pluginManager);
@@ -107,7 +112,7 @@ public class MavenDevOps {
                         inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
                         inputKubeBase64Config, inputAssignationProjects,
                         dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
-                        kubeBase64ConfigAppendOpt);
+                        kubeBase64ConfigAppendOpt, mojoName);
                 DevOps.Init.init(mockClasspath);
                 Config.initMavenProject(session, pluginManager);
                 // 特殊Mojo处理
@@ -132,7 +137,8 @@ public class MavenDevOps {
                                             Optional<String> dockerRegistryUrlAppendOpt,
                                             Optional<String> dockerRegistryUserNameAppendOpt,
                                             Optional<String> dockerRegistryPasswordAppendOpt,
-                                            Optional<String> kubeBase64ConfigAppendOpt)
+                                            Optional<String> kubeBase64ConfigAppendOpt,
+                                            String mojoName)
                 throws IOException, InvocationTargetException, IllegalAccessException {
             logger.info("Init final config ...");
             String basicDirectory = session.getTopLevelProject().getBasedir().getPath() + File.separator;
@@ -181,7 +187,20 @@ public class MavenDevOps {
                                 inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
                                 inputKubeBase64Config,
                                 dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
-                                kubeBase64ConfigAppendOpt);
+                                kubeBase64ConfigAppendOpt, mojoName);
+                // 初始化标签配置
+                if (!mojoName.equals("unrelease")) {
+                    initDewDockerLabel(finalProjectConfig, inputProfile, inputDockerHost, inputDockerRegistryUrl,
+                            inputDockerRegistryUserName, inputDockerRegistryPassword);
+                    if (null != finalProjectConfig.getDisableReuseVersion() && !finalProjectConfig.getDisableReuseVersion()
+                            && finalProjectConfig.getReuseVersionType().equals("LABEL")) {
+                        initDewDockerLabel(finalProjectConfig.getAppendProfile(), finalProjectConfig.getReuseLastVersionFromProfile(),
+                                finalProjectConfig.getAppendProfile().getDocker().getHost(),
+                                finalProjectConfig.getAppendProfile().getDocker().getRegistryUrl(),
+                                finalProjectConfig.getAppendProfile().getDocker().getRegistryUserName(),
+                                finalProjectConfig.getAppendProfile().getDocker().getRegistryPassword());
+                    }
+                }
                 DevOps.Config.getFinalConfig().getProjects().put(project.getId(), finalProjectConfig);
                 logger.debug("[" + project.getId() + "] configured");
             }
@@ -199,6 +218,27 @@ public class MavenDevOps {
                     }
                 });
             }
+        }
+
+        private static void initDewDockerLabel(DewProfile config, String profile,
+                                               String inputDockerHost, String inputDockerRegistryUrl, String inputDockerRegistryUserName,
+                                               String inputDockerRegistryPassword) throws IOException {
+            DewDockerLabel dewDockerLabel = DEW_DOCKER_LABEL_MAP.get(profile);
+            if (null == dewDockerLabel) {
+                dewDockerLabel = new DewDockerLabel();
+                dewDockerLabel.setName(profile);
+                DockerHelper.init("", logger, inputDockerHost, inputDockerRegistryUrl,
+                        inputDockerRegistryUserName, inputDockerRegistryPassword);
+                Integer labelId = DockerHelper.inst("").registry.getLabelsByName(profile);
+                if (null == labelId) {
+                    DockerHelper.inst("").registry.addLabel(profile);
+                    labelId = DockerHelper.inst("").registry.getLabelsByName(profile);
+                }
+                dewDockerLabel.setId(labelId);
+                DEW_DOCKER_LABEL_MAP.put(profile, dewDockerLabel);
+            }
+            config.setDewDockerLabel(dewDockerLabel);
+
         }
 
         private static void notSkip(FinalProjectConfig projectConfig, MavenProject project, Boolean isParent) {
