@@ -64,35 +64,42 @@ public interface AppKindPlugin {
     BasicFlow releaseFlow();
 
     /**
-     * Release flow basic flow.
+     * UnRelease flow basic flow.
      *
      * @return the basic flow
      */
     BasicFlow unReleaseFlow();
 
     /**
-     * Release flow basic flow.
+     * Rollback flow basic flow.
      *
      * @return the basic flow
      */
     BasicFlow rollbackFlow();
 
     /**
-     * Release flow basic flow.
+     * Scale flow basic flow.
      *
      * @return the basic flow
      */
     BasicFlow scaleFlow(int replicas, boolean autoScale, int minReplicas, int maxReplicas, int cpuAvg);
 
     /**
-     * Release flow basic flow.
+     * Refresh flow basic flow.
+     *
+     * @return the basic flow
+     */
+    BasicFlow refreshFlow();
+
+    /**
+     * Log flow basic flow.
      *
      * @return the basic flow
      */
     BasicFlow logFlow(String podName, boolean follow);
 
     /**
-     * Release flow basic flow.
+     * Debug flow basic flow.
      *
      * @return the basic flow
      */

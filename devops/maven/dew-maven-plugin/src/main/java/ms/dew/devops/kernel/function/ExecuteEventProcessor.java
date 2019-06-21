@@ -65,6 +65,7 @@ public class ExecuteEventProcessor {
                 && !mojoName.equalsIgnoreCase("rollback")
                 && !mojoName.equalsIgnoreCase("scale")
                 && !mojoName.equalsIgnoreCase("unrelease")
+                && !mojoName.equalsIgnoreCase("refresh")
         ) {
             return;
         }
@@ -137,6 +138,7 @@ public class ExecuteEventProcessor {
                             || project.getExecuteSuccessfulMojos().contains("rollback")
                             || project.getExecuteSuccessfulMojos().contains("scale")
                             || project.getExecuteSuccessfulMojos().contains("unrelease")
+                            || project.getExecuteSuccessfulMojos().contains("refresh")
                     ).collect(Collectors.toList());
             List<FinalProjectConfig> nonExecutionProjects =
                     projects.values().stream()

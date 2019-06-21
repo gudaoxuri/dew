@@ -531,9 +531,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#应用卸载">4.2.7. 应用卸载</a></li>
 <li><a href="#日志查看">4.2.8. 日志查看</a></li>
 <li><a href="#伸缩扩展">4.2.9. 伸缩扩展</a></li>
-<li><a href="#ci_cd工具支持_gitlab_ci">4.2.10. CI/CD工具支持-Gitlab CI</a></li>
-<li><a href="#执行通知">4.2.11. 执行通知</a></li>
-<li><a href="#监控管理">4.2.12. 监控管理</a></li>
+<li><a href="#应用刷新">4.2.10. 应用刷新</a></li>
+<li><a href="#ci_cd工具支持_gitlab_ci">4.2.11. CI/CD工具支持-Gitlab CI</a></li>
+<li><a href="#执行通知">4.2.12. 执行通知</a></li>
+<li><a href="#监控管理">4.2.13. 监控管理</a></li>
 </ul>
 </li>
 <li><a href="#devops-env-install">4.3. 测试、生产环境安装配置</a>
@@ -4879,7 +4880,20 @@ mvn dew:scale
 </div>
 </div>
 <div class="sect3">
-<h4 id="ci_cd工具支持_gitlab_ci"><a class="anchor" href="#ci_cd工具支持_gitlab_ci"></a>4.2.10. CI/CD工具支持-Gitlab CI</h4>
+<h4 id="应用刷新"><a class="anchor" href="#应用刷新"></a>4.2.10. 应用刷新</h4>
+<div class="paragraph">
+<p>用于刷新重启某一个应用，此命令在要重启的应用目录下执行。</p>
+</div>
+<div class="listingblock">
+<div class="title">命令</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 基础命令
+mvn dew:refresh</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ci_cd工具支持_gitlab_ci"><a class="anchor" href="#ci_cd工具支持_gitlab_ci"></a>4.2.11. CI/CD工具支持-Gitlab CI</h4>
 <div class="paragraph">
 <p>应用的部署与回滚为 <code>DevOps</code> 的核心操作，这些操作应该与 <code>CI/CD</code> 工具集成使用。</p>
 </div>
@@ -4940,7 +4954,7 @@ prod deploy:
 </div>
 </div>
 <div class="sect3">
-<h4 id="执行通知"><a class="anchor" href="#执行通知"></a>4.2.11. 执行通知</h4>
+<h4 id="执行通知"><a class="anchor" href="#执行通知"></a>4.2.12. 执行通知</h4>
 <div class="paragraph">
 <p>目前支持 <code>钉钉</code> 与 <code>HTTP</code> 两种方式：</p>
 </div>
@@ -5044,7 +5058,7 @@ prod deploy:
 </div>
 </div>
 <div class="sect3">
-<h4 id="监控管理"><a class="anchor" href="#监控管理"></a>4.2.12. 监控管理</h4>
+<h4 id="监控管理"><a class="anchor" href="#监控管理"></a>4.2.13. 监控管理</h4>
 
 </div>
 </div>
@@ -9160,7 +9174,7 @@ prod deploy: # 生产环境部署
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-14 15:01:55 CST
+Last updated 2019-06-17 16:48:39 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
