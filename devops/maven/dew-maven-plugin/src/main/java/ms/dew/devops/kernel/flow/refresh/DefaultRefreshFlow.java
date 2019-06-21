@@ -17,7 +17,7 @@
 package ms.dew.devops.kernel.flow.refresh;
 
 import io.kubernetes.client.ApiException;
-import io.kubernetes.client.models.*;
+import io.kubernetes.client.models.ExtensionsV1beta1Deployment;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.helper.KubeHelper;
@@ -25,7 +25,8 @@ import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.resource.KubeDeploymentBuilder;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Date;
+import java.util.stream.Collectors;
 
 /**
  * Default refresh flow.
@@ -38,29 +39,25 @@ public class DefaultRefreshFlow extends BasicFlow {
     protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
 
         logger.info("Restarting pods ... ");
-        KubeHelper.inst(config.getId()).patch(config.getAppName(), new ArrayList<String>() {
-            {
-                List<ExtensionsV1beta1Deployment> deploymentList = KubeHelper.inst(
-                        config.getId()).list("app=" + config.getAppName(), config.getNamespace(),
-                        KubeRES.DEPLOYMENT, ExtensionsV1beta1Deployment.class);
-
-                for (ExtensionsV1beta1Deployment deployment : deploymentList) {
-                    if (config.getAppName().equals(deployment.getMetadata().getName())) {
-                        deployment.getSpec().getTemplate().getSpec().getContainers().forEach(c -> {
-                                    if (c.getName().equals(KubeDeploymentBuilder.FLAG_CONTAINER_NAME)) {
-                                        if (c.getEnv() == null || c.getEnv().isEmpty()) {
-                                            add("{ \"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/env\", "
-                                                    + "\"value\": [{\"name\":\"DEW_RESTART_DATE\",\"value\":\"" + new Date() + "\"}] }");
-                                        } else {
-                                            add("{ \"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/env/0\", "
-                                                    + "\"value\": {\"name\":\"DEW_RESTART_DATE\",\"value\":\"" + new Date() + "\"} }");
-                                        }
-                                    }
-                                }
-                        );
-                    }
-                }
-            }
-        }, config.getNamespace(), KubeRES.DEPLOYMENT);
+        KubeHelper.inst(config.getId()).patch(config.getAppName(),
+                KubeHelper.inst(
+                        config.getId()).list("app=" + config.getAppName() + ",version=" + config.getAppVersion(), config.getNamespace(),
+                        KubeRES.DEPLOYMENT, ExtensionsV1beta1Deployment.class)
+                        .stream()
+                        .filter(deploy -> config.getAppName().equals(deploy.getMetadata().getName()))
+                        .flatMap(deploy -> deploy.getSpec().getTemplate().getSpec().getContainers()
+                                .stream()
+                                .filter(container -> container.getName().equals(KubeDeploymentBuilder.FLAG_CONTAINER_NAME))
+                        )
+                        .map(container -> {
+                            if (container.getEnv() == null || container.getEnv().isEmpty()) {
+                                return "{ \"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/env\", "
+                                        + "\"value\": [{\"name\":\"DEW_RESTART_DATE\",\"value\":\"" + new Date() + "\"}] }";
+                            } else {
+                                return "{ \"op\": \"add\", \"path\": \"/spec/template/spec/containers/0/env/0\", "
+                                        + "\"value\": {\"name\":\"DEW_RESTART_DATE\",\"value\":\"" + new Date() + "\"} }";
+                            }
+                        })
+                        .collect(Collectors.toList()), config.getNamespace(), KubeRES.DEPLOYMENT);
     }
 }
