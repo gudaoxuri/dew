@@ -46,7 +46,7 @@ public class DewProfile {
     // 重用版本方式，支持两中方式 LABEL(镜像打标签，默认方式) TAG(上传新tag方式)
     private String reuseVersionType = "LABEL";
     // 镜像标签信息
-    private DewDockerLabel dewDockerLabel;
+    private DewDockerImage dewDockerImage;
     // 忽略变更文件列表，此列表指定的文件不用于是否有变更要部署的判断依据
     // 支持 glob , @see https://en.wikipedia.org/wiki/Glob_(programming)
     private Set<String> ignoreChangeFiles = new HashSet<>();
@@ -172,17 +172,17 @@ public class DewProfile {
      *
      * @return the dew docker label
      */
-    public DewDockerLabel getDewDockerLabel() {
-        return dewDockerLabel;
+    public DewDockerImage getDewDockerImage() {
+        return dewDockerImage;
     }
 
     /**
      * Sets dew docker label.
      *
-     * @param dewDockerLabel the dew docker label
+     * @param dewDockerImage the dew docker label
      */
-    public void setDewDockerLabel(DewDockerLabel dewDockerLabel) {
-        this.dewDockerLabel = dewDockerLabel;
+    public void setDewDockerImage(DewDockerImage dewDockerImage) {
+        this.dewDockerImage = dewDockerImage;
     }
 
     /**

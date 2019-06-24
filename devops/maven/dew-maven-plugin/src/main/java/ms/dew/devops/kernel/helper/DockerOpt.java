@@ -31,7 +31,6 @@ import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.BuildImageResultCallback;
 import com.github.dockerjava.core.command.PullImageResultCallback;
 import com.github.dockerjava.core.command.PushImageResultCallback;
-import ms.dew.devops.kernel.config.DewDockerLabel;
 import ms.dew.devops.kernel.model.DockerImageTag;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -356,18 +355,25 @@ public class DockerOpt {
          * Get labels.
          *
          * @param labelName the label name
+         * @param projectId the project id
          * @return labelId
          * @throws IOException the io exception
          */
-        public Integer getLabelsByName(String labelName) throws IOException {
-            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(registryApiUrl + "/labels?scope=g&name=" + labelName, wrapHeader());
+        public Integer getLabelsByName(String labelName, Integer projectId) throws IOException {
+            String url = registryApiUrl + "/labels?name=" + labelName;
+            if (projectId == null || projectId == 0) {
+                url = url + "&scope=g";
+            } else {
+                url = url + "&scope=p&project_id=" + projectId;
+            }
+            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(url, wrapHeader());
             boolean result = responseWrap.statusCode == 200;
             Integer labelId = null;
             if (result) {
                 log.debug("Registry get labels result [" + responseWrap.statusCode + "]" + responseWrap.result);
-                List<DewDockerLabel> data = $.json.toList(responseWrap.result, DewDockerLabel.class);
+                List<Map> data = $.json.toList(responseWrap.result, Map.class);
                 if (CollectionUtils.isNotEmpty(data)) {
-                    labelId = data.get(0).getId();
+                    labelId = (Integer) data.get(0).get("id");
                 }
             } else {
                 log.error("Registry get labels result [" + responseWrap.statusCode + "]" + responseWrap.result);
@@ -382,12 +388,16 @@ public class DockerOpt {
          * @return <b>true</b> if success
          * @throws IOException the io exception
          */
-        public boolean addLabel(String labelName) throws IOException {
+        public boolean addLabel(String labelName, Integer projectId) throws IOException {
             Map<String, Object> data = new HashMap<String, Object>() {{
                 put("description", labelName);
                 put("name", labelName);
-                put("project_id", 0);
-                put("scope", "g");
+                put("project_id", projectId);
+                if (null == projectId || projectId == 0) {
+                    put("scope", "g");
+                } else {
+                    put("scope", "p");
+                }
             }};
             HttpHelper.ResponseWrap responseWrap = $.http.postWrap(registryApiUrl + "/labels", $.json.toJsonString(data), wrapHeader());
             boolean result = responseWrap.statusCode == 201 || responseWrap.statusCode == 409;
@@ -462,6 +472,22 @@ public class DockerOpt {
             return dockerImageTags;
         }
 
+        /**
+         * Get project id by name.
+         *
+         * @param projectName the project name
+         * @return the project id
+         * @throws IOException the io exception
+         */
+        public Integer getProjectIdByName(String projectName) throws IOException {
+            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(registryApiUrl + "/projects?name=" + projectName, wrapHeader());
+            boolean result = responseWrap.statusCode == 200;
+            Integer projectId = null;
+            if (result) {
+                projectId = (Integer) $.json.toList(responseWrap.result, Map.class).get(0).get("project_id");
+            }
+            return projectId;
+        }
     }
 
 }

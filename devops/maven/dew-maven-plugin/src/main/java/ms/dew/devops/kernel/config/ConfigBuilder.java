@@ -23,6 +23,7 @@ import ms.dew.devops.kernel.helper.GitHelper;
 import ms.dew.devops.kernel.helper.YamlHelper;
 import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
 import ms.dew.devops.kernel.plugin.deploy.DeployPlugin;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 
@@ -117,7 +118,6 @@ public class ConfigBuilder {
      * @param dockerRegistryUrlAppendOpt      the docker registry url append opt
      * @param dockerRegistryUserNameAppendOpt the docker registry user name append opt
      * @param dockerRegistryPasswordAppendOpt the docker registry password append opt
-     * @param kubeBase64ConfigAppendOpt       the kube base 64 config append opt
      * @return the result
      * @throws InvocationTargetException the invocation target exception
      * @throws IllegalAccessException    the illegal access exception
@@ -130,9 +130,7 @@ public class ConfigBuilder {
                                                   String inputKubeBase64Config, Optional<String> dockerHostAppendOpt,
                                                   Optional<String> dockerRegistryUrlAppendOpt,
                                                   Optional<String> dockerRegistryUserNameAppendOpt,
-                                                  Optional<String> dockerRegistryPasswordAppendOpt,
-                                                  Optional<String> kubeBase64ConfigAppendOpt,
-                                                  String mojoName)
+                                                  Optional<String> dockerRegistryPasswordAppendOpt)
             throws InvocationTargetException, IllegalAccessException {
         // 格式化
         inputProfile = inputProfile.toLowerCase();
@@ -160,8 +158,7 @@ public class ConfigBuilder {
         FinalProjectConfig finalProjectConfig = doBuildProject(dewConfig, appKindPlugin, deployPlugin, mavenSession, mavenProject,
                 inputProfile, inputDockerHost, inputDockerRegistryUrl,
                 inputDockerRegistryUserName, inputDockerRegistryPassword, inputKubeBase64Config,
-                dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
-                kubeBase64ConfigAppendOpt, mojoName);
+                dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt);
         if (!finalProjectConfig.getSkip() && finalProjectConfig.getKube().getBase64Config().isEmpty()) {
             throw new ConfigException("[" + mavenProject.getArtifactId() + "] Kubernetes config can't be empty");
         }
@@ -176,8 +173,7 @@ public class ConfigBuilder {
                                                      String inputKubeBase64Config,
                                                      Optional<String> dockerHostAppendOpt, Optional<String> dockerRegistryUrlAppendOpt,
                                                      Optional<String> dockerRegistryUserNameAppendOpt,
-                                                     Optional<String> dockerRegistryPasswordAppendOpt,
-                                                     Optional<String> kubeBase64ConfigAppendOpt, String mojoName)
+                                                     Optional<String> dockerRegistryPasswordAppendOpt)
             throws InvocationTargetException, IllegalAccessException {
         FinalProjectConfig finalProjectConfig = new FinalProjectConfig();
         if (inputProfile.equalsIgnoreCase(FLAG_DEW_DEVOPS_DEFAULT_PROFILE)) {
@@ -234,11 +230,10 @@ public class ConfigBuilder {
 
         // setting custom config by app kind
         finalProjectConfig.getAppKindPlugin().customConfig(finalProjectConfig);
-        if (!mojoName.equals("unrelease")) {
+        if (StringUtils.isNotEmpty(inputDockerRegistryUrl)) {
             // setting reuse version
             fillReuseVersionInfo(finalProjectConfig, dewConfig,
-                    dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
-                    kubeBase64ConfigAppendOpt);
+                    dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt);
         }
         return finalProjectConfig;
     }
@@ -247,8 +242,7 @@ public class ConfigBuilder {
                                              Optional<String> dockerHostAppendOpt,
                                              Optional<String> dockerRegistryUrlAppendOpt,
                                              Optional<String> dockerRegistryUserNameAppendOpt,
-                                             Optional<String> dockerRegistryPasswordAppendOpt,
-                                             Optional<String> kubeBase64ConfigAppendOpt) {
+                                             Optional<String> dockerRegistryPasswordAppendOpt) {
         if (finalProjectConfig.getDisableReuseVersion() != null
                 && finalProjectConfig.getDisableReuseVersion()) {
             // 配置显示要求禁用重用版本
@@ -335,18 +329,7 @@ public class ConfigBuilder {
             appendProfile.getDocker().setRegistryPassword(finalProjectConfig.getDocker().getRegistryPassword());
         }
 
-        kubeBase64ConfigAppendOpt.ifPresent(obj ->
-                appendProfile.getKube().setBase64Config(obj.trim())
-        );
-        if (appendProfile.getKube().getBase64Config() == null || appendProfile.getKube().getBase64Config().isEmpty()) {
-            appendProfile.getKube().setBase64Config(dewConfig.getKube().getBase64Config());
-        }
-        if (appendProfile.getKube().getBase64Config() == null || appendProfile.getKube().getBase64Config().isEmpty()) {
-            appendProfile.getKube().setBase64Config(finalProjectConfig.getKube().getBase64Config());
-        }
-
-        if (appendProfile.getKube().getBase64Config().isEmpty()
-                || appendProfile.getDocker().getHost().isEmpty()) {
+        if (appendProfile.getDocker().getHost().isEmpty()) {
             throw new ConfigException("In reuse version mode, "
                     + "'kubernetes base64 config' and 'docker host' must be specified by "
                     + "command-line arguments '"

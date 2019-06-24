@@ -16,7 +16,7 @@
 
 package ms.dew.devops.kernel.model;
 
-import ms.dew.devops.kernel.config.DewDockerLabel;
+import ms.dew.devops.kernel.config.DewDockerImage;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -33,7 +33,7 @@ public class DockerImageTag implements Serializable {
 
     private Date created;
 
-    private List<DewDockerLabel> labels;
+    private List<DewDockerImage> labels;
 
     public String getName() {
         return name;
@@ -51,11 +51,11 @@ public class DockerImageTag implements Serializable {
         this.created = created;
     }
 
-    public List<DewDockerLabel> getLabels() {
+    public List<DewDockerImage> getLabels() {
         return labels;
     }
 
-    public void setLabels(List<DewDockerLabel> labels) {
+    public void setLabels(List<DewDockerImage> labels) {
         this.labels = labels;
     }
 }

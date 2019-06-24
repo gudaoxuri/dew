@@ -108,8 +108,6 @@ public class DevOps {
                                     project.getAppendProfile().getDocker().getRegistryUrl(),
                                     project.getAppendProfile().getDocker().getRegistryUserName(),
                                     project.getAppendProfile().getDocker().getRegistryPassword());
-                            KubeHelper.init(project.getId() + APPEND_FLAG, logger,
-                                    project.getAppendProfile().getKube().getBase64Config());
                         }
                     });
         }

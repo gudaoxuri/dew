@@ -285,13 +285,10 @@ public abstract class BasicMojo extends AbstractMojo {
                 formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_USERNAME + DevOps.APPEND_FLAG, formattedProperties);
         Optional<String> dockerRegistryPasswordAppendOpt =
                 formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD + DevOps.APPEND_FLAG, formattedProperties);
-        Optional<String> kubeBase64ConfigAppendOpt =
-                formatParameters(FLAG_DEW_DEVOPS_KUBE_CONFIG + DevOps.APPEND_FLAG, formattedProperties);
         try {
             MavenDevOps.Init.init(mavenSession, pluginManager, profile, quiet,
                     dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config, assignationProjects,
                     dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
-                    kubeBase64ConfigAppendOpt, getMojoName(),
                     mockClasspath);
         } catch (ConfigException e) {
             // 此错误会中止程序
