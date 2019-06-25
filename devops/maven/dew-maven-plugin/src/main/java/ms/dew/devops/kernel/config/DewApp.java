@@ -65,11 +65,7 @@ public class DewApp {
     private Boolean metricsEnabled;
     // 节点亲和性配置
     // 默认选择标签为 group=app 的节点
-    private Map<String, String> nodeSelector = new HashMap<String, String>() {
-        {
-            put("group", "app");
-        }
-    };
+    private Map<String, String> nodeSelector = new HashMap<>();
     // 预打包命令
     // 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> && npm install，发现不存在 node_modules 时执行
     // 后端服务默认为空

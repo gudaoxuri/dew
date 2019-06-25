@@ -55,6 +55,11 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         selectorLabels.remove("version");
         selectorLabels.remove("provider");
 
+        Map<String, String> nodeSelectors = config.getApp().getNodeSelector();
+        if (config.getApp().getNodeSelector().isEmpty()) {
+            nodeSelectors.put("group", "app");
+        }
+
         V1ResourceRequirements re = new V1ResourceRequirements();
         re.setRequests(config.getApp().getContainerResourcesRequests());
         V1ContainerBuilder containerBuilder = new V1ContainerBuilder()
@@ -130,7 +135,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                                         .build())
                                 .withSpec(new V1PodSpecBuilder()
                                         .withContainers(containerBuilder.build())
-                                        .withNodeSelector(config.getApp().getNodeSelector())
+                                        .withNodeSelector(nodeSelectors)
                                         .build())
                                 .build())
                         .build())
