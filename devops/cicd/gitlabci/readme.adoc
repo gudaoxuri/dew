@@ -1,6 +1,6 @@
 ==== Dew CI/CD : Gitlab CI 实现
 
-此为Gitlab CI上的 CI/CD 处理，集成说明参见：https://gudaoxuri.github.io/dew/
+此为Gitlab CI上的 CI/CD 处理，集成说明参见： http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter[Dew Devops 部署运维]
 
 .前置准备
 

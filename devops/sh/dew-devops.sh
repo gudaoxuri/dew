@@ -123,7 +123,7 @@ waiting_input_check_regex(){
         tip="${tip} [${defaultValue}]"
     fi
     read ${readCmd} "${tip}:" answer
-    if [[ "${defaultValue}" != "" ]]; then
+    if [[ ${answer} == "" && "${defaultValue}" != "" ]]; then
         answer=${defaultValue}
         echo "* No value was entered,using the default [${defaultValue}]."
     fi
@@ -138,7 +138,7 @@ waiting_input_check_regex(){
                 echo
             fi
         done
-    elif [[ "${needMatch}" != "" ]]; then
+    elif [[ "${needMatch}" != "" && "${needMatch}" != "Y"  ]]; then
         while [[ "${answer}" =~ ${regex} ]]; do
             read ${readCmd} "* The format of value is not right,please retype:" answer
             if [[ "${isSecret}" != "" ]]; then
@@ -201,7 +201,11 @@ deal_ingress_backend_yaml(){
     local backend_str="$1"
     local url=$(echo ${backend_str} | cut -d ' ' -f1)
     local host=$(echo ${url} | cut -d '/' -f1)
-    local svcPath=$(echo ${url#*/})
+    local svcPath=""
+    if [[ ${url} =~ / ]]; then
+        svcPath=$(echo ${url#*/})
+    fi
+
     if [[ "${svcPath}" != "" ]]; then
         svcPath=/${svcPath}
     fi
@@ -291,7 +295,7 @@ check_minio_status(){
     echo "The access key and secret key are right."
 
     echo
-    echo "# The MinIO must be already created."
+    echo "# The MinIO bucket must be already created."
     waiting_input "Please input your MinIO bucket name for gitlab storage" ${MINIO_BUCKET_NAME} Y
     MINIO_BUCKET_NAME=${GENERAL_INPUT_ANSWER}
 
@@ -426,7 +430,7 @@ init_gitlab_runner(){
     waiting_input "Please input the namespace for gitlab runner to install" ${GITLAB_RUNNER_NAMESPACE}
     local gitlab_runner_namespace=${GENERAL_INPUT_ANSWER}
 
-    local check_ns_exists=$(kubectl get ns | grep -w ${gitlab_runner_namespace} | wc -l)
+    local check_ns_exists=$(kubectl get ns | awk '{print $1}' | grep -P ^${gitlab_runner_namespace}\$ | wc -l)
     while [[ "${check_ns_exists}" == 0 ]]; do
         waiting_input_YN "* the namespace [${gitlab_runner_namespace}] doesn't exist,would you like to create it?" "Y"
         local answer_create_namespace=${GENERAL_INPUT_ANSWER}
@@ -512,17 +516,21 @@ EOF
     GITLAB_RUNNER_REG_TOKEN=${GENERAL_INPUT_ANSWER}
 
     echo
+    echo "The runner profile is used for label your runner environment,and"
+    echo "it also is related with your project profile,please set it right."
     echo "# e.g. Using \"test\" to label your runner environment. "
     waiting_input "Please input your runner profile" "" "Y"
     GITLAB_RUNNER_PROFILE=${GENERAL_INPUT_ANSWER}
 
     echo
-    echo "# Default container image to use for builds when none is specified."
+    echo "# Default the runner container image to use for builds when none is specified."
+    echo "# Using the [${GITLAB_RUNNER_IMAGE}] for the latest feature,or "
+    echo "# using it as the base image of your custom runner container image."
     waiting_input "Please Input your runner image" ${GITLAB_RUNNER_IMAGE}
     GITLAB_RUNNER_IMAGE=${GENERAL_INPUT_ANSWER}
 
     echo
-    echo "# The DockerD url is used for dew-maven-plugin."
+    echo "# The DockerD url is used for dew-maven-plugin to build your project images."
     echo "# e.g. ${DOCKERD_URL}"
     waiting_input "Please input your DockerD service url" "" "Y"
     DOCKERD_URL=${GENERAL_INPUT_ANSWER}
@@ -686,7 +694,7 @@ project_create_check(){
     # The e-mail format checking.
     echo
     echo "# E-mail is used for binding the Harbor user account that you created above."
-    local emailRegex="^([a-zA-Z0-9_\-\.\+]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$"
+    local emailRegex="^([a-zA-Z0-9_-]+)@([a-zA-Z0-9_-]+)\.([a-zA-Z]{2,5})$"
     waiting_input_check_regex "Please input the e-mail for your Harbor project user account" "${emailRegex}" "Y" "" "${DEW_HARBOR_USER_EMAIL}"
     local user_email=${GENERAL_INPUT_ANSWER}
 
@@ -834,16 +842,21 @@ echo ""
 
 PS3='Choose your option: '
 
-select option in "Init cluster" "Create a project"
+select option in "Init cluster" "Install Gitlab runner" "Create a project"
 
 do
     case ${option} in
      'Init cluster')
       echo "========== Init cluster =========="
       echo "# * Create the cluster role for service discovery"
-      echo "# * Install the gitlab runner"
       check_kubernetes_env
       init_kubernetes_cluster
+      echo "=================================="
+      break;;
+       'Install Gitlab runner')
+      echo "====== Install Gitlab runner ======"
+      echo "# * Install the gitlab runner"
+      check_kubernetes_env
       init_helm_gitlab_repo
       init_gitlab_runner
       echo "=================================="
