@@ -23,6 +23,7 @@ import ms.dew.devops.kernel.helper.GitHelper;
 import ms.dew.devops.kernel.helper.YamlHelper;
 import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
 import ms.dew.devops.kernel.plugin.deploy.DeployPlugin;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 
@@ -45,7 +46,6 @@ public class ConfigBuilder {
      * 默认环境值.
      */
     public static final String FLAG_DEW_DEVOPS_DEFAULT_PROFILE = "default";
-
 
     /**
      * 将default环境的配置合并到其它环境中.
@@ -118,7 +118,6 @@ public class ConfigBuilder {
      * @param dockerRegistryUrlAppendOpt      the docker registry url append opt
      * @param dockerRegistryUserNameAppendOpt the docker registry user name append opt
      * @param dockerRegistryPasswordAppendOpt the docker registry password append opt
-     * @param kubeBase64ConfigAppendOpt       the kube base 64 config append opt
      * @return the result
      * @throws InvocationTargetException the invocation target exception
      * @throws IllegalAccessException    the illegal access exception
@@ -131,8 +130,7 @@ public class ConfigBuilder {
                                                   String inputKubeBase64Config, Optional<String> dockerHostAppendOpt,
                                                   Optional<String> dockerRegistryUrlAppendOpt,
                                                   Optional<String> dockerRegistryUserNameAppendOpt,
-                                                  Optional<String> dockerRegistryPasswordAppendOpt,
-                                                  Optional<String> kubeBase64ConfigAppendOpt)
+                                                  Optional<String> dockerRegistryPasswordAppendOpt)
             throws InvocationTargetException, IllegalAccessException {
         // 格式化
         inputProfile = inputProfile.toLowerCase();
@@ -160,8 +158,7 @@ public class ConfigBuilder {
         FinalProjectConfig finalProjectConfig = doBuildProject(dewConfig, appKindPlugin, deployPlugin, mavenSession, mavenProject,
                 inputProfile, inputDockerHost, inputDockerRegistryUrl,
                 inputDockerRegistryUserName, inputDockerRegistryPassword, inputKubeBase64Config,
-                dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
-                kubeBase64ConfigAppendOpt);
+                dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt);
         if (!finalProjectConfig.getSkip() && finalProjectConfig.getKube().getBase64Config().isEmpty()) {
             throw new ConfigException("[" + mavenProject.getArtifactId() + "] Kubernetes config can't be empty");
         }
@@ -176,8 +173,7 @@ public class ConfigBuilder {
                                                      String inputKubeBase64Config,
                                                      Optional<String> dockerHostAppendOpt, Optional<String> dockerRegistryUrlAppendOpt,
                                                      Optional<String> dockerRegistryUserNameAppendOpt,
-                                                     Optional<String> dockerRegistryPasswordAppendOpt,
-                                                     Optional<String> kubeBase64ConfigAppendOpt)
+                                                     Optional<String> dockerRegistryPasswordAppendOpt)
             throws InvocationTargetException, IllegalAccessException {
         FinalProjectConfig finalProjectConfig = new FinalProjectConfig();
         if (inputProfile.equalsIgnoreCase(FLAG_DEW_DEVOPS_DEFAULT_PROFILE)) {
@@ -234,10 +230,11 @@ public class ConfigBuilder {
 
         // setting custom config by app kind
         finalProjectConfig.getAppKindPlugin().customConfig(finalProjectConfig);
-        // setting reuse version
-        fillReuseVersionInfo(finalProjectConfig, dewConfig,
-                dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
-                kubeBase64ConfigAppendOpt);
+        if (StringUtils.isNotEmpty(inputDockerRegistryUrl)) {
+            // setting reuse version
+            fillReuseVersionInfo(finalProjectConfig, dewConfig,
+                    dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt);
+        }
         return finalProjectConfig;
     }
 
@@ -245,8 +242,7 @@ public class ConfigBuilder {
                                              Optional<String> dockerHostAppendOpt,
                                              Optional<String> dockerRegistryUrlAppendOpt,
                                              Optional<String> dockerRegistryUserNameAppendOpt,
-                                             Optional<String> dockerRegistryPasswordAppendOpt,
-                                             Optional<String> kubeBase64ConfigAppendOpt) {
+                                             Optional<String> dockerRegistryPasswordAppendOpt) {
         if (finalProjectConfig.getDisableReuseVersion() != null
                 && finalProjectConfig.getDisableReuseVersion()) {
             // 配置显示要求禁用重用版本
@@ -255,17 +251,27 @@ public class ConfigBuilder {
         // 配置没有指明，按默认逻辑执行
         // 先设置默认启用
         finalProjectConfig.setDisableReuseVersion(false);
-        if ((finalProjectConfig.getReuseLastVersionFromProfile() == null || finalProjectConfig.getReuseLastVersionFromProfile().isEmpty())
-                && (finalProjectConfig.getProfile().equals("production") || finalProjectConfig.getProfile().equals("prod"))) {
+        if ((finalProjectConfig.getReuseLastVersionFromProfile() == null || finalProjectConfig.getReuseLastVersionFromProfile().isEmpty())) {
             // 如果当前是生产环境则自动填充
             // 猜测填充的来源环境
             String guessFromProfile = null;
-            if (dewConfig.getProfiles().containsKey("pre-prod")) {
-                guessFromProfile = "pre-prod";
-            } else if (dewConfig.getProfiles().containsKey("pre-production")) {
-                guessFromProfile = "pre-production";
-            } else if (dewConfig.getProfiles().containsKey("uat")) {
-                guessFromProfile = "uat";
+            if (finalProjectConfig.getProfile().equals("production") || finalProjectConfig.getProfile().equals("prod")) {
+                if (dewConfig.getProfiles().containsKey("pre-prod")) {
+                    guessFromProfile = "pre-prod";
+                } else if (dewConfig.getProfiles().containsKey("pre-production")) {
+                    guessFromProfile = "pre-production";
+                } else if (dewConfig.getProfiles().containsKey("uat")) {
+                    guessFromProfile = "uat";
+                }
+            } else if (finalProjectConfig.getProfile().equals("pre-production") || finalProjectConfig.getProfile().equals("pre-prod")
+                    || finalProjectConfig.getProfile().equals("uat")) {
+                if (dewConfig.getProfiles().containsKey("test")) {
+                    guessFromProfile = "test";
+                }
+            } else if (finalProjectConfig.getProfile().equals("test")) {
+                if (dewConfig.getProfiles().containsKey("dev")) {
+                    guessFromProfile = "dev";
+                }
             }
             if (guessFromProfile != null) {
                 finalProjectConfig.setReuseLastVersionFromProfile(guessFromProfile);
@@ -277,7 +283,7 @@ public class ConfigBuilder {
             return;
         }
         // 存在重用版本，不允许重用默认profile
-        // 附加Kubernetes和Docker的配置
+        // 附加Docker的配置
         // 附加顺序：
         // 1) 带 '-append' 命令行参数
         // 2) '.dew' 配置中对应环境的配置
@@ -323,22 +329,10 @@ public class ConfigBuilder {
             appendProfile.getDocker().setRegistryPassword(finalProjectConfig.getDocker().getRegistryPassword());
         }
 
-        kubeBase64ConfigAppendOpt.ifPresent(obj ->
-                appendProfile.getKube().setBase64Config(obj.trim())
-        );
-        if (appendProfile.getKube().getBase64Config() == null || appendProfile.getKube().getBase64Config().isEmpty()) {
-            appendProfile.getKube().setBase64Config(dewConfig.getKube().getBase64Config());
-        }
-        if (appendProfile.getKube().getBase64Config() == null || appendProfile.getKube().getBase64Config().isEmpty()) {
-            appendProfile.getKube().setBase64Config(finalProjectConfig.getKube().getBase64Config());
-        }
-
-        if (appendProfile.getKube().getBase64Config().isEmpty()
-                || appendProfile.getDocker().getHost().isEmpty()) {
+        if (appendProfile.getDocker().getHost().isEmpty()) {
             throw new ConfigException("In reuse version mode, "
-                    + "'kubernetes base64 config' and 'docker host' must be specified by "
+                    + "'docker host' must be specified by "
                     + "command-line arguments '"
-                    + "dew_devops_kube_config-append'/ "
                     + "dew_devops_docker_host-append'"
                     + "OR '.dew' profile configuration file");
         }

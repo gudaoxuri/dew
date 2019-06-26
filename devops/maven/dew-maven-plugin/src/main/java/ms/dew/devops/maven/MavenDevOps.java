@@ -78,7 +78,6 @@ public class MavenDevOps {
          * @param dockerRegistryUrlAppendOpt      the docker registry url append opt
          * @param dockerRegistryUserNameAppendOpt the docker registry user name append opt
          * @param dockerRegistryPasswordAppendOpt the docker registry password append opt
-         * @param kubeBase64ConfigAppendOpt       the kube base 64 config append opt
          * @param mockClasspath                   the mock classpath
          */
         public static synchronized void init(MavenSession session, BuildPluginManager pluginManager,
@@ -88,7 +87,6 @@ public class MavenDevOps {
                                              String inputKubeBase64Config, String inputAssignationProjects,
                                              Optional<String> dockerHostAppendOpt, Optional<String> dockerRegistryUrlAppendOpt,
                                              Optional<String> dockerRegistryUserNameAppendOpt, Optional<String> dockerRegistryPasswordAppendOpt,
-                                             Optional<String> kubeBase64ConfigAppendOpt,
                                              String mockClasspath) {
             try {
                 Config.initMavenProject(session, pluginManager);
@@ -106,8 +104,7 @@ public class MavenDevOps {
                 initFinalConfig(session, inputProfile,
                         inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
                         inputKubeBase64Config, inputAssignationProjects,
-                        dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
-                        kubeBase64ConfigAppendOpt);
+                        dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt);
                 DevOps.Init.init(mockClasspath);
                 Config.initMavenProject(session, pluginManager);
                 // 特殊Mojo处理
@@ -131,8 +128,7 @@ public class MavenDevOps {
                                             Optional<String> dockerHostAppendOpt,
                                             Optional<String> dockerRegistryUrlAppendOpt,
                                             Optional<String> dockerRegistryUserNameAppendOpt,
-                                            Optional<String> dockerRegistryPasswordAppendOpt,
-                                            Optional<String> kubeBase64ConfigAppendOpt)
+                                            Optional<String> dockerRegistryPasswordAppendOpt)
                 throws IOException, InvocationTargetException, IllegalAccessException {
             logger.info("Init final config ...");
             String basicDirectory = session.getTopLevelProject().getBasedir().getPath() + File.separator;
@@ -180,8 +176,7 @@ public class MavenDevOps {
                         ConfigBuilder.buildProject(dewConfig, appKindPluginOpt.get(), deployPlugin, session, project, inputProfile,
                                 inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
                                 inputKubeBase64Config,
-                                dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
-                                kubeBase64ConfigAppendOpt);
+                                dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt);
                 DevOps.Config.getFinalConfig().getProjects().put(project.getId(), finalProjectConfig);
                 logger.debug("[" + project.getId() + "] configured");
             }

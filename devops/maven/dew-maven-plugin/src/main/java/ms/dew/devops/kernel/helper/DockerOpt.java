@@ -31,6 +31,7 @@ import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.command.BuildImageResultCallback;
 import com.github.dockerjava.core.command.PullImageResultCallback;
 import com.github.dockerjava.core.command.PushImageResultCallback;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 
 import java.io.File;
@@ -348,6 +349,159 @@ public class DockerOpt {
             return header;
         }
 
+        /**
+         * Get label description by name.
+         *
+         * @param labelName the label name
+         * @param projectId the project id
+         * @return label description
+         * @throws IOException the io exception
+         */
+        public Label getLabelByName(String labelName, Integer projectId) throws IOException {
+            String url = registryApiUrl + "/labels?name=" + labelName;
+            if (projectId == null || projectId == 0) {
+                url = url + "&scope=g";
+            } else {
+                url = url + "&scope=p&project_id=" + projectId;
+            }
+            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(url, wrapHeader());
+            boolean result = responseWrap.statusCode == 200;
+            Label label = null;
+            if (result) {
+                log.debug("Registry get labels result [" + responseWrap.statusCode + "]" + responseWrap.result);
+                List<Label> data = $.json.toList(responseWrap.result, Label.class);
+                if (CollectionUtils.isNotEmpty(data)) {
+                    label = data.get(0);
+                }
+            } else {
+                log.error("Registry get labels result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            }
+            return label;
+        }
+
+        /**
+         * Add label.
+         *
+         * @param label   the label
+         * @return <b>true</b> if success
+         * @throws IOException the io exception
+         */
+        public boolean addLabel(Label label) throws IOException {
+                if (null == label.projectId || label.getProjectId() == 0) {
+                    label.setScope("g");
+                } else {
+                    label.setScope("p");
+                }
+            HttpHelper.ResponseWrap responseWrap = $.http.postWrap(registryApiUrl + "/labels", $.json.toJsonString(label), wrapHeader());
+            boolean result = responseWrap.statusCode == 201;
+            if (result) {
+                log.debug("Registry add label result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            } else {
+                log.error("Registry add label result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            }
+            return result;
+        }
+
+        /**
+         * Update label.
+         *
+         * @param labelId the label id
+         * @param label   label
+         * @return <b>true</b> if success
+         * @throws IOException the io exception
+         */
+        public boolean updateLabelById(Integer labelId, Label label) throws IOException {
+            HttpHelper.ResponseWrap responseWrap = $.http.putWrap(registryApiUrl + "/labels/" + labelId,
+                    $.json.toJsonString(label), wrapHeader());
+            boolean result = responseWrap.statusCode == 200;
+            if (result) {
+                log.debug("Registry add label result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            } else {
+                log.error("Registry add label result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            }
+            return result;
+
+        }
+
+        /**
+         * Get project id by name.
+         *
+         * @param projectName the project name
+         * @return the project id
+         * @throws IOException the io exception
+         */
+        public Integer getProjectIdByName(String projectName) throws IOException {
+            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(registryApiUrl + "/projects?name=" + projectName, wrapHeader());
+            boolean result = responseWrap.statusCode == 200;
+            Integer projectId = null;
+            if (result) {
+                projectId = (Integer) $.json.toList(responseWrap.result, Map.class).get(0).get("project_id");
+            }
+            return projectId;
+        }
+    }
+
+
+    /**
+     * Docker label.
+     *
+     * @author Liuhongcheng
+     */
+    public static class Label {
+        private Integer id;
+        private String name;
+        private String description;
+        private Integer projectId;
+        private String scope;
+        private Boolean deleted;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public Integer getProjectId() {
+            return projectId;
+        }
+
+        public void setProjectId(Integer projectId) {
+            this.projectId = projectId;
+        }
+
+        public String getScope() {
+            return scope;
+        }
+
+        public void setScope(String scope) {
+            this.scope = scope;
+        }
+
+        public Boolean getDeleted() {
+            return deleted;
+        }
+
+        public void setDeleted(Boolean deleted) {
+            this.deleted = deleted;
+        }
     }
 
 }
