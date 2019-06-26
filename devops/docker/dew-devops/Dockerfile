@@ -11,7 +11,8 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
 # ----------------- Add maven agent
 ARG MAVEN_AGENT_URL=https://oss.sonatype.org/content/repositories/snapshots/ms/dew/dew-maven-agent/2.0.0-SNAPSHOT/dew-maven-agent-2.0.0-20190614.073115-1.jar
 
-RUN mkdir -p /opt/jar/ \
+RUN mkdir -p /opt/maven/ \
+    && mkdir -p /opt/jar/ \
     && curl -o /opt/jar/dew-maven-agent.jar $MAVEN_AGENT_URL
 
 # Use a custom settings.xml file
