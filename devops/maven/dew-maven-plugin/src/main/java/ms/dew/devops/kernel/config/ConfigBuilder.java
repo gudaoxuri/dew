@@ -331,7 +331,7 @@ public class ConfigBuilder {
 
         if (appendProfile.getDocker().getHost().isEmpty()) {
             throw new ConfigException("In reuse version mode, "
-                    + "'docker host' must be specified by "
+                    + "'Docker host' must be specified by "
                     + "command-line arguments '"
                     + "dew_devops_docker_host-append'"
                     + "OR '.dew' profile configuration file");

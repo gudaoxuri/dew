@@ -79,6 +79,66 @@
                 <project.build.testSourceDirectory>src/test/3.6.0</project.build.testSourceDirectory>
             </properties>
         </profile>
+        <profile>
+            <id>maven-core-3.6.1</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.core.version>3.6.1</maven.core.version>
+                <project.build.testSourceDirectory>src/test/3.6.1</project.build.testSourceDirectory>
+            </properties>
+        </profile>
+        <profile>
+            <id>maven-core-3.5.2</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.core.version>3.5.2</maven.core.version>
+                <project.build.testSourceDirectory>src/test/3.5.2</project.build.testSourceDirectory>
+            </properties>
+        </profile>
+        <profile>
+            <id>maven-core-3.3.9</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.core.version>3.3.9</maven.core.version>
+                <project.build.testSourceDirectory>src/test/3.3.9</project.build.testSourceDirectory>
+            </properties>
+        </profile>
+        <profile>
+            <id>maven-core-3.3.3</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.core.version>3.3.3</maven.core.version>
+                <project.build.testSourceDirectory>src/test/3.3.3</project.build.testSourceDirectory>
+            </properties>
+        </profile>
+        <profile>
+            <id>maven-core-3.2.5</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.core.version>3.2.5</maven.core.version>
+                <project.build.testSourceDirectory>src/test/3.2.5</project.build.testSourceDirectory>
+            </properties>
+        </profile>
+        <profile>
+            <id>maven-core-3.0.5</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.core.version>3.0.5</maven.core.version>
+                <project.build.testSourceDirectory>src/test/3.0.5</project.build.testSourceDirectory>
+            </properties>
+        </profile>
     </profiles>
 
 </project>
