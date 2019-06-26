@@ -357,7 +357,7 @@ public class DockerOpt {
          * @return label description
          * @throws IOException the io exception
          */
-        public Map<String, Object> getLabelByName(String labelName, Integer projectId) throws IOException {
+        public Label getLabelByName(String labelName, Integer projectId) throws IOException {
             String url = registryApiUrl + "/labels?name=" + labelName;
             if (projectId == null || projectId == 0) {
                 url = url + "&scope=g";
@@ -366,12 +366,12 @@ public class DockerOpt {
             }
             HttpHelper.ResponseWrap responseWrap = $.http.getWrap(url, wrapHeader());
             boolean result = responseWrap.statusCode == 200;
-            Map<String, Object> label = new HashMap<>();
+            Label label = null;
             if (result) {
                 log.debug("Registry get labels result [" + responseWrap.statusCode + "]" + responseWrap.result);
-                List<Map> data = $.json.toList(responseWrap.result, Map.class);
+                List<Label> data = $.json.toList(responseWrap.result, Label.class);
                 if (CollectionUtils.isNotEmpty(data)) {
-                    label.putAll(data.get(0));
+                    label = data.get(0);
                 }
             } else {
                 log.error("Registry get labels result [" + responseWrap.statusCode + "]" + responseWrap.result);
@@ -382,24 +382,17 @@ public class DockerOpt {
         /**
          * Add label.
          *
-         * @param labelName   the label name
-         * @param projectId   the project id
-         * @param description the label description
+         * @param label   the label
          * @return <b>true</b> if success
          * @throws IOException the io exception
          */
-        public boolean addLabel(String labelName, Integer projectId, String description) throws IOException {
-            Map<String, Object> data = new HashMap<String, Object>() {{
-                put("description", description);
-                put("name", labelName);
-                put("project_id", projectId);
-                if (null == projectId || projectId == 0) {
-                    put("scope", "g");
+        public boolean addLabel(Label label) throws IOException {
+                if (null == label.projectId || label.getProjectId() == 0) {
+                    label.setScope("g");
                 } else {
-                    put("scope", "p");
+                    label.setScope("p");
                 }
-            }};
-            HttpHelper.ResponseWrap responseWrap = $.http.postWrap(registryApiUrl + "/labels", $.json.toJsonString(data), wrapHeader());
+            HttpHelper.ResponseWrap responseWrap = $.http.postWrap(registryApiUrl + "/labels", $.json.toJsonString(label), wrapHeader());
             boolean result = responseWrap.statusCode == 201;
             if (result) {
                 log.debug("Registry add label result [" + responseWrap.statusCode + "]" + responseWrap.result);
@@ -417,8 +410,8 @@ public class DockerOpt {
          * @return <b>true</b> if success
          * @throws IOException the io exception
          */
-        public boolean updateLabelById(Integer labelId, Map<String, Object> label) throws IOException {
-            HttpHelper.ResponseWrap responseWrap = $.http.putWrap(registryApiUrl + "/labels/" + String.valueOf(labelId),
+        public boolean updateLabelById(Integer labelId, Label label) throws IOException {
+            HttpHelper.ResponseWrap responseWrap = $.http.putWrap(registryApiUrl + "/labels/" + labelId,
                     $.json.toJsonString(label), wrapHeader());
             boolean result = responseWrap.statusCode == 200;
             if (result) {
@@ -445,6 +438,69 @@ public class DockerOpt {
                 projectId = (Integer) $.json.toList(responseWrap.result, Map.class).get(0).get("project_id");
             }
             return projectId;
+        }
+    }
+
+
+    /**
+     * Docker label.
+     *
+     * @author Liuhongcheng
+     */
+    public static class Label {
+        private Integer id;
+        private String name;
+        private String description;
+        private Integer projectId;
+        private String scope;
+        private Boolean deleted;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public Integer getProjectId() {
+            return projectId;
+        }
+
+        public void setProjectId(Integer projectId) {
+            this.projectId = projectId;
+        }
+
+        public String getScope() {
+            return scope;
+        }
+
+        public void setScope(String scope) {
+            this.scope = scope;
+        }
+
+        public Boolean getDeleted() {
+            return deleted;
+        }
+
+        public void setDeleted(Boolean deleted) {
+            this.deleted = deleted;
         }
     }
 
