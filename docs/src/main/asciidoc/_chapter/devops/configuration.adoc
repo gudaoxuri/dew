@@ -17,7 +17,7 @@ DevOps的配置有两类，
 .继承规则
 
 * ``.dew`` 可放在任意应用（模块）的根目录（与pom.xml同级）下，应用会继承项目的配置
-* ``.dew`` 支持多环境(profile)，各环境继承默认环境的配置
+* ``.dew`` 支持多环境(profiles)，各环境继承默认环境的配置
 
 .继承示例
 
@@ -33,7 +33,7 @@ DevOps的配置有两类，
 -
 app:
   replicas: 1
-profile:
+profiles:
   test:
     namespace: todo-test
   uat:
@@ -41,7 +41,7 @@ profile:
 -
 # 应用A配置的.dew 内容:
 -
-profile:
+profiles:
   uat:
     app:
       replicas: 2
@@ -51,7 +51,7 @@ profile:
 -
 app:
   replicas: 1               # 继承全局配置
-profile:
+profiles:
   test:
     namespace: todo-test    # 继承全局配置
     app:
@@ -60,6 +60,80 @@ profile:
     namespace: todo-uat
     app:
       replicas: 2           # 使用应用A的覆写配置
+-
+----
+
+.profiles 继承规则
+* 若全局配置的``.dew``中配置了某一profile的参数，若想在应用B覆写全局配置的profile，则需要在应用B中设定此配置以实现覆写。
+
+----
+# 项目结构
+|- moduleA
+|-  |- pom.xml
+|-  |- .dew         # 应用A配置
+|- moduleB
+|-  |- pom.xml
+|-  |- .dew         # 应用A配置
+|- pom.xml
+|- .dew             # 全局配置
+
+# 全局配置的.dew 内容:
+-
+app:
+  replicas: 1 # 全局默认配置
+profiles:
+  test:
+    namespace: todo-test
+  uat:
+    namespace: todo-uat
+    app:
+      replicas: 2 # 全局profile配置
+-
+# 应用A配置的.dew 内容:
+-
+profiles:
+  uat:
+    app:
+      replicas: 3 # 应用A的profile配置
+-
+# 应用B配置的.dew 内容:
+-
+app:
+  replicas: 4     # 应用B的默认配置
+profiles:
+  uat:
+    app:
+      replicas: 5 # 应用B的profile配置
+-
+
+# 对于应用A最终的配置为:
+-
+app:
+  replicas: 1               # 继承全局配置
+profiles:
+  test:
+    namespace: todo-test    # 继承全局配置
+    app:
+      replicas: 1           # 继承全局配置的默认环境配置
+  uat:
+    namespace: todo-uat
+    app:
+      replicas: 3           # 使用应用A的profile覆写配置
+-
+
+# 对于应用B最终的配置为:
+-
+app:
+  replicas: 4               # 使用应用B的默认配置
+profiles:
+  test:
+    namespace: todo-test    # 继承全局配置
+    app:
+      replicas: 4           # 使用应用B的默认配置
+  uat:
+    namespace: todo-uat
+    app:
+      replicas: 5           # 使用应用B的profile覆写配置
 -
 ----
 
@@ -104,9 +178,9 @@ app:                                    # 应用配置
                                         # 后端服务默认为空
   runOptions:                           # 运行参数，可指定诸如 JVM 配置等信息
   serverConfig: |-                      # 服务配置，多为Nginx配置
-  containerResourcesLimits:             # 容器资源上限，同Kubernetes配置，值应大于等于containerResourcesRequests
+  containerResourcesLimits: {}          # 容器资源上限，同Kubernetes配置，值应大于等于containerResourcesRequests
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-  containerResourcesRequests:           # 容器资源下限，同Kubernetes配置，值应小于等于containerResourcesLimits
+  containerResourcesRequests: {}        # 容器资源下限，同Kubernetes配置，值应小于等于containerResourcesLimits
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
 docker:                                 # Docker配置
   host:                                 # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
@@ -121,8 +195,8 @@ kube:                                   # Kubernetes配置
                                         # 使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 notifies:                               # 通知配置
   - type: DD                            # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
-    defaultReceivers:                   # 默认接收人列表，钉钉为手机号，邮件为邮箱
-    dndTimeReceivers:                   # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
+    defaultReceivers: []                # 默认接收人列表，钉钉为手机号，邮件为邮箱
+    dndTimeReceivers: []                # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
     args:                               # 不同类型的参数，邮件不需要设置
         url:                            # type=DD表示钉钉的推送地址
                                         # 说明详见：https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq

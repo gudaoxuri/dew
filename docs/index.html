@@ -471,7 +471,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#需求分析">3.1.1. 需求分析</a></li>
 <li><a href="#功能体验">3.1.2. 功能体验</a></li>
 <li><a href="#模块设计">3.1.3. 模块设计</a></li>
-<li><a href="#核心代码说明">3.1.4. 核心代码说明</a></li>
+<li><a href="#framework-quick-start-core-code-instructions">3.1.4. 核心代码说明</a></li>
 </ul>
 </li>
 <li><a href="#framework-user-manual">3.2. 框架使用手册</a>
@@ -534,7 +534,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#应用刷新">4.2.10. 应用刷新</a></li>
 <li><a href="#ci_cd工具支持_gitlab_ci">4.2.11. CI/CD工具支持-Gitlab CI</a></li>
 <li><a href="#执行通知">4.2.12. 执行通知</a></li>
-<li><a href="#监控管理">4.2.13. 监控管理</a></li>
+<li><a href="#dew-devops-deploy">4.2.13. Dew DevOps 脚本部署</a></li>
+<li><a href="#监控管理">4.2.14. 监控管理</a></li>
 </ul>
 </li>
 <li><a href="#devops-env-install">4.3. 测试、生产环境安装配置</a>
@@ -567,6 +568,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#统一配置处理">4.5.3. 统一配置处理</a></li>
 <li><a href="#jvm设置">4.5.4. JVM设置</a></li>
 <li><a href="#配置中心选择">4.5.5. 配置中心选择</a></li>
+<li><a href="#spring_cloud_项目的_dew_gitlab_ci_cd_实践">4.5.6. Spring Cloud 项目的 Dew &amp; Gitlab CI/CD 实践</a></li>
 </ul>
 </li>
 <li><a href="#devops示例">4.6. DevOps示例</a>
@@ -635,7 +637,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#支持的ci_cd服务">6.5. 支持的CI/CD服务</a>
 <ul class="sectlevel3">
 <li><a href="#dew-devops-maven-agent">6.5.1. Dew DevOps Maven Agent</a></li>
-<li><a href="#dew_ci_cd_gitlab_ci_实现">6.5.2. Dew CI/CD : Gitlab CI 实现</a></li>
+<li><a href="#dew-gitlab-ci">6.5.2. Dew CI/CD : Gitlab CI 实现</a></li>
 </ul>
 </li>
 </ul>
@@ -756,7 +758,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p><strong>没有合适的微服务框架</strong> 导致人员技能要求高、项目研发成本高企</p>
+<p><strong>没有合适的微服务框架</strong> 导致人员技能要求高、项目研发成本高</p>
 </div>
 </blockquote>
 </div>
@@ -787,7 +789,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="paragraph">
 <div class="title"><strong>提供微服务架构指南</strong></div>
-<p>项目要上微服务，其架构思想是前提，《微服务架构设计》(<a href="https://github.com/gudaoxuri/Microservices-Architecture" class="bare">https://github.com/gudaoxuri/Microservices-Architecture</a>) 做为入门书籍非常合适。</p>
+<p>项目要上微服务，其架构思想是前提，《微服务架构设计》(<a href="https://gudaoxuri.gitbook.io/microservices-architecture" class="bare">https://gudaoxuri.gitbook.io/microservices-architecture</a>) 做为入门书籍非常合适。</p>
 </div>
 <div class="olist arabic">
 <div class="title"><strong>扩展主流微服务框架</strong></div>
@@ -826,7 +828,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p><strong>集成度低、操作不友好</strong> DevOps是一个系统性工程，想通过传统的CI/CD工具实现难度较大</p>
+<p><strong>集成度低、操作不友好</strong></p>
+</div>
+<div class="paragraph">
+<p>DevOps是一个系统性工程，想通过传统的CI/CD工具的方法实现难度较大</p>
 </div>
 </blockquote>
 </div>
@@ -841,7 +846,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p><strong>平台依赖，不通用</strong> 厂商方案做了高度集成，弥补了工具型方案的不足，但问题也很明显，各厂商都有自己的一套标准，互不兼容，导致平台绑定，无法迁移</p>
+<p><strong>平台依赖，不通用</strong></p>
+</div>
+<div class="paragraph">
+<p>云厂商方案做了高度集成，弥补了工具型方案的不足，但问题也很明显，各厂商都有自己的一套标准，互不兼容，导致平台绑定，无法迁移</p>
 </div>
 </blockquote>
 </div>
@@ -862,7 +870,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ol>
 </div>
 <div class="paragraph">
-<p>基于这一理念，我们我们提供一体化的Maven插件，实现了：</p>
+<p>基于这一理念，我们提供的一体化的Maven插件，实现了：</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -1043,7 +1051,7 @@ cd frontend &amp;&amp; npm install &amp;&amp; npm run dev:h5
 </div>
 </div>
 <div class="sect3">
-<h4 id="核心代码说明"><a class="anchor" href="#核心代码说明"></a>3.1.4. 核心代码说明</h4>
+<h4 id="framework-quick-start-core-code-instructions"><a class="anchor" href="#framework-quick-start-core-code-instructions"></a>3.1.4. 核心代码说明</h4>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -4576,8 +4584,9 @@ spec:
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">curl -O https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/sh/dew-devops.sh
 sh dew-devops.sh
 # 选择对应操作，根据提示操作即可
-# 选择 1 进行集群初始化和 gitlab-runner 安装
-# 选择 2 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等</code></pre>
+# 选择 1 进行集群初始化
+# 选择 2 安装 Gitlab runner
+# 选择 3 创建项目， 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4712,7 +4721,7 @@ mvn deploy
 <div id="devops-user-manual-release-skip" class="paragraph">
 <div class="title">不需要部署的应用处理</div>
 <p><code>Dew</code> 会自行判断应用是否需要部署，对于不需要部署的应用为加速执行会设置一系列的skip，
-部署执行的是"Default Lifecycle (<a href="https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html)"，" class="bare">https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html)"，</a>
+部署执行的是 <a href="https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html">Default Lifecycle</a> ，
 默认包含了如下插件的skip：</p>
 </div>
 <div class="olist arabic">
@@ -5058,7 +5067,134 @@ prod deploy:
 </div>
 </div>
 <div class="sect3">
-<h4 id="监控管理"><a class="anchor" href="#监控管理"></a>4.2.13. 监控管理</h4>
+<h4 id="dew-devops-deploy"><a class="anchor" href="#dew-devops-deploy"></a>4.2.13. Dew DevOps 脚本部署</h4>
+<div class="paragraph">
+<p>此为Dew DevOps 的脚本 <code>dew-devops.sh</code> 部署相关说明。集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
+</div>
+<div class="sect4">
+<h5 id="before_started"><a class="anchor" href="#before_started"></a>Before Started</h5>
+<div class="paragraph">
+<p>环境准备：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>正常运行的Kubernetes集群</p>
+</li>
+<li>
+<p>安装 Helm</p>
+</li>
+<li>
+<p>可用的 Harbor 镜像仓库</p>
+</li>
+<li>
+<p>GitLab 仓库</p>
+</li>
+<li>
+<p>MinIO，并创建好对应的 bucket(用于进行Runner的缓存存储)</p>
+</li>
+<li>
+<p>DockerD（用于Runner中dew-maven-plugin进行项目镜像的打包上传拉取）</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>项目准备：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>在项目代码中添加并配置 <code>.dew</code> 文件（详见 <a href="http://doc.dew.ms/#devops-configuration-dew">.dew 配置详情</a>）</p>
+</li>
+<li>
+<p>在项目代码中添加并配置 <code>.gitlab-ci.yml</code> 文件（参考 <a href="http://doc.dew.ms/#dew_ci_cd_gitlab_ci_%E5%AE%9E%E7%8E%B0">Gitlab CI 实现</a>）</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="使用方式"><a class="anchor" href="#使用方式"></a>使用方式</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">curl -O https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/sh/dew-devops.sh
+sh dew-devops.sh</code></pre>
+</div>
+</div>
+<div class="sect5">
+<h6 id="选项介绍"><a class="anchor" href="#选项介绍"></a>选项介绍</h6>
+<div class="paragraph">
+<div class="title">Init cluster</div>
+<p>集群初始化：创建一个用于集群服务发现的 ClusterRole</p>
+</div>
+<div class="paragraph">
+<div class="title">Install Gitlab runner</div>
+<p>Gitlab runner 安装，用于配合 <a href="http://doc.dew.ms/#dew_ci_cd_gitlab_ci_%E5%AE%9E%E7%8E%B0">Gitlab CI</a>部署项目。
+此选项功能：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>创建一个ConfigMap，用于保存Maven的settings.xml。
+创建一个Secret用于保存MinIO的key和secret。若不使用MinIO作为缓存存储，需要自行配置。
+安装Gitlab Runner,并生成gitlab-runner/gitlab-runner-helm-installation.sh，以便查看配置。</pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+若不使用MinIO作为缓存存储，请参考 <a href="https://gitlab.com/charts/gitlab-runner/blob/master/values.yaml">Gitlab Runner Chart</a>自行配置。
+</td>
+</tr>
+</table>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Gitlab Runner 部分配置参数说明：</p>
+</div>
+</blockquote>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">配置项</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">说明</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">runners.image</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">runner的默认容器镜像，为了保证能使用最新的Dew DevOps功能，建议使用dewms/devops:latest；或者也可使用基于此镜像的自定义镜像</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">runners.tags</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用于Gitlab CI 触发部署的runner的tag，此脚本中，tags和项目的profile保持一致。也可在执行脚本时自行修改。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">runners.env.dew_devops_profile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">此为指定部署项目的profile，默认与runners.tags只保持一致。可在执行脚本时自行修改。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">runners.env.dew_devops_XXX</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">更多runner.env配置项，详见： <a href="http://doc.dew.ms/#maven_%E9%85%8D%E7%BD%AE">Maven 配置</a></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<div class="title">Create a project</div>
+<p>创建项目：用于给需要部署的项目来创建一个部署的命名空间等。
+详见： <a href="http://doc.dew.ms/#%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88">创建项目</a></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="监控管理"><a class="anchor" href="#监控管理"></a>4.2.14. 监控管理</h4>
 
 </div>
 </div>
@@ -6346,7 +6482,7 @@ EOF</code></pre>
 <p><code>.dew</code> 可放在任意应用（模块）的根目录（与pom.xml同级）下，应用会继承项目的配置</p>
 </li>
 <li>
-<p><code>.dew</code> 支持多环境(profile)，各环境继承默认环境的配置</p>
+<p><code>.dew</code> 支持多环境(profiles)，各环境继承默认环境的配置</p>
 </li>
 </ul>
 </div>
@@ -6364,7 +6500,7 @@ EOF</code></pre>
 -
 app:
   replicas: 1
-profile:
+profiles:
   test:
     namespace: todo-test
   uat:
@@ -6372,7 +6508,7 @@ profile:
 -
 # 应用A配置的.dew 内容:
 -
-profile:
+profiles:
   uat:
     app:
       replicas: 2
@@ -6382,7 +6518,7 @@ profile:
 -
 app:
   replicas: 1               # 继承全局配置
-profile:
+profiles:
   test:
     namespace: todo-test    # 继承全局配置
     app:
@@ -6391,6 +6527,86 @@ profile:
     namespace: todo-uat
     app:
       replicas: 2           # 使用应用A的覆写配置
+-</pre>
+</div>
+</div>
+<div class="ulist">
+<div class="title">profiles 继承规则</div>
+<ul>
+<li>
+<p>若全局配置的<code>.dew</code>中配置了某一profile的参数，若想在应用B覆写全局配置的profile，则需要在应用B中设定此配置以实现覆写。</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># 项目结构
+|- moduleA
+|-  |- pom.xml
+|-  |- .dew         # 应用A配置
+|- moduleB
+|-  |- pom.xml
+|-  |- .dew         # 应用A配置
+|- pom.xml
+|- .dew             # 全局配置
+
+# 全局配置的.dew 内容:
+-
+app:
+  replicas: 1 # 全局默认配置
+profiles:
+  test:
+    namespace: todo-test
+  uat:
+    namespace: todo-uat
+    app:
+      replicas: 2 # 全局profile配置
+-
+# 应用A配置的.dew 内容:
+-
+profiles:
+  uat:
+    app:
+      replicas: 3 # 应用A的profile配置
+-
+# 应用B配置的.dew 内容:
+-
+app:
+  replicas: 4     # 应用B的默认配置
+profiles:
+  uat:
+    app:
+      replicas: 5 # 应用B的profile配置
+-
+
+# 对于应用A最终的配置为:
+-
+app:
+  replicas: 1               # 继承全局配置
+profiles:
+  test:
+    namespace: todo-test    # 继承全局配置
+    app:
+      replicas: 1           # 继承全局配置的默认环境配置
+  uat:
+    namespace: todo-uat
+    app:
+      replicas: 3           # 使用应用A的profile覆写配置
+-
+
+# 对于应用B最终的配置为:
+-
+app:
+  replicas: 4               # 使用应用B的默认配置
+profiles:
+  test:
+    namespace: todo-test    # 继承全局配置
+    app:
+      replicas: 4           # 使用应用B的默认配置
+  uat:
+    namespace: todo-uat
+    app:
+      replicas: 5           # 使用应用B的profile覆写配置
 -</pre>
 </div>
 </div>
@@ -6434,9 +6650,9 @@ app:                                    # 应用配置
                                         # 后端服务默认为空
   runOptions:                           # 运行参数，可指定诸如 JVM 配置等信息
   serverConfig: |-                      # 服务配置，多为Nginx配置
-  containerResourcesLimits:             # 容器资源上限，同Kubernetes配置，值应大于等于containerResourcesRequests
+  containerResourcesLimits: {}          # 容器资源上限，同Kubernetes配置，值应大于等于containerResourcesRequests
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-  containerResourcesRequests:           # 容器资源下限，同Kubernetes配置，值应小于等于containerResourcesLimits
+  containerResourcesRequests: {}        # 容器资源下限，同Kubernetes配置，值应小于等于containerResourcesLimits
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
 docker:                                 # Docker配置
   host:                                 # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
@@ -6451,8 +6667,8 @@ kube:                                   # Kubernetes配置
                                         # 使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 notifies:                               # 通知配置
   - type: DD                            # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
-    defaultReceivers:                   # 默认接收人列表，钉钉为手机号，邮件为邮箱
-    dndTimeReceivers:                   # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
+    defaultReceivers: []                # 默认接收人列表，钉钉为手机号，邮件为邮箱
+    dndTimeReceivers: []                # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
     args:                               # 不同类型的参数，邮件不需要设置
         url:                            # type=DD表示钉钉的推送地址
                                         # 说明详见：https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
@@ -6626,6 +6842,34 @@ dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使
 <div class="paragraph">
 <p>由于 <code>spring-cloud-kubernetes</code> 使用的配置方案并不直观、无法实现版本留存、修改审计、配置加密（非摘要），
 所以 <code>dew</code> 建议使用 <code>Spring Cloud Config</code> ，<code>dew</code> 提供了其 helm 版本，详见 <a href="#helm-chart-spring-cloud-config">Dew Helm Chart : Spring Cloud Config</a> 。</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="spring_cloud_项目的_dew_gitlab_ci_cd_实践"><a class="anchor" href="#spring_cloud_项目的_dew_gitlab_ci_cd_实践"></a>4.5.6. Spring Cloud 项目的 Dew &amp; Gitlab CI/CD 实践</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>部署 Spring Cloud 配置中心，详见 <a href="#helm-chart-spring-cloud-config">Dew Spring Cloud 配置中心部署</a>，<a href="#dew-spring-cloud-config">Dew Spring Cloud 配置中心实例</a></p>
+</li>
+<li>
+<p>在 Kubernetes 集群中执行<code>dew-devops.sh</code>脚本部署环境、创建项目，详见：<a href="#dew-devops-deploy">Dew DevOps 脚本部署</a></p>
+</li>
+<li>
+<p>在 Gitlab上 创建项目</p>
+</li>
+<li>
+<p>在项目中引入 Dew 的<code>parent-starter</code>依赖，详细请参考: <a href="#framework-quick-start-core-code-instructions">框架快速入门</a></p>
+</li>
+<li>
+<p>添加用于触发 Gitlab Runner 的<code>.gitlab-ci.yml</code>配置文件，详见：<a href="#dew-gitlab-ci">Dew Gitlab CI 实现</a></p>
+</li>
+<li>
+<p>添加 Dew Maven Plugin 支持的 Kubernetes 部署配置文件<code>.dew</code>，详见：<a href="#devops-configuration-dew">.dew 文件配置</a></p>
+</li>
+<li>
+<p><code>合并代码</code>到需要部署的分支，触发 Gitlab Runner 进行项目部署</p>
+</li>
+</ol>
 </div>
 </div>
 </div>
@@ -6956,7 +7200,7 @@ mvn -P devops dew:release -Ddew_devops_profile=prod</pre>
 #
 dew_devops_docker_host=tcp://10.200.131.215:2375
 # Docker registry url, nullable
-dew_devops_docker_registry_url=https://harbor.trc.com/v2
+dew_devops_docker_registry_url=https://harbor.dew.ms/v2
 # Docker registry user name, nullable
 dew_devops_docker_registry_username=dew
 # Docker registry password, nullable
@@ -6965,14 +7209,14 @@ dew_devops_docker_registry_password=Dew123456
 dew_devops_kube_config=YXBpVmVyc2lvbjogdjEKY2x1c3RlcnM6Ci0gY2x1c3RlcjoKICAgIGNlcnRpZmljYXRlLWF1dGhvcml0eS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VONVJFTkRRV0pEWjBGM1NVSkJaMGxDUVVSQlRrSm5hM0ZvYTJsSE9YY3dRa0ZSYzBaQlJFRldUVkpOZDBWUldVUldVVkZFUlhkd2NtUlhTbXdLWTIwMWJHUkhWbnBOUWpSWVJGUkZOVTFFVVhoTlZFRXpUVlJCZUU0eGIxaEVWRWsxVFVSUmQwOUVRVE5OVkVGNFRqRnZkMFpVUlZSTlFrVkhRVEZWUlFwQmVFMUxZVE5XYVZwWVNuVmFXRkpzWTNwRFEwRlRTWGRFVVZsS1MyOWFTV2gyWTA1QlVVVkNRbEZCUkdkblJWQkJSRU5EUVZGdlEyZG5SVUpCU3pWbENqUkpLekJrVG5RNVFsWm1OMWhOZWxWM2FIZGtTRlZ0WmsxWGFHdGlkelU1YVVGbmFVY3lSRGcyTTNkamNWWXhhRGswTjJ4c01rVlNRM0puWlRkM1prVUtWRklyY0ZOcVJUZGlPRWhNUlRaNE5VZEhXbkkyUkhKa1kwVnhhRFZSYzNoeUwyODVOVGxrYVNzeldYTmFNR3AwYVRSalFVNURjMGR2T0RkaFZpOUNOQXAzUmpBMmEyOXJVVU5yYlZSYVNXbG1kRWQwYW5CWlJWUkljV0phVlhwMlpYTnNRamRhY0daeWVXY3ZhWHBWVjI0M0x6VXhkVTVhZEdaclZtSkRhR0pCQ2psS1ozSnlXVFJqYTBZck1XdG5VVmxrTjFKMlRsRnVkMDQwTm5WbGJsUklhVlJaYWpONGVYVnVkbU5GYTNZd1RVNU1WV2haUXpOQ2JWcDNlVmxtTWxZS1IwaHJZbWt4VEZWa01WSlNSWFJVUTNKdWIydExPRUZ3UVV0NE4yaGpaVFpETm5OYVEwWTNWVEpvYXpWSk1qTlVUa2xJUkZGb1dGUkZka3BhTlZCbFpncFNNMDlWY0Zaak0wVkliREJPVDFGMFZ6Tk5RMEYzUlVGQllVMXFUVU5GZDBSbldVUldVakJRUVZGSUwwSkJVVVJCWjB0clRVRTRSMEV4VldSRmQwVkNDaTkzVVVaTlFVMUNRV1k0ZDBSUldVcExiMXBKYUhaalRrRlJSVXhDVVVGRVoyZEZRa0ZKZVdab1JqTmljMkZIWlRSeGQwMVdhRE14VjNCT1NTOU9URUVLZEZCc01VWkllbWxNYW5BcldVMW9MMjlyZDFKcmQzaERUbU5QWVhwRGVVUnlSbkozYVhkbE0ydG9USEExYVZwak5WTnVRMlJWUjBobVNsTjZPVEJwZWdwamNDdEViRXhQWnpKWGNUbFFObk5qTkZCV2JsaEhNRTVZUjBZMU1sSmtkRWw2Y205UE5ESkVVVWRDVTBSUGFVbHlTM2RpY25Bdk1HUTRLMWs1ZHl0WkNrSnVXVGxZZEVWNlNtOVdRMkp0YTFock5UTXlTa04xU0ZaSlVtOWpURGxUYjI1UVpIVjRNWFo0YjFJcmNuQTJRWE5VTkN0cloxRTFXbkJaVVZreVQzVUthVVJMTnpGWlFrbzBjbWxSZDBNNWJWRnJaV2RSYXpsdWFFUk9ORWhxYzIxMWJIQmFiemRJU0ZCTVZtVXZNa3BEZEhaRFUzUnVkVTFFYjNOQ1ZWRnJNZ292Ykd0b05uZzNkRlF2YWpKSU4wRldXalZMTlc5NE5FMHhPVFZ4ZEhrMFlsTmFjbmhoTWpVek5FTnpSblpJTTA1M1REZE1hMGhTYW5Sc2N6MEtMUzB0TFMxRlRrUWdRMFZTVkVsR1NVTkJWRVV0TFMwdExRbz0KICAgIHNlcnZlcjogaHR0cHM6Ly8xMC4yMDAuMTMxLjE4OjY0NDMKICBuYW1lOiBrdWJlcm5ldGVzCmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBrdWJlcm5ldGVzCiAgICB1c2VyOiBrdWJlcm5ldGVzLWFkbWluCiAgbmFtZToga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmN1cnJlbnQtY29udGV4dDoga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmtpbmQ6IENvbmZpZwpwcmVmZXJlbmNlczoge30KdXNlcnM6Ci0gbmFtZToga3ViZXJuZXRlcy1hZG1pbgogIHVzZXI6CiAgICBjbGllbnQtY2VydGlmaWNhdGUtZGF0YTogTFMwdExTMUNSVWRKVGlCRFJWSlVTVVpKUTBGVVJTMHRMUzB0Q2sxSlNVTTRha05EUVdSeFowRjNTVUpCWjBsSlJWUlZjbE5SV21kblowRjNSRkZaU2t0dldrbG9kbU5PUVZGRlRFSlJRWGRHVkVWVVRVSkZSMEV4VlVVS1FYaE5TMkV6Vm1sYVdFcDFXbGhTYkdONlFXVkdkekI0VDFSQk1FMVVSWGRPZWtWM1RWUmtZVVozTUhsTlJFRXdUVlJCZDA1NlJYZE5ha1poVFVSUmVBcEdla0ZXUW1kT1ZrSkJiMVJFYms0MVl6TlNiR0pVY0hSWldFNHdXbGhLZWsxU2EzZEdkMWxFVmxGUlJFVjRRbkprVjBwc1kyMDFiR1JIVm5wTVYwWnJDbUpYYkhWTlNVbENTV3BCVGtKbmEzRm9hMmxIT1hjd1FrRlJSVVpCUVU5RFFWRTRRVTFKU1VKRFowdERRVkZGUVhSdmFXOHdjbWxTU2k5QlkzQXhlVE1LUjBKbVkxaGhRbWhMTlRWek1EWk1ibEI2TmpCWGVEQnlkalZ6SzNWeVdVaFliWFYyU2pWVGNrVlpRbEpIWWtWdlRIcDVVemhYVW1KU01HdDFjbEJOUlFvMVpWUlpUR012UnpaeGNuVnVka1p4UjNSak4xaFJSMGN6VkVzdlJUSnNLMkkxZVdJeGEwTnliM2htTTNOelVFeFVVbVZDT0hFd1NrWm5iRmRpZEdjeUNsZElWVFJhUlZrNE1sbzVObkVyWkV4clZHaFJNRUV4YlZWMlUxRjZWMFlyU2xOaVNYbHNkVTV4VWxBMGExaHdZME16U1hKQlozcEdPWEZITkV0R1V6Z0tkM2xuUm5sRU9VUlJja3cyWkRGcE5qaDFVazR6YW10bFZYTTBNMHRDTlc4cldGcEhka05KY2tsR1owaDNXRUZhVkRkVE1ub3ZaRVJRZG5vcmFVaFdVQXBZYzFaUlIweEVkRGx4YWtwR2JYRk1WazlRZVVGelFuWlhWM0Z6VFZaTFpWSXJWbGhYYkRoSll6bG9iMFZWVkdOcmEyMXhRV0YzWkdNMlEzcEplbFJ5Q21FelNqRTRVVWxFUVZGQlFtOTVZM2RLVkVGUFFtZE9Wa2hST0VKQlpqaEZRa0ZOUTBKaFFYZEZkMWxFVmxJd2JFSkJkM2REWjFsSlMzZFpRa0pSVlVnS1FYZEpkMFJSV1VwTGIxcEphSFpqVGtGUlJVeENVVUZFWjJkRlFrRkRSVmRUYTB3MFkwRmFhekJsVnpScVMzTlhhVEV6YTAxSmJ5ODNMM3BZZG1aRWFBcGpTR05YYVdONlRqUndNRGs1T0RoVmVtbHdVak54YUZCMmVHaHhXR0pwTlRKS09WVlJOVkFyVUUxS05IRjJOamRSU1VGM1pHMXhlRXRzZFVORldqWk1DazVoYmtWRGNtZDVaek5QZW1kQ1dtaElUa3N4YUhob2VtdzBMME54YTBKTmNGbEJNSEprWWpKVlpUTlhiV05wV1hkc1EyUk9Ramw2ZVhKV01VUXZVa2tLZW5aTFYwUnJUMU5xV2pjMFVGWlpXbWh5VVdkWFJWVllPVWRGYlVsSlZXcFFZbXhsYTNKV1kyOXVTbmxpT1ZwV2VqZDNNbFZNVUVkTFkxcG1iMHBMYkFwWUt5OWhhVk5SYWs0NWRFazRRelEyYUd0aWFtTlFkalJwVHpJMmNtcFZSRTB2VDJsRWFuVlBLMnRFTjFaTlFqZHpWMjFTVFZkUWVGbFhTWE5rZG5wNUNtRk5Semd3VnpsMk9FMUpSbFJ4TjBsVVNVTTJjelowVld0aWFsUjVNMlZwVUhSM1ozUlFLMU5aZG1GRFVWRndiVFl6WnowS0xTMHRMUzFGVGtRZ1EwVlNWRWxHU1VOQlZFVXRMUzB0TFFvPQogICAgY2xpZW50LWtleS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJTVTBFZ1VGSkpWa0ZVUlNCTFJWa3RMUzB0TFFwTlNVbEZiMmRKUWtGQlMwTkJVVVZCZEc5cGJ6QnlhVkpLTDBGamNERjVNMGRDWm1OWVlVSm9TelUxY3pBMlRHNVFlall3VjNnd2NuWTFjeXQxY2xsSUNsaHRkWFpLTlZOeVJWbENVa2RpUlc5TWVubFRPRmRTWWxJd2EzVnlVRTFGTldWVVdVeGpMMGMyY1hKMWJuWkdjVWQwWXpkWVVVZEhNMVJMTDBVeWJDc0tZalY1WWpGclEzSnZlR1l6YzNOUVRGUlNaVUk0Y1RCS1JtZHNWMkowWnpKWFNGVTBXa1ZaT0RKYU9UWnhLMlJNYTFSb1VUQkJNVzFWZGxOUmVsZEdLd3BLVTJKSmVXeDFUbkZTVURScldIQmpRek5KY2tGbmVrWTVjVWMwUzBaVE9IZDVaMFo1UkRsRVVYSk1ObVF4YVRZNGRWSk9NMnByWlZWek5ETkxRalZ2Q2l0WVdrZDJRMGx5U1VablNIZFlRVnBVTjFNeWVpOWtSRkIyZWl0cFNGWlFXSE5XVVVkTVJIUTVjV3BLUm0xeFRGWlBVSGxCYzBKMlYxZHhjMDFXUzJVS1VpdFdXRmRzT0Vsak9XaHZSVlZVWTJ0cmJYRkJZWGRrWXpaRGVrbDZWSEpoTTBveE9GRkpSRUZSUVVKQmIwbENRVVV2SzJGbldWaEVjalI1T0RCMlFncFVVbWhKT1V4RmRscFJXa3B2Y1ZoS1NWcEVUU3RTZEhCSFJrRmlVMEV4Y0ZWeFpHeG9PV2hRZUdaNVoyZEhjRVJCYW5CYVZVbG9jbXMzYTFVNFJtbHdDa1V2T1hkSUwwWk1kVzlCUkUxNGIwTTRTalJqY25jMVpXRmxNSE51VTBwNmRrRTFUREIwZFRsalluSkRLMVJIYkhKeldERlNSMVJIZDJ4SFpTc3ZjMDRLTVVKMFIwYzVWMDlHYjB4Rk5tMTZSbkUwT1ZRek9EWmtORXhpTDJFMmRIbGFRV1pOZEVGYWNFaGhjRnBHZEVwYVZXOTJlRXRFZVVkWE56Rk9UMElyWWdwdWN6WlRaV2hRV1VZMU0wbGFXRGswYWk5NVJFeDNXRTVYT0ZNMmFGbEdORVpwY1RReVMyRkxlU3RFZVhKNVFrMTRVVzV4UzJaU1RsaDRRMlE0ZEhkeENuSjZWRGQwUldaQk1qVlljRllyU0hOemNVWjJVMVZEZDA1eFptbGxZbFprV25oSFdVc3dlbU5ZYnl0WWFuWlVVRlp3VTBkMlVrbHFaRlpOZFN0elNEQUtSak55VkZKNlZVTm5XVVZCTWpZeE5sTnRjbXhGWW1OTFIzbFFWRFJOUVVOVldFNVRabFJHU1RBMWJGWnRiVmRXU1RaTlRXRXlVSHBoWVRNeU4xcDFPUXBESzBwQlFYcFhTQ3RYVmpaaVZEQjVXbnBCU1Vwa05rY3JZbUZCZVhGMFVHaEdka1p6Y20xNWRXTk9lV2xzZURobVl6UkpVMHRLU3l0a2FrcHFOR0ZLQ2xKUlJsRk5UbkZ2VlhSblZXZHFVbE54WkRKNVkzcGFWRGcyTlM5VGJtWktRVVZ6U213dk9VdDBhSFpCZGpWWWIwdHBPWFJ1Tm5ORFoxbEZRVEZNWWpBS0syeE1kbWgwZVRWQmMwTkZZMGRNWTNKSlZTOWxTMUYyVHk5alJWbDNZMllyTjJ0aFZHZDJVMHN6Y0ZaVFUzcDZXWGhSUVVwa1NEYzNRWHBsWlVOT1RBcEphVlJoY1M5U2QweHlTalJrYlVkeVRYWmFhVVJZZVVWNFlUZDRjR1U0VldkQlpEQjFUV1pIYlRGbFIwdHBUelp6VmpKWFlrTkljME5EVm5sdmQyaHZDbUpLVGxwbVMwOUxObHBvVkZwaVUwZE9kSFJqVVdkaVRDdG1SM2t3U2s5amJqVmFZbXhPVFVObldVRTRaMjVvWnpkNmFsSjJSakZ2VWtkSmExVnFPVklLVDBSaVRXcFVja2RNYTBwTFIxSnJVR2tyV0hJemMyYzFiamxYV1dSWlIwcFBTRlI0WWxac1lUbFFlbGxCYW1SVUwxRk5RbWt4TkdGbmJ6ZFFVa2xxVHdweFNXazBVbXBhV1haUFJtTkJNRmN6VlZnd2RYQkxWMHRXU2tOUmJrUndUR0UyVlhaRU9IVXhjR2hrWjBab1JpOUJURmxoZW1sbmNIZDZUVVY2UTBoMENteHlNalY0U0ZKTU0xUkZiV3hMUVhsdWIxaFFjVkZMUW1kQ2JsWXZkblJKYURNNVFqTTVZazUxTUdoTVQySktZVzVPVEhsWWFYQlRXR3cwU1hnMFIzb0taMlJhYnpaVFdVOTJZakJrYTBwS1FVazJVakJXVEhwbE9EQmFNRkYyVUhGMFoxTmpjeXRPTkVka2JVaEZNWGRzVVU1UFUyaERNMlZwWTNNeGRIRXJNZ3BQUWpoYVdrczBTbVV5YjNrelRVbGxUVGszSzFnNFV6bG9ObUl4Y0c1c1NtcEdlblpKUkdkMlNVUkpRMDE1YzBkcFlsbGlWRlJ6VjJWRWJVNU9SVVJPQ2padFIzaEJiMGRCUVc5TVZEUmpOMGRJYkRaWlV6SjVRazlJWTJ4UU9FTTNZMnMwVDBFNE0xcFFRbmhGVkVzeGVua3hSblphVlcxb1ZGcDNlbmRJUlVFS1JEWTFUbWhVTW1SWlUwcFNXV3hKZFd0S1ptcEpTV0ZXWjNobVZHdGtTa0lyWlhOYWVtcHNXVkJFYTNWbVEzRmphWEY2UkZSNlptSlZSa29yYWpGMVpBcGhNbU00UlZCV2QyWTJRMWxLV2taYU1FZEpMMkp6VVN0Vk5XVnZZemN3ZW1FeVNtMUlhRVl5YTNocmRIUjZSME0zVTNNOUNpMHRMUzB0UlU1RUlGSlRRU0JRVWtsV1FWUkZJRXRGV1MwdExTMHRDZz09Cg==
 # Repository id, must be filled out in version replacement mode
 # If the repository needs authentication, the authentication information corresponding to this Id should be added to settings.xml
-dew_devops_it_repository_id=trc-releases
+dew_devops_it_repository_id=dew-releases
 # Snapshot  repository url, must be filled out in version replacement mode
-dew_devops_it_repository_url=http://121.41.17.205:18081/nexus/content/repositories/releases/
+dew_devops_it_repository_url=http://xx.xx.xx/nexus/content/repositories/releases/
 # Snapshot repository id, must be filled out in version replacement mode
 # If the repository needs authentication, the authentication information corresponding to this Id should be added to settings.xml
-dew_devops_it_snapshotRepository_id=trc-snapshots
+dew_devops_it_snapshotRepository_id=dew-snapshots
 # Snapshot  repository url, must be filled out in version replacement mode
-dew_devops_it_snapshotRepository_url=http://121.41.17.205:18081/nexus/content/repositories/snapshots/</code></pre>
+dew_devops_it_snapshotRepository_url=http://xx.xx.xx/nexus/content/repositories/snapshots/</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -8442,6 +8686,7 @@ systemctl start dnsmasq
 # 编辑本机的 /etc/hosts 添加映射
 -
 x.x.x.x gitlab.dew.ms
+x.x.x.x config.dew.ms
 x.x.x.x harbor.dew.ms
 x.x.x.x maven.dew.ms
 x.x.x.x minio.dew.ms
@@ -8645,13 +8890,18 @@ kubectl get pv,pvc</code></pre>
 <pre>curl -O https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/sh/dew-devops.sh
 sh dew-devops.sh
 # 选择对应操作，根据提示操作即可
-# 选择 1 进行集群初始化和 gitlab-runner 安装
-# 选择 2 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等</pre>
+# 选择 1 进行集群初始化
+# 选择 2 安装 Gitlab runner
+# 选择 3 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等</pre>
 </div>
 </div>
 </li>
+</ul>
+</div>
+<div id="dew-spring-cloud-config" class="ulist checklist">
+<ul class="checklist">
 <li>
-<p><input type="checkbox" data-item-complete="0"> 安装并设置Spring Cloud Config</p>
+<p><i class="fa fa-square-o"></i> 安装并设置Spring Cloud Config</p>
 <div class="literalblock">
 <div class="content">
 <pre># 添加helm库
@@ -8667,7 +8917,7 @@ kubectl -n devops edit cm custom-config
 #     config:
 #       server:
 #         git:
-#           uri: https://rep.360taihe.com/env/csp-message.git
+#           uri: https://gitlab.dew.ms/env/dew.git
 #           username: cdman
 #           password: cdman123
 #   security:
@@ -8796,7 +9046,7 @@ logging:
 </div>
 </li>
 <li>
-<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 为前端工程添加 <code>pom.xml</code> ,e.g.</p>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 为前端工程添加 <code>pom.xml</code> ，e.g.</p>
 <div class="literalblock">
 <div class="content">
 <pre>-----------------
@@ -8860,7 +9110,7 @@ logging:
 <p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 在项目中添加<code>.dew</code>配置，详见 <a href="#devops-configuration-dew">.dew 配置</a></p>
 <div class="literalblock">
 <div class="content">
-<pre># 在根目录添加 .dew ,至少添加 使用到的 profile 及 namespace 信息
+<pre># 在根目录添加 .dew ，至少添加 使用到的 profile 及 namespace 信息
 # e.g.
 # -----------------
 # 默认通知配置，详见 Dew的通知处理模块
@@ -8929,7 +9179,7 @@ prod deploy: # 生产环境部署
 <div class="sect3">
 <h4 id="dew_docker_image_集成kubectl与helm"><a class="anchor" href="#dew_docker_image_集成kubectl与helm"></a>6.4.1. Dew Docker Image : 集成Kubectl与Helm</h4>
 <div class="paragraph">
-<p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -8956,7 +9206,7 @@ helm list
 <div class="sect3">
 <h4 id="dew_docker_image_集成ci_cd能力"><a class="anchor" href="#dew_docker_image_集成ci_cd能力"></a>6.4.2. Dew Docker Image : 集成CI/CD能力</h4>
 <div class="paragraph">
-<p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -8985,7 +9235,7 @@ npm version
 <div class="sect3">
 <h4 id="dew_docker_image_spring_cloud_config"><a class="anchor" href="#dew_docker_image_spring_cloud_config"></a>6.4.3. Dew Docker Image : Spring Cloud Config</h4>
 <div class="paragraph">
-<p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -9004,7 +9254,7 @@ docker run -d --name dew-spring-cloud-config \
 <div class="sect3">
 <h4 id="helm-chart-spring-cloud-config"><a class="anchor" href="#helm-chart-spring-cloud-config"></a>6.4.4. Dew Helm Chart : Spring Cloud Config</h4>
 <div class="paragraph">
-<p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="listingblock">
 <div class="title">使用</div>
@@ -9040,7 +9290,7 @@ git add --all</code></pre>
 <div class="sect3">
 <h4 id="dew-devops-maven-agent"><a class="anchor" href="#dew-devops-maven-agent"></a>6.5.1. Dew DevOps Maven Agent</h4>
 <div class="paragraph">
-<p>本插件为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+<p>本插件为Dew微服务体系的组成部分，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="paragraph">
 <p>Dew会动态判定应用（子模块）是否需要部署，但Maven无法在启动后动态处理应用是否跳过，
@@ -9058,9 +9308,9 @@ mvn -P devops deploy &lt;其它命令&gt;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="dew_ci_cd_gitlab_ci_实现"><a class="anchor" href="#dew_ci_cd_gitlab_ci_实现"></a>6.5.2. Dew CI/CD : Gitlab CI 实现</h4>
+<h4 id="dew-gitlab-ci"><a class="anchor" href="#dew-gitlab-ci"></a>6.5.2. Dew CI/CD : Gitlab CI 实现</h4>
 <div class="paragraph">
-<p>此为Gitlab CI上的 CI/CD 处理，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+<p>此为Gitlab CI上的 CI/CD 处理，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="olist arabic">
 <div class="title">前置准备</div>

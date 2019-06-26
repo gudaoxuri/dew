@@ -204,6 +204,7 @@ systemctl start dnsmasq
 # 编辑本机的 /etc/hosts 添加映射
 -
 x.x.x.x gitlab.dew.ms
+x.x.x.x config.dew.ms
 x.x.x.x harbor.dew.ms
 x.x.x.x maven.dew.ms
 x.x.x.x minio.dew.ms
