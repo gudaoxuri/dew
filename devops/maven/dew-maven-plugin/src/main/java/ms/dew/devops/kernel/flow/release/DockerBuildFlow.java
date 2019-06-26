@@ -164,7 +164,7 @@ public class DockerBuildFlow extends BasicFlow {
             Integer projectId = DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry
                     .getProjectIdByName(config.getAppendProfile().getNamespace());
             String reuseImageName = null;
-            DockerOpt.Label label = DockerHelper.inst(config.getId()).registry.getLabelByName(config.getAppName(), projectId);
+            DockerOpt.Label label = DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry.getLabelByName(config.getAppName(), projectId);
             if (label != null) {
                 reuseImageName = label.getDescription();
             }
