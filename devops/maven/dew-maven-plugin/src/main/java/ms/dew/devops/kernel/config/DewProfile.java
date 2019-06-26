@@ -33,6 +33,10 @@ public class DewProfile {
 
     protected static final Logger logger = DewLog.build(DewProfile.class);
 
+    public static final String REUSE_VERSION_TYPE_LABEL = "LABEL";
+
+    public static final String REUSE_VERSION_TYPE_TAG = "TAG";
+
     // 环境名称，内部使用，不需要显式指定
     private String profile;
     // 命名空间
@@ -44,9 +48,7 @@ public class DewProfile {
     // 重用版本的目标环境名称，默认会尝试使用 pre-prod/pre-production/uat 为名称（找到当前项目第一个存在的环境），都不存在时需要显式指定
     private String reuseLastVersionFromProfile;
     // 重用版本方式，支持两中方式 LABEL(镜像打标签，默认方式) TAG(上传新tag方式)
-    private String reuseVersionType = "LABEL";
-    // 镜像标签信息
-    private DewDockerImage dewDockerImage;
+    private String reuseVersionType = REUSE_VERSION_TYPE_LABEL;
     // 忽略变更文件列表，此列表指定的文件不用于是否有变更要部署的判断依据
     // 支持 glob , @see https://en.wikipedia.org/wiki/Glob_(programming)
     private Set<String> ignoreChangeFiles = new HashSet<>();
@@ -165,24 +167,6 @@ public class DewProfile {
      */
     public void setReuseVersionType(String reuseVersionType) {
         this.reuseVersionType = reuseVersionType;
-    }
-
-    /**
-     * Gets dew docker label.
-     *
-     * @return the dew docker label
-     */
-    public DewDockerImage getDewDockerImage() {
-        return dewDockerImage;
-    }
-
-    /**
-     * Sets dew docker label.
-     *
-     * @param dewDockerImage the dew docker label
-     */
-    public void setDewDockerImage(DewDockerImage dewDockerImage) {
-        this.dewDockerImage = dewDockerImage;
     }
 
     /**

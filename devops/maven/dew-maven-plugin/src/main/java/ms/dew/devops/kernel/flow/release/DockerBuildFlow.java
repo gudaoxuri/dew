@@ -18,23 +18,22 @@ package ms.dew.devops.kernel.flow.release;
 
 import com.ecfront.dew.common.$;
 import ms.dew.devops.kernel.DevOps;
-import ms.dew.devops.kernel.config.DewDockerImage;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.helper.DockerHelper;
-import ms.dew.devops.kernel.model.DockerImageTag;
 import ms.dew.devops.kernel.util.DewLog;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+
+import static ms.dew.devops.kernel.config.DewProfile.REUSE_VERSION_TYPE_LABEL;
+import static ms.dew.devops.kernel.config.DewProfile.REUSE_VERSION_TYPE_TAG;
 
 /**
  * Docker build flow.
@@ -42,10 +41,6 @@ import java.util.stream.Collectors;
  * @author gudaoxuri
  */
 public class DockerBuildFlow extends BasicFlow {
-
-    private static final String REUSE_VERSION_TYPE_LABEL = "LABEL";
-
-    private static final String REUSE_VERSION_TYPE_TAG = "TAG";
 
     /**
      * Pre docker build.
@@ -168,40 +163,36 @@ public class DockerBuildFlow extends BasicFlow {
         @Override
         public void processBeforeRelease(FinalProjectConfig config, String flowBasePath) throws IOException {
             // 判断是否有最近可用的image
-            List<DockerImageTag> dockerImageTags = DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG)
-                    .registry.listTags(config.getAppendProfile().getNamespace() + "/" + config.getAppName());
-            if (!CollectionUtils.isNotEmpty(dockerImageTags)) {
+            String reuseImageName = getImageNameByLabelName(config);
+            if (StringUtils.isEmpty(reuseImageName)) {
                 processByNewImage(config, flowBasePath);
                 return;
             }
-            DockerImageTag reuseImageTag = dockerImageTags.stream().collect(Collectors.toMap(DockerImageTag::getName,
-                    dockerImageTag -> dockerImageTag)).get(config.getImageVersion());
-            if (reuseImageTag == null) {
+            if (!DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry.exist(reuseImageName)) {
                 processByNewImage(config, flowBasePath);
                 return;
             }
-            dockerImageTags = dockerImageTags.stream().filter(dockerImageTag ->
-                    dockerImageTag.getCreated().getTime() >= reuseImageTag.getCreated().getTime()
-                            && CollectionUtils.isNotEmpty(dockerImageTag.getLabels()) && dockerImageTag.getLabels().stream()
-                            .map(DewDockerImage::getLabelName).collect(Collectors.toList()).contains(config.getReuseLastVersionFromProfile()))
-                    .sorted(Comparator.comparing(DockerImageTag::getCreated)).collect(Collectors.toList());
-            if (!CollectionUtils.isNotEmpty(dockerImageTags)) {
-                processByNewImage(config, flowBasePath);
-                return;
-            }
-            String reuseImageName = config.getImageName(
-                    config.getAppendProfile().getDocker().getRegistryHost(),
-                    config.getAppendProfile().getNamespace(),
-                    config.getAppName(),
-                    dockerImageTags.get(0).getName());
             DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).image.pull(reuseImageName, true);
             DockerHelper.inst(config.getId()).image.copy(reuseImageName, config.getCurrImageName());
         }
 
+        private String getImageNameByLabelName(FinalProjectConfig config) throws IOException {
+            Integer projectId = DockerHelper.inst(config.getId()).registry.getProjectIdByName(config.getAppendProfile().getNamespace());
+            return DockerHelper.inst(config.getId()).registry.getLabelByName(config.getAppName(), projectId)
+                    .get("description").toString();
+        }
+
         @Override
         public void processAfterReleaseSuccessful(FinalProjectConfig config) throws IOException {
-            logger.info("Add label to image : {}", config.getCurrImageName());
-            DockerHelper.inst(config.getId()).registry.addLabelToImage(config.getCurrImageName(), config.getDewDockerImage().getLabelId());
+            logger.info("Add label : " + config.getCurrImageName());
+            Integer projectId = DockerHelper.inst(config.getId()).registry.getProjectIdByName(config.getNamespace());
+            Map<String, Object> label = DockerHelper.inst(config.getId()).registry.getLabelByName(config.getAppName(), projectId);
+            if (label.isEmpty()) {
+                DockerHelper.inst(config.getId()).registry.addLabel(config.getAppName(), projectId, config.getCurrImageName());
+            } else {
+                label.put("description", config.getCurrImageName());
+                DockerHelper.inst(config.getId()).registry.updateLabelById((Integer) label.get("id"), label);
+            }
         }
     }
 

@@ -283,7 +283,7 @@ public class ConfigBuilder {
             return;
         }
         // 存在重用版本，不允许重用默认profile
-        // 附加Kubernetes和Docker的配置
+        // 附加Docker的配置
         // 附加顺序：
         // 1) 带 '-append' 命令行参数
         // 2) '.dew' 配置中对应环境的配置
@@ -331,9 +331,8 @@ public class ConfigBuilder {
 
         if (appendProfile.getDocker().getHost().isEmpty()) {
             throw new ConfigException("In reuse version mode, "
-                    + "'kubernetes base64 config' and 'docker host' must be specified by "
+                    + "'docker host' must be specified by "
                     + "command-line arguments '"
-                    + "dew_devops_kube_config-append'/ "
                     + "dew_devops_docker_host-append'"
                     + "OR '.dew' profile configuration file");
         }

@@ -18,10 +18,11 @@ package ms.dew.devops.maven;
 
 import com.ecfront.dew.common.$;
 import ms.dew.devops.kernel.DevOps;
-import ms.dew.devops.kernel.config.*;
+import ms.dew.devops.kernel.config.ConfigBuilder;
+import ms.dew.devops.kernel.config.DewConfig;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.exception.ConfigException;
 import ms.dew.devops.kernel.function.NeedProcessChecker;
-import ms.dew.devops.kernel.helper.DockerHelper;
 import ms.dew.devops.kernel.helper.GitHelper;
 import ms.dew.devops.kernel.helper.YamlHelper;
 import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
@@ -32,7 +33,6 @@ import ms.dew.devops.maven.function.AppKindPluginSelector;
 import ms.dew.devops.maven.function.DependenciesResolver;
 import ms.dew.devops.maven.function.DeployPluginSelector;
 import ms.dew.devops.maven.function.MavenSkipProcessor;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.project.MavenProject;
@@ -45,7 +45,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -56,11 +55,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MavenDevOps {
 
     private static Logger logger = DewLog.build(MavenDevOps.class);
-
-    /**
-     * docker label map.
-     */
-    private static final ConcurrentHashMap<String, DewDockerImage> DEW_DOCKER_LABEL_MAP = new ConcurrentHashMap<>();
 
     /**
      * Init.
@@ -183,19 +177,6 @@ public class MavenDevOps {
                                 inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
                                 inputKubeBase64Config,
                                 dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt);
-                // 初始化标签配置
-                if (StringUtils.isNotEmpty(inputDockerRegistryUrl)) {
-                    initDewDockerLabel(finalProjectConfig, inputProfile, inputDockerHost, inputDockerRegistryUrl,
-                            inputDockerRegistryUserName, inputDockerRegistryPassword);
-                    if (null != finalProjectConfig.getDisableReuseVersion() && !finalProjectConfig.getDisableReuseVersion()
-                            && finalProjectConfig.getReuseVersionType().equals("LABEL")) {
-                        initDewDockerLabel(finalProjectConfig.getAppendProfile(), finalProjectConfig.getReuseLastVersionFromProfile(),
-                                finalProjectConfig.getAppendProfile().getDocker().getHost(),
-                                finalProjectConfig.getAppendProfile().getDocker().getRegistryUrl(),
-                                finalProjectConfig.getAppendProfile().getDocker().getRegistryUserName(),
-                                finalProjectConfig.getAppendProfile().getDocker().getRegistryPassword());
-                    }
-                }
                 DevOps.Config.getFinalConfig().getProjects().put(project.getId(), finalProjectConfig);
                 logger.debug("[" + project.getId() + "] configured");
             }
@@ -213,29 +194,6 @@ public class MavenDevOps {
                     }
                 });
             }
-        }
-
-        private static void initDewDockerLabel(DewProfile config, String profile,
-                                               String inputDockerHost, String inputDockerRegistryUrl, String inputDockerRegistryUserName,
-                                               String inputDockerRegistryPassword) throws IOException {
-            DewDockerImage dewDockerImage = DEW_DOCKER_LABEL_MAP.get(profile);
-            if (null == dewDockerImage) {
-                dewDockerImage = new DewDockerImage();
-                dewDockerImage.setLabelName(profile);
-                DockerHelper.init("", logger, inputDockerHost, inputDockerRegistryUrl,
-                        inputDockerRegistryUserName, inputDockerRegistryPassword);
-                Integer projectId = DockerHelper.inst("").registry.getProjectIdByName(config.getNamespace());
-                Integer labelId = DockerHelper.inst("").registry.getLabelsByName(profile, projectId);
-                if (null == labelId) {
-                    DockerHelper.inst("").registry.addLabel(profile, projectId);
-                    labelId = DockerHelper.inst("").registry.getLabelsByName(profile, projectId);
-                }
-                dewDockerImage.setLabelProjectId(projectId);
-                dewDockerImage.setLabelId(labelId);
-                DEW_DOCKER_LABEL_MAP.put(profile, dewDockerImage);
-            }
-            config.setDewDockerImage(dewDockerImage);
-
         }
 
         private static void notSkip(FinalProjectConfig projectConfig, MavenProject project, Boolean isParent) {
