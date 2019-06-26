@@ -71,3 +71,12 @@ spring:
 由于 ``spring-cloud-kubernetes`` 使用的配置方案并不直观、无法实现版本留存、修改审计、配置加密（非摘要），
 所以 ``dew`` 建议使用 ``Spring Cloud Config`` ，``dew`` 提供了其 helm 版本，详见 <<helm-chart-spring-cloud-config>> 。
 
+==== Spring Cloud 项目的 Dew & Gitlab CI/CD 实践
+
+. 部署 Spring Cloud 配置中心，详见 <<helm-chart-spring-cloud-config,Dew Spring Cloud 配置中心部署>>，<<dew-spring-cloud-config,Dew Spring Cloud 配置中心实例>>
+. 在 Kubernetes 集群中执行``dew-devops.sh``脚本部署环境、创建项目，详见：<<dew-devops-deploy,Dew DevOps 脚本部署>>
+. 在 Gitlab上 创建项目
+. 在项目中引入 Dew 的``parent-starter``依赖，详细请参考: <<framework-quick-start-core-code-instructions,框架快速入门>>
+. 添加用于触发 Gitlab Runner 的``.gitlab-ci.yml``配置文件，详见：<<dew-gitlab-ci,Dew Gitlab CI 实现>>
+. 添加 Dew Maven Plugin 支持的 Kubernetes 部署配置文件``.dew``，详见：<<devops-configuration-dew,.dew 文件配置>>
+. ``合并代码``到需要部署的分支，触发 Gitlab Runner 进行项目部署

@@ -93,8 +93,9 @@ include::../../../../../../devops/it/src/it/todo/frontend/pom.xml[]
 curl -O https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/sh/dew-devops.sh
 sh dew-devops.sh
 # 选择对应操作，根据提示操作即可
-# 选择 1 进行集群初始化和 gitlab-runner 安装
-# 选择 2 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等
+# 选择 1 进行集群初始化
+# 选择 2 安装 Gitlab runner
+# 选择 3 创建项目， 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等
 ----
 
 .Dew和Maven的配置
@@ -167,7 +168,7 @@ IMPORTANT: 在CI/CD工具中附加参数的kubernetes、docker相关参数应作
 .不需要部署的应用处理
 
 ``Dew`` 会自行判断应用是否需要部署，对于不需要部署的应用为加速执行会设置一系列的skip，
-部署执行的是"Default Lifecycle (https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html)"，
+部署执行的是 https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html[Default Lifecycle] ，
 默认包含了如下插件的skip：
 
 . Core plugins（clean、compiler、deploy、failsafe、install、resources、site、surefire）
@@ -428,6 +429,9 @@ image::./images/gitlab-ci-rollback.png[]
 	}
 }
 ----
+
+include::../../../../../../devops/sh/readme.adoc[]
+
 
 ==== 监控管理
 
