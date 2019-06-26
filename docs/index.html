@@ -471,7 +471,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#需求分析">3.1.1. 需求分析</a></li>
 <li><a href="#功能体验">3.1.2. 功能体验</a></li>
 <li><a href="#模块设计">3.1.3. 模块设计</a></li>
-<li><a href="#核心代码说明">3.1.4. 核心代码说明</a></li>
+<li><a href="#framework-quick-start-core-code-instructions">3.1.4. 核心代码说明</a></li>
 </ul>
 </li>
 <li><a href="#framework-user-manual">3.2. 框架使用手册</a>
@@ -534,7 +534,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#应用刷新">4.2.10. 应用刷新</a></li>
 <li><a href="#ci_cd工具支持_gitlab_ci">4.2.11. CI/CD工具支持-Gitlab CI</a></li>
 <li><a href="#执行通知">4.2.12. 执行通知</a></li>
-<li><a href="#dew_devops_脚本部署">4.2.13. Dew DevOps 脚本部署</a></li>
+<li><a href="#dew-devops-deploy">4.2.13. Dew DevOps 脚本部署</a></li>
 <li><a href="#监控管理">4.2.14. 监控管理</a></li>
 </ul>
 </li>
@@ -568,6 +568,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#统一配置处理">4.5.3. 统一配置处理</a></li>
 <li><a href="#jvm设置">4.5.4. JVM设置</a></li>
 <li><a href="#配置中心选择">4.5.5. 配置中心选择</a></li>
+<li><a href="#spring_cloud_项目的_dew_gitlab_ci_cd_实践">4.5.6. Spring Cloud 项目的 Dew &amp; Gitlab CI/CD 实践</a></li>
 </ul>
 </li>
 <li><a href="#devops示例">4.6. DevOps示例</a>
@@ -636,7 +637,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#支持的ci_cd服务">6.5. 支持的CI/CD服务</a>
 <ul class="sectlevel3">
 <li><a href="#dew-devops-maven-agent">6.5.1. Dew DevOps Maven Agent</a></li>
-<li><a href="#dew_ci_cd_gitlab_ci_实现">6.5.2. Dew CI/CD : Gitlab CI 实现</a></li>
+<li><a href="#dew-gitlab-ci">6.5.2. Dew CI/CD : Gitlab CI 实现</a></li>
 </ul>
 </li>
 </ul>
@@ -1050,7 +1051,7 @@ cd frontend &amp;&amp; npm install &amp;&amp; npm run dev:h5
 </div>
 </div>
 <div class="sect3">
-<h4 id="核心代码说明"><a class="anchor" href="#核心代码说明"></a>3.1.4. 核心代码说明</h4>
+<h4 id="framework-quick-start-core-code-instructions"><a class="anchor" href="#framework-quick-start-core-code-instructions"></a>3.1.4. 核心代码说明</h4>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -5066,7 +5067,7 @@ prod deploy:
 </div>
 </div>
 <div class="sect3">
-<h4 id="dew_devops_脚本部署"><a class="anchor" href="#dew_devops_脚本部署"></a>4.2.13. Dew DevOps 脚本部署</h4>
+<h4 id="dew-devops-deploy"><a class="anchor" href="#dew-devops-deploy"></a>4.2.13. Dew DevOps 脚本部署</h4>
 <div class="paragraph">
 <p>此为Dew DevOps 的脚本 <code>dew-devops.sh</code> 部署相关说明。集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
 </div>
@@ -5180,7 +5181,7 @@ sh dew-devops.sh</code></pre>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">runners.env.dew_devops_XXX</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">更多runner.env配置项，详见：http://doc.dew.ms/#maven_%E9%85%8D%E7%BD%AE[Maven 配置]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">更多runner.env配置项，详见： <a href="http://doc.dew.ms/#maven_%E9%85%8D%E7%BD%AE">Maven 配置</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -6841,6 +6842,34 @@ dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使
 <div class="paragraph">
 <p>由于 <code>spring-cloud-kubernetes</code> 使用的配置方案并不直观、无法实现版本留存、修改审计、配置加密（非摘要），
 所以 <code>dew</code> 建议使用 <code>Spring Cloud Config</code> ，<code>dew</code> 提供了其 helm 版本，详见 <a href="#helm-chart-spring-cloud-config">Dew Helm Chart : Spring Cloud Config</a> 。</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="spring_cloud_项目的_dew_gitlab_ci_cd_实践"><a class="anchor" href="#spring_cloud_项目的_dew_gitlab_ci_cd_实践"></a>4.5.6. Spring Cloud 项目的 Dew &amp; Gitlab CI/CD 实践</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>部署 Spring Cloud 配置中心，详见 <a href="#helm-chart-spring-cloud-config">Dew Spring Cloud 配置中心部署</a>，<a href="#dew-spring-cloud-config">Dew Spring Cloud 配置中心实例</a></p>
+</li>
+<li>
+<p>在 Kubernetes 集群中执行<code>dew-devops.sh</code>脚本部署环境、创建项目，详见：<a href="#dew-devops-deploy">Dew DevOps 脚本部署</a></p>
+</li>
+<li>
+<p>在 Gitlab上 创建项目</p>
+</li>
+<li>
+<p>在项目中引入 Dew 的<code>parent-starter</code>依赖，详细请参考: <a href="#framework-quick-start-core-code-instructions">框架快速入门</a></p>
+</li>
+<li>
+<p>添加用于触发 Gitlab Runner 的<code>.gitlab-ci.yml</code>配置文件，详见：<a href="#dew-gitlab-ci">Dew Gitlab CI 实现</a></p>
+</li>
+<li>
+<p>添加 Dew Maven Plugin 支持的 Kubernetes 部署配置文件<code>.dew</code>，详见：<a href="#devops-configuration-dew">.dew 文件配置</a></p>
+</li>
+<li>
+<p><code>合并代码</code>到需要部署的分支，触发 Gitlab Runner 进行项目部署</p>
+</li>
+</ol>
 </div>
 </div>
 </div>
@@ -8657,6 +8686,7 @@ systemctl start dnsmasq
 # 编辑本机的 /etc/hosts 添加映射
 -
 x.x.x.x gitlab.dew.ms
+x.x.x.x config.dew.ms
 x.x.x.x harbor.dew.ms
 x.x.x.x maven.dew.ms
 x.x.x.x minio.dew.ms
@@ -8866,8 +8896,12 @@ sh dew-devops.sh
 </div>
 </div>
 </li>
+</ul>
+</div>
+<div id="dew-spring-cloud-config" class="ulist checklist">
+<ul class="checklist">
 <li>
-<p><input type="checkbox" data-item-complete="0"> 安装并设置Spring Cloud Config</p>
+<p><i class="fa fa-square-o"></i> 安装并设置Spring Cloud Config</p>
 <div class="literalblock">
 <div class="content">
 <pre># 添加helm库
@@ -9012,7 +9046,7 @@ logging:
 </div>
 </li>
 <li>
-<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 为前端工程添加 <code>pom.xml</code> ,e.g.</p>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 为前端工程添加 <code>pom.xml</code> ，e.g.</p>
 <div class="literalblock">
 <div class="content">
 <pre>-----------------
@@ -9076,7 +9110,7 @@ logging:
 <p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 在项目中添加<code>.dew</code>配置，详见 <a href="#devops-configuration-dew">.dew 配置</a></p>
 <div class="literalblock">
 <div class="content">
-<pre># 在根目录添加 .dew ,至少添加 使用到的 profile 及 namespace 信息
+<pre># 在根目录添加 .dew ，至少添加 使用到的 profile 及 namespace 信息
 # e.g.
 # -----------------
 # 默认通知配置，详见 Dew的通知处理模块
@@ -9274,7 +9308,7 @@ mvn -P devops deploy &lt;其它命令&gt;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="dew_ci_cd_gitlab_ci_实现"><a class="anchor" href="#dew_ci_cd_gitlab_ci_实现"></a>6.5.2. Dew CI/CD : Gitlab CI 实现</h4>
+<h4 id="dew-gitlab-ci"><a class="anchor" href="#dew-gitlab-ci"></a>6.5.2. Dew CI/CD : Gitlab CI 实现</h4>
 <div class="paragraph">
 <p>此为Gitlab CI上的 CI/CD 处理，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
 </div>

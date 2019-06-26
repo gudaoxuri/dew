@@ -16,6 +16,7 @@
   # 选择 2 安装 Gitlab runner
   # 选择 3 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等
 
+[[dew-spring-cloud-config]]
 * [ ] 安装并设置Spring Cloud Config
 
   # 添加helm库
@@ -115,7 +116,7 @@
       ms.dew: DEBUG                       # Dew目录日志配置
       org.springframework.jdbc.core: TRACE# Jdbc目录日志配置
 
-* [ ] [Dew DevOps] 为前端工程添加 ``pom.xml`` ,e.g.
+* [ ] [Dew DevOps] 为前端工程添加 ``pom.xml`` ，e.g.
 
   -----------------
   <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -166,7 +167,7 @@
 
 * [ ] [Dew DevOps] 在项目中添加``.dew``配置，详见 <<devops-configuration-dew>>
 
-  # 在根目录添加 .dew ,至少添加 使用到的 profile 及 namespace 信息
+  # 在根目录添加 .dew ，至少添加 使用到的 profile 及 namespace 信息
   # e.g.
   # -----------------
   # 默认通知配置，详见 Dew的通知处理模块
