@@ -1,4 +1,4 @@
-FROM maven:3.6-jdk-8
+FROM maven:3.6.1-jdk-8
 
 # ----------------- Add git client
 
@@ -9,7 +9,7 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
     && apt-get install -y nodejs
 
 # ----------------- Add maven agent
-ARG MAVEN_AGENT_URL=https://oss.sonatype.org/content/repositories/snapshots/ms/dew/dew-maven-agent/2.0.0-SNAPSHOT/dew-maven-agent-2.0.0-20190614.073115-1.jar
+ARG MAVEN_AGENT_URL=https://oss.sonatype.org/content/repositories/snapshots/ms/dew/dew-maven-agent/2.0.0-SNAPSHOT/dew-maven-agent-2.0.0-20190627.015620-2.jar
 
 RUN mkdir -p /opt/maven/ \
     && mkdir -p /opt/jar/ \
