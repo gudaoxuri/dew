@@ -86,7 +86,7 @@ yum-config-manager \
     --add-repo \
     https://download.docker.com/linux/centos/docker-ce.repo
 
-yum update -y && yum install -y docker-ce-18.06.2.ce
+yum install -y docker-ce-18.06.2.ce
 
 mkdir /etc/docker
 
@@ -172,12 +172,10 @@ net.bridge.bridge-nf-call-iptables = 1
 EOF
 
 sysctl --system
-
-yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
+K8S_VERSION="1.14.1-0"
+yum install -y kubelet-${K8S_VERSION} kubeadm-${K8S_VERSION} kubectl-${K8S_VERSION} --disableexcludes=kubernetes
 systemctl enable --now kubelet
 
-# 查看安装的Kubernetes版本
-yum list installed | grep kube
 ----
 
 TIP: https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/
@@ -193,9 +191,10 @@ kubeadm init \
     --pod-network-cidr=10.244.0.0/16
 
 # 初始化Kubernetes，二选一，不使用代理方式，通过image-repository 及 --kubernetes-version 避免被墙，注意版本与yum安装的版本对应
+K8S_VERSION="1.14.1"
 kubeadm init \
     --image-repository registry.aliyuncs.com/google_containers \
-    --kubernetes-version v1.14.1 \
+    --kubernetes-version ${K8S_VERSION} \
     --pod-network-cidr=10.244.0.0/16
 
 # 记录上述操作输出中的kubeadm join
@@ -340,12 +339,18 @@ spec:
         - /metrics-server
         - --kubelet-insecure-tls
         - --kubelet-preferred-address-types=InternalIP"
+# 不使用代理，需要修改镜像
+kubectl -n kube-system set image deploy metrics-server metrics-server=rancher/metrics-server-amd64:v0.3.1
 # 验证安装结果
 kubectl top node
 kubectl top pod
 ----
 
 ==== Nginx Ingress Controller
+TIP: chart: https://github.com/helm/charts/tree/master/stable/nginx-ingress +
+源码：https://github.com/kubernetes/ingress-nginx +
+官网：https://kubernetes.github.io/ingress-nginx/ +
+Nginx ingress ConfigMap配置： https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/configmap.md#max-worker-connections
 
 .安装配置
 [source,bash]
@@ -686,7 +691,6 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     --set alertmanager.alertmanagerSpec.nodeSelector.group=devops \
     --set prometheus.prometheusSpec.nodeSelector.group=devops \
     --set kube-state-metrics.nodeSelector.group=devops \
-    --set nodeExporter.nodeSelector.group=devops \
     --set grafana.nodeSelector.group=devops
 
 

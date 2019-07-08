@@ -327,7 +327,7 @@ check_harbor_status(){
 check_harbor_admin_account(){
 
     waiting_input "Please input your Harbor registry admin account" ${HARBOR_REGISTRY_ADMIN}
-    registry_admin=${GENERAL_INPUT_ANSWER}
+    HARBOR_REGISTRY_ADMIN=${GENERAL_INPUT_ANSWER}
 
     echo
     echo "# Please input your Harbor registry admin account password."
@@ -342,8 +342,9 @@ check_harbor_admin_account(){
         read -e -s -p "The password format is not right, please retype: " registry_password
         check_password=$(echo "${registry_password}" | grep -P ${HARBOR_REGISTRY_PASSWORD_REGEX}| wc -l)
     done
+    HARBOR_REGISTRY_ADMIN_PASSWORD=${registry_password}
 
-    ADMIN_AUTHORIZATION=$(echo -n ${registry_admin}:${registry_password} | base64)
+    ADMIN_AUTHORIZATION=$(echo -n ${HARBOR_REGISTRY_ADMIN}:${HARBOR_REGISTRY_ADMIN_PASSWORD} | base64)
     check_admin_status=$(curl "${HARBOR_REGISTRY_URL}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -o /dev/nullrl -s -w %{http_code} -k)
     while [[ ${check_admin_status} -eq 401 || ${check_admin_status} -eq 403 ]];do
         echo
@@ -749,17 +750,20 @@ project_create(){
     kubectl -n ${PROJECT_NAMESPACE} patch serviceaccount default \
         -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
 
-    project_ingress_create
-    echo
-    local check_ingress_exist=$(kubectl get ing dew-ingress -n ${PROJECT_NAMESPACE} | wc -l)
-    if [[ "${check_ingress_exist}" -eq 0 ]]; then
-        echo -e "\033[31m * Failed to created Ingress, the script to end. Please create the Ingress yourself. \033[1;m"
-        exit;
-    else
-        echo "Finished to create project [${PROJECT_NAMESPACE}]."
-        echo "The script to end."
-        exit;
+    waiting_input_YN "If you want to create the Ingress for your project?" "Y"
+    local answer_create_ingress=${GENERAL_INPUT_ANSWER}
+    if [[ "${answer_create_ingress}" == "Y" ]]; then
+        project_ingress_create
+        echo
+        local check_ingress_exist=$(kubectl get ing dew-ingress -n ${PROJECT_NAMESPACE} | wc -l)
+        if [[ "${check_ingress_exist}" -eq 0 ]]; then
+            echo -e "\033[31m * Failed to created Ingress, the script to end. Please create the Ingress yourself. \033[1;m"
+            exit;
+        fi
     fi
+
+    echo "Finished to create project [${PROJECT_NAMESPACE}]."
+    exit;
 }
 
 project_ingress_create(){
