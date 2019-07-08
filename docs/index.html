@@ -638,6 +638,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#dew-devops-maven-agent">6.5.1. Dew DevOps Maven Agent</a></li>
 <li><a href="#dew-gitlab-ci">6.5.2. Dew CI/CD : Gitlab CI 实现</a></li>
+<li><a href="#dew-jenkins-ci">6.5.3. Dew CI/CD : Jenkins CI 实现</a></li>
 </ul>
 </li>
 </ul>
@@ -4586,7 +4587,7 @@ sh dew-devops.sh
 # 选择对应操作，根据提示操作即可
 # 选择 1 进行集群初始化
 # 选择 2 安装 Gitlab runner
-# 选择 3 创建项目， 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等</code></pre>
+# 选择 3 创建项目：为项目创建namespace、ingress、拉取镜像的secret；对应的 Harbor 账户和镜像仓库等</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5429,7 +5430,7 @@ yum-config-manager \
     --add-repo \
     https://download.docker.com/linux/centos/docker-ce.repo
 
-yum update -y &amp;&amp; yum install -y docker-ce-18.06.2.ce
+yum install -y docker-ce-18.06.2.ce
 
 mkdir /etc/docker
 
@@ -5527,12 +5528,9 @@ net.bridge.bridge-nf-call-iptables = 1
 EOF
 
 sysctl --system
-
-yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
-systemctl enable --now kubelet
-
-# 查看安装的Kubernetes版本
-yum list installed | grep kube</code></pre>
+K8S_VERSION="1.14.1-0"
+yum install -y kubelet-${K8S_VERSION} kubeadm-${K8S_VERSION} kubectl-${K8S_VERSION} --disableexcludes=kubernetes
+systemctl enable --now kubelet</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -5558,9 +5556,10 @@ kubeadm init \
     --pod-network-cidr=10.244.0.0/16
 
 # 初始化Kubernetes，二选一，不使用代理方式，通过image-repository 及 --kubernetes-version 避免被墙，注意版本与yum安装的版本对应
+K8S_VERSION="1.14.1"
 kubeadm init \
     --image-repository registry.aliyuncs.com/google_containers \
-    --kubernetes-version v1.14.1 \
+    --kubernetes-version ${K8S_VERSION} \
     --pod-network-cidr=10.244.0.0/16
 
 # 记录上述操作输出中的kubeadm join
@@ -5749,6 +5748,8 @@ spec:
         - /metrics-server
         - --kubelet-insecure-tls
         - --kubelet-preferred-address-types=InternalIP"
+# 不使用代理，需要修改镜像
+kubectl -n kube-system set image deploy metrics-server metrics-server=rancher/metrics-server-amd64:v0.3.1
 # 验证安装结果
 kubectl top node
 kubectl top pod</code></pre>
@@ -5757,6 +5758,21 @@ kubectl top pod</code></pre>
 </div>
 <div class="sect3">
 <h4 id="nginx_ingress_controller"><a class="anchor" href="#nginx_ingress_controller"></a>4.3.7. Nginx Ingress Controller</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+chart: <a href="https://github.com/helm/charts/tree/master/stable/nginx-ingress" class="bare">https://github.com/helm/charts/tree/master/stable/nginx-ingress</a><br>
+源码：https://github.com/kubernetes/ingress-nginx<br>
+官网：https://kubernetes.github.io/ingress-nginx/<br>
+Nginx ingress ConfigMap配置： <a href="https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/configmap.md#max-worker-connections" class="bare">https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/configmap.md#max-worker-connections</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
@@ -6141,7 +6157,6 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     --set alertmanager.alertmanagerSpec.nodeSelector.group=devops \
     --set prometheus.prometheusSpec.nodeSelector.group=devops \
     --set kube-state-metrics.nodeSelector.group=devops \
-    --set nodeExporter.nodeSelector.group=devops \
     --set grafana.nodeSelector.group=devops
 
 
@@ -8892,7 +8907,7 @@ sh dew-devops.sh
 # 选择对应操作，根据提示操作即可
 # 选择 1 进行集群初始化
 # 选择 2 安装 Gitlab runner
-# 选择 3 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等</pre>
+# 选择 3 创建项目：为项目创建namespace、ingress、拉取镜像的secret；对应的 Harbor 账户和镜像仓库等</pre>
 </div>
 </div>
 </li>
@@ -9195,7 +9210,7 @@ docker run -it -e KUBE_CONFIG=$KUBE_CONFIG dewms/k8s-native-client
 -
 # 添加kube config
 echo -n $KUBE_CONFIG | base64 -d &gt; $HOME/.kube/config
-# 正确显示kubrenetes信息
+# 正确显示kubernetes信息
 kubectl version
 # 正确显示helm信息（如果存在的话）
 helm list
@@ -9418,13 +9433,115 @@ prod deploy: # 生产环境部署
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="dew-jenkins-ci"><a class="anchor" href="#dew-jenkins-ci"></a>6.5.3. Dew CI/CD : Jenkins CI 实现</h4>
+<div class="paragraph">
+<p>此为 Jenkins 的 CI/CD 处理，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
+</div>
+<div class="olist arabic">
+<div class="title">前置准备</div>
+<ol class="arabic">
+<li>
+<p>创建项目</p>
+</li>
+<li>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的各个环境（详见 <a href="#devops-user-manual">DevOps使用手册</a>），不需要执行脚本中的步骤2</p>
+</li>
+<li>
+<p>在项目代码中添加并配置 <code>.dew</code> 文件（详见 <a href="#devops-user-manual">DevOps使用手册</a>）</p>
+</li>
+</ol>
+</div>
+<div class="ulist">
+<div class="title">实现方案</div>
+<ul>
+<li>
+<p>方案一：Jenkins Pipeline</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>在Jenkins中创建一个<code>pipeline</code></p>
+</li>
+<li>
+<p>Pipeline <code>Definition</code> 选择 <code>Pipeline script</code></p>
+</li>
+<li>
+<p>参考jenkins-ci-pipeline.groovy脚本，修改配置参数，填入输入框保存即可；在需要部署项目时，选择立即构建pipeline即可</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>node {
+    def mvnHome = tool 'maven'
+    env.PATH = "${mvnHome}/bin:${env.PATH}"
+
+    profile = "test"
+    branch = "test"
+    git_url = "https://github.com/dew-ms/devops-example-helloworld-backend.git"
+    docker_d_host = "tcp://10.200.131.215:2375"
+    harbor_host = "https://harbor.dew.ms"
+    harbor_username = "dew"
+    harbor_password = "Dew123456"
+    // 在 k8s master节点执行以下命令获取
+    // echo $(cat ~/.kube/config | base64) | tr -d " "
+    kube_config = "YXBpVmVyc2lvbjogdjEKY2x1c3RlcnM6Ci0gY2x1c3RlcjoKICAgIGNlcnRpZmljYXRlLWF1dGhvcml0eS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VONVJFTkRRV0pEWjBGM1NVSkJaMGxDUVVSQlRrSm5hM0ZvYTJsSE9YY3dRa0ZSYzBaQlJFRldUVkpOZDBWUldVUldVVkZFUlhkd2NtUlhTbXdLWTIwMWJHUkhWbnBOUWpSWVJGUkZOVTFFVVhoTlZFRXpUVlJCZUU0eGIxaEVWRWsxVFVSUmQwOUVRVE5OVkVGNFRqRnZkMFpVUlZSTlFrVkhRVEZWUlFwQmVFMUxZVE5XYVZwWVNuVmFXRkpzWTNwRFEwRlRTWGRFVVZsS1MyOWFTV2gyWTA1QlVVVkNRbEZCUkdkblJWQkJSRU5EUVZGdlEyZG5SVUpCU3pWbENqUkpLekJrVG5RNVFsWm1OMWhOZWxWM2FIZGtTRlZ0WmsxWGFHdGlkelU1YVVGbmFVY3lSRGcyTTNkamNWWXhhRGswTjJ4c01rVlNRM0puWlRkM1prVUtWRklyY0ZOcVJUZGlPRWhNUlRaNE5VZEhXbkkyUkhKa1kwVnhhRFZSYzNoeUwyODVOVGxrYVNzeldYTmFNR3AwYVRSalFVNURjMGR2T0RkaFZpOUNOQXAzUmpBMmEyOXJVVU5yYlZSYVNXbG1kRWQwYW5CWlJWUkljV0phVlhwMlpYTnNRamRhY0daeWVXY3ZhWHBWVjI0M0x6VXhkVTVhZEdaclZtSkRhR0pCQ2psS1ozSnlXVFJqYTBZck1XdG5VVmxrTjFKMlRsRnVkMDQwTm5WbGJsUklhVlJaYWpONGVYVnVkbU5GYTNZd1RVNU1WV2haUXpOQ2JWcDNlVmxtTWxZS1IwaHJZbWt4VEZWa01WSlNSWFJVUTNKdWIydExPRUZ3UVV0NE4yaGpaVFpETm5OYVEwWTNWVEpvYXpWSk1qTlVUa2xJUkZGb1dGUkZka3BhTlZCbFpncFNNMDlWY0Zaak0wVkliREJPVDFGMFZ6Tk5RMEYzUlVGQllVMXFUVU5GZDBSbldVUldVakJRUVZGSUwwSkJVVVJCWjB0clRVRTRSMEV4VldSRmQwVkNDaTkzVVVaTlFVMUNRV1k0ZDBSUldVcExiMXBKYUhaalRrRlJSVXhDVVVGRVoyZEZRa0ZKZVdab1JqTmljMkZIWlRSeGQwMVdhRE14VjNCT1NTOU9URUVLZEZCc01VWkllbWxNYW5BcldVMW9MMjlyZDFKcmQzaERUbU5QWVhwRGVVUnlSbkozYVhkbE0ydG9USEExYVZwak5WTnVRMlJWUjBobVNsTjZPVEJwZWdwamNDdEViRXhQWnpKWGNUbFFObk5qTkZCV2JsaEhNRTVZUjBZMU1sSmtkRWw2Y205UE5ESkVVVWRDVTBSUGFVbHlTM2RpY25Bdk1HUTRLMWs1ZHl0WkNrSnVXVGxZZEVWNlNtOVdRMkp0YTFock5UTXlTa04xU0ZaSlVtOWpURGxUYjI1UVpIVjRNWFo0YjFJcmNuQTJRWE5VTkN0cloxRTFXbkJaVVZreVQzVUthVVJMTnpGWlFrbzBjbWxSZDBNNWJWRnJaV2RSYXpsdWFFUk9ORWhxYzIxMWJIQmFiemRJU0ZCTVZtVXZNa3BEZEhaRFUzUnVkVTFFYjNOQ1ZWRnJNZ292Ykd0b05uZzNkRlF2YWpKSU4wRldXalZMTlc5NE5FMHhPVFZ4ZEhrMFlsTmFjbmhoTWpVek5FTnpSblpJTTA1M1REZE1hMGhTYW5Sc2N6MEtMUzB0TFMxRlRrUWdRMFZTVkVsR1NVTkJWRVV0TFMwdExRbz0KICAgIHNlcnZlcjogaHR0cHM6Ly8xMC4yMDAuMTMxLjE4OjY0NDMKICBuYW1lOiBrdWJlcm5ldGVzCmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBrdWJlcm5ldGVzCiAgICB1c2VyOiBrdWJlcm5ldGVzLWFkbWluCiAgbmFtZToga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmN1cnJlbnQtY29udGV4dDoga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmtpbmQ6IENvbmZpZwpwcmVmZXJlbmNlczoge30KdXNlcnM6Ci0gbmFtZToga3ViZXJuZXRlcy1hZG1pbgogIHVzZXI6CiAgICBjbGllbnQtY2VydGlmaWNhdGUtZGF0YTogTFMwdExTMUNSVWRKVGlCRFJWSlVTVVpKUTBGVVJTMHRMUzB0Q2sxSlNVTTRha05EUVdSeFowRjNTVUpCWjBsSlJWUlZjbE5SV21kblowRjNSRkZaU2t0dldrbG9kbU5PUVZGRlRFSlJRWGRHVkVWVVRVSkZSMEV4VlVVS1FYaE5TMkV6Vm1sYVdFcDFXbGhTYkdONlFXVkdkekI0VDFSQk1FMVVSWGRPZWtWM1RWUmtZVVozTUhsTlJFRXdUVlJCZDA1NlJYZE5ha1poVFVSUmVBcEdla0ZXUW1kT1ZrSkJiMVJFYms0MVl6TlNiR0pVY0hSWldFNHdXbGhLZWsxU2EzZEdkMWxFVmxGUlJFVjRRbkprVjBwc1kyMDFiR1JIVm5wTVYwWnJDbUpYYkhWTlNVbENTV3BCVGtKbmEzRm9hMmxIT1hjd1FrRlJSVVpCUVU5RFFWRTRRVTFKU1VKRFowdERRVkZGUVhSdmFXOHdjbWxTU2k5QlkzQXhlVE1LUjBKbVkxaGhRbWhMTlRWek1EWk1ibEI2TmpCWGVEQnlkalZ6SzNWeVdVaFliWFYyU2pWVGNrVlpRbEpIWWtWdlRIcDVVemhYVW1KU01HdDFjbEJOUlFvMVpWUlpUR012UnpaeGNuVnVka1p4UjNSak4xaFJSMGN6VkVzdlJUSnNLMkkxZVdJeGEwTnliM2htTTNOelVFeFVVbVZDT0hFd1NrWm5iRmRpZEdjeUNsZElWVFJhUlZrNE1sbzVObkVyWkV4clZHaFJNRUV4YlZWMlUxRjZWMFlyU2xOaVNYbHNkVTV4VWxBMGExaHdZME16U1hKQlozcEdPWEZITkV0R1V6Z0tkM2xuUm5sRU9VUlJja3cyWkRGcE5qaDFVazR6YW10bFZYTTBNMHRDTlc4cldGcEhka05KY2tsR1owaDNXRUZhVkRkVE1ub3ZaRVJRZG5vcmFVaFdVQXBZYzFaUlIweEVkRGx4YWtwR2JYRk1WazlRZVVGelFuWlhWM0Z6VFZaTFpWSXJWbGhYYkRoSll6bG9iMFZWVkdOcmEyMXhRV0YzWkdNMlEzcEplbFJ5Q21FelNqRTRVVWxFUVZGQlFtOTVZM2RLVkVGUFFtZE9Wa2hST0VKQlpqaEZRa0ZOUTBKaFFYZEZkMWxFVmxJd2JFSkJkM2REWjFsSlMzZFpRa0pSVlVnS1FYZEpkMFJSV1VwTGIxcEphSFpqVGtGUlJVeENVVUZFWjJkRlFrRkRSVmRUYTB3MFkwRmFhekJsVnpScVMzTlhhVEV6YTAxSmJ5ODNMM3BZZG1aRWFBcGpTR05YYVdONlRqUndNRGs1T0RoVmVtbHdVak54YUZCMmVHaHhXR0pwTlRKS09WVlJOVkFyVUUxS05IRjJOamRSU1VGM1pHMXhlRXRzZFVORldqWk1DazVoYmtWRGNtZDVaek5QZW1kQ1dtaElUa3N4YUhob2VtdzBMME54YTBKTmNGbEJNSEprWWpKVlpUTlhiV05wV1hkc1EyUk9Ramw2ZVhKV01VUXZVa2tLZW5aTFYwUnJUMU5xV2pjMFVGWlpXbWh5VVdkWFJWVllPVWRGYlVsSlZXcFFZbXhsYTNKV1kyOXVTbmxpT1ZwV2VqZDNNbFZNVUVkTFkxcG1iMHBMYkFwWUt5OWhhVk5SYWs0NWRFazRRelEyYUd0aWFtTlFkalJwVHpJMmNtcFZSRTB2VDJsRWFuVlBLMnRFTjFaTlFqZHpWMjFTVFZkUWVGbFhTWE5rZG5wNUNtRk5Semd3VnpsMk9FMUpSbFJ4TjBsVVNVTTJjelowVld0aWFsUjVNMlZwVUhSM1ozUlFLMU5aZG1GRFVWRndiVFl6WnowS0xTMHRMUzFGVGtRZ1EwVlNWRWxHU1VOQlZFVXRMUzB0TFFvPQogICAgY2xpZW50LWtleS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJTVTBFZ1VGSkpWa0ZVUlNCTFJWa3RMUzB0TFFwTlNVbEZiMmRKUWtGQlMwTkJVVVZCZEc5cGJ6QnlhVkpLTDBGamNERjVNMGRDWm1OWVlVSm9TelUxY3pBMlRHNVFlall3VjNnd2NuWTFjeXQxY2xsSUNsaHRkWFpLTlZOeVJWbENVa2RpUlc5TWVubFRPRmRTWWxJd2EzVnlVRTFGTldWVVdVeGpMMGMyY1hKMWJuWkdjVWQwWXpkWVVVZEhNMVJMTDBVeWJDc0tZalY1WWpGclEzSnZlR1l6YzNOUVRGUlNaVUk0Y1RCS1JtZHNWMkowWnpKWFNGVTBXa1ZaT0RKYU9UWnhLMlJNYTFSb1VUQkJNVzFWZGxOUmVsZEdLd3BLVTJKSmVXeDFUbkZTVURScldIQmpRek5KY2tGbmVrWTVjVWMwUzBaVE9IZDVaMFo1UkRsRVVYSk1ObVF4YVRZNGRWSk9NMnByWlZWek5ETkxRalZ2Q2l0WVdrZDJRMGx5U1VablNIZFlRVnBVTjFNeWVpOWtSRkIyZWl0cFNGWlFXSE5XVVVkTVJIUTVjV3BLUm0xeFRGWlBVSGxCYzBKMlYxZHhjMDFXUzJVS1VpdFdXRmRzT0Vsak9XaHZSVlZVWTJ0cmJYRkJZWGRrWXpaRGVrbDZWSEpoTTBveE9GRkpSRUZSUVVKQmIwbENRVVV2SzJGbldWaEVjalI1T0RCMlFncFVVbWhKT1V4RmRscFJXa3B2Y1ZoS1NWcEVUU3RTZEhCSFJrRmlVMEV4Y0ZWeFpHeG9PV2hRZUdaNVoyZEhjRVJCYW5CYVZVbG9jbXMzYTFVNFJtbHdDa1V2T1hkSUwwWk1kVzlCUkUxNGIwTTRTalJqY25jMVpXRmxNSE51VTBwNmRrRTFUREIwZFRsalluSkRLMVJIYkhKeldERlNSMVJIZDJ4SFpTc3ZjMDRLTVVKMFIwYzVWMDlHYjB4Rk5tMTZSbkUwT1ZRek9EWmtORXhpTDJFMmRIbGFRV1pOZEVGYWNFaGhjRnBHZEVwYVZXOTJlRXRFZVVkWE56Rk9UMElyWWdwdWN6WlRaV2hRV1VZMU0wbGFXRGswYWk5NVJFeDNXRTVYT0ZNMmFGbEdORVpwY1RReVMyRkxlU3RFZVhKNVFrMTRVVzV4UzJaU1RsaDRRMlE0ZEhkeENuSjZWRGQwUldaQk1qVlljRllyU0hOemNVWjJVMVZEZDA1eFptbGxZbFprV25oSFdVc3dlbU5ZYnl0WWFuWlVVRlp3VTBkMlVrbHFaRlpOZFN0elNEQUtSak55VkZKNlZVTm5XVVZCTWpZeE5sTnRjbXhGWW1OTFIzbFFWRFJOUVVOVldFNVRabFJHU1RBMWJGWnRiVmRXU1RaTlRXRXlVSHBoWVRNeU4xcDFPUXBESzBwQlFYcFhTQ3RYVmpaaVZEQjVXbnBCU1Vwa05rY3JZbUZCZVhGMFVHaEdka1p6Y20xNWRXTk9lV2xzZURobVl6UkpVMHRLU3l0a2FrcHFOR0ZLQ2xKUlJsRk5UbkZ2VlhSblZXZHFVbE54WkRKNVkzcGFWRGcyTlM5VGJtWktRVVZ6U213dk9VdDBhSFpCZGpWWWIwdHBPWFJ1Tm5ORFoxbEZRVEZNWWpBS0syeE1kbWgwZVRWQmMwTkZZMGRNWTNKSlZTOWxTMUYyVHk5alJWbDNZMllyTjJ0aFZHZDJVMHN6Y0ZaVFUzcDZXWGhSUVVwa1NEYzNRWHBsWlVOT1RBcEphVlJoY1M5U2QweHlTalJrYlVkeVRYWmFhVVJZZVVWNFlUZDRjR1U0VldkQlpEQjFUV1pIYlRGbFIwdHBUelp6VmpKWFlrTkljME5EVm5sdmQyaHZDbUpLVGxwbVMwOUxObHBvVkZwaVUwZE9kSFJqVVdkaVRDdG1SM2t3U2s5amJqVmFZbXhPVFVObldVRTRaMjVvWnpkNmFsSjJSakZ2VWtkSmExVnFPVklLVDBSaVRXcFVja2RNYTBwTFIxSnJVR2tyV0hJemMyYzFiamxYV1dSWlIwcFBTRlI0WWxac1lUbFFlbGxCYW1SVUwxRk5RbWt4TkdGbmJ6ZFFVa2xxVHdweFNXazBVbXBhV1haUFJtTkJNRmN6VlZnd2RYQkxWMHRXU2tOUmJrUndUR0UyVlhaRU9IVXhjR2hrWjBab1JpOUJURmxoZW1sbmNIZDZUVVY2UTBoMENteHlNalY0U0ZKTU0xUkZiV3hMUVhsdWIxaFFjVkZMUW1kQ2JsWXZkblJKYURNNVFqTTVZazUxTUdoTVQySktZVzVPVEhsWWFYQlRXR3cwU1hnMFIzb0taMlJhYnpaVFdVOTJZakJrYTBwS1FVazJVakJXVEhwbE9EQmFNRkYyVUhGMFoxTmpjeXRPTkVka2JVaEZNWGRzVVU1UFUyaERNMlZwWTNNeGRIRXJNZ3BQUWpoYVdrczBTbVV5YjNrelRVbGxUVGszSzFnNFV6bG9ObUl4Y0c1c1NtcEdlblpKUkdkMlNVUkpRMDE1YzBkcFlsbGlWRlJ6VjJWRWJVNU9SVVJPQ2padFIzaEJiMGRCUVc5TVZEUmpOMGRJYkRaWlV6SjVRazlJWTJ4UU9FTTNZMnMwVDBFNE0xcFFRbmhGVkVzeGVua3hSblphVlcxb1ZGcDNlbmRJUlVFS1JEWTFUbWhVTW1SWlUwcFNXV3hKZFd0S1ptcEpTV0ZXWjNobVZHdGtTa0lyWlhOYWVtcHNXVkJFYTNWbVEzRmphWEY2UkZSNlptSlZSa29yYWpGMVpBcGhNbU00UlZCV2QyWTJRMWxLV2taYU1FZEpMMkp6VVN0Vk5XVnZZemN3ZW1FeVNtMUlhRVl5YTNocmRIUjZSME0zVTNNOUNpMHRMUzB0UlU1RUlGSlRRU0JRVWtsV1FWUkZJRXRGV1MwdExTMHRDZz09Cg"
+
+    stage('Preparation') {
+        // 拉取代码
+        git branch: "${branch}", url: "${git_url}"
+    }
+    stage('Deploy') {
+        // 部署服务
+        sh " mvn -P devops deploy -Dmaven.test.skip=true -Ddew_devops_profile=${profile} -Ddew_devops_quiet=true -Ddew_devops_kube_config=${kube_config} -Ddew_devops_docker_host=${docker_d_host} -Ddew_devops_docker_registry_url=${harbor_host}/v2 -Ddew_devops_docker_registry_username=${harbor_username} -Ddew_devops_docker_registry_password=${harbor_password} "
+    }
+}</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>方案二：</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>在Jenkins中创建一个<code>自由风格的软件项目</code>，自行配置需要的内容</p>
+</li>
+<li>
+<p>在<code>构建</code>模块选择<code>Execute shell</code>，参考jenkins-ci-project.sh脚本内容，修改参数，填入输入框保存即可；在需要部署项目时，选择立即构建即可</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>#!/bin/bash
+
+profile="test"
+docker_d_host="tcp://10.200.131.215:2375"
+harbor_host="https://harbor.dew.ms"
+harbor_username="dew"
+harbor_password="Dew123456"
+# 在 k8s master节点执行以下命令获取
+# echo $(cat ~/.kube/config | base64) | tr -d " "
+kube_config="YXBpVmVyc2lvbjogdjEKY2x1c3RlcnM6Ci0gY2x1c3RlcjoKICAgIGNlcnRpZmljYXRlLWF1dGhvcml0eS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VONVJFTkRRV0pEWjBGM1NVSkJaMGxDUVVSQlRrSm5hM0ZvYTJsSE9YY3dRa0ZSYzBaQlJFRldUVkpOZDBWUldVUldVVkZFUlhkd2NtUlhTbXdLWTIwMWJHUkhWbnBOUWpSWVJGUkZOVTFFVVhoTlZFRXpUVlJCZUU0eGIxaEVWRWsxVFVSUmQwOUVRVE5OVkVGNFRqRnZkMFpVUlZSTlFrVkhRVEZWUlFwQmVFMUxZVE5XYVZwWVNuVmFXRkpzWTNwRFEwRlRTWGRFVVZsS1MyOWFTV2gyWTA1QlVVVkNRbEZCUkdkblJWQkJSRU5EUVZGdlEyZG5SVUpCU3pWbENqUkpLekJrVG5RNVFsWm1OMWhOZWxWM2FIZGtTRlZ0WmsxWGFHdGlkelU1YVVGbmFVY3lSRGcyTTNkamNWWXhhRGswTjJ4c01rVlNRM0puWlRkM1prVUtWRklyY0ZOcVJUZGlPRWhNUlRaNE5VZEhXbkkyUkhKa1kwVnhhRFZSYzNoeUwyODVOVGxrYVNzeldYTmFNR3AwYVRSalFVNURjMGR2T0RkaFZpOUNOQXAzUmpBMmEyOXJVVU5yYlZSYVNXbG1kRWQwYW5CWlJWUkljV0phVlhwMlpYTnNRamRhY0daeWVXY3ZhWHBWVjI0M0x6VXhkVTVhZEdaclZtSkRhR0pCQ2psS1ozSnlXVFJqYTBZck1XdG5VVmxrTjFKMlRsRnVkMDQwTm5WbGJsUklhVlJaYWpONGVYVnVkbU5GYTNZd1RVNU1WV2haUXpOQ2JWcDNlVmxtTWxZS1IwaHJZbWt4VEZWa01WSlNSWFJVUTNKdWIydExPRUZ3UVV0NE4yaGpaVFpETm5OYVEwWTNWVEpvYXpWSk1qTlVUa2xJUkZGb1dGUkZka3BhTlZCbFpncFNNMDlWY0Zaak0wVkliREJPVDFGMFZ6Tk5RMEYzUlVGQllVMXFUVU5GZDBSbldVUldVakJRUVZGSUwwSkJVVVJCWjB0clRVRTRSMEV4VldSRmQwVkNDaTkzVVVaTlFVMUNRV1k0ZDBSUldVcExiMXBKYUhaalRrRlJSVXhDVVVGRVoyZEZRa0ZKZVdab1JqTmljMkZIWlRSeGQwMVdhRE14VjNCT1NTOU9URUVLZEZCc01VWkllbWxNYW5BcldVMW9MMjlyZDFKcmQzaERUbU5QWVhwRGVVUnlSbkozYVhkbE0ydG9USEExYVZwak5WTnVRMlJWUjBobVNsTjZPVEJwZWdwamNDdEViRXhQWnpKWGNUbFFObk5qTkZCV2JsaEhNRTVZUjBZMU1sSmtkRWw2Y205UE5ESkVVVWRDVTBSUGFVbHlTM2RpY25Bdk1HUTRLMWs1ZHl0WkNrSnVXVGxZZEVWNlNtOVdRMkp0YTFock5UTXlTa04xU0ZaSlVtOWpURGxUYjI1UVpIVjRNWFo0YjFJcmNuQTJRWE5VTkN0cloxRTFXbkJaVVZreVQzVUthVVJMTnpGWlFrbzBjbWxSZDBNNWJWRnJaV2RSYXpsdWFFUk9ORWhxYzIxMWJIQmFiemRJU0ZCTVZtVXZNa3BEZEhaRFUzUnVkVTFFYjNOQ1ZWRnJNZ292Ykd0b05uZzNkRlF2YWpKSU4wRldXalZMTlc5NE5FMHhPVFZ4ZEhrMFlsTmFjbmhoTWpVek5FTnpSblpJTTA1M1REZE1hMGhTYW5Sc2N6MEtMUzB0TFMxRlRrUWdRMFZTVkVsR1NVTkJWRVV0TFMwdExRbz0KICAgIHNlcnZlcjogaHR0cHM6Ly8xMC4yMDAuMTMxLjE4OjY0NDMKICBuYW1lOiBrdWJlcm5ldGVzCmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBrdWJlcm5ldGVzCiAgICB1c2VyOiBrdWJlcm5ldGVzLWFkbWluCiAgbmFtZToga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmN1cnJlbnQtY29udGV4dDoga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmtpbmQ6IENvbmZpZwpwcmVmZXJlbmNlczoge30KdXNlcnM6Ci0gbmFtZToga3ViZXJuZXRlcy1hZG1pbgogIHVzZXI6CiAgICBjbGllbnQtY2VydGlmaWNhdGUtZGF0YTogTFMwdExTMUNSVWRKVGlCRFJWSlVTVVpKUTBGVVJTMHRMUzB0Q2sxSlNVTTRha05EUVdSeFowRjNTVUpCWjBsSlJWUlZjbE5SV21kblowRjNSRkZaU2t0dldrbG9kbU5PUVZGRlRFSlJRWGRHVkVWVVRVSkZSMEV4VlVVS1FYaE5TMkV6Vm1sYVdFcDFXbGhTYkdONlFXVkdkekI0VDFSQk1FMVVSWGRPZWtWM1RWUmtZVVozTUhsTlJFRXdUVlJCZDA1NlJYZE5ha1poVFVSUmVBcEdla0ZXUW1kT1ZrSkJiMVJFYms0MVl6TlNiR0pVY0hSWldFNHdXbGhLZWsxU2EzZEdkMWxFVmxGUlJFVjRRbkprVjBwc1kyMDFiR1JIVm5wTVYwWnJDbUpYYkhWTlNVbENTV3BCVGtKbmEzRm9hMmxIT1hjd1FrRlJSVVpCUVU5RFFWRTRRVTFKU1VKRFowdERRVkZGUVhSdmFXOHdjbWxTU2k5QlkzQXhlVE1LUjBKbVkxaGhRbWhMTlRWek1EWk1ibEI2TmpCWGVEQnlkalZ6SzNWeVdVaFliWFYyU2pWVGNrVlpRbEpIWWtWdlRIcDVVemhYVW1KU01HdDFjbEJOUlFvMVpWUlpUR012UnpaeGNuVnVka1p4UjNSak4xaFJSMGN6VkVzdlJUSnNLMkkxZVdJeGEwTnliM2htTTNOelVFeFVVbVZDT0hFd1NrWm5iRmRpZEdjeUNsZElWVFJhUlZrNE1sbzVObkVyWkV4clZHaFJNRUV4YlZWMlUxRjZWMFlyU2xOaVNYbHNkVTV4VWxBMGExaHdZME16U1hKQlozcEdPWEZITkV0R1V6Z0tkM2xuUm5sRU9VUlJja3cyWkRGcE5qaDFVazR6YW10bFZYTTBNMHRDTlc4cldGcEhka05KY2tsR1owaDNXRUZhVkRkVE1ub3ZaRVJRZG5vcmFVaFdVQXBZYzFaUlIweEVkRGx4YWtwR2JYRk1WazlRZVVGelFuWlhWM0Z6VFZaTFpWSXJWbGhYYkRoSll6bG9iMFZWVkdOcmEyMXhRV0YzWkdNMlEzcEplbFJ5Q21FelNqRTRVVWxFUVZGQlFtOTVZM2RLVkVGUFFtZE9Wa2hST0VKQlpqaEZRa0ZOUTBKaFFYZEZkMWxFVmxJd2JFSkJkM2REWjFsSlMzZFpRa0pSVlVnS1FYZEpkMFJSV1VwTGIxcEphSFpqVGtGUlJVeENVVUZFWjJkRlFrRkRSVmRUYTB3MFkwRmFhekJsVnpScVMzTlhhVEV6YTAxSmJ5ODNMM3BZZG1aRWFBcGpTR05YYVdONlRqUndNRGs1T0RoVmVtbHdVak54YUZCMmVHaHhXR0pwTlRKS09WVlJOVkFyVUUxS05IRjJOamRSU1VGM1pHMXhlRXRzZFVORldqWk1DazVoYmtWRGNtZDVaek5QZW1kQ1dtaElUa3N4YUhob2VtdzBMME54YTBKTmNGbEJNSEprWWpKVlpUTlhiV05wV1hkc1EyUk9Ramw2ZVhKV01VUXZVa2tLZW5aTFYwUnJUMU5xV2pjMFVGWlpXbWh5VVdkWFJWVllPVWRGYlVsSlZXcFFZbXhsYTNKV1kyOXVTbmxpT1ZwV2VqZDNNbFZNVUVkTFkxcG1iMHBMYkFwWUt5OWhhVk5SYWs0NWRFazRRelEyYUd0aWFtTlFkalJwVHpJMmNtcFZSRTB2VDJsRWFuVlBLMnRFTjFaTlFqZHpWMjFTVFZkUWVGbFhTWE5rZG5wNUNtRk5Semd3VnpsMk9FMUpSbFJ4TjBsVVNVTTJjelowVld0aWFsUjVNMlZwVUhSM1ozUlFLMU5aZG1GRFVWRndiVFl6WnowS0xTMHRMUzFGVGtRZ1EwVlNWRWxHU1VOQlZFVXRMUzB0TFFvPQogICAgY2xpZW50LWtleS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJTVTBFZ1VGSkpWa0ZVUlNCTFJWa3RMUzB0TFFwTlNVbEZiMmRKUWtGQlMwTkJVVVZCZEc5cGJ6QnlhVkpLTDBGamNERjVNMGRDWm1OWVlVSm9TelUxY3pBMlRHNVFlall3VjNnd2NuWTFjeXQxY2xsSUNsaHRkWFpLTlZOeVJWbENVa2RpUlc5TWVubFRPRmRTWWxJd2EzVnlVRTFGTldWVVdVeGpMMGMyY1hKMWJuWkdjVWQwWXpkWVVVZEhNMVJMTDBVeWJDc0tZalY1WWpGclEzSnZlR1l6YzNOUVRGUlNaVUk0Y1RCS1JtZHNWMkowWnpKWFNGVTBXa1ZaT0RKYU9UWnhLMlJNYTFSb1VUQkJNVzFWZGxOUmVsZEdLd3BLVTJKSmVXeDFUbkZTVURScldIQmpRek5KY2tGbmVrWTVjVWMwUzBaVE9IZDVaMFo1UkRsRVVYSk1ObVF4YVRZNGRWSk9NMnByWlZWek5ETkxRalZ2Q2l0WVdrZDJRMGx5U1VablNIZFlRVnBVTjFNeWVpOWtSRkIyZWl0cFNGWlFXSE5XVVVkTVJIUTVjV3BLUm0xeFRGWlBVSGxCYzBKMlYxZHhjMDFXUzJVS1VpdFdXRmRzT0Vsak9XaHZSVlZVWTJ0cmJYRkJZWGRrWXpaRGVrbDZWSEpoTTBveE9GRkpSRUZSUVVKQmIwbENRVVV2SzJGbldWaEVjalI1T0RCMlFncFVVbWhKT1V4RmRscFJXa3B2Y1ZoS1NWcEVUU3RTZEhCSFJrRmlVMEV4Y0ZWeFpHeG9PV2hRZUdaNVoyZEhjRVJCYW5CYVZVbG9jbXMzYTFVNFJtbHdDa1V2T1hkSUwwWk1kVzlCUkUxNGIwTTRTalJqY25jMVpXRmxNSE51VTBwNmRrRTFUREIwZFRsalluSkRLMVJIYkhKeldERlNSMVJIZDJ4SFpTc3ZjMDRLTVVKMFIwYzVWMDlHYjB4Rk5tMTZSbkUwT1ZRek9EWmtORXhpTDJFMmRIbGFRV1pOZEVGYWNFaGhjRnBHZEVwYVZXOTJlRXRFZVVkWE56Rk9UMElyWWdwdWN6WlRaV2hRV1VZMU0wbGFXRGswYWk5NVJFeDNXRTVYT0ZNMmFGbEdORVpwY1RReVMyRkxlU3RFZVhKNVFrMTRVVzV4UzJaU1RsaDRRMlE0ZEhkeENuSjZWRGQwUldaQk1qVlljRllyU0hOemNVWjJVMVZEZDA1eFptbGxZbFprV25oSFdVc3dlbU5ZYnl0WWFuWlVVRlp3VTBkMlVrbHFaRlpOZFN0elNEQUtSak55VkZKNlZVTm5XVVZCTWpZeE5sTnRjbXhGWW1OTFIzbFFWRFJOUVVOVldFNVRabFJHU1RBMWJGWnRiVmRXU1RaTlRXRXlVSHBoWVRNeU4xcDFPUXBESzBwQlFYcFhTQ3RYVmpaaVZEQjVXbnBCU1Vwa05rY3JZbUZCZVhGMFVHaEdka1p6Y20xNWRXTk9lV2xzZURobVl6UkpVMHRLU3l0a2FrcHFOR0ZLQ2xKUlJsRk5UbkZ2VlhSblZXZHFVbE54WkRKNVkzcGFWRGcyTlM5VGJtWktRVVZ6U213dk9VdDBhSFpCZGpWWWIwdHBPWFJ1Tm5ORFoxbEZRVEZNWWpBS0syeE1kbWgwZVRWQmMwTkZZMGRNWTNKSlZTOWxTMUYyVHk5alJWbDNZMllyTjJ0aFZHZDJVMHN6Y0ZaVFUzcDZXWGhSUVVwa1NEYzNRWHBsWlVOT1RBcEphVlJoY1M5U2QweHlTalJrYlVkeVRYWmFhVVJZZVVWNFlUZDRjR1U0VldkQlpEQjFUV1pIYlRGbFIwdHBUelp6VmpKWFlrTkljME5EVm5sdmQyaHZDbUpLVGxwbVMwOUxObHBvVkZwaVUwZE9kSFJqVVdkaVRDdG1SM2t3U2s5amJqVmFZbXhPVFVObldVRTRaMjVvWnpkNmFsSjJSakZ2VWtkSmExVnFPVklLVDBSaVRXcFVja2RNYTBwTFIxSnJVR2tyV0hJemMyYzFiamxYV1dSWlIwcFBTRlI0WWxac1lUbFFlbGxCYW1SVUwxRk5RbWt4TkdGbmJ6ZFFVa2xxVHdweFNXazBVbXBhV1haUFJtTkJNRmN6VlZnd2RYQkxWMHRXU2tOUmJrUndUR0UyVlhaRU9IVXhjR2hrWjBab1JpOUJURmxoZW1sbmNIZDZUVVY2UTBoMENteHlNalY0U0ZKTU0xUkZiV3hMUVhsdWIxaFFjVkZMUW1kQ2JsWXZkblJKYURNNVFqTTVZazUxTUdoTVQySktZVzVPVEhsWWFYQlRXR3cwU1hnMFIzb0taMlJhYnpaVFdVOTJZakJrYTBwS1FVazJVakJXVEhwbE9EQmFNRkYyVUhGMFoxTmpjeXRPTkVka2JVaEZNWGRzVVU1UFUyaERNMlZwWTNNeGRIRXJNZ3BQUWpoYVdrczBTbVV5YjNrelRVbGxUVGszSzFnNFV6bG9ObUl4Y0c1c1NtcEdlblpKUkdkMlNVUkpRMDE1YzBkcFlsbGlWRlJ6VjJWRWJVNU9SVVJPQ2padFIzaEJiMGRCUVc5TVZEUmpOMGRJYkRaWlV6SjVRazlJWTJ4UU9FTTNZMnMwVDBFNE0xcFFRbmhGVkVzeGVua3hSblphVlcxb1ZGcDNlbmRJUlVFS1JEWTFUbWhVTW1SWlUwcFNXV3hKZFd0S1ptcEpTV0ZXWjNobVZHdGtTa0lyWlhOYWVtcHNXVkJFYTNWbVEzRmphWEY2UkZSNlptSlZSa29yYWpGMVpBcGhNbU00UlZCV2QyWTJRMWxLV2taYU1FZEpMMkp6VVN0Vk5XVnZZemN3ZW1FeVNtMUlhRVl5YTNocmRIUjZSME0zVTNNOUNpMHRMUzB0UlU1RUlGSlRRU0JRVWtsV1FWUkZJRXRGV1MwdExTMHRDZz09Cg"
+# 部署服务
+mvn -P devops deploy -Dmaven.test.skip=true -Ddew_devops_profile=${profile} -Ddew_devops_quiet=true -Ddew_devops_kube_config=${kube_config} -Ddew_devops_docker_host=${docker_d_host} -Ddew_devops_docker_registry_url=${harbor_host}/v2 -Ddew_devops_docker_registry_username=${harbor_username} -Ddew_devops_docker_registry_password=${harbor_password}</pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-17 16:48:39 CST
+Last updated 2019-07-08 19:39:28 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

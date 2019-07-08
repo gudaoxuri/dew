@@ -1,0 +1,27 @@
+[[dew-jenkins-ci]]
+==== Dew CI/CD : Jenkins CI 实现
+
+此为 Jenkins 的 CI/CD 处理，集成说明参见： http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter[Dew Devops 部署运维]
+
+.前置准备
+
+. 创建项目
+. 执行 ``dew-devops.sh`` 初始化项目对应的各个环境（详见 <<devops-user-manual>>），不需要执行脚本中的步骤2
+. 在项目代码中添加并配置 ``.dew`` 文件（详见 <<devops-user-manual>>）
+
+.实现方案
+- 方案一：Jenkins Pipeline
+. 在Jenkins中创建一个``pipeline``
+. Pipeline ``Definition`` 选择 ``Pipeline script``
+. 参考jenkins-ci-pipeline.groovy脚本，修改配置参数，填入输入框保存即可；在需要部署项目时，选择立即构建pipeline即可
+[source,groovy]
+----
+include::jenkins-ci-pipeline.groovy[]
+----
+- 方案二：
+. 在Jenkins中创建一个``自由风格的软件项目``，自行配置需要的内容
+. 在``构建``模块选择``Execute shell``，参考jenkins-ci-project.sh脚本内容，修改参数，填入输入框保存即可；在需要部署项目时，选择立即构建即可
+[source,bash]
+----
+include::jenkins-ci-project.sh[]
+----

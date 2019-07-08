@@ -82,3 +82,5 @@ include::../../../../devops/maven/dew-maven-agent/readme.adoc[]
 
 include::../../../../devops/cicd/gitlabci/readme.adoc[]
 
+include::../../../../devops/cicd/jenkinsci/readme.adoc[]
+
