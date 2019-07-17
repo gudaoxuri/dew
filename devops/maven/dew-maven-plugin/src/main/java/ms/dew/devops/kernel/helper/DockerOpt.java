@@ -18,6 +18,7 @@ package ms.dew.devops.kernel.helper;
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.HttpHelper;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.dockerjava.api.DockerClient;
 import com.github.dockerjava.api.command.BuildImageCmd;
 import com.github.dockerjava.api.command.PullImageCmd;
@@ -451,6 +452,7 @@ public class DockerOpt {
         private Integer id;
         private String name;
         private String description;
+        @JsonProperty(value = "project_id")
         private Integer projectId;
         private String scope;
         private Boolean deleted;

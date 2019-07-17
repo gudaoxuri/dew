@@ -41,10 +41,7 @@ import org.slf4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 /**
@@ -186,7 +183,7 @@ public class MavenDevOps {
         private static void initAssignDeploymentProjects(String assignationProjects, List<MavenProject> projects) {
             if (null != assignationProjects) {
                 projects.forEach(project -> {
-                    if (assignationProjects.contains(project.getArtifactId())) {
+                    if (Arrays.asList(assignationProjects.split(",")).contains(project.getArtifactId())) {
                         notSkip(DevOps.Config.getProjectConfig(project.getId()), project, false);
                     } else {
                         DevOps.SkipProcess
