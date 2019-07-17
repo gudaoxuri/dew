@@ -56,7 +56,7 @@ public class ShellHelper {
         logger.info("[" + flag + "] Exec : " + cmd);
         AtomicBoolean isSuccess = new AtomicBoolean(true);
         try {
-            Future<Void> execF = $.shell.execute(cmd, env, null, null, false, false, new ReportHandler() {
+            Future<Void> execF = $.shell.execute(cmd, env, null, null, false, new ReportHandler() {
                 @Override
                 public void errorlog(String line) {
                     logger.warn(line);
