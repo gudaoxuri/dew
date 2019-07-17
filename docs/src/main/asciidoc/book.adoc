@@ -1,5 +1,5 @@
 = Dew:一站式微服务解决方案 [2.x Building...]
-v2.0.0-SNAPSHOT
+v2.0.0-beta1
 :doctype: book
 :encoding: utf-8
 :lang: zh-CN
