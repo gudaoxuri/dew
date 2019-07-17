@@ -60,12 +60,11 @@ public class ShellHelper {
                 @Override
                 public void errorlog(String line) {
                     logger.warn(line);
-                    isSuccess.set(false);
                 }
 
                 @Override
                 public void outputlog(String line) {
-                    logger.debug(line);
+                    logger.info(line);
                 }
 
                 @Override
