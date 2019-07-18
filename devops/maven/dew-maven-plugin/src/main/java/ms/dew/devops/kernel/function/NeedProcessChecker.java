@@ -211,7 +211,7 @@ public class NeedProcessChecker {
         List<String> needProcessSnapshotProjects = projectConfigs.stream()
                 // 找到需要处理的快照项目
                 .filter(projectConfig -> !projectConfig.getSkip()
-                        && projectConfig.getAppVersion().toUpperCase().endsWith("SNAPSHOT"))
+                        && projectConfig.getId().toUpperCase().endsWith("SNAPSHOT"))
                 .map(FinalProjectConfig::getId)
                 .collect(Collectors.toList());
         dependencyProcess(projectConfigs, needProcessSnapshotProjects);
