@@ -19,6 +19,7 @@ package ms.dew.devops.kernel.plugin.deploy;
 import com.ecfront.dew.common.Resp;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -46,6 +47,15 @@ public interface DeployPlugin {
      * @return the optional
      */
     Optional<String> fetchLastDeployedVersion(String projectId, String appName, String namespace);
+
+    /**
+     * 获取重用环境部署的最新的版本.
+     *
+     * @param projectConfig the project config
+     * @return 最新的版本
+     * @throws IOException the IOException
+     */
+    Optional<String> fetchLastDeployedVersionByReuseProfile(FinalProjectConfig projectConfig) throws IOException;
 
     /**
      * 获取环境变量.

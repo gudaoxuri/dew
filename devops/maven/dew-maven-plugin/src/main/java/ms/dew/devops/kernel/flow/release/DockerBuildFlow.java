@@ -24,12 +24,14 @@ import ms.dew.devops.kernel.helper.DockerHelper;
 import ms.dew.devops.kernel.helper.DockerOpt;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Optional;
 
 import static ms.dew.devops.kernel.config.DewProfile.REUSE_VERSION_TYPE_LABEL;
 import static ms.dew.devops.kernel.config.DewProfile.REUSE_VERSION_TYPE_TAG;
@@ -57,7 +59,18 @@ public class DockerBuildFlow extends BasicFlow {
     protected void process(FinalProjectConfig config, String flowBasePath) throws IOException {
         // 先判断是否存在
         if (!DockerHelper.inst(config.getId()).registry.exist(config.getCurrImageName())) {
-            new ReuseVersionProcessorFactory().processBeforeRelease(config, flowBasePath);
+            if (config.getDisableReuseVersion()
+                    || ReuseVersionProcessorFactory.processBeforeRelease(config, flowBasePath)) {
+                processByNewImage(config, flowBasePath);
+            }
+            // push 到 registry
+            if (config.getDocker().getRegistryUrl() == null
+                    || config.getDocker().getRegistryUrl().isEmpty()) {
+                logger.warn("Not found docker registry url and push is ignored, which is mostly used for stand-alone testing");
+            } else {
+                logger.info("Pushing image : " + config.getCurrImageName());
+                DockerHelper.inst(config.getId()).image.push(config.getCurrImageName(), true);
+            }
         } else {
             logger.info("Ignore build, because image " + config.getCurrImageName() + " already exist");
         }
@@ -88,43 +101,46 @@ public class DockerBuildFlow extends BasicFlow {
         });
     }
 
-    class ReuseVersionProcessorFactory {
+    /**
+     * 重用版本处理工厂类.
+     */
+    public static class ReuseVersionProcessorFactory {
 
-        ReuseVersionLabelProcessor reuseVersionLabelProcessor = new ReuseVersionLabelProcessor();
-        ReuseVersionTagProcessor reuseVersionTagProcessor = new ReuseVersionTagProcessor();
+        private static ReuseVersionLabelProcessor reuseVersionLabelProcessor = new ReuseVersionLabelProcessor();
+        private static ReuseVersionTagProcessor reuseVersionTagProcessor = new ReuseVersionTagProcessor();
 
-        public void processBeforeRelease(FinalProjectConfig config, String flowBasePath) throws IOException {
-            if (config.getDisableReuseVersion()) {
-                processByNewImage(config, flowBasePath);
-            } else {
-                switch (config.getReuseVersionType()) {
-                    case REUSE_VERSION_TYPE_LABEL:
-                        reuseVersionLabelProcessor.processBeforeRelease(config, flowBasePath);
-                        break;
-                    case REUSE_VERSION_TYPE_TAG:
-                        reuseVersionTagProcessor.processBeforeRelease(config, flowBasePath);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            // push 到 registry
-            if (config.getDocker().getRegistryUrl() == null
-                    || config.getDocker().getRegistryUrl().isEmpty()) {
-                logger.warn("Not found docker registry url and push is ignored, which is mostly used for stand-alone testing");
-            } else {
-                logger.info("Pushing image : " + config.getCurrImageName());
-                DockerHelper.inst(config.getId()).image.push(config.getCurrImageName(), true);
+        /**
+         * Process before release boolean.
+         *
+         * @param config       the config
+         * @param flowBasePath the flow base path
+         * @return the boolean
+         * @throws IOException the io exception
+         */
+        static boolean processBeforeRelease(FinalProjectConfig config, String flowBasePath) throws IOException {
+            switch (config.getReuseVersionType()) {
+                case REUSE_VERSION_TYPE_LABEL:
+                    return reuseVersionLabelProcessor.processBeforeRelease(config, flowBasePath);
+                case REUSE_VERSION_TYPE_TAG:
+                    return reuseVersionTagProcessor.processBeforeRelease(config, flowBasePath);
+                default:
+                    return false;
             }
         }
 
-        public void processAfterReleaseSuccessful(FinalProjectConfig config, Logger logger) throws IOException {
+        /**
+         * Process after release successful.
+         *
+         * @param config the config
+         * @throws IOException the io exception
+         */
+        static void processAfterReleaseSuccessful(FinalProjectConfig config) throws IOException {
             switch (config.getReuseVersionType()) {
                 case REUSE_VERSION_TYPE_LABEL:
-                    reuseVersionLabelProcessor.processAfterReleaseSuccessful(config, logger);
+                    reuseVersionLabelProcessor.processAfterReleaseSuccessful(config);
                     break;
                 case REUSE_VERSION_TYPE_TAG:
-                    reuseVersionTagProcessor.processAfterReleaseSuccessful(config, logger);
+                    reuseVersionTagProcessor.processAfterReleaseSuccessful(config);
                     break;
                 default:
                     break;
@@ -132,47 +148,56 @@ public class DockerBuildFlow extends BasicFlow {
         }
 
 
+        /**
+         * Gets reuse commit.
+         *
+         * @param config the config
+         * @return the reuse commit
+         * @throws IOException the io exception
+         */
+        public static Optional<String> getReuseCommit(FinalProjectConfig config) throws IOException {
+            switch (config.getReuseVersionType()) {
+                case REUSE_VERSION_TYPE_LABEL:
+                    return reuseVersionLabelProcessor.getReuseCommit(config);
+                case REUSE_VERSION_TYPE_TAG:
+                    return reuseVersionTagProcessor.getReuseCommit(config);
+                default:
+                    return Optional.empty();
+            }
+        }
     }
 
     private interface ReuseVersionProcessor {
 
-        void processBeforeRelease(FinalProjectConfig config, String flowBasePath) throws IOException;
+        Logger logger = LoggerFactory.getLogger(ReuseVersionProcessor.class);
 
-        void processAfterReleaseSuccessful(FinalProjectConfig config, Logger logger) throws IOException;
+        boolean processBeforeRelease(FinalProjectConfig config, String flowBasePath) throws IOException;
+
+        void processAfterReleaseSuccessful(FinalProjectConfig config) throws IOException;
+
+        Optional<String> getReuseCommit(FinalProjectConfig config) throws IOException;
 
     }
 
-    private class ReuseVersionLabelProcessor implements ReuseVersionProcessor {
+    private static class ReuseVersionLabelProcessor implements ReuseVersionProcessor {
 
         @Override
-        public void processBeforeRelease(FinalProjectConfig config, String flowBasePath) throws IOException {
+        public boolean processBeforeRelease(FinalProjectConfig config, String flowBasePath) throws IOException {
             // 判断是否有最近可用的image
             String reuseImageName = getImageNameByLabelName(config);
             if (StringUtils.isEmpty(reuseImageName)) {
-                processByNewImage(config, flowBasePath);
-                return;
+                return false;
             }
             if (!DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry.exist(reuseImageName)) {
-                processByNewImage(config, flowBasePath);
-                return;
+                return false;
             }
             DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).image.pull(reuseImageName, true);
             DockerHelper.inst(config.getId()).image.copy(reuseImageName, config.getCurrImageName());
-        }
-
-        private String getImageNameByLabelName(FinalProjectConfig config) throws IOException {
-            Integer projectId = DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry
-                    .getProjectIdByName(config.getAppendProfile().getNamespace());
-            String reuseImageName = null;
-            DockerOpt.Label label = DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry.getLabelByName(config.getAppName(), projectId);
-            if (label != null) {
-                reuseImageName = label.getDescription();
-            }
-            return reuseImageName;
+            return true;
         }
 
         @Override
-        public void processAfterReleaseSuccessful(FinalProjectConfig config, Logger logger) throws IOException {
+        public void processAfterReleaseSuccessful(FinalProjectConfig config) throws IOException {
             logger.info("Add label : " + config.getCurrImageName());
             Integer projectId = DockerHelper.inst(config.getId()).registry.getProjectIdByName(config.getNamespace());
             DockerOpt.Label label = DockerHelper.inst(config.getId()).registry.getLabelByName(config.getAppName(), projectId);
@@ -187,12 +212,32 @@ public class DockerBuildFlow extends BasicFlow {
                 DockerHelper.inst(config.getId()).registry.updateLabelById(label.getId(), label);
             }
         }
-    }
-
-    private class ReuseVersionTagProcessor implements ReuseVersionProcessor {
 
         @Override
-        public void processBeforeRelease(FinalProjectConfig config, String flowBasePath) throws IOException {
+        public Optional<String> getReuseCommit(FinalProjectConfig config) throws IOException {
+            String imageName = getImageNameByLabelName(config);
+            if (StringUtils.isEmpty(imageName)) {
+                return Optional.empty();
+            }
+            return Optional.of(imageName.substring(imageName.lastIndexOf(":") + 1));
+        }
+
+        private String getImageNameByLabelName(FinalProjectConfig config) throws IOException {
+            Integer projectId = DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry
+                    .getProjectIdByName(config.getAppendProfile().getNamespace());
+            String reuseImageName = null;
+            DockerOpt.Label label = DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry.getLabelByName(config.getAppName(), projectId);
+            if (label != null) {
+                reuseImageName = label.getDescription();
+            }
+            return reuseImageName;
+        }
+    }
+
+    private static class ReuseVersionTagProcessor implements ReuseVersionProcessor {
+
+        @Override
+        public boolean processBeforeRelease(FinalProjectConfig config, String flowBasePath) throws IOException {
             // 判断指定tag的image是否存在
             String reuseImageName = config.getImageName(config.getAppendProfile().getDocker().getRegistryHost(),
                     config.getAppendProfile().getNamespace(), config.getAppName(), DEPLOYED_TAG);
@@ -200,13 +245,13 @@ public class DockerBuildFlow extends BasicFlow {
                 // 从目标环境的镜像仓库拉取镜像到本地
                 DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).image.pull(reuseImageName, true);
                 DockerHelper.inst(config.getId()).image.copy(reuseImageName, config.getCurrImageName());
-            } else {
-                processByNewImage(config, flowBasePath);
+                return true;
             }
+            return false;
         }
 
         @Override
-        public void processAfterReleaseSuccessful(FinalProjectConfig config, Logger logger) {
+        public void processAfterReleaseSuccessful(FinalProjectConfig config) {
             if (config.getDocker().getRegistryUrl() == null
                     || config.getDocker().getRegistryUrl().isEmpty()) {
                 logger.warn("Not found docker registry url and push is ignored, which is mostly used for stand-alone testing");
@@ -217,6 +262,12 @@ public class DockerBuildFlow extends BasicFlow {
                 logger.info("Pushing available latest image : {}", config.getCurrImageName());
                 DockerHelper.inst(config.getId()).image.push(tagImageName, true);
             }
+        }
+
+        @Override
+        public Optional<String> getReuseCommit(FinalProjectConfig config) throws IOException {
+            // TODO
+            return Optional.empty();
         }
     }
 

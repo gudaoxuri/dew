@@ -85,6 +85,12 @@ public class MavenDeployPlugin implements DeployPlugin {
     }
 
     @Override
+    public Optional<String> fetchLastDeployedVersionByReuseProfile(FinalProjectConfig projectConfig) throws IOException {
+        // TODO
+        return Optional.empty();
+    }
+
+    @Override
     public Map<String, String> getEnv(FinalProjectConfig projectConfig) {
         return new HashMap<>();
     }

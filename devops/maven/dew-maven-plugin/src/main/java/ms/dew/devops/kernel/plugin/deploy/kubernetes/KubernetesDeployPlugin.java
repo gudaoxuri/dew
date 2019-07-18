@@ -21,11 +21,13 @@ import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1Service;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.exception.ProjectProcessException;
+import ms.dew.devops.kernel.flow.release.DockerBuildFlow;
 import ms.dew.devops.kernel.function.VersionController;
 import ms.dew.devops.kernel.helper.KubeHelper;
 import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.plugin.deploy.DeployPlugin;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -41,7 +43,7 @@ public class KubernetesDeployPlugin implements DeployPlugin {
     public Resp<String> deployAble(FinalProjectConfig projectConfig) {
         if (projectConfig.getKube().getBase64Config() == null
                 || projectConfig.getKube().getBase64Config().isEmpty()) {
-            return Resp.badRequest("Kubernetes config NOT fonud");
+            return Resp.badRequest("Kubernetes config NOT found");
         }
         return Resp.success("");
     }
@@ -58,7 +60,11 @@ public class KubernetesDeployPlugin implements DeployPlugin {
         } catch (ApiException e) {
             throw new ProjectProcessException(e.getMessage(), e);
         }
+    }
 
+    @Override
+    public Optional<String> fetchLastDeployedVersionByReuseProfile(FinalProjectConfig config) throws IOException {
+        return DockerBuildFlow.ReuseVersionProcessorFactory.getReuseCommit(config);
     }
 
     @Override

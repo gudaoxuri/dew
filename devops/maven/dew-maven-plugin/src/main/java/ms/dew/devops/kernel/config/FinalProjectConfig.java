@@ -46,7 +46,7 @@ public class FinalProjectConfig extends DewProfile {
     // 用于指定应用的版本
     // app version 对应于当前的 git commit
     private String appVersion;
-    // 用于指定 docker的版本
+    // 用于指定 docker 的版本
     // 如果在重用版本模式下指向被重用的 git commit
     private String imageVersion;
     private String skipReason = "";

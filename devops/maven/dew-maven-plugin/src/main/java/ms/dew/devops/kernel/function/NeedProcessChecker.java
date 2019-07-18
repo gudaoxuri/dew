@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,18 +77,23 @@ public class NeedProcessChecker {
                             logger.debug("Latest version is " + lastDeployedVersion);
                             if (!projectConfig.getDisableReuseVersion()) {
                                 // 重用版本
-                                projectConfig.getDeployPlugin().fetchLastDeployedVersion(projectConfig.getId() + DevOps.APPEND_FLAG,
-                                        projectConfig.getAppName(), projectConfig.getNamespace()).ifPresent(lastVersionDeployCommitFromProfile -> {
-                                    if (lastDeployedVersion.equals(lastVersionDeployCommitFromProfile)) {
-                                        DevOps.SkipProcess.skip(projectConfig,
-                                                "Reuse last version " + lastDeployedVersion + " has been deployed", false);
-                                    } else {
-                                        logger.info("Reuse last version " + lastVersionDeployCommitFromProfile
-                                                + " from " + projectConfig.getReuseLastVersionFromProfile());
-                                        projectConfig.setGitCommit(lastVersionDeployCommitFromProfile);
-                                        projectConfig.setImageVersion(lastVersionDeployCommitFromProfile);
-                                    }
-                                });
+                                try {
+                                    projectConfig.getDeployPlugin()
+                                            .fetchLastDeployedVersionByReuseProfile(projectConfig)
+                                            .ifPresent(lastVersionDeployCommitFromProfile -> {
+                                                if (lastDeployedVersion.equals(lastVersionDeployCommitFromProfile)) {
+                                                    DevOps.SkipProcess.skip(projectConfig,
+                                                            "Reuse last version " + lastDeployedVersion + " has been deployed", false);
+                                                } else {
+                                                    logger.info("Reuse last version " + lastVersionDeployCommitFromProfile
+                                                            + " from " + projectConfig.getReuseLastVersionFromProfile());
+                                                    projectConfig.setGitCommit(lastVersionDeployCommitFromProfile);
+                                                    projectConfig.setImageVersion(lastVersionDeployCommitFromProfile);
+                                                }
+                                            });
+                                } catch (IOException e) {
+                                    logger.error("Fetch reuse version error.", e);
+                                }
                             }
                             List<String> changedFiles = fetchGitDiff(lastDeployedVersion);
                             // 判断有没有代码变更
