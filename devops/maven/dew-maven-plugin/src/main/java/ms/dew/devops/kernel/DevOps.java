@@ -287,6 +287,7 @@ public class DevOps {
             config.setSkip(false);
             config.setHasError(false);
             config.setSkipReason("");
+            unSkip(config.getMavenProject());
             logger.info("[" + config.getAppName() + "] UnSkipped");
         }
 
