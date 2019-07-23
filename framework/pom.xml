@@ -39,6 +39,7 @@
         <module>modules/cluster-redis</module>
         <module>modules/cluster-hazelcast</module>
         <module>modules/cluster-rabbit</module>
+        <module>modules/cluster-kafka</module>
         <module>modules/hbase-starter</module>
         <module>modules/notification</module>
         <module>modules/boot-starter</module>

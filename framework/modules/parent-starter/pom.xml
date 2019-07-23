@@ -51,6 +51,8 @@
 
         <guava.version>20.0</guava.version>
         <hbase.version>2.0.0</hbase.version>
+        <kafka.version>2.1.1</kafka.version>
+        <spring.kafka.version>2.2.7.RELEASE</spring.kafka.version>
 
         <spring-cloud.version>2.1.1.RELEASE</spring-cloud.version>
         <dew-common.version>1.4.13</dew-common.version>
@@ -205,6 +207,16 @@
                         <artifactId>hadoop-aws</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>${kafka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.kafka</groupId>
+                <artifactId>spring-kafka</artifactId>
+                <version>${spring.kafka.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
