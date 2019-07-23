@@ -34,7 +34,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootApplication
 @SpringBootTest
-//@Ignore("Need start kafka server")
+@Ignore("Need start kafka server")
 public class ClusterTest {
 
     @Autowired
