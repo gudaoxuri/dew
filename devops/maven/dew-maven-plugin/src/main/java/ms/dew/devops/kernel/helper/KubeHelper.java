@@ -16,7 +16,7 @@
 
 package ms.dew.devops.kernel.helper;
 
-import org.apache.maven.plugin.logging.Log;
+import org.slf4j.Logger;
 
 /**
  * Kubernetes操作函数类.
@@ -33,7 +33,7 @@ public class KubeHelper extends MultiInstProcessor {
      * @param log              the log
      * @param base64KubeConfig the base 64 kube config
      */
-    public static void init(String instanceId, Log log, String base64KubeConfig) {
+    public static void init(String instanceId, Logger log, String base64KubeConfig) {
         multiInit("KUBE", instanceId,
                 () -> new KubeOpt(log, base64KubeConfig), base64KubeConfig);
     }

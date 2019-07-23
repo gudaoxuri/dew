@@ -18,7 +18,10 @@ package ms.dew.core.cluster.spi.hazelcast;
 
 import com.hazelcast.client.HazelcastClientNotActiveException;
 import ms.dew.core.cluster.AbsClusterMQ;
+import ms.dew.core.cluster.dto.MessageWrap;
 
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -40,28 +43,34 @@ public class HazelcastClusterMQ extends AbsClusterMQ {
     }
 
     @Override
-    protected boolean doPublish(String topic, String message) {
+    protected boolean doPublish(String topic, String message, Optional<Map<String, Object>> header, boolean confirm) {
+        if (confirm) {
+            throw new UnsupportedOperationException("Hazelcast doesn't support confirm mode");
+        }
         hazelcastAdapter.getHazelcastInstance().getTopic(topic).publish(message);
         return true;
     }
 
     @Override
-    protected void doSubscribe(String topic, Consumer<String> consumer) {
+    protected void doSubscribe(String topic, Consumer<MessageWrap> consumer) {
         hazelcastAdapter.getHazelcastInstance().getTopic(topic).addMessageListener(message ->
-                consumer.accept((String) message.getMessageObject()));
+                consumer.accept(new MessageWrap(topic, (String) message.getMessageObject())));
     }
 
     @Override
-    protected boolean doRequest(String address, String message) {
+    protected boolean doRequest(String address, String message, Optional<Map<String, Object>> header, boolean confirm) {
+        if (confirm) {
+            throw new UnsupportedOperationException("Hazelcast doesn't support confirm mode");
+        }
         return hazelcastAdapter.getHazelcastInstance().getQueue(address).add(message);
     }
 
     @Override
-    protected void doResponse(String address, Consumer<String> consumer) {
+    protected void doResponse(String address, Consumer<MessageWrap> consumer) {
         try {
             while (hazelcastAdapter.isActive()) {
                 String message = (String) hazelcastAdapter.getHazelcastInstance().getQueue(address).take();
-                consumer.accept(message);
+                consumer.accept(new MessageWrap(address, message));
             }
         } catch (HazelcastClientNotActiveException e) {
             if (hazelcastAdapter.isActive()) {
@@ -73,4 +82,8 @@ public class HazelcastClusterMQ extends AbsClusterMQ {
         }
     }
 
+    @Override
+    public boolean supportHeader() {
+        return false;
+    }
 }

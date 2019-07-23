@@ -1,0 +1,144 @@
+<!--
+  ~ Copyright 2019. the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>ms.dew</groupId>
+        <artifactId>parent-starter</artifactId>
+        <version>2.0.0-beta2</version>
+        <relativePath>../../../framework/modules/parent-starter</relativePath>
+    </parent>
+
+    <artifactId>dew-maven-agent</artifactId>
+    <packaging>jar</packaging>
+    <version>2.0.0-beta2</version>
+    <name>2.1 Dew DevOps Maven Agent</name>
+
+    <properties>
+        <checkStyle.skip>true</checkStyle.skip>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <index>true</index>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                        </manifest>
+                        <manifestEntries>
+                            <Premain-Class>ms.dew.devops.agent.MavenAgent</Premain-Class>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>${maven.core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>maven-core-3.6.0</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.core.version>3.6.0</maven.core.version>
+                <project.build.testSourceDirectory>src/test/3.6.0</project.build.testSourceDirectory>
+            </properties>
+        </profile>
+        <profile>
+            <id>maven-core-3.6.1</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.core.version>3.6.1</maven.core.version>
+                <project.build.testSourceDirectory>src/test/3.6.1</project.build.testSourceDirectory>
+            </properties>
+        </profile>
+        <profile>
+            <id>maven-core-3.5.2</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.core.version>3.5.2</maven.core.version>
+                <project.build.testSourceDirectory>src/test/3.5.2</project.build.testSourceDirectory>
+            </properties>
+        </profile>
+        <profile>
+            <id>maven-core-3.3.9</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.core.version>3.3.9</maven.core.version>
+                <project.build.testSourceDirectory>src/test/3.3.9</project.build.testSourceDirectory>
+            </properties>
+        </profile>
+        <profile>
+            <id>maven-core-3.3.3</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.core.version>3.3.3</maven.core.version>
+                <project.build.testSourceDirectory>src/test/3.3.3</project.build.testSourceDirectory>
+            </properties>
+        </profile>
+        <profile>
+            <id>maven-core-3.2.5</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.core.version>3.2.5</maven.core.version>
+                <project.build.testSourceDirectory>src/test/3.2.5</project.build.testSourceDirectory>
+            </properties>
+        </profile>
+        <profile>
+            <id>maven-core-3.0.5</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.core.version>3.0.5</maven.core.version>
+                <project.build.testSourceDirectory>src/test/3.0.5</project.build.testSourceDirectory>
+            </properties>
+        </profile>
+    </profiles>
+
+</project>

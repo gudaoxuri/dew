@@ -17,7 +17,7 @@ Issues： https://github.com/gudaoxuri/dew/issues
 [source,properties]
 ./devops/devops-test.properties示例
 ----
-include::./devops/devops-test.properties[]
+include::./devops/devops-test-example.properties[]
 ----
 
 提交前请运行 ``mvn clean test -P qa``，确认代码通过CheckStyle检查和测试。

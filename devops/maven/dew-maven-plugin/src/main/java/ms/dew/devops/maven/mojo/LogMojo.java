@@ -17,9 +17,7 @@
 package ms.dew.devops.maven.mojo;
 
 import io.kubernetes.client.ApiException;
-import ms.dew.devops.kernel.flow.log.DefaultLogFlow;
-import org.apache.maven.plugins.annotations.Execute;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
+import ms.dew.devops.kernel.DevOps;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import java.io.IOException;
@@ -30,12 +28,12 @@ import java.io.IOException;
  * @author gudaoxuri
  */
 @Mojo(name = "log")
-@Execute(phase = LifecyclePhase.VALIDATE, goal = "init")
 public class LogMojo extends BasicMojo {
 
     @Override
     protected boolean executeInternal() throws IOException, ApiException {
-        return new DefaultLogFlow(podName, follow).exec(getMojoName());
+        return DevOps.Config.getProjectConfig(mavenProject.getId()).getAppKindPlugin()
+                .logFlow(podName, follow).exec(mavenProject.getId(), getMojoName());
     }
 
 }

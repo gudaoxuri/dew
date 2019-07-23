@@ -16,6 +16,7 @@
 
 package ms.dew.core.cluster.ha;
 
+import ms.dew.core.cluster.dto.MessageWrap;
 import ms.dew.core.cluster.ha.dto.HAConfig;
 import ms.dew.core.cluster.ha.entity.PrepareCommitMsg;
 
@@ -44,9 +45,9 @@ public interface ClusterHA {
      *
      * @param addr the addr
      * @param msg  the msg
-     * @return the string
+     * @return the id
      */
-    String mq_afterPollMsg(String addr, String msg);
+    String mq_afterPollMsg(String addr, MessageWrap msg);
 
     /**
      * 消息被确认后的处理方法.

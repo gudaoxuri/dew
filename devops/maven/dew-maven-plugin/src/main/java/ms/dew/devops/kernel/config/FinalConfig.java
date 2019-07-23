@@ -39,13 +39,4 @@ public class FinalConfig {
         return projects;
     }
 
-    /**
-     * Sets projects.
-     *
-     * @param projects the projects
-     */
-    public void setProjects(Map<String, FinalProjectConfig> projects) {
-        this.projects = projects;
-    }
-
 }

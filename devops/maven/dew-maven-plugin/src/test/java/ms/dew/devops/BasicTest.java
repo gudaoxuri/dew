@@ -69,13 +69,13 @@ public abstract class BasicTest {
                 new FileInputStream(
                         Paths.get("").toFile().getAbsoluteFile().getParentFile().getParentFile().getAbsolutePath() + File.separator
                                 + "devops-test.properties"));
-        defaultKubeConfig = properties.getProperty("dew.devops.kube.config");
-        defaultDockerHost = properties.getProperty("dew.devops.docker.host");
-        defaultDockerRegistryUrl = properties.getProperty("dew.devops.docker.registry.url");
+        defaultKubeConfig = properties.getProperty("dew_devops_kube_config");
+        defaultDockerHost = properties.getProperty("dew_devops_docker_host");
+        defaultDockerRegistryUrl = properties.getProperty("dew_devops_docker_registry_url");
         if (defaultDockerRegistryUrl != null) {
             defaultDockerRegistryHost = new URL(defaultDockerRegistryUrl).getHost();
         }
-        defaultDockerRegistryUserName = properties.getProperty("dew.devops.docker.registry.username");
-        defaultDockerRegistryPassword = properties.getProperty("dew.devops.docker.registry.password");
+        defaultDockerRegistryUserName = properties.getProperty("dew_devops_docker_registry_username");
+        defaultDockerRegistryPassword = properties.getProperty("dew_devops_docker_registry_password");
     }
 }

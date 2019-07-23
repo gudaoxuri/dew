@@ -4,7 +4,5 @@ dew:
 
 spring:
   rabbitmq:
-    host: 10.200.20.220
+    host: 127.0.0.1
     port: 5672
-    username: dew
-    password: dew123456

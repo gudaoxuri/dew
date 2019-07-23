@@ -62,6 +62,7 @@ TIP: ``parent-starter`` 中已包含各模块的版本，引用模块依赖时�
 | cluster-hazelcast   | Hazelcast集群能力实现
 | cluster-rabbit      | RabbitMQ集群能力实现
 | cluster-redis       | Redis集群能力实现
+| cluster-mqtt        | MQTT集群能力实现
 | hbase-starter       | HBase Spring Boot 实现
 | idempotent-starter  | 幂等处理模块
 | notification        | 通知处理模块
@@ -226,13 +227,13 @@ TIP: 完整使用手册见 https://gudaoxuri.github.io/dew-common/
 各实现对应的支持如下：
 
 |====
-|功能        |Redis   |Hazelcast  |Rabbit
+|功能        |Redis   |Hazelcast  |Rabbit | MQTT
 
-|分布式缓存    | *       | /        | /
-|分布式Map    |*        |*          |/
-|分布式锁     |*        |*          |/
-|MQ          |*        |*          |*
-|领导者选举   |*         |/         |/
+|分布式缓存    | *       |           |    |
+|分布式Map    |*        |*          |    |
+|分布式锁     |*        |*          |    |
+|MQ          |*        |*          |*    |*(只支持pub-sub)
+|领导者选举   |*        |           |    |
 |====
 
 [IMPORTANT]
@@ -240,6 +241,7 @@ TIP: 完整使用手册见 https://gudaoxuri.github.io/dew-common/
 =====
 * Redis实现了所有功能，但其MQ上不适用于高可用场景
 * 只有Rabbit的MQ支持跟踪日志（见跟踪日志章节）
+* MQTT多用于IoT环境
 =====
 
 ===== 启用方式
@@ -264,35 +266,51 @@ TIP: 完整使用手册见 https://gudaoxuri.github.io/dew-common/
     <groupId>ms.dew</groupId>
     <artifactId>cluster-spi-rabbit</artifactId>
 </dependency>
+<dependency>
+    <groupId>ms.dew</groupId>
+    <artifactId>cluster-spi-mqtt</artifactId>
+</dependency>
 ----
 
 [source,yml]
 .增加配置
 ----
 dew:
-    cluster: # 集群功能
-        cache: # 分布式缓存实现，默认为 redis
-        map: # 分布式Map实现，默认为 redis
-        lock: # 分布式锁实现，默认为 redis
-        mq: # MQ实现，默认为 redis
-        election: # 领导者选举实现，默认为 redis
+    cluster:                            # 集群功能
+        cache:                          # 分布式缓存实现，默认为 redis
+        map:                            # 分布式Map实现，默认为 redis
+        lock:                           # 分布式锁实现，默认为 redis
+        mq:                             # MQ实现，默认为 redis
+        election:                       # 领导者选举实现，默认为 redis
 
 spring:
     redis:
-        host: # redis主机
-        port: # redis端口
-        database: # redis数据库
-        password: # redis密码
+        host:                           # redis主机
+        port:                           # redis端口
+        database:                       # redis数据库
+        password:                       # redis密码
         lettuce:
-          pool: # 连接池配置
+          pool:                         # 连接池配置
     rabbitmq:
-      host: # rabbit主机
-      port: # rabbit端口
-      username: # rabbit用户名
-      password: # rabbit密码
-      virtual-host: # rabbit VH
+      host:                             # rabbit主机
+      port:                             # rabbit端口
+      username:                         # rabbit用户名
+      password:                         # rabbit密码
+      virtual-host:                     # rabbit VH
     hazelcast:
-        addresses: [] # hazelcast地址，端口可选
+        addresses: []                   # hazelcast地址，端口可选
+dew:
+  mw:                                   # 中间件
+    mqtt:                               # MQTT集群实现
+      broker:                           # Broker地址，e.g. tcp://127.0.0.1:1883
+      clientId: Dew_Cluster_<Cluster.instanceId>
+                                        # 连接客户端ID，注意一个集群内客户端ID必须唯一
+      persistence:                      # 存储，默认为File，可选 memory
+      userName:                         # 用户名
+      password:                         # 密码
+      timeoutSec:                       # 连接超时时间
+      keepAliveIntervalSec:             # 心跳间隔时间
+      cleanSession: true                # 是否消除Session
 ----
 
 TIP: 集群服务的使用入口统一为： `Dew.cluster.XX`
@@ -418,19 +436,22 @@ include::../../../../../../framework/modules/cluster-common/src/main/java/ms/dew
 ----
 // pub-sub
 Dew.cluster.mq.subscribe("test_pub_sub", message ->
-        logger.info("pub_sub>>" + message));
-Dew.cluster.mq.publish("test_pub_sub", "msgA");
+        logger.info("pub_sub>>" + message.getBody()));
+Dew.cluster.mq.publish("test_pub_sub", "msgA",new HashMap<String, Object>() {
+      {
+          put("h", "001");
+      }
+  });
 Dew.cluster.mq.publish("test_pub_sub", "msgB");
 // req-resp
 Dew.cluster.mq.response("test_rep_resp", message ->
-        logger.info("req_resp>>" + message));
-Dew.cluster.mq.request("test_rep_resp", "msg1");
+        logger.info("req_resp>>" + message.getBody()));
+Dew.cluster.mq.request("test_rep_resp", "msg1",new HashMap<String, Object>() {
+      {
+          put("h", "001");
+      }
+  });
 Dew.cluster.mq.request("test_rep_resp", "msg2");
-// rabbit confirm
-if (Dew.cluster.mq instanceof RabbitClusterMQ) {
-    boolean success = Dew.cluster.mq.publish("test_pub_sub", "confirm message");
-    success = Dew.cluster.mq.request("test_rep_resp", "confirm message");
-}
 ----
 
 IMPORTANT: 发布订阅模式时，发布前 `topic` 必须已经存在，可先使用 `subscribe` 订阅，此操作会自动创建 `topic` 。

@@ -143,11 +143,6 @@
             <property name="tokens" value="METHOD_REF"/>
             <property name="option" value="nl"/>
         </module>
-        <module name="PackageName">
-            <property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$"/>
-            <message key="name.invalidPattern"
-                     value="Package name ''{0}'' must match pattern ''{1}''."/>
-        </module>
         <module name="TypeName">
             <message key="name.invalidPattern"
                      value="Type name ''{0}'' must match pattern ''{1}''."/>

@@ -25,6 +25,7 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 * 实现兼容Spring Cloud与Istio的部署、监控架构
 * 引入DevOps流程
 * 独立通知功能到``notification``
+* 支持kafka、MQTT的MQ实现
 * 支持多个Redis连接 <<framework-user-manual-cluster-redis-mutli-connection>>
 
 .Improvement

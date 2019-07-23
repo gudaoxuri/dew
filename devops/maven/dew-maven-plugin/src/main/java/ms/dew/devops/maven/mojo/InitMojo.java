@@ -16,28 +16,23 @@
 
 package ms.dew.devops.maven.mojo;
 
-import ms.dew.devops.kernel.Dew;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+
+import static org.apache.maven.plugins.annotations.LifecyclePhase.VALIDATE;
 
 /**
  * Init mojo.
  * <p>
- * NOTE: 此mojo不能单独调用，仅用于 build 或 release 内部调用
+ * NOTE: 此mojo不能单独调用，仅与 release 配合使用
+ * <p>
+ * 默认绑定到 validate phase，
+ * 是为抢先初始化配置及执行 skip 操作（避免不必要的compile/jar/install/deploy等）
  *
  * @author gudaoxuri
  */
-@Mojo(name = "init", defaultPhase = LifecyclePhase.VALIDATE, requiresDependencyResolution = ResolutionScope.COMPILE)
+@Mojo(name = "init", defaultPhase = VALIDATE, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class InitMojo extends BasicMojo {
-
-    @Override
-    protected void initExecute() {
-        if (Dew.initialized) {
-            // 初始化，确保之前项目的Maven属性不会带入到当前项目
-            Dew.Config.initCurrentMavenProject();
-        }
-    }
 
     @Override
     protected boolean executeInternal() {

@@ -18,6 +18,7 @@ package ms.dew.core.cluster;
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.DependencyHelper;
+import ms.dew.core.cluster.dto.MessageHeader;
 import ms.dew.core.cluster.ha.ClusterHA;
 import ms.dew.core.cluster.ha.H2ClusterHA;
 import ms.dew.core.cluster.ha.dto.HAConfig;
@@ -27,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -39,7 +39,7 @@ public class Cluster {
     private static final Logger logger = LoggerFactory.getLogger(Cluster.class);
     public static String instanceId = $.field.createUUID();
     private static Function<String, Map<String, Object>> _mqGetHeader;
-    private static Consumer<Object[]> _mqSetHeader;
+    private static Function<MessageHeader, Map<String, Object>> _mqSetHeader;
     private static ClusterHA clusterHA = null;
     private static String applicationName = "_default";
     /**
@@ -81,11 +81,11 @@ public class Cluster {
     /**
      * 初始化MQ Header的自定义处理方法.
      *
-     * @param mqGetHeader 在发送MQ消息前自定义设置MQ Header
-     * @param mqSetHeader 在收到MQ消息时自定义设置MQ Header
+     * @param mqGetHeader 在发送MQ消息前自定义设置MQ Header , Input:Topic name, Output:Header Items
+     * @param mqSetHeader 在收到MQ消息时自定义设置MQ Header , Input:Topic name + Header Items, Output:Header Items
      */
     public static void initMqHeader(
-            Function<String, Map<String, Object>> mqGetHeader, Consumer<Object[]> mqSetHeader) {
+            Function<String, Map<String, Object>> mqGetHeader, Function<MessageHeader, Map<String, Object>> mqSetHeader) {
         _mqGetHeader = mqGetHeader;
         _mqSetHeader = mqSetHeader;
     }
@@ -145,9 +145,10 @@ public class Cluster {
         }
     }
 
-    static void setMQHeader(String name, Map<String, Object> header) {
+    static Map<String, Object> setMQHeader(String name, Map<String, Object> header) {
         if (_mqSetHeader != null) {
-            _mqSetHeader.accept(new Object[]{name, header});
+            return _mqSetHeader.apply(new MessageHeader(name, header));
         }
+        return header;
     }
 }

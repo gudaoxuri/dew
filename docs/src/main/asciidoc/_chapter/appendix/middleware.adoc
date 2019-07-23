@@ -178,6 +178,18 @@ gitlab-ctl reconfigure
 
 TIP: https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md
 
+.镜像存储
+[source,bash]
+----
+# Harbor安装步骤略过
+# 登录Harbor docker login <host> -u <user> -p <password>
+docker login harbor.dew.ms -u admin -p Harbor12345
+# e.g. 上传镜像
+docker pull dewms/devops:latest
+docker tag dewms/devops:latest harbor.dew.ms/dewms/devops:latest
+docker push harbor.dew.ms/dewms/devops:latest
+----
+
 ==== Dnsmasq
 
 TIP: dnsmasq为轻量级的DNS解析工具，也可用类似的工具替代。
@@ -192,6 +204,7 @@ systemctl start dnsmasq
 # 编辑本机的 /etc/hosts 添加映射
 -
 x.x.x.x gitlab.dew.ms
+x.x.x.x config.dew.ms
 x.x.x.x harbor.dew.ms
 x.x.x.x maven.dew.ms
 x.x.x.x minio.dew.ms
@@ -208,11 +221,29 @@ x.x.x.x jaeger.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
 # 编辑所有容器服务节点，加上dnsmasq节点的IP
 vi /etc/resolv.conf
 -
-nameserver x.x.x.x # IP当前节点
+nameserver x.x.x.x # IP当前节点 应放在所有nameserver的最上面
 -
 
 # TIP: 以上设置在节点重启后可能被重置，更好的做法见：
 # @see https://unix.stackexchange.com/questions/163831/nameservers-erased-after-systemctl-restart-network-service
+# 方法一：
+#   修改/etc/resolv.conf之后，执行
+#   sudo chattr +i /etc/resolv.conf
+#   可以通过重启网络查看是否被重置
+#   service network restart
+#   cat /etc/resolv.conf
+----
+
+==== NTPDate
+TIP: ntpdate用于服务器间时间同步。
+
+.安装配置
+[source,bash]
+----
+# 在各节点安装
+yum install -y ntp
+# 修改个节点/etc/crontab文件
+echo '*/1 * * * * root ntpdate cn.pool.ntp.org' >> /etc/crontab
 ----
 
 ==== Minio

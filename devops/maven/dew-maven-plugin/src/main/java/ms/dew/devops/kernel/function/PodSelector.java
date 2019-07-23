@@ -18,12 +18,13 @@ package ms.dew.devops.kernel.function;
 
 import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.V1Pod;
+import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.exception.ProjectProcessException;
 import ms.dew.devops.kernel.helper.KubeHelper;
 import ms.dew.devops.kernel.helper.KubeRES;
-import ms.dew.devops.kernel.Dew;
-import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.resource.KubeDeploymentBuilder;
+import ms.dew.devops.kernel.util.DewLog;
+import org.slf4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,6 +40,9 @@ import java.util.stream.Collectors;
  * @author gudaoxuri
  */
 public class PodSelector {
+
+    private static Logger logger = DewLog.build(PodSelector.class);
+
 
     /**
      * Select one pod.
@@ -63,7 +67,7 @@ public class PodSelector {
                         .anyMatch(container -> container.getName().equalsIgnoreCase(KubeDeploymentBuilder.FLAG_CONTAINER_NAME)))
                 .collect(Collectors.toMap(pod -> idx.incrementAndGet(), pod -> pod));
         if (pods.size() > 1) {
-            Dew.log.info("\r\n------------------ Found multiple pods, please select number: ------------------\r\n"
+            logger.info("\r\n------------------ Found multiple pods, please select number: ------------------\r\n"
                     + pods.entrySet().stream()
                     .map(pod -> " < " + pod.getKey() + " > "
                             + pod.getValue().getMetadata().getName()

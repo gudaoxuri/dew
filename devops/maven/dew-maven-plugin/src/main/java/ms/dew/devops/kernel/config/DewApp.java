@@ -29,58 +29,55 @@ import java.util.Map;
 public class DewApp {
 
     // 部署的副本数
-    private int replicas = 1;
+    private Integer replicas = 1;
     // 保留的历史版本数
-    private int revisionHistoryLimit = 3;
+    private Integer revisionHistoryLimit = 3;
     // 端口号，默认情况下前端项目为80(不可修改)，后端服务为8080
-    private int port = 8080;
+    private Integer port;
+    // 是否启用健康监控，仅用于后端服务
+    private Boolean healthCheckEnabled;
     // 存活检测HTTP的路径，仅用于后端服务
-    private String livenessPath = "/actuator/health";
+    private String livenessPath;
     // 可用检测HTTP的路径，仅用于后端服务
-    private String readinessPath = "/actuator/health";
+    private String readinessPath;
     // 首次存活检测延迟时间，仅用于后端服务
-    private int livenessInitialDelaySeconds = 30;
+    private Integer livenessInitialDelaySeconds = 30;
     // 存活检测周期，仅用于后端服务
-    private int livenessPeriodSeconds = 30;
+    private Integer livenessPeriodSeconds = 30;
     // 存活检测失败次数阈值，超过后销毁当前实例并重启另一个实例，仅用于后端服务
-    private int livenessFailureThreshold = 6;
+    private Integer livenessFailureThreshold = 6;
     // 首次可用检测延迟时间，仅用于后端服务
-    private int readinessInitialDelaySeconds = 30;
+    private Integer readinessInitialDelaySeconds = 30;
     // 可用检测周期，仅用于后端服务
-    private int readinessPeriodSeconds = 30;
+    private Integer readinessPeriodSeconds = 30;
     // 可用检测失败次数阈值，超过后当前实例不可用，仅用于后端服务
-    private int readinessFailureThreshold = 3;
+    private Integer readinessFailureThreshold = 3;
     // 是否启用追踪日志，仅用于后端服务
-    private boolean traceLogEnabled = true;
+    private Boolean traceLogEnabled;
     // 是否在控制台输出spans日志，仅用于后端服务
-    private boolean traceLogSpans = false;
+    private Boolean traceLogSpans;
     // 设置跳过追踪的接口，为空则使用官方默认值，仅用于后端服务
     // @see https://github.com/opentracing-contrib/java-spring-web/blob/master/opentracing-spring-web-starter/src/main/java/io/opentracing/contrib/spring/web/starter/WebTracingProperties.java
-    private String traceWebSkipPattern = "/api-docs.*|/swagger.*|.*\\\\.png|.*\\\\.css|.*\\\\.js|.*\\\\.html|/favicon.ico|/hystrix.stream"
-            + "|/actuator.*";
+    private String traceWebSkipPattern;
     // 追踪日志概率采样比率，为1.0则使用全量采样，仅用于后端服务
-    private Double traceProbabilisticSamplingRate = 0.1;
+    private Double traceProbabilisticSamplingRate;
     // 是否启用Prometheus的metrics，仅用于后端服务
-    private boolean metricsEnabled = true;
+    private Boolean metricsEnabled;
     // 节点亲和性配置
     // 默认选择标签为 group=app 的节点
-    private Map<String, String> nodeSelector = new HashMap<String, String>() {
-        {
-            put("group", "app");
-        }
-    };
+    private Map<String, String> nodeSelector = new HashMap<>();
     // 预打包命令
     // 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> && npm install，发现不存在 node_modules 时执行
     // 后端服务默认为空
-    private String preparePackageCmd = "";
+    private String preparePackageCmd;
     // 打包命令
     // 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> npm run build:<环境名称>
     // 后端服务默认为空
-    private String packageCmd = "";
+    private String packageCmd;
     // 服务配置，多为Nginx配置
-    private String serverConfig = "";
+    private String serverConfig;
     // 运行参数，可指定诸如 JVM 配置等信息
-    private String runOptions = "";
+    private String runOptions;
     // 容器资源上限，同Kubernetes配置
     // @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
     private Map<String, Quantity> containerResourcesLimits = new HashMap<>();
@@ -93,7 +90,7 @@ public class DewApp {
      *
      * @return the replicas
      */
-    public int getReplicas() {
+    public Integer getReplicas() {
         return replicas;
     }
 
@@ -102,8 +99,26 @@ public class DewApp {
      *
      * @param replicas the replicas
      */
-    public void setReplicas(int replicas) {
+    public void setReplicas(Integer replicas) {
         this.replicas = replicas;
+    }
+
+    /**
+     * Gets revision history limit.
+     *
+     * @return the revision history limit
+     */
+    public Integer getRevisionHistoryLimit() {
+        return revisionHistoryLimit;
+    }
+
+    /**
+     * Sets revision history limit.
+     *
+     * @param revisionHistoryLimit the revision history limit
+     */
+    public void setRevisionHistoryLimit(Integer revisionHistoryLimit) {
+        this.revisionHistoryLimit = revisionHistoryLimit;
     }
 
     /**
@@ -111,7 +126,7 @@ public class DewApp {
      *
      * @return the port
      */
-    public int getPort() {
+    public Integer getPort() {
         return port;
     }
 
@@ -120,8 +135,16 @@ public class DewApp {
      *
      * @param port the port
      */
-    public void setPort(int port) {
+    public void setPort(Integer port) {
         this.port = port;
+    }
+
+    public Boolean getHealthCheckEnabled() {
+        return healthCheckEnabled;
+    }
+
+    public void setHealthCheckEnabled(Boolean healthCheckEnabled) {
+        this.healthCheckEnabled = healthCheckEnabled;
     }
 
     /**
@@ -161,29 +184,11 @@ public class DewApp {
     }
 
     /**
-     * Gets revision history limit.
-     *
-     * @return the revision history limit
-     */
-    public int getRevisionHistoryLimit() {
-        return revisionHistoryLimit;
-    }
-
-    /**
-     * Sets revision history limit.
-     *
-     * @param revisionHistoryLimit the revision history limit
-     */
-    public void setRevisionHistoryLimit(int revisionHistoryLimit) {
-        this.revisionHistoryLimit = revisionHistoryLimit;
-    }
-
-    /**
      * Gets liveness initial delay seconds.
      *
      * @return the liveness initial delay seconds
      */
-    public int getLivenessInitialDelaySeconds() {
+    public Integer getLivenessInitialDelaySeconds() {
         return livenessInitialDelaySeconds;
     }
 
@@ -192,7 +197,7 @@ public class DewApp {
      *
      * @param livenessInitialDelaySeconds the liveness initial delay seconds
      */
-    public void setLivenessInitialDelaySeconds(int livenessInitialDelaySeconds) {
+    public void setLivenessInitialDelaySeconds(Integer livenessInitialDelaySeconds) {
         this.livenessInitialDelaySeconds = livenessInitialDelaySeconds;
     }
 
@@ -201,7 +206,7 @@ public class DewApp {
      *
      * @return the liveness period seconds
      */
-    public int getLivenessPeriodSeconds() {
+    public Integer getLivenessPeriodSeconds() {
         return livenessPeriodSeconds;
     }
 
@@ -210,44 +215,8 @@ public class DewApp {
      *
      * @param livenessPeriodSeconds the liveness period seconds
      */
-    public void setLivenessPeriodSeconds(int livenessPeriodSeconds) {
+    public void setLivenessPeriodSeconds(Integer livenessPeriodSeconds) {
         this.livenessPeriodSeconds = livenessPeriodSeconds;
-    }
-
-    /**
-     * Gets readiness initial delay seconds.
-     *
-     * @return the readiness initial delay seconds
-     */
-    public int getReadinessInitialDelaySeconds() {
-        return readinessInitialDelaySeconds;
-    }
-
-    /**
-     * Sets readiness initial delay seconds.
-     *
-     * @param readinessInitialDelaySeconds the readiness initial delay seconds
-     */
-    public void setReadinessInitialDelaySeconds(int readinessInitialDelaySeconds) {
-        this.readinessInitialDelaySeconds = readinessInitialDelaySeconds;
-    }
-
-    /**
-     * Gets readiness period seconds.
-     *
-     * @return the readiness period seconds
-     */
-    public int getReadinessPeriodSeconds() {
-        return readinessPeriodSeconds;
-    }
-
-    /**
-     * Sets readiness period seconds.
-     *
-     * @param readinessPeriodSeconds the readiness period seconds
-     */
-    public void setReadinessPeriodSeconds(int readinessPeriodSeconds) {
-        this.readinessPeriodSeconds = readinessPeriodSeconds;
     }
 
     /**
@@ -255,7 +224,7 @@ public class DewApp {
      *
      * @return the liveness failure threshold
      */
-    public int getLivenessFailureThreshold() {
+    public Integer getLivenessFailureThreshold() {
         return livenessFailureThreshold;
     }
 
@@ -264,8 +233,44 @@ public class DewApp {
      *
      * @param livenessFailureThreshold the liveness failure threshold
      */
-    public void setLivenessFailureThreshold(int livenessFailureThreshold) {
+    public void setLivenessFailureThreshold(Integer livenessFailureThreshold) {
         this.livenessFailureThreshold = livenessFailureThreshold;
+    }
+
+    /**
+     * Gets readiness initial delay seconds.
+     *
+     * @return the readiness initial delay seconds
+     */
+    public Integer getReadinessInitialDelaySeconds() {
+        return readinessInitialDelaySeconds;
+    }
+
+    /**
+     * Sets readiness initial delay seconds.
+     *
+     * @param readinessInitialDelaySeconds the readiness initial delay seconds
+     */
+    public void setReadinessInitialDelaySeconds(Integer readinessInitialDelaySeconds) {
+        this.readinessInitialDelaySeconds = readinessInitialDelaySeconds;
+    }
+
+    /**
+     * Gets readiness period seconds.
+     *
+     * @return the readiness period seconds
+     */
+    public Integer getReadinessPeriodSeconds() {
+        return readinessPeriodSeconds;
+    }
+
+    /**
+     * Sets readiness period seconds.
+     *
+     * @param readinessPeriodSeconds the readiness period seconds
+     */
+    public void setReadinessPeriodSeconds(Integer readinessPeriodSeconds) {
+        this.readinessPeriodSeconds = readinessPeriodSeconds;
     }
 
     /**
@@ -273,7 +278,7 @@ public class DewApp {
      *
      * @return the readiness failure threshold
      */
-    public int getReadinessFailureThreshold() {
+    public Integer getReadinessFailureThreshold() {
         return readinessFailureThreshold;
     }
 
@@ -282,16 +287,16 @@ public class DewApp {
      *
      * @param readinessFailureThreshold the readiness failure threshold
      */
-    public void setReadinessFailureThreshold(int readinessFailureThreshold) {
+    public void setReadinessFailureThreshold(Integer readinessFailureThreshold) {
         this.readinessFailureThreshold = readinessFailureThreshold;
     }
 
     /**
-     * Is trace log enabled boolean.
+     * Gets trace log enabled.
      *
-     * @return the boolean
+     * @return the trace log enabled
      */
-    public boolean isTraceLogEnabled() {
+    public Boolean getTraceLogEnabled() {
         return traceLogEnabled;
     }
 
@@ -300,25 +305,25 @@ public class DewApp {
      *
      * @param traceLogEnabled the trace log enabled
      */
-    public void setTraceLogEnabled(boolean traceLogEnabled) {
+    public void setTraceLogEnabled(Boolean traceLogEnabled) {
         this.traceLogEnabled = traceLogEnabled;
     }
 
     /**
-     * Is trace log spans enabled boolean.
+     * Gets trace log spans.
      *
-     * @return the boolean
+     * @return the trace log spans
      */
-    public boolean isTraceLogSpans() {
+    public Boolean getTraceLogSpans() {
         return traceLogSpans;
     }
 
     /**
-     * Sets trace log spans enabled.
+     * Sets trace log spans.
      *
-     * @param traceLogSpans the trace log spans enabled
+     * @param traceLogSpans the trace log spans
      */
-    public void setTraceLogSpans(boolean traceLogSpans) {
+    public void setTraceLogSpans(Boolean traceLogSpans) {
         this.traceLogSpans = traceLogSpans;
     }
 
@@ -359,11 +364,11 @@ public class DewApp {
     }
 
     /**
-     * Is metrics enabled boolean.
+     * Gets metrics enabled.
      *
-     * @return the boolean
+     * @return the metrics enabled
      */
-    public boolean isMetricsEnabled() {
+    public Boolean getMetricsEnabled() {
         return metricsEnabled;
     }
 
@@ -372,7 +377,7 @@ public class DewApp {
      *
      * @param metricsEnabled the metrics enabled
      */
-    public void setMetricsEnabled(boolean metricsEnabled) {
+    public void setMetricsEnabled(Boolean metricsEnabled) {
         this.metricsEnabled = metricsEnabled;
     }
 
@@ -467,7 +472,7 @@ public class DewApp {
     }
 
     /**
-     * Gets the container resources limits.
+     * Gets container resources limits.
      *
      * @return the container resources limits
      */
@@ -476,7 +481,7 @@ public class DewApp {
     }
 
     /**
-     * Sets the container resources limits.
+     * Sets container resources limits.
      *
      * @param containerResourcesLimits the container resources limits
      */
@@ -485,7 +490,7 @@ public class DewApp {
     }
 
     /**
-     * Gets the container resources requests.
+     * Gets container resources requests.
      *
      * @return the container resources requests
      */
@@ -494,7 +499,7 @@ public class DewApp {
     }
 
     /**
-     * Set the container resources requests.
+     * Sets container resources requests.
      *
      * @param containerResourcesRequests the container resources requests
      */

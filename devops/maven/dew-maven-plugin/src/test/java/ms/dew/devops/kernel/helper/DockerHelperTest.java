@@ -18,7 +18,7 @@ package ms.dew.devops.kernel.helper;
 
 import com.github.dockerjava.api.model.Image;
 import ms.dew.devops.BasicTest;
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import ms.dew.devops.kernel.util.DewLog;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class DockerHelperTest extends BasicTest {
      */
     @Before
     public void before() {
-        DockerHelper.init("", new SystemStreamLog(),
+        DockerHelper.init("", DewLog.build(this.getClass()),
                 defaultDockerHost, defaultDockerRegistryUrl, defaultDockerRegistryUserName, defaultDockerRegistryPassword);
     }
 

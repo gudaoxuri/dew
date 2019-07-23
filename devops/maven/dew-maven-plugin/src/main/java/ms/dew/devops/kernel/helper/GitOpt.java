@@ -18,7 +18,7 @@ package ms.dew.devops.kernel.helper;
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
-import org.apache.maven.plugin.logging.Log;
+import org.slf4j.Logger;
 
 import java.util.List;
 
@@ -29,17 +29,14 @@ import java.util.List;
  */
 public class GitOpt {
 
-    /**
-     * Log.
-     */
-    protected Log log;
+    protected Logger log;
 
     /**
      * Instantiates a new Git opt.
      *
      * @param log the log
      */
-    protected GitOpt(Log log) {
+    protected GitOpt(Logger log) {
         this.log = log;
     }
 

@@ -17,8 +17,8 @@
 package ms.dew.devops.maven.mojo;
 
 import io.kubernetes.client.ApiException;
-import ms.dew.devops.kernel.flow.release.ReleaseFlowFactory;
-import org.apache.maven.plugins.annotations.Execute;
+import ms.dew.devops.kernel.DevOps;
+import ms.dew.devops.kernel.function.StatusReporter;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -27,17 +27,24 @@ import java.io.IOException;
 
 /**
  * Release mojo.
- * <p>
- * 前置调用 prepare mojo 完成初始化
  *
  * @author gudaoxuri
  */
-@Mojo(name = "release", requiresDependencyResolution = ResolutionScope.COMPILE)
-@Execute(phase = LifecyclePhase.DEPLOY, goal = "build")
+@Mojo(name = "release", defaultPhase = LifecyclePhase.DEPLOY, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class ReleaseMojo extends BasicMojo {
 
     @Override
     protected boolean executeInternal() throws IOException, ApiException {
-        return ReleaseFlowFactory.choose().exec(getMojoName());
+        if (mavenSession.isParallel()) {
+            StatusReporter.report();
+        }
+        DevOps.Config.getProjectConfig(mavenProject.getId()).getAppKindPlugin()
+                .prepareFlow().exec(mavenProject.getId(), getMojoName());
+
+        DevOps.Config.getProjectConfig(mavenProject.getId()).getAppKindPlugin()
+                .buildFlow().exec(mavenProject.getId(), getMojoName());
+
+        return DevOps.Config.getProjectConfig(mavenProject.getId()).getAppKindPlugin()
+                .releaseFlow().exec(mavenProject.getId(), getMojoName());
     }
 }

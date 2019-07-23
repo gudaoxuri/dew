@@ -16,7 +16,7 @@
 
 package ms.dew.devops.kernel.helper;
 
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import ms.dew.devops.kernel.util.DewLog;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,7 +33,7 @@ public class YamlHelperTest {
      */
     @Before
     public void before() {
-        YamlHelper.init(new SystemStreamLog());
+        YamlHelper.init(DewLog.build(this.getClass()));
     }
 
     /**

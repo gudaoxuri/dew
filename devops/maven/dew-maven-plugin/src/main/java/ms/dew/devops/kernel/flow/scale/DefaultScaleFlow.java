@@ -17,11 +17,10 @@
 package ms.dew.devops.kernel.flow.scale;
 
 import io.kubernetes.client.ApiException;
-import ms.dew.devops.kernel.helper.KubeHelper;
-import ms.dew.devops.kernel.helper.KubeRES;
-import ms.dew.devops.kernel.Dew;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
+import ms.dew.devops.kernel.helper.KubeHelper;
+import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.resource.KubeHorizontalPodAutoscalerBuilder;
 
 import java.io.IOException;
@@ -60,14 +59,14 @@ public class DefaultScaleFlow extends BasicFlow {
     @Override
     protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
         if (!autoScale) {
-            Dew.log.info("Change replicas number is " + replicas);
+            logger.info("Change replicas number is " + replicas);
             KubeHelper.inst(config.getId()).patch(config.getAppName(), new ArrayList<String>() {
                 {
                     add("{\"op\":\"replace\",\"path\":\"/spec/replicas\",\"value\":" + replicas + "}");
                 }
             }, config.getNamespace(), KubeRES.DEPLOYMENT);
         } else {
-            Dew.log.info("Enabled auto scale between " + minReplicas + " and " + maxReplicas);
+            logger.info("Enabled auto scale between " + minReplicas + " and " + maxReplicas);
             KubeHelper.inst(config.getId()).apply(
                     new KubeHorizontalPodAutoscalerBuilder().build(config, minReplicas, maxReplicas, cpuAvg));
         }

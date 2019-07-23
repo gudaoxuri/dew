@@ -18,13 +18,13 @@ package ms.dew.devops.kernel.resource;
 
 import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.models.*;
-import ms.dew.devops.kernel.exception.ProjectProcessException;
-import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.function.VersionController;
+import ms.dew.devops.kernel.helper.KubeRES;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Kubernetes deployment builder.
@@ -41,7 +41,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         Map<String, String> annotations = new HashMap<>();
         annotations.put(VersionController.FLAG_KUBE_RESOURCE_GIT_COMMIT, config.getGitCommit());
         annotations.put("dew.ms/scm-url", config.getScmUrl());
-        if (config.getApp().isTraceLogEnabled()) {
+        if (config.getApp().getTraceLogEnabled()) {
             annotations.put("sidecar.jaegertracing.io/inject", "true");
         }
 
@@ -55,67 +55,64 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         selectorLabels.remove("version");
         selectorLabels.remove("provider");
 
-        V1ResourceRequirements re = new V1ResourceRequirements();
-        re.setRequests(config.getApp().getContainerResourcesRequests());
-        V1ContainerBuilder containerBuilder;
-        switch (config.getKind()) {
-            case JVM_SERVICE:
-                containerBuilder = new V1ContainerBuilder()
-                        .withName(FLAG_CONTAINER_NAME)
-                        .withImage(config.getCurrImageName())
-                        .withImagePullPolicy("IfNotPresent")
-                        .withPorts(new V1ContainerPortBuilder()
-                                .withContainerPort(config.getApp().getPort())
-                                .withName("http")
-                                .withProtocol("TCP")
-                                .build())
-                        .withEnv(new V1EnvVarBuilder()
-                                .withName("JAVA_OPTIONS")
-                                // 附加spring boot的环境信息
-                                .withValue(setContainerEnvJavaOptionsValue(config))
-                                .build())
-                        .withLivenessProbe(new V1ProbeBuilder()
-                                .withHttpGet(new V1HTTPGetActionBuilder()
-                                        .withPath(config.getApp().getLivenessPath())
-                                        .withPort(new IntOrString(config.getApp().getPort()))
-                                        .withScheme("HTTP")
-                                        .build())
-                                .withInitialDelaySeconds(config.getApp().getLivenessInitialDelaySeconds())
-                                .withPeriodSeconds(config.getApp().getLivenessPeriodSeconds())
-                                .withFailureThreshold(config.getApp().getLivenessFailureThreshold())
-                                .build())
-                        .withReadinessProbe(new V1ProbeBuilder()
-                                .withHttpGet(new V1HTTPGetActionBuilder()
-                                        .withPath(config.getApp().getReadinessPath())
-                                        .withPort(new IntOrString(config.getApp().getPort()))
-                                        .withScheme("HTTP")
-                                        .build())
-                                .withInitialDelaySeconds(config.getApp().getReadinessInitialDelaySeconds())
-                                .withPeriodSeconds(config.getApp().getReadinessPeriodSeconds())
-                                .withFailureThreshold(config.getApp().getReadinessFailureThreshold())
-                                .build())
-                        .withResources(new V1ResourceRequirements()
-                                .requests(config.getApp().getContainerResourcesRequests())
-                                .limits(config.getApp().getContainerResourcesLimits()));
-                break;
-            case FRONTEND:
-                containerBuilder = new V1ContainerBuilder()
-                        .withName(FLAG_CONTAINER_NAME)
-                        .withImage(config.getCurrImageName())
-                        .withImagePullPolicy("IfNotPresent")
-                        .withPorts(new V1ContainerPortBuilder()
-                                .withContainerPort(config.getApp().getPort())
-                                .withName("http")
-                                .withProtocol("TCP")
-                                .build())
-                        .withResources(new V1ResourceRequirements()
-                                .requests(config.getApp().getContainerResourcesRequests())
-                                .limits(config.getApp().getContainerResourcesLimits()));
-                break;
-            default:
-                throw new ProjectProcessException("Kind " + config.getKind().name() + " does not require deployment");
+        Map<String, String> nodeSelectors = config.getApp().getNodeSelector();
+        if (config.getApp().getNodeSelector().isEmpty()) {
+            nodeSelectors.put("group", "app");
         }
 
+        V1ResourceRequirements re = new V1ResourceRequirements();
+        re.setRequests(config.getApp().getContainerResourcesRequests());
+        V1ContainerBuilder containerBuilder = new V1ContainerBuilder()
+                .withName(FLAG_CONTAINER_NAME)
+                .withImage(config.getCurrImageName())
+                .withImagePullPolicy("IfNotPresent")
+                .withPorts(new V1ContainerPortBuilder()
+                        .withContainerPort(config.getApp().getPort())
+                        .withName("http")
+                        .withProtocol("TCP")
+                        .build())
+                .withResources(new V1ResourceRequirements()
+                        .requests(config.getApp().getContainerResourcesRequests())
+                        .limits(config.getApp().getContainerResourcesLimits()));
+        Map<String, String> env = config.getAppKindPlugin().getEnv(config);
+        config.getDeployPlugin().getEnv(config).forEach((k, v) -> {
+            if (env.containsKey(k)) {
+                env.put(k, env.get(k) + " " + v);
+            } else {
+                env.put(k, v);
+            }
+        });
+        env.putAll(config.getDeployPlugin().getEnv(config));
+        if (!env.isEmpty()) {
+            containerBuilder.withEnv(env.entrySet().stream().map(e ->
+                    new V1EnvVarBuilder()
+                            .withName(e.getKey())
+                            .withValue(e.getValue())
+                            .build()
+            ).collect(Collectors.toList()));
+        }
+        if (config.getApp().getHealthCheckEnabled()) {
+            containerBuilder.withLivenessProbe(new V1ProbeBuilder()
+                    .withHttpGet(new V1HTTPGetActionBuilder()
+                            .withPath(config.getApp().getLivenessPath())
+                            .withPort(new IntOrString(config.getApp().getPort()))
+                            .withScheme("HTTP")
+                            .build())
+                    .withInitialDelaySeconds(config.getApp().getLivenessInitialDelaySeconds())
+                    .withPeriodSeconds(config.getApp().getLivenessPeriodSeconds())
+                    .withFailureThreshold(config.getApp().getLivenessFailureThreshold())
+                    .build())
+                    .withReadinessProbe(new V1ProbeBuilder()
+                            .withHttpGet(new V1HTTPGetActionBuilder()
+                                    .withPath(config.getApp().getReadinessPath())
+                                    .withPort(new IntOrString(config.getApp().getPort()))
+                                    .withScheme("HTTP")
+                                    .build())
+                            .withInitialDelaySeconds(config.getApp().getReadinessInitialDelaySeconds())
+                            .withPeriodSeconds(config.getApp().getReadinessPeriodSeconds())
+                            .withFailureThreshold(config.getApp().getReadinessFailureThreshold())
+                            .build());
+        }
         ExtensionsV1beta1DeploymentBuilder builder = new ExtensionsV1beta1DeploymentBuilder();
         builder.withKind(KubeRES.DEPLOYMENT.getVal())
                 .withApiVersion("extensions/v1beta1")
@@ -138,7 +135,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                                         .build())
                                 .withSpec(new V1PodSpecBuilder()
                                         .withContainers(containerBuilder.build())
-                                        .withNodeSelector(config.getApp().getNodeSelector())
+                                        .withNodeSelector(nodeSelectors)
                                         .build())
                                 .build())
                         .build())
@@ -146,24 +143,4 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         return builder.build();
     }
 
-    private String setContainerEnvJavaOptionsValue(FinalProjectConfig config) {
-        String containerEnvJavaOptionsValue = config.getApp().getRunOptions()
-                + " -Dspring.profiles.active=" + config.getProfile()
-                + " -Dserver.port=" + config.getApp().getPort();
-        if (config.getApp().isTraceLogEnabled()) {
-            containerEnvJavaOptionsValue += " -Dopentracing.jaeger.log-spans=" + config.getApp().isTraceLogSpans();
-            if (!config.getApp().getTraceProbabilisticSamplingRate().equals(1.0)) {
-                containerEnvJavaOptionsValue += " -Dopentracing.jaeger.probabilistic-sampler.sampling-rate="
-                        + config.getApp().getTraceProbabilisticSamplingRate();
-            }
-            if (!config.getApp().getTraceWebSkipPattern().isEmpty()) {
-                containerEnvJavaOptionsValue += " -Dopentracing.spring.web.skip-pattern=" + config.getApp().getTraceWebSkipPattern();
-            }
-        }
-        if (config.getApp().isMetricsEnabled()) {
-            containerEnvJavaOptionsValue += " -Dmanagement.endpoints.web.exposure.include=*"
-                    + " -Dmetrics.tags:application=${spring.application.name}";
-        }
-        return containerEnvJavaOptionsValue;
-    }
 }

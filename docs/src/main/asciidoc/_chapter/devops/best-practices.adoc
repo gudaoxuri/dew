@@ -1,12 +1,12 @@
 [[devops-best-practices]]
-=== DevOps最佳实践[TBD]
+=== DevOps最佳实践
 
 ==== 为什么不用 fabric8
 
 Fabric8的maven插件( https://github.com/fabric8io/docker-maven-plugin )比较成熟，并且被 Spring Cloud Kubernetes 官方推荐( https://github.com/fabric8-quickstarts/spring-boot-ribbon )。
 
 ``dew`` 之所以没有使用fabric8是因为设计理念有一定差异，``dew`` 追求 ``轻量化、在一定规范下的可定制化、集成化`` ，
-比如实现了基于环境的部署流程，自动判断子项目是否需要发布、版本管理、版本重用模式、钉钉通知等，这些差异是导致自研的原因。
+比如实现了基于环境的部署流程，自动判断应用是否需要发布、版本管理、版本重用模式、钉钉通知等，这些差异是导致自研的原因。
 当然在实现上也借鉴了fabric8比较好的做法，比如JVM参数的自动化处理。
 
 [[devops-best-practices-auth]]
@@ -48,7 +48,35 @@ spring:
 
 ==== JVM设置
 
-默认情况下 ``dew`` 会根据容器环境自行设置JVM参数，规则及自定义配置见 <<>> 。
+在 ``app.runOptions`` 配置中可以指定 JVM 的参数（比如 ``-Xms -Xmx``），但同时也可以通过 ``app.containerResourcesLimits`` 和 ``app.containerResourcesRequests`` 指定容器资源的上下限，两者如何配合？
 
-==== Spring Cloud Config的部署方式
+``dew`` 推荐用户设置容器的资源限定，部署时 ``dew`` 会根据容器环境自行设置JVM参数，规则如下：
 
+* ``-Xmx`` 或 ``-Xms`` 设置
+** 如果传入的 ``JAVA_OPTIONS`` 带有 ``-Xmx`` 或 ``-Xms`` 则优先使用传入设置
+** 如果传入了 ``JAVA_MAX_MEM_RATIO`` 则设置 ``-Xmx`` 为 ``最大可用内存``/``JAVA_MAX_MEM_RATIO``， 当 ``JAVA_MAX_MEM_RATIO``=50 时表示 ``-Xmx`` 为最大可用内存的50%
+** 如果没有指定 ``JAVA_MAX_MEM_RATIO`` 且 ``系统内存资源`` <= 300M 则 设置 ``-Xmx`` 为其25%
+** 如果没有指定 ``JAVA_MAX_MEM_RATIO`` 且 ``系统内存资源`` > 300M 则 设置 ``-Xmx`` 为其50%
+** 如果传入了 ``JAVA_INIT_MEM_RATIO`` 并且 ``JAVA_INIT_MEM_RATIO``=0 则不设置 ``-Xms``
+** 如果传入了 ``JAVA_INIT_MEM_RATIO`` 并且 ``JAVA_INIT_MEM_RATIO``!=0 & ``-Xmx`` 不为空 则 设置 ``-Xms`` 为 ``-Xmx``/``JAVA_INIT_MEM_RATIO``，当 ``JAVA_INIT_MEM_RATIO``=50 时表示 ``-Xms`` 为 ``-Xmx``的50%
+** 如果没有传入 ``JAVA_INIT_MEM_RATIO`` 则 设置 ``JAVA_INIT_MEM_RATIO``=100，执行同上一步的 ``-Xms`` 设置规则
+* 如果JDK版本 < 10 设置 ``-XX:ParallelGCThreads``=<可用CPU核数> ``-XX:ConcGCThreads``=<可用CPU核数> ``-Djava.util.concurrent.ForkJoinPool.common.parallelism``=<可用CPU核数>
+* 如果JDK版本 < 10 设置 ``-XX:+UseParallelGC`` ``-XX:GCTimeRatio``=4 ``-XX:AdaptiveSizePolicyWeight``=90 ``-XX:MinHeapFreeRatio``=40 ``-XX:MaxHeapFreeRatio``=70
+* 如果JDK版本 !=7 设置 ``-XX:+ExitOnOutOfMemoryError``
+
+以上规则参考于： https://github.com/fabric8io-images/run-java-sh
+
+==== 配置中心选择
+
+由于 ``spring-cloud-kubernetes`` 使用的配置方案并不直观、无法实现版本留存、修改审计、配置加密（非摘要），
+所以 ``dew`` 建议使用 ``Spring Cloud Config`` ，``dew`` 提供了其 helm 版本，详见 <<helm-chart-spring-cloud-config>> 。
+
+==== Spring Cloud 项目的 Dew & Gitlab CI/CD 实践
+
+. 部署 Spring Cloud 配置中心，详见 <<helm-chart-spring-cloud-config,Dew Spring Cloud 配置中心部署>>，<<dew-spring-cloud-config,Dew Spring Cloud 配置中心实例>>
+. 在 Kubernetes 集群中执行``dew-devops.sh``脚本部署环境、创建项目，详见：<<dew-devops-deploy,Dew DevOps 脚本部署>>
+. 在 Gitlab上 创建项目
+. 在项目中引入 Dew 的``parent-starter``依赖，详细请参考: <<framework-quick-start-core-code-instructions,框架快速入门>>
+. 添加用于触发 Gitlab Runner 的``.gitlab-ci.yml``配置文件，详见：<<dew-gitlab-ci,Dew Gitlab CI 实现>>
+. 添加 Dew Maven Plugin 支持的 Kubernetes 部署配置文件``.dew``，详见：<<devops-configuration-dew,.dew 文件配置>>
+. ``合并代码``到需要部署的分支，触发 Gitlab Runner 进行项目部署

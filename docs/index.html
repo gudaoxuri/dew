@@ -21,7 +21,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.6.1">
-<meta name="author" content="v2.0.0-SNAPSHOT">
+<meta name="author" content="v2.0.0-beta2">
 <title>Dew:一站式微服务解决方案 [2.x Building&#8230;&#8203;]</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -447,7 +447,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Dew:一站式微服务解决方案 [2.x Building&#8230;&#8203;]</h1>
 <div class="details">
-<span id="author" class="author">v2.0.0-SNAPSHOT</span><br>
+<span id="author" class="author">v2.0.0-beta2</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -471,7 +471,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#需求分析">3.1.1. 需求分析</a></li>
 <li><a href="#功能体验">3.1.2. 功能体验</a></li>
 <li><a href="#模块设计">3.1.3. 模块设计</a></li>
-<li><a href="#核心代码说明">3.1.4. 核心代码说明</a></li>
+<li><a href="#framework-quick-start-core-code-instructions">3.1.4. 核心代码说明</a></li>
 </ul>
 </li>
 <li><a href="#framework-user-manual">3.2. 框架使用手册</a>
@@ -514,45 +514,69 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#部署运维_devops_chapter">4. 部署运维 DevOps Chapter</a>
 <ul class="sectlevel2">
-<li><a href="#devops-env-install">4.1. 测试、生产环境安装配置</a>
+<li><a href="#devops-quick-start">4.1. DevOps快速入门</a>
 <ul class="sectlevel3">
-<li><a href="#服务规划">4.1.1. 服务规划</a></li>
-<li><a href="#基础配置">4.1.2. 基础配置</a></li>
-<li><a href="#docker">4.1.3. Docker</a></li>
-<li><a href="#kubernetes">4.1.4. Kubernetes</a></li>
-<li><a href="#helm">4.1.5. Helm</a></li>
-<li><a href="#metrics_server">4.1.6. Metrics Server</a></li>
-<li><a href="#nginx_ingress_controller">4.1.7. Nginx Ingress Controller</a></li>
-<li><a href="#dashboard">4.1.8. Dashboard</a></li>
-<li><a href="#elasticsearch">4.1.9. Elasticsearch</a></li>
-<li><a href="#kibana">4.1.10. Kibana</a></li>
-<li><a href="#prometheus_grafana">4.1.11. Prometheus &amp;&amp; Grafana</a></li>
-<li><a href="#fluentd">4.1.12. Fluentd</a></li>
-<li><a href="#jaeger">4.1.13. Jaeger</a></li>
+<li><a href="#功能体验_2">4.1.1. 功能体验</a></li>
+<li><a href="#发生了什么">4.1.2. 发生了什么？</a></li>
 </ul>
 </li>
-<li><a href="#devops-user-manual">4.2. DevOps使用手册[TBD]</a></li>
-<li><a href="#devops-configuration">4.3. DevOps配置速查</a>
+<li><a href="#devops-user-manual">4.2. DevOps使用手册</a>
 <ul class="sectlevel3">
-<li><a href="#devops-configuration-dew">4.3.1. .dew 配置</a></li>
-<li><a href="#maven_配置">4.3.2. Maven 配置</a></li>
+<li><a href="#devops-user-manual-import">4.2.1. 引入方式</a></li>
+<li><a href="#支持的项目类型">4.2.2. 支持的项目类型</a></li>
+<li><a href="#nodejs项目的特殊处理">4.2.3. NodeJS项目的特殊处理</a></li>
+<li><a href="#项目配置">4.2.4. 项目配置</a></li>
+<li><a href="#打包部署">4.2.5. 打包部署</a></li>
+<li><a href="#版本回滚">4.2.6. 版本回滚</a></li>
+<li><a href="#应用卸载">4.2.7. 应用卸载</a></li>
+<li><a href="#日志查看">4.2.8. 日志查看</a></li>
+<li><a href="#伸缩扩展">4.2.9. 伸缩扩展</a></li>
+<li><a href="#应用刷新">4.2.10. 应用刷新</a></li>
+<li><a href="#ci_cd工具支持_gitlab_ci">4.2.11. CI/CD工具支持-Gitlab CI</a></li>
+<li><a href="#执行通知">4.2.12. 执行通知</a></li>
+<li><a href="#dew-devops-deploy">4.2.13. Dew DevOps 脚本部署</a></li>
+<li><a href="#监控管理">4.2.14. 监控管理</a></li>
 </ul>
 </li>
-<li><a href="#devops-best-practices">4.4. DevOps最佳实践[TBD]</a>
+<li><a href="#devops-env-install">4.3. 测试、生产环境安装配置</a>
 <ul class="sectlevel3">
-<li><a href="#为什么不用_fabric8">4.4.1. 为什么不用 fabric8</a></li>
-<li><a href="#devops-best-practices-auth">4.4.2. 鉴权处理</a></li>
-<li><a href="#统一配置处理">4.4.3. 统一配置处理</a></li>
-<li><a href="#jvm设置">4.4.4. JVM设置</a></li>
-<li><a href="#spring_cloud_config的部署方式">4.4.5. Spring Cloud Config的部署方式</a></li>
+<li><a href="#服务规划">4.3.1. 服务规划</a></li>
+<li><a href="#基础配置">4.3.2. 基础配置</a></li>
+<li><a href="#docker">4.3.3. Docker</a></li>
+<li><a href="#kubernetes">4.3.4. Kubernetes</a></li>
+<li><a href="#helm">4.3.5. Helm</a></li>
+<li><a href="#metrics_server">4.3.6. Metrics Server</a></li>
+<li><a href="#nginx_ingress_controller">4.3.7. Nginx Ingress Controller</a></li>
+<li><a href="#dashboard">4.3.8. Dashboard</a></li>
+<li><a href="#elasticsearch">4.3.9. Elasticsearch</a></li>
+<li><a href="#kibana">4.3.10. Kibana</a></li>
+<li><a href="#prometheus_grafana">4.3.11. Prometheus &amp; Grafana</a></li>
+<li><a href="#fluentd">4.3.12. Fluentd</a></li>
+<li><a href="#jaeger">4.3.13. Jaeger</a></li>
 </ul>
 </li>
-<li><a href="#devops示例">4.5. DevOps示例</a>
+<li><a href="#devops-configuration">4.4. DevOps配置速查</a>
 <ul class="sectlevel3">
-<li><a href="#devops示例_helloworld后端服务">4.5.1. DevOps示例 : Helloworld后端服务</a></li>
-<li><a href="#devops示例_helloworld类库">4.5.2. DevOps示例 : Helloworld类库</a></li>
-<li><a href="#devops示例_helloworld前端">4.5.3. DevOps示例 : Helloworld前端</a></li>
-<li><a href="#devops示例_to_do">4.5.4. DevOps示例 : To-Do</a></li>
+<li><a href="#devops-configuration-dew">4.4.1. .dew 配置</a></li>
+<li><a href="#maven_配置">4.4.2. Maven 配置</a></li>
+</ul>
+</li>
+<li><a href="#devops-best-practices">4.5. DevOps最佳实践</a>
+<ul class="sectlevel3">
+<li><a href="#为什么不用_fabric8">4.5.1. 为什么不用 fabric8</a></li>
+<li><a href="#devops-best-practices-auth">4.5.2. 鉴权处理</a></li>
+<li><a href="#统一配置处理">4.5.3. 统一配置处理</a></li>
+<li><a href="#jvm设置">4.5.4. JVM设置</a></li>
+<li><a href="#配置中心选择">4.5.5. 配置中心选择</a></li>
+<li><a href="#spring_cloud_项目的_dew_gitlab_ci_cd_实践">4.5.6. Spring Cloud 项目的 Dew &amp; Gitlab CI/CD 实践</a></li>
+</ul>
+</li>
+<li><a href="#devops示例">4.6. DevOps示例</a>
+<ul class="sectlevel3">
+<li><a href="#devops示例_helloworld后端服务">4.6.1. DevOps示例 : Helloworld后端服务</a></li>
+<li><a href="#devops示例_helloworld类库">4.6.2. DevOps示例 : Helloworld类库</a></li>
+<li><a href="#devops示例_helloworld前端">4.6.3. DevOps示例 : Helloworld前端</a></li>
+<li><a href="#devops示例_to_do">4.6.4. DevOps示例 : To-Do</a></li>
 </ul>
 </li>
 </ul>
@@ -590,9 +614,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#gitlab">6.2.5. Gitlab</a></li>
 <li><a href="#harbor">6.2.6. Harbor</a></li>
 <li><a href="#dnsmasq">6.2.7. Dnsmasq</a></li>
-<li><a href="#minio">6.2.8. Minio</a></li>
-<li><a href="#nfs">6.2.9. NFS</a></li>
-<li><a href="#glusterfs">6.2.10. GlusterFS</a></li>
+<li><a href="#ntpdate">6.2.8. NTPDate</a></li>
+<li><a href="#minio">6.2.9. Minio</a></li>
+<li><a href="#nfs">6.2.10. NFS</a></li>
+<li><a href="#glusterfs">6.2.11. GlusterFS</a></li>
 </ul>
 </li>
 <li><a href="#dew-2-migration-guide">6.3. Dew 2.x Migration guide[TBD]</a>
@@ -611,7 +636,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#支持的ci_cd服务">6.5. 支持的CI/CD服务</a>
 <ul class="sectlevel3">
-<li><a href="#dew_ci_cd_gitlab_ci_实现">6.5.1. Dew CI/CD : Gitlab CI 实现</a></li>
+<li><a href="#dew-devops-maven-agent">6.5.1. Dew DevOps Maven Agent</a></li>
+<li><a href="#dew-gitlab-ci">6.5.2. Dew CI/CD : Gitlab CI 实现</a></li>
 </ul>
 </li>
 </ul>
@@ -732,7 +758,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p><strong>没有合适的微服务框架</strong> 导致人员技能要求高、项目研发成本高企</p>
+<p><strong>没有合适的微服务框架</strong> 导致人员技能要求高、项目研发成本高</p>
 </div>
 </blockquote>
 </div>
@@ -763,7 +789,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="paragraph">
 <div class="title"><strong>提供微服务架构指南</strong></div>
-<p>项目要上微服务，其架构思想是前提，《微服务架构设计》(<a href="https://github.com/gudaoxuri/Microservices-Architecture" class="bare">https://github.com/gudaoxuri/Microservices-Architecture</a>) 做为入门书籍非常合适。</p>
+<p>项目要上微服务，其架构思想是前提，《微服务架构设计》(<a href="https://gudaoxuri.gitbook.io/microservices-architecture" class="bare">https://gudaoxuri.gitbook.io/microservices-architecture</a>) 做为入门书籍非常合适。</p>
 </div>
 <div class="olist arabic">
 <div class="title"><strong>扩展主流微服务框架</strong></div>
@@ -802,7 +828,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p><strong>集成度低、操作不友好</strong> DevOps是一个系统性工程，想通过传统的CI/CD工具实现难度较大</p>
+<p><strong>集成度低、操作不友好</strong></p>
+</div>
+<div class="paragraph">
+<p>DevOps是一个系统性工程，想通过传统的CI/CD工具的方法实现难度较大</p>
 </div>
 </blockquote>
 </div>
@@ -817,7 +846,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="quoteblock">
 <blockquote>
 <div class="paragraph">
-<p><strong>平台依赖，不通用</strong> 厂商方案做了高度集成，弥补了工具型方案的不足，但问题也很明显，各厂商都有自己的一套标准，互不兼容，导致平台绑定，无法迁移</p>
+<p><strong>平台依赖，不通用</strong></p>
+</div>
+<div class="paragraph">
+<p>云厂商方案做了高度集成，弥补了工具型方案的不足，但问题也很明显，各厂商都有自己的一套标准，互不兼容，导致平台绑定，无法迁移</p>
 </div>
 </blockquote>
 </div>
@@ -838,7 +870,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ol>
 </div>
 <div class="paragraph">
-<p>基于这一思念，我们我们提供一体化的Maven插件，实现了：</p>
+<p>基于这一理念，我们提供的一体化的Maven插件，实现了：</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -879,9 +911,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 |-  |-  |- cluster-hazelcast               // Hazelcast集群能力实现
 |-  |-  |- cluster-rabbit                  // RabbitMQ集群能力实现
 |-  |-  |- cluster-redis                   // Redis集群能力实现
+|-  |-  |- cluster-mqtt                    // MQTT集群能力实现
 |-  |-  |- idempotent-starter              // 幂等处理模块
 |-  |-  |- notification                    // 通知处理模块
 |-  |-  |- test-starter                    // 单元测试模块
+|-  |-  |- hbase-starter                   // Spring Boot HBase Starter 模块
 |-  |- components                          // 集成的服务
 |-  |-  |- auth                            // 认证服务
 |-  |-  |- auth-sdk-starter                // 认证服务SDK
@@ -1017,7 +1051,7 @@ cd frontend &amp;&amp; npm install &amp;&amp; npm run dev:h5
 </div>
 </div>
 <div class="sect3">
-<h4 id="核心代码说明"><a class="anchor" href="#核心代码说明"></a>3.1.4. 核心代码说明</h4>
+<h4 id="framework-quick-start-core-code-instructions"><a class="anchor" href="#framework-quick-start-core-code-instructions"></a>3.1.4. 核心代码说明</h4>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1390,6 +1424,14 @@ public class NotifierController {
 <td class="tableblock halign-left valign-top"><p class="tableblock">Redis集群能力实现</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">cluster-mqtt</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MQTT集群能力实现</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">hbase-starter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HBase Spring Boot 实现</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">idempotent-starter</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">幂等处理模块</p></td>
 </tr>
@@ -1611,10 +1653,11 @@ $.field.validateMobile("18657120000")
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
 </colgroup>
 <thead>
 <tr>
@@ -1622,38 +1665,44 @@ $.field.validateMobile("18657120000")
 <th class="tableblock halign-left valign-top">Redis</th>
 <th class="tableblock halign-left valign-top">Hazelcast</th>
 <th class="tableblock halign-left valign-top">Rabbit</th>
+<th class="tableblock halign-left valign-top">MQTT</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">分布式缓存</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">分布式Map</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">分布式锁</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">MQ</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">*(只支持pub-sub)</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">领导者选举</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">*</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">/</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 </tbody>
 </table>
@@ -1672,6 +1721,9 @@ $.field.validateMobile("18657120000")
 </li>
 <li>
 <p>只有Rabbit的MQ支持跟踪日志（见跟踪日志章节）</p>
+</li>
+<li>
+<p>MQTT多用于IoT环境</p>
 </li>
 </ul>
 </div>
@@ -1700,6 +1752,10 @@ $.field.validateMobile("18657120000")
 &lt;dependency&gt;
     &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;cluster-spi-rabbit&lt;/artifactId&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;artifactId&gt;cluster-spi-mqtt&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -1707,29 +1763,41 @@ $.field.validateMobile("18657120000")
 <div class="title">增加配置</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">dew:
-    cluster: # 集群功能
-        cache: # 分布式缓存实现，默认为 redis
-        map: # 分布式Map实现，默认为 redis
-        lock: # 分布式锁实现，默认为 redis
-        mq: # MQ实现，默认为 redis
-        election: # 领导者选举实现，默认为 redis
+    cluster:                            # 集群功能
+        cache:                          # 分布式缓存实现，默认为 redis
+        map:                            # 分布式Map实现，默认为 redis
+        lock:                           # 分布式锁实现，默认为 redis
+        mq:                             # MQ实现，默认为 redis
+        election:                       # 领导者选举实现，默认为 redis
 
 spring:
     redis:
-        host: # redis主机
-        port: # redis端口
-        database: # redis数据库
-        password: # redis密码
+        host:                           # redis主机
+        port:                           # redis端口
+        database:                       # redis数据库
+        password:                       # redis密码
         lettuce:
-          pool: # 连接池配置
+          pool:                         # 连接池配置
     rabbitmq:
-      host: # rabbit主机
-      port: # rabbit端口
-      username: # rabbit用户名
-      password: # rabbit密码
-      virtual-host: # rabbit VH
+      host:                             # rabbit主机
+      port:                             # rabbit端口
+      username:                         # rabbit用户名
+      password:                         # rabbit密码
+      virtual-host:                     # rabbit VH
     hazelcast:
-        addresses: [] # hazelcast地址，端口可选</code></pre>
+        addresses: []                   # hazelcast地址，端口可选
+dew:
+  mw:                                   # 中间件
+    mqtt:                               # MQTT集群实现
+      broker:                           # Broker地址，e.g. tcp://127.0.0.1:1883
+      clientId: Dew_Cluster_&lt;Cluster.instanceId&gt;
+                                        # 连接客户端ID，注意一个集群内客户端ID必须唯一
+      persistence:                      # 存储，默认为File，可选 memory
+      userName:                         # 用户名
+      password:                         # 密码
+      timeoutSec:                       # 连接超时时间
+      keepAliveIntervalSec:             # 心跳间隔时间
+      cleanSession: true                # 是否消除Session</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -2582,6 +2650,8 @@ lock.tryLockWithFun(0, 1000, () -&gt; {
 
 package ms.dew.core.cluster;
 
+import ms.dew.core.cluster.dto.MessageWrap;
+
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -2599,9 +2669,36 @@ public interface ClusterMQ {
      *
      * @param topic   主题
      * @param message 消息内容
-     * @return 是否发布成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
+     * @param header  消息头
+     * @param confirm 是否需要确认
+     * @return 是否发布成功 ，此返回值仅在 confirm 模式下才能保证严格准确！
      */
-    boolean publish(String topic, String message);
+    boolean publish(String topic, String message, Map&lt;String, Object&gt; header, boolean confirm);
+
+    /**
+     * MQ 发布订阅模式 之 发布.
+     * &lt;p&gt;
+     * 请确保发布之前 topic 已经存在
+     *
+     * @param topic   主题
+     * @param message 消息内容
+     * @param header  消息头
+     */
+    default void publish(String topic, String message, Map&lt;String, Object&gt; header) {
+        publish(topic, message, header, false);
+    }
+
+    /**
+     * MQ 发布订阅模式 之 发布.
+     * &lt;p&gt;
+     * 请确保发布之前 topic 已经存在
+     *
+     * @param topic   主题
+     * @param message 消息内容
+     */
+    default void publish(String topic, String message) {
+        publish(topic, message, null);
+    }
 
 
     /**
@@ -2612,7 +2709,29 @@ public interface ClusterMQ {
      * @param topic    主题
      * @param consumer 订阅处理方法
      */
-    void subscribe(String topic, Consumer&lt;String&gt; consumer);
+    void subscribe(String topic, Consumer&lt;MessageWrap&gt; consumer);
+
+    /**
+     * MQ 请求响应模式 之 请求.
+     *
+     * @param address 请求地址
+     * @param message 消息内容
+     * @param header  消息头
+     * @param confirm 是否需要确认
+     * @return 是否发布成功 ，此返回值仅在 confirm 模式下才能保证严格准确！
+     */
+    boolean request(String address, String message, Map&lt;String, Object&gt; header, boolean confirm);
+
+    /**
+     * MQ 请求响应模式 之 请求.
+     *
+     * @param address 请求地址
+     * @param message 消息内容
+     * @param header  消息头
+     */
+    default void request(String address, String message, Map&lt;String, Object&gt; header) {
+        request(address, message, header, false);
+    }
 
 
     /**
@@ -2620,9 +2739,11 @@ public interface ClusterMQ {
      *
      * @param address 请求地址
      * @param message 消息内容
-     * @return 是否请求成功
      */
-    boolean request(String address, String message);
+    default void request(String address, String message) {
+        request(address, message, null);
+    }
+
 
     /**
      * MQ 请求响应模式 之 响应.
@@ -2632,16 +2753,35 @@ public interface ClusterMQ {
      * @param address  请求对应的地址
      * @param consumer 响应处理方法
      */
-    void response(String address, Consumer&lt;String&gt; consumer);
+    void response(String address, Consumer&lt;MessageWrap&gt; consumer);
 
+    /**
+     * Gets mq header.
+     *
+     * @param name the name
+     * @return the mq header
+     */
     default Map&lt;String, Object&gt; getMQHeader(String name) {
         return Cluster.getMQHeader(name);
     }
 
-    default void setMQHeader(String name, Map&lt;String, Object&gt; header) {
-        Cluster.setMQHeader(name, header);
+    /**
+     * Sets mq header.
+     *
+     * @param name   the name
+     * @param header the header
+     * @return the mq header
+     */
+    default Map&lt;String, Object&gt; setMQHeader(String name, Map&lt;String, Object&gt; header) {
+        return Cluster.setMQHeader(name, header);
     }
 
+    /**
+     * Is header support.
+     *
+     * @return the result
+     */
+    boolean supportHeader();
 }</code></pre>
 </div>
 </div>
@@ -2650,19 +2790,22 @@ public interface ClusterMQ {
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">// pub-sub
 Dew.cluster.mq.subscribe("test_pub_sub", message -&gt;
-        logger.info("pub_sub&gt;&gt;" + message));
-Dew.cluster.mq.publish("test_pub_sub", "msgA");
+        logger.info("pub_sub&gt;&gt;" + message.getBody()));
+Dew.cluster.mq.publish("test_pub_sub", "msgA",new HashMap&lt;String, Object&gt;() {
+      {
+          put("h", "001");
+      }
+  });
 Dew.cluster.mq.publish("test_pub_sub", "msgB");
 // req-resp
 Dew.cluster.mq.response("test_rep_resp", message -&gt;
-        logger.info("req_resp&gt;&gt;" + message));
-Dew.cluster.mq.request("test_rep_resp", "msg1");
-Dew.cluster.mq.request("test_rep_resp", "msg2");
-// rabbit confirm
-if (Dew.cluster.mq instanceof RabbitClusterMQ) {
-    boolean success = Dew.cluster.mq.publish("test_pub_sub", "confirm message");
-    success = Dew.cluster.mq.request("test_rep_resp", "confirm message");
-}</code></pre>
+        logger.info("req_resp&gt;&gt;" + message.getBody()));
+Dew.cluster.mq.request("test_rep_resp", "msg1",new HashMap&lt;String, Object&gt;() {
+      {
+          put("h", "001");
+      }
+  });
+Dew.cluster.mq.request("test_rep_resp", "msg2");</code></pre>
 </div>
 </div>
 <div class="admonitionblock important">
@@ -3577,6 +3720,62 @@ swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，�
 </tr>
 </table>
 </div>
+<div class="sect4">
+<h5 id="spring_boot_hbase"><a class="anchor" href="#spring_boot_hbase"></a>Spring Boot HBase</h5>
+<div class="paragraph">
+<p>在集成 HBase 客户端能力的基础之上，支持 Spring Boot 配置管理、支持 Kerberos 认证。</p>
+</div>
+<div class="listingblock">
+<div class="title">依赖</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;artifactId&gt;hbase-starter&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">配置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">spring:
+  hbase:
+    zkQuorum: localhost  # zookeeper url
+    znodeParent: /hbase-secure # zookeeper znode parent
+    auth:
+      type: kerberos # 认证类型，默认是 simple，可选：simple 和 kerberos
+      principal: # kerberos 下 principal
+      keytab: # kerberos 下 keytab 路径
+      hbaseMasterPrincipal: # kerberos 下 hbase master principal
+      hbaseRegionServerPrincipal: # kerberos 下 hbase region server principal
+      hbaseClientRetriesNumber: # hbase 客户端重试次数，默认：5
+      hbaseClientOperationTimeout: # hbase 客户端超时时间，默认：300000
+      hbaseClientScannerTimeoutPeriod: # hbase 客户端 scan 超时时间，默认：60000
+      hbaseClientPause: # hbase 重试的休眠时间，默认：30</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">使用</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Autowired
+private HBaseTemplate hbaseTemplate;
+
+hbaseTemplate.get("table_hbase", "0002093140000000",
+                "0", "reg_platform", (result, row) -&gt; Bytes.toString(result.value()));</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+HBaseTemplate 其他使用方法可以详见 hbase-starter 模块下的 test 内容。
+</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -3674,7 +3873,17 @@ swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，�
       sdk:                              # SDK配置
           server-url:                   # 服务器地址
           white-list:                   # 白名单，逗号分隔
-
+  mw:                                   # 中间件
+    mqtt:                               # MQTT集群实现
+      broker:                           # Broker地址，e.g. tcp://127.0.0.1:1883
+      clientId: Dew_Cluster_&lt;Cluster.instanceId&gt;
+                                        # 连接客户端ID，注意一个集群内客户端ID必须唯一
+      persistence:                      # 存储，默认为File，可选 memory
+      userName:                         # 用户名
+      password:                         # 密码
+      timeoutSec:                       # 连接超时时间
+      keepAliveIntervalSec:             # 心跳间隔时间
+      cleanSession: true                # 是否消除Session
 
 spring:                                 # 常用 Spring 配置
   application:
@@ -3788,8 +3997,8 @@ logging:
 <pre>X Build Project                 // 构建工程
 |- sources                      // 源码目录
 |-  |- basics                   // 基础源码，为各服务工程的依赖，要求deploy到Maven仓库
-|-  |-  |- parent               // 父工程，所有服务端项目的根POM
-|-  |-  |- common               // 公共工程，所有服务端项目的基础依赖
+|-  |-  |- parent               // 父工程，所有服务端应用的根POM
+|-  |-  |- common               // 公共工程，所有服务端应用的基础依赖
 |-  |-  |- common-service       // 公共服务工程，所有服务工程的根POM，自身依赖于common
 |-  |-  |- &lt;...&gt;                // 其它基础工程，比如common-spark，大数据服务的基础依赖
 |-  |- services                 // 服务源码，对应于一个个微服务
@@ -4029,7 +4238,968 @@ RedisCacheManager cacheManager() {
 <h2 id="部署运维_devops_chapter"><a class="anchor" href="#部署运维_devops_chapter"></a>4. 部署运维 DevOps Chapter</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="devops-env-install"><a class="anchor" href="#devops-env-install"></a>4.1. 测试、生产环境安装配置</h3>
+<h3 id="devops-quick-start"><a class="anchor" href="#devops-quick-start"></a>4.1. DevOps快速入门</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+本文以 To-Do 项目为示例讲解 <code>Dew</code> DevOps部分的入门操作，项目地址： <a href="https://github.com/dew-ms/devops-example-todo" class="bare">https://github.com/dew-ms/devops-example-todo</a> 。
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+关于 To-Do 项目的介绍请先阅读 <a href="#framework-quick-start">框架快速入门</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="功能体验_2"><a class="anchor" href="#功能体验_2"></a>4.1.1. 功能体验</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+体验环境要求安装 Java(&gt;=8)、Maven、NodeJS(&gt;=8)
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>目录结构如下：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># ======= 前置准备 =======
+# 执行dew-devops.sh根据提示创建项目
+sh dew-devops.sh
+# 添加本地Host映射
+-
+x.x.x.x todo-uat.dew.ms
+x.x.x.x todo-api-uat.dew.ms
+-
+# ======= 前置准备 =======
+git clone https://github.com/dew-ms/devops-example-todo.git
+cd devops-example-todo
+# 执行安装
+mvn install -Dmaven.test.skip=true
+# 部署到Kubernetes
+mvn -P devops deploy -Ddew_devops_profile=uat
+
+# 打开浏览器，输入 http://todo-uat.dew.ms，切换到移动模式体验</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="发生了什么"><a class="anchor" href="#发生了什么"></a>4.1.2. 发生了什么？</h4>
+<div class="paragraph">
+<p>当执行 <code>sh dew-devops.sh</code> 创建项目时实际上做了：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>创建一个Harbor project及对应的用户，并做了权限绑定</p>
+</li>
+<li>
+<p>创建一个kubernetes namespace</p>
+</li>
+<li>
+<p>为这个kubernetes namespace绑定service-discovery-client角色，用于服务间发现</p>
+</li>
+<li>
+<p>为这个kubernetes namespace创建docker-registry Secret，用于Harbor认证</p>
+</li>
+<li>
+<p>为这个Kubernetes namespace创建Ingress，绑定服务与域名，内容类似：</p>
+<div class="literalblock">
+<div class="content">
+<pre>apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+  name: dew-ingress
+  namespace: dew-uat
+spec:
+  rules:
+  - host: todo-api-uat.dew.ms
+    http:
+      paths:
+      - backend:
+          serviceName: todo-kernel
+          servicePort: 8080
+        path: /
+  - host: todo-uat.dew.ms
+    http:
+      paths:
+      - backend:
+          serviceName: todo-frontend
+          servicePort: 80
+        path: /</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>当执行 <code>mvn -P devops dew:release -Ddew_devops_profile=uat</code> 时实际上做了：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>根据根目录的 <code>pom.xml</code> 配置找到所有的Maven模块并按依赖排序</p>
+</li>
+<li>
+<p>对比当前的Git版本(git commit)与已部署的服务版本找到之间变更的文件</p>
+</li>
+<li>
+<p>遍历每个Maven模块找到当前有文件变更的模块，视这些模块为要部署的模块</p>
+</li>
+<li>
+<p>提示用户是否部署</p>
+</li>
+<li>
+<p>根据模块对应的类型执行不同的准备操作：</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>JVM服务(Spring Boot): 执行 <code>mvn package spring-boot-maven-plugin:repackage</code> 打出fatjar</p>
+</li>
+<li>
+<p>前端工程: 执行<code>cd ./frontend &amp;&amp; npm install &amp;&amp; npm install -g @tarojs/cli &amp;&amp; set NODE_ENV=test &amp;&amp; npm run build:h5</code> 打出dist文件</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>根据模块对应的类型执行不同的编译操作：</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>JVM服务/前端工程: 执行 <code>docker build</code> 与 <code>docker push</code> 发布到 Harbor</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>根据模块对应的类型执行不同的部署操作：</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>JVM类库/Pom工程: 执行 <code>mvn deploy</code> 发布到Maven仓库，并创建 configmap 打上版本记录</p>
+</li>
+<li>
+<p>JVM服务/前端工程: 部署 deployment 与 service 到 kuberenetes，并创建 configmap 打上版本记录</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="devops-user-manual"><a class="anchor" href="#devops-user-manual"></a>4.2. DevOps使用手册</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>Dew</code> DevOps部分的核心是由 <code>dew-maven-plugin</code> 实现。
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="devops-user-manual-import"><a class="anchor" href="#devops-user-manual-import"></a>4.2.1. 引入方式</h4>
+<div class="sect4">
+<h5 id="使用_code_dew_framework_code"><a class="anchor" href="#使用_code_dew_framework_code"></a>使用 <code>Dew Framework</code></h5>
+<div class="paragraph">
+<p>如果您的项目使用 <code>Dew Framework</code> 构建则只要确保引入了 <code>parent-starter</code> 即可。</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="不使用_code_dew_framework_code"><a class="anchor" href="#不使用_code_dew_framework_code"></a>不使用 <code>Dew Framework</code></h5>
+<div class="paragraph">
+<p><code>Dew DevOps</code> 完全可以独立于 <code>Dew Framework</code> 使用，只需要在项目的父POM中加上如下配置即可。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;profile&gt;
+    &lt;id&gt;devops&lt;/id&gt;
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+                &lt;artifactId&gt;dew-maven-plugin&lt;/artifactId&gt;
+                &lt;!--生产环境请选择合适的版本!--&gt;
+                &lt;version&gt;${dew.version}&lt;/version&gt;
+                &lt;executions&gt;
+                    &lt;execution&gt;
+                        &lt;goals&gt;
+                            &lt;goal&gt;init&lt;/goal&gt;
+                            &lt;goal&gt;release&lt;/goal&gt;
+                        &lt;/goals&gt;
+                    &lt;/execution&gt;
+                &lt;/executions&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/profile&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="支持的项目类型"><a class="anchor" href="#支持的项目类型"></a>4.2.2. 支持的项目类型</h4>
+<div class="paragraph">
+<p>目前支持以下项目类型：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Spring Boot/Cloud</code> 发布到 <code>Kubernetes</code></p>
+</li>
+<li>
+<p><code>NodeJS</code> 发布到 <code>Kubernetes</code></p>
+</li>
+<li>
+<p><code>JVM Libraries</code> 发布到 <code>Maven Repository</code></p>
+</li>
+<li>
+<p><code>POM</code> 发布到 <code>Maven Repository</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="nodejs项目的特殊处理"><a class="anchor" href="#nodejs项目的特殊处理"></a>4.2.3. NodeJS项目的特殊处理</h4>
+<div class="paragraph">
+<p>NodeJS项目需要添加Maven项目。</p>
+</div>
+<div class="listingblock">
+<div class="title">处理步骤</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;!-- 1. 添加pom.xml文件，格式如下 --&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+  &lt;!-- parent要最终指向带有 profile为 devops 的父pom，比如 parent-starter --&gt;
+  &lt;parent&gt;
+    ...
+  &lt;/parent&gt;
+
+  &lt;groupId&gt;...&lt;/groupId&gt;
+  &lt;artifactId&gt;...&lt;/artifactId&gt;
+  &lt;packaging&gt;pom&lt;/packaging&gt;
+
+  ...
+&lt;/project&gt;
+
+&lt;!-- 2. 将此项目做为module引入 --&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">pom.xml示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!--
+  ~ Copyright 2019. the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  --&gt;
+
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+
+  &lt;parent&gt;
+    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
+    &lt;version&gt;2.0.0-beta2&lt;/version&gt;
+  &lt;/parent&gt;
+
+  &lt;groupId&gt;ms.dew.devops.it&lt;/groupId&gt;
+  &lt;artifactId&gt;todo-frontend&lt;/artifactId&gt;
+  &lt;packaging&gt;pom&lt;/packaging&gt;
+
+  &lt;properties&gt;
+    &lt;sonar.skip&gt;true&lt;/sonar.skip&gt;
+  &lt;/properties&gt;
+
+  &lt;repositories&gt;
+    &lt;repository&gt;
+      &lt;id&gt;central&lt;/id&gt;
+      &lt;url&gt;https://repo.maven.apache.org/maven2&lt;/url&gt;
+    &lt;/repository&gt;
+    &lt;repository&gt;
+      &lt;id&gt;oss-public&lt;/id&gt;
+      &lt;url&gt;https://oss.sonatype.org/content/groups/public&lt;/url&gt;
+    &lt;/repository&gt;
+    &lt;repository&gt;
+      &lt;id&gt;oss-snapshot&lt;/id&gt;
+      &lt;url&gt;https://oss.sonatype.org/content/repositories/snapshots&lt;/url&gt;
+      &lt;snapshots&gt;
+        &lt;enabled&gt;true&lt;/enabled&gt;
+        &lt;checksumPolicy&gt;warn&lt;/checksumPolicy&gt;
+      &lt;/snapshots&gt;
+    &lt;/repository&gt;
+  &lt;/repositories&gt;
+
+&lt;/project&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="项目配置"><a class="anchor" href="#项目配置"></a>4.2.4. 项目配置</h4>
+<div class="listingblock">
+<div class="title">项目初始化</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">curl -O https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/sh/dew-devops.sh
+sh dew-devops.sh
+# 选择对应操作，根据提示操作即可
+# 选择 1 进行集群初始化
+# 选择 2 安装 Gitlab runner
+# 选择 3 创建项目， 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<div class="title">Dew和Maven的配置</div>
+<p>见：<a href="#devops-configuration">DevOps配置速查</a></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="打包部署"><a class="anchor" href="#打包部署"></a>4.2.5. 打包部署</h4>
+<div class="paragraph">
+<p>用于部署一个项目下的多个应用，此命令多在项目根目录下执行。</p>
+</div>
+<div style='position:relative; padding-bottom:calc(64.51% + 44px)'><iframe src='https://gfycat.com/ifr/WellwornAmbitiousBalloonfish' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
+<div class="listingblock">
+<div class="title">命令</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 基础命令
+mvn deploy
+
+# ====================== 附加参数 ======================
+# dew_devops_profile                           # 指定的环境
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
+# dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
+# dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+# dew_devops_docker_registry_username          # Docker Registry 用户名
+# dew_devops_docker_registry_password          # Docker Registry 密码
+# dew_devops_assignation_projects              # 指定部署应用artifactId  多个以逗号分隔
+# dew_devops_quiet                             # 是否静默处理</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+在CI/CD工具中附加参数的kubernetes、docker相关参数应作为变量配置到执行器中，对应用本身不可见。
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<div class="title">核心流程</div>
+<ul>
+<li>
+<p>依赖排序，使用Maven自身的Reactor机制为项目中的各应用（模块）做依赖排序</p>
+</li>
+<li>
+<p>配置装配，根据 <a href="#devops-configuration-dew-inheritance-rules">继承规则</a> 完成配置组装</p>
+</li>
+<li>
+<p>部署探测，用于确定要部署哪些应用</p>
+<div class="ulist">
+<ul>
+<li>
+<p>命令优先，如指定部署应用( <code>dew_devops_assignation_projects</code> ) 则短路后续探测</p>
+</li>
+<li>
+<p>配置次之，如配置中指定了 <code>skip: true</code> 则视之为不需要部署的应用</p>
+</li>
+<li>
+<p>版本比对，比对已部署的各应用版本与当前各应用的代码，找到有代码变更的应用，视之为要部署的应用</p>
+</li>
+<li>
+<p>依赖传递分析，分析没有代码变更的应用，如其依赖包有变更（比如依赖了某些SNAPSHOT的模块）时这些应用也被视为要部署的应用</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>编译准备，根据配置装配时分析到的应用类型，为不同应用类型执行不同的编译方案</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Spring Boot/Cloud</code> 应用需要执行 <code>repackage</code> 以打出 <code>fatjar</code></p>
+</li>
+<li>
+<p><code>NodeJS</code> 应用需要执行对应的 <code>node</code> 命令完成打包</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>单元测试（可通过 <code>-Dmaven.test.skip=true</code> 跳过）</p>
+</li>
+<li>
+<p>发布部署，根据配置装配时分析到的部署类型，为不同部署类型执行不同的发布方案</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Maven</code> 方式直接使用 <code>mvn deploy</code></p>
+</li>
+<li>
+<p><code>Kubernetes</code> 方式先编译 <code>Docker Image</code> 并上传到 <code>Registry</code> ，再部署到 <code>Kubernetes</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>版本处理，部署完成后打上当前版本号</p>
+</li>
+<li>
+<p>结果通知，发送钉钉或HTTP请求完成结果通知</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">版本重用模式</div>
+<p>一般项目都会要求生产环境的代码要与预发/UAT环境最后一次验收通过的代码保持一致，具体到容器中即要保证两者的 <code>Docker Image</code> 相同。</p>
+</div>
+<div class="paragraph">
+<p>版本重用模式可以实现部署时重用某一环境 <code>Docker Image</code> 的要求。其核心流程如下：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>重用判定，以一套规则判断当前是否在重用模式下，也可使用 <code>disableReuseVersion: true/false , reuseLastVersionFromProfile: &lt;目标环境名称&gt;</code> 指定是否是重用模式</p>
+</li>
+<li>
+<p>镜像获取，从目标环境获取镜像并上传到当前环境的 <code>Registry</code> 中</p>
+</li>
+<li>
+<p>后续操作同普通模式的流程</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">并行部署</div>
+<p><code>Dew</code> 支持使用Maven的 <code>-T </code> 实现并行编译部署，例如： <code>mvn -T 1C deploy</code></p>
+</div>
+<div id="devops-user-manual-release-skip" class="paragraph">
+<div class="title">不需要部署的应用处理</div>
+<p><code>Dew</code> 会自行判断应用是否需要部署，对于不需要部署的应用为加速执行会设置一系列的skip，
+部署执行的是 <a href="https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html">Default Lifecycle</a> ，
+默认包含了如下插件的skip：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Core plugins（clean、compiler、deploy、failsafe、install、resources、site、surefire）</p>
+</li>
+<li>
+<p>Packaging types/tools（war、jar、source）</p>
+</li>
+<li>
+<p>Reporting plugins（checkstyle）</p>
+</li>
+<li>
+<p>Tools（assembly、dependency、gpg）</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>同时 <code>Dew</code> 提供了 <code>dew.devops.skip</code> ，用户可自行添加到其它插件、环境中。</p>
+</div>
+<div class="listingblock">
+<div class="title">dew.devops.skip使用示例</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;!-- 动态跳过特定插件 --&gt;
+&lt;plugin&gt;
+     &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+     &lt;artifactId&gt;maven-antrun-plugin&lt;/artifactId&gt;
+     &lt;configuration&gt;
+         &lt;skip&gt;${dew.devops.skip}&lt;/skip&gt;
+     &lt;/configuration&gt;
+&lt;/plugin&gt;
+
+&lt;!--
+  并不是所有插件都提供了skip配置（比如maven-shade-plugin），这时可以使用profile + activation的方式解决
+
+  1. 定义一个profile，id随意
+  2. activation &gt; property 中添加 name 为 dew.devops.skip , value 为 !true 的属性
+  3. 添加需要动态skip的内容，可以是插件、依赖、属性等
+--&gt;
+&lt;profile&gt;
+    &lt;id&gt;devops-ext&lt;/id&gt;
+    &lt;activation&gt;
+        &lt;property&gt;
+            &lt;name&gt;dew.devops.skip&lt;/name&gt;
+            &lt;value&gt;!true&lt;/value&gt;
+        &lt;/property&gt;
+    &lt;/activation&gt;
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+                &lt;artifactId&gt;maven-shade-plugin&lt;/artifactId&gt;
+                ...
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/profile&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<div class="title">使用 <code>javaagent</code> 动态跳过不需要部署的应用</div>
+<p>详见 <a href="#dew-devops-maven-agent">Dew DevOps Maven Agent</a></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="版本回滚"><a class="anchor" href="#版本回滚"></a>4.2.6. 版本回滚</h4>
+<div class="paragraph">
+<p>用于回滚某一个应用，此命令在要回滚的应用目录下执行。</p>
+</div>
+<div class="listingblock">
+<div class="title">命令</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 基础命令
+mvn dew:rollback
+
+# ====================== 附加参数 ======================
+# dew_devops_profile                           # 指定的环境
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
+# dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
+# dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+# dew_devops_docker_registry_username          # Docker Registry 用户名
+# dew_devops_docker_registry_password          # Docker Registry 密码</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+在CI/CD工具中附加参数的kubernetes、docker相关参数应作为变量配置到执行器中，对应用本身不可见。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="应用卸载"><a class="anchor" href="#应用卸载"></a>4.2.7. 应用卸载</h4>
+<div class="paragraph">
+<p>用于卸载某一个应用，但不会删除其对应的版本信息，此命令在要卸载的应用目录下执行。</p>
+</div>
+<div class="listingblock">
+<div class="title">命令</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 基础命令
+mvn dew:unrelease
+
+# ====================== 附加参数 ======================
+# dew_devops_profile                           # 指定的环境
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="日志查看"><a class="anchor" href="#日志查看"></a>4.2.8. 日志查看</h4>
+<div class="paragraph">
+<p>用于查看某一个应用的日志，此命令在要查看日志的应用目录下执行。</p>
+</div>
+<div class="listingblock">
+<div class="title">命令</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 基础命令
+mvn dew:log
+
+# ====================== 附加参数 ======================
+# dew_devops_profile                           # 指定的环境
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
+# dew_devops_podName                           # 要使用的Pod名称，如不填写当存在多个Pod时会要求用户选择
+# dew_devops_log_follow                        # 是否滚动查看日志</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="伸缩扩展"><a class="anchor" href="#伸缩扩展"></a>4.2.9. 伸缩扩展</h4>
+<div class="paragraph">
+<p>用于伸缩某一个应用，此命令在要伸缩的应用目录下执行。</p>
+</div>
+<div class="listingblock">
+<div class="title">命令</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 基础命令
+mvn dew:scale
+
+# ====================== 附加参数 ======================
+# dew_devops_scale_replicas                    # 伸缩Pod数量
+# dew_devops_scale_auto                        # 是否启用自动伸缩
+# dew_devops_scale_auto_minReplicas            # 自动伸缩Pod数下限
+# dew_devops_scale_auto_maxReplicas            # 自动伸缩Pod数上限
+# dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使用率标识</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>dew_devops_scale_auto: false</code>（默认情况） 时 <code>dew_devops_scale_replicas</code> 为必要参数，反之另几个参数为必要参数。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="应用刷新"><a class="anchor" href="#应用刷新"></a>4.2.10. 应用刷新</h4>
+<div class="paragraph">
+<p>用于刷新重启某一个应用，此命令在要重启的应用目录下执行。</p>
+</div>
+<div class="listingblock">
+<div class="title">命令</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 基础命令
+mvn dew:refresh</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ci_cd工具支持_gitlab_ci"><a class="anchor" href="#ci_cd工具支持_gitlab_ci"></a>4.2.11. CI/CD工具支持-Gitlab CI</h4>
+<div class="paragraph">
+<p>应用的部署与回滚为 <code>DevOps</code> 的核心操作，这些操作应该与 <code>CI/CD</code> 工具集成使用。</p>
+</div>
+<div class="paragraph">
+<p><code>Dew</code> 官方支持与 <code>Gitlab CI</code> 集成，步骤如下：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>使用 <code>dew-devops.sh</code> 初始化项目时填写 <code>Gitlab CI</code> 相关信息</p>
+</li>
+<li>
+<p>在项目根目录下添加 <code>.gitlab-ci.yml</code> 即可，格式如下：</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml">stages:
+  - deploy
+
+cache:
+  paths:
+    - frontend/node_modules/
+    - .m2/
+
+uat deploy:
+  stage: deploy
+  only:
+    - uat
+  tags:
+    - uat
+  script:
+    - mvn -P devops dew:release
+
+prod deploy:
+  stage: deploy
+  only:
+    - prod
+  tags:
+    - prod
+  script:
+    - mvn -P devops dew:release</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<div class="title">自动化部署</div>
+<p>当对应的分支有commit时即可触发部署。</p>
+</div>
+<div class="paragraph">
+<div class="title">版本回滚</div>
+<p>在 <code>Gitlab CI Pipelines</code> 中进入要回滚的 <code>Pipeline</code> ，点击 <code>Retry</code> 即可。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/gitlab-ci-rollback.png" alt="gitlab ci rollback">
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="执行通知"><a class="anchor" href="#执行通知"></a>4.2.12. 执行通知</h4>
+<div class="paragraph">
+<p>目前支持 <code>钉钉</code> 与 <code>HTTP</code> 两种方式：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>钉钉支持markdown格式的钉钉消息</p>
+</li>
+<li>
+<p>HTTP数据结构分为以下几种情况</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-js" data-lang="js">// PROCESS_EMPTY(空项目)
+{
+	"title": "DevOps process successful",         // 消息标题
+	"content": {                                  // 消息内容
+		"kind": "PROCESS_EMPTY",                  // 过程处理类型
+		"ci": "",                                 // CI操作
+		"message": {}                             // 消息结果内容
+	}
+}
+// PROCESS_INIT(初始化)
+{
+	"title": "DevOps process successful",         // 消息标题
+	"content": {                                  // 消息内容
+		"kind": "PROCESS_INIT",                   // 过程处理类型
+		"ci": "",                                 // CI操作
+		"message": {                              // 消息结果内容
+			"profile": "uat",                     // 分支或者环境
+			"project": "todo-parent",             // 应用名称
+		}
+	}
+}
+// PROCESS_EXECUTE_SUCCESS(成功)/PROCESS_EXECUTE_FAILURE(失败)
+{
+	"title": "DevOps process successful",         // 消息标题
+	"content": {                                  // 消息内容
+		"kind": "PROCESS_EXECUTE_SUCCESS",        // 过程处理类型
+		"ci": "",                                 // CI操作
+		"message": {                              // 消息结果内容
+			"mojoName": "release",                // mvn操作步骤
+            "profile": "uat",                     // 分支或者环境
+            "project": "todo-parent",             // 应用名称
+            "successfulFlag": "Successful",       // 成功标识
+            "group": "ms.dew.devops.it",          // 应用group名称
+            "message":"***",                      // 错误信息
+            "throwable":"**"                      // 错误
+		}
+	}
+}
+// PROCESS_GLOBAL_ERROR(全局错误)
+{
+	"title": "DevOps process successful",         // 消息标题
+	"content": {                                  // 消息内容
+		"kind": "PROCESS_GLOBAL_ERROR",           // 过程处理类型
+		"ci": "",                                 // CI操作
+		"message": {                              // 消息结果内容
+			"error": "release",                   // 错误信息
+            "errorStackTrace": "uat"              // 错误堆栈信息
+		}
+	}
+}
+// PROCESS_SHUTDOWN(关闭)
+{
+	"title": "DevOps process successful",         // 消息标题
+	"content": {                                  // 消息内容
+		"kind": "PROCESS_SHUTDOWN",               // 过程处理类型
+		"ci": "",                                 // ci操作
+		"message": {                              // 消息结果内容
+			"successfulExecProjects": [{          // 成功的应用
+			    "groupId":"com.terran.message",   // maven groupId
+			    "artifactId":"dingtalk",          // maven artifactId
+			    "execMojos":"release",            // 执行成功的操作，多个以逗号分隔 有release(发布)、unrelease(卸载)、scale(扩容)、rollback(回滚)四种操作
+			    "name":"dingtalk"                 // maven应用名称
+			    "reason":null
+			}],
+			"failureExecProjects": [{             // 失败的应用
+                "groupId":"com.terran.message",   // maven groupId
+                "artifactId":"dingtalk",          // maven artifactId
+                "name":"dingtalk",                // maven应用名称
+                "reason":"***"                    // 失败原因
+            }],
+			"noneExecProjects": [{                // 没有执行的应用，在某一应用处理失败后后续的应用都不会被执行
+                "groupId":"com.terran.message",   // maven groupId
+                "artifactId":"dingtalk",          // maven artifactId
+                "name":"dingtalk"                 // maven应用名称
+			}],
+			"ignoreExecProjects": [{              // 忽略的应用
+                "groupId":"com.terran.message",   // maven groupId
+                "artifactId":"dingtalk",          // maven artifactId
+                "name":"dingtalk",                // maven应用名称
+                "reason":"***"                    // 忽略原因
+			}]
+		}
+	}
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="dew-devops-deploy"><a class="anchor" href="#dew-devops-deploy"></a>4.2.13. Dew DevOps 脚本部署</h4>
+<div class="paragraph">
+<p>此为Dew DevOps 的脚本 <code>dew-devops.sh</code> 部署相关说明。集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
+</div>
+<div class="sect4">
+<h5 id="before_started"><a class="anchor" href="#before_started"></a>Before Started</h5>
+<div class="paragraph">
+<p>环境准备：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>正常运行的Kubernetes集群</p>
+</li>
+<li>
+<p>安装 Helm</p>
+</li>
+<li>
+<p>可用的 Harbor 镜像仓库</p>
+</li>
+<li>
+<p>GitLab 仓库</p>
+</li>
+<li>
+<p>MinIO，并创建好对应的 bucket(用于进行Runner的缓存存储)</p>
+</li>
+<li>
+<p>DockerD（用于Runner中dew-maven-plugin进行项目镜像的打包上传拉取）</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>项目准备：</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>在项目代码中添加并配置 <code>.dew</code> 文件（详见 <a href="http://doc.dew.ms/#devops-configuration-dew">.dew 配置详情</a>）</p>
+</li>
+<li>
+<p>在项目代码中添加并配置 <code>.gitlab-ci.yml</code> 文件（参考 <a href="http://doc.dew.ms/#dew_ci_cd_gitlab_ci_%E5%AE%9E%E7%8E%B0">Gitlab CI 实现</a>）</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="使用方式"><a class="anchor" href="#使用方式"></a>使用方式</h5>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">curl -O https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/sh/dew-devops.sh
+sh dew-devops.sh</code></pre>
+</div>
+</div>
+<div class="sect5">
+<h6 id="选项介绍"><a class="anchor" href="#选项介绍"></a>选项介绍</h6>
+<div class="paragraph">
+<div class="title">Init cluster</div>
+<p>集群初始化：创建一个用于集群服务发现的 ClusterRole</p>
+</div>
+<div class="paragraph">
+<div class="title">Install Gitlab runner</div>
+<p>Gitlab runner 安装，用于配合 <a href="http://doc.dew.ms/#dew_ci_cd_gitlab_ci_%E5%AE%9E%E7%8E%B0">Gitlab CI</a>部署项目。
+此选项功能：</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>创建一个ConfigMap，用于保存Maven的settings.xml。
+创建一个Secret用于保存MinIO的key和secret。若不使用MinIO作为缓存存储，需要自行配置。
+安装Gitlab Runner,并生成gitlab-runner/gitlab-runner-helm-installation.sh，以便查看配置。</pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+若不使用MinIO作为缓存存储，请参考 <a href="https://gitlab.com/charts/gitlab-runner/blob/master/values.yaml">Gitlab Runner Chart</a>自行配置。
+</td>
+</tr>
+</table>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Gitlab Runner 部分配置参数说明：</p>
+</div>
+</blockquote>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">配置项</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">说明</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">runners.image</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">runner的默认容器镜像，为了保证能使用最新的Dew DevOps功能，建议使用dewms/devops:latest；或者也可使用基于此镜像的自定义镜像</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">runners.tags</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用于Gitlab CI 触发部署的runner的tag，此脚本中，tags和项目的profile保持一致。也可在执行脚本时自行修改。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">runners.env.dew_devops_profile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">此为指定部署项目的profile，默认与runners.tags只保持一致。可在执行脚本时自行修改。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">runners.env.dew_devops_XXX</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">更多runner.env配置项，详见： <a href="http://doc.dew.ms/#maven_%E9%85%8D%E7%BD%AE">Maven 配置</a></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<div class="title">Create a project</div>
+<p>创建项目：用于给需要部署的项目来创建一个部署的命名空间等。
+详见： <a href="http://doc.dew.ms/#%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88">创建项目</a></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="监控管理"><a class="anchor" href="#监控管理"></a>4.2.14. 监控管理</h4>
+
+</div>
+</div>
+<div class="sect2">
+<h3 id="devops-env-install"><a class="anchor" href="#devops-env-install"></a>4.3. 测试、生产环境安装配置</h3>
 <div class="admonitionblock important">
 <table>
 <tr>
@@ -4059,7 +5229,7 @@ RedisCacheManager cacheManager() {
 </table>
 </div>
 <div class="sect3">
-<h4 id="服务规划"><a class="anchor" href="#服务规划"></a>4.1.1. 服务规划</h4>
+<h4 id="服务规划"><a class="anchor" href="#服务规划"></a>4.3.1. 服务规划</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -4209,7 +5379,7 @@ RedisCacheManager cacheManager() {
 </div>
 </div>
 <div class="sect3">
-<h4 id="基础配置"><a class="anchor" href="#基础配置"></a>4.1.2. 基础配置</h4>
+<h4 id="基础配置"><a class="anchor" href="#基础配置"></a>4.3.2. 基础配置</h4>
 <div class="paragraph">
 <p><strong>以 Centos7 为例，各节点做好ssh免密互访、关闭防火墙、关闭swap、禁用SELINUX</strong></p>
 </div>
@@ -4235,7 +5405,7 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub root@k8s-X</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="docker"><a class="anchor" href="#docker"></a>4.1.3. Docker</h4>
+<h4 id="docker"><a class="anchor" href="#docker"></a>4.3.3. Docker</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -4320,7 +5490,7 @@ systemctl restart docker
 </div>
 </div>
 <div class="sect3">
-<h4 id="kubernetes"><a class="anchor" href="#kubernetes"></a>4.1.4. Kubernetes</h4>
+<h4 id="kubernetes"><a class="anchor" href="#kubernetes"></a>4.3.4. Kubernetes</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -4492,7 +5662,7 @@ data:
 </div>
 </div>
 <div class="sect3">
-<h4 id="helm"><a class="anchor" href="#helm"></a>4.1.5. Helm</h4>
+<h4 id="helm"><a class="anchor" href="#helm"></a>4.3.5. Helm</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -4547,7 +5717,7 @@ kubectl get pod -n kube-system -l app=helm</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="metrics_server"><a class="anchor" href="#metrics_server"></a>4.1.6. Metrics Server</h4>
+<h4 id="metrics_server"><a class="anchor" href="#metrics_server"></a>4.3.6. Metrics Server</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -4586,12 +5756,13 @@ kubectl top pod</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="nginx_ingress_controller"><a class="anchor" href="#nginx_ingress_controller"></a>4.1.7. Nginx Ingress Controller</h4>
+<h4 id="nginx_ingress_controller"><a class="anchor" href="#nginx_ingress_controller"></a>4.3.7. Nginx Ingress Controller</h4>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 使用如下方式将80 443暴露出来
-helm install stable/nginx-ingress --name dew-nginx --namespace ingress-nginx --version=1.4.0 \
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 不使用代理，添加 --set defaultBackend.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/defaultbackend
+# 使用如下方式将80 443暴露出来
+helm install stable/nginx-ingress --name dew-nginx --namespace nginx-ingress --version=1.4.0 \
     --set controller.kind=DaemonSet \
     --set controller.hostNetwork=true \
     --set controller.stats.enabled=true \
@@ -4601,7 +5772,7 @@ helm install stable/nginx-ingress --name dew-nginx --namespace ingress-nginx --v
 </div>
 </div>
 <div class="sect3">
-<h4 id="dashboard"><a class="anchor" href="#dashboard"></a>4.1.8. Dashboard</h4>
+<h4 id="dashboard"><a class="anchor" href="#dashboard"></a>4.3.8. Dashboard</h4>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
@@ -4634,7 +5805,7 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | gre
 </div>
 </div>
 <div class="sect3">
-<h4 id="elasticsearch"><a class="anchor" href="#elasticsearch"></a>4.1.9. Elasticsearch</h4>
+<h4 id="elasticsearch"><a class="anchor" href="#elasticsearch"></a>4.3.9. Elasticsearch</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -4643,6 +5814,7 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | gre
 </td>
 <td class="content">
 <a href="https://github.com/elastic/helm-charts/blob/master/elasticsearch" class="bare">https://github.com/elastic/helm-charts/blob/master/elasticsearch</a> 注意仔细查看各参数设值的说明。
+     * 暂不推荐Elasticsearch使用容器化。
 </td>
 </tr>
 </table>
@@ -4718,7 +5890,7 @@ helm install --name dew-elasticsearch elastic/elasticsearch --namespace devops -
 </div>
 </div>
 <div class="sect3">
-<h4 id="kibana"><a class="anchor" href="#kibana"></a>4.1.10. Kibana</h4>
+<h4 id="kibana"><a class="anchor" href="#kibana"></a>4.3.10. Kibana</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -4746,7 +5918,7 @@ kind: PersistentVolume
 metadata:
   labels:
     app: kibana
-  name: kibana
+  name: dew-kibana
 spec:
   capacity:
     storage: 10Gi
@@ -4783,9 +5955,6 @@ helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 
     --set env."ELASTICSEARCH_URL"="http://dew-elasticsearch-master:9200" \
     --set service.internalPort=5601 \
     --set ingress.enabled=true,ingress.hosts={kibana.dew.ms} \
-    --set-string ingress.annotations."kubernetes\.io/ingress\.class"=nginx \
-    --set-string ingress.annotations."kubernetes\.io/tls-acme"="true" \
-    --set ingress.tls[0].hosts={kibana.dew.ms},ingress.tls[0].secretName=kibana-certs \
     --set dashboardImport.enabled=true \
     --set dashboardImport.dashboards."k8s"="https://raw.githubusercontent.com/monotek/kibana-dashboards/master/k8s-fluentd-elasticsearch.json" \
     --set serviceAccount.create=true,serviceAccountName=kibana \
@@ -4801,7 +5970,7 @@ helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 
 </div>
 </div>
 <div class="sect3">
-<h4 id="prometheus_grafana"><a class="anchor" href="#prometheus_grafana"></a>4.1.11. Prometheus &amp;&amp; Grafana</h4>
+<h4 id="prometheus_grafana"><a class="anchor" href="#prometheus_grafana"></a>4.3.11. Prometheus &amp; Grafana</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -4916,14 +6085,21 @@ kubectl -n devops create secret generic dew-prometheus-operator-etcd \
   --from-file=/etc/kubernetes/pki/etcd/peer.crt \
   --from-file=/etc/kubernetes/pki/etcd/peer.key
 
-# 安装，不使用代理要加上 --set kube-state-metrics.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kube-state-metrics
-# 若要启用对etcd监控，需设置kubeEtcd相关参数。
-# grafana.'grafana\.ini'为Grafana的配置参数,请安装时自行修改。
-# 若 Grafana 使用StorageClass,需要进行以下配置，无需创建PV，PVC
-#   --set grafana.persistence.storageClassName="yourscname"
-#   --set grafana.persistence.size=10Gi
-#   删去此行配置：    --set grafana.persistence.existingClaim=grafana \
-#   * Alertmanager和Prometheus由于生成的PVC名字长度过长，会造成无法自动创建PV，不建议使用StorageClass
+# 安装
+# · 不使用代理要加上 --set kube-state-metrics.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kube-state-metrics
+# · 若要启用对etcd监控，需设置kubeEtcd相关参数。
+# · grafana.'grafana\.ini'为Grafana的配置参数,请安装时自行修改。
+# · 使用StorageClass
+#    - 若 Grafana 使用StorageClass，需要进行以下配置，无需创建PV，PVC
+#      --set grafana.persistence.storageClassName="yourscname"
+#      --set grafana.persistence.size=10Gi
+#      删去此行配置：    --set grafana.persistence.existingClaim=grafana \
+#    - Prometheus使用StorageClass,需要添加以下配置，无需创建PV，PVC
+#      --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.storageClassName="yourscname" \
+#    - Alertmanager和Prometheus使用StorageClass,需要添加以下配置，无需创建PVC，但因为自动生成的PVC名称过长，
+#      而无法动态创建PV，所以需要自行修改chart相关配置或指定已创建好的PV名称：
+#      --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.volumeName=prometheus-alertmanager \
+#      --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.storageClassName="yourscname" \
 helm install stable/prometheus-operator --name dew-prometheus-operator --namespace devops --version=5.0.10 \
     --set kubelet.serviceMonitor.https=true \
     --set prometheus.ingress.enabled=true \
@@ -4933,8 +6109,8 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     --set prometheusOperator.securityContext.runAsNonRoot=false \
     --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
     --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
-    --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.selector.matchLabels."component"="alertmanager" \
     --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.selector.matchLabels."component"="prometheus" \
+    --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.selector.matchLabels."component"="alertmanager" \
     --set prometheus.prometheusSpec.secrets[0]=dew-prometheus-operator-etcd \
     --set kubeEtcd.serviceMonitor.scheme=https \
     --set kubeEtcd.serviceMonitor.insecureSkipVerify=true \
@@ -4946,7 +6122,6 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     --set grafana.defaultDashboardsEnabled=true \
     --set grafana.ingress.enabled=true \
     --set grafana.ingress.hosts={grafana.dew.ms} \
-    --set grafana.ingress.tls[0].host={grafana.dew.ms},ingress.tls[0].secretName=dew-grafana \
     --set grafana.sidecar.dashboards.enabled=true \
     --set grafana.sidecar.dashboards.searchNamespace="devops"\
     --set grafana.sidecar.dashboards.label=grafana_dashboard \
@@ -4959,7 +6134,7 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     --set grafana.'grafana\.ini'.smtp.password=XXXXX \
     --set grafana.'grafana\.ini'.smtp.from_address="XXXXX@163.com" \
     --set grafana.'grafana\.ini'.smtp.skip_verify=true \
-    --set grafana.'grafana\.ini'.server.root_url="https://grafana.dew.ms" \
+    --set grafana.'grafana\.ini'.server.root_url="http://grafana.dew.ms" \
     --set grafana.persistence.enabled=true \
     --set grafana.persistence.existingClaim=grafana \
     --set prometheusOperator.nodeSelector.group=devops \
@@ -4973,7 +6148,7 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
 # grafana默认用户名：admin
 # 访问 http://prometheus.dew.ms
 # 访问 http://alertmanager.dew.ms
-# 访问 https://grafana.dew.ms</code></pre>
+# 访问 http://grafana.dew.ms</code></pre>
 </div>
 </div>
 <div class="quoteblock">
@@ -5061,6 +6236,7 @@ kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops
 2.部署项目及创建进行监控的ServiceMonitor
   注意ServiceMonitor的labels要含有Prometheus-operator创建的Prometheus的serviceMonitorSelector的label。
   详细文章：https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources
+            https://coreos.com/operators/prometheus/docs/latest/user-guides/getting-started.html
 3.Demo
   以devops-example-todo的compute模块为例创建ServiceMonitor
   link: https://github.com/dew-ms/devops-example-todo
@@ -5092,7 +6268,7 @@ kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops
 </div>
 </div>
 <div class="sect3">
-<h4 id="fluentd"><a class="anchor" href="#fluentd"></a>4.1.12. Fluentd</h4>
+<h4 id="fluentd"><a class="anchor" href="#fluentd"></a>4.3.12. Fluentd</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -5111,12 +6287,21 @@ kubectl edit statefulset prometheus-dew-prometheus-operator-prometheus -n devops
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">helm repo add kiwigrid https://kiwigrid.github.io
 
-# 安装，不使用代理要加上 --set image.tag=v2.4.0 --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/fluentd-elasticsearch
-# 若要启用Prometheus进行监控Fluentd，
-# 需要先将Fluentd通过设置service暴露出来，然后设置prometheusRule和serviceMonitor。
-# 此配置需结合Prometheus-operator使用。
-helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace devops --version=2.8.3 \
+# 安装
+# · 不使用代理要加上 --set image.tag=v2.4.0 --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/fluentd-elasticsearch
+#    如需使用最新版本镜像，可自行下载镜像源文件制作镜像
+#    地址：https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch/fluentd-es-image
+# · 镜像版本建议使用v2.5.2以上，避免一些bug。
+# · 请根据需要进行节点亲和性相关设置，但请保证需要收集日志的节点有Fluentd部署。
+#    e.g. 若只需收集部署了应用的节点的日志，设置 --set nodeSelector.group=app
+# · 通过启用configMaps.useDefaults各类型的日志配置文件，来实现各类日志的收集，默认为全部启用。
+#    更多的日志收集配置，请见：https://docs.fluentd.org
+# · 若要启用Prometheus进行监控Fluentd，
+#    需要先将Fluentd通过设置service暴露出来，然后设置prometheusRule和serviceMonitor。
+#    此配置需结合Prometheus-operator使用。
+helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace devops --version=3.0.0 \
     --set elasticsearch.host=dew-elasticsearch-master \
+    --set elasticsearch.port=9200 \
     --set elasticsearch.logstash_prefix=logstash \
     --set service.type=ClusterIP \
     --set service.ports[0].name="monitor-agent" \
@@ -5127,12 +6312,17 @@ helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace de
     --set prometheusRule.labels.release=dew-prometheus-operator \
     --set serviceMonitor.enabled=true \
     --set serviceMonitor.labels.release=dew-prometheus-operator \
-    --set nodeSelector.group=devops</code></pre>
+    --set configMaps.useDefaults.outputConf=true \
+    --set configMaps.useDefaults.containersInputConf=true \
+    --set configMaps.useDefaults.systemConf=false \
+    --set configMaps.useDefaults.systemInputConf=false \
+    --set configMaps.useDefaults.forwardInputConf=false \
+    --set configMaps.useDefaults.monitoringConf=false</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="jaeger"><a class="anchor" href="#jaeger"></a>4.1.13. Jaeger</h4>
+<h4 id="jaeger"><a class="anchor" href="#jaeger"></a>4.3.13. Jaeger</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -5178,22 +6368,33 @@ spec:
     options:
       es:
         server-urls: http://dew-elasticsearch-master:9200
+  ingress:
+    enabled: false # 用于使用下面自定义的Ingress
 EOF
 
 # Jaeger实例可在不同namespace下创建使用，使用中请注意namespace的问题。
 # 使用sidecar的方式部署项目：https://github.com/jaegertracing/jaeger-operator#auto-injection-of-jaeger-agent-sidecars
 # 使用daemonset的方式部署项目：https://github.com/jaegertracing/jaeger-operator#agent-as-daemonset
 
-# 添加Host，修改Jaeger实例的Ingress
-kubectl patch ingress jaeger-query -n devops -p "spec:
- rules:
-   - host: jaeger.dew.ms
-     http:
-       paths:
-         - backend:
-             serviceName: jaeger-query
-             servicePort: 16686
-           path: /"
+# 添加Host，为Jaeger实例创建Ingress
+# 注意serviceName与Jaeger实例创建的service名称保持一致
+cat &lt;&lt;EOF | kubectl -n devops apply -f -
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: jaeger-query
+spec:
+  rules:
+    - host: jaeger.dew.ms
+      http:
+        paths:
+          - backend:
+              serviceName: jaeger-query
+              servicePort: 16686
+            path: /
+EOF
 
 # Pod的调度
 # 目前jaeger-operator暂不支持直接设置，请关注该项目的更新情况。
@@ -5252,46 +6453,7 @@ EOF</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="devops-user-manual"><a class="anchor" href="#devops-user-manual"></a>4.2. DevOps使用手册[TBD]</h3>
-<div class="paragraph">
-<p>CI/CD</p>
-</div>
-<div class="paragraph">
-<p>通过分支变更触发</p>
-</div>
-<div class="paragraph">
-<p>初始化</p>
-</div>
-<div class="paragraph">
-<p>发布</p>
-</div>
-<div class="paragraph">
-<p>回滚</p>
-</div>
-<div class="paragraph">
-<p>删除</p>
-</div>
-<div class="paragraph">
-<p>日志查看</p>
-</div>
-<div class="paragraph">
-<p>伸缩扩展</p>
-</div>
-<div class="paragraph">
-<p>Maven配置</p>
-</div>
-<div class="paragraph">
-<p>重用版本</p>
-</div>
-<div class="paragraph">
-<p>脚本使用</p>
-</div>
-<div class="paragraph">
-<p>支持的项目类型</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="devops-configuration"><a class="anchor" href="#devops-configuration"></a>4.3. DevOps配置速查</h3>
+<h3 id="devops-configuration"><a class="anchor" href="#devops-configuration"></a>4.4. DevOps配置速查</h3>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -5312,15 +6474,15 @@ EOF</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="devops-configuration-dew"><a class="anchor" href="#devops-configuration-dew"></a>4.3.1. .dew 配置</h4>
-<div class="ulist">
+<h4 id="devops-configuration-dew"><a class="anchor" href="#devops-configuration-dew"></a>4.4.1. .dew 配置</h4>
+<div id="devops-configuration-dew-inheritance-rules" class="ulist">
 <div class="title">继承规则</div>
 <ul>
 <li>
-<p><code>.dew</code> 可放在任意子项目（模块）的根目录（与pom.xml同级）下，子项目会继承父项目的配置</p>
+<p><code>.dew</code> 可放在任意应用（模块）的根目录（与pom.xml同级）下，应用会继承项目的配置</p>
 </li>
 <li>
-<p><code>.dew</code> 支持多环境(profile)，各环境继承默认环境的配置</p>
+<p><code>.dew</code> 支持多环境(profiles)，各环境继承默认环境的配置</p>
 </li>
 </ul>
 </div>
@@ -5330,7 +6492,7 @@ EOF</code></pre>
 <pre># 项目结构
 |- moduleA
 |-  |- pom.xml
-|-  |- .dew         # 项目A配置
+|-  |- .dew         # 应用A配置
 |- pom.xml
 |- .dew             # 全局配置
 
@@ -5338,33 +6500,113 @@ EOF</code></pre>
 -
 app:
   replicas: 1
-profile:
+profiles:
   test:
     namespace: todo-test
-  prod:
-    namespace: todo-prod
+  uat:
+    namespace: todo-uat
 -
-# 项目A配置的.dew 内容:
+# 应用A配置的.dew 内容:
 -
-profile:
+profiles:
   uat:
     app:
       replicas: 2
 -
 
-# 对于项目A最终的配置为:
+# 对于应用A最终的配置为:
 -
 app:
   replicas: 1               # 继承全局配置
-profile:
+profiles:
   test:
     namespace: todo-test    # 继承全局配置
     app:
       replicas: 1           # 继承全局配置的默认环境配置
-  prod:
-    namespace: todo-prod
+  uat:
+    namespace: todo-uat
     app:
-      replicas: 2           # 使用项目A的覆写配置
+      replicas: 2           # 使用应用A的覆写配置
+-</pre>
+</div>
+</div>
+<div class="ulist">
+<div class="title">profiles 继承规则</div>
+<ul>
+<li>
+<p>若全局配置的<code>.dew</code>中配置了某一profile的参数，若想在应用B覆写全局配置的profile，则需要在应用B中设定此配置以实现覆写。</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># 项目结构
+|- moduleA
+|-  |- pom.xml
+|-  |- .dew         # 应用A配置
+|- moduleB
+|-  |- pom.xml
+|-  |- .dew         # 应用A配置
+|- pom.xml
+|- .dew             # 全局配置
+
+# 全局配置的.dew 内容:
+-
+app:
+  replicas: 1 # 全局默认配置
+profiles:
+  test:
+    namespace: todo-test
+  uat:
+    namespace: todo-uat
+    app:
+      replicas: 2 # 全局profile配置
+-
+# 应用A配置的.dew 内容:
+-
+profiles:
+  uat:
+    app:
+      replicas: 3 # 应用A的profile配置
+-
+# 应用B配置的.dew 内容:
+-
+app:
+  replicas: 4     # 应用B的默认配置
+profiles:
+  uat:
+    app:
+      replicas: 5 # 应用B的profile配置
+-
+
+# 对于应用A最终的配置为:
+-
+app:
+  replicas: 1               # 继承全局配置
+profiles:
+  test:
+    namespace: todo-test    # 继承全局配置
+    app:
+      replicas: 1           # 继承全局配置的默认环境配置
+  uat:
+    namespace: todo-uat
+    app:
+      replicas: 3           # 使用应用A的profile覆写配置
+-
+
+# 对于应用B最终的配置为:
+-
+app:
+  replicas: 4               # 使用应用B的默认配置
+profiles:
+  test:
+    namespace: todo-test    # 继承全局配置
+    app:
+      replicas: 4           # 使用应用B的默认配置
+  uat:
+    namespace: todo-uat
+    app:
+      replicas: 5           # 使用应用B的profile覆写配置
 -</pre>
 </div>
 </div>
@@ -5373,7 +6615,6 @@ profile:
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml"># 默认环境配置
 namespace: default                      # 命名空间，强烈建议修改为特定的命名空间
-kind:                                   # 项目类型，默认自动探测，也可以显式指定为 JVM_SERVICE/JVM_LIB/FRONTEND/POM
 skip: false                             # 是否跳过，为true时表示
 disableReuseVersion:                    # 是否禁用重用版本，e.g. 生产环境重用预发环境的最后一个版本（不用重新打包Docker image)
                                         # 默认情况前端工程为true（node编译期会混入环境信息导致无法重用），其它工程为false
@@ -5382,54 +6623,52 @@ reuseLastVersionFromProfile:            # 重用版本的目标环境名称
                                         # 都不存在时需要显式指定
 ignoreChangeFiles: []                   # 忽略变更文件列表，此列表指定的文件不用于是否有变更要部署的判断依据
                                         # 支持 glob , @see https://en.wikipedia.org/wiki/Glob_(programming)
-  app:                                  # 应用配置
-    replicas: 1                         # 部署的副本数
-    revisionHistoryLimit: 3             # 保留的历史版本数
-    port: 8080                          # 端口号，默认情况下前端项目为80(不可修改)，后端服务为8080
-    livenessPath: /actuator/health      # 存活检测HTTP的路径，仅用于后端服务
-    readinessPath: /actuator/health     # 可用检测HTTP的路径，仅用于后端服务
-    livenessInitialDelaySeconds: 60     # 首次存活检测延迟时间，仅用于后端服务
-    livenessPeriodSeconds: 30           # 存活检测周期，仅用于后端服务
-    livenessFailureThreshold: 6         # 存活检测失败次数阈值，超过后销毁当前实例并重启另一个实例，仅用于后端服务
-    readinessInitialDelaySeconds: 10    # 首次可用检测延迟时间，仅用于后端服务
-    readinessPeriodSeconds: 60          # 可用检测周期，仅用于后端服务
-    readinessFailureThreshold: 3        # 可用检测失败次数阈值，超过后当前实例不可用，仅用于后端服务
-    traceLogEnabled: true               # 是否启用追踪日志，仅用于后端服务
-    traceLogSpans: false                # 是否在控制台输出spans日志，仅用于后端服务
-    traceWebSkipPattern: ""             # 设置跳过追踪的接口，为空则使用官方默认值，仅用于后端服务
-    traceProbabilisticSamplingRate: 0.1 # 追踪日志概率采样比率，为1.0则使用全量采样，仅用于后端服务
-    metricsEnabled: true                # 是否启用Prometheus的metrics，仅用于后端服务
-    nodeSelector:                       # 节点亲和性配置
-      group: app                        # 默认选择标签为 group=app 的节点
-    preparePackageCmd:                  # 预打包命令
-                                        # 前端项目默认为 cd &lt;项目目录&gt; &amp;&amp; set NODE_ENV=&lt;环境名称&gt; &amp;&amp; npm install，发现不存在 node_modules 时执行
+app:                                    # 应用配置
+  replicas: 1                           # 部署的副本数
+  revisionHistoryLimit: 3               # 保留的历史版本数
+  port: 8080                            # 端口号，默认情况下前端应用为80(不可修改)，后端服务为8080
+  livenessPath: /actuator/health        # 存活检测HTTP的路径，仅用于后端服务
+  readinessPath: /actuator/health       # 可用检测HTTP的路径，仅用于后端服务
+  livenessInitialDelaySeconds: 60       # 首次存活检测延迟时间，仅用于后端服务
+  livenessPeriodSeconds: 30             # 存活检测周期，仅用于后端服务
+  livenessFailureThreshold: 6           # 存活检测失败次数阈值，超过后销毁当前实例并重启另一个实例，仅用于后端服务
+  readinessInitialDelaySeconds: 10      # 首次可用检测延迟时间，仅用于后端服务
+  readinessPeriodSeconds: 60            # 可用检测周期，仅用于后端服务
+  readinessFailureThreshold: 3          # 可用检测失败次数阈值，超过后当前实例不可用，仅用于后端服务
+  traceLogEnabled: true                 # 是否启用追踪日志，仅用于后端服务
+  traceLogSpans: false                  # 是否在控制台输出spans日志，仅用于后端服务
+  traceWebSkipPattern: ""               # 设置跳过追踪的接口，为空则使用官方默认值，仅用于后端服务
+  traceProbabilisticSamplingRate: 0.1   # 追踪日志概率采样比率，为1.0则使用全量采样，仅用于后端服务
+  metricsEnabled: true                  # 是否启用Prometheus的metrics，仅用于后端服务
+  nodeSelector:                         # 节点亲和性配置
+    group: app                          # 默认选择标签为 group=app 的节点
+  preparePackageCmd:                    # 预打包命令
+                                        # 前端应用默认为 cd &lt;应用目录&gt; &amp;&amp; set NODE_ENV=&lt;环境名称&gt; &amp;&amp; npm install，发现不存在 node_modules 时执行
                                         # 后端服务默认为空
-    packageCmd:                         # 打包命令
-                                        # 前端项目默认为 cd &lt;项目目录&gt; &amp;&amp; set NODE_ENV=&lt;环境名称&gt; npm run build:&lt;环境名称&gt;
+  packageCmd:                           # 打包命令
+                                        # 前端应用默认为 cd &lt;应用目录&gt; &amp;&amp; set NODE_ENV=&lt;环境名称&gt; npm run build:&lt;环境名称&gt;
                                         # 后端服务默认为空
-    errorCompensationPackageCmd:        # packageCmd 执行错误时的补偿命令
-                                        # 前端项目默认为 cd &lt;项目目录&gt; &amp;&amp; set NODE_ENV=&lt;环境名称&gt; npm install &amp;&amp; npm run build:&lt;环境名称&gt;
-                                        # 后端服务默认为空
-    runOptions:                         # 运行参数，可指定诸如 JVM 配置等信息
-    containerResourcesLimits:           # 容器资源上限，同Kubernetes配置
+  runOptions:                           # 运行参数，可指定诸如 JVM 配置等信息
+  serverConfig: |-                      # 服务配置，多为Nginx配置
+  containerResourcesLimits: {}          # 容器资源上限，同Kubernetes配置，值应大于等于containerResourcesRequests
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-    containerResourcesRequests:         # 容器资源下限，同Kubernetes配置
+  containerResourcesRequests: {}        # 容器资源下限，同Kubernetes配置，值应小于等于containerResourcesLimits
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-  docker:                               # Docker配置
-    host:                               # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-    registryUrl:                        # Docker Registry Url  e.g. https://harbor.dew.ms/v2
-    registryUserName:                   # Docker Registry 用户名，此项建议使用Maven方式配置
-    registryPassword:                   # Docker Registry 密码，此项建议使用Maven方式配置
-    image:                              # Docker 镜像
-                                        # 前端项目默认使用 nginx:alpine
-                                        # 后端服务项目默认使用 openjdk:8-alpine
-  kube:                                 # Kubernetes配置
-    base64Config:                       # Kubernetes Base64 后的配置，此项建议使用Maven方式配置
+docker:                                 # Docker配置
+  host:                                 # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
+  registryUrl:                          # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+  registryUserName:                     # Docker Registry 用户名，此项建议使用Maven方式配置
+  registryPassword:                     # Docker Registry 密码，此项建议使用Maven方式配置
+  image:                                # Docker 镜像
+                                        # 前端应用默认使用 nginx:alpine
+                                        # 后端服务应用默认使用 openjdk:8-alpine
+kube:                                   # Kubernetes配置
+  base64Config:                         # Kubernetes Base64 后的配置，此项建议使用Maven方式配置
                                         # 使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
-  notify:                               # 通知配置
-    type: DD                            # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
-    defaultReceivers:                   # 默认接收人列表，钉钉为手机号，邮件为邮箱
-    dndTimeReceivers:                   # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
+notifies:                               # 通知配置
+  - type: DD                            # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
+    defaultReceivers: []                # 默认接收人列表，钉钉为手机号，邮件为邮箱
+    dndTimeReceivers: []                # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
     args:                               # 不同类型的参数，邮件不需要设置
         url:                            # type=DD表示钉钉的推送地址
                                         # 说明详见：https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
@@ -5448,50 +6687,51 @@ profiles:
 </div>
 </div>
 <div class="sect3">
-<h4 id="maven_配置"><a class="anchor" href="#maven_配置"></a>4.3.2. Maven 配置</h4>
+<h4 id="maven_配置"><a class="anchor" href="#maven_配置"></a>4.4.2. Maven 配置</h4>
 <div class="listingblock">
 <div class="title">配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># ============= 公共场景使用 =============
-dew.devops.profile                           # 默认环境
-dew.devops.kube.config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
+dew_devops_profile                           # 指定的环境
+dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 # ============= 发布与回滚使用 =============
-dew.devops.docker.host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-dew.devops.docker.registry.url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
-dew.devops.docker.registry.username          # Docker Registry 用户名
-dew.devops.docker.registry.password          # Docker Registry 密码
-ew.devops.quiet
+dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
+dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+dew_devops_docker_registry_username          # Docker Registry 用户名
+dew_devops_docker_registry_password          # Docker Registry 密码
+dew_devops_assignation_projects              # 指定部署应用artifactId  多个以逗号分隔
+dew_devops_quiet                             # 是否静默处理
 # ============= 日志及调试场景使用 =============
-dew.devops.podName                           # 要使用的Pod名称
+dew_devops_podName                           # 要使用的Pod名称，如不填写当存在多个Pod时会要求用户选择
 # ============= 日志场景使用 =============
-dew.devops.log.follow                        # 是否滚动查看日志
+dew_devops_log_follow                        # 是否滚动查看日志
 # ============= 调试场景使用 =============
-dew.devops.debug.forward.port                # 转发端口标识
+dew_devops_debug_forward_port                # 转发端口标识
 # ============= 伸缩场景使用 =============
-dew.devops.scale.replicas                    # 伸缩Pod数量
-dew.devops.scale.auto                        # 是否启用自动伸缩
-dew.devops.scale.auto.minReplicas            # 自动伸缩Pod数下限
-dew.devops.scale.auto.maxReplicas            # 自动伸缩Pod数上限
-dew.devops.scale.auto.cpu.averageUtilization # 自动伸缩条件：CPU平均使用率标识</code></pre>
+dew_devops_scale_replicas                    # 伸缩Pod数量
+dew_devops_scale_auto                        # 是否启用自动伸缩
+dew_devops_scale_auto_minReplicas            # 自动伸缩Pod数下限
+dew_devops_scale_auto_maxReplicas            # 自动伸缩Pod数上限
+dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使用率标识</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="devops-best-practices"><a class="anchor" href="#devops-best-practices"></a>4.4. DevOps最佳实践[TBD]</h3>
+<h3 id="devops-best-practices"><a class="anchor" href="#devops-best-practices"></a>4.5. DevOps最佳实践</h3>
 <div class="sect3">
-<h4 id="为什么不用_fabric8"><a class="anchor" href="#为什么不用_fabric8"></a>4.4.1. 为什么不用 fabric8</h4>
+<h4 id="为什么不用_fabric8"><a class="anchor" href="#为什么不用_fabric8"></a>4.5.1. 为什么不用 fabric8</h4>
 <div class="paragraph">
 <p>Fabric8的maven插件( <a href="https://github.com/fabric8io/docker-maven-plugin" class="bare">https://github.com/fabric8io/docker-maven-plugin</a> )比较成熟，并且被 Spring Cloud Kubernetes 官方推荐( <a href="https://github.com/fabric8-quickstarts/spring-boot-ribbon" class="bare">https://github.com/fabric8-quickstarts/spring-boot-ribbon</a> )。</p>
 </div>
 <div class="paragraph">
 <p><code>dew</code> 之所以没有使用fabric8是因为设计理念有一定差异，<code>dew</code> 追求 <code>轻量化、在一定规范下的可定制化、集成化</code> ，
-比如实现了基于环境的部署流程，自动判断子项目是否需要发布、版本管理、版本重用模式、钉钉通知等，这些差异是导致自研的原因。
+比如实现了基于环境的部署流程，自动判断应用是否需要发布、版本管理、版本重用模式、钉钉通知等，这些差异是导致自研的原因。
 当然在实现上也借鉴了fabric8比较好的做法，比如JVM参数的自动化处理。</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="devops-best-practices-auth"><a class="anchor" href="#devops-best-practices-auth"></a>4.4.2. 鉴权处理</h4>
+<h4 id="devops-best-practices-auth"><a class="anchor" href="#devops-best-practices-auth"></a>4.5.2. 鉴权处理</h4>
 <div class="paragraph">
 <p>在传统的Spring Cloud工程中多使用网关（如 Zuul、Spring Cloud Gateway）做统一的认证处理，但在Kubernetes下使用了 <code>ingress</code> ，如果再加上网关会导致多了一层转发。
 并且Kubernetes使用自身的Service已经实现了网关的服务发现，所以再引入网关就显得累赘了。</p>
@@ -5501,7 +6741,7 @@ dew.devops.scale.auto.cpu.averageUtilization # 自动伸缩条件：CPU平均使
 </div>
 </div>
 <div class="sect3">
-<h4 id="统一配置处理"><a class="anchor" href="#统一配置处理"></a>4.4.3. 统一配置处理</h4>
+<h4 id="统一配置处理"><a class="anchor" href="#统一配置处理"></a>4.5.3. 统一配置处理</h4>
 <div class="paragraph">
 <p>Spring Cloud Kubernetes 实现了基于ConfigMap/Secrets的统一配置管理，但由于后者暂未解决版本化管理、自定义密钥的加解密及友好的配置编辑能力，
 故推荐使用Spring Cloud Config， <code>dew</code> 基于Spring Cloud Config封装了Chart，详见 <a href="#helm-chart-spring-cloud-config">Dew Helm Chart : Spring Cloud Config</a> 。</p>
@@ -5545,22 +6785,100 @@ dew.devops.scale.auto.cpu.averageUtilization # 自动伸缩条件：CPU平均使
 </table>
 </div>
 <div class="sect3">
-<h4 id="jvm设置"><a class="anchor" href="#jvm设置"></a>4.4.4. JVM设置</h4>
+<h4 id="jvm设置"><a class="anchor" href="#jvm设置"></a>4.5.4. JVM设置</h4>
 <div class="paragraph">
-<p>默认情况下 <code>dew</code> 会根据容器环境自行设置JVM参数，规则及自定义配置见 &lt;&lt;&gt;&gt; 。</p>
+<p>在 <code>app.runOptions</code> 配置中可以指定 JVM 的参数（比如 <code>-Xms -Xmx</code>），但同时也可以通过 <code>app.containerResourcesLimits</code> 和 <code>app.containerResourcesRequests</code> 指定容器资源的上下限，两者如何配合？</p>
+</div>
+<div class="paragraph">
+<p><code>dew</code> 推荐用户设置容器的资源限定，部署时 <code>dew</code> 会根据容器环境自行设置JVM参数，规则如下：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>-Xmx</code> 或 <code>-Xms</code> 设置</p>
+<div class="ulist">
+<ul>
+<li>
+<p>如果传入的 <code>JAVA_OPTIONS</code> 带有 <code>-Xmx</code> 或 <code>-Xms</code> 则优先使用传入设置</p>
+</li>
+<li>
+<p>如果传入了 <code>JAVA_MAX_MEM_RATIO</code> 则设置 <code>-Xmx</code> 为 <code>最大可用内存</code>/<code>JAVA_MAX_MEM_RATIO</code>， 当 <code>JAVA_MAX_MEM_RATIO</code>=50 时表示 <code>-Xmx</code> 为最大可用内存的50%</p>
+</li>
+<li>
+<p>如果没有指定 <code>JAVA_MAX_MEM_RATIO</code> 且 <code>系统内存资源</code> &#8656; 300M 则 设置 <code>-Xmx</code> 为其25%</p>
+</li>
+<li>
+<p>如果没有指定 <code>JAVA_MAX_MEM_RATIO</code> 且 <code>系统内存资源</code> &gt; 300M 则 设置 <code>-Xmx</code> 为其50%</p>
+</li>
+<li>
+<p>如果传入了 <code>JAVA_INIT_MEM_RATIO</code> 并且 <code>JAVA_INIT_MEM_RATIO</code>=0 则不设置 <code>-Xms</code></p>
+</li>
+<li>
+<p>如果传入了 <code>JAVA_INIT_MEM_RATIO</code> 并且 <code>JAVA_INIT_MEM_RATIO</code>!=0 &amp; <code>-Xmx</code> 不为空 则 设置 <code>-Xms</code> 为 <code>-Xmx</code>/<code>JAVA_INIT_MEM_RATIO</code>，当 <code>JAVA_INIT_MEM_RATIO</code>=50 时表示 <code>-Xms</code> 为 <code>-Xmx</code>的50%</p>
+</li>
+<li>
+<p>如果没有传入 <code>JAVA_INIT_MEM_RATIO</code> 则 设置 <code>JAVA_INIT_MEM_RATIO</code>=100，执行同上一步的 <code>-Xms</code> 设置规则</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>如果JDK版本 &lt; 10 设置 <code>-XX:ParallelGCThreads</code>=&lt;可用CPU核数&gt; <code>-XX:ConcGCThreads</code>=&lt;可用CPU核数&gt; <code>-Djava.util.concurrent.ForkJoinPool.common.parallelism</code>=&lt;可用CPU核数&gt;</p>
+</li>
+<li>
+<p>如果JDK版本 &lt; 10 设置 <code>-XX:+UseParallelGC</code> <code>-XX:GCTimeRatio</code>=4 <code>-XX:AdaptiveSizePolicyWeight</code>=90 <code>-XX:MinHeapFreeRatio</code>=40 <code>-XX:MaxHeapFreeRatio</code>=70</p>
+</li>
+<li>
+<p>如果JDK版本 !=7 设置 <code>-XX:+ExitOnOutOfMemoryError</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>以上规则参考于： <a href="https://github.com/fabric8io-images/run-java-sh" class="bare">https://github.com/fabric8io-images/run-java-sh</a></p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="spring_cloud_config的部署方式"><a class="anchor" href="#spring_cloud_config的部署方式"></a>4.4.5. Spring Cloud Config的部署方式</h4>
-
+<h4 id="配置中心选择"><a class="anchor" href="#配置中心选择"></a>4.5.5. 配置中心选择</h4>
+<div class="paragraph">
+<p>由于 <code>spring-cloud-kubernetes</code> 使用的配置方案并不直观、无法实现版本留存、修改审计、配置加密（非摘要），
+所以 <code>dew</code> 建议使用 <code>Spring Cloud Config</code> ，<code>dew</code> 提供了其 helm 版本，详见 <a href="#helm-chart-spring-cloud-config">Dew Helm Chart : Spring Cloud Config</a> 。</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="spring_cloud_项目的_dew_gitlab_ci_cd_实践"><a class="anchor" href="#spring_cloud_项目的_dew_gitlab_ci_cd_实践"></a>4.5.6. Spring Cloud 项目的 Dew &amp; Gitlab CI/CD 实践</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>部署 Spring Cloud 配置中心，详见 <a href="#helm-chart-spring-cloud-config">Dew Spring Cloud 配置中心部署</a>，<a href="#dew-spring-cloud-config">Dew Spring Cloud 配置中心实例</a></p>
+</li>
+<li>
+<p>在 Kubernetes 集群中执行<code>dew-devops.sh</code>脚本部署环境、创建项目，详见：<a href="#dew-devops-deploy">Dew DevOps 脚本部署</a></p>
+</li>
+<li>
+<p>在 Gitlab上 创建项目</p>
+</li>
+<li>
+<p>在项目中引入 Dew 的<code>parent-starter</code>依赖，详细请参考: <a href="#framework-quick-start-core-code-instructions">框架快速入门</a></p>
+</li>
+<li>
+<p>添加用于触发 Gitlab Runner 的<code>.gitlab-ci.yml</code>配置文件，详见：<a href="#dew-gitlab-ci">Dew Gitlab CI 实现</a></p>
+</li>
+<li>
+<p>添加 Dew Maven Plugin 支持的 Kubernetes 部署配置文件<code>.dew</code>，详见：<a href="#devops-configuration-dew">.dew 文件配置</a></p>
+</li>
+<li>
+<p><code>合并代码</code>到需要部署的分支，触发 Gitlab Runner 进行项目部署</p>
+</li>
+</ol>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="devops示例"><a class="anchor" href="#devops示例"></a>4.5. DevOps示例</h3>
+<h3 id="devops示例"><a class="anchor" href="#devops示例"></a>4.6. DevOps示例</h3>
 <div class="sect3">
-<h4 id="devops示例_helloworld后端服务"><a class="anchor" href="#devops示例_helloworld后端服务"></a>4.5.1. DevOps示例 : Helloworld后端服务</h4>
+<h4 id="devops示例_helloworld后端服务"><a class="anchor" href="#devops示例_helloworld后端服务"></a>4.6.1. DevOps示例 : Helloworld后端服务</h4>
 <div class="paragraph">
-<p>本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/</p>
+<p>本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.ms</p>
 </div>
 <div class="paragraph">
 <div class="title">说明</div>
@@ -5570,11 +6888,11 @@ dew.devops.scale.auto.cpu.averageUtilization # 自动伸缩条件：CPU平均使
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-#notify:
-  # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
-  #args:
-    # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-    #url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+notifies:
+  - type: DD
+    args:
+      # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+      url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加测试环境
   test:
@@ -5586,15 +6904,22 @@ profiles:
 <div class="title">前置准备</div>
 <ol class="arabic">
 <li>
-<p>执行 <code>dew-devops.sh</code> 初始化项目对应的test环境（详见 <a href="#devops-user-manual">DevOps使用手册[TBD]</a>）</p>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的test环境（ 详见 <a href="http://doc.dew.ms/#devops-user-manual" class="bare">http://doc.dew.ms/#devops-user-manual</a> ）</p>
 </li>
 </ol>
 </div>
 <div class="listingblock">
 <div class="title">手工执行</div>
 <div class="content">
-<pre># 执行如下maven命令(发布到test环境)
-mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
+<pre># 参数设置 (win/unix)
+SET/export dew_devops_kube_config=...
+SET/export dew_devops_docker_host=...
+SET/export dew_devops_docker_registry_url=...
+SET/export dew_devops_docker_registry_username=...
+SET/export dew_devops_docker_registry_password=...
+
+# 执行如下maven命令(发布到test环境)
+mvn -P devops dew:release -Ddew_devops_profile=test</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -5605,9 +6930,9 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="devops示例_helloworld类库"><a class="anchor" href="#devops示例_helloworld类库"></a>4.5.2. DevOps示例 : Helloworld类库</h4>
+<h4 id="devops示例_helloworld类库"><a class="anchor" href="#devops示例_helloworld类库"></a>4.6.2. DevOps示例 : Helloworld类库</h4>
 <div class="paragraph">
-<p>本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/</p>
+<p>本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.ms</p>
 </div>
 <div class="paragraph">
 <div class="title">说明</div>
@@ -5626,10 +6951,12 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
 <div class="listingblock">
 <div class="title">手工执行</div>
 <div class="content">
-<pre># 执行如下maven命令(发布到test环境)
-mvn -P devops dew:build dew:release -Ddew.devops.profile=test \
-    -Ddew.devops.it.snapshotRepository.id=&lt;私库Id，如私库需要认证则此Id对应的认证信息要添加到 settings.xml中&gt; \
-    -Ddew.devops.it.snapshotRepository.url=&lt;私库Url&gt; \</pre>
+<pre># 参数设置 (win/unix)
+SET/export dew_devops_it_snapshotRepository_id=&lt;私库Id，如私库需要认证则此Id对应的认证信息要添加到 settings.xml中&gt;
+SET/export dew_devops_it_snapshotRepository_url=&lt;私库Url&gt;
+
+# 执行如下maven命令(发布到test环境)
+mvn -P devops dew:release -Ddew_devops_profile=test</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -5640,9 +6967,9 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test \
 </div>
 </div>
 <div class="sect3">
-<h4 id="devops示例_helloworld前端"><a class="anchor" href="#devops示例_helloworld前端"></a>4.5.3. DevOps示例 : Helloworld前端</h4>
+<h4 id="devops示例_helloworld前端"><a class="anchor" href="#devops示例_helloworld前端"></a>4.6.3. DevOps示例 : Helloworld前端</h4>
 <div class="paragraph">
-<p>本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/</p>
+<p>本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.ms</p>
 </div>
 <div class="paragraph">
 <div class="title">说明</div>
@@ -5676,15 +7003,22 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test \
 <div class="title">前置准备</div>
 <ol class="arabic">
 <li>
-<p>执行 <code>dew-devops.sh</code> 初始化项目对应的test环境（详见 <a href="#devops-user-manual">DevOps使用手册[TBD]</a>）</p>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的test环境（详见 <a href="http://doc.dew.ms/#devops-user-manual" class="bare">http://doc.dew.ms/#devops-user-manual</a> ）</p>
 </li>
 </ol>
 </div>
 <div class="listingblock">
 <div class="title">手工执行</div>
 <div class="content">
-<pre># 执行如下maven命令(发布到test环境)
-mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
+<pre># 参数设置 (win/unix)
+SET/export dew_devops_kube_config=...
+SET/export dew_devops_docker_host=...
+SET/export dew_devops_docker_registry_url=...
+SET/export dew_devops_docker_registry_username=...
+SET/export dew_devops_docker_registry_password=...
+
+# 执行如下maven命令(发布到test环境)
+mvn -P devops dew:release -Ddew_devops_profile=test</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -5695,9 +7029,9 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="devops示例_to_do"><a class="anchor" href="#devops示例_to_do"></a>4.5.4. DevOps示例 : To-Do</h4>
+<h4 id="devops示例_to_do"><a class="anchor" href="#devops示例_to_do"></a>4.6.4. DevOps示例 : To-Do</h4>
 <div class="paragraph">
-<p>本示例为Dew微服务体系的组成部分，使用说明参见：https://gudaoxuri.github.io/dew/</p>
+<p>本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.ms</p>
 </div>
 <div class="paragraph">
 <div class="title">说明</div>
@@ -5716,6 +7050,9 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
 </li>
 <li>
 <p>自定义.dew文件</p>
+</li>
+<li>
+<p>自定义Docker Image</p>
 </li>
 <li>
 <p>自动化部署到Kubernetes</p>
@@ -5743,11 +7080,11 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=test</pre>
 <div class="title">/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml"># 默认通知配置，详见 Dew的通知处理模块
-#notify:
-  # type 不填写时默认使用钉钉，也可以选择 type: HTTP / MAIL
-  #args:
-    # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-    #url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
+notifies:
+  - type: DD
+    args:
+      # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+      url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加uat环境
   uat:
@@ -5775,7 +7112,8 @@ app:
 <div class="listingblock">
 <div class="title">/notifier/.dew配置说明</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">docker:
+<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">skip: true
+docker:
   # 使用自定义的Image，默认JVM类型项目的Image为openjdk:8-alpine
   image: openjdk:8</code></pre>
 </div>
@@ -5784,17 +7122,26 @@ app:
 <div class="title">前置准备</div>
 <ol class="arabic">
 <li>
-<p>执行 <code>dew-devops.sh</code> 初始化项目对应的uat和prod环境（详见 <a href="#devops-user-manual">DevOps使用手册[TBD]</a>）</p>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的uat和prod环境（详见 <a href="http://doc.dew.ms/#devops-user-manual" class="bare">http://doc.dew.ms/#devops-user-manual</a> ）</p>
 </li>
 </ol>
 </div>
 <div class="listingblock">
 <div class="title">手工执行</div>
 <div class="content">
-<pre># 执行如下maven命令(发布到uat环境)
-mvn -P devops dew:build dew:release -Ddew.devops.profile=uat
+<pre># 参数设置 (win/unix)
+SET/export dew_devops_kube_config=...
+SET/export dew_devops_docker_host=...
+SET/export dew_devops_docker_registry_url=...
+SET/export dew_devops_docker_registry_username=...
+SET/export dew_devops_docker_registry_password=...
+SET/export dew_devops_it_snapshotRepository_id=&lt;私库Id，如私库需要认证则此Id对应的认证信息要添加到 settings.xml中&gt;
+SET/export dew_devops_it_snapshotRepository_url=&lt;私库Url&gt;
+
+# 执行如下maven命令(发布到uat环境)
+mvn -P devops dew:release -Ddew_devops_profile=uat
 # 执行如下maven命令(发布到prod环境)
-mvn -P devops dew:build dew:release -Ddew.devops.profile=prod</pre>
+mvn -P devops dew:release -Ddew_devops_profile=prod</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -5851,20 +7198,25 @@ mvn -P devops dew:build dew:release -Ddew.devops.profile=prod</pre>
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-dew.devops.docker.host=tcp://10.200.131.215:2375
+dew_devops_docker_host=tcp://10.200.131.215:2375
 # Docker registry url, nullable
-dew.devops.docker.registry.url=https://harbor.trc.com/v2
+dew_devops_docker_registry_url=https://harbor.dew.ms/v2
 # Docker registry user name, nullable
-dew.devops.docker.registry.username=dew
+dew_devops_docker_registry_username=dew
 # Docker registry password, nullable
-dew.devops.docker.registry.password=Dew123456
+dew_devops_docker_registry_password=Dew123456
 # Kubernetes base64 configuration
-dew.devops.kube.config=YXBpVmVyc2lvbjogdjEKY2x1c3RlcnM6Ci0gY2x1c3RlcjoKICAgIGNlcnRpZmljYXRlLWF1dGhvcml0eS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VONVJFTkRRV0pEWjBGM1NVSkJaMGxDUVVSQlRrSm5hM0ZvYTJsSE9YY3dRa0ZSYzBaQlJFRldUVkpOZDBWUldVUldVVkZFUlhkd2NtUlhTbXdLWTIwMWJHUkhWbnBOUWpSWVJGUkZOVTFFVVhoTlZFRXpUVlJCZUU0eGIxaEVWRWsxVFVSUmQwOUVRVE5OVkVGNFRqRnZkMFpVUlZSTlFrVkhRVEZWUlFwQmVFMUxZVE5XYVZwWVNuVmFXRkpzWTNwRFEwRlRTWGRFVVZsS1MyOWFTV2gyWTA1QlVVVkNRbEZCUkdkblJWQkJSRU5EUVZGdlEyZG5SVUpCU3pWbENqUkpLekJrVG5RNVFsWm1OMWhOZWxWM2FIZGtTRlZ0WmsxWGFHdGlkelU1YVVGbmFVY3lSRGcyTTNkamNWWXhhRGswTjJ4c01rVlNRM0puWlRkM1prVUtWRklyY0ZOcVJUZGlPRWhNUlRaNE5VZEhXbkkyUkhKa1kwVnhhRFZSYzNoeUwyODVOVGxrYVNzeldYTmFNR3AwYVRSalFVNURjMGR2T0RkaFZpOUNOQXAzUmpBMmEyOXJVVU5yYlZSYVNXbG1kRWQwYW5CWlJWUkljV0phVlhwMlpYTnNRamRhY0daeWVXY3ZhWHBWVjI0M0x6VXhkVTVhZEdaclZtSkRhR0pCQ2psS1ozSnlXVFJqYTBZck1XdG5VVmxrTjFKMlRsRnVkMDQwTm5WbGJsUklhVlJaYWpONGVYVnVkbU5GYTNZd1RVNU1WV2haUXpOQ2JWcDNlVmxtTWxZS1IwaHJZbWt4VEZWa01WSlNSWFJVUTNKdWIydExPRUZ3UVV0NE4yaGpaVFpETm5OYVEwWTNWVEpvYXpWSk1qTlVUa2xJUkZGb1dGUkZka3BhTlZCbFpncFNNMDlWY0Zaak0wVkliREJPVDFGMFZ6Tk5RMEYzUlVGQllVMXFUVU5GZDBSbldVUldVakJRUVZGSUwwSkJVVVJCWjB0clRVRTRSMEV4VldSRmQwVkNDaTkzVVVaTlFVMUNRV1k0ZDBSUldVcExiMXBKYUhaalRrRlJSVXhDVVVGRVoyZEZRa0ZKZVdab1JqTmljMkZIWlRSeGQwMVdhRE14VjNCT1NTOU9URUVLZEZCc01VWkllbWxNYW5BcldVMW9MMjlyZDFKcmQzaERUbU5QWVhwRGVVUnlSbkozYVhkbE0ydG9USEExYVZwak5WTnVRMlJWUjBobVNsTjZPVEJwZWdwamNDdEViRXhQWnpKWGNUbFFObk5qTkZCV2JsaEhNRTVZUjBZMU1sSmtkRWw2Y205UE5ESkVVVWRDVTBSUGFVbHlTM2RpY25Bdk1HUTRLMWs1ZHl0WkNrSnVXVGxZZEVWNlNtOVdRMkp0YTFock5UTXlTa04xU0ZaSlVtOWpURGxUYjI1UVpIVjRNWFo0YjFJcmNuQTJRWE5VTkN0cloxRTFXbkJaVVZreVQzVUthVVJMTnpGWlFrbzBjbWxSZDBNNWJWRnJaV2RSYXpsdWFFUk9ORWhxYzIxMWJIQmFiemRJU0ZCTVZtVXZNa3BEZEhaRFUzUnVkVTFFYjNOQ1ZWRnJNZ292Ykd0b05uZzNkRlF2YWpKSU4wRldXalZMTlc5NE5FMHhPVFZ4ZEhrMFlsTmFjbmhoTWpVek5FTnpSblpJTTA1M1REZE1hMGhTYW5Sc2N6MEtMUzB0TFMxRlRrUWdRMFZTVkVsR1NVTkJWRVV0TFMwdExRbz0KICAgIHNlcnZlcjogaHR0cHM6Ly8xMC4yMDAuMTMxLjE4OjY0NDMKICBuYW1lOiBrdWJlcm5ldGVzCmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBrdWJlcm5ldGVzCiAgICB1c2VyOiBrdWJlcm5ldGVzLWFkbWluCiAgbmFtZToga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmN1cnJlbnQtY29udGV4dDoga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmtpbmQ6IENvbmZpZwpwcmVmZXJlbmNlczoge30KdXNlcnM6Ci0gbmFtZToga3ViZXJuZXRlcy1hZG1pbgogIHVzZXI6CiAgICBjbGllbnQtY2VydGlmaWNhdGUtZGF0YTogTFMwdExTMUNSVWRKVGlCRFJWSlVTVVpKUTBGVVJTMHRMUzB0Q2sxSlNVTTRha05EUVdSeFowRjNTVUpCWjBsSlJWUlZjbE5SV21kblowRjNSRkZaU2t0dldrbG9kbU5PUVZGRlRFSlJRWGRHVkVWVVRVSkZSMEV4VlVVS1FYaE5TMkV6Vm1sYVdFcDFXbGhTYkdONlFXVkdkekI0VDFSQk1FMVVSWGRPZWtWM1RWUmtZVVozTUhsTlJFRXdUVlJCZDA1NlJYZE5ha1poVFVSUmVBcEdla0ZXUW1kT1ZrSkJiMVJFYms0MVl6TlNiR0pVY0hSWldFNHdXbGhLZWsxU2EzZEdkMWxFVmxGUlJFVjRRbkprVjBwc1kyMDFiR1JIVm5wTVYwWnJDbUpYYkhWTlNVbENTV3BCVGtKbmEzRm9hMmxIT1hjd1FrRlJSVVpCUVU5RFFWRTRRVTFKU1VKRFowdERRVkZGUVhSdmFXOHdjbWxTU2k5QlkzQXhlVE1LUjBKbVkxaGhRbWhMTlRWek1EWk1ibEI2TmpCWGVEQnlkalZ6SzNWeVdVaFliWFYyU2pWVGNrVlpRbEpIWWtWdlRIcDVVemhYVW1KU01HdDFjbEJOUlFvMVpWUlpUR012UnpaeGNuVnVka1p4UjNSak4xaFJSMGN6VkVzdlJUSnNLMkkxZVdJeGEwTnliM2htTTNOelVFeFVVbVZDT0hFd1NrWm5iRmRpZEdjeUNsZElWVFJhUlZrNE1sbzVObkVyWkV4clZHaFJNRUV4YlZWMlUxRjZWMFlyU2xOaVNYbHNkVTV4VWxBMGExaHdZME16U1hKQlozcEdPWEZITkV0R1V6Z0tkM2xuUm5sRU9VUlJja3cyWkRGcE5qaDFVazR6YW10bFZYTTBNMHRDTlc4cldGcEhka05KY2tsR1owaDNXRUZhVkRkVE1ub3ZaRVJRZG5vcmFVaFdVQXBZYzFaUlIweEVkRGx4YWtwR2JYRk1WazlRZVVGelFuWlhWM0Z6VFZaTFpWSXJWbGhYYkRoSll6bG9iMFZWVkdOcmEyMXhRV0YzWkdNMlEzcEplbFJ5Q21FelNqRTRVVWxFUVZGQlFtOTVZM2RLVkVGUFFtZE9Wa2hST0VKQlpqaEZRa0ZOUTBKaFFYZEZkMWxFVmxJd2JFSkJkM2REWjFsSlMzZFpRa0pSVlVnS1FYZEpkMFJSV1VwTGIxcEphSFpqVGtGUlJVeENVVUZFWjJkRlFrRkRSVmRUYTB3MFkwRmFhekJsVnpScVMzTlhhVEV6YTAxSmJ5ODNMM3BZZG1aRWFBcGpTR05YYVdONlRqUndNRGs1T0RoVmVtbHdVak54YUZCMmVHaHhXR0pwTlRKS09WVlJOVkFyVUUxS05IRjJOamRSU1VGM1pHMXhlRXRzZFVORldqWk1DazVoYmtWRGNtZDVaek5QZW1kQ1dtaElUa3N4YUhob2VtdzBMME54YTBKTmNGbEJNSEprWWpKVlpUTlhiV05wV1hkc1EyUk9Ramw2ZVhKV01VUXZVa2tLZW5aTFYwUnJUMU5xV2pjMFVGWlpXbWh5VVdkWFJWVllPVWRGYlVsSlZXcFFZbXhsYTNKV1kyOXVTbmxpT1ZwV2VqZDNNbFZNVUVkTFkxcG1iMHBMYkFwWUt5OWhhVk5SYWs0NWRFazRRelEyYUd0aWFtTlFkalJwVHpJMmNtcFZSRTB2VDJsRWFuVlBLMnRFTjFaTlFqZHpWMjFTVFZkUWVGbFhTWE5rZG5wNUNtRk5Semd3VnpsMk9FMUpSbFJ4TjBsVVNVTTJjelowVld0aWFsUjVNMlZwVUhSM1ozUlFLMU5aZG1GRFVWRndiVFl6WnowS0xTMHRMUzFGVGtRZ1EwVlNWRWxHU1VOQlZFVXRMUzB0TFFvPQogICAgY2xpZW50LWtleS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJTVTBFZ1VGSkpWa0ZVUlNCTFJWa3RMUzB0TFFwTlNVbEZiMmRKUWtGQlMwTkJVVVZCZEc5cGJ6QnlhVkpLTDBGamNERjVNMGRDWm1OWVlVSm9TelUxY3pBMlRHNVFlall3VjNnd2NuWTFjeXQxY2xsSUNsaHRkWFpLTlZOeVJWbENVa2RpUlc5TWVubFRPRmRTWWxJd2EzVnlVRTFGTldWVVdVeGpMMGMyY1hKMWJuWkdjVWQwWXpkWVVVZEhNMVJMTDBVeWJDc0tZalY1WWpGclEzSnZlR1l6YzNOUVRGUlNaVUk0Y1RCS1JtZHNWMkowWnpKWFNGVTBXa1ZaT0RKYU9UWnhLMlJNYTFSb1VUQkJNVzFWZGxOUmVsZEdLd3BLVTJKSmVXeDFUbkZTVURScldIQmpRek5KY2tGbmVrWTVjVWMwUzBaVE9IZDVaMFo1UkRsRVVYSk1ObVF4YVRZNGRWSk9NMnByWlZWek5ETkxRalZ2Q2l0WVdrZDJRMGx5U1VablNIZFlRVnBVTjFNeWVpOWtSRkIyZWl0cFNGWlFXSE5XVVVkTVJIUTVjV3BLUm0xeFRGWlBVSGxCYzBKMlYxZHhjMDFXUzJVS1VpdFdXRmRzT0Vsak9XaHZSVlZVWTJ0cmJYRkJZWGRrWXpaRGVrbDZWSEpoTTBveE9GRkpSRUZSUVVKQmIwbENRVVV2SzJGbldWaEVjalI1T0RCMlFncFVVbWhKT1V4RmRscFJXa3B2Y1ZoS1NWcEVUU3RTZEhCSFJrRmlVMEV4Y0ZWeFpHeG9PV2hRZUdaNVoyZEhjRVJCYW5CYVZVbG9jbXMzYTFVNFJtbHdDa1V2T1hkSUwwWk1kVzlCUkUxNGIwTTRTalJqY25jMVpXRmxNSE51VTBwNmRrRTFUREIwZFRsalluSkRLMVJIYkhKeldERlNSMVJIZDJ4SFpTc3ZjMDRLTVVKMFIwYzVWMDlHYjB4Rk5tMTZSbkUwT1ZRek9EWmtORXhpTDJFMmRIbGFRV1pOZEVGYWNFaGhjRnBHZEVwYVZXOTJlRXRFZVVkWE56Rk9UMElyWWdwdWN6WlRaV2hRV1VZMU0wbGFXRGswYWk5NVJFeDNXRTVYT0ZNMmFGbEdORVpwY1RReVMyRkxlU3RFZVhKNVFrMTRVVzV4UzJaU1RsaDRRMlE0ZEhkeENuSjZWRGQwUldaQk1qVlljRllyU0hOemNVWjJVMVZEZDA1eFptbGxZbFprV25oSFdVc3dlbU5ZYnl0WWFuWlVVRlp3VTBkMlVrbHFaRlpOZFN0elNEQUtSak55VkZKNlZVTm5XVVZCTWpZeE5sTnRjbXhGWW1OTFIzbFFWRFJOUVVOVldFNVRabFJHU1RBMWJGWnRiVmRXU1RaTlRXRXlVSHBoWVRNeU4xcDFPUXBESzBwQlFYcFhTQ3RYVmpaaVZEQjVXbnBCU1Vwa05rY3JZbUZCZVhGMFVHaEdka1p6Y20xNWRXTk9lV2xzZURobVl6UkpVMHRLU3l0a2FrcHFOR0ZLQ2xKUlJsRk5UbkZ2VlhSblZXZHFVbE54WkRKNVkzcGFWRGcyTlM5VGJtWktRVVZ6U213dk9VdDBhSFpCZGpWWWIwdHBPWFJ1Tm5ORFoxbEZRVEZNWWpBS0syeE1kbWgwZVRWQmMwTkZZMGRNWTNKSlZTOWxTMUYyVHk5alJWbDNZMllyTjJ0aFZHZDJVMHN6Y0ZaVFUzcDZXWGhSUVVwa1NEYzNRWHBsWlVOT1RBcEphVlJoY1M5U2QweHlTalJrYlVkeVRYWmFhVVJZZVVWNFlUZDRjR1U0VldkQlpEQjFUV1pIYlRGbFIwdHBUelp6VmpKWFlrTkljME5EVm5sdmQyaHZDbUpLVGxwbVMwOUxObHBvVkZwaVUwZE9kSFJqVVdkaVRDdG1SM2t3U2s5amJqVmFZbXhPVFVObldVRTRaMjVvWnpkNmFsSjJSakZ2VWtkSmExVnFPVklLVDBSaVRXcFVja2RNYTBwTFIxSnJVR2tyV0hJemMyYzFiamxYV1dSWlIwcFBTRlI0WWxac1lUbFFlbGxCYW1SVUwxRk5RbWt4TkdGbmJ6ZFFVa2xxVHdweFNXazBVbXBhV1haUFJtTkJNRmN6VlZnd2RYQkxWMHRXU2tOUmJrUndUR0UyVlhaRU9IVXhjR2hrWjBab1JpOUJURmxoZW1sbmNIZDZUVVY2UTBoMENteHlNalY0U0ZKTU0xUkZiV3hMUVhsdWIxaFFjVkZMUW1kQ2JsWXZkblJKYURNNVFqTTVZazUxTUdoTVQySktZVzVPVEhsWWFYQlRXR3cwU1hnMFIzb0taMlJhYnpaVFdVOTJZakJrYTBwS1FVazJVakJXVEhwbE9EQmFNRkYyVUhGMFoxTmpjeXRPTkVka2JVaEZNWGRzVVU1UFUyaERNMlZwWTNNeGRIRXJNZ3BQUWpoYVdrczBTbVV5YjNrelRVbGxUVGszSzFnNFV6bG9ObUl4Y0c1c1NtcEdlblpKUkdkMlNVUkpRMDE1YzBkcFlsbGlWRlJ6VjJWRWJVNU9SVVJPQ2padFIzaEJiMGRCUVc5TVZEUmpOMGRJYkRaWlV6SjVRazlJWTJ4UU9FTTNZMnMwVDBFNE0xcFFRbmhGVkVzeGVua3hSblphVlcxb1ZGcDNlbmRJUlVFS1JEWTFUbWhVTW1SWlUwcFNXV3hKZFd0S1ptcEpTV0ZXWjNobVZHdGtTa0lyWlhOYWVtcHNXVkJFYTNWbVEzRmphWEY2UkZSNlptSlZSa29yYWpGMVpBcGhNbU00UlZCV2QyWTJRMWxLV2taYU1FZEpMMkp6VVN0Vk5XVnZZemN3ZW1FeVNtMUlhRVl5YTNocmRIUjZSME0zVTNNOUNpMHRMUzB0UlU1RUlGSlRRU0JRVWtsV1FWUkZJRXRGV1MwdExTMHRDZz09Cg==
+dew_devops_kube_config=YXBpVmVyc2lvbjogdjEKY2x1c3RlcnM6Ci0gY2x1c3RlcjoKICAgIGNlcnRpZmljYXRlLWF1dGhvcml0eS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJEUlZKVVNVWkpRMEZVUlMwdExTMHRDazFKU1VONVJFTkRRV0pEWjBGM1NVSkJaMGxDUVVSQlRrSm5hM0ZvYTJsSE9YY3dRa0ZSYzBaQlJFRldUVkpOZDBWUldVUldVVkZFUlhkd2NtUlhTbXdLWTIwMWJHUkhWbnBOUWpSWVJGUkZOVTFFVVhoTlZFRXpUVlJCZUU0eGIxaEVWRWsxVFVSUmQwOUVRVE5OVkVGNFRqRnZkMFpVUlZSTlFrVkhRVEZWUlFwQmVFMUxZVE5XYVZwWVNuVmFXRkpzWTNwRFEwRlRTWGRFVVZsS1MyOWFTV2gyWTA1QlVVVkNRbEZCUkdkblJWQkJSRU5EUVZGdlEyZG5SVUpCU3pWbENqUkpLekJrVG5RNVFsWm1OMWhOZWxWM2FIZGtTRlZ0WmsxWGFHdGlkelU1YVVGbmFVY3lSRGcyTTNkamNWWXhhRGswTjJ4c01rVlNRM0puWlRkM1prVUtWRklyY0ZOcVJUZGlPRWhNUlRaNE5VZEhXbkkyUkhKa1kwVnhhRFZSYzNoeUwyODVOVGxrYVNzeldYTmFNR3AwYVRSalFVNURjMGR2T0RkaFZpOUNOQXAzUmpBMmEyOXJVVU5yYlZSYVNXbG1kRWQwYW5CWlJWUkljV0phVlhwMlpYTnNRamRhY0daeWVXY3ZhWHBWVjI0M0x6VXhkVTVhZEdaclZtSkRhR0pCQ2psS1ozSnlXVFJqYTBZck1XdG5VVmxrTjFKMlRsRnVkMDQwTm5WbGJsUklhVlJaYWpONGVYVnVkbU5GYTNZd1RVNU1WV2haUXpOQ2JWcDNlVmxtTWxZS1IwaHJZbWt4VEZWa01WSlNSWFJVUTNKdWIydExPRUZ3UVV0NE4yaGpaVFpETm5OYVEwWTNWVEpvYXpWSk1qTlVUa2xJUkZGb1dGUkZka3BhTlZCbFpncFNNMDlWY0Zaak0wVkliREJPVDFGMFZ6Tk5RMEYzUlVGQllVMXFUVU5GZDBSbldVUldVakJRUVZGSUwwSkJVVVJCWjB0clRVRTRSMEV4VldSRmQwVkNDaTkzVVVaTlFVMUNRV1k0ZDBSUldVcExiMXBKYUhaalRrRlJSVXhDVVVGRVoyZEZRa0ZKZVdab1JqTmljMkZIWlRSeGQwMVdhRE14VjNCT1NTOU9URUVLZEZCc01VWkllbWxNYW5BcldVMW9MMjlyZDFKcmQzaERUbU5QWVhwRGVVUnlSbkozYVhkbE0ydG9USEExYVZwak5WTnVRMlJWUjBobVNsTjZPVEJwZWdwamNDdEViRXhQWnpKWGNUbFFObk5qTkZCV2JsaEhNRTVZUjBZMU1sSmtkRWw2Y205UE5ESkVVVWRDVTBSUGFVbHlTM2RpY25Bdk1HUTRLMWs1ZHl0WkNrSnVXVGxZZEVWNlNtOVdRMkp0YTFock5UTXlTa04xU0ZaSlVtOWpURGxUYjI1UVpIVjRNWFo0YjFJcmNuQTJRWE5VTkN0cloxRTFXbkJaVVZreVQzVUthVVJMTnpGWlFrbzBjbWxSZDBNNWJWRnJaV2RSYXpsdWFFUk9ORWhxYzIxMWJIQmFiemRJU0ZCTVZtVXZNa3BEZEhaRFUzUnVkVTFFYjNOQ1ZWRnJNZ292Ykd0b05uZzNkRlF2YWpKSU4wRldXalZMTlc5NE5FMHhPVFZ4ZEhrMFlsTmFjbmhoTWpVek5FTnpSblpJTTA1M1REZE1hMGhTYW5Sc2N6MEtMUzB0TFMxRlRrUWdRMFZTVkVsR1NVTkJWRVV0TFMwdExRbz0KICAgIHNlcnZlcjogaHR0cHM6Ly8xMC4yMDAuMTMxLjE4OjY0NDMKICBuYW1lOiBrdWJlcm5ldGVzCmNvbnRleHRzOgotIGNvbnRleHQ6CiAgICBjbHVzdGVyOiBrdWJlcm5ldGVzCiAgICB1c2VyOiBrdWJlcm5ldGVzLWFkbWluCiAgbmFtZToga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmN1cnJlbnQtY29udGV4dDoga3ViZXJuZXRlcy1hZG1pbkBrdWJlcm5ldGVzCmtpbmQ6IENvbmZpZwpwcmVmZXJlbmNlczoge30KdXNlcnM6Ci0gbmFtZToga3ViZXJuZXRlcy1hZG1pbgogIHVzZXI6CiAgICBjbGllbnQtY2VydGlmaWNhdGUtZGF0YTogTFMwdExTMUNSVWRKVGlCRFJWSlVTVVpKUTBGVVJTMHRMUzB0Q2sxSlNVTTRha05EUVdSeFowRjNTVUpCWjBsSlJWUlZjbE5SV21kblowRjNSRkZaU2t0dldrbG9kbU5PUVZGRlRFSlJRWGRHVkVWVVRVSkZSMEV4VlVVS1FYaE5TMkV6Vm1sYVdFcDFXbGhTYkdONlFXVkdkekI0VDFSQk1FMVVSWGRPZWtWM1RWUmtZVVozTUhsTlJFRXdUVlJCZDA1NlJYZE5ha1poVFVSUmVBcEdla0ZXUW1kT1ZrSkJiMVJFYms0MVl6TlNiR0pVY0hSWldFNHdXbGhLZWsxU2EzZEdkMWxFVmxGUlJFVjRRbkprVjBwc1kyMDFiR1JIVm5wTVYwWnJDbUpYYkhWTlNVbENTV3BCVGtKbmEzRm9hMmxIT1hjd1FrRlJSVVpCUVU5RFFWRTRRVTFKU1VKRFowdERRVkZGUVhSdmFXOHdjbWxTU2k5QlkzQXhlVE1LUjBKbVkxaGhRbWhMTlRWek1EWk1ibEI2TmpCWGVEQnlkalZ6SzNWeVdVaFliWFYyU2pWVGNrVlpRbEpIWWtWdlRIcDVVemhYVW1KU01HdDFjbEJOUlFvMVpWUlpUR012UnpaeGNuVnVka1p4UjNSak4xaFJSMGN6VkVzdlJUSnNLMkkxZVdJeGEwTnliM2htTTNOelVFeFVVbVZDT0hFd1NrWm5iRmRpZEdjeUNsZElWVFJhUlZrNE1sbzVObkVyWkV4clZHaFJNRUV4YlZWMlUxRjZWMFlyU2xOaVNYbHNkVTV4VWxBMGExaHdZME16U1hKQlozcEdPWEZITkV0R1V6Z0tkM2xuUm5sRU9VUlJja3cyWkRGcE5qaDFVazR6YW10bFZYTTBNMHRDTlc4cldGcEhka05KY2tsR1owaDNXRUZhVkRkVE1ub3ZaRVJRZG5vcmFVaFdVQXBZYzFaUlIweEVkRGx4YWtwR2JYRk1WazlRZVVGelFuWlhWM0Z6VFZaTFpWSXJWbGhYYkRoSll6bG9iMFZWVkdOcmEyMXhRV0YzWkdNMlEzcEplbFJ5Q21FelNqRTRVVWxFUVZGQlFtOTVZM2RLVkVGUFFtZE9Wa2hST0VKQlpqaEZRa0ZOUTBKaFFYZEZkMWxFVmxJd2JFSkJkM2REWjFsSlMzZFpRa0pSVlVnS1FYZEpkMFJSV1VwTGIxcEphSFpqVGtGUlJVeENVVUZFWjJkRlFrRkRSVmRUYTB3MFkwRmFhekJsVnpScVMzTlhhVEV6YTAxSmJ5ODNMM3BZZG1aRWFBcGpTR05YYVdONlRqUndNRGs1T0RoVmVtbHdVak54YUZCMmVHaHhXR0pwTlRKS09WVlJOVkFyVUUxS05IRjJOamRSU1VGM1pHMXhlRXRzZFVORldqWk1DazVoYmtWRGNtZDVaek5QZW1kQ1dtaElUa3N4YUhob2VtdzBMME54YTBKTmNGbEJNSEprWWpKVlpUTlhiV05wV1hkc1EyUk9Ramw2ZVhKV01VUXZVa2tLZW5aTFYwUnJUMU5xV2pjMFVGWlpXbWh5VVdkWFJWVllPVWRGYlVsSlZXcFFZbXhsYTNKV1kyOXVTbmxpT1ZwV2VqZDNNbFZNVUVkTFkxcG1iMHBMYkFwWUt5OWhhVk5SYWs0NWRFazRRelEyYUd0aWFtTlFkalJwVHpJMmNtcFZSRTB2VDJsRWFuVlBLMnRFTjFaTlFqZHpWMjFTVFZkUWVGbFhTWE5rZG5wNUNtRk5Semd3VnpsMk9FMUpSbFJ4TjBsVVNVTTJjelowVld0aWFsUjVNMlZwVUhSM1ozUlFLMU5aZG1GRFVWRndiVFl6WnowS0xTMHRMUzFGVGtRZ1EwVlNWRWxHU1VOQlZFVXRMUzB0TFFvPQogICAgY2xpZW50LWtleS1kYXRhOiBMUzB0TFMxQ1JVZEpUaUJTVTBFZ1VGSkpWa0ZVUlNCTFJWa3RMUzB0TFFwTlNVbEZiMmRKUWtGQlMwTkJVVVZCZEc5cGJ6QnlhVkpLTDBGamNERjVNMGRDWm1OWVlVSm9TelUxY3pBMlRHNVFlall3VjNnd2NuWTFjeXQxY2xsSUNsaHRkWFpLTlZOeVJWbENVa2RpUlc5TWVubFRPRmRTWWxJd2EzVnlVRTFGTldWVVdVeGpMMGMyY1hKMWJuWkdjVWQwWXpkWVVVZEhNMVJMTDBVeWJDc0tZalY1WWpGclEzSnZlR1l6YzNOUVRGUlNaVUk0Y1RCS1JtZHNWMkowWnpKWFNGVTBXa1ZaT0RKYU9UWnhLMlJNYTFSb1VUQkJNVzFWZGxOUmVsZEdLd3BLVTJKSmVXeDFUbkZTVURScldIQmpRek5KY2tGbmVrWTVjVWMwUzBaVE9IZDVaMFo1UkRsRVVYSk1ObVF4YVRZNGRWSk9NMnByWlZWek5ETkxRalZ2Q2l0WVdrZDJRMGx5U1VablNIZFlRVnBVTjFNeWVpOWtSRkIyZWl0cFNGWlFXSE5XVVVkTVJIUTVjV3BLUm0xeFRGWlBVSGxCYzBKMlYxZHhjMDFXUzJVS1VpdFdXRmRzT0Vsak9XaHZSVlZVWTJ0cmJYRkJZWGRrWXpaRGVrbDZWSEpoTTBveE9GRkpSRUZSUVVKQmIwbENRVVV2SzJGbldWaEVjalI1T0RCMlFncFVVbWhKT1V4RmRscFJXa3B2Y1ZoS1NWcEVUU3RTZEhCSFJrRmlVMEV4Y0ZWeFpHeG9PV2hRZUdaNVoyZEhjRVJCYW5CYVZVbG9jbXMzYTFVNFJtbHdDa1V2T1hkSUwwWk1kVzlCUkUxNGIwTTRTalJqY25jMVpXRmxNSE51VTBwNmRrRTFUREIwZFRsalluSkRLMVJIYkhKeldERlNSMVJIZDJ4SFpTc3ZjMDRLTVVKMFIwYzVWMDlHYjB4Rk5tMTZSbkUwT1ZRek9EWmtORXhpTDJFMmRIbGFRV1pOZEVGYWNFaGhjRnBHZEVwYVZXOTJlRXRFZVVkWE56Rk9UMElyWWdwdWN6WlRaV2hRV1VZMU0wbGFXRGswYWk5NVJFeDNXRTVYT0ZNMmFGbEdORVpwY1RReVMyRkxlU3RFZVhKNVFrMTRVVzV4UzJaU1RsaDRRMlE0ZEhkeENuSjZWRGQwUldaQk1qVlljRllyU0hOemNVWjJVMVZEZDA1eFptbGxZbFprV25oSFdVc3dlbU5ZYnl0WWFuWlVVRlp3VTBkMlVrbHFaRlpOZFN0elNEQUtSak55VkZKNlZVTm5XVVZCTWpZeE5sTnRjbXhGWW1OTFIzbFFWRFJOUVVOVldFNVRabFJHU1RBMWJGWnRiVmRXU1RaTlRXRXlVSHBoWVRNeU4xcDFPUXBESzBwQlFYcFhTQ3RYVmpaaVZEQjVXbnBCU1Vwa05rY3JZbUZCZVhGMFVHaEdka1p6Y20xNWRXTk9lV2xzZURobVl6UkpVMHRLU3l0a2FrcHFOR0ZLQ2xKUlJsRk5UbkZ2VlhSblZXZHFVbE54WkRKNVkzcGFWRGcyTlM5VGJtWktRVVZ6U213dk9VdDBhSFpCZGpWWWIwdHBPWFJ1Tm5ORFoxbEZRVEZNWWpBS0syeE1kbWgwZVRWQmMwTkZZMGRNWTNKSlZTOWxTMUYyVHk5alJWbDNZMllyTjJ0aFZHZDJVMHN6Y0ZaVFUzcDZXWGhSUVVwa1NEYzNRWHBsWlVOT1RBcEphVlJoY1M5U2QweHlTalJrYlVkeVRYWmFhVVJZZVVWNFlUZDRjR1U0VldkQlpEQjFUV1pIYlRGbFIwdHBUelp6VmpKWFlrTkljME5EVm5sdmQyaHZDbUpLVGxwbVMwOUxObHBvVkZwaVUwZE9kSFJqVVdkaVRDdG1SM2t3U2s5amJqVmFZbXhPVFVObldVRTRaMjVvWnpkNmFsSjJSakZ2VWtkSmExVnFPVklLVDBSaVRXcFVja2RNYTBwTFIxSnJVR2tyV0hJemMyYzFiamxYV1dSWlIwcFBTRlI0WWxac1lUbFFlbGxCYW1SVUwxRk5RbWt4TkdGbmJ6ZFFVa2xxVHdweFNXazBVbXBhV1haUFJtTkJNRmN6VlZnd2RYQkxWMHRXU2tOUmJrUndUR0UyVlhaRU9IVXhjR2hrWjBab1JpOUJURmxoZW1sbmNIZDZUVVY2UTBoMENteHlNalY0U0ZKTU0xUkZiV3hMUVhsdWIxaFFjVkZMUW1kQ2JsWXZkblJKYURNNVFqTTVZazUxTUdoTVQySktZVzVPVEhsWWFYQlRXR3cwU1hnMFIzb0taMlJhYnpaVFdVOTJZakJrYTBwS1FVazJVakJXVEhwbE9EQmFNRkYyVUhGMFoxTmpjeXRPTkVka2JVaEZNWGRzVVU1UFUyaERNMlZwWTNNeGRIRXJNZ3BQUWpoYVdrczBTbVV5YjNrelRVbGxUVGszSzFnNFV6bG9ObUl4Y0c1c1NtcEdlblpKUkdkMlNVUkpRMDE1YzBkcFlsbGlWRlJ6VjJWRWJVNU9SVVJPQ2padFIzaEJiMGRCUVc5TVZEUmpOMGRJYkRaWlV6SjVRazlJWTJ4UU9FTTNZMnMwVDBFNE0xcFFRbmhGVkVzeGVua3hSblphVlcxb1ZGcDNlbmRJUlVFS1JEWTFUbWhVTW1SWlUwcFNXV3hKZFd0S1ptcEpTV0ZXWjNobVZHdGtTa0lyWlhOYWVtcHNXVkJFYTNWbVEzRmphWEY2UkZSNlptSlZSa29yYWpGMVpBcGhNbU00UlZCV2QyWTJRMWxLV2taYU1FZEpMMkp6VVN0Vk5XVnZZemN3ZW1FeVNtMUlhRVl5YTNocmRIUjZSME0zVTNNOUNpMHRMUzB0UlU1RUlGSlRRU0JRVWtsV1FWUkZJRXRGV1MwdExTMHRDZz09Cg==
+# Repository id, must be filled out in version replacement mode
+# If the repository needs authentication, the authentication information corresponding to this Id should be added to settings.xml
+dew_devops_it_repository_id=dew-releases
+# Snapshot  repository url, must be filled out in version replacement mode
+dew_devops_it_repository_url=http://xx.xx.xx/nexus/content/repositories/releases/
 # Snapshot repository id, must be filled out in version replacement mode
 # If the repository needs authentication, the authentication information corresponding to this Id should be added to settings.xml
-dew.devops.it.snapshotRepository.id=trc-snapshots
+dew_devops_it_snapshotRepository_id=dew-snapshots
 # Snapshot  repository url, must be filled out in version replacement mode
-dew.devops.it.snapshotRepository.url=http://121.41.17.205:18081/nexus/content/repositories/snapshots/</code></pre>
+dew_devops_it_snapshotRepository_url=http://xx.xx.xx/nexus/content/repositories/snapshots/</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -6190,6 +7542,9 @@ helm list</pre>
 </li>
 <li>
 <p>独立通知功能到<code>notification</code></p>
+</li>
+<li>
+<p>支持kafka、MQTT的MQ实现</p>
 </li>
 <li>
 <p>支持多个Redis连接 <a href="#framework-user-manual-cluster-redis-mutli-connection">多实例支持</a></p>
@@ -7294,6 +8649,18 @@ gitlab-ctl reconfigure
 </tr>
 </table>
 </div>
+<div class="listingblock">
+<div class="title">镜像存储</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># Harbor安装步骤略过
+# 登录Harbor docker login &lt;host&gt; -u &lt;user&gt; -p &lt;password&gt;
+docker login harbor.dew.ms -u admin -p Harbor12345
+# e.g. 上传镜像
+docker pull dewms/devops:latest
+docker tag dewms/devops:latest harbor.dew.ms/dewms/devops:latest
+docker push harbor.dew.ms/dewms/devops:latest</code></pre>
+</div>
+</div>
 </div>
 <div class="sect3">
 <h4 id="dnsmasq"><a class="anchor" href="#dnsmasq"></a>6.2.7. Dnsmasq</h4>
@@ -7319,6 +8686,7 @@ systemctl start dnsmasq
 # 编辑本机的 /etc/hosts 添加映射
 -
 x.x.x.x gitlab.dew.ms
+x.x.x.x config.dew.ms
 x.x.x.x harbor.dew.ms
 x.x.x.x maven.dew.ms
 x.x.x.x minio.dew.ms
@@ -7335,16 +8703,46 @@ x.x.x.x jaeger.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
 # 编辑所有容器服务节点，加上dnsmasq节点的IP
 vi /etc/resolv.conf
 -
-nameserver x.x.x.x # IP当前节点
+nameserver x.x.x.x # IP当前节点 应放在所有nameserver的最上面
 -
 
 # TIP: 以上设置在节点重启后可能被重置，更好的做法见：
-# @see https://unix.stackexchange.com/questions/163831/nameservers-erased-after-systemctl-restart-network-service</code></pre>
+# @see https://unix.stackexchange.com/questions/163831/nameservers-erased-after-systemctl-restart-network-service
+# 方法一：
+#   修改/etc/resolv.conf之后，执行
+#   sudo chattr +i /etc/resolv.conf
+#   可以通过重启网络查看是否被重置
+#   service network restart
+#   cat /etc/resolv.conf</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="minio"><a class="anchor" href="#minio"></a>6.2.8. Minio</h4>
+<h4 id="ntpdate"><a class="anchor" href="#ntpdate"></a>6.2.8. NTPDate</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+ntpdate用于服务器间时间同步。
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 在各节点安装
+yum install -y ntp
+# 修改个节点/etc/crontab文件
+echo '*/1 * * * * root ntpdate cn.pool.ntp.org' &gt;&gt; /etc/crontab</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="minio"><a class="anchor" href="#minio"></a>6.2.9. Minio</h4>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
@@ -7382,7 +8780,7 @@ nohup ./minio server /mnt/data &amp;
 </div>
 </div>
 <div class="sect3">
-<h4 id="nfs"><a class="anchor" href="#nfs"></a>6.2.9. NFS</h4>
+<h4 id="nfs"><a class="anchor" href="#nfs"></a>6.2.10. NFS</h4>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
@@ -7420,7 +8818,7 @@ showmount -e localhost</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="glusterfs"><a class="anchor" href="#glusterfs"></a>6.2.10. GlusterFS</h4>
+<h4 id="glusterfs"><a class="anchor" href="#glusterfs"></a>6.2.11. GlusterFS</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -7492,13 +8890,18 @@ kubectl get pv,pvc</code></pre>
 <pre>curl -O https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/sh/dew-devops.sh
 sh dew-devops.sh
 # 选择对应操作，根据提示操作即可
-# 选择 1 进行集群初始化和 gitlab-runner 安装
-# 选择 2 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等</pre>
+# 选择 1 进行集群初始化
+# 选择 2 安装 Gitlab runner
+# 选择 3 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等</pre>
 </div>
 </div>
 </li>
+</ul>
+</div>
+<div id="dew-spring-cloud-config" class="ulist checklist">
+<ul class="checklist">
 <li>
-<p><input type="checkbox" data-item-complete="0"> 安装并设置Spring Cloud Config</p>
+<p><i class="fa fa-square-o"></i> 安装并设置Spring Cloud Config</p>
 <div class="literalblock">
 <div class="content">
 <pre># 添加helm库
@@ -7514,7 +8917,7 @@ kubectl -n devops edit cm custom-config
 #     config:
 #       server:
 #         git:
-#           uri: https://rep.360taihe.com/env/csp-message.git
+#           uri: https://gitlab.dew.ms/env/dew.git
 #           username: cdman
 #           password: cdman123
 #   security:
@@ -7643,7 +9046,7 @@ logging:
 </div>
 </li>
 <li>
-<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 为前端工程添加 <code>pom.xml</code> ,e.g.</p>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 为前端工程添加 <code>pom.xml</code> ，e.g.</p>
 <div class="literalblock">
 <div class="content">
 <pre>-----------------
@@ -7654,7 +9057,7 @@ logging:
   &lt;parent&gt;
     &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
-    &lt;version&gt;2.0.0-SNAPSHOT&lt;/version&gt;
+    &lt;version&gt;2.0.0-beta2&lt;/version&gt;
   &lt;/parent&gt;
   &lt;groupId&gt;ms.dew.devops.it&lt;/groupId&gt;
   &lt;artifactId&gt;todo-frontend&lt;/artifactId&gt;
@@ -7707,7 +9110,7 @@ logging:
 <p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 在项目中添加<code>.dew</code>配置，详见 <a href="#devops-configuration-dew">.dew 配置</a></p>
 <div class="literalblock">
 <div class="content">
-<pre># 在根目录添加 .dew ,至少添加 使用到的 profile 及 namespace 信息
+<pre># 在根目录添加 .dew ，至少添加 使用到的 profile 及 namespace 信息
 # e.g.
 # -----------------
 # 默认通知配置，详见 Dew的通知处理模块
@@ -7724,12 +9127,12 @@ profiles:
   prod:
     namespace: dew-prod
 # -----------------
-# （可选）根据实际情况为每个项目添加 .dew 文件以添加各项目的特殊配置</pre>
+# （可选）根据实际情况为每个应用添加 .dew 文件以添加各应用的特殊配置</pre>
 </div>
 </div>
 </li>
 <li>
-<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 在项目中添加<code>.gitlab</code>配置，详见 <a href="#devops-cicd-gitlab-template">gitlab-ci-template.yml</a>， e.g.</p>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 在项目中添加<code>.gitlab-ci.yml</code>配置，详见 <a href="#devops-cicd-gitlab-template">gitlab-ci-template.yml</a>， e.g.</p>
 <div class="literalblock">
 <div class="content">
 <pre>stages:
@@ -7746,7 +9149,7 @@ test deploy:
   tags:
     - test
   script:
-    - mvn -P devops dew:build dew:release
+    - mvn -P devops dew:release
 # 用户验收/预发环境部署
 uat deploy:
   stage: deploy
@@ -7755,7 +9158,7 @@ uat deploy:
   tags:
     - uat
   script:
-    - mvn -P devops dew:build dew:release
+    - mvn -P devops dew:release
 prod deploy: # 生产环境部署
   stage: deploy
   only:
@@ -7763,7 +9166,7 @@ prod deploy: # 生产环境部署
   tags:
     - prod
   script:
-    - mvn -P devops dew:build dew:release</pre>
+    - mvn -P devops dew:release</pre>
 </div>
 </div>
 </li>
@@ -7776,7 +9179,7 @@ prod deploy: # 生产环境部署
 <div class="sect3">
 <h4 id="dew_docker_image_集成kubectl与helm"><a class="anchor" href="#dew_docker_image_集成kubectl与helm"></a>6.4.1. Dew Docker Image : 集成Kubectl与Helm</h4>
 <div class="paragraph">
-<p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -7803,12 +9206,16 @@ helm list
 <div class="sect3">
 <h4 id="dew_docker_image_集成ci_cd能力"><a class="anchor" href="#dew_docker_image_集成ci_cd能力"></a>6.4.2. Dew Docker Image : 集成CI/CD能力</h4>
 <div class="paragraph">
-<p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre># 直接使用docker hub镜像或手工打包：
 docker build -t dewms/devops .
+或
+docker build -t dewms/devops --build-arg MAVEN_AGENT_URL=&lt;&gt; .
+
+
 
 # 测试
 docker run -it dewms/devops
@@ -7828,7 +9235,7 @@ npm version
 <div class="sect3">
 <h4 id="dew_docker_image_spring_cloud_config"><a class="anchor" href="#dew_docker_image_spring_cloud_config"></a>6.4.3. Dew Docker Image : Spring Cloud Config</h4>
 <div class="paragraph">
-<p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -7847,7 +9254,7 @@ docker run -d --name dew-spring-cloud-config \
 <div class="sect3">
 <h4 id="helm-chart-spring-cloud-config"><a class="anchor" href="#helm-chart-spring-cloud-config"></a>6.4.4. Dew Helm Chart : Spring Cloud Config</h4>
 <div class="paragraph">
-<p>本镜像为Dew微服务体系的组成部分，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="listingblock">
 <div class="title">使用</div>
@@ -7881,9 +9288,29 @@ git add --all</code></pre>
 <div class="sect2">
 <h3 id="支持的ci_cd服务"><a class="anchor" href="#支持的ci_cd服务"></a>6.5. 支持的CI/CD服务</h3>
 <div class="sect3">
-<h4 id="dew_ci_cd_gitlab_ci_实现"><a class="anchor" href="#dew_ci_cd_gitlab_ci_实现"></a>6.5.1. Dew CI/CD : Gitlab CI 实现</h4>
+<h4 id="dew-devops-maven-agent"><a class="anchor" href="#dew-devops-maven-agent"></a>6.5.1. Dew DevOps Maven Agent</h4>
 <div class="paragraph">
-<p>此为Gitlab CI上的 CI/CD 处理，集成说明参见：https://gudaoxuri.github.io/dew/</p>
+<p>本插件为Dew微服务体系的组成部分，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
+</div>
+<div class="paragraph">
+<p>Dew会动态判定应用（子模块）是否需要部署，但Maven无法在启动后动态处理应用是否跳过，
+Dew的maven插件为此做了一定要处理，但这一做法只是跳过了执行插件，并没有彻底跳过应用，详见 <a href="#devops-user-manual-release-skip">不需要部署的应用处理</a> 。</p>
+</div>
+<div class="paragraph">
+<p>本插件使用 <code>javaagent</code> 可实现彻底的跳过不需要部署的应用。</p>
+</div>
+<div class="listingblock">
+<div class="title">使用</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">SET MAVEN_OPTS=-javaagent:&lt;本插件的jar&gt;
+mvn -P devops deploy &lt;其它命令&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="dew-gitlab-ci"><a class="anchor" href="#dew-gitlab-ci"></a>6.5.2. Dew CI/CD : Gitlab CI 实现</h4>
+<div class="paragraph">
+<p>此为Gitlab CI上的 CI/CD 处理，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="olist arabic">
 <div class="title">前置准备</div>
@@ -7892,20 +9319,16 @@ git add --all</code></pre>
 <p>创建Gitlab项目</p>
 </li>
 <li>
-<p>执行 <code>dew-devops.sh</code> 初始化项目对应的各个环境（详见 <a href="#devops-user-manual">DevOps使用手册[TBD]</a>）</p>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的各个环境（详见 <a href="#devops-user-manual">DevOps使用手册</a>）</p>
 </li>
 <li>
-<p>在项目代码中添加并配置 <code>.dew</code> 文件（详见 <a href="#devops-user-manual">DevOps使用手册[TBD]</a>）</p>
+<p>在项目代码中添加并配置 <code>.dew</code> 文件（详见 <a href="#devops-user-manual">DevOps使用手册</a>）</p>
 </li>
 </ol>
 </div>
 <div class="olist arabic">
 <div class="title">核心流程</div>
 <ol class="arabic">
-<li>
-<p>确认Gitlab中的项目已启用CI
-（勾选 <a href="https://&lt;Gitlab" class="bare">https://&lt;Gitlab</a> Host&gt;/&lt;Group&gt;/&lt;Project&gt;/settings/ci_cd 中的 <code>Default to Auto DevOps pipeline</code>），</p>
-</li>
 <li>
 <p>配置 <code>.gitlab-ci.yml</code>，配置参见 <code>devops/cicd/gilabci/.gitlab-ci-template.yml</code></p>
 </li>
@@ -7965,7 +9388,7 @@ test deploy:
     - test
   script:
     # 执行的操作，可以扩展，但要保留以下代码
-    - mvn -P devops dew:build dew:release
+    - mvn -P devops dew:release
     # 可在此处添加代理
     # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.ms" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.ms"
 
@@ -7977,7 +9400,7 @@ uat deploy:
   tags:
     - uat
   script:
-    - mvn -P devops dew:build dew:release
+    - mvn -P devops dew:release
 
 prod deploy: # 生产环境部署
   stage: deploy
@@ -7989,7 +9412,7 @@ prod deploy: # 生产环境部署
     - prod
   script:
     # 执行的操作，可以扩展，但要保留以下代码
-    - mvn -P devops dew:build dew:release
+    - mvn -P devops dew:release
     # 可在此处添加代理
     # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.ms" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.ms"</code></pre>
 </div>
@@ -8001,7 +9424,7 @@ prod deploy: # 生产环境部署
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-04-30 13:37:51 CST
+Last updated 2019-07-17 17:20:12 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

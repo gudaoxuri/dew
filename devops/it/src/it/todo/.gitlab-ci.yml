@@ -13,7 +13,7 @@ uat deploy:
   tags:
     - uat
   script:
-    - mvn -P devops ms.dew:dew-maven-plugin:build ms.dew:dew-maven-plugin:release
+    - mvn -P devops dew:release
 
 prod deploy:
   stage: deploy
@@ -22,4 +22,4 @@ prod deploy:
   tags:
     - prod
   script:
-    - mvn -P devops ms.dew:dew-maven-plugin:build ms.dew:dew-maven-plugin:release
+    - mvn -P devops dew:release

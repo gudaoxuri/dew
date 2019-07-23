@@ -16,7 +16,9 @@
 
 package ms.dew.devops.kernel.config;
 
+import ms.dew.devops.kernel.util.DewLog;
 import ms.dew.notification.NotifyConfig;
+import org.slf4j.Logger;
 
 import java.util.HashSet;
 import java.util.List;
@@ -29,18 +31,24 @@ import java.util.Set;
  */
 public class DewProfile {
 
+    protected static final Logger logger = DewLog.build(DewProfile.class);
+
+    public static final String REUSE_VERSION_TYPE_LABEL = "LABEL";
+
+    public static final String REUSE_VERSION_TYPE_TAG = "TAG";
+
     // 环境名称，内部使用，不需要显式指定
     private String profile;
     // 命名空间
     private String namespace = "default";
     // 是否跳过
-    private boolean skip = false;
-    // 项目类型
-    private AppKind kind;
+    private Boolean skip = false;
     // 是否禁用重用版本，默认情况前端工程为true（node编译期会混入环境信息导致无法重用），其它工程为false
     private Boolean disableReuseVersion;
     // 重用版本的目标环境名称，默认会尝试使用 pre-prod/pre-production/uat 为名称（找到当前项目第一个存在的环境），都不存在时需要显式指定
-    private String reuseLastVersionFromProfile = "";
+    private String reuseLastVersionFromProfile;
+    // 重用版本方式，支持两中方式 LABEL(镜像打标签，默认方式) TAG(上传新tag方式)
+    private String reuseVersionType = REUSE_VERSION_TYPE_LABEL;
     // 忽略变更文件列表，此列表指定的文件不用于是否有变更要部署的判断依据
     // 支持 glob , @see https://en.wikipedia.org/wiki/Glob_(programming)
     private Set<String> ignoreChangeFiles = new HashSet<>();
@@ -72,11 +80,11 @@ public class DewProfile {
     }
 
     /**
-     * Is skip boolean.
+     * Gets skip.
      *
-     * @return the boolean
+     * @return the skip
      */
-    public boolean isSkip() {
+    public Boolean getSkip() {
         return skip;
     }
 
@@ -85,26 +93,8 @@ public class DewProfile {
      *
      * @param skip the skip
      */
-    public void setSkip(boolean skip) {
+    public void setSkip(Boolean skip) {
         this.skip = skip;
-    }
-
-    /**
-     * Gets kind.
-     *
-     * @return the kind
-     */
-    public AppKind getKind() {
-        return kind;
-    }
-
-    /**
-     * Sets kind.
-     *
-     * @param kind the kind
-     */
-    public void setKind(AppKind kind) {
-        this.kind = kind;
     }
 
     /**
@@ -159,6 +149,24 @@ public class DewProfile {
      */
     public void setReuseLastVersionFromProfile(String reuseLastVersionFromProfile) {
         this.reuseLastVersionFromProfile = reuseLastVersionFromProfile;
+    }
+
+    /**
+     * Gets reuse version type.
+     *
+     * @return the reuse version type
+     */
+    public String getReuseVersionType() {
+        return reuseVersionType;
+    }
+
+    /**
+     * Sets reuse version type.
+     *
+     * @param reuseVersionType the reuse version type
+     */
+    public void setReuseVersionType(String reuseVersionType) {
+        this.reuseVersionType = reuseVersionType;
     }
 
     /**
@@ -233,10 +241,20 @@ public class DewProfile {
         this.kube = kube;
     }
 
+    /**
+     * Gets notifies.
+     *
+     * @return the notifies
+     */
     public List<NotifyConfig> getNotifies() {
         return notifies;
     }
 
+    /**
+     * Sets notifies.
+     *
+     * @param notifies the notifies
+     */
     public void setNotifies(List<NotifyConfig> notifies) {
         this.notifies = notifies;
     }

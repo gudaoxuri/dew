@@ -17,11 +17,14 @@
 package ms.dew.core.cluster.spi.redis;
 
 import ms.dew.core.cluster.AbsClusterMQ;
+import ms.dew.core.cluster.dto.MessageWrap;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
@@ -43,7 +46,10 @@ public class RedisClusterMQ extends AbsClusterMQ {
     }
 
     @Override
-    protected boolean doPublish(String topic, String message) {
+    protected boolean doPublish(String topic, String message, Optional<Map<String, Object>> header, boolean confirm) {
+        if (confirm) {
+            throw new UnsupportedOperationException("Hazelcast doesn't support confirm mode");
+        }
         redisTemplate.execute((RedisCallback<Void>) connection -> {
             connection.publish(topic.getBytes(), message.getBytes());
             return null;
@@ -52,17 +58,20 @@ public class RedisClusterMQ extends AbsClusterMQ {
     }
 
     @Override
-    protected void doSubscribe(String topic, Consumer<String> consumer) {
+    protected void doSubscribe(String topic, Consumer<MessageWrap> consumer) {
         new Thread(() -> redisTemplate.execute((RedisCallback<Void>) connection -> {
             connection.subscribe((message, pattern) ->
-                            consumer.accept(new String(message.getBody(), StandardCharsets.UTF_8)),
+                            consumer.accept(new MessageWrap(topic, new String(message.getBody(), StandardCharsets.UTF_8))),
                     topic.getBytes());
             return null;
         })).start();
     }
 
     @Override
-    protected boolean doRequest(String address, String message) {
+    protected boolean doRequest(String address, String message, Optional<Map<String, Object>> header, boolean confirm) {
+        if (confirm) {
+            throw new UnsupportedOperationException("Hazelcast doesn't support confirm mode");
+        }
         redisTemplate.execute((RedisCallback<Void>) connection -> {
             connection.lPush(address.getBytes(), message.getBytes());
             return null;
@@ -71,7 +80,7 @@ public class RedisClusterMQ extends AbsClusterMQ {
     }
 
     @Override
-    protected void doResponse(String address, Consumer<String> consumer) {
+    protected void doResponse(String address, Consumer<MessageWrap> consumer) {
         new Thread(() -> redisTemplate.execute((RedisCallback<Void>) connection -> {
             while (!connection.isClosed()) {
                 List<byte[]> messages = connection.bRPop(30, address.getBytes());
@@ -79,9 +88,14 @@ public class RedisClusterMQ extends AbsClusterMQ {
                     continue;
                 }
                 String message = new String(messages.get(1), StandardCharsets.UTF_8);
-                consumer.accept(message);
+                consumer.accept(new MessageWrap(address, message));
             }
             return null;
         })).start();
+    }
+
+    @Override
+    public boolean supportHeader() {
+        return false;
     }
 }

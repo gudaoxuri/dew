@@ -40,7 +40,7 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
         Map<String, String> annotations = new HashMap<>();
         annotations.put(VersionController.FLAG_KUBE_RESOURCE_GIT_COMMIT, config.getGitCommit());
         annotations.put("dew.ms/scm-url", config.getScmUrl());
-        if (config.getApp().isTraceLogEnabled()) {
+        if (config.getApp().getTraceLogEnabled()) {
             annotations.put("sidecar.jaegertracing.io/inject", "true");
         }
 

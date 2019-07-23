@@ -19,7 +19,7 @@ package ms.dew.devops.kernel.util;
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.ReportHandler;
 import ms.dew.devops.kernel.exception.ProjectProcessException;
-import ms.dew.devops.kernel.Dew;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.Map;
@@ -33,6 +33,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author gudaoxuri
  */
 public class ShellHelper {
+
+    private static Logger logger = DewLog.build(ShellHelper.class);
 
     private ShellHelper() {
     }
@@ -51,19 +53,18 @@ public class ShellHelper {
 
 
     private static boolean doExecCmd(String flag, Map<String, String> env, String cmd, int retry) {
-        Dew.log.info("[" + flag + "] Exec : " + cmd);
+        logger.info("[" + flag + "] Exec : " + cmd);
         AtomicBoolean isSuccess = new AtomicBoolean(true);
         try {
-            Future<Void> execF = $.shell.execute(cmd, env, null, null, false, false, new ReportHandler() {
+            Future<Void> execF = $.shell.execute(cmd, env, null, null, false, new ReportHandler() {
                 @Override
                 public void errorlog(String line) {
-                    Dew.log.warn(line);
-                    isSuccess.set(false);
+                    logger.warn(line);
                 }
 
                 @Override
                 public void outputlog(String line) {
-                    Dew.log.debug(line);
+                    logger.info(line);
                 }
 
                 @Override
@@ -82,10 +83,10 @@ public class ShellHelper {
             // 命令执行过程错误，由上层业务判断是否抛异常
             if (retry < 3) {
                 // 重试一次
-                Dew.log.warn("[" + flag + "] Exec error : " + cmd + " , Retry  : " + (retry + 1));
+                logger.warn("[" + flag + "] Exec error : " + cmd + " , Retry  : " + (retry + 1));
                 return doExecCmd(flag, env, cmd, retry + 1);
             } else {
-                Dew.log.warn("[" + flag + "] Exec error : " + cmd);
+                logger.warn("[" + flag + "] Exec error : " + cmd);
             }
             return false;
         }

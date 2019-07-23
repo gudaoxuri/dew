@@ -94,7 +94,17 @@ dew:                                    # Dew 参数key前缀
       sdk:                              # SDK配置
           server-url:                   # 服务器地址
           white-list:                   # 白名单，逗号分隔
-
+  mw:                                   # 中间件
+    mqtt:                               # MQTT集群实现
+      broker:                           # Broker地址，e.g. tcp://127.0.0.1:1883
+      clientId: Dew_Cluster_<Cluster.instanceId>
+                                        # 连接客户端ID，注意一个集群内客户端ID必须唯一
+      persistence:                      # 存储，默认为File，可选 memory
+      userName:                         # 用户名
+      password:                         # 密码
+      timeoutSec:                       # 连接超时时间
+      keepAliveIntervalSec:             # 心跳间隔时间
+      cleanSession: true                # 是否消除Session
 
 spring:                                 # 常用 Spring 配置
   application:

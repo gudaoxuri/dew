@@ -1,5 +1,5 @@
 = Dew:一站式微服务解决方案 [2.x Building...]
-v2.0.0-SNAPSHOT
+v2.0.0-beta2
 :doctype: book
 :encoding: utf-8
 :lang: zh-CN
@@ -29,9 +29,11 @@ include::_chapter/framework/best-practices.adoc[]
 
 == 部署运维 DevOps Chapter
 
-include::_chapter/devops/install.adoc[]
+include::_chapter/devops/quick-start.adoc[]
 
 include::_chapter/devops/user-manual.adoc[]
+
+include::_chapter/devops/install.adoc[]
 
 include::_chapter/devops/configuration.adoc[]
 
@@ -75,6 +77,8 @@ include::../../../../devops/docker/dew-spring-cloud-config/readme.adoc[]
 include::../../../../devops/chart/dew-spring-cloud-config/readme.adoc[]
 
 === 支持的CI/CD服务
+
+include::../../../../devops/maven/dew-maven-agent/readme.adoc[]
 
 include::../../../../devops/cicd/gitlabci/readme.adoc[]
 

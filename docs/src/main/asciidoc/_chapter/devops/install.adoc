@@ -350,8 +350,9 @@ kubectl top pod
 .安装配置
 [source,bash]
 ----
+# 不使用代理，添加 --set defaultBackend.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/defaultbackend
 # 使用如下方式将80 443暴露出来
-helm install stable/nginx-ingress --name dew-nginx --namespace ingress-nginx --version=1.4.0 \
+helm install stable/nginx-ingress --name dew-nginx --namespace nginx-ingress --version=1.4.0 \
     --set controller.kind=DaemonSet \
     --set controller.hostNetwork=true \
     --set controller.stats.enabled=true \
@@ -394,6 +395,7 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | gre
 ==== Elasticsearch
 
 TIP: https://github.com/elastic/helm-charts/blob/master/elasticsearch 注意仔细查看各参数设值的说明。
+     * 暂不推荐Elasticsearch使用容器化。
 
 .安装配置
 [source,bash]
@@ -510,9 +512,6 @@ helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 
     --set env."ELASTICSEARCH_URL"="http://dew-elasticsearch-master:9200" \
     --set service.internalPort=5601 \
     --set ingress.enabled=true,ingress.hosts={kibana.dew.ms} \
-    --set-string ingress.annotations."kubernetes\.io/ingress\.class"=nginx \
-    --set-string ingress.annotations."kubernetes\.io/tls-acme"="true" \
-    --set ingress.tls[0].hosts={kibana.dew.ms},ingress.tls[0].secretName=kibana-certs \
     --set dashboardImport.enabled=true \
     --set dashboardImport.dashboards."k8s"="https://raw.githubusercontent.com/monotek/kibana-dashboards/master/k8s-fluentd-elasticsearch.json" \
     --set serviceAccount.create=true,serviceAccountName=kibana \
@@ -526,7 +525,7 @@ helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 
     --set nodeSelector.group=devops
 ----
 
-==== Prometheus && Grafana
+==== Prometheus & Grafana
 
 TIP: https://github.com/helm/charts/tree/master/stable/prometheus-operator
 
@@ -631,14 +630,21 @@ kubectl -n devops create secret generic dew-prometheus-operator-etcd \
   --from-file=/etc/kubernetes/pki/etcd/peer.crt \
   --from-file=/etc/kubernetes/pki/etcd/peer.key
 
-# 安装，不使用代理要加上 --set kube-state-metrics.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kube-state-metrics
-# 若要启用对etcd监控，需设置kubeEtcd相关参数。
-# grafana.'grafana\.ini'为Grafana的配置参数,请安装时自行修改。
-# 若 Grafana 使用StorageClass，需要进行以下配置，无需创建PV，PVC
-#   --set grafana.persistence.storageClassName="yourscname"
-#   --set grafana.persistence.size=10Gi
-#   删去此行配置：    --set grafana.persistence.existingClaim=grafana \
-#   * Alertmanager和Prometheus由于生成的PVC名字长度过长，会造成无法自动创建PV，不建议使用StorageClass
+# 安装
+# · 不使用代理要加上 --set kube-state-metrics.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kube-state-metrics
+# · 若要启用对etcd监控，需设置kubeEtcd相关参数。
+# · grafana.'grafana\.ini'为Grafana的配置参数,请安装时自行修改。
+# · 使用StorageClass
+#    - 若 Grafana 使用StorageClass，需要进行以下配置，无需创建PV，PVC
+#      --set grafana.persistence.storageClassName="yourscname"
+#      --set grafana.persistence.size=10Gi
+#      删去此行配置：    --set grafana.persistence.existingClaim=grafana \
+#    - Prometheus使用StorageClass,需要添加以下配置，无需创建PV，PVC
+#      --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.storageClassName="yourscname" \
+#    - Alertmanager和Prometheus使用StorageClass,需要添加以下配置，无需创建PVC，但因为自动生成的PVC名称过长，
+#      而无法动态创建PV，所以需要自行修改chart相关配置或指定已创建好的PV名称：
+#      --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.volumeName=prometheus-alertmanager \
+#      --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.storageClassName="yourscname" \
 helm install stable/prometheus-operator --name dew-prometheus-operator --namespace devops --version=5.0.10 \
     --set kubelet.serviceMonitor.https=true \
     --set prometheus.ingress.enabled=true \
@@ -648,8 +654,8 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     --set prometheusOperator.securityContext.runAsNonRoot=false \
     --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
     --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
-    --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.selector.matchLabels."component"="alertmanager" \
     --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.selector.matchLabels."component"="prometheus" \
+    --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.selector.matchLabels."component"="alertmanager" \
     --set prometheus.prometheusSpec.secrets[0]=dew-prometheus-operator-etcd \
     --set kubeEtcd.serviceMonitor.scheme=https \
     --set kubeEtcd.serviceMonitor.insecureSkipVerify=true \
@@ -661,7 +667,6 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     --set grafana.defaultDashboardsEnabled=true \
     --set grafana.ingress.enabled=true \
     --set grafana.ingress.hosts={grafana.dew.ms} \
-    --set grafana.ingress.tls[0].host={grafana.dew.ms},ingress.tls[0].secretName=dew-grafana \
     --set grafana.sidecar.dashboards.enabled=true \
     --set grafana.sidecar.dashboards.searchNamespace="devops"\
     --set grafana.sidecar.dashboards.label=grafana_dashboard \
@@ -674,7 +679,7 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     --set grafana.'grafana\.ini'.smtp.password=XXXXX \
     --set grafana.'grafana\.ini'.smtp.from_address="XXXXX@163.com" \
     --set grafana.'grafana\.ini'.smtp.skip_verify=true \
-    --set grafana.'grafana\.ini'.server.root_url="https://grafana.dew.ms" \
+    --set grafana.'grafana\.ini'.server.root_url="http://grafana.dew.ms" \
     --set grafana.persistence.enabled=true \
     --set grafana.persistence.existingClaim=grafana \
     --set prometheusOperator.nodeSelector.group=devops \
@@ -688,7 +693,7 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
 # grafana默认用户名：admin
 # 访问 http://prometheus.dew.ms
 # 访问 http://alertmanager.dew.ms
-# 访问 https://grafana.dew.ms
+# 访问 http://grafana.dew.ms
 ----
 
 .常见问题
@@ -739,6 +744,7 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
   2.部署项目及创建进行监控的ServiceMonitor
     注意ServiceMonitor的labels要含有Prometheus-operator创建的Prometheus的serviceMonitorSelector的label。
     详细文章：https://github.com/coreos/prometheus-operator/blob/master/Documentation/user-guides/getting-started.md#related-resources
+              https://coreos.com/operators/prometheus/docs/latest/user-guides/getting-started.html
   3.Demo
     以devops-example-todo的compute模块为例创建ServiceMonitor
     link: https://github.com/dew-ms/devops-example-todo
@@ -777,14 +783,21 @@ TIP: https://github.com/kiwigrid/helm-charts/tree/master/charts/fluentd-elastics
 ----
 helm repo add kiwigrid https://kiwigrid.github.io
 
-# 安装，不使用代理要加上 --set image.tag=v2.4.0 --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/fluentd-elasticsearch
-# 请根据需要进行节点亲和性相关设置，但请保证需要收集日志的节点有Fluentd部署。
-# e.g. 只收集部署了应用的节点的日志，设置 --set nodeSelector.group=app
-# 若要启用Prometheus进行监控Fluentd，
-# 需要先将Fluentd通过设置service暴露出来，然后设置prometheusRule和serviceMonitor。
-# 此配置需结合Prometheus-operator使用。
-helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace devops --version=2.8.3 \
+# 安装
+# · 不使用代理要加上 --set image.tag=v2.4.0 --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/fluentd-elasticsearch
+#    如需使用最新版本镜像，可自行下载镜像源文件制作镜像
+#    地址：https://github.com/kubernetes/kubernetes/tree/master/cluster/addons/fluentd-elasticsearch/fluentd-es-image
+# · 镜像版本建议使用v2.5.2以上，避免一些bug。
+# · 请根据需要进行节点亲和性相关设置，但请保证需要收集日志的节点有Fluentd部署。
+#    e.g. 若只需收集部署了应用的节点的日志，设置 --set nodeSelector.group=app
+# · 通过启用configMaps.useDefaults各类型的日志配置文件，来实现各类日志的收集，默认为全部启用。
+#    更多的日志收集配置，请见：https://docs.fluentd.org
+# · 若要启用Prometheus进行监控Fluentd，
+#    需要先将Fluentd通过设置service暴露出来，然后设置prometheusRule和serviceMonitor。
+#    此配置需结合Prometheus-operator使用。
+helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace devops --version=3.0.0 \
     --set elasticsearch.host=dew-elasticsearch-master \
+    --set elasticsearch.port=9200 \
     --set elasticsearch.logstash_prefix=logstash \
     --set service.type=ClusterIP \
     --set service.ports[0].name="monitor-agent" \
@@ -795,6 +808,12 @@ helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace de
     --set prometheusRule.labels.release=dew-prometheus-operator \
     --set serviceMonitor.enabled=true \
     --set serviceMonitor.labels.release=dew-prometheus-operator \
+    --set configMaps.useDefaults.outputConf=true \
+    --set configMaps.useDefaults.containersInputConf=true \
+    --set configMaps.useDefaults.systemConf=false \
+    --set configMaps.useDefaults.systemInputConf=false \
+    --set configMaps.useDefaults.forwardInputConf=false \
+    --set configMaps.useDefaults.monitoringConf=false
 ----
 
 ==== Jaeger
@@ -834,22 +853,33 @@ spec:
     options:
       es:
         server-urls: http://dew-elasticsearch-master:9200
+  ingress:
+    enabled: false # 用于使用下面自定义的Ingress
 EOF
 
 # Jaeger实例可在不同namespace下创建使用，使用中请注意namespace的问题。
 # 使用sidecar的方式部署项目：https://github.com/jaegertracing/jaeger-operator#auto-injection-of-jaeger-agent-sidecars
 # 使用daemonset的方式部署项目：https://github.com/jaegertracing/jaeger-operator#agent-as-daemonset
 
-# 添加Host，修改Jaeger实例的Ingress
-kubectl patch ingress jaeger-query -n devops -p "spec:
- rules:
-   - host: jaeger.dew.ms
-     http:
-       paths:
-         - backend:
-             serviceName: jaeger-query
-             servicePort: 16686
-           path: /"
+# 添加Host，为Jaeger实例创建Ingress
+# 注意serviceName与Jaeger实例创建的service名称保持一致
+cat <<EOF | kubectl -n devops apply -f -
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: jaeger-query
+spec:
+  rules:
+    - host: jaeger.dew.ms
+      http:
+        paths:
+          - backend:
+              serviceName: jaeger-query
+              servicePort: 16686
+            path: /
+EOF
 
 # Pod的调度
 # 目前jaeger-operator暂不支持直接设置，请关注该项目的更新情况。

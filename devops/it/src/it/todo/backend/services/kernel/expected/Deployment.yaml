@@ -35,8 +35,8 @@ spec:
       - env:
         - name: JAVA_OPTIONS
           value: ' -Dspring.profiles.active=prod -Dserver.port=8080 -Dopentracing.jaeger.log-spans=false
-            -Dopentracing.jaeger.probabilistic-sampler.sampling-rate=0.1 -Dmanagement.endpoints.web.exposure.include=*
-            -Dmetrics.tags:application=${spring.application.name}'
+            -Dopentracing.jaeger.probabilistic-sampler.sampling-rate=0.1 -Dopentracing.spring.web.skip-pattern=/api-docs.*|/swagger.*|.*\\.png|.*\\.css|.*\\.js|.*\\.html|/favicon.ico|/hystrix.stream|/actuator.*
+            -Dmanagement.endpoints.web.exposure.include=* -Dmanagement.metrics.tags.application=kernel'
         image: "@ignore@"
         imagePullPolicy: IfNotPresent
         livenessProbe:
