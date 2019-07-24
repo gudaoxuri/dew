@@ -22,7 +22,9 @@ import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.function.VersionController;
 import ms.dew.devops.kernel.helper.KubeRES;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -74,6 +76,17 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                 .withResources(new V1ResourceRequirements()
                         .requests(config.getApp().getContainerResourcesRequests())
                         .limits(config.getApp().getContainerResourcesLimits()));
+        if (!config.getApp().getVolumeMounts().isEmpty()) {
+            // 装配volumeMounts配置
+            containerBuilder.withVolumeMounts(new ArrayList<V1VolumeMount>() {
+                {
+                    config.getApp().getVolumeMounts().forEach(map -> add(new V1VolumeMountBuilder()
+                            .withMountPath(map.get("mountPath"))
+                            .withName(map.get("name")).build())
+                    );
+                }
+            });
+        }
         Map<String, String> env = config.getAppKindPlugin().getEnv(config);
         config.getDeployPlugin().getEnv(config).forEach((k, v) -> {
             if (env.containsKey(k)) {
@@ -91,6 +104,18 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                             .build()
             ).collect(Collectors.toList()));
         }
+        // 装配volume配置
+        List<V1Volume> volumes = null;
+        if (!config.getApp().getVolumes().isEmpty()) {
+             volumes = new ArrayList<V1Volume>() {{
+                config.getApp().getVolumes().forEach(map -> add(new V1VolumeBuilder()
+                        .withName(map.get("name"))
+                        .withPersistentVolumeClaim(new V1PersistentVolumeClaimVolumeSource().claimName(map.get("claimName")))
+                        .build())
+                );
+            }};
+        }
+
         if (config.getApp().getHealthCheckEnabled()) {
             containerBuilder.withLivenessProbe(new V1ProbeBuilder()
                     .withHttpGet(new V1HTTPGetActionBuilder()
@@ -136,6 +161,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                                 .withSpec(new V1PodSpecBuilder()
                                         .withContainers(containerBuilder.build())
                                         .withNodeSelector(nodeSelectors)
+                                        .withVolumes(volumes)
                                         .build())
                                 .build())
                         .build())
