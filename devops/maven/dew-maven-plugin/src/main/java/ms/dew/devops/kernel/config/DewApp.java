@@ -18,7 +18,9 @@ package ms.dew.devops.kernel.config;
 
 import io.kubernetes.client.custom.Quantity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -66,6 +68,10 @@ public class DewApp {
     // 节点亲和性配置
     // 默认选择标签为 group=app 的节点
     private Map<String, String> nodeSelector = new HashMap<>();
+    // volumeAmounts配置 不填写名称默认为namespace
+    private List<Map<String, String>> volumeMounts = new ArrayList<>();
+    // volume配置
+    private List<Map<String, String>> volumes = new ArrayList<>();
     // 预打包命令
     // 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> && npm install，发现不存在 node_modules 时执行
     // 后端服务默认为空
@@ -397,6 +403,42 @@ public class DewApp {
      */
     public void setNodeSelector(Map<String, String> nodeSelector) {
         this.nodeSelector = nodeSelector;
+    }
+
+    /**
+     * Gets volume mounts.
+     *
+     * @return the volume mounts
+     */
+    public List<Map<String, String>> getVolumeMounts() {
+        return volumeMounts;
+    }
+
+    /**
+     * Sets volume mounts.
+     *
+     * @param volumeMounts the volume mounts
+     */
+    public void setVolumeMounts(List<Map<String, String>> volumeMounts) {
+        this.volumeMounts = volumeMounts;
+    }
+
+    /**
+     * Gets volumes.
+     *
+     * @return the volumes
+     */
+    public List<Map<String, String>> getVolumes() {
+        return volumes;
+    }
+
+    /**
+     * Sets volumes.
+     *
+     * @param volumes the volumes
+     */
+    public void setVolumes(List<Map<String, String>> volumes) {
+        this.volumes = volumes;
     }
 
     /**
