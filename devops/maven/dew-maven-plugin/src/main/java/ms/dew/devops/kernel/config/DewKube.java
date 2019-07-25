@@ -23,7 +23,7 @@ package ms.dew.devops.kernel.config;
  */
 public class DewKube {
 
-    // Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
+    // Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
     private String base64Config = "";
 
     /**

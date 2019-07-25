@@ -40,7 +40,7 @@ GITLAB_RUNNER_IMAGE=dewms/devops:2.0.0-beta2
 GITLAB_RUNNER_REG_TOKEN=3mezus8cX9qAjkrNY4B
 GITLAB_RUNNER_PROFILE=test
 
-KUBERNETES_CONFIG=$(echo $( < ~/.kube/config | base64 <~/.kube/config) | tr -d " ")
+KUBERNETES_CONFIG=$(echo $(base64 < /etc/kubernetes/admin.conf) |  tr -d " ")
 INGRESS_HOST_EXAMPLE="test.dew.ms/api user-service:8080"
 
 # ------------------
