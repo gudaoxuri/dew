@@ -92,6 +92,9 @@ public class JvmServiceSpringBootAppKindPlugin implements AppKindPlugin {
         if (projectConfig.getApp().getHealthCheckEnabled() == null) {
             projectConfig.getApp().setHealthCheckEnabled(true);
         }
+        if (projectConfig.getApp().getHealthCheckEnabled() && projectConfig.getApp().getHealthCheckPort() == null) {
+            projectConfig.getApp().setHealthCheckPort(projectConfig.getApp().getPort());
+        }
         if (projectConfig.getApp().getTraceLogEnabled() == null) {
             projectConfig.getApp().setTraceLogEnabled(true);
         }

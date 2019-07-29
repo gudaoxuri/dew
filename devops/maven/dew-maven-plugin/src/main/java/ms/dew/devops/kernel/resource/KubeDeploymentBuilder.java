@@ -64,15 +64,30 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
 
         V1ResourceRequirements re = new V1ResourceRequirements();
         re.setRequests(config.getApp().getContainerResourcesRequests());
+
+        List<V1ContainerPort> ports = new ArrayList<>();
+        ports.add(new V1ContainerPortBuilder()
+                .withContainerPort(config.getApp().getPort())
+                .withName("http")
+                .withProtocol("TCP")
+                .build());
+        if (config.getApp().getExtendedPorts() != null) {
+            config.getApp().getExtendedPorts().forEach(port -> {
+                if (port.getName() == null || port.getName().isEmpty()) {
+                    port.setName("http-" + port.getContainerPort());
+                }
+                if (port.getProtocol() == null || port.getProtocol().isEmpty()) {
+                    port.setProtocol("TCP");
+                }
+                ports.add(port);
+            });
+        }
+
         V1ContainerBuilder containerBuilder = new V1ContainerBuilder()
                 .withName(FLAG_CONTAINER_NAME)
                 .withImage(config.getCurrImageName())
                 .withImagePullPolicy("IfNotPresent")
-                .withPorts(new V1ContainerPortBuilder()
-                        .withContainerPort(config.getApp().getPort())
-                        .withName("http")
-                        .withProtocol("TCP")
-                        .build())
+                .withPorts(ports)
                 .withResources(new V1ResourceRequirements()
                         .requests(config.getApp().getContainerResourcesRequests())
                         .limits(config.getApp().getContainerResourcesLimits()));
@@ -107,7 +122,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         // 装配volume配置
         List<V1Volume> volumes = null;
         if (!config.getApp().getVolumes().isEmpty()) {
-             volumes = new ArrayList<V1Volume>() {{
+            volumes = new ArrayList<V1Volume>() {{
                 config.getApp().getVolumes().forEach(map -> add(new V1VolumeBuilder()
                         .withName(map.get("name"))
                         .withPersistentVolumeClaim(new V1PersistentVolumeClaimVolumeSource().claimName(map.get("claimName")))
@@ -120,7 +135,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
             containerBuilder.withLivenessProbe(new V1ProbeBuilder()
                     .withHttpGet(new V1HTTPGetActionBuilder()
                             .withPath(config.getApp().getLivenessPath())
-                            .withPort(new IntOrString(config.getApp().getPort()))
+                            .withPort(new IntOrString(config.getApp().getHealthCheckPort()))
                             .withScheme("HTTP")
                             .build())
                     .withInitialDelaySeconds(config.getApp().getLivenessInitialDelaySeconds())
@@ -130,7 +145,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                     .withReadinessProbe(new V1ProbeBuilder()
                             .withHttpGet(new V1HTTPGetActionBuilder()
                                     .withPath(config.getApp().getReadinessPath())
-                                    .withPort(new IntOrString(config.getApp().getPort()))
+                                    .withPort(new IntOrString(config.getApp().getHealthCheckPort()))
                                     .withScheme("HTTP")
                                     .build())
                             .withInitialDelaySeconds(config.getApp().getReadinessInitialDelaySeconds())

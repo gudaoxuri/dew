@@ -17,6 +17,7 @@
 package ms.dew.devops.kernel.config;
 
 import io.kubernetes.client.custom.Quantity;
+import io.kubernetes.client.models.V1ContainerPort;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,8 +37,12 @@ public class DewApp {
     private Integer revisionHistoryLimit = 3;
     // 端口号，默认情况下前端项目为80(不可修改)，后端服务为8080
     private Integer port;
+    // 扩展端口，仅用于后端服务
+    private List<V1ContainerPort> extendedPorts;
     // 是否启用健康监控，仅用于后端服务
     private Boolean healthCheckEnabled;
+    // 健康检查使用端口，仅用于后端服务
+    private Integer healthCheckPort;
     // 存活检测HTTP的路径，仅用于后端服务
     private String livenessPath;
     // 可用检测HTTP的路径，仅用于后端服务
@@ -145,10 +150,56 @@ public class DewApp {
         this.port = port;
     }
 
+    /**
+     * Gets extended ports.
+     *
+     * @return the extendedPorts
+     */
+    public List<V1ContainerPort> getExtendedPorts() {
+        return extendedPorts;
+    }
+
+    /**
+     * Sets extended ports.
+     *
+     * @param extendedPorts the extendedPorts
+     */
+    public void setExtendedPorts(List<V1ContainerPort> extendedPorts) {
+        this.extendedPorts = extendedPorts;
+    }
+
+    /**
+     * Gets health check port.
+     *
+     * @return the healthCheckPort
+     */
+    public Integer getHealthCheckPort() {
+        return healthCheckPort;
+    }
+
+    /**
+     * Sets health check port.
+     *
+     * @param healthCheckPort the healthCheckPort
+     */
+    public void setHealthCheckPort(Integer healthCheckPort) {
+        this.healthCheckPort = healthCheckPort;
+    }
+
+    /**
+     * Gets health check enabled.
+     *
+     * @return the healthCheckEnabled
+     */
     public Boolean getHealthCheckEnabled() {
         return healthCheckEnabled;
     }
 
+    /**
+     * Sets health check enabled.
+     *
+     * @param healthCheckEnabled the healthCheckEnabled
+     */
     public void setHealthCheckEnabled(Boolean healthCheckEnabled) {
         this.healthCheckEnabled = healthCheckEnabled;
     }
