@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.plugin.appkind.frontend_node;
+package ms.dew.devops.kernel.plugin.appkind.frontend.node_native;
 
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
@@ -32,15 +32,15 @@ import java.util.Map;
 
 
 /**
- * Node frontend app kind plugin.
+ * Native Node frontend app kind plugin.
  *
- * @author gudaoxuri
+ * @author Liuhongcheng
  */
-public class FrontendNodeAppKindPlugin implements AppKindPlugin {
+public class FrontendNativeNodeAppKindPlugin implements AppKindPlugin {
 
     @Override
     public String getName() {
-        return "Node Frontend";
+        return "Native Node Frontend";
     }
 
     @Override
@@ -58,12 +58,12 @@ public class FrontendNodeAppKindPlugin implements AppKindPlugin {
 
     @Override
     public BasicFlow prepareFlow() {
-        return new FrontendNodePrepareFlow();
+        return new FrontendNativeNodePrepareFlow();
     }
 
     @Override
     public BasicFlow buildFlow() {
-        return new FrontendNodeBuildFlow();
+        return new FrontendNativeNodeBuildFlow();
     }
 
     @Override

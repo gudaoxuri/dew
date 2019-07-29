@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.plugin.appkind.frontend_node;
+package ms.dew.devops.kernel.plugin.appkind.frontend.node_non_natvie;
 
 import com.ecfront.dew.common.$;
 import ms.dew.devops.kernel.DevOps;
@@ -24,13 +24,15 @@ import ms.dew.devops.kernel.flow.release.DockerBuildFlow;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Node frontend build flow.
  *
  * @author gudaoxuri
  */
-public class FrontendNodeBuildFlow extends DockerBuildFlow {
+public class FrontendNonNativeNodeBuildFlow extends DockerBuildFlow {
 
     protected void preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
         if (config.getApp().getServerConfig() != null && !config.getApp().getServerConfig().isEmpty()) {
@@ -38,7 +40,13 @@ public class FrontendNodeBuildFlow extends DockerBuildFlow {
         } else {
             Files.write(Paths.get(flowBasePath + "custom.conf"), "".getBytes());
         }
-        $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/frontend_node/Dockerfile"), flowBasePath + "Dockerfile");
+        $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/frontend/node_non_native/Dockerfile"), flowBasePath + "Dockerfile");
     }
 
+    @Override
+    protected Map<String, String> packageDockerFileArg(FinalProjectConfig config) {
+        return new HashMap<String, String>() {{
+            put("PORT", config.getApp().getPort() + "");
+        }};
+    }
 }

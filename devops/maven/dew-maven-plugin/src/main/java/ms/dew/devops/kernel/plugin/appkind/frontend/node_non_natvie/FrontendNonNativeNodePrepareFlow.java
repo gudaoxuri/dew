@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.plugin.appkind.frontend_node;
+package ms.dew.devops.kernel.plugin.appkind.frontend.node_non_natvie;
 
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.release.BasicPrepareFlow;
@@ -32,7 +32,7 @@ import java.util.Optional;
  *
  * @author gudaoxuri
  */
-public class FrontendNodePrepareFlow extends BasicPrepareFlow {
+public class FrontendNonNativeNodePrepareFlow extends BasicPrepareFlow {
     @Override
     protected boolean needExecutePreparePackageCmd(FinalProjectConfig config, String currentPath) {
         return new File(currentPath).listFiles((dir, name) -> "node_modules".equals(name)).length == 0;

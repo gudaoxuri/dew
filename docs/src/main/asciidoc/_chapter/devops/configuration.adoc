@@ -182,6 +182,8 @@ app:                                    # 应用配置
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
   containerResourcesRequests: {}        # 容器资源下限，同Kubernetes配置，值应小于等于containerResourcesLimits
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+  volumeMounts: []                      # 卷安装配置
+  volumes: []                           # 卷配置，如果使用公用卷配置，请自行在项目对应的namespace下安装pv，pvc及endpoints
 docker:                                 # Docker配置
   host:                                 # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
   registryUrl:                          # Docker Registry Url  e.g. https://harbor.dew.ms/v2
