@@ -17,7 +17,8 @@
 package ms.dew.devops.maven.function;
 
 import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
-import ms.dew.devops.kernel.plugin.appkind.frontend_node.FrontendNodeAppKindPlugin;
+import ms.dew.devops.kernel.plugin.appkind.frontend.node_native.FrontendNativeNodeAppKindPlugin;
+import ms.dew.devops.kernel.plugin.appkind.frontend.node_non_natvie.FrontendNonNativeNodeAppKindPlugin;
 import ms.dew.devops.kernel.plugin.appkind.jvmservice_springboot.JvmServiceSpringBootAppKindPlugin;
 import ms.dew.devops.kernel.plugin.deploy.DeployPlugin;
 import ms.dew.devops.kernel.plugin.deploy.kubernetes.KubernetesDeployPlugin;
@@ -40,7 +41,8 @@ public class DeployPluginSelector {
      * @return the deploy plugin
      */
     public static DeployPlugin select(AppKindPlugin appKindPlugin, MavenProject mavenProject) {
-        if (appKindPlugin instanceof FrontendNodeAppKindPlugin
+        if (appKindPlugin instanceof FrontendNonNativeNodeAppKindPlugin
+                || appKindPlugin instanceof FrontendNativeNodeAppKindPlugin
                 || appKindPlugin instanceof JvmServiceSpringBootAppKindPlugin) {
             return new KubernetesDeployPlugin();
         }
