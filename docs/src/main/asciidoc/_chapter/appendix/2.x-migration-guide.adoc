@@ -77,6 +77,14 @@
         max-idle: 50
         min-idle: 10
 
+  # tomcat容器配置由http变更为servelet，对应的配置示例如下：
+  spring:
+    servlet:
+      multipart:
+        enalbed: true
+        max-file-size: 100MB
+        max-request-size: 100MB
+
   # actuators被重构，修改见：https://www.baeldung.com/spring-boot-actuators
 
   # Cache不再支持Guava，替换为Caffeine，见： https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-caching.html#boot-features-caching-provider-caffeine
@@ -131,6 +139,9 @@
     <groupId>ms.dew.devops.it</groupId>
     <artifactId>todo-frontend</artifactId>
     <packaging>pom</packaging>
+    <properties>
+        <frontend.package.type>NATIVE</frontend.package.type>
+    </properties>
     <repositories>
       <repository>
         <id>central</id>
@@ -151,7 +162,7 @@
     </repositories>
   </project>
   -----------------
-  将此工程加入到<modules>中
+  将此工程加入到<modules>中，如果前端工程是原生Node启动方式，在pom的properties中添加属性frontend.package.type为NATIVE
 
 * [ ] [Dew DevOps] 去掉前端编译时的进度条显示
 

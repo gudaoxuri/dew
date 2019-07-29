@@ -165,7 +165,9 @@ calc_init_memory() {
   fi
 
   local xmx=`echo  $(calc_max_memory) | tr -cd "[0-9]"`
-  calc_mem_opt $(($xmx*1048576)) "${JAVA_INIT_MEM_RATIO}" "ms"
+  if [[ ${xmx} ]]; then
+    calc_mem_opt $(($xmx*1048576)) "${JAVA_INIT_MEM_RATIO}" "ms"
+  fi
 }
 
 calc_mem_opt() {

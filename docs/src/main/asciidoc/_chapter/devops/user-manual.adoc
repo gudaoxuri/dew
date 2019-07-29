@@ -72,6 +72,11 @@ NodeJS项目需要添加Maven项目。
   <artifactId>...</artifactId>
   <packaging>pom</packaging>
 
+  <!-- 如果前端工程是原生NodeJS启动方式，请在pom中添加一下配置，如果前端工程是打包成静态文件的方式则不需要添加 -->
+  <properties>
+    <frontend.package.type>NATIVE</frontend.package.type>
+  </properties>
+
   ...
 </project>
 
