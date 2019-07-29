@@ -14,33 +14,24 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.config;
+package ms.dew.devops.it;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- * Dew kubernetes.
+ * MultiPortsDemoApplicationTests.
  *
- * @author gudaoxuri
+ * @author 钱奕汎
  */
-public class DewKube {
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class MultiPortsDemoApplicationTests {
 
-    // Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
-    private String base64Config = "";
-
-    /**
-     * Gets base 64 config.
-     *
-     * @return the base 64 config
-     */
-    public String getBase64Config() {
-        return base64Config;
+    @Test
+    public void contextLoads() {
     }
 
-    /**
-     * Sets base 64 config.
-     *
-     * @param base64Config the base 64 config
-     */
-    public void setBase64Config(String base64Config) {
-        this.base64Config = base64Config;
-    }
 }

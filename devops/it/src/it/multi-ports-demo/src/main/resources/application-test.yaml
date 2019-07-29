@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: multi-ports-demo
+  profiles:
+    active: test

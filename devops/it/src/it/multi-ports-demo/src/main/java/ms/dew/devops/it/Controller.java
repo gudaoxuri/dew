@@ -14,33 +14,25 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.config;
+package ms.dew.devops.it;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 
 /**
- * Dew kubernetes.
+ * Controller.
  *
- * @author gudaoxuri
+ * @author 钱奕汎
  */
-public class DewKube {
+@RestController
+public class Controller {
 
-    // Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
-    private String base64Config = "";
 
-    /**
-     * Gets base 64 config.
-     *
-     * @return the base 64 config
-     */
-    public String getBase64Config() {
-        return base64Config;
+    @GetMapping("/hello/tomcat")
+    public ResponseEntity<String> hello() {
+        return ResponseEntity.ok("Hello Tomcat!");
     }
 
-    /**
-     * Sets base 64 config.
-     *
-     * @param base64Config the base 64 config
-     */
-    public void setBase64Config(String base64Config) {
-        this.base64Config = base64Config;
-    }
 }

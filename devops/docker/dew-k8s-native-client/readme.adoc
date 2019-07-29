@@ -9,13 +9,13 @@ docker build -t dewms/k8s-native-client .
 # 测试
 
 # 获取当前的kube config
-KUBE_CONFIG=`echo $(cat ~/.kube/config | base64) | tr -d " "`
+KUBE_CONFIG=`echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`
 # 进入容器
 docker run -it -e KUBE_CONFIG=$KUBE_CONFIG dewms/k8s-native-client
 -
 # 添加kube config
 echo -n $KUBE_CONFIG | base64 -d > $HOME/.kube/config
-# 正确显示kubrenetes信息
+# 正确显示kubernetes信息
 kubectl version
 # 正确显示helm信息（如果存在的话）
 helm list

@@ -56,6 +56,24 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
         selectorLabels.remove("expose");
         selectorLabels.remove("provider");
 
+        List<V1ServicePort> ports = new ArrayList<>();
+        ports.add(new V1ServicePortBuilder()
+                .withName("http")
+                .withPort(config.getApp().getPort())
+                .withProtocol("TCP")
+                .withTargetPort(new IntOrString(config.getApp().getPort()))
+                .build());
+        if (config.getApp().getExtendedPorts() != null) {
+            config.getApp().getExtendedPorts().forEach(port -> {
+                ports.add(new V1ServicePortBuilder()
+                        .withName(port.getName())
+                        .withPort(port.getContainerPort())
+                        .withProtocol(port.getProtocol())
+                        .withTargetPort(new IntOrString(port.getContainerPort()))
+                        .build());
+            });
+        }
+
         V1ServiceBuilder builder = new V1ServiceBuilder();
         builder.withKind(KubeRES.SERVICE.getVal())
                 .withApiVersion("v1")
@@ -67,12 +85,7 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
                         .build())
                 .withSpec(new V1ServiceSpecBuilder()
                         .withSelector(selectorLabels)
-                        .withPorts(new V1ServicePortBuilder()
-                                .withName("http")
-                                .withPort(config.getApp().getPort())
-                                .withProtocol("TCP")
-                                .withTargetPort(new IntOrString(config.getApp().getPort()))
-                                .build())
+                        .withPorts(ports)
                         .build())
                 .build();
         return builder.build();

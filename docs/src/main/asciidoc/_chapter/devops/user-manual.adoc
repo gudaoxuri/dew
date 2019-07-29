@@ -100,7 +100,7 @@ sh dew-devops.sh
 # 选择对应操作，根据提示操作即可
 # 选择 1 进行集群初始化
 # 选择 2 安装 Gitlab runner
-# 选择 3 创建项目， 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等
+# 选择 3 创建项目：为项目创建namespace、ingress、拉取镜像的secret；对应的 Harbor 账户和镜像仓库等
 ----
 
 .Dew和Maven的配置
@@ -125,7 +125,7 @@ mvn deploy
 
 # ====================== 附加参数 ======================
 # dew_devops_profile                           # 指定的环境
-# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
 # dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
 # dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
 # dew_devops_docker_registry_username          # Docker Registry 用户名
@@ -240,7 +240,7 @@ mvn dew:rollback
 
 # ====================== 附加参数 ======================
 # dew_devops_profile                           # 指定的环境
-# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
 # dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
 # dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
 # dew_devops_docker_registry_username          # Docker Registry 用户名
@@ -262,7 +262,7 @@ mvn dew:unrelease
 
 # ====================== 附加参数 ======================
 # dew_devops_profile                           # 指定的环境
-# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
 ----
 
 ==== 日志查看
@@ -278,7 +278,7 @@ mvn dew:log
 
 # ====================== 附加参数 ======================
 # dew_devops_profile                           # 指定的环境
-# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
 # dew_devops_podName                           # 要使用的Pod名称，如不填写当存在多个Pod时会要求用户选择
 # dew_devops_log_follow                        # 是否滚动查看日志
 ----
