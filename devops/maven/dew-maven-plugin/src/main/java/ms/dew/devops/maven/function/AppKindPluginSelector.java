@@ -18,10 +18,12 @@ package ms.dew.devops.maven.function;
 
 import ms.dew.devops.kernel.exception.ConfigException;
 import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
-import ms.dew.devops.kernel.plugin.appkind.frontend_node.FrontendNodeAppKindPlugin;
+import ms.dew.devops.kernel.plugin.appkind.frontend.node_native.FrontendNativeNodeAppKindPlugin;
+import ms.dew.devops.kernel.plugin.appkind.frontend.node_non_natvie.FrontendNonNativeNodeAppKindPlugin;
 import ms.dew.devops.kernel.plugin.appkind.jvmlib.JvmLibAppKindPlugin;
 import ms.dew.devops.kernel.plugin.appkind.jvmservice_springboot.JvmServiceSpringBootAppKindPlugin;
 import ms.dew.devops.kernel.plugin.appkind.pom.PomAppKindPlugin;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
@@ -46,7 +48,11 @@ public class AppKindPluginSelector {
             return Optional.of(new JvmLibAppKindPlugin());
         }
         if (new File(mavenProject.getBasedir().getPath() + File.separator + "package.json").exists()) {
-            return Optional.of(new FrontendNodeAppKindPlugin());
+            if (StringUtils.isNotBlank(mavenProject.getProperties().getProperty("frontend.package.type"))
+                    && mavenProject.getProperties().getProperty("frontend.package.type").equals("NATIVE")) {
+                return Optional.of(new FrontendNativeNodeAppKindPlugin());
+            }
+            return Optional.of(new FrontendNonNativeNodeAppKindPlugin());
         }
         if (mavenProject.getPackaging().equalsIgnoreCase("jar")
                 && new File(mavenProject.getBasedir().getPath() + File.separator

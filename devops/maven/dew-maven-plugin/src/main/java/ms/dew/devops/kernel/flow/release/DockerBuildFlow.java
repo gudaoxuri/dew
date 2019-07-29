@@ -30,7 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import static ms.dew.devops.kernel.config.DewProfile.REUSE_VERSION_TYPE_LABEL;
@@ -55,6 +55,10 @@ public class DockerBuildFlow extends BasicFlow {
     protected void preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
     }
 
+    protected Map<String, String> packageDockerFileArg(FinalProjectConfig config) {
+        return packageDockerFileArg(config);
+    }
+
     @Override
     protected void process(FinalProjectConfig config, String flowBasePath) throws IOException {
         // 先判断是否存在
@@ -76,6 +80,7 @@ public class DockerBuildFlow extends BasicFlow {
         }
     }
 
+
     /**
      * 正常模式下的处理.
      *
@@ -94,11 +99,7 @@ public class DockerBuildFlow extends BasicFlow {
             dockerFileContent = dockerFileContent.replaceAll("FROM .*", "FROM " + config.getDocker().getImage().trim());
             Files.write(Paths.get(flowBasePath + "Dockerfile"), dockerFileContent.getBytes());
         }
-        DockerHelper.inst(config.getId()).image.build(config.getCurrImageName(), flowBasePath, new HashMap<String, String>() {
-            {
-                put("PORT", config.getApp().getPort() + "");
-            }
-        });
+        DockerHelper.inst(config.getId()).image.build(config.getCurrImageName(), flowBasePath, packageDockerFileArg(config));
     }
 
     /**

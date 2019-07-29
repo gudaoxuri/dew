@@ -14,36 +14,42 @@
  * limitations under the License.
  */
 
-package ms.dew.devops.kernel.plugin.appkind.jvmservice_springboot;
+package ms.dew.devops.kernel.plugin.appkind.frontend.node_native;
 
 import com.ecfront.dew.common.$;
 import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.release.DockerBuildFlow;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Spring boot build flow.
+ * Native Node frontend build flow.
  *
- * @author gudaoxuri
+ * @author Liuhongcheng
  */
-public class JvmServiceSpringBootBuildFlow extends DockerBuildFlow {
+public class FrontendNativeNodeBuildFlow extends DockerBuildFlow {
 
     protected void preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
-        $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/jvmservice_springboot/Dockerfile"), flowBasePath + "Dockerfile");
-        $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/jvmservice_springboot/run-java.sh"), flowBasePath + "run-java.sh");
-        $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/jvmservice_springboot/debug-java.sh"), flowBasePath + "debug-java.sh");
+        if (config.getApp().getServerConfig() != null && !config.getApp().getServerConfig().isEmpty()) {
+            Files.write(Paths.get(flowBasePath + "custom.conf"), config.getApp().getServerConfig().getBytes());
+        } else {
+            Files.write(Paths.get(flowBasePath + "custom.conf"), "".getBytes());
+        }
+        $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/frontend/node_native/Dockerfile"), flowBasePath + "Dockerfile");
     }
 
     @Override
     protected Map<String, String> packageDockerFileArg(FinalProjectConfig config) {
         return new HashMap<String, String>() {{
-            put("PORT", config.getApp().getPort() + "");
+            String packageCmd = config.getApp().getPackageCmd();
+            String cmd = StringUtils.isNotBlank(packageCmd) ? packageCmd : " npm run " + config.getProfile();
+            put("startCmd", cmd);
         }};
     }
-
-
 }
