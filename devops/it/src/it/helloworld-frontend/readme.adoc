@@ -30,7 +30,7 @@ SET/export dew_devops_docker_registry_username=...
 SET/export dew_devops_docker_registry_password=...
 
 # 执行如下maven命令(发布到test环境)
-mvn -P devops dew:release -Ddew_devops_profile=test
+mvn -P devops deploy -Ddew_devops_profile=test
 ----
 
 .Gitlab CI执行
