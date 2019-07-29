@@ -23,11 +23,11 @@
         <artifactId>parent-starter</artifactId>
         <version>2.0.0-beta2</version>
     </parent>
-    <groupId>com.tairanchina.csp.demo.multi.port</groupId>
-    <artifactId>multi-port-demo</artifactId>
+    <groupId>ms.dew.devops.it</groupId>
+    <artifactId>multi-ports-demo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>multi-ports-demo</name>
-    <description>Multi Port Demo</description>
+    <description>Multi Ports Demo</description>
 
     <properties>
         <java.version>1.8</java.version>

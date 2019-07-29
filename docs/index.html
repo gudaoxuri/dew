@@ -4508,6 +4508,11 @@ spec:
   &lt;artifactId&gt;...&lt;/artifactId&gt;
   &lt;packaging&gt;pom&lt;/packaging&gt;
 
+  &lt;!-- 如果前端工程是原生NodeJS启动方式，请在pom中添加一下配置，如果前端工程是打包成静态文件的方式则不需要添加 --&gt;
+  &lt;properties&gt;
+    &lt;frontend.package.type&gt;NATIVE&lt;/frontend.package.type&gt;
+  &lt;/properties&gt;
+
   ...
 &lt;/project&gt;
 
@@ -4586,7 +4591,7 @@ sh dew-devops.sh
 # 选择对应操作，根据提示操作即可
 # 选择 1 进行集群初始化
 # 选择 2 安装 Gitlab runner
-# 选择 3 创建项目， 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等</code></pre>
+# 选择 3 创建项目：为项目创建namespace、ingress、拉取镜像的secret；对应的 Harbor 账户和镜像仓库等</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4936,7 +4941,7 @@ uat deploy:
   tags:
     - uat
   script:
-    - mvn -P devops dew:release
+    - mvn -P devops deploy
 
 prod deploy:
   stage: deploy
@@ -4945,7 +4950,7 @@ prod deploy:
   tags:
     - prod
   script:
-    - mvn -P devops dew:release</code></pre>
+    - mvn -P devops deploy</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5429,7 +5434,7 @@ yum-config-manager \
     --add-repo \
     https://download.docker.com/linux/centos/docker-ce.repo
 
-yum update -y &amp;&amp; yum install -y docker-ce-18.06.2.ce
+yum install -y docker-ce-18.06.2.ce
 
 mkdir /etc/docker
 
@@ -5527,12 +5532,9 @@ net.bridge.bridge-nf-call-iptables = 1
 EOF
 
 sysctl --system
-
-yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
-systemctl enable --now kubelet
-
-# 查看安装的Kubernetes版本
-yum list installed | grep kube</code></pre>
+K8S_VERSION="1.14.1-0"
+yum install -y kubelet-${K8S_VERSION} kubeadm-${K8S_VERSION} kubectl-${K8S_VERSION} --disableexcludes=kubernetes
+systemctl enable --now kubelet</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -5558,9 +5560,10 @@ kubeadm init \
     --pod-network-cidr=10.244.0.0/16
 
 # 初始化Kubernetes，二选一，不使用代理方式，通过image-repository 及 --kubernetes-version 避免被墙，注意版本与yum安装的版本对应
+K8S_VERSION="1.14.1"
 kubeadm init \
     --image-repository registry.aliyuncs.com/google_containers \
-    --kubernetes-version v1.14.1 \
+    --kubernetes-version ${K8S_VERSION} \
     --pod-network-cidr=10.244.0.0/16
 
 # 记录上述操作输出中的kubeadm join
@@ -5749,6 +5752,8 @@ spec:
         - /metrics-server
         - --kubelet-insecure-tls
         - --kubelet-preferred-address-types=InternalIP"
+# 不使用代理，需要修改镜像
+kubectl -n kube-system set image deploy metrics-server metrics-server=rancher/metrics-server-amd64:v0.3.1
 # 验证安装结果
 kubectl top node
 kubectl top pod</code></pre>
@@ -5757,6 +5762,21 @@ kubectl top pod</code></pre>
 </div>
 <div class="sect3">
 <h4 id="nginx_ingress_controller"><a class="anchor" href="#nginx_ingress_controller"></a>4.3.7. Nginx Ingress Controller</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+chart: <a href="https://github.com/helm/charts/tree/master/stable/nginx-ingress" class="bare">https://github.com/helm/charts/tree/master/stable/nginx-ingress</a><br>
+源码：https://github.com/kubernetes/ingress-nginx<br>
+官网：https://kubernetes.github.io/ingress-nginx/<br>
+Nginx ingress ConfigMap配置： <a href="https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/configmap.md#max-worker-connections" class="bare">https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/configmap.md#max-worker-connections</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
@@ -6141,7 +6161,6 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     --set alertmanager.alertmanagerSpec.nodeSelector.group=devops \
     --set prometheus.prometheusSpec.nodeSelector.group=devops \
     --set kube-state-metrics.nodeSelector.group=devops \
-    --set nodeExporter.nodeSelector.group=devops \
     --set grafana.nodeSelector.group=devops
 
 
@@ -6475,6 +6494,86 @@ EOF</code></pre>
 </div>
 <div class="sect3">
 <h4 id="devops-configuration-dew"><a class="anchor" href="#devops-configuration-dew"></a>4.4.1. .dew 配置</h4>
+<div class="listingblock">
+<div class="title">配置说明</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml"># 默认环境配置
+namespace: default                      # 命名空间，强烈建议修改为特定的命名空间
+skip: false                             # 是否跳过，为true时表示
+disableReuseVersion:                    # 是否禁用重用版本，e.g. 生产环境重用预发环境的最后一个版本（不用重新打包Docker image)
+                                        # 默认情况前端工程为true（node编译期会混入环境信息导致无法重用），其它工程为false
+reuseLastVersionFromProfile:            # 重用版本的目标环境名称
+                                        # 默认会尝试使用 pre-prod/pre-production/uat 为名称（找到当前项目第一个存在的环境）
+                                        # 都不存在时需要显式指定
+ignoreChangeFiles: []                   # 忽略变更文件列表，此列表指定的文件不用于是否有变更要部署的判断依据
+                                        # 支持 glob , @see https://en.wikipedia.org/wiki/Glob_(programming)
+app:                                    # 应用配置
+  replicas: 1                           # 部署的副本数
+  revisionHistoryLimit: 3               # 保留的历史版本数
+  port: 8080                            # 端口号，默认情况下前端应用为80(不可修改)，后端服务为8080
+  extendedPorts:                        # 扩展端口，仅用于后端服务
+  healthCheckEnabled: true              # 是否启用健康检查，仅用于后端服务，默认启用
+  healthCheckPort:                      # 用于健康检查的端口，仅用于后端服务，如不设置，默认使用app.port的端口
+  livenessPath: /actuator/health        # 存活检测HTTP的路径，仅用于后端服务
+  readinessPath: /actuator/health       # 可用检测HTTP的路径，仅用于后端服务
+  livenessInitialDelaySeconds: 60       # 首次存活检测延迟时间，仅用于后端服务
+  livenessPeriodSeconds: 30             # 存活检测周期，仅用于后端服务
+  livenessFailureThreshold: 6           # 存活检测失败次数阈值，超过后销毁当前实例并重启另一个实例，仅用于后端服务
+  readinessInitialDelaySeconds: 10      # 首次可用检测延迟时间，仅用于后端服务
+  readinessPeriodSeconds: 60            # 可用检测周期，仅用于后端服务
+  readinessFailureThreshold: 3          # 可用检测失败次数阈值，超过后当前实例不可用，仅用于后端服务
+  traceLogEnabled: true                 # 是否启用追踪日志，仅用于后端服务
+  traceLogSpans: false                  # 是否在控制台输出spans日志，仅用于后端服务
+  traceWebSkipPattern: ""               # 设置跳过追踪的接口，为空则使用官方默认值，仅用于后端服务
+  traceProbabilisticSamplingRate: 0.1   # 追踪日志概率采样比率，为1.0则使用全量采样，仅用于后端服务
+  metricsEnabled: true                  # 是否启用Prometheus的metrics，仅用于后端服务
+  nodeSelector:                         # 节点亲和性配置
+    group: app                          # 默认选择标签为 group=app 的节点
+  preparePackageCmd:                    # 预打包命令
+                                        # 前端应用默认为 cd &lt;应用目录&gt; &amp;&amp; set NODE_ENV=&lt;环境名称&gt; &amp;&amp; npm install，发现不存在 node_modules 时执行
+                                        # 后端服务默认为空
+  packageCmd:                           # 打包命令
+                                        # 前端应用默认为 cd &lt;应用目录&gt; &amp;&amp; set NODE_ENV=&lt;环境名称&gt; npm run build:&lt;环境名称&gt;
+                                        # 后端服务默认为空
+  runOptions:                           # 运行参数，可指定诸如 JVM 配置等信息
+  serverConfig: |-                      # 服务配置，多为Nginx配置
+  containerResourcesLimits: {}          # 容器资源上限，同Kubernetes配置，值应大于等于containerResourcesRequests
+                                        # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+  containerResourcesRequests: {}        # 容器资源下限，同Kubernetes配置，值应小于等于containerResourcesLimits
+                                        # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+  volumeMounts: []                      # 卷安装配置
+  volumes: []                           # 卷配置，如果使用公用卷配置，请自行在项目对应的namespace下安装pv，pvc及endpoints
+docker:                                 # Docker配置
+  host:                                 # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
+  registryUrl:                          # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+  registryUserName:                     # Docker Registry 用户名，此项建议使用Maven方式配置
+  registryPassword:                     # Docker Registry 密码，此项建议使用Maven方式配置
+  image:                                # Docker 镜像
+                                        # 前端应用默认使用 nginx:alpine
+                                        # 后端服务应用默认使用 openjdk:8-alpine
+kube:                                   # Kubernetes配置
+  base64Config:                         # Kubernetes Base64 后的配置，此项建议使用Maven方式配置
+                                        # 使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
+notifies:                               # 通知配置
+  - type: DD                            # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
+    defaultReceivers: []                # 默认接收人列表，钉钉为手机号，邮件为邮箱
+    dndTimeReceivers: []                # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
+    args:                               # 不同类型的参数，邮件不需要设置
+        url:                            # type=DD表示钉钉的推送地址
+                                        # 说明详见：https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
+                                        # type=HTTP表示HTTP Hook的地址
+        msgType:                        # 仅用于type=DD，支持 text/markdown
+    strategy:                           # 通知策略
+        minIntervalSec: 0               # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
+        dndTime:                        # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
+                                        # HH:mm-HH:mm，如果两个时间相等表示全天免扰，如果后者大于前者表示跨天免扰
+        forceSendTimes: 3               # 同一免扰周期间通知调用达到几次后强制发送
+# 其它环境配置
+profiles:
+    &lt;name&gt;: # 环境名称，e.g. test uat prod
+        # 此处配置项同默认环境的配置项，用于覆写默认配置</code></pre>
+</div>
+</div>
 <div id="devops-configuration-dew-inheritance-rules" class="ulist">
 <div class="title">继承规则</div>
 <ul>
@@ -6608,81 +6707,6 @@ profiles:
     app:
       replicas: 5           # 使用应用B的profile覆写配置
 -</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">配置说明</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml"># 默认环境配置
-namespace: default                      # 命名空间，强烈建议修改为特定的命名空间
-skip: false                             # 是否跳过，为true时表示
-disableReuseVersion:                    # 是否禁用重用版本，e.g. 生产环境重用预发环境的最后一个版本（不用重新打包Docker image)
-                                        # 默认情况前端工程为true（node编译期会混入环境信息导致无法重用），其它工程为false
-reuseLastVersionFromProfile:            # 重用版本的目标环境名称
-                                        # 默认会尝试使用 pre-prod/pre-production/uat 为名称（找到当前项目第一个存在的环境）
-                                        # 都不存在时需要显式指定
-ignoreChangeFiles: []                   # 忽略变更文件列表，此列表指定的文件不用于是否有变更要部署的判断依据
-                                        # 支持 glob , @see https://en.wikipedia.org/wiki/Glob_(programming)
-app:                                    # 应用配置
-  replicas: 1                           # 部署的副本数
-  revisionHistoryLimit: 3               # 保留的历史版本数
-  port: 8080                            # 端口号，默认情况下前端应用为80(不可修改)，后端服务为8080
-  livenessPath: /actuator/health        # 存活检测HTTP的路径，仅用于后端服务
-  readinessPath: /actuator/health       # 可用检测HTTP的路径，仅用于后端服务
-  livenessInitialDelaySeconds: 60       # 首次存活检测延迟时间，仅用于后端服务
-  livenessPeriodSeconds: 30             # 存活检测周期，仅用于后端服务
-  livenessFailureThreshold: 6           # 存活检测失败次数阈值，超过后销毁当前实例并重启另一个实例，仅用于后端服务
-  readinessInitialDelaySeconds: 10      # 首次可用检测延迟时间，仅用于后端服务
-  readinessPeriodSeconds: 60            # 可用检测周期，仅用于后端服务
-  readinessFailureThreshold: 3          # 可用检测失败次数阈值，超过后当前实例不可用，仅用于后端服务
-  traceLogEnabled: true                 # 是否启用追踪日志，仅用于后端服务
-  traceLogSpans: false                  # 是否在控制台输出spans日志，仅用于后端服务
-  traceWebSkipPattern: ""               # 设置跳过追踪的接口，为空则使用官方默认值，仅用于后端服务
-  traceProbabilisticSamplingRate: 0.1   # 追踪日志概率采样比率，为1.0则使用全量采样，仅用于后端服务
-  metricsEnabled: true                  # 是否启用Prometheus的metrics，仅用于后端服务
-  nodeSelector:                         # 节点亲和性配置
-    group: app                          # 默认选择标签为 group=app 的节点
-  preparePackageCmd:                    # 预打包命令
-                                        # 前端应用默认为 cd &lt;应用目录&gt; &amp;&amp; set NODE_ENV=&lt;环境名称&gt; &amp;&amp; npm install，发现不存在 node_modules 时执行
-                                        # 后端服务默认为空
-  packageCmd:                           # 打包命令
-                                        # 前端应用默认为 cd &lt;应用目录&gt; &amp;&amp; set NODE_ENV=&lt;环境名称&gt; npm run build:&lt;环境名称&gt;
-                                        # 后端服务默认为空
-  runOptions:                           # 运行参数，可指定诸如 JVM 配置等信息
-  serverConfig: |-                      # 服务配置，多为Nginx配置
-  containerResourcesLimits: {}          # 容器资源上限，同Kubernetes配置，值应大于等于containerResourcesRequests
-                                        # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-  containerResourcesRequests: {}        # 容器资源下限，同Kubernetes配置，值应小于等于containerResourcesLimits
-                                        # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
-docker:                                 # Docker配置
-  host:                                 # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-  registryUrl:                          # Docker Registry Url  e.g. https://harbor.dew.ms/v2
-  registryUserName:                     # Docker Registry 用户名，此项建议使用Maven方式配置
-  registryPassword:                     # Docker Registry 密码，此项建议使用Maven方式配置
-  image:                                # Docker 镜像
-                                        # 前端应用默认使用 nginx:alpine
-                                        # 后端服务应用默认使用 openjdk:8-alpine
-kube:                                   # Kubernetes配置
-  base64Config:                         # Kubernetes Base64 后的配置，此项建议使用Maven方式配置
-                                        # 使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
-notifies:                               # 通知配置
-  - type: DD                            # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
-    defaultReceivers: []                # 默认接收人列表，钉钉为手机号，邮件为邮箱
-    dndTimeReceivers: []                # 免扰时间内的接收人列表，只有该列表中的接收人才能在免扰时间内接收通知
-    args:                               # 不同类型的参数，邮件不需要设置
-        url:                            # type=DD表示钉钉的推送地址
-                                        # 说明详见：https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
-                                        # type=HTTP表示HTTP Hook的地址
-        msgType:                        # 仅用于type=DD，支持 text/markdown
-    strategy:                           # 通知策略
-        minIntervalSec: 0               # 最小间隔的通知时间，0表示不设置，如为10则表示10s内只会发送一次
-        dndTime:                        # 免扰时间，HH:mm-HH:mm 如，18:00-06:00
-                                        # HH:mm-HH:mm，如果两个时间相等表示全天免扰，如果后者大于前者表示跨天免扰
-        forceSendTimes: 3               # 同一免扰周期间通知调用达到几次后强制发送
-# 其它环境配置
-profiles:
-    &lt;name&gt;: # 环境名称，e.g. test uat prod
-        # 此处配置项同默认环境的配置项，用于覆写默认配置</code></pre>
 </div>
 </div>
 </div>
@@ -6919,7 +6943,7 @@ SET/export dew_devops_docker_registry_username=...
 SET/export dew_devops_docker_registry_password=...
 
 # 执行如下maven命令(发布到test环境)
-mvn -P devops dew:release -Ddew_devops_profile=test</pre>
+mvn -P devops deploy -Ddew_devops_profile=test</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -6956,7 +6980,7 @@ SET/export dew_devops_it_snapshotRepository_id=&lt;私库Id，如私库需要认
 SET/export dew_devops_it_snapshotRepository_url=&lt;私库Url&gt;
 
 # 执行如下maven命令(发布到test环境)
-mvn -P devops dew:release -Ddew_devops_profile=test</pre>
+mvn -P devops deploy -Ddew_devops_profile=test</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -7018,7 +7042,7 @@ SET/export dew_devops_docker_registry_username=...
 SET/export dew_devops_docker_registry_password=...
 
 # 执行如下maven命令(发布到test环境)
-mvn -P devops dew:release -Ddew_devops_profile=test</pre>
+mvn -P devops deploy -Ddew_devops_profile=test</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -7139,9 +7163,9 @@ SET/export dew_devops_it_snapshotRepository_id=&lt;私库Id，如私库需要认
 SET/export dew_devops_it_snapshotRepository_url=&lt;私库Url&gt;
 
 # 执行如下maven命令(发布到uat环境)
-mvn -P devops dew:release -Ddew_devops_profile=uat
+mvn -P devops deploy -Ddew_devops_profile=uat
 # 执行如下maven命令(发布到prod环境)
-mvn -P devops dew:release -Ddew_devops_profile=prod</pre>
+mvn -P devops deploy -Ddew_devops_profile=prod</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8892,7 +8916,7 @@ sh dew-devops.sh
 # 选择对应操作，根据提示操作即可
 # 选择 1 进行集群初始化
 # 选择 2 安装 Gitlab runner
-# 选择 3 创建项目，为项目创建namespace、ingress、对应 Harbor 账户和镜像仓库等</pre>
+# 选择 3 创建项目：为项目创建namespace、ingress、拉取镜像的secret；对应的 Harbor 账户和镜像仓库等</pre>
 </div>
 </div>
 </li>
@@ -8981,6 +9005,17 @@ redis:
 </div>
 <div class="literalblock">
 <div class="content">
+<pre># tomcat容器配置由http变更为servelet，对应的配置示例如下：
+spring:
+  servlet:
+    multipart:
+      enalbed: true
+      max-file-size: 100MB
+      max-request-size: 100MB</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
 <pre># actuators被重构，修改见：https://www.baeldung.com/spring-boot-actuators</pre>
 </div>
 </div>
@@ -9062,6 +9097,9 @@ logging:
   &lt;groupId&gt;ms.dew.devops.it&lt;/groupId&gt;
   &lt;artifactId&gt;todo-frontend&lt;/artifactId&gt;
   &lt;packaging&gt;pom&lt;/packaging&gt;
+  &lt;properties&gt;
+      &lt;frontend.package.type&gt;NATIVE&lt;/frontend.package.type&gt;
+  &lt;/properties&gt;
   &lt;repositories&gt;
     &lt;repository&gt;
       &lt;id&gt;central&lt;/id&gt;
@@ -9082,7 +9120,7 @@ logging:
   &lt;/repositories&gt;
 &lt;/project&gt;
 -----------------
-将此工程加入到&lt;modules&gt;中</pre>
+将此工程加入到&lt;modules&gt;中，如果前端工程是原生Node启动方式，在pom的properties中添加属性frontend.package.type为NATIVE</pre>
 </div>
 </div>
 </li>
@@ -9195,7 +9233,7 @@ docker run -it -e KUBE_CONFIG=$KUBE_CONFIG dewms/k8s-native-client
 -
 # 添加kube config
 echo -n $KUBE_CONFIG | base64 -d &gt; $HOME/.kube/config
-# 正确显示kubrenetes信息
+# 正确显示kubernetes信息
 kubectl version
 # 正确显示helm信息（如果存在的话）
 helm list
@@ -9388,7 +9426,7 @@ test deploy:
     - test
   script:
     # 执行的操作，可以扩展，但要保留以下代码
-    - mvn -P devops dew:release
+    - mvn -P devops deploy
     # 可在此处添加代理
     # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.ms" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.ms"
 
@@ -9400,7 +9438,7 @@ uat deploy:
   tags:
     - uat
   script:
-    - mvn -P devops dew:release
+    - mvn -P devops deploy
 
 prod deploy: # 生产环境部署
   stage: deploy
@@ -9412,7 +9450,7 @@ prod deploy: # 生产环境部署
     - prod
   script:
     # 执行的操作，可以扩展，但要保留以下代码
-    - mvn -P devops dew:release
+    - mvn -P devops deploy
     # 可在此处添加代理
     # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.ms" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.ms"</code></pre>
 </div>
@@ -9424,7 +9462,7 @@ prod deploy: # 生产环境部署
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-07-17 17:20:12 CST
+Last updated 2019-07-25 10:24:51 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
