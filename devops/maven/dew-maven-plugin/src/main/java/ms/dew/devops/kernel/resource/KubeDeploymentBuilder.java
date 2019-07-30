@@ -84,6 +84,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         }
 
         V1ContainerBuilder containerBuilder = new V1ContainerBuilder()
+                .withCommand(config.getApp().getContainerCmd())
                 .withName(FLAG_CONTAINER_NAME)
                 .withImage(config.getCurrImageName())
                 .withImagePullPolicy("IfNotPresent")
