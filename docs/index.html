@@ -6537,6 +6537,7 @@ app:                                    # 应用配置
                                         # 后端服务默认为空
   runOptions:                           # 运行参数，可指定诸如 JVM 配置等信息
   serverConfig: |-                      # 服务配置，多为Nginx配置
+  containerCmd: []                      # 容器command命令
   containerResourcesLimits: {}          # 容器资源上限，同Kubernetes配置，值应大于等于containerResourcesRequests
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
   containerResourcesRequests: {}        # 容器资源下限，同Kubernetes配置，值应小于等于containerResourcesLimits

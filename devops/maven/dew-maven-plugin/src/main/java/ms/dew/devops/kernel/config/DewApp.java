@@ -89,6 +89,8 @@ public class DewApp {
     private String serverConfig;
     // 运行参数，可指定诸如 JVM 配置等信息
     private String runOptions;
+    // 容器command命令
+    private List<String> containerCmd;
     // 容器资源上限，同Kubernetes配置
     // @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
     private Map<String, Quantity> containerResourcesLimits = new HashMap<>();
@@ -562,6 +564,24 @@ public class DewApp {
      */
     public void setRunOptions(String runOptions) {
         this.runOptions = runOptions;
+    }
+
+    /**
+     * Gets container command.
+     *
+     * @return the container command
+     */
+    public List<String> getContainerCmd() {
+        return containerCmd;
+    }
+
+    /**
+     * Sets container command.
+     *
+     * @param containerCmd the container command
+     */
+    public void setContainerCmd(List<String> containerCmd) {
+        this.containerCmd = containerCmd;
     }
 
     /**
