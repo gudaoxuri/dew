@@ -30,13 +30,12 @@ public class DemoVerticle extends AbstractVerticle {
 
     private static final Logger logger = LoggerFactory.getLogger(DemoVerticle.class);
 
-
     @Override
-    public void start() throws Exception {
+    public void start() {
         logger.info("Init Vertx...");
         vertx.createHttpServer(new HttpServerOptions()
                 .setTcpKeepAlive(true))
-                .requestHandler(MultiPortsDemoApplication.cacheVertxHandler)
+                .requestHandler(new VertxHandler())
                 .listen(8010, event -> {
                     if (event.succeeded()) {
                         logger.info("Vertx Http Server Started ");
@@ -44,7 +43,6 @@ public class DemoVerticle extends AbstractVerticle {
                         logger.error("Vertx Http Server Start Fail", event.cause());
                     }
                 });
-
     }
 
     @Override

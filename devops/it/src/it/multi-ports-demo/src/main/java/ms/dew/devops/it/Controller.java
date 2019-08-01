@@ -16,7 +16,6 @@
 
 package ms.dew.devops.it;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,9 +29,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class Controller {
 
 
-    @GetMapping("/hello/tomcat")
-    public ResponseEntity<String> hello() {
-        return ResponseEntity.ok("Hello Tomcat!");
+    @GetMapping("/hello")
+    public String hello() {
+        return "Spring Cloud";
     }
 
 }

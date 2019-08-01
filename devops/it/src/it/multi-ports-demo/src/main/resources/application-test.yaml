@@ -3,3 +3,15 @@ spring:
     name: multi-ports-demo
   profiles:
     active: test
+#  cloud:
+#    kubernetes:
+#      ribbon:
+#        mode: SERVICE
+
+logging:
+  level:
+    ROOT: DEBUG
+
+multi-ports-demo:
+  ribbon:
+    PortName: http

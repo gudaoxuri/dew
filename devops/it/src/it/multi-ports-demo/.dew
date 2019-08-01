@@ -7,8 +7,8 @@ app:
     name: test
   #healthCheckEnabled: false
   healthCheckPort: 8010
-  livenessPath: /hello/vertx
-  readinessPath: /hello/vertx
+  livenessPath: /hello
+  readinessPath: /hello
 profiles:
   test:
     namespace: dew-test

@@ -19,9 +19,13 @@ package ms.dew.devops.it;
 import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.client.WebClient;
+import ms.dew.Dew;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.SpringCloudApplication;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 
@@ -30,15 +34,13 @@ import javax.annotation.PostConstruct;
  *
  * @author 钱奕汎
  */
-@SpringBootApplication
+@SpringCloudApplication
 public class MultiPortsDemoApplication {
 
+    private static final Logger logger = LoggerFactory.getLogger(MultiPortsDemoApplication.class);
 
     @Autowired
-    VertxHandler vertxHandler;
-
-    public static VertxHandler cacheVertxHandler;
-
+    private RestTemplate restTemplate;
 
     public static void main(String[] args) {
         SpringApplication.run(MultiPortsDemoApplication.class, args);
@@ -49,10 +51,14 @@ public class MultiPortsDemoApplication {
      */
     @PostConstruct
     public void init() {
-        cacheVertxHandler = vertxHandler;
         Vertx vertx = Vertx.vertx();
         vertx.deployVerticle(DemoVerticle.class, new DeploymentOptions());
         WebClient.create(vertx);
+
+        Dew.Timer.periodic(10, 10, () -> {
+            String resp = restTemplate.getForObject("http://multi-ports-demo/hello", String.class);
+            logger.info(">>>>> " + resp);
+        });
     }
 
 }

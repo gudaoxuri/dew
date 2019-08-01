@@ -29,15 +29,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class VertxHandler implements Handler<HttpServerRequest> {
 
-    private static final String URL = "/hello/vertx";
-
     @Override
     public void handle(HttpServerRequest request) {
 
-        if (request.method().equals(HttpMethod.GET) && request.path().equals(URL)) {
-            request.bodyHandler(buffer -> {
-                request.response().setStatusCode(200).end("Hello vert.x!");
-            });
+        if (request.method().equals(HttpMethod.GET) && request.path().equals("/hello")) {
+            request.bodyHandler(buffer ->
+                    request.response().setStatusCode(200).end("vertx"));
         } else {
             request.response().setStatusCode(404).end("Not Found!");
         }
