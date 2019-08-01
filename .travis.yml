@@ -4,7 +4,7 @@ install: mvn install -DskipTests=true -Ddew.it.skip=true -Dmaven.javadoc.skip=tr
 script: mvn compile -DskipTests=true -Ddew.it.skip=true -Dmaven.javadoc.skip=true -B -V -P qa
 
 jdk:
-  - oraclejdk8
+  - openjdk8
 
 notifications:
   email:
