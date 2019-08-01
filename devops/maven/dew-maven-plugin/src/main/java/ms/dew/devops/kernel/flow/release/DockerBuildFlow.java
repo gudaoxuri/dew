@@ -187,14 +187,14 @@ public class DockerBuildFlow extends BasicFlow {
             // 判断是否有最近可用的image
             String reuseImageName = getImageNameByLabelName(config);
             if (StringUtils.isEmpty(reuseImageName)) {
-                return false;
+                return true;
             }
             if (!DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry.exist(reuseImageName)) {
-                return false;
+                return true;
             }
             DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).image.pull(reuseImageName, true);
             DockerHelper.inst(config.getId()).image.copy(reuseImageName, config.getCurrImageName());
-            return true;
+            return false;
         }
 
         @Override
@@ -246,9 +246,9 @@ public class DockerBuildFlow extends BasicFlow {
                 // 从目标环境的镜像仓库拉取镜像到本地
                 DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).image.pull(reuseImageName, true);
                 DockerHelper.inst(config.getId()).image.copy(reuseImageName, config.getCurrImageName());
-                return true;
+                return false;
             }
-            return false;
+            return true;
         }
 
         @Override
