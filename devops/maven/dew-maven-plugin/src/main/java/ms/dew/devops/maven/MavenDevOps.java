@@ -104,6 +104,7 @@ public class MavenDevOps {
                         dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt);
                 DevOps.Init.init(mockClasspath);
                 Config.initMavenProject(session, pluginManager);
+                initAssignDeploymentProjects(inputAssignationProjects, session.getProjectDependencyGraph().getSortedProjects());
                 // 特殊Mojo处理
                 if (session.getGoals().stream().map(String::toLowerCase)
                         .anyMatch(s ->
@@ -177,7 +178,6 @@ public class MavenDevOps {
                 DevOps.Config.getFinalConfig().getProjects().put(project.getId(), finalProjectConfig);
                 logger.debug("[" + project.getId() + "] configured");
             }
-            initAssignDeploymentProjects(inputAssignationProjects, session.getProjectDependencyGraph().getSortedProjects());
         }
 
         private static void initAssignDeploymentProjects(String assignationProjects, List<MavenProject> projects) {
