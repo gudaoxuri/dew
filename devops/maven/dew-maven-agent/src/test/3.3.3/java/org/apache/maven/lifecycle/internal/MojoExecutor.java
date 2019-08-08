@@ -102,7 +102,12 @@ public class MojoExecutor {
 
     public void execute(MavenSession session, List<MojoExecution> mojoExecutions, ProjectIndex projectIndex)
             throws LifecycleExecutionException {
-        if (SkipCheck.skip(session.getCurrentProject().getBasedir())) {
+        if (SkipCheck.skip(session.getCurrentProject().getBasedir())
+                && mojoExecutions.stream().map(MojoExecution::getGoal).map(String::toLowerCase)
+                .anyMatch(s ->
+                        s.contains("ms.dew:dew-maven-plugin:release")
+                                || s.contains("dew:release")
+                                || s.contains("deploy"))) {
             return;
         }
         DependencyContext dependencyContext = newDependencyContext(session, mojoExecutions);
