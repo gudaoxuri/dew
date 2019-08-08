@@ -42,7 +42,7 @@ public class SingleThreadedBuilder
                                     s.contains("ms.dew:dew-maven-plugin:release")
                                             || s.contains("dew:release")
                                             || s.contains("deploy"))) {
-                        return;
+                        continue;
                     }
                     lifecycleModuleBuilder.buildProject(session, reactorContext, projectBuild.getProject(),
                             taskSegment);
