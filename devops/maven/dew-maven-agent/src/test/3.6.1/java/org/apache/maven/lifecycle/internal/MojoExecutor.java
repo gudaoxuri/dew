@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -137,7 +138,12 @@ public class MojoExecutor
         throws LifecycleExecutionException
 
     {
-        if (SkipCheck.skip(session.getCurrentProject().getBasedir())) {
+        if (SkipCheck.skip(session.getCurrentProject().getBasedir())
+                && mojoExecutions.stream().map(MojoExecution::getGoal).map(String::toLowerCase)
+                .anyMatch(s ->
+                        s.contains("ms.dew:dew-maven-plugin:release")
+                                || s.contains("dew:release")
+                                || s.contains("deploy"))) {
             return;
         }
         DependencyContext dependencyContext = newDependencyContext( session, mojoExecutions );

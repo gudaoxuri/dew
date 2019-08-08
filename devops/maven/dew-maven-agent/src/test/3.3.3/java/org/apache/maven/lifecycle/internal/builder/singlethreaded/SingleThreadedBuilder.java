@@ -36,8 +36,13 @@ public class SingleThreadedBuilder
         for (TaskSegment taskSegment : taskSegments) {
             for (ProjectSegment projectBuild : projectBuilds.getByTaskSegment(taskSegment)) {
                 try {
-                    if (SkipCheck.skip(projectBuild.getProject().getBasedir())) {
-                        continue;
+                    if (SkipCheck.skip(session.getCurrentProject().getBasedir())
+                            && session.getGoals().stream().map(String::toLowerCase)
+                            .anyMatch(s ->
+                                    s.contains("ms.dew:dew-maven-plugin:release")
+                                            || s.contains("dew:release")
+                                            || s.contains("deploy"))) {
+                        return;
                     }
                     lifecycleModuleBuilder.buildProject(session, reactorContext, projectBuild.getProject(),
                             taskSegment);
