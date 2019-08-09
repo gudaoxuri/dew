@@ -46,7 +46,6 @@ public class MavenAgent {
                 inst.addTransformer(new Transformer("3.6.0", new HashSet<String>() {
                     {
                         add("org/apache/maven/lifecycle/internal/builder/singlethreaded/SingleThreadedBuilder");
-                        add("org/apache/maven/lifecycle/internal/builder/multithreaded/MultiThreadedBuilder");
                         add("org/apache/maven/lifecycle/internal/MojoExecutor");
                     }
                 }));
@@ -55,7 +54,6 @@ public class MavenAgent {
                 inst.addTransformer(new Transformer("3.6.1", new HashSet<String>() {
                     {
                         add("org/apache/maven/lifecycle/internal/builder/singlethreaded/SingleThreadedBuilder");
-                        add("org/apache/maven/lifecycle/internal/builder/multithreaded/MultiThreadedBuilder");
                         add("org/apache/maven/lifecycle/internal/MojoExecutor");
                     }
                 }));
@@ -64,7 +62,6 @@ public class MavenAgent {
                 inst.addTransformer(new Transformer("3.5.2", new HashSet<String>() {
                     {
                         add("org/apache/maven/lifecycle/internal/builder/singlethreaded/SingleThreadedBuilder");
-                        add("org/apache/maven/lifecycle/internal/builder/multithreaded/MultiThreadedBuilder");
                         add("org/apache/maven/lifecycle/internal/MojoExecutor");
                     }
                 }));
@@ -73,7 +70,6 @@ public class MavenAgent {
                 inst.addTransformer(new Transformer("3.3.9", new HashSet<String>() {
                     {
                         add("org/apache/maven/lifecycle/internal/builder/singlethreaded/SingleThreadedBuilder");
-                        add("org/apache/maven/lifecycle/internal/builder/multithreaded/MultiThreadedBuilder");
                         add("org/apache/maven/lifecycle/internal/MojoExecutor");
                     }
                 }));
@@ -82,7 +78,6 @@ public class MavenAgent {
                 inst.addTransformer(new Transformer("3.3.3", new HashSet<String>() {
                     {
                         add("org/apache/maven/lifecycle/internal/builder/singlethreaded/SingleThreadedBuilder");
-                        add("org/apache/maven/lifecycle/internal/builder/multithreaded/MultiThreadedBuilder");
                         add("org/apache/maven/lifecycle/internal/MojoExecutor");
                     }
                 }));
@@ -91,7 +86,6 @@ public class MavenAgent {
                 inst.addTransformer(new Transformer("3.2.5", new HashSet<String>() {
                     {
                         add("org/apache/maven/lifecycle/internal/builder/singlethreaded/SingleThreadedBuilder");
-                        add("org/apache/maven/lifecycle/internal/builder/multithreaded/MultiThreadedBuilder");
                         add("org/apache/maven/lifecycle/internal/MojoExecutor");
                     }
                 }));
@@ -100,7 +94,6 @@ public class MavenAgent {
                 inst.addTransformer(new Transformer("3.0.5", new HashSet<String>() {
                     {
                         add("org/apache/maven/lifecycle/internal/LifecycleStarter");
-                        add("org/apache/maven/lifecycle/internal/LifecycleThreadedBuilder");
                         add("org/apache/maven/lifecycle/internal/MojoExecutor");
                     }
                 }));
