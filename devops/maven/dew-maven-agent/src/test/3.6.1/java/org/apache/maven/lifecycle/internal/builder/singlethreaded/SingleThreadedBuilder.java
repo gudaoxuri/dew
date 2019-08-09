@@ -41,7 +41,7 @@ public class SingleThreadedBuilder
         for (TaskSegment taskSegment : taskSegments) {
             for (ProjectSegment projectBuild : projectBuilds.getByTaskSegment(taskSegment)) {
                 try {
-                    if (SkipCheck.skip(projectBuild.getProject().getBasedir())
+                    if (null != session.getCurrentProject() && SkipCheck.skip(projectBuild.getProject().getBasedir())
                             && session.getGoals().stream().map(String::toLowerCase)
                             .anyMatch(s ->
                                     s.contains("ms.dew:dew-maven-plugin:release")
