@@ -188,10 +188,10 @@ public class NeedProcessChecker {
                     .filter(path -> {
                         for (String collectedProjectPath : collectedProjectPaths) {
                             if (path.startsWith(collectedProjectPath)) {
-                                return false;
+                                return true;
                             }
                         }
-                        return true;
+                        return false;
                     })
                     .collect(Collectors.toList());
         }
