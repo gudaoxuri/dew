@@ -19,7 +19,6 @@ package ms.dew.devops.kernel.function;
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
 import ms.dew.devops.kernel.DevOps;
-import ms.dew.devops.kernel.config.DewProfile;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.exception.GlobalProcessException;
 import ms.dew.devops.kernel.helper.GitHelper;
@@ -174,14 +173,24 @@ public class NeedProcessChecker {
         }
         String projectPath = projectConfig.getDirectory().substring(basePathFile.getPath().length() + 1).replaceAll("\\\\", "/");
         final String basePath = basePathFile.getPath();
-        // 获取当前项目目录下的工程路径
+
+        // 获取当前项目目录下的工程路径及依赖项目的工程路径
         List<String> collectedProjectPaths = projectConfig.getMavenSession().getProjects().stream()
-                .filter(project -> project.getBasedir().getPath().startsWith(projectConfig.getDirectory()))
-                .map(project -> project.getBasedir().getPath().substring(basePath.length() + 1).replaceAll("\\\\", "/"))
+                .filter(project -> (project.getBasedir().getPath() + File.separator).startsWith(projectConfig.getDirectory())
+                        || projectConfig.getMavenProject().getDependencies().stream()
+                        .anyMatch(dependency -> dependency.getArtifactId().equals(project.getArtifactId())))
+                .map(project -> {
+                    if (!project.getBasedir().getPath().equals(basePath)) {
+                        return project.getBasedir().getPath().substring(basePath.length() + 1).replaceAll("\\\\", "/");
+                    }
+                    return basePath;
+                })
                 .collect(Collectors.toList());
-        // 找到当前项目变更的文件列表
+        // 找到当前项目变更的文件列表及依赖项目变更的文件列表
         changedFiles = changedFiles.stream()
-                .filter(path -> path.startsWith(projectPath))
+                .filter(path -> path.startsWith(projectPath) || projectConfig.getMavenSession().getProjects().stream()
+                        .anyMatch(project -> path.startsWith((project.getBasedir().getPath() + File.separator)
+                                .substring(project.getBasedir().getPath().length() + 1).replaceAll("\\\\", "/"))))
                 .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(collectedProjectPaths)) {
             changedFiles = changedFiles.stream()
@@ -219,8 +228,8 @@ public class NeedProcessChecker {
 
     private static void dependencyProcess(Collection<FinalProjectConfig> projectConfigs, List<String> needProcessProjects) {
         projectConfigs.stream()
-                // 所有跳过的项目
-                .filter(DewProfile::getSkip)
+                // 所有跳过的项目(配置文件跳过的项目除外)
+                .filter(finalProjectConfig -> finalProjectConfig.getSkip() && null != finalProjectConfig.getDisableReuseVersion())
                 // 找到有依赖于需要处理的快照项目
                 .filter(projectConfig ->
                         projectConfig.getMavenProject().getArtifacts().stream()

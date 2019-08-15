@@ -74,7 +74,7 @@ public abstract class BasicPrepareFlow extends BasicFlow {
 
     @Override
     protected void process(FinalProjectConfig config, String flowBasePath) throws IOException {
-        if (!config.getDisableReuseVersion()) {
+        if (null != config.getDisableReuseVersion() && !config.getDisableReuseVersion()) {
             // 重用模式下不用再执行准备操作
             return;
         }
