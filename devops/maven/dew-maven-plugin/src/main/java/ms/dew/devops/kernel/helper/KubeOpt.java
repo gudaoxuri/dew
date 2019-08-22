@@ -972,6 +972,8 @@ public class KubeOpt {
                             name, namespace, "true", deleteOptions, null, null, null, null);
                     break;
                 case DEPLOYMENT:
+                    // 后台级联删除（按照Deployment->ReplicaSet->Pod的顺序进行删除）
+                    deleteOptions.setPropagationPolicy("Background");
                     extensionsApi.deleteNamespacedDeployment(
                             name, namespace, "true", deleteOptions, null, null, null, null);
                     break;

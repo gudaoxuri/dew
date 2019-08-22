@@ -24,10 +24,7 @@ import ms.dew.devops.kernel.helper.KubeHelper;
 import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.resource.KubeConfigMapBuilder;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -213,6 +210,31 @@ public class VersionController {
      */
     public static String getAppVersion(V1ConfigMap versionMap) {
         return versionMap.getMetadata().getLabels().get(FLAG_KUBE_RESOURCE_APP_VERSION);
+    }
+
+    /**
+     * Gets app current version.
+     *
+     * @param config the FinalProjectConfig
+     * @return the app current version
+     */
+    public static String getAppCurrentVersion(FinalProjectConfig config) throws ApiException {
+        V1Service service = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(), KubeRES.SERVICE, V1Service.class);
+        return service != null ? VersionController.getAppVersion(service) : null;
+    }
+
+    /**
+     * Gets app versions.
+     *
+     * @param config the FinalProjectConfig
+     * @return the app version
+     */
+    public static Map<String, V1ConfigMap> getAppVersions(FinalProjectConfig config) throws ApiException {
+        return VersionController
+                .getVersionHistory(config.getId(), config.getAppName(), config.getNamespace(), true).stream()
+                .collect(Collectors
+                        .toMap(VersionController::getAppVersion, ver -> ver,
+                                (v1, v2) -> v1, LinkedHashMap::new));
     }
 
     /**
