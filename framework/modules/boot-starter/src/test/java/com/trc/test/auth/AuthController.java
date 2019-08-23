@@ -20,10 +20,12 @@ import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
 import ms.dew.Dew;
 import ms.dew.core.DewContext;
+import ms.dew.core.auth.dto.OptInfo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -50,6 +52,7 @@ public class AuthController {
      *
      * @param userDTO the user dto
      * @return the resp
+     * @throws InterruptedException the interrupted exception
      */
     @PostMapping(value = "register")
     public Resp<Void> register(@RequestBody UserDTO userDTO) throws InterruptedException {
@@ -83,7 +86,17 @@ public class AuthController {
                 .setToken(token)
                 .setTokenKind(Dew.context().getTokenKind())
                 .setName(userDTO.getName())
-                .setMobile(userDTO.getPhone()));
+                .setMobile(userDTO.getPhone())
+                .setRoleInfo(new HashSet<OptInfo.RoleInfo>() {
+                    {
+                        add(new OptInfo.RoleInfo()
+                                .setCode(userDTO.getRole())
+                                .setName("..")
+                                .setTenantCode("")
+                        );
+                    }
+                })
+        );
         return Resp.success(token);
     }
 
@@ -91,6 +104,7 @@ public class AuthController {
      * 模拟业务操作.
      *
      * @return the resp
+     * @throws InterruptedException the interrupted exception
      */
     @GetMapping(value = "business/someopt")
     public Resp<OptInfoExt> someOpt() throws InterruptedException {
@@ -103,6 +117,7 @@ public class AuthController {
      * 模拟用户注销.
      *
      * @return the resp
+     * @throws InterruptedException the interrupted exception
      */
     @DeleteMapping(value = "logout")
     public Resp<Void> logout() throws InterruptedException {
@@ -172,6 +187,8 @@ public class AuthController {
         private String idCard;
 
         private String password;
+
+        private String role;
 
         /**
          * Gets id.
@@ -261,6 +278,26 @@ public class AuthController {
          */
         public void setIdCard(String idCard) {
             this.idCard = idCard;
+        }
+
+        /**
+         * Gets role.
+         *
+         * @return the role
+         */
+        public String getRole() {
+            return role;
+        }
+
+        /**
+         * Sets role.
+         *
+         * @param role the role
+         * @return the role
+         */
+        public UserDTO setRole(String role) {
+            this.role = role;
+            return this;
         }
     }
 

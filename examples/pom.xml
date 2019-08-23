@@ -24,7 +24,7 @@
     <artifactId>build-example</artifactId>
     <name>3 Dew Example Build</name>
     <packaging>pom</packaging>
-    <version>2.0.0-beta2</version>
+    <version>2.0.0-SNAPSHOT</version>
 
     <properties>
         <maven.install.skip>true</maven.install.skip>

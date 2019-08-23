@@ -20,7 +20,7 @@ import ms.dew.Dew
 import ms.dew.auth.domain.{Ident, Resource}
 import ms.dew.auth.dto.basic.{AccessTokenReq, AccessTokenResp}
 import ms.dew.auth.dto.management._
-import ms.dew.auth.dto.user.{LoginReq, RegisterReq, UserModifyReq}
+import ms.dew.auth.dto.user.{LoginReq, RegisterReq, UserModifyReq, UserResp}
 import ms.dew.auth.sdk.TokenInfo
 import ms.dew.auth.service.ManagementService
 import ms.dew.test.DewTestAutoConfiguration
@@ -34,10 +34,10 @@ import org.springframework.transaction.annotation.Transactional
 import scala.collection.JavaConverters._
 
 /**
-  * Auth test.
-  *
-  * @author gudaoxuri
-  */
+ * Auth test.
+ *
+ * @author gudaoxuri
+ */
 @RunWith(classOf[SpringRunner])
 @SpringBootTest(classes = Array(classOf[DewTestAutoConfiguration], classOf[AuthApplication]), webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
@@ -261,9 +261,8 @@ class AuthTest extends BasicTest {
     getR = get("/test/auth/t", classOf[Void])
     assert(getR.ok())
     // get user
-    val infoR = get("/user/info", classOf[TokenInfo])
-    assert(infoR.getBody.getName == "蒋震宇" && infoR.getBody.getRoles.containsValue("普通用户"))
-    // modify user
+    val infoR = get("/user/info", classOf[UserResp])
+    assert(infoR.getBody.getName == "蒋震宇" && infoR.getBody.getRoles.containsValue("普通用户")) // modify user
     val user = new UserModifyReq
     user.name = "蒋震宇"
     user.password = "456"
@@ -311,12 +310,11 @@ class AuthTest extends BasicTest {
     token = loginR.getBody.getToken
 
     // getUser
-    var infoR = get("/user/info", classOf[TokenInfo])
+    var infoR = get("/user/info", classOf[UserResp])
     assert(infoR.getBody.getName == "注册用户A" && infoR.getBody.getRoles.isEmpty)
-
     // logout
     delete("/user/logout")
-    infoR = get("/user/info", classOf[TokenInfo])
+    infoR = get("/user/info", classOf[UserResp])
     assert(!infoR.ok())
 
   }

@@ -40,27 +40,16 @@ public class AuthTest {
 
     /**
      * Test all.
-     *
-     * @throws Exception the exception
      */
-    public void testAll() throws Exception {
+    public void testAll() {
         AuthController.UserDTO userDTO = new AuthController.UserDTO();
         userDTO.setIdCard("331023395739483150");
         userDTO.setName("辰");
         userDTO.setPassword("123456");
         userDTO.setPhone("15957199704");
+        userDTO.setRole("admin");
         Resp registerResult = testRestTemplate.postForObject("/auth/register", userDTO, Resp.class);
         Assert.assertEquals("200", registerResult.getCode());
-
-        //["/auth/register/*","/auth/re?","/user/**","/tes[t]"]
-        registerResult = testRestTemplate.postForObject("/auth/register/user", userDTO, Resp.class);
-        Assert.assertEquals("403", registerResult.getCode());
-        registerResult = testRestTemplate.postForObject("/auth/reg", userDTO, Resp.class);
-        Assert.assertEquals("403", registerResult.getCode());
-        registerResult = testRestTemplate.postForObject("/user/register/hello", userDTO, Resp.class);
-        Assert.assertEquals("403", registerResult.getCode());
-        registerResult = testRestTemplate.postForObject("/test", userDTO, Resp.class);
-        Assert.assertEquals("403", registerResult.getCode());
 
         AuthController.LoginDTO loginDTO = new AuthController.LoginDTO();
         loginDTO.setIdCard(userDTO.getIdCard());
@@ -80,13 +69,44 @@ public class AuthTest {
         Assert.assertEquals("200", bussinessResult.getCode());
         Assert.assertEquals("331023395739483150", bussinessResult.getBody().getIdCard());
 
+
+        testRouter(headers);
+
         testRestTemplate.exchange("/auth/logout", HttpMethod.DELETE, new HttpEntity<>(null, headers), Resp.class);
         bussinessResult = Resp.generic(
                 testRestTemplate.exchange("/auth/business/someopt",
                         HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody(), OptInfoExt.class);
         Assert.assertEquals("401", bussinessResult.getCode());
 
+
         testTokenKind(loginDTO);
+
+    }
+
+    private void testRouter(HttpHeaders headers) {
+        // blackUri
+        AuthController.UserDTO userDTO = new AuthController.UserDTO();
+        userDTO.setIdCard("331023395739483150");
+        userDTO.setName("辰");
+        userDTO.setPassword("123456");
+        userDTO.setPhone("15957199704");
+
+        //["/auth/register/*","/auth/re?","/user/**","/tes[t]"]
+        Resp registerResult = testRestTemplate.postForObject("/auth/register/user", userDTO, Resp.class);
+        Assert.assertEquals("403", registerResult.getCode());
+        registerResult = testRestTemplate.postForObject("/auth/reg", userDTO, Resp.class);
+        Assert.assertEquals("403", registerResult.getCode());
+        registerResult = testRestTemplate.postForObject("/user/register/hello", userDTO, Resp.class);
+        Assert.assertEquals("403", registerResult.getCode());
+        registerResult = testRestTemplate.postForObject("/test", userDTO, Resp.class);
+        Assert.assertEquals("403", registerResult.getCode());
+
+        // roleAuth
+        registerResult = testRestTemplate.postForObject("/mgr/register/user", userDTO, Resp.class);
+        Assert.assertEquals("401", registerResult.getCode());
+        registerResult = testRestTemplate.exchange("/mgr/register/user",
+                HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody();
+        Assert.assertEquals("404", registerResult.getCode());
     }
 
     private void testTokenKind(AuthController.LoginDTO loginDTO) {
@@ -152,5 +172,6 @@ public class AuthTest {
                 OptInfoExt.class);
         Assert.assertEquals("200", bussinessResult.getCode());
     }
+
 
 }

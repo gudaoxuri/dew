@@ -64,7 +64,10 @@ dew:                                    # Dew 参数key前缀
     router:                             # 路由功能
       enabled: false                    # 是否启用
       black-uri:                        # URL黑名单，支持ant风格
-        <Http Method>: [<URLs>]         # URL黑名单列表
+        <Http Method>: [<URLs>]         # URL黑名单列表，Method = all 表示所有方法
+      role-auth:                        # 角色认证
+        <Role Code>:                    # 角色编码
+          <Http Method>: [<URLs>]       # 只有该角色才能访问的URL，支持ant风格，Method = all 表示所有方法
     token-kinds:                        # Token类型，可为不同的Token类型设置不同的过期时间、保留的版本
       <Kind>:                           # Token类型名称，比如 PC/Android/... ，默认会创建名为 DEFAULT 的类型
         expire-sec: 86400               # Token 过期时间（秒）

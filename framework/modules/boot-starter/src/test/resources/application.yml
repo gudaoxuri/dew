@@ -47,6 +47,13 @@ dew:
       enabled: true
       blackUri:
         post: ["/auth/register/*","/auth/re?","/user/**","/tes{t}"]
+      roleAuth:
+        admin:
+          all: ["/mgr/**"]
+          get: ["/user/**"]
+        user:
+          get: ["/user/**"]
+          post: ["/user/"]
     token-kinds:
       DEFAULT:
         revisionHistoryLimit: 1

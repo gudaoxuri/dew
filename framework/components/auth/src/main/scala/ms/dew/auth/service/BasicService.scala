@@ -107,8 +107,8 @@ class BasicService @Autowired()(
         .toSet
     if (matchedRoles.nonEmpty) {
       if (tokenInfo.getAccountCode != null
-        && tokenInfo.getRoles != null
-        && tokenInfo.getRoles.keySet().stream().anyMatch(role => matchedRoles.contains(role))) {
+        && tokenInfo.getRoleInfo != null
+        && tokenInfo.getRoleInfo.stream().anyMatch(role => matchedRoles.contains(role.getCode))) {
         Resp.success(tokenInfo)
       } else {
         Resp.unAuthorized(s"Uri [$uri] Account [${tokenInfo.getTenantId} - ${tokenInfo.getName}] 没有权限")

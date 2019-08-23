@@ -917,6 +917,7 @@ public class DewConfig {
 
             private boolean enabled = false;
             private Map<String, List<String>> blackUri = new LinkedHashMap<>();
+            private Map<String, Map<String, List<String>>> roleAuth = new LinkedHashMap<>();
 
             /**
              * Is enabled boolean.
@@ -952,6 +953,26 @@ public class DewConfig {
              */
             public void setBlackUri(Map<String, List<String>> blackUri) {
                 this.blackUri = blackUri;
+            }
+
+            /**
+             * Gets role auth.
+             *
+             * @return the role auth
+             */
+            public Map<String, Map<String, List<String>>> getRoleAuth() {
+                return roleAuth;
+            }
+
+            /**
+             * Sets role auth.
+             *
+             * @param roleAuth the role auth
+             * @return the role auth
+             */
+            public Router setRoleAuth(Map<String, Map<String, List<String>>> roleAuth) {
+                this.roleAuth = roleAuth;
+                return this;
             }
         }
 

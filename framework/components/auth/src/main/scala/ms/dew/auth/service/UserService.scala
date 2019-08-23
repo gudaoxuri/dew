@@ -24,6 +24,7 @@ import ms.dew.auth.domain.{Account, Ident}
 import ms.dew.auth.dto.user._
 import ms.dew.auth.repository.{AccountRepository, IdentRepository}
 import ms.dew.auth.sdk.TokenInfo
+import ms.dew.core.auth.dto.OptInfo
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.mail.javamail.{JavaMailSender, MimeMessageHelper}
 import org.springframework.stereotype.Service
@@ -170,7 +171,11 @@ class UserService @Autowired()(
     tokenInfo.setAccountCode(account.id)
     tokenInfo.setName(account.name)
     tokenInfo.setTenantId(account.tenantId)
-    tokenInfo.setRoles(account.roles.asScala.map(role => role.id -> role.name).toMap.asJava)
+    tokenInfo.setRoleInfo(account.roles.asScala.map(role => new OptInfo.RoleInfo()
+      .setCode(role.getId)
+      .setName(role.getName)
+      .setTenantCode(role.getTenantId)
+    ).asJava)
     tokenInfo.setToken($.field.createUUID())
     Dew.cluster.cache.del(AuthConfig.CACHE_LOGIN_ERROR + loginKey)
     Dew.cluster.cache.setex(AuthConfig.CACHE_TOKEN + tokenInfo.getToken, $.json.toJsonString(tokenInfo), authConfig.tokenExpireSec)
