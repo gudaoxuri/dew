@@ -18,6 +18,7 @@ package ms.dew.devops.kernel.helper;
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
+import ms.dew.devops.kernel.exception.GitDiffException;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -53,6 +54,11 @@ public class GitOpt {
             List<String> changedFiles = changedFilesR.getBody();
             log.info("Found " + changedFiles.size() + " changed files by git diff --name-only " + startCommitHash + " " + endCommitHash);
             return changedFiles;
+        } else if (changedFilesR.getMessage().contains("fatal: bad object") || changedFilesR.getMessage().contains("Abnormal termination")) {
+            // 如果 git diff 执行时报错，将异常抛出，方便之后继续部署。
+            // 此报错常见于代码回退后，使用 Gitlab Runner 全量重新拉取代码部署时，无法获取commit id；
+            // 使用 Jenkins 部署，增量拉取代码未见异常。
+            throw new GitDiffException(changedFilesR.getMessage());
         } else {
             throw new RuntimeException(changedFilesR.getMessage());
         }

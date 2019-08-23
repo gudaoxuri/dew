@@ -20,6 +20,7 @@ import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
 import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
+import ms.dew.devops.kernel.exception.GitDiffException;
 import ms.dew.devops.kernel.exception.GlobalProcessException;
 import ms.dew.devops.kernel.helper.GitHelper;
 import ms.dew.devops.kernel.util.DewLog;
@@ -94,10 +95,14 @@ public class NeedProcessChecker {
                                     logger.error("Fetch reuse version error.", e);
                                 }
                             }
-                            List<String> changedFiles = fetchGitDiff(lastDeployedVersion);
-                            // 判断有没有代码变更
-                            if (!hasUnDeployFiles(changedFiles, projectConfig)) {
-                                DevOps.SkipProcess.skip(projectConfig, "No code changes", false);
+                            try {
+                                List<String> changedFiles = fetchGitDiff(lastDeployedVersion);
+                                // 判断有没有代码变更
+                                if (!hasUnDeployFiles(changedFiles, projectConfig)) {
+                                    DevOps.SkipProcess.skip(projectConfig, "No code changes", false);
+                                }
+                            } catch (GitDiffException e) {
+                                logger.warn("Redeploying [" + projectConfig.getAppName() + "] due to some codes had been reverted or changed.");
                             }
                         });
             }
@@ -107,32 +112,9 @@ public class NeedProcessChecker {
             List<FinalProjectConfig> processingProjects = DevOps.Config.getFinalConfig().getProjects().values().stream()
                     .filter(config -> !config.getSkip())
                     .collect(Collectors.toList());
-            if (processingProjects.isEmpty()) {
-                // 不存在需要处理的项目
-                DevOps.stopped = true;
-                logger.info("No project found to be processed");
-                ExecuteEventProcessor.init(processingProjects);
+            // 提示要处理的项目，并判断是否继续执行
+            if (!dealProcessProjects(processingProjects, quiet)) {
                 return;
-            }
-            // 提示将要处理的项目
-            StringBuilder sb = new StringBuilder();
-            sb.append("\r\n==================== Processing Projects =====================\r\n\r\n");
-            sb.append(processingProjects.stream().map(config ->
-                    String.format("> [%-25s] %s:%s", config.getAppKindPlugin().getName(), config.getAppGroup(), config.getAppName()))
-                    .collect(Collectors.joining("\r\n")));
-            sb.append("\r\n\r\n==============================================================\r\n");
-            if (quiet) {
-                logger.info(sb.toString());
-            } else {
-                // 非静默模式，用户选择是否继续
-                sb.append("\r\n< Y > or < N >");
-                logger.info(sb.toString());
-                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                if (reader.readLine().trim().equalsIgnoreCase("N")) {
-                    DevOps.stopped = true;
-                    logger.info("Process canceled");
-                    return;
-                }
             }
             ExecuteEventProcessor.init(processingProjects);
         } catch (Throwable e) {
@@ -245,4 +227,54 @@ public class NeedProcessChecker {
                     });
                 });
     }
+
+    /**
+     * 是否要继续处理项目.
+     *
+     * @param processingProjects the processing projects
+     * @param quiet              the quiet
+     * @return Boolean
+     * @throws IOException IOException
+     */
+    private static Boolean dealProcessProjects(List<FinalProjectConfig> processingProjects, boolean quiet) throws IOException {
+        if (processingProjects.isEmpty()) {
+            // 不存在需要处理的项目
+            DevOps.stopped = true;
+            logger.info("No project found to be processed");
+            ExecuteEventProcessor.init(processingProjects);
+            return false;
+        }
+        // 提示将要处理的项目
+        StringBuilder sb = getProcessProjectsString(processingProjects);
+        if (quiet) {
+            logger.info(sb.toString());
+        } else {
+            // 非静默模式，用户选择是否继续
+            logger.info(sb.append("\r\n< Y > or < N >").toString());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            if (reader.readLine().trim().equalsIgnoreCase("N")) {
+                DevOps.stopped = true;
+                logger.info("Process canceled");
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Get Process Projects String.
+     *
+     * @param processingProjects processingProjects
+     * @return StringBuilder
+     */
+    private static StringBuilder getProcessProjectsString(List<FinalProjectConfig> processingProjects) {
+        // 将要处理的项目
+        return new StringBuilder()
+                .append("\r\n==================== Processing Projects =====================\r\n\r\n")
+                .append(processingProjects.stream().map(config ->
+                        String.format("> [%-25s] %s:%s", config.getAppKindPlugin().getName(), config.getAppGroup(), config.getAppName()))
+                        .collect(Collectors.joining("\r\n")))
+                .append("\r\n\r\n==============================================================\r\n");
+    }
+
 }

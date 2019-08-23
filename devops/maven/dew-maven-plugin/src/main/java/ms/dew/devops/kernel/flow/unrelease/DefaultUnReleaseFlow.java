@@ -17,15 +17,12 @@
 package ms.dew.devops.kernel.flow.unrelease;
 
 import io.kubernetes.client.ApiException;
-import io.kubernetes.client.models.V1Pod;
-import io.kubernetes.client.models.V1beta1ReplicaSet;
-import ms.dew.devops.kernel.helper.KubeHelper;
-import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
+import ms.dew.devops.kernel.helper.KubeHelper;
+import ms.dew.devops.kernel.helper.KubeRES;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Default un-release flow.
@@ -37,23 +34,8 @@ public class DefaultUnReleaseFlow extends BasicFlow {
     protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
         // 删除 service
         KubeHelper.inst(config.getId()).delete(config.getAppName(), config.getNamespace(), KubeRES.SERVICE);
-        // 删除 deployment
+        // 删除 Deployment,ReplicaSet,Pod
         KubeHelper.inst(config.getId()).delete(config.getAppName(), config.getNamespace(), KubeRES.DEPLOYMENT);
-        // 删除 ReplicaSet
-        List<V1beta1ReplicaSet> rsList = KubeHelper.inst(
-                config.getId()).list("app=" + config.getAppName() + ",group=" + config.getAppGroup() + ",version=" + config.getAppVersion(),
-                config.getNamespace(), KubeRES.REPLICA_SET, V1beta1ReplicaSet.class);
-        for (V1beta1ReplicaSet rs : rsList) {
-            KubeHelper.inst(config.getId()).delete(rs.getMetadata().getName(), rs.getMetadata().getNamespace(), KubeRES.REPLICA_SET);
-        }
-        // 删除 pod
-        List<V1Pod> pods = KubeHelper.inst(
-                config.getId()).list(
-                "app=" + config.getAppName() + ",group=" + config.getAppGroup() + ",version=" + config.getAppVersion(),
-                config.getNamespace(), KubeRES.POD, V1Pod.class);
-        for (V1Pod rs : pods) {
-            KubeHelper.inst(config.getId()).delete(rs.getMetadata().getName(), rs.getMetadata().getNamespace(), KubeRES.POD);
-        }
     }
 
 }

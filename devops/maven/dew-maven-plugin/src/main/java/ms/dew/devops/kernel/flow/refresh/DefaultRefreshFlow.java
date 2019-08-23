@@ -20,11 +20,11 @@ import io.kubernetes.client.ApiException;
 import io.kubernetes.client.models.ExtensionsV1beta1Deployment;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
+import ms.dew.devops.kernel.function.VersionController;
 import ms.dew.devops.kernel.helper.KubeHelper;
 import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.resource.KubeDeploymentBuilder;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -36,12 +36,13 @@ import java.util.stream.Collectors;
 public class DefaultRefreshFlow extends BasicFlow {
 
     @Override
-    protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
+    protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException {
 
         logger.info("Restarting pods ... ");
         KubeHelper.inst(config.getId()).patch(config.getAppName(),
                 KubeHelper.inst(
-                        config.getId()).list("app=" + config.getAppName() + ",version=" + config.getAppVersion(), config.getNamespace(),
+                        config.getId()).list("app=" + config.getAppName()
+                                + ",version=" + VersionController.getAppCurrentVersion(config), config.getNamespace(),
                         KubeRES.DEPLOYMENT, ExtensionsV1beta1Deployment.class)
                         .stream()
                         .filter(deploy -> config.getAppName().equals(deploy.getMetadata().getName()))

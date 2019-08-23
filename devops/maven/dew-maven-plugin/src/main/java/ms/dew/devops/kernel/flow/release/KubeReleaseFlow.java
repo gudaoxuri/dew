@@ -267,11 +267,7 @@ public class KubeReleaseFlow extends BasicFlow {
         int offset = config.getApp().getRevisionHistoryLimit();
         for (V1ConfigMap configMap : verConfigMaps) {
             boolean enabled = VersionController.isVersionEnabled(configMap);
-            if (enabled) {
-                // 保留要求的版本数量
-                offset--;
-            }
-            if (!enabled || offset <= 0) {
+            if (!enabled || offset < 0) {
                 String oldGitCommit = VersionController.getGitCommit(configMap);
                 logger.debug("Remove old version : " + configMap.getMetadata().getName());
                 // 删除 config map
@@ -280,6 +276,10 @@ public class KubeReleaseFlow extends BasicFlow {
                 DockerHelper.inst(config.getId()).image.remove(config.getImageName(oldGitCommit));
                 // 删除 registry 中的 image
                 DockerHelper.inst(config.getId()).registry.remove(config.getImageName(oldGitCommit));
+            }
+            if (enabled) {
+                // 保留要求的版本数量
+                offset--;
             }
         }
     }
