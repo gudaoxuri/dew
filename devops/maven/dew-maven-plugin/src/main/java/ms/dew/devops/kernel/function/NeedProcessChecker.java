@@ -18,24 +18,25 @@ package ms.dew.devops.kernel.function;
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
+import io.kubernetes.client.models.V1ConfigMap;
 import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.exception.GitDiffException;
 import ms.dew.devops.kernel.exception.GlobalProcessException;
 import ms.dew.devops.kernel.helper.GitHelper;
+import ms.dew.devops.kernel.plugin.appkind.jvmlib.JvmLibAppKindPlugin;
+import ms.dew.devops.kernel.plugin.appkind.pom.PomAppKindPlugin;
 import ms.dew.devops.kernel.util.DewLog;
 import ms.dew.devops.kernel.util.ExecuteOnceProcessor;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -227,6 +228,45 @@ public class NeedProcessChecker {
                     });
                 });
     }
+
+    /**
+     * check Need Rollback Process Projects.
+     *
+     * @param rollbackVersion rollbackVersion
+     */
+    public static synchronized void checkNeedRollbackProcessProjects(String rollbackVersion, boolean quiet) {
+        if (StringUtils.isBlank(rollbackVersion)) {
+            return;
+        }
+        try {
+            logger.info("Assign rollback version : " + rollbackVersion);
+            List<FinalProjectConfig> processingProjects = new ArrayList<>();
+            for (FinalProjectConfig projectConfig : DevOps.Config.getFinalConfig().getProjects().values()) {
+                if (projectConfig.getSkip() || projectConfig.getAppKindPlugin() instanceof PomAppKindPlugin
+                        || projectConfig.getAppKindPlugin() instanceof JvmLibAppKindPlugin) {
+                    continue;
+                }
+                String currentAppVersion = VersionController.getAppCurrentVersion(projectConfig);
+                Map<String, V1ConfigMap> versions = VersionController.getAppVersions(projectConfig);
+
+                if (!(projectConfig.getAppKindPlugin() instanceof PomAppKindPlugin)
+                        && !rollbackVersion.equalsIgnoreCase(currentAppVersion)
+                        && versions.containsKey(rollbackVersion)) {
+                    processingProjects.add(projectConfig);
+                }
+            }
+            // 提示要处理的项目，并判断是否继续执行
+            if (!dealProcessProjects(processingProjects, quiet)) {
+                return;
+            }
+            ExecuteEventProcessor.init(processingProjects);
+        } catch (
+                Throwable e) {
+            throw new GlobalProcessException(e.getMessage(), e);
+        }
+
+    }
+
 
     /**
      * 是否要继续处理项目.

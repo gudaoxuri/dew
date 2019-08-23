@@ -33,7 +33,7 @@ public class RollbackMojo extends BasicMojo {
     @Override
     protected boolean executeInternal() throws IOException, ApiException {
         return DevOps.Config.getProjectConfig(mavenProject.getId()).getAppKindPlugin()
-                .rollbackFlow().exec(mavenProject.getId(), getMojoName());
+                .rollbackFlow(history, rollbackVersion).exec(mavenProject.getId(), getMojoName());
     }
 
 }

@@ -77,8 +77,8 @@ public class FrontendNativeNodeAppKindPlugin implements AppKindPlugin {
     }
 
     @Override
-    public BasicFlow rollbackFlow() {
-        return new DefaultRollbackFlow();
+    public BasicFlow rollbackFlow(boolean history, String version) {
+        return new DefaultRollbackFlow(history, version);
     }
 
     @Override

@@ -68,7 +68,7 @@ public class JvmLibAppKindPlugin implements AppKindPlugin {
     }
 
     @Override
-    public BasicFlow rollbackFlow() {
+    public BasicFlow rollbackFlow(boolean history, String version) {
         return new NoNeedProcessFLow();
     }
 

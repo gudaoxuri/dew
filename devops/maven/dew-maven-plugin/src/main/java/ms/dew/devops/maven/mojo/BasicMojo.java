@@ -131,6 +131,16 @@ public abstract class BasicMojo extends AbstractMojo {
      * 自动伸缩条件：CPU平均使用率标识.
      */
     private static final String FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG = "dew_devops_scale_auto_cpu_averageUtilization";
+    // ============= 回滚场景使用 =============
+    /**
+     * 回滚版本显示历史版本标识.
+     */
+    private static final String FLAG_DEW_DEVOPS_VERSION_HISTORY = "dew_devops_version_history";
+
+    /**
+     * 回滚指定版本标识.
+     */
+    private static final String FLAG_DEW_DEVOPS_ROLLBACK_VERSION = "dew_devops_rollback_version";
 
     // ============= 测试场景使用 =============
     /**
@@ -242,6 +252,17 @@ public abstract class BasicMojo extends AbstractMojo {
     @Parameter(property = FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG)
     int cpuAvg;
 
+    // ============= 回滚场景使用 =============
+    /**
+     * The History.
+     */
+    @Parameter(property = FLAG_DEW_DEVOPS_VERSION_HISTORY)
+    boolean history;
+    /**
+     * The rollback assigned Version.
+     */
+    @Parameter(property = FLAG_DEW_DEVOPS_ROLLBACK_VERSION)
+    String rollbackVersion;
 
     // ============= 测试场景使用 =============
     @Parameter(property = FLAG_DEW_DEVOPS_MOCK_CLASS_PATH)
@@ -287,7 +308,8 @@ public abstract class BasicMojo extends AbstractMojo {
                 formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD + DevOps.APPEND_FLAG, formattedProperties);
         try {
             MavenDevOps.Init.init(mavenSession, pluginManager, profile, quiet,
-                    dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config, assignationProjects,
+                    dockerHost, dockerRegistryUrl, dockerRegistryUserName, dockerRegistryPassword, kubeBase64Config,
+                    assignationProjects, rollbackVersion,
                     dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt,
                     mockClasspath);
         } catch (ConfigException e) {
@@ -363,6 +385,10 @@ public abstract class BasicMojo extends AbstractMojo {
                 .ifPresent(obj -> maxReplicas = Integer.valueOf(obj));
         formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG, formattedProperties)
                 .ifPresent(obj -> cpuAvg = Integer.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_VERSION_HISTORY, formattedProperties)
+                .ifPresent(obj -> history = Boolean.valueOf(obj));
+        formatParameters(FLAG_DEW_DEVOPS_ROLLBACK_VERSION, formattedProperties)
+                .ifPresent(obj -> rollbackVersion = obj);
         formatParameters(FLAG_DEW_DEVOPS_MOCK_CLASS_PATH, formattedProperties)
                 .ifPresent(obj -> mockClasspath = obj);
     }

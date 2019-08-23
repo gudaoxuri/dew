@@ -239,8 +239,12 @@ IMPORTANT: 在CI/CD工具中附加参数的kubernetes、docker相关参数应作
 mvn dew:rollback
 
 # ====================== 附加参数 ======================
+# dew_devops_version_history                    # 是否显示发布的历史版本，为true时，只显示历史版本信息，不进行回滚。默认为false。
+# dew_devops_rollback_version                  # 指定版本进行回滚。为空时使用交互式回滚方式。
+# dew_devops_assignation_projects              # 指定回滚的应用artifactId，多个以逗号分隔。
+# dew_devops_quiet                             # 是否静默处理
 # dew_devops_profile                           # 指定的环境
-# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " " 获取
 # dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
 # dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
 # dew_devops_docker_registry_username          # Docker Registry 用户名
@@ -261,6 +265,7 @@ IMPORTANT: 在CI/CD工具中附加参数的kubernetes、docker相关参数应作
 mvn dew:unrelease
 
 # ====================== 附加参数 ======================
+# dew_devops_assignation_projects              # 指定卸载的应用artifactId  多个以逗号分隔
 # dew_devops_profile                           # 指定的环境
 # dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
 ----
@@ -314,6 +319,9 @@ NOTE: ``dew_devops_scale_auto: false``（默认情况） 时 ``dew_devops_scale_
 ----
 # 基础命令
 mvn dew:refresh
+
+# ====================== 附加参数 ======================
+# dew_devops_assignation_projects              # 指定刷新的应用artifactId  多个以逗号分隔
 ----
 
 ==== CI/CD工具支持-Gitlab CI

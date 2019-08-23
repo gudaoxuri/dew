@@ -81,7 +81,7 @@ public class MavenDevOps {
                                              String inputProfile, boolean quiet,
                                              String inputDockerHost, String inputDockerRegistryUrl,
                                              String inputDockerRegistryUserName, String inputDockerRegistryPassword,
-                                             String inputKubeBase64Config, String inputAssignationProjects,
+                                             String inputKubeBase64Config, String inputAssignationProjects, String rollbackVersion,
                                              Optional<String> dockerHostAppendOpt, Optional<String> dockerRegistryUrlAppendOpt,
                                              Optional<String> dockerRegistryUserNameAppendOpt, Optional<String> dockerRegistryPasswordAppendOpt,
                                              String mockClasspath) {
@@ -113,6 +113,10 @@ public class MavenDevOps {
                                         || s.contains("deploy"))) {
                     NeedProcessChecker.checkNeedProcessProjects(quiet);
                     MavenSkipProcessor.process(session);
+                }
+                if (session.getGoals().stream().map(String::toLowerCase)
+                        .anyMatch(s -> s.contains("dew:rollback"))) {
+                    NeedProcessChecker.checkNeedRollbackProcessProjects(rollbackVersion, quiet);
                 }
             } catch (Exception e) {
                 throw new ConfigException(e.getMessage(), e);

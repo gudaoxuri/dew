@@ -75,7 +75,7 @@ public interface AppKindPlugin {
      *
      * @return the basic flow
      */
-    BasicFlow rollbackFlow();
+    BasicFlow rollbackFlow(boolean history, String version);
 
     /**
      * Scale flow basic flow.
