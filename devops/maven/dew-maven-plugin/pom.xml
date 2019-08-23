@@ -31,6 +31,7 @@
     <name>2.0 Dew DevOps Maven Plugin</name>
 
     <properties>
+        <checkstyle.config.path>../../../framework/checkstyle/checkstyle.xml</checkstyle.config.path>
     </properties>
 
     <dependencies>
