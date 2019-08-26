@@ -102,9 +102,20 @@ public class AuthTest {
         Assert.assertEquals("403", registerResult.getCode());
 
         // roleAuth
-        registerResult = testRestTemplate.postForObject("/mgr/register/user", userDTO, Resp.class);
-        Assert.assertEquals("401", registerResult.getCode());
+        // 没有token
         registerResult = testRestTemplate.exchange("/mgr/register/user",
+                HttpMethod.GET, new HttpEntity<>(null, null), Resp.class).getBody();
+        Assert.assertEquals("401", registerResult.getCode());
+        // admin访问只有user允可的url
+        registerResult = testRestTemplate.exchange("/user/only-user-role/xx",
+                HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody();
+        Assert.assertEquals("401", registerResult.getCode());
+        // admin访问只有admin允可的url
+        registerResult = testRestTemplate.exchange("/mgr/register/user",
+                HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody();
+        Assert.assertEquals("404", registerResult.getCode());
+        // admin访问admin和user允可的url
+        registerResult = testRestTemplate.exchange("/user/u1",
                 HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody();
         Assert.assertEquals("404", registerResult.getCode());
     }

@@ -52,7 +52,7 @@ dew:
           all: ["/mgr/**"]
           get: ["/user/**"]
         user:
-          get: ["/user/**"]
+          get: ["/user/**","/user/only-user-role/**"]
           post: ["/user/"]
     token-kinds:
       DEFAULT:

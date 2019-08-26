@@ -47,6 +47,7 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
     private static final Logger logger = LoggerFactory.getLogger(BasicHandlerInterceptor.class);
 
     private static final String URL_SPLIT = "@";
+    private static final String ROLE_SPLIT = ".";
 
     private AntPathMatcher pathMatcher = new AntPathMatcher();
 
@@ -134,24 +135,37 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
                                 request.getMethod(), request.getRequestURI()), AuthException.class.getName());
                 return false;
             }
-
+            // 角色权限处理
             if (!roleAuth.isEmpty()) {
-                Set<String> needRoles = roleAuth.entrySet().stream()
-                        .filter(entry -> pathMatcher.match(entry.getKey(), reqUri))
-                        .flatMap(entry -> entry.getValue().stream())
-                        .collect(Collectors.toSet());
-                if (!needRoles.isEmpty() && (StringUtils.isEmpty(token) || Dew.auth.getOptInfo(token)
-                        .map(opt ->
-                                ((Set<OptInfo.RoleInfo>) opt.getRoleInfo()).stream()
-                                        .map(role -> {
-                                            if (StringUtils.isEmpty(role.getTenantCode())) {
-                                                return role.getCode();
-                                            } else {
-                                                return role.getTenantCode() + "." + role.getCode();
-                                            }
-                                        })
-                                        .noneMatch(needRoles::contains))
-                        .orElse(true))) {
+                String finalToken = token;
+                boolean pass = roleAuth.keySet().stream()
+                        .filter(strings -> pathMatcher.match(strings, reqUri))
+                        .min(pathMatcher.getPatternComparator(reqUri))
+                        .map(matchedUri -> {
+                            // 找到需要鉴权的URI
+                            if (StringUtils.isEmpty(finalToken)) {
+                                // Token不存在
+                                return false;
+                            }
+                            Set<String> needRoles = roleAuth.get(matchedUri);
+                            return Dew.auth.getOptInfo(finalToken)
+                                    .map(opt ->
+                                            ((Set<OptInfo.RoleInfo>) opt.getRoleInfo()).stream()
+                                                    .map(role -> {
+                                                        if (StringUtils.isEmpty(role.getTenantCode())) {
+                                                            return role.getCode();
+                                                        } else {
+                                                            return role.getTenantCode() + ROLE_SPLIT + role.getCode();
+                                                        }
+                                                    })
+                                                    // 是否找到匹配的角色
+                                                    .anyMatch(needRoles::contains))
+                                    // Token在缓存中不存在
+                                    .orElse(false);
+                        })
+                        // 该请求URI不需要鉴权
+                        .orElse(true);
+                if (!pass) {
                     ErrorController.error(request, response, Integer.parseInt(StandardCode.UNAUTHORIZED.toString()),
                             String.format("The current[%s][%s] request role is not allowed",
                                     request.getMethod(), request.getRequestURI()), AuthException.class.getName());
