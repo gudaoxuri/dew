@@ -337,6 +337,7 @@ public class WebController {
         @Phone(message = "手机号错误", groups = {CreateGroup.class, UpdateGroup.class})
         private String phone;
 
+        private String addr;
 
         /**
          * Gets id card.
@@ -392,6 +393,25 @@ public class WebController {
             this.phone = phone;
         }
 
+        /**
+         * Gets addr.
+         *
+         * @return the addr
+         */
+        public String getAddr() {
+            return addr;
+        }
+
+        /**
+         * Sets addr.
+         *
+         * @param addr the addr
+         * @return the addr
+         */
+        public UserDTO setAddr(String addr) {
+            this.addr = addr;
+            return this;
+        }
     }
 
 }

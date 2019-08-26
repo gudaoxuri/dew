@@ -407,6 +407,7 @@ public class DewConfig {
         public static class Format {
 
             private boolean useUnityError = true;
+            private boolean autoTrimFromReq = false;
 
             private String errorFlag = "__DEW_ERROR__";
 
@@ -444,6 +445,26 @@ public class DewConfig {
              */
             public void setUseUnityError(boolean useUnityError) {
                 this.useUnityError = useUnityError;
+            }
+
+            /**
+             * Is auto trim from req boolean.
+             *
+             * @return the boolean
+             */
+            public boolean isAutoTrimFromReq() {
+                return autoTrimFromReq;
+            }
+
+            /**
+             * Sets auto trim from req.
+             *
+             * @param autoTrimFromReq the auto trim from req
+             * @return the auto trim from req
+             */
+            public Format setAutoTrimFromReq(boolean autoTrimFromReq) {
+                this.autoTrimFromReq = autoTrimFromReq;
+                return this;
             }
         }
 

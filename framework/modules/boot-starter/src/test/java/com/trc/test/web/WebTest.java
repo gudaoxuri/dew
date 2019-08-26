@@ -55,6 +55,7 @@ public class WebTest {
         testResponseFormat();
         testValidation();
         testTimeConvert();
+        testAutoTrim();
     }
 
     private void testResponseFormat() throws Exception {
@@ -119,6 +120,22 @@ public class WebTest {
         Assert.assertEquals("x00010", mappingResult.getBody().getCode());
         Assert.assertEquals("[Internal Server Error]认证错误", mappingResult.getBody().getMessage());
         logger.info($.json.toJsonString(mappingResult.getBody()));
+    }
+
+    private void testAutoTrim() throws Exception {
+        WebController.UserDTO userDTO = new WebController.UserDTO();
+        userDTO.setAge(11);
+        userDTO.setIdCard("110101201709013174");
+        userDTO.setPhone("15971997041");
+        WebController.UserDTO result = testRestTemplate.postForObject(
+                "/test/valid-create", userDTO, WebController.UserDTO.class);
+        Assert.assertEquals("15971997041", result.getPhone());
+        Assert.assertNull(result.getAddr());
+        userDTO.setAddr("   1   ");
+        result = testRestTemplate.postForObject(
+                "/test/valid-create", userDTO, WebController.UserDTO.class);
+        Assert.assertEquals("15971997041", result.getPhone());
+        Assert.assertEquals("1", result.getAddr());
     }
 
     private void testTimeConvert() throws IOException {

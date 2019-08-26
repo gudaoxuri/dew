@@ -10,6 +10,8 @@ dew:
         name: gudaoxuri
         url: http://www.ecfront.com
         email: i@sunisle.org
+    format:
+      auto-trim-from-req: true
     error-mapping:
       "[com.trc.test.web.AuthException]":
         http-code: 401

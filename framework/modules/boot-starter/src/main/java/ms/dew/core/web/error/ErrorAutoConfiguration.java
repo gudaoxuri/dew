@@ -40,7 +40,7 @@ import javax.servlet.Servlet;
 @ConditionalOnWebApplication
 @ConditionalOnClass({Servlet.class, DispatcherServlet.class})
 @AutoConfigureBefore(ErrorMvcAutoConfiguration.class)
-@ConditionalOnProperty(prefix = "dew.basic.format", name = "useUnityError", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "dew.basic.format", name = "use-unity-error", havingValue = "true", matchIfMissing = true)
 public class ErrorAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(ErrorAutoConfiguration.class);

@@ -20,6 +20,7 @@ dew:                                    # Dew 参数key前缀
         email:                          # 联系人邮箱
     format:                             # 格式化配置
       use-unity-error: true             # 是否启用统一响应
+      auto-trim-from-req: false         # 是否自动去掉请求中字符串类型的前后空格
       error-flag: __DEW_ERROR__         # 默认的通知标识
     error-mapping:                      # 自定义错误映射
       "[<>]":                           # 异常类名

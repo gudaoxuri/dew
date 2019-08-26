@@ -27,6 +27,8 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 * 独立通知功能到``notification``
 * 支持kafka、MQTT的MQ实现
 * 支持多个Redis连接 <<framework-user-manual-cluster-redis-mutli-connection>>
+* 支持简单的基于角色的URL拦截功能
+* 支持全局请求内容中字符串自动去前后空格（ ``dew.basic.format.auto-trim-from-req = true`` ）
 
 .Improvement
 
