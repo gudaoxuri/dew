@@ -3,9 +3,7 @@
 
 [TIP]
 ====
-DevOps的配置有两类，
-一是通过项目目录下的 ``.dew`` 配置，
-二是通过 ``Maven`` 配置，在 ``pom.xml`` 中的properties或是 ``mvn -Dxxx`` 作为参数传入。
+DevOps的配置有两类， 一是通过项目目录下的 ``.dew`` 配置， 二是通过 ``Maven`` 配置，在 ``pom.xml`` 中的properties或是 ``mvn -Dxxx`` 作为参数传入。
 
 推荐的做法是相对固定的、不敏感的信息配置到 ``.dew`` 中，而诸如Kubernetes配置、Harbor用户名/密码等信息用Maven在命令行中作为参数传入。
 ====
@@ -31,7 +29,7 @@ app:                                    # 应用配置
   revisionHistoryLimit: 3               # 保留的历史版本数
   port: 8080                            # 端口号，默认情况下前端应用为80(不可修改)，后端服务为8080
   extendedPorts:                        # 扩展端口，仅用于后端服务
-  debugPort: 9000                       # 远程调试服务端口号，仅永固后端服务，默认是9000
+  debugPort: 9000                       # 远程调试服务端口号，仅用于后端服务，默认是9000
   healthCheckEnabled: true              # 是否启用健康检查，仅用于后端服务，默认启用
   healthCheckPort:                      # 用于健康检查的端口，仅用于后端服务，如不设置，默认使用app.port的端口
   livenessPath: /actuator/health        # 存活检测HTTP的路径，仅用于后端服务
@@ -98,12 +96,10 @@ profiles:
 
 [[devops-configuration-dew-inheritance-rules]]
 .继承规则
-
 * ``.dew`` 可放在任意应用（模块）的根目录（与pom.xml同级）下，应用会继承项目的配置
 * ``.dew`` 支持多环境(profiles)，各环境继承默认环境的配置
 
 .继承示例
-
 ----
 # 项目结构
 |- moduleA
