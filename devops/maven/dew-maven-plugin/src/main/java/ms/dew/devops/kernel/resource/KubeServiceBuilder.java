@@ -18,9 +18,9 @@ package ms.dew.devops.kernel.resource;
 
 import io.kubernetes.client.custom.IntOrString;
 import io.kubernetes.client.models.*;
-import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.function.VersionController;
+import ms.dew.devops.kernel.helper.KubeRES;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -112,5 +112,47 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
                                 + key.replaceAll("\\/", "~1")
                                 + "\",\"value\":\"" + value + "\"}"));
         return patcher;
+    }
+
+    /**
+     * Build debug port.
+     * <p>
+     *
+     * @param service     the service
+     * @param forwardPort the forward port
+     * @param debugPort  the target port
+     */
+    public void buildDebugPort(V1Service service, int debugPort, int forwardPort) {
+        service.getSpec().setType("NodePort");
+        if (service.getSpec().getPorts().stream().noneMatch(v1ServicePort -> v1ServicePort.getPort() == forwardPort)) {
+            service.getSpec().getPorts().add(new V1ServicePortBuilder()
+                    .withName("http-debug")
+                    .withPort(forwardPort)
+                    .withProtocol("TCP")
+                    .withTargetPort(new IntOrString(forwardPort))
+                    .build());
+        }
+        if (service.getSpec().getPorts().stream().noneMatch(v1ServicePort -> v1ServicePort.getPort() == debugPort)) {
+            service.getSpec().getPorts().add(new V1ServicePortBuilder()
+                    .withName("http-new")
+                    .withPort(debugPort)
+                    .withProtocol("TCP")
+                    .withTargetPort(new IntOrString(debugPort))
+                    .build());
+        }
+    }
+
+    /**
+     * Clear debug port.
+     * <p>
+     *
+     * @param service     the service
+     * @param forwardPort the forward port
+     * @param debugPort  the target port
+     */
+    public void clearDebugPort(V1Service service, int debugPort, int forwardPort) {
+        service.getSpec().setType("ClusterIP");
+        service.getSpec().getPorts().removeIf(v1ServicePort -> v1ServicePort.getPort() == debugPort || v1ServicePort.getPort() == forwardPort);
+        service.getSpec().getPorts().forEach(v1ServicePort -> v1ServicePort.setNodePort(null));
     }
 }

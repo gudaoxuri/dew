@@ -36,6 +36,8 @@ public class JvmServiceSpringBootBuildFlow extends DockerBuildFlow {
         $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/jvmservice_springboot/Dockerfile"), flowBasePath + "Dockerfile");
         $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/jvmservice_springboot/run-java.sh"), flowBasePath + "run-java.sh");
         $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/jvmservice_springboot/debug-java.sh"), flowBasePath + "debug-java.sh");
+        $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/jvmservice_springboot/debug-clear.sh"),
+                flowBasePath + "debug-clear.sh");
     }
 
     @Override

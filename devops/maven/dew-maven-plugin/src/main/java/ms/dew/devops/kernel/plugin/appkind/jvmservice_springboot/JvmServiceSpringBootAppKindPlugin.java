@@ -170,6 +170,8 @@ public class JvmServiceSpringBootAppKindPlugin implements AppKindPlugin {
         return new HashMap<String, String>() {
             {
                 put("JAVA_OPTIONS", setJavaOptionsValue(projectConfig));
+                put("JAVA_DEBUG_OPTIONS", " -Dspring.profiles.active=" + projectConfig.getProfile() + " -Dserver.port="
+                        + projectConfig.getApp().getDebugPort());
             }
         };
     }
