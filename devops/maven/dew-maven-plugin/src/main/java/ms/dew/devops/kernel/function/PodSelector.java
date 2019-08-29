@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -67,15 +68,23 @@ public class PodSelector {
                         .anyMatch(container -> container.getName().equalsIgnoreCase(KubeDeploymentBuilder.FLAG_CONTAINER_NAME)))
                 .collect(Collectors.toMap(pod -> idx.incrementAndGet(), pod -> pod));
         if (pods.size() > 1) {
-            logger.info("\r\n------------------ Found multiple pods, please select number: ------------------\r\n"
-                    + pods.entrySet().stream()
-                    .map(pod -> " < " + pod.getKey() + " > "
-                            + pod.getValue().getMetadata().getName()
-                            + " | Pod IP:" + pod.getValue().getStatus().getPodIP()
-                            + " | Node:" + pod.getValue().getStatus().getHostIP())
-                    .collect(Collectors.joining("\r\n")));
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            int selected = Integer.valueOf(reader.readLine().trim());
+            int selected;
+            if (config.getMavenSession().getGoals().stream().map(String::toLowerCase)
+                    .anyMatch(s ->
+                            s.contains("ms.dew:dew-maven-plugin:debug")
+                                    || s.contains("dew:debug"))) {
+                selected = new Random().nextInt(pods.size()) + 1;
+            } else {
+                logger.info("\r\n------------------ Found multiple pods, please select number: ------------------\r\n"
+                        + pods.entrySet().stream()
+                        .map(pod -> " < " + pod.getKey() + " > "
+                                + pod.getValue().getMetadata().getName()
+                                + " | Pod IP:" + pod.getValue().getStatus().getPodIP()
+                                + " | Node:" + pod.getValue().getStatus().getHostIP())
+                        .collect(Collectors.joining("\r\n")));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                selected = Integer.valueOf(reader.readLine().trim());
+            }
             return pods.get(selected).getMetadata().getName();
         } else if (pods.size() == 1) {
             return pods.get(1).getMetadata().getName();

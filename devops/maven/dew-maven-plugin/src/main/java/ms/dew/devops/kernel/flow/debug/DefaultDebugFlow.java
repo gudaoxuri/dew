@@ -65,7 +65,7 @@ public class DefaultDebugFlow extends BasicFlow {
                                 "./debug-java.sh"
                         }, System.out::println);
         V1Service service = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(), KubeRES.SERVICE, V1Service.class);
-        new KubeServiceBuilder().buildDebugPort(service, 9000, 5005);
+        new KubeServiceBuilder().buildDebugPort(service, config.getApp().getDebugPort(), 5005);
         KubeHelper.inst(config.getId()).replace(service);
         service = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(), KubeRES.SERVICE, V1Service.class);
         System.out.println("Http-debug nodePort:["
@@ -122,7 +122,7 @@ public class DefaultDebugFlow extends BasicFlow {
         @Override
         public void run() {
             System.out.println("Debug shutdown execute start...");
-            new KubeServiceBuilder().clearDebugPort(service, 9000, 5005);
+            new KubeServiceBuilder().clearDebugPort(service, config.getApp().getDebugPort(), 5005);
             try {
                 KubeHelper.inst(config.getId()).replace(service);
                 KubeHelper.inst(config.getId())
