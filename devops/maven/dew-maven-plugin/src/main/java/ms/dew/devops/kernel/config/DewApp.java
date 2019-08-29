@@ -39,6 +39,8 @@ public class DewApp {
     private Integer port;
     // 扩展端口，仅用于后端服务
     private List<V1ContainerPort> extendedPorts;
+    // 远程调试服务端口号，仅用于后端，默认是9000
+    private Integer debugPort = 9000;
     // 是否启用健康监控，仅用于后端服务
     private Boolean healthCheckEnabled;
     // 健康检查使用端口，仅用于后端服务
@@ -168,6 +170,24 @@ public class DewApp {
      */
     public void setExtendedPorts(List<V1ContainerPort> extendedPorts) {
         this.extendedPorts = extendedPorts;
+    }
+
+    /**
+     * Gets debug port.
+     *
+     * @return the debugPort
+     */
+    public Integer getDebugPort() {
+        return debugPort;
+    }
+
+    /**
+     * Sets extended ports.
+     *
+     * @param debugPort the debugPort
+     */
+    public void setDebugPort(Integer debugPort) {
+        this.debugPort = debugPort;
     }
 
     /**

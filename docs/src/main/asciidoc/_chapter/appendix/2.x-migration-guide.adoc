@@ -64,6 +64,10 @@
         ...
   # MySQL默认的client升级到8.x 注意时区设置及驱动名变更(com.mysql.cj.jdbc.Driver)
 
+  # Hikari连接池 datetime类型有时间差问题，解决方案如下：
+    1. 在URL配置中加上 useTimezone=true&serverTimezone=GMT%2B8(推荐使用这种)
+    2. 或者修改数据库time_zone
+
   # Redis的客户端默认由Jedis改为Lettuce，对应的配置示例：
   redis:
     host: ...
@@ -95,6 +99,8 @@
       basic:
         app-secret: "{cipher}..."
         token-expire-ms:  # 错误，值不能为空
+
+  # 使用Springboot定时任务需要在启动类上加上@EnableScheduling
 
 
 * [ ] [Dew Framework] 修改 ``dew-parent`` 的版本号到最新版本
