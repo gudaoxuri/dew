@@ -86,6 +86,7 @@ public class BasicAuthAdapter implements AuthAdapter {
 
     @Override
     public <E extends OptInfo> void setOptInfo(E optInfo) {
+        Dew.dewConfig.getSecurity().getTokenKinds().putIfAbsent(optInfo.getTokenKind(), new DewConfig.Security.TokenKind());
         if (!cache.setnx(TOKEN_INFO_FLAG + optInfo.getToken(), $.json.toJsonString(optInfo),
                 Dew.dewConfig.getSecurity().getTokenKinds().get(optInfo.getTokenKind()).getExpireSec())) {
             return;
@@ -98,7 +99,9 @@ public class BasicAuthAdapter implements AuthAdapter {
 
     private void removeOldToken(Object accountCode, String tokenKind) {
         // 当前 token kind 要求保留的历史版本数
-        int revisionHistoryLimit = Dew.dewConfig.getSecurity().getTokenKinds().get(tokenKind).getRevisionHistoryLimit();
+        int revisionHistoryLimit = Dew.dewConfig.getSecurity().getTokenKinds()
+                .getOrDefault(tokenKind, new DewConfig.Security.TokenKind())
+                .getRevisionHistoryLimit();
         // 当前 account code 关联的所有 token
         Map<String, String> tokenKinds = cache.hgetAll(TOKEN_ID_REL_FLAG + accountCode);
         tokenKinds.keySet().stream()
