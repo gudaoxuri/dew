@@ -212,7 +212,8 @@ public class NeedProcessChecker {
     private static void dependencyProcess(Collection<FinalProjectConfig> projectConfigs, List<String> needProcessProjects) {
         projectConfigs.stream()
                 // 所有跳过的项目(配置文件跳过的项目除外)
-                .filter(finalProjectConfig -> finalProjectConfig.getSkip() && null != finalProjectConfig.getDisableReuseVersion())
+                .filter(finalProjectConfig -> finalProjectConfig.getSkip() && StringUtils.isNotBlank(finalProjectConfig.getSkipReason())
+                        && null != finalProjectConfig.getDisableReuseVersion())
                 // 找到有依赖于需要处理的快照项目
                 .filter(projectConfig ->
                         projectConfig.getMavenProject().getArtifacts().stream()
