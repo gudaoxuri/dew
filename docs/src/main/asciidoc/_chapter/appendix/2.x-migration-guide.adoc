@@ -203,3 +203,37 @@
   # -----------------
   # （可选）根据实际情况为每个应用添加 .dew 文件以添加各应用的特殊配置
 
+* [ ] [Dew DevOps] 在项目中添加``.gitlab-ci.yml``配置，详见 <<devops-cicd-gitlab-template>>， e.g.
+
+  stages:
+    - deploy
+  cache:
+    paths:
+      - node_modules/
+      - .m2/
+  # 测试环境部署
+  test deploy:
+    stage: deploy
+    only:
+      - test
+    tags:
+      - test
+    script:
+      - mvn -P devops dew:release
+  # 用户验收/预发环境部署
+  uat deploy:
+    stage: deploy
+    only:
+      - uat
+    tags:
+      - uat
+    script:
+      - mvn -P devops dew:release
+  prod deploy: # 生产环境部署
+    stage: deploy
+    only:
+      - prod
+    tags:
+      - prod
+    script:
+      - mvn -P devops dew:release
