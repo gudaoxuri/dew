@@ -1,0 +1,139 @@
+ifndef::imagesdir[:imagesdir: ../../../../docs]
+
+===== Jenkins pipeline 部署脚本说明
+
+====== Jenkins 插件
+
+以下为 Dew DevOps 在 Jenkins Pipeline 部署中使用到的 Jenkins 插件。
+
+.Git Parameter
+设置方法如图，e.g.
+
+image::./images/devops-jenkins/git_branch.jpg[width="70%",height="70%"]
+
+.Mask Passwords Plugin
+Mask Passwords Plugin 用于隐藏一些不应在 Jenkins Job 执行的控制台输出的敏感数据内容。
+
+- 可以通过在 Pipeline 脚本中设置需要隐藏的参数值, e.g.
+
+[source,groovy]
+----
+wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: "${credentialsId}", var: 'credentialsId']]]) {
+    git branch: "${branch}", credentialsId: "${credentialsId}", url: "${git_url}"
+}
+----
++
+TIP: 需要安装此插件，如不安装，使用``dew-devops.groovy``脚本会报错。
+
+.Extended Choice Parameter
+一款可以定义参数的插件
+
+.插件使用方法
+通过如下设置，可直接在 Pipeline 脚本中引用变量名``${git_repo}``或``${env.git_repo}``即可使用参数值。
+
+image::./images/devops-jenkins/extend-choice-parameter.jpg[width="70%",height="70%"]
+image::./images/devops-jenkins/git_repo.jpg[width="70%",height="70%"]
+p.s. 也可通过 Jenkins 自身的参数类型来设值。
+
+image::./images/devops-jenkins/parameter.jpg[width="50%",height="50%"]
+
+====== Pipeline 脚本
+
+脚本使用方法：
+
+- 创建一个Pipeline，按照如下方式配置，填入对应的脚本路径及名称
++
+image::./images/devops-jenkins/pipeline-scm.jpg[width="70%",height="70%"]
+
+.dew-maven-agent-update 脚本
+用于更新 Jenkins 各节点 dew-maven-agent 版本时使用。脚本路径：``devops/cicd/jenkins/scripts/dew-maven-agent-update.groovy``
+
+- 需要两个参数化构建参数
++
+|===
+| jenkins_agents    |需要更新的 Jenkins 节点，多个以``,``逗号分隔，如不填写，默认值为 master
+| MAVEN_AGENT_URL   |最新的 dew-maven-agent jar 包的地址；仓库路径：https://oss.sonatype.org/content/repositories/public/ms/dew/dew-maven-agent
+|===
+
+- 需结合全局变量使用
++
+|===
+|MAVEN_OPTS         |值一般为``-javaagent:/opt/jar/dew-maven-agent.jar  -Dorg.apache.maven.user-settings=/opt/maven/conf/settings.xml``
+|===
+
+.dew-devops 脚本
+此脚本为 Dew DevOps 部署所用脚本，脚本中涉及的参数请查看 <<Jenkins-Parameter>> 章节。 +
+脚本路径： ``devops/cicd/jenkins/scripts/dew-devops.groovy``
+
+[[Jenkins-Parameter]]
+====== Jenkins 参数
+
+[[jenkins-global-env]]
+* Jenkins 全局环境变量
++
+|===
+|CREDENTIALSID_GIT                  |用来拉取代码的凭据
+|DEW_DEVOPS_DOCKERD_HOST            |dockerD的地址，e.g. tcp://10.0.0.10:2375
+|DEW_DEVOPS_HARBOR_HOST             |Harbor仓库的地址
+|DEW_DEVOPS_HARBOR_USERNAME         |Harbor管理员的账号
+|DEW_DEVOPS_HARBOR_PASSWORD         |Harbor管理员账号的密码
+|DEW_DEVOPS_PROJECT_PROFILE_XXX     |部署代码的profile，e.g. DEW_DEVOPS_PROJECT_PROFILE_TEST=test
+|DEW_DEVOPS_KUBE_CONFIG_XXXX        |项目要部署的K8S集群的kube_config的base64加密的值，通过在该集群的master节点，执行此命令
+``echo $(cat /etc/kubernetes/admin.conf\| base64) \| tr -d " "``获取,注意admin.conf变更时及时更新此值。 +
+参数名举例： DEW_DEVOPS_KUBE_CONFIG_TEST，DEW_DEVOPS_KUBE_CONFIG_UAT，DEW_DEVOPS_KUBE_CONFIG_PRD,DEW_DEVOPS_KUBE_CONFIG
+|MAVEN_OPTS                         |值一般为``-javaagent:/opt/jar/dew-maven-agent.jar  -Dorg.apache.maven.user-settings=/opt/maven/conf/settings.xml`` +
+此参数需和``dew-maven-agent-update``脚本结合使用。
+|===
++
+TIP: 注意需要将mvn，node等工具加入环境变量``PATH``中。另外根据情况修改``dew-devops.groovy``脚本中``mvnHome``和``nodeHome``的值。
+
+[[Jenkins-Parameter-build]]
+* Pipeline Job 参数化构建参数
++
+** 基础参数
++
+|===
+|Parameter        |Description |Tip
+|checkout_enabled | 是否只checkout代码 | 默认为false。为true时，不进行其他stage的执行。
+|git_repo         | 为要部署项目的``SSH``格式的代码地址，在pipeline脚本中，直接使用``${git_repo}``即可获取git代码的值。| TIP: 如果pipeline使用scm的方法进行部署，不建议此参数名设为git_url，因为可能会和
+|branch           | 要进行部署的代码的分支 | 此参数推荐使用Git Paremeter插件来配置。branch的值为去除``origin/``的部分。
+|jenkins_agent    | 运行Job的Jenkins节点   | 默认根据job名设值，job名包含test的为slave，包含uat/prd/prod的为master；profile为prd/prod的默认为master
+|jenkins_agents   | 指定Job运行的Jenkins节点,多个用,分隔。|如不指定，默认为``master``。
+|profile          | 要部署项目的profile | 如不指定，根据 Job 的名字来自动判断。p.s. 生产环境默认的profile为``prd``。
+|kube_config      | Kubernetes集群的admin.conf的base64值 | 默认根据job名设值
+|maven_debug      | 是否启用mvnDebug进行调试 | 默认不启用
+|===
++
+** devops_x 各参数
++
+|===
+|**Parameter**          | **Description**
+|devops_assign_services | devops_assign_services为指定部署的项目模块（服务）名，值为各模块的``artifactId``对应值。多个服务之间可以用``,``分隔。
+|devops_appended_cmd    | devops_appended_cmd为部署时的附加命令，如，进行scale或autoscale时，需要额外配置的参数，可通过此参数值来传递。
+|devops_mvn_thread      | devops_mvn_thread为进行部署项目时使用的线程数，如不配置此参数，默认为单线程.
+|devops_phase           | devops_phase 进行部署的阶段，如果配置此参数，默认为``deploy``
+|===
++
+[[devops_phase]]
+*** devops_phase 可选参数值说明：
++
+|===
+|**Value**      | **Description**
+|deploy         | 应用部署
+|rollback       | 应用回滚
+|unrelease      | 应用卸载
+|refresh/restart| 应用重启
+|scale          | 伸缩应用服务
+|autoscale      | 应用自动伸缩扩展
+|redeploy       | 卸载应用并重新部署
+|debug          | 远程调试服务
+|===
++
+** devops_phase 为``rollback``时的可选参数
++
+|===
+|**Parameter**              | **Description**
+|history                    |是否显示历史部署版本 (rollback_input_enable=true时，也显示history)
+|rollback_input_enable      |是否启用交互式回滚方式
+|devops_rollback_version    |指定的回滚版本，默认为空
+|===

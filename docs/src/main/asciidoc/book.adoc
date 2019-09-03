@@ -27,6 +27,7 @@ include::_chapter/framework/configuration.adoc[]
 
 include::_chapter/framework/best-practices.adoc[]
 
+[[Devops-chapter]]
 == 部署运维 DevOps Chapter
 
 include::_chapter/devops/quick-start.adoc[]
@@ -81,4 +82,6 @@ include::../../../../devops/chart/dew-spring-cloud-config/readme.adoc[]
 include::../../../../devops/maven/dew-maven-agent/readme.adoc[]
 
 include::../../../../devops/cicd/gitlabci/readme.adoc[]
+
+include::../../../../devops/cicd/jenkins/readme.adoc[]
 

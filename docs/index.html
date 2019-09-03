@@ -21,7 +21,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.6.1">
-<meta name="author" content="v2.0.0-beta2">
+<meta name="author" content="v2.0.0-SNAPSHOT">
 <title>Dew:一站式微服务解决方案 [2.x Building&#8230;&#8203;]</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -447,7 +447,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Dew:一站式微服务解决方案 [2.x Building&#8230;&#8203;]</h1>
 <div class="details">
-<span id="author" class="author">v2.0.0-beta2</span><br>
+<span id="author" class="author">v2.0.0-SNAPSHOT</span><br>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -512,12 +512,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </li>
-<li><a href="#部署运维_devops_chapter">4. 部署运维 DevOps Chapter</a>
+<li><a href="#Devops-chapter">4. 部署运维 DevOps Chapter</a>
 <ul class="sectlevel2">
 <li><a href="#devops-quick-start">4.1. DevOps快速入门</a>
 <ul class="sectlevel3">
 <li><a href="#功能体验_2">4.1.1. 功能体验</a></li>
-<li><a href="#发生了什么">4.1.2. 发生了什么？</a></li>
+<li><a href="#what-for-dew-devops">4.1.2. 发生了什么？</a></li>
 </ul>
 </li>
 <li><a href="#devops-user-manual">4.2. DevOps使用手册</a>
@@ -532,10 +532,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#日志查看">4.2.8. 日志查看</a></li>
 <li><a href="#伸缩扩展">4.2.9. 伸缩扩展</a></li>
 <li><a href="#应用刷新">4.2.10. 应用刷新</a></li>
-<li><a href="#ci_cd工具支持_gitlab_ci">4.2.11. CI/CD工具支持-Gitlab CI</a></li>
-<li><a href="#执行通知">4.2.12. 执行通知</a></li>
-<li><a href="#dew-devops-deploy">4.2.13. Dew DevOps 脚本部署</a></li>
-<li><a href="#监控管理">4.2.14. 监控管理</a></li>
+<li><a href="#应用远程调试">4.2.11. 应用远程调试</a></li>
+<li><a href="#ci_cd工具支持">4.2.12. CI/CD工具支持</a></li>
+<li><a href="#执行通知">4.2.13. 执行通知</a></li>
+<li><a href="#dew-devops-deploy">4.2.14. Dew DevOps 脚本部署</a></li>
+<li><a href="#监控管理">4.2.15. 监控管理</a></li>
 </ul>
 </li>
 <li><a href="#devops-env-install">4.3. 测试、生产环境安装配置</a>
@@ -638,6 +639,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#dew-devops-maven-agent">6.5.1. Dew DevOps Maven Agent</a></li>
 <li><a href="#dew-gitlab-ci">6.5.2. Dew CI/CD : Gitlab CI 实现</a></li>
+<li><a href="#dew-jenkins-pipeline">6.5.3. Dew DevOps : Jenkins Pipeline 部署</a></li>
 </ul>
 </li>
 </ul>
@@ -3271,7 +3273,10 @@ public class WebController {
     router:                             # 路由功能
       enabled: false                    # 是否启用
       black-uri:                        # URL黑名单，支持ant风格
-        &lt;Http Method&gt;: [&lt;URLs&gt;]         # URL黑名单列表
+        &lt;Http Method&gt;: [&lt;URLs&gt;]         # URL黑名单列表，Method = all 表示所有方法
+      role-auth:                        # 角色认证
+        &lt;Role Code&gt;:                    # 角色编码，角色可以带租户，使用.分隔，e.g. tenant1.admin / tenant2.admin
+          &lt;Http Method&gt;: [&lt;URLs&gt;]       # 只有该角色才能访问的URL，支持ant风格，支持继承与重写，Method = all 表示所有方法
     token-kinds:                        # Token类型，可为不同的Token类型设置不同的过期时间、保留的版本
       &lt;Kind&gt;:                           # Token类型名称，比如 PC/Android/... ，默认会创建名为 DEFAULT 的类型
         expire-sec: 86400               # Token 过期时间（秒）
@@ -3362,7 +3367,16 @@ public Resp&lt;String&gt; login(@RequestBody LoginDTO loginDTO) {
             .setAccountCode($.field.createShortUUID())
             .setToken(token)
             .setName(user.getName())
-            .setMobile(user.getPhone()));
+            .setMobile(user.getPhone())
+            .setRoleInfo(new HashSet&lt;OptInfo.RoleInfo&gt;() {
+                {
+                    add(new OptInfo.RoleInfo()
+                            .setCode(userDTO.getRole())
+                            .setName("..")
+                            .setTenantCode("")
+                    );
+                }
+            }));
     return Resp.success(token);
 }
 
@@ -3799,6 +3813,7 @@ HBaseTemplate 其他使用方法可以详见 hbase-starter 模块下的 test 内
         email:                          # 联系人邮箱
     format:                             # 格式化配置
       use-unity-error: true             # 是否启用统一响应
+      auto-trim-from-req: false         # 是否自动去掉请求中字符串类型的前后空格
       error-flag: __DEW_ERROR__         # 默认的通知标识
     error-mapping:                      # 自定义错误映射
       "[&lt;&gt;]":                           # 异常类名
@@ -3843,7 +3858,10 @@ HBaseTemplate 其他使用方法可以详见 hbase-starter 模块下的 test 内
     router:                             # 路由功能
       enabled: false                    # 是否启用
       black-uri:                        # URL黑名单，支持ant风格
-        &lt;Http Method&gt;: [&lt;URLs&gt;]         # URL黑名单列表
+        &lt;Http Method&gt;: [&lt;URLs&gt;]         # URL黑名单列表，Method = all 表示所有方法
+      role-auth:                        # 角色认证
+        &lt;Role Code&gt;:                    # 角色编码，角色可以带租户，使用.分隔，e.g. tenant1.admin / tenant2.admin
+          &lt;Http Method&gt;: [&lt;URLs&gt;]       # 只有该角色才能访问的URL，支持ant风格，支持继承与重写，Method = all 表示所有方法
     token-kinds:                        # Token类型，可为不同的Token类型设置不同的过期时间、保留的版本
       &lt;Kind&gt;:                           # Token类型名称，比如 PC/Android/... ，默认会创建名为 DEFAULT 的类型
         expire-sec: 86400               # Token 过期时间（秒）
@@ -4235,7 +4253,7 @@ RedisCacheManager cacheManager() {
 </div>
 </div>
 <div class="sect1">
-<h2 id="部署运维_devops_chapter"><a class="anchor" href="#部署运维_devops_chapter"></a>4. 部署运维 DevOps Chapter</h2>
+<h2 id="Devops-chapter"><a class="anchor" href="#Devops-chapter"></a>4. 部署运维 DevOps Chapter</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="devops-quick-start"><a class="anchor" href="#devops-quick-start"></a>4.1. DevOps快速入门</h3>
@@ -4303,7 +4321,7 @@ mvn -P devops deploy -Ddew_devops_profile=uat
 </div>
 </div>
 <div class="sect3">
-<h4 id="发生了什么"><a class="anchor" href="#发生了什么"></a>4.1.2. 发生了什么？</h4>
+<h4 id="what-for-dew-devops"><a class="anchor" href="#what-for-dew-devops"></a>4.1.2. 发生了什么？</h4>
 <div class="paragraph">
 <p>当执行 <code>sh dew-devops.sh</code> 创建项目时实际上做了：</p>
 </div>
@@ -4353,7 +4371,7 @@ spec:
 </ol>
 </div>
 <div class="paragraph">
-<p>当执行 <code>mvn -P devops dew:release -Ddew_devops_profile=uat</code> 时实际上做了：</p>
+<p>当执行 <code>mvn -P devops deploy -Ddew_devops_profile=uat</code> 时实际上做了：</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -4547,7 +4565,7 @@ spec:
   &lt;parent&gt;
     &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
-    &lt;version&gt;2.0.0-beta2&lt;/version&gt;
+    &lt;version&gt;2.0.0-SNAPSHOT&lt;/version&gt;
   &lt;/parent&gt;
 
   &lt;groupId&gt;ms.dew.devops.it&lt;/groupId&gt;
@@ -4594,6 +4612,18 @@ sh dew-devops.sh
 # 选择 3 创建项目：为项目创建namespace、ingress、拉取镜像的secret；对应的 Harbor 账户和镜像仓库等</code></pre>
 </div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+如使用Jenkins进行部署，可跳过选项2，详见：<a href="#dew-jenkins-pipeline">Dew Jenkins Pipeline 部署</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <div class="title">Dew和Maven的配置</div>
 <p>见：<a href="#devops-configuration">DevOps配置速查</a></p>
@@ -4609,7 +4639,7 @@ sh dew-devops.sh
 <div class="title">命令</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 基础命令
-mvn deploy
+mvn -P devops deploy
 
 # ====================== 附加参数 ======================
 # dew_devops_profile                           # 指定的环境
@@ -4725,25 +4755,13 @@ mvn deploy
 </div>
 <div id="devops-user-manual-release-skip" class="paragraph">
 <div class="title">不需要部署的应用处理</div>
-<p><code>Dew</code> 会自行判断应用是否需要部署，对于不需要部署的应用为加速执行会设置一系列的skip，
-部署执行的是 <a href="https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html">Default Lifecycle</a> ，
-默认包含了如下插件的skip：</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Core plugins（clean、compiler、deploy、failsafe、install、resources、site、surefire）</p>
-</li>
-<li>
-<p>Packaging types/tools（war、jar、source）</p>
-</li>
-<li>
-<p>Reporting plugins（checkstyle）</p>
-</li>
-<li>
-<p>Tools（assembly、dependency、gpg）</p>
-</li>
-</ol>
+<p><code>Dew</code> 会自行判断应用是否需要部署，对于不需要部署的应用为加速执行会设置一系列的skip，<br>
+部署执行的是 <a href="https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html">Default Lifecycle</a> ，<br>
+默认包含了如下插件的skip：<br>
+. Core plugins（clean、compiler、deploy、failsafe、install、resources、site、surefire）
+. Packaging types/tools（war、jar、source）
+. Reporting plugins（checkstyle）
+. Tools（assembly、dependency、gpg）</p>
 </div>
 <div class="paragraph">
 <p>同时 <code>Dew</code> 提供了 <code>dew.devops.skip</code> ，用户可自行添加到其它插件、环境中。</p>
@@ -4801,7 +4819,7 @@ mvn deploy
 <div class="title">命令</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 基础命令
-mvn dew:rollback
+mvn -P devops dew:rollback
 
 # ====================== 附加参数 ======================
 # dew_devops_version_history                    # 是否显示发布的历史版本，为true时，只显示历史版本信息，不进行回滚。默认为false。
@@ -4838,7 +4856,7 @@ mvn dew:rollback
 <div class="title">命令</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 基础命令
-mvn dew:unrelease
+mvn -P devops dew:unrelease
 
 # ====================== 附加参数 ======================
 # dew_devops_assignation_projects              # 指定卸载的应用artifactId  多个以逗号分隔
@@ -4856,7 +4874,7 @@ mvn dew:unrelease
 <div class="title">命令</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 基础命令
-mvn dew:log
+mvn -P devops dew:log
 
 # ====================== 附加参数 ======================
 # dew_devops_profile                           # 指定的环境
@@ -4875,7 +4893,7 @@ mvn dew:log
 <div class="title">命令</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 基础命令
-mvn dew:scale
+mvn -P devops dew:scale
 
 # ====================== 附加参数 ======================
 # dew_devops_scale_replicas                    # 伸缩Pod数量
@@ -4907,7 +4925,7 @@ mvn dew:scale
 <div class="title">命令</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 基础命令
-mvn dew:refresh
+mvn -P devops dew:refresh
 
 # ====================== 附加参数 ======================
 # dew_devops_assignation_projects              # 指定刷新的应用artifactId  多个以逗号分隔</code></pre>
@@ -4915,7 +4933,38 @@ mvn dew:refresh
 </div>
 </div>
 <div class="sect3">
-<h4 id="ci_cd工具支持_gitlab_ci"><a class="anchor" href="#ci_cd工具支持_gitlab_ci"></a>4.2.11. CI/CD工具支持-Gitlab CI</h4>
+<h4 id="应用远程调试"><a class="anchor" href="#应用远程调试"></a>4.2.11. 应用远程调试</h4>
+<div class="paragraph">
+<p>用于远程调试服务，此命令在要调试的应用目录下执行。请结合<code>-Dew_devops_assignation_projects=</code>指定服务名进行调试。</p>
+</div>
+<div class="listingblock">
+<div class="title">命令</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 基础命令
+mvn -P devops dew:debug
+
+# ====================== 附加参数 ======================
+# dew_devops_assignation_projects              # 指定刷新的应用artifactId  多个以逗号分隔</code></pre>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+启动调试后，会在控制台输出调试端口相关内容，e.g. <code>Http-debug nodePort:[30537].   Http-new nodePort: [30198]</code>，Http-debug nodePort为远程debug的端口，Http-new nodePort为远程启动的用于调试服务的端口。<br>
+调试完毕请结束debug进程。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="ci_cd工具支持"><a class="anchor" href="#ci_cd工具支持"></a>4.2.12. CI/CD工具支持</h4>
+<div class="sect4">
+<h5 id="gitlab_ci"><a class="anchor" href="#gitlab_ci"></a>Gitlab CI</h5>
 <div class="paragraph">
 <p>应用的部署与回滚为 <code>DevOps</code> 的核心操作，这些操作应该与 <code>CI/CD</code> 工具集成使用。</p>
 </div>
@@ -4925,7 +4974,7 @@ mvn dew:refresh
 <div class="ulist">
 <ul>
 <li>
-<p>使用 <code>dew-devops.sh</code> 初始化项目时填写 <code>Gitlab CI</code> 相关信息</p>
+<p>使用 <code>dew-devops.sh</code> 初始化项目时，执行2，填写 <code>Gitlab CI</code> 相关信息，安装Gitlab Runner</p>
 </li>
 <li>
 <p>在项目根目录下添加 <code>.gitlab-ci.yml</code> 即可，格式如下：</p>
@@ -4975,8 +5024,18 @@ prod deploy:
 </div>
 </div>
 </div>
+<div class="sect4">
+<h5 id="jenkins_pipeline"><a class="anchor" href="#jenkins_pipeline"></a>Jenkins Pipeline</h5>
+<div class="paragraph">
+<p>关于 Jenkins Pipeline 的 Job 设置，可参考 <a href="#dew-jenkins-pipeline">Dew DevOps : Jenkins Pipeline 部署</a>。</p>
+</div>
+<div class="paragraph">
+<p>如需自动化部署，可使用 <a href="https://github.com/jenkinsci/gitlab-plugin">GitLab Plugin</a> 实现。</p>
+</div>
+</div>
+</div>
 <div class="sect3">
-<h4 id="执行通知"><a class="anchor" href="#执行通知"></a>4.2.12. 执行通知</h4>
+<h4 id="执行通知"><a class="anchor" href="#执行通知"></a>4.2.13. 执行通知</h4>
 <div class="paragraph">
 <p>目前支持 <code>钉钉</code> 与 <code>HTTP</code> 两种方式：</p>
 </div>
@@ -5080,9 +5139,9 @@ prod deploy:
 </div>
 </div>
 <div class="sect3">
-<h4 id="dew-devops-deploy"><a class="anchor" href="#dew-devops-deploy"></a>4.2.13. Dew DevOps 脚本部署</h4>
+<h4 id="dew-devops-deploy"><a class="anchor" href="#dew-devops-deploy"></a>4.2.14. Dew DevOps 脚本部署</h4>
 <div class="paragraph">
-<p>此为Dew DevOps 的脚本 <code>dew-devops.sh</code> 部署相关说明。集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
+<p>此为Dew DevOps 的脚本 <code>dew-devops.sh</code> 部署相关说明。集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="sect4">
 <h5 id="before_started"><a class="anchor" href="#before_started"></a>Before Started</h5>
@@ -5104,10 +5163,10 @@ prod deploy:
 <p>GitLab 仓库</p>
 </li>
 <li>
-<p>MinIO，并创建好对应的 bucket(用于进行Runner的缓存存储)</p>
+<p>DockerD（用于Runner中dew-maven-plugin进行项目镜像的打包上传拉取）</p>
 </li>
 <li>
-<p>DockerD（用于Runner中dew-maven-plugin进行项目镜像的打包上传拉取）</p>
+<p>MinIO，并创建好对应的 bucket(用于进行Runner的缓存存储) (使用Gitlab Runner部署项目需要此项)</p>
 </li>
 </ol>
 </div>
@@ -5120,7 +5179,7 @@ prod deploy:
 <p>在项目代码中添加并配置 <code>.dew</code> 文件（详见 <a href="http://doc.dew.ms/#devops-configuration-dew">.dew 配置详情</a>）</p>
 </li>
 <li>
-<p>在项目代码中添加并配置 <code>.gitlab-ci.yml</code> 文件（参考 <a href="http://doc.dew.ms/#dew_ci_cd_gitlab_ci_%E5%AE%9E%E7%8E%B0">Gitlab CI 实现</a>）</p>
+<p>若使用 Gitlab Runner 进行部署，需要在项目代码中添加并配置 <code>.gitlab-ci.yml</code> 文件（参考 <a href="../cicd/gitlabci/readme.html#dew-gitlab-ci">Gitlab CI 实现</a>）</p>
 </li>
 </ol>
 </div>
@@ -5137,12 +5196,13 @@ sh dew-devops.sh</code></pre>
 <h6 id="选项介绍"><a class="anchor" href="#选项介绍"></a>选项介绍</h6>
 <div class="paragraph">
 <div class="title">Init cluster</div>
-<p>集群初始化：创建一个用于集群服务发现的 ClusterRole</p>
+<p>集群初始化：创建一个用于集群服务发现的 ClusterRole。一个 Kubernetes 集群只需要初始化一次。</p>
 </div>
 <div class="paragraph">
 <div class="title">Install Gitlab runner</div>
-<p>Gitlab runner 安装，用于配合 <a href="http://doc.dew.ms/#dew_ci_cd_gitlab_ci_%E5%AE%9E%E7%8E%B0">Gitlab CI</a>部署项目。
-此选项功能：</p>
+<p>Gitlab runner 安装，用于配合 <a href="#dew-gitlab-ci">Gitlab CI</a>部署项目。<br>
+此项执行次数根据 Runner 的 profile 和 tag 的情况自行安装。<br>
+执行此选项，实际进行了以下操作：</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -5201,13 +5261,13 @@ sh dew-devops.sh</code></pre>
 <div class="paragraph">
 <div class="title">Create a project</div>
 <p>创建项目：用于给需要部署的项目来创建一个部署的命名空间等。
-详见： <a href="http://doc.dew.ms/#%E5%8F%91%E7%94%9F%E4%BA%86%E4%BB%80%E4%B9%88">创建项目</a></p>
+详见： <a href="#what-for-dew-devops">创建项目</a></p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="监控管理"><a class="anchor" href="#监控管理"></a>4.2.14. 监控管理</h4>
+<h4 id="监控管理"><a class="anchor" href="#监控管理"></a>4.2.15. 监控管理</h4>
 
 </div>
 </div>
@@ -5831,6 +5891,18 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | gre
 # 添加域名到客户机hosts并访问 https://dashboard.dew.ms</code></pre>
 </div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+另一款 Kubernetes Dashboard 推荐：<a href="https://github.com/herbrandson/k8dash">k8dash</a>
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect3">
 <h4 id="elasticsearch"><a class="anchor" href="#elasticsearch"></a>4.3.9. Elasticsearch</h4>
@@ -5841,7 +5913,7 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | gre
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-<a href="https://github.com/elastic/helm-charts/blob/master/elasticsearch" class="bare">https://github.com/elastic/helm-charts/blob/master/elasticsearch</a> 注意仔细查看各参数设值的说明。
+<a href="https://github.com/elastic/helm-charts/blob/master/elasticsearch" class="bare">https://github.com/elastic/helm-charts/blob/master/elasticsearch</a> 注意仔细查看各参数设值的说明。<br>
      * 暂不推荐Elasticsearch使用容器化。
 </td>
 </tr>
@@ -6489,9 +6561,7 @@ EOF</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>DevOps的配置有两类，
-一是通过项目目录下的 <code>.dew</code> 配置，
-二是通过 <code>Maven</code> 配置，在 <code>pom.xml</code> 中的properties或是 <code>mvn -Dxxx</code> 作为参数传入。</p>
+<p>DevOps的配置有两类， 一是通过项目目录下的 <code>.dew</code> 配置， 二是通过 <code>Maven</code> 配置，在 <code>pom.xml</code> 中的properties或是 <code>mvn -Dxxx</code> 作为参数传入。</p>
 </div>
 <div class="paragraph">
 <p>推荐的做法是相对固定的、不敏感的信息配置到 <code>.dew</code> 中，而诸如Kubernetes配置、Harbor用户名/密码等信息用Maven在命令行中作为参数传入。</p>
@@ -6520,6 +6590,7 @@ app:                                    # 应用配置
   revisionHistoryLimit: 3               # 保留的历史版本数
   port: 8080                            # 端口号，默认情况下前端应用为80(不可修改)，后端服务为8080
   extendedPorts:                        # 扩展端口，仅用于后端服务
+  debugPort: 9000                       # 远程调试服务端口号，仅用于后端服务，默认是9000
   healthCheckEnabled: true              # 是否启用健康检查，仅用于后端服务，默认启用
   healthCheckPort:                      # 用于健康检查的端口，仅用于后端服务，如不设置，默认使用app.port的端口
   livenessPath: /actuator/health        # 存活检测HTTP的路径，仅用于后端服务
@@ -7587,6 +7658,12 @@ helm list</pre>
 </li>
 <li>
 <p>支持多个Redis连接 <a href="#framework-user-manual-cluster-redis-mutli-connection">多实例支持</a></p>
+</li>
+<li>
+<p>支持简单的基于角色的URL拦截功能</p>
+</li>
+<li>
+<p>支持全局请求内容中字符串自动去前后空格（ <code>dew.basic.format.auto-trim-from-req = true</code> ）</p>
 </li>
 </ul>
 </div>
@@ -8934,6 +9011,18 @@ sh dew-devops.sh
 # 选择 3 创建项目：为项目创建namespace、ingress、拉取镜像的secret；对应的 Harbor 账户和镜像仓库等</pre>
 </div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+如使用Jenkins进行部署，可跳过选项2，详见：<a href="#dew-jenkins-pipeline">Dew Jenkins Pipeline 部署</a>
+</td>
+</tr>
+</table>
+</div>
 </li>
 </ul>
 </div>
@@ -9004,6 +9093,13 @@ spring:
 </div>
 <div class="literalblock">
 <div class="content">
+<pre># Hikari连接池 datetime类型有时间差问题，解决方案如下：
+  1. 在URL配置中加上 useTimezone=true&amp;serverTimezone=GMT%2B8(推荐使用这种)
+  2. 或者修改数据库time_zone</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
 <pre># Redis的客户端默认由Jedis改为Lettuce，对应的配置示例：
 redis:
   host: ...
@@ -9047,6 +9143,11 @@ csp:
     basic:
       app-secret: "{cipher}..."
       token-expire-ms:  # 错误，值不能为空</pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre># 使用Springboot定时任务需要在启动类上加上@EnableScheduling</pre>
 </div>
 </div>
 </li>
@@ -9107,7 +9208,7 @@ logging:
   &lt;parent&gt;
     &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
-    &lt;version&gt;2.0.0-beta2&lt;/version&gt;
+    &lt;version&gt;2.0.0-SNAPSHOT&lt;/version&gt;
   &lt;/parent&gt;
   &lt;groupId&gt;ms.dew.devops.it&lt;/groupId&gt;
   &lt;artifactId&gt;todo-frontend&lt;/artifactId&gt;
@@ -9173,8 +9274,8 @@ notify:
     # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
     url: xxx
 profiles:
-  test:
-    namespace: dew-test
+  test:                 # 环境对应的 profile
+    namespace: dew-test # 各环境对应的 namespace 为必填项
   uat:
     namespace: dew-uat
   prod:
@@ -9184,8 +9285,27 @@ profiles:
 </div>
 </div>
 </li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+各环境 namespace 的值请配置为与 dew-devops.sh 脚本中创建的 project 相同的名称。
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist checklist">
+<ul class="checklist">
 <li>
-<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 在项目中添加<code>.gitlab-ci.yml</code>配置，详见 <a href="#devops-cicd-gitlab-template">gitlab-ci-template.yml</a>， e.g.</p>
+<p><i class="fa fa-square-o"></i> [Dew DevOps] 若使用 Jenkins Pipeline 部署项目，可在 Jenkins 中创建 Pipeline Job。详细配置方法参见：<a href="#dew-jenkins-pipeline">Dew DevOps : Jenkins Pipeline 部署</a></p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> [Dew DevOps] 若使用 Gitlab Runner 部署项目，在项目中添加<code>.gitlab-ci.yml</code>配置，详见 <a href="#devops-cicd-gitlab-template">gitlab-ci-template.yml</a>， e.g.</p>
 <div class="literalblock">
 <div class="content">
 <pre>stages:
@@ -9202,7 +9322,7 @@ test deploy:
   tags:
     - test
   script:
-    - mvn -P devops dew:release
+    - mvn -P devops deploy
 # 用户验收/预发环境部署
 uat deploy:
   stage: deploy
@@ -9211,7 +9331,7 @@ uat deploy:
   tags:
     - uat
   script:
-    - mvn -P devops dew:release
+    - mvn -P devops deploy
 prod deploy: # 生产环境部署
   stage: deploy
   only:
@@ -9219,7 +9339,7 @@ prod deploy: # 生产环境部署
   tags:
     - prod
   script:
-    - mvn -P devops dew:release</pre>
+    - mvn -P devops deploy</pre>
 </div>
 </div>
 </li>
@@ -9232,7 +9352,7 @@ prod deploy: # 生产环境部署
 <div class="sect3">
 <h4 id="dew_docker_image_集成kubectl与helm"><a class="anchor" href="#dew_docker_image_集成kubectl与helm"></a>6.4.1. Dew Docker Image : 集成Kubectl与Helm</h4>
 <div class="paragraph">
-<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
+<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -9259,7 +9379,7 @@ helm list
 <div class="sect3">
 <h4 id="dew_docker_image_集成ci_cd能力"><a class="anchor" href="#dew_docker_image_集成ci_cd能力"></a>6.4.2. Dew Docker Image : 集成CI/CD能力</h4>
 <div class="paragraph">
-<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
+<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -9288,7 +9408,7 @@ npm version
 <div class="sect3">
 <h4 id="dew_docker_image_spring_cloud_config"><a class="anchor" href="#dew_docker_image_spring_cloud_config"></a>6.4.3. Dew Docker Image : Spring Cloud Config</h4>
 <div class="paragraph">
-<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
+<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -9307,7 +9427,7 @@ docker run -d --name dew-spring-cloud-config \
 <div class="sect3">
 <h4 id="helm-chart-spring-cloud-config"><a class="anchor" href="#helm-chart-spring-cloud-config"></a>6.4.4. Dew Helm Chart : Spring Cloud Config</h4>
 <div class="paragraph">
-<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
+<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="listingblock">
 <div class="title">使用</div>
@@ -9343,7 +9463,7 @@ git add --all</code></pre>
 <div class="sect3">
 <h4 id="dew-devops-maven-agent"><a class="anchor" href="#dew-devops-maven-agent"></a>6.5.1. Dew DevOps Maven Agent</h4>
 <div class="paragraph">
-<p>本插件为Dew微服务体系的组成部分，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
+<p>本插件为Dew微服务体系的组成部分，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="paragraph">
 <p>Dew会动态判定应用（子模块）是否需要部署，但Maven无法在启动后动态处理应用是否跳过，
@@ -9355,7 +9475,7 @@ Dew的maven插件为此做了一定要处理，但这一做法只是跳过了执
 <div class="listingblock">
 <div class="title">使用</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">SET MAVEN_OPTS=-javaagent:&lt;本插件的jar&gt;
+<pre class="prettyprint highlight"><code class="language-text" data-lang="text">SET MAVEN_OPTS=-javaagent:&lt;本插件的jar&gt;
 mvn -P devops deploy &lt;其它命令&gt;</code></pre>
 </div>
 </div>
@@ -9363,7 +9483,7 @@ mvn -P devops deploy &lt;其它命令&gt;</code></pre>
 <div class="sect3">
 <h4 id="dew-gitlab-ci"><a class="anchor" href="#dew-gitlab-ci"></a>6.5.2. Dew CI/CD : Gitlab CI 实现</h4>
 <div class="paragraph">
-<p>此为Gitlab CI上的 CI/CD 处理，集成说明参见： <a href="http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter">Dew Devops 部署运维</a></p>
+<p>此为Gitlab CI上的 CI/CD 处理，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
 <div class="olist arabic">
 <div class="title">前置准备</div>
@@ -9383,7 +9503,7 @@ mvn -P devops deploy &lt;其它命令&gt;</code></pre>
 <div class="title">核心流程</div>
 <ol class="arabic">
 <li>
-<p>配置 <code>.gitlab-ci.yml</code>，配置参见 <code>devops/cicd/gilabci/.gitlab-ci-template.yml</code></p>
+<p>配置 <code>.gitlab-ci.yml</code>，配置参见 <a href="https://github.com/gudaoxuri/dew/blob/master/devops/cicd/gitlabci/.gitlab-ci-template.yml">gitlab-ci-template.yml</a></p>
 </li>
 <li>
 <p>添加 <code>.gitlab-ci.yml</code> 到项目代码根目录</p>
@@ -9471,13 +9591,732 @@ prod deploy: # 生产环境部署
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="dew-jenkins-pipeline"><a class="anchor" href="#dew-jenkins-pipeline"></a>6.5.3. Dew DevOps : Jenkins Pipeline 部署</h4>
+<div class="paragraph">
+<p>此为 使用 Dew DevOps 进行部署项目的 Jenkins Pipeline 部署方式的说明。Dew DevOps 集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
+</div>
+<div class="olist arabic">
+<div class="title">前置准备</div>
+<ol class="arabic">
+<li>
+<p>创建项目</p>
+</li>
+<li>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的各个环境（详见 <a href="#devops-user-manual">DevOps使用手册</a>），不需要执行脚本中的步骤2</p>
+</li>
+<li>
+<p>在项目代码中添加并配置 <code>.dew</code> 文件（详见 <a href="#devops-user-manual">DevOps使用手册</a>）</p>
+</li>
+<li>
+<p>安装 Jenkins</p>
+</li>
+<li>
+<p>安装 Jenkins 插件 <code>Mask Passwords Plugin</code>，用于隐藏 Pipeline 构建过程中的敏感参数值。如不安装，Pipeline 直接执行 dew-devops.groovy 脚本会报错。</p>
+</li>
+<li>
+<p>安装 Jenkins 插件<code>Git Parameter</code>和<code>Extended Choice Parameter</code>，便于 Pipeline 参数化构建使用。</p>
+</li>
+<li>
+<p>在 Jenkins 的<code>系统管理</code> &#8594; <code>系统设置</code>中，设置 <code>全局属性</code> &#8594; <code>环境变量</code>,具体参数详见：<a href="#jenkins-global-env">Jenkins Dew DevOps 全局环境变量</a></p>
+</li>
+</ol>
+</div>
+<div class="olist arabic">
+<div class="title">核心流程</div>
+<ol class="arabic">
+<li>
+<p>根据需要修改 <code>devops/cicd/jenkins/scripts/dew-devops.groovy</code> Pipeline 脚本</p>
+</li>
+<li>
+<p>在 Jenkins 中创建一个<code>pipeline</code></p>
+</li>
+<li>
+<p>在 Pipeline <code>Definition</code>选择需要的流水线类型</p>
+<div class="ulist">
+<ul>
+<li>
+<p>选择 <code>Pipeline script</code>，将修改后的<code>dew-devops.groovy</code>脚本内容粘贴进输入框即可。</p>
+</li>
+<li>
+<p>若选择<code>Pipeline script from SCM</code> ，填入修改的脚本所在路径即可。e.g.</p>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/manual/pipeline-scm.jpg" alt="pipeline scm">
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>在 General 部分，勾选<code>参数化构建过程</code>，填入需要的各项参数。详细参数可查 <a href="#Jenkins-Parameter-build">Dew Pipeline 参数化构建参数</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>一些必要参数</p>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Parameter Name </strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Description</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">git_repo</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">需要部署项目的代码地址</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">branch</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">需要部署项目的代码分支，格式为：origin/master</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">profile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">需要部署项目的配置profile，如不设置，默认根据 Pipeline Job名称中包含的关键字来匹配，匹配关键字： test/uat/prd/prod</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kube_config</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">需要将项目部署在的 Kubernetes 集群的 kube config 的base64 的值,通过在Kubernetes集群中执行<code>$(cat /etc/kubernetes/admin.conf| base64) | tr -d " " </code> 获取；如不设置，默认根据Pipeline Job的名字找到已有的全局环境变量中的 DEW_DEVOPS_KUBE_CONFIG_XXXX 。请确保该参数有值可取。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">devops_phase</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">需要执行的Dew DevOps类型，不填时默认为 deploy</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">devops_mvn_thread</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">部署项目的线程数，如不设置，将单线程部署，部署速度较慢。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">devops_assign_services</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">指定部署的服务名，以各模块的artifactId，多个以<code>,</code>逗号分隔。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+更多详情可看<a href="#Jenkins-pipeline">Jenkins pipeline 使用手册</a>
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="sect4">
+<h5 id="Jenkins-pipeline"><a class="anchor" href="#Jenkins-pipeline"></a>Jenkins Pipeline Job 使用手册</h5>
+<div class="sect5">
+<h6 id="jenkins_pipeline_job_创建"><a class="anchor" href="#jenkins_pipeline_job_创建"></a>Jenkins Pipeline Job 创建</h6>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>点击 新建任务 &#8594; 选择 pipeline（流水线），如图：</p>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/manual/pipeline-create.jpg" alt="pipeline create" width="70%" height="70%">
+</div>
+</div>
+</li>
+<li>
+<p>在 General 中选择参数化构建过程</p>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/manual/parameter.jpg" alt="parameter" width="70%" height="70%">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>点击参数化构建，添加相关的参数</p>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/manual/parameter-types.jpg" alt="parameter types" width="70%" height="70%">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Git Parameter</p>
+<div class="paragraph">
+<p>Git Parameter 类型的参数适用于和Git相关的数据，可以通过<code>Use repository</code>设置Git repo的地址来自动获取相关参数值。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>e.g.</p>
+<div class="paragraph">
+<p>以变量<code>branch</code>为例，</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/manual/parameter-branch-1.jpg" alt="parameter branch 1" width="70%" height="70%">
+</div>
+</div>
+<div class="paragraph">
+<p>点开高级可以进行更详细的设置</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/manual/parameter-branch-2.jpg" alt="parameter branch 2" width="70%" height="70%">
+</div>
+</div>
+<div class="paragraph">
+<p>通过<code>Default Value</code>和<code>Selected Value</code>来设置<code>branch</code>变量的默认值。</p>
+</div>
+</li>
+<li>
+<p>Trouble Shooting</p>
+<div class="paragraph">
+<p>新创建的Job，在第一次参数化构建时，会显示以下内容，此为正常现象，在第一次构建完成后，会正常显示该repo中的branch信息。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/manual/ts-git.jpg" alt="ts git" width="70%" height="70%">
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Extended Choice Parameter</p>
+<div class="paragraph">
+<p>此参数类型，通常用于多种参数值的进行选择的情况。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>e.g.</p>
+<div class="paragraph">
+<p>以变量<code>devops_assign_services</code>为例</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/manual/parameter-assign-service.jpg" alt="parameter assign service" width="70%" height="70%">
+</div>
+</div>
+<div class="paragraph">
+<p>通过设置分隔符，value 及 value description，可以直接在参数化构建时，显示出列表。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/manual/parameter-assign-service-view.jpg" alt="parameter assign service view" width="70%" height="70%">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Tips</p>
+<div class="paragraph">
+<p>value 和 value description 的内容位置需要严格对应。</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>其他的参数类型使用可根据需要自行选择,其他的参数可以自行设置。</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>在页面最下方的流水线设置中选择<code>SCM</code>的方式</p>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/manual/pipeline-scm.jpg" alt="pipeline scm" width="70%" height="70%">
+</div>
+</div>
+<div class="paragraph">
+<p>在<code>脚本路径</code>中，设置需要执行的脚本文件路径。<code>devops/cicd/jenkins/scripts/dew-devops.groovy</code>为使用<code>dew</code>来进行服务部署的 Pipeline 脚本。</p>
+</div>
+</li>
+<li>
+<p>在Job左侧点击参数化构建，即可开始Job的构建。</p>
+<div class="ulist">
+<ul>
+<li>
+<p>e.g.</p>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/manual/pipeline-build.jpg" alt="pipeline build" width="70%" height="70%">
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect5">
+<h6 id="jenkins_pipeline_job_使用"><a class="anchor" href="#jenkins_pipeline_job_使用"></a>Jenkins Pipeline Job 使用</h6>
+<div class="paragraph">
+<p>使用 Dew DevOps 进行服务的管理的 Job 的参数化构建内容如图</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/manual/pipeline-dew.jpg" alt="pipeline dew" width="70%" height="70%">
+</div>
+</div>
+<div class="paragraph">
+<p>直接点击开始构建，即可开始全部服务的部署，各参数使用当前默认值。</p>
+</div>
+<div class="ulist">
+<div class="title">参数说明：</div>
+<ul>
+<li>
+<p>branch 为部署代码的分支</p>
+</li>
+<li>
+<p>profile 为部署代码的环境配置</p>
+</li>
+<li>
+<p>devops_appended_cmd 为 Dew 部署命令的附加值，可为空。详细可查 <a href="http://doc.dew.ms/#devops-user-manual">Dew DevOps</a>。</p>
+</li>
+<li>
+<p>devops_assign_services 为指定部署的服务，为空时部署全部服务。可多选。</p>
+</li>
+<li>
+<p>devops_phase 为部署的类型，默认为 deploy（部署服务）。对应值说明见：<a href="../../README.html#devops_phase">devops_phase</a></p>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/manual/pipeline-devops-phase-view.jpg" alt="pipeline devops phase view" width="50%" height="50%">
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5">
+<h6 id="trouble_shootings"><a class="anchor" href="#trouble_shootings"></a>Trouble Shootings</h6>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>参数化构建时显示 The default value has been returned.</p>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/manual/ts-git.jpg" alt="ts git" width="70%" height="70%">
+</div>
+</div>
+<div class="paragraph">
+<p>A:
+新创建的 Job，在第一次参数化构建时，会显示以上内容，此为正常现象，在第一次构建完成后，会正常显示该 Repo 对应信息。</p>
+</div>
+</li>
+<li>
+<p>Job 的 控制台输出中，显示 stage skip</p>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/manual/ts-stage-skip.jpg" alt="ts stage skip" width="70%" height="70%">
+</div>
+</div>
+<div class="paragraph">
+<p>A:
+此为正常现象。参数化构建时，因为参数不同时，会执行不同的脚本内容。</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="jenkins_pipeline_部署脚本说明"><a class="anchor" href="#jenkins_pipeline_部署脚本说明"></a>Jenkins pipeline 部署脚本说明</h5>
+<div class="sect5">
+<h6 id="jenkins_插件"><a class="anchor" href="#jenkins_插件"></a>Jenkins 插件</h6>
+<div class="paragraph">
+<p>以下为 Dew DevOps 在 Jenkins Pipeline 部署中使用到的 Jenkins 插件。</p>
+</div>
+<div class="paragraph">
+<div class="title">Git Parameter</div>
+<p>设置方法如图，e.g.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/git_branch.jpg" alt="git branch" width="70%" height="70%">
+</div>
+</div>
+<div class="paragraph">
+<div class="title">Mask Passwords Plugin</div>
+<p>Mask Passwords Plugin 用于隐藏一些不应在 Jenkins Job 执行的控制台输出的敏感数据内容。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>可以通过在 Pipeline 脚本中设置需要隐藏的参数值, e.g.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">wrap([$class: 'MaskPasswordsBuildWrapper', varPasswordPairs: [[password: "${credentialsId}", var: 'credentialsId']]]) {
+    git branch: "${branch}", credentialsId: "${credentialsId}", url: "${git_url}"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>+
+TIP: 需要安装此插件，如不安装，只用<code>dew-devops.groovy</code>脚本会报错。</p>
+</div>
+<div class="paragraph">
+<div class="title">Extended Choice Parameter</div>
+<p>一款可以定义参数的插件</p>
+</div>
+<div class="paragraph">
+<div class="title">插件使用方法</div>
+<p>通过如下设置，可直接在 Pipeline 脚本中引用变量名<code>${git_repo}</code>或<code>${env.git_repo}</code>即可使用参数值。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/extend-choice-parameter.jpg" alt="extend choice parameter" width="70%" height="70%">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/git_repo.jpg" alt="git repo" width="70%" height="70%">
+</div>
+</div>
+<div class="paragraph">
+<p>p.s. 也可通过 Jenkins 自身的参数类型来设值。</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/parameter.jpg" alt="parameter" width="50%" height="50%">
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="pipeline_脚本"><a class="anchor" href="#pipeline_脚本"></a>Pipeline 脚本</h6>
+<div class="paragraph">
+<p>脚本使用方法：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>创建一个Pipeline，按照如下方式配置，填入对应的脚本路径及名称</p>
+<div class="imageblock">
+<div class="content">
+<img src="./images/devops-jenkins/pipeline-scm.jpg" alt="pipeline scm" width="70%" height="70%">
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">dew-maven-agent-update 脚本</div>
+<p>用于更新 Jenkins 各节点 dew-maven-agent 版本时使用。脚本路径：<code>devops/cicd/jenkins/scripts/dew-maven-agent-update.groovy</code></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>需要两个参数化构建参数</p>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jenkins_agents</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">需要更新的 Jenkins 节点，多个以<code>,</code>逗号分隔，如不填写，默认值为 master</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MAVEN_AGENT_URL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">最新的 dew-maven-agent jar 包的地址；仓库路径：https://oss.sonatype.org/content/repositories/public/ms/dew/dew-maven-agent</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>需结合全局变量使用</p>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MAVEN_OPTS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">值一般为<code>-javaagent:/opt/jar/dew-maven-agent.jar  -Dorg.apache.maven.user-settings=/opt/maven/conf/settings.xml</code></p></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">dew-devops 脚本</div>
+<p>此脚本为 Dew DevOps 部署所用脚本，脚本中涉及的参数请查看 <a href="#Jenkins-Parameter">Jenkins 参数</a> 章节。<br>
+脚本路径： <code>devops/cicd/jenkins/scripts/dew-devops.groovy</code></p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="Jenkins-Parameter"><a class="anchor" href="#Jenkins-Parameter"></a>Jenkins 参数</h6>
+<div id="jenkins-global-env" class="ulist">
+<ul>
+<li>
+<p>Jenkins 全局环境变量</p>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CREDENTIALSID_GIT</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用来拉取代码的凭据</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DEW_DEVOPS_DOCKERD_HOST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dockerD的地址，e.g. tcp://10.0.0.10:2375</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DEW_DEVOPS_HARBOR_HOST</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Harbor仓库的地址</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DEW_DEVOPS_HARBOR_USERNAME</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Harbor管理员的账号</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DEW_DEVOPS_HARBOR_PASSWORD</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Harbor管理员账号的密码</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DEW_DEVOPS_PROJECT_PROFILE_XXX</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">部署代码的profile，e.g. DEW_DEVOPS_PROJECT_PROFILE_TEST=test</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DEW_DEVOPS_KUBE_CONFIG_XXXX</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">项目要部署的K8S集群的kube_config的base64加密的值，通过在该集群的master节点，执行此命令
+<code>echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "</code>获取,注意admin.conf变更时及时更新此值。<br>
+参数名举例： DEW_DEVOPS_KUBE_CONFIG_TEST，DEW_DEVOPS_KUBE_CONFIG_UAT，DEW_DEVOPS_KUBE_CONFIG_PRD,DEW_DEVOPS_KUBE_CONFIG</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">MAVEN_OPTS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">值一般为<code>-javaagent:/opt/jar/dew-maven-agent.jar  -Dorg.apache.maven.user-settings=/opt/maven/conf/settings.xml</code><br>
+此参数需和<code>dew-maven-agent-update</code>脚本结合使用。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+注意需要将mvn，node等工具加入环境变量<code>PATH</code>中。另外根据情况修改<code>dew-devops.groovy</code>脚本中<code>mvnHome</code>和<code>nodeHome</code>的值。
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+<div id="Jenkins-Parameter-build" class="ulist">
+<ul>
+<li>
+<p>Pipeline Job 参数化构建参数</p>
+<div class="ulist">
+<ul>
+<li>
+<p>基础参数</p>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Parameter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tip</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">checkout_enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否只checkout代码</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">默认为false。为true时，不进行其他stage的执行。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">git_repo</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">为要部署项目的<code>SSH</code>格式的代码地址，在pipeline脚本中，直接使用<code>${git_repo}</code>即可获取git代码的值。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TIP: 如果pipeline使用scm的方法进行部署，不建议此参数名设为git_url，因为可能会和</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">branch</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">要进行部署的代码的分支</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">此参数推荐使用Git Paremeter插件来配置。branch的值为去除<code>origin/</code>的部分。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jenkins_agent</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">运行Job的Jenkins节点</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">默认根据job名设值，job名包含test的为slave，包含uat/prd/prod的为master；profile为prd/prod的默认为master</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">jenkins_agents</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">指定Job运行的Jenkins节点,多个用,分隔。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">如不指定，默认为<code>master</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">profile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">要部署项目的profile</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">如不指定，根据 Job 的名字来自动判断。p.s. 生产环境默认的profile为<code>prd</code>。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">kube_config</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes集群的admin.conf的base64值</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">默认根据job名设值</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">maven_debug</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否启用mvnDebug进行调试</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">默认不启用</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>devops_x 各参数</p>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Parameter</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Description</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">devops_assign_services</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">devops_assign_services为指定部署的项目模块（服务）名，值为各模块的<code>artifactId</code>对应值。多个服务之间可以用<code>,</code>分隔。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">devops_appended_cmd</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">devops_appended_cmd为部署时的附加命令，如，进行scale或autoscale时，需要额外配置的参数，可通过此参数值来传递。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">devops_mvn_thread</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">devops_mvn_thread为进行部署项目时使用的线程数，如不配置此参数，默认为单线程.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">devops_phase</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">devops_phase 进行部署的阶段，如果配置此参数，默认为<code>deploy</code></p></td>
+</tr>
+</tbody>
+</table>
+<div id="devops_phase" class="ulist">
+<ul>
+<li>
+<p>devops_phase 可选参数值说明：</p>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Value</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Description</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">deploy</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">应用部署</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">rollback</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">应用回滚</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">unrelease</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">应用卸载</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">refresh/restart</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">应用重启</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">scale</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">伸缩应用服务</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">autoscale</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">应用自动伸缩扩展</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">redeploy</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">卸载应用并重新部署</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">debug</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">远程调试服务</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>devops_phase 为<code>rollback</code>时的可选参数</p>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Parameter</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Description</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">history</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否显示历史部署版本 (rollback_input_enable=true时，也显示history)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">rollback_input_enable</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否启用交互式回滚方式</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">devops_rollback_version</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">指定的回滚版本，默认为空</p></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-07-25 10:24:51 CST
+Last updated 2019-09-03 10:10:07 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

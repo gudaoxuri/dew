@@ -397,9 +397,11 @@ kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | gre
 # 添加域名到客户机hosts并访问 https://dashboard.dew.ms
 ----
 
+TIP: 另一款 Kubernetes Dashboard 推荐：link:https://github.com/herbrandson/k8dash[k8dash]
+
 ==== Elasticsearch
 
-TIP: https://github.com/elastic/helm-charts/blob/master/elasticsearch 注意仔细查看各参数设值的说明。
+TIP: https://github.com/elastic/helm-charts/blob/master/elasticsearch 注意仔细查看各参数设值的说明。 +
      * 暂不推荐Elasticsearch使用容器化。
 
 .安装配置

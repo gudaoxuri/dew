@@ -1,6 +1,6 @@
 ==== Dew DevOps Maven Plugin
 
-本插件为Dew微服务体系的组成部分，集成说明参见： http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter[Dew Devops 部署运维]
+本插件为Dew微服务体系的组成部分，集成说明参见： <<Devops-chapter,Dew Devops 部署运维>>
 
 [NOTE]
 .环境要求
