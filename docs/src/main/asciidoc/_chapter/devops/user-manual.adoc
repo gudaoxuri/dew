@@ -92,7 +92,6 @@ include::../../../../../../devops/it/src/it/todo/frontend/pom.xml[]
 ==== 项目配置
 
 .项目初始化
-
 [source,bash]
 ----
 curl -O https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/sh/dew-devops.sh
@@ -103,8 +102,9 @@ sh dew-devops.sh
 # 选择 3 创建项目：为项目创建namespace、ingress、拉取镜像的secret；对应的 Harbor 账户和镜像仓库等
 ----
 
-.Dew和Maven的配置
+TIP: 如使用Jenkins进行部署，可跳过选项2，详见：<<dew-jenkins-pipeline,Dew Jenkins Pipeline 部署>>
 
+.Dew和Maven的配置
 见：<<devops-configuration>>
 
 ==== 打包部署
@@ -115,13 +115,11 @@ sh dew-devops.sh
 <div style='position:relative; padding-bottom:calc(64.51% + 44px)'><iframe src='https://gfycat.com/ifr/WellwornAmbitiousBalloonfish' frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen></iframe></div>
 ++++
 
-
 .命令
-
 [source,bash]
 ----
 # 基础命令
-mvn deploy
+mvn -P devops deploy
 
 # ====================== 附加参数 ======================
 # dew_devops_profile                           # 指定的环境
@@ -137,14 +135,13 @@ mvn deploy
 IMPORTANT: 在CI/CD工具中附加参数的kubernetes、docker相关参数应作为变量配置到执行器中，对应用本身不可见。
 
 .核心流程
-
 * 依赖排序，使用Maven自身的Reactor机制为项目中的各应用（模块）做依赖排序
 * 配置装配，根据 <<devops-configuration-dew-inheritance-rules>> 完成配置组装
 * 部署探测，用于确定要部署哪些应用
-**  命令优先，如指定部署应用( ``dew_devops_assignation_projects`` ) 则短路后续探测
-**  配置次之，如配置中指定了 ``skip: true`` 则视之为不需要部署的应用
-**  版本比对，比对已部署的各应用版本与当前各应用的代码，找到有代码变更的应用，视之为要部署的应用
-**  依赖传递分析，分析没有代码变更的应用，如其依赖包有变更（比如依赖了某些SNAPSHOT的模块）时这些应用也被视为要部署的应用
+** 命令优先，如指定部署应用( ``dew_devops_assignation_projects`` ) 则短路后续探测
+** 配置次之，如配置中指定了 ``skip: true`` 则视之为不需要部署的应用
+** 版本比对，比对已部署的各应用版本与当前各应用的代码，找到有代码变更的应用，视之为要部署的应用
+** 依赖传递分析，分析没有代码变更的应用，如其依赖包有变更（比如依赖了某些SNAPSHOT的模块）时这些应用也被视为要部署的应用
 * 编译准备，根据配置装配时分析到的应用类型，为不同应用类型执行不同的编译方案
 ** ``Spring Boot/Cloud`` 应用需要执行 ``repackage`` 以打出 ``fatjar``
 ** ``NodeJS`` 应用需要执行对应的 ``node`` 命令完成打包
@@ -156,7 +153,6 @@ IMPORTANT: 在CI/CD工具中附加参数的kubernetes、docker相关参数应作
 * 结果通知，发送钉钉或HTTP请求完成结果通知
 
 .版本重用模式
-
 一般项目都会要求生产环境的代码要与预发/UAT环境最后一次验收通过的代码保持一致，具体到容器中即要保证两者的 ``Docker Image`` 相同。
 
 版本重用模式可以实现部署时重用某一环境 ``Docker Image`` 的要求。其核心流程如下：
@@ -166,16 +162,13 @@ IMPORTANT: 在CI/CD工具中附加参数的kubernetes、docker相关参数应作
 * 后续操作同普通模式的流程
 
 .并行部署
-
 ``Dew`` 支持使用Maven的 ``-T `` 实现并行编译部署，例如： ``mvn -T 1C deploy``
 
 [[devops-user-manual-release-skip]]
 .不需要部署的应用处理
-
-``Dew`` 会自行判断应用是否需要部署，对于不需要部署的应用为加速执行会设置一系列的skip，
-部署执行的是 https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html[Default Lifecycle] ，
-默认包含了如下插件的skip：
-
+``Dew`` 会自行判断应用是否需要部署，对于不需要部署的应用为加速执行会设置一系列的skip， +
+部署执行的是 https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html[Default Lifecycle] ， +
+默认包含了如下插件的skip： +
 . Core plugins（clean、compiler、deploy、failsafe、install、resources、site、surefire）
 . Packaging types/tools（war、jar、source）
 . Reporting plugins（checkstyle）
@@ -223,20 +216,17 @@ IMPORTANT: 在CI/CD工具中附加参数的kubernetes、docker相关参数应作
 ----
 
 .使用 ``javaagent`` 动态跳过不需要部署的应用
-
 详见 <<dew-devops-maven-agent>>
-
 
 ==== 版本回滚
 
 用于回滚某一个应用，此命令在要回滚的应用目录下执行。
 
 .命令
-
 [source,bash]
 ----
 # 基础命令
-mvn dew:rollback
+mvn -P devops dew:rollback
 
 # ====================== 附加参数 ======================
 # dew_devops_version_history                    # 是否显示发布的历史版本，为true时，只显示历史版本信息，不进行回滚。默认为false。
@@ -258,11 +248,10 @@ IMPORTANT: 在CI/CD工具中附加参数的kubernetes、docker相关参数应作
 用于卸载某一个应用，但不会删除其对应的版本信息，此命令在要卸载的应用目录下执行。
 
 .命令
-
 [source,bash]
 ----
 # 基础命令
-mvn dew:unrelease
+mvn -P devops dew:unrelease
 
 # ====================== 附加参数 ======================
 # dew_devops_assignation_projects              # 指定卸载的应用artifactId  多个以逗号分隔
@@ -275,11 +264,10 @@ mvn dew:unrelease
 用于查看某一个应用的日志，此命令在要查看日志的应用目录下执行。
 
 .命令
-
 [source,bash]
 ----
 # 基础命令
-mvn dew:log
+mvn -P devops dew:log
 
 # ====================== 附加参数 ======================
 # dew_devops_profile                           # 指定的环境
@@ -293,11 +281,10 @@ mvn dew:log
 用于伸缩某一个应用，此命令在要伸缩的应用目录下执行。
 
 .命令
-
 [source,bash]
 ----
 # 基础命令
-mvn dew:scale
+mvn -P devops dew:scale
 
 # ====================== 附加参数 ======================
 # dew_devops_scale_replicas                    # 伸缩Pod数量
@@ -314,39 +301,63 @@ NOTE: ``dew_devops_scale_auto: false``（默认情况） 时 ``dew_devops_scale_
 用于刷新重启某一个应用，此命令在要重启的应用目录下执行。
 
 .命令
-
 [source,bash]
 ----
 # 基础命令
-mvn dew:refresh
+mvn -P devops dew:refresh
 
 # ====================== 附加参数 ======================
 # dew_devops_assignation_projects              # 指定刷新的应用artifactId  多个以逗号分隔
 ----
 
-==== CI/CD工具支持-Gitlab CI
+==== 应用远程调试
+
+用于远程调试服务，此命令在要调试的应用目录下执行。请结合``-Dew_devops_assignation_projects=``指定服务名进行调试。
+
+.命令
+[source,bash]
+----
+# 基础命令
+mvn -P devops dew:debug
+
+# ====================== 附加参数 ======================
+# dew_devops_assignation_projects              # 指定刷新的应用artifactId  多个以逗号分隔
+----
+
+TIP: 启动调试后，会在控制台输出调试端口相关内容，e.g. ``Http-debug nodePort:[30537].   Http-new nodePort: [30198]``，Http-debug nodePort为远程debug的端口，Http-new nodePort为远程启动的用于调试服务的端口。 +
+调试完毕请结束debug进程。
+
+==== CI/CD工具支持
+
+===== Gitlab CI
 
 应用的部署与回滚为 ``DevOps`` 的核心操作，这些操作应该与 ``CI/CD`` 工具集成使用。
 
 ``Dew`` 官方支持与 ``Gitlab CI`` 集成，步骤如下：
 
-* 使用 ``dew-devops.sh`` 初始化项目时填写 ``Gitlab CI`` 相关信息
+* 使用 ``dew-devops.sh`` 初始化项目时，执行2，填写 ``Gitlab CI`` 相关信息，安装Gitlab Runner
 * 在项目根目录下添加 ``.gitlab-ci.yml`` 即可，格式如下：
 
 [source,yaml]
 ----
+
 include::../../../../../../devops/it/src/it/todo/.gitlab-ci.yml[]
+
 ----
 
 .自动化部署
-
 当对应的分支有commit时即可触发部署。
 
 .版本回滚
-
 在 ``Gitlab CI Pipelines`` 中进入要回滚的 ``Pipeline`` ，点击 ``Retry`` 即可。
 
 image::./images/gitlab-ci-rollback.png[]
+
+===== Jenkins Pipeline
+
+关于 Jenkins Pipeline 的 Job 设置，可参考 <<dew-jenkins-pipeline, Dew DevOps : Jenkins Pipeline 部署>>。
+
+如需自动化部署，可使用 link:https://github.com/jenkinsci/gitlab-plugin[GitLab Plugin] 实现。
 
 ==== 执行通知
 
@@ -444,7 +455,6 @@ image::./images/gitlab-ci-rollback.png[]
 ----
 
 include::../../../../../../devops/sh/readme.adoc[]
-
 
 ==== 监控管理
 

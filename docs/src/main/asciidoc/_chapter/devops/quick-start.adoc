@@ -33,6 +33,7 @@ mvn -P devops deploy -Ddew_devops_profile=uat
 # 打开浏览器，输入 http://todo-uat.dew.ms，切换到移动模式体验
 ----
 
+[[what-for-dew-devops]]
 ==== 发生了什么？
 
 当执行 ``sh dew-devops.sh`` 创建项目时实际上做了：
@@ -67,7 +68,7 @@ mvn -P devops deploy -Ddew_devops_profile=uat
           path: /
 
 
-当执行 ``mvn -P devops dew:release -Ddew_devops_profile=uat`` 时实际上做了：
+当执行 ``mvn -P devops deploy -Ddew_devops_profile=uat`` 时实际上做了：
 
 . 根据根目录的 ``pom.xml`` 配置找到所有的Maven模块并按依赖排序
 . 对比当前的Git版本(git commit)与已部署的服务版本找到之间变更的文件

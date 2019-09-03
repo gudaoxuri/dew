@@ -1,0 +1,43 @@
+ifndef::imagesdir[:imagesdir: ../../../docs]
+
+[[dew-jenkins-pipeline]]
+==== Dew DevOps : Jenkins Pipeline 部署
+
+此为 使用 Dew DevOps 进行部署项目的 Jenkins Pipeline 部署方式的说明。Dew DevOps 集成说明参见： <<Devops-chapter,Dew Devops 部署运维>>
+
+.前置准备
+. 创建项目
+. 执行 ``dew-devops.sh`` 初始化项目对应的各个环境（详见 <<devops-user-manual>>），不需要执行脚本中的步骤2
+. 在项目代码中添加并配置 ``.dew`` 文件（详见 <<devops-user-manual>>）
+. 安装 Jenkins
+. 安装 Jenkins 插件 ``Mask Passwords Plugin``，用于隐藏 Pipeline 构建过程中的敏感参数值。如不安装，Pipeline 直接执行 dew-devops.groovy 脚本会报错。
+. 安装 Jenkins 插件``Git Parameter``和``Extended Choice Parameter``，便于 Pipeline 参数化构建使用。
+. 在 Jenkins 的``系统管理`` -> ``系统设置``中，设置 ``全局属性`` -> ``环境变量``,具体参数详见：<<jenkins-global-env,Jenkins Dew DevOps 全局环境变量>>
+
+.核心流程
+. 根据需要修改 ``devops/cicd/jenkins/scripts/dew-devops.groovy`` Pipeline 脚本
+. 在 Jenkins 中创建一个``pipeline``
+. 在 Pipeline ``Definition``选择需要的流水线类型
+** 选择 ``Pipeline script``，将修改后的``dew-devops.groovy``脚本内容粘贴进输入框即可。
+** 若选择``Pipeline script from SCM`` ，填入修改的脚本所在路径即可。e.g.
++
+image::./images/devops-jenkins/manual/pipeline-scm.jpg[]
+. 在 General 部分，勾选``参数化构建过程``，填入需要的各项参数。详细参数可查 <<Jenkins-Parameter-build,Dew Pipeline 参数化构建参数>>
+** 一些必要参数
++
+|===
+|**Parameter Name **    |**Description**
+| git_repo              | 需要部署项目的代码地址
+| branch                | 需要部署项目的代码分支，格式为：origin/master
+| profile               | 需要部署项目的配置profile，如不设置，默认根据 Pipeline Job名称中包含的关键字来匹配，匹配关键字： test/uat/prd/prod
+| kube_config           | 需要将项目部署在的 Kubernetes 集群的 kube config 的base64 的值,通过在Kubernetes集群中执行``$(cat /etc/kubernetes/admin.conf\| base64) \| tr -d " " `` 获取；如不设置，默认根据Pipeline Job的名字找到已有的全局环境变量中的 DEW_DEVOPS_KUBE_CONFIG_XXXX 。请确保该参数有值可取。
+| devops_phase          | 需要执行的Dew DevOps类型，不填时默认为 deploy
+| devops_mvn_thread     | 部署项目的线程数，如不设置，将单线程部署，部署速度较慢。
+| devops_assign_services| 指定部署的服务名，以各模块的artifactId，多个以``,``逗号分隔。
+|===
++
+TIP: 更多详情可看<<Jenkins-pipeline,Jenkins pipeline 使用手册>>
+
+
+include::../jenkins/doc/manual/jenkins-user-manual.adoc[]
+include::../jenkins/scripts/pipeline-scripts.adoc[]

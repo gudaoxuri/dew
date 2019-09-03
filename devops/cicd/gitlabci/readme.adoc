@@ -1,7 +1,7 @@
 [[dew-gitlab-ci]]
 ==== Dew CI/CD : Gitlab CI 实现
 
-此为Gitlab CI上的 CI/CD 处理，集成说明参见： http://doc.dew.ms/#%E9%83%A8%E7%BD%B2%E8%BF%90%E7%BB%B4_devops_chapter[Dew Devops 部署运维]
+此为Gitlab CI上的 CI/CD 处理，集成说明参见： <<Devops-chapter,Dew Devops 部署运维>>
 
 .前置准备
 
@@ -11,7 +11,7 @@
 
 .核心流程
 
-. 配置 ``.gitlab-ci.yml``，配置参见 ``devops/cicd/gilabci/.gitlab-ci-template.yml``
+. 配置 ``.gitlab-ci.yml``，配置参见 link:https://github.com/gudaoxuri/dew/blob/master/devops/cicd/gitlabci/.gitlab-ci-template.yml[gitlab-ci-template.yml]
 . 添加 ``.gitlab-ci.yml`` 到项目代码根目录
 
 [[devops-cicd-gitlab-template]]

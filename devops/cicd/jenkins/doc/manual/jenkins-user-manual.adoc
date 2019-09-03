@@ -1,0 +1,95 @@
+ifndef::imagesdir[:imagesdir: ../../../../../docs]
+
+[[Jenkins-pipeline]]
+===== Jenkins Pipeline Job 使用手册
+
+====== Jenkins Pipeline Job 创建
+
+. 点击 新建任务 -> 选择 pipeline（流水线），如图：
++
+image::./images/devops-jenkins/manual/pipeline-create.jpg[width="70%",height="70%"]
+. 在 General 中选择参数化构建过程
++
+image::./images/devops-jenkins/manual/parameter.jpg[width="70%",height="70%"]
+* 点击参数化构建，添加相关的参数
++
+image::./images/devops-jenkins/manual/parameter-types.jpg[width="70%",height="70%"]
+** Git Parameter
++
+Git Parameter 类型的参数适用于和Git相关的数据，可以通过``Use repository``设置Git repo的地址来自动获取相关参数值。
++
+*** e.g.
++
+以变量``branch``为例，
++
+image::./images/devops-jenkins/manual/parameter-branch-1.jpg[width="70%",height="70%"]
+点开高级可以进行更详细的设置
++
+image::./images/devops-jenkins/manual/parameter-branch-2.jpg[width="70%",height="70%"]
+通过``Default Value``和``Selected Value``来设置``branch``变量的默认值。
+*** Trouble Shooting
++
+新创建的Job，在第一次参数化构建时，会显示以下内容，此为正常现象，在第一次构建完成后，会正常显示该repo中的branch信息。
++
+image::./images/devops-jenkins/manual/ts-git.jpg[width="70%",height="70%"]
+
+** Extended Choice Parameter
++
+此参数类型，通常用于多种参数值的进行选择的情况。
++
+*** e.g.
++
+以变量``devops_assign_services``为例
++
+image::./images/devops-jenkins/manual/parameter-assign-service.jpg[width="70%",height="70%"]
+通过设置分隔符，value 及 value description，可以直接在参数化构建时，显示出列表。
++
+image::./images/devops-jenkins/manual/parameter-assign-service-view.jpg[width="70%",height="70%"]
+**** Tips
++
+value 和 value description 的内容位置需要严格对应。
+
+** 其他的参数类型使用可根据需要自行选择,其他的参数可以自行设置。
+
+. 在页面最下方的流水线设置中选择``SCM``的方式
++
+image::./images/devops-jenkins/manual/pipeline-scm.jpg[width="70%",height="70%"]
+在``脚本路径``中，设置需要执行的脚本文件路径。``devops/cicd/jenkins/scripts/dew-devops.groovy``为使用``dew``来进行服务部署的 Pipeline 脚本。
+
+. 在Job左侧点击参数化构建，即可开始Job的构建。
+* e.g.
++
+image::./images/devops-jenkins/manual/pipeline-build.jpg[width="70%",height="70%"]
+
+====== Jenkins Pipeline Job 使用
+
+使用 Dew DevOps 进行服务的管理的 Job 的参数化构建内容如图
+
+image::./images/devops-jenkins/manual/pipeline-dew.jpg[width="70%",height="70%"]
+直接点击开始构建，即可开始全部服务的部署，各参数使用当前默认值。
+
+.参数说明：
+- branch 为部署代码的分支
+- profile 为部署代码的环境配置
+- devops_appended_cmd 为 Dew 部署命令的附加值，可为空。详细可查 link:http://doc.dew.ms/#devops-user-manual[Dew DevOps]。
+- devops_assign_services 为指定部署的服务，为空时部署全部服务。可多选。
+- devops_phase 为部署的类型，默认为 deploy（部署服务）。对应值说明见：<<../../README.adoc#devops_phase,devops_phase>>
++
+image::./images/devops-jenkins/manual/pipeline-devops-phase-view.jpg[width="50%",height="50%"]
+
+====== Trouble Shootings
+
+. 参数化构建时显示 The default value has been returned.
++
+image::./images/devops-jenkins/manual/ts-git.jpg[width="70%",height="70%"]
+A:
+新创建的 Job，在第一次参数化构建时，会显示以上内容，此为正常现象，在第一次构建完成后，会正常显示该 Repo 对应信息。
+. Job 的 控制台输出中，显示 stage skip
++
+image::./images/devops-jenkins/manual/ts-stage-skip.jpg[width="70%",height="70%"]
+A:
+此为正常现象。参数化构建时，因为参数不同时，会执行不同的脚本内容。
+
+
+  
+

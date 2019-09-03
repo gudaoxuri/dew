@@ -15,6 +15,8 @@
   # 选择 1 进行集群初始化
   # 选择 2 安装 Gitlab runner
   # 选择 3 创建项目：为项目创建namespace、ingress、拉取镜像的secret；对应的 Harbor 账户和镜像仓库等
++
+TIP: 如使用Jenkins进行部署，可跳过选项2，详见：<<dew-jenkins-pipeline,Dew Jenkins Pipeline 部署>>
 
 [[dew-spring-cloud-config]]
 * [ ] 安装并设置Spring Cloud Config
@@ -105,7 +107,7 @@
 
 * [ ] [Dew Framework] 修改 ``dew-parent`` 的版本号到最新版本
 * [ ] [Dew Framework] 使用IDE全局查询替换 ``com.tairanchina.csp.dew`` 为 ``ms.dew``
-* [ ] [Dew Framework] 鉴权修改，详见 <<devops-best-practices-auth>>
+* [ ] [Dew Framework] 鉴权修改，详见 <<devops-best-practices-auth,鉴权处理>>
 
   由于Dew 2.x 不推荐引入独立的服务网关，故需要对鉴权做一定的修改 。
 
@@ -182,7 +184,7 @@
       <version><最新的版本></version>
   </parent>
 
-* [ ] [Dew DevOps] 在项目中添加``.dew``配置，详见 <<devops-configuration-dew>>
+* [ ] [Dew DevOps] 在项目中添加``.dew``配置，详见 <<devops-configuration-dew,.dew 配置>>
 
   # 在根目录添加 .dew ，至少添加 使用到的 profile 及 namespace 信息
   # e.g.
@@ -194,8 +196,8 @@
       # 通知的URL，可自行修改，详见 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
       url: xxx
   profiles:
-    test:
-      namespace: dew-test
+    test:                 # 环境对应的 profile
+      namespace: dew-test # 各环境对应的 namespace 为必填项
     uat:
       namespace: dew-uat
     prod:
@@ -203,7 +205,10 @@
   # -----------------
   # （可选）根据实际情况为每个应用添加 .dew 文件以添加各应用的特殊配置
 
-* [ ] [Dew DevOps] 在项目中添加``.gitlab-ci.yml``配置，详见 <<devops-cicd-gitlab-template>>， e.g.
+TIP: 各环境 namespace 的值请配置为与 dew-devops.sh 脚本中创建的 project 相同的名称。
+
+* [ ] [Dew DevOps] 若使用 Jenkins Pipeline 部署项目，可在 Jenkins 中创建 Pipeline Job。详细配置方法参见：<<dew-jenkins-pipeline,Dew DevOps : Jenkins Pipeline 部署>>
+* [ ] [Dew DevOps] 若使用 Gitlab Runner 部署项目，在项目中添加``.gitlab-ci.yml``配置，详见 <<devops-cicd-gitlab-template,gitlab-ci-template.yml>>， e.g.
 
   stages:
     - deploy
@@ -219,7 +224,7 @@
     tags:
       - test
     script:
-      - mvn -P devops dew:release
+      - mvn -P devops deploy
   # 用户验收/预发环境部署
   uat deploy:
     stage: deploy
@@ -228,7 +233,7 @@
     tags:
       - uat
     script:
-      - mvn -P devops dew:release
+      - mvn -P devops deploy
   prod deploy: # 生产环境部署
     stage: deploy
     only:
@@ -236,4 +241,4 @@
     tags:
       - prod
     script:
-      - mvn -P devops dew:release
+      - mvn -P devops deploy
