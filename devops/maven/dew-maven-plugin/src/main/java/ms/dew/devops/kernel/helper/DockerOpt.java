@@ -300,7 +300,7 @@ public class DockerOpt {
          * @param imageName the image name
          * @return <b>true</b> if exist
          */
-        public boolean exist(String imageName)  {
+        public boolean exist(String imageName) {
             String[] item = parseImageInfo(imageName);
             HttpHelper.ResponseWrap responseWrap = $.http.getWrap(registryApiUrl + "/repositories/" + item[0] + "/tags/" + item[1], wrapHeader());
             log.debug("Registry exist image result [" + responseWrap.statusCode + "]" + responseWrap.result);
@@ -340,7 +340,8 @@ public class DockerOpt {
             Map<String, String> header = new HashMap<>();
             header.put("Content-Type", "application/json");
             header.put("accept", "application/json");
-            header.put("authorization", "Basic " + $.security.encodeStringToBase64(registryUsername + ":" + registryPassword, StandardCharsets.UTF_8));
+            header.put("authorization", "Basic "
+                    + $.security.encodeStringToBase64(registryUsername + ":" + registryPassword, StandardCharsets.UTF_8));
             return header;
         }
 
