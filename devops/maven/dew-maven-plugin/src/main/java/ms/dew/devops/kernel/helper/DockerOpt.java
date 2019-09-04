@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -299,9 +299,8 @@ public class DockerOpt {
          *
          * @param imageName the image name
          * @return <b>true</b> if exist
-         * @throws IOException the io exception
          */
-        public boolean exist(String imageName) throws IOException {
+        public boolean exist(String imageName)  {
             String[] item = parseImageInfo(imageName);
             HttpHelper.ResponseWrap responseWrap = $.http.getWrap(registryApiUrl + "/repositories/" + item[0] + "/tags/" + item[1], wrapHeader());
             log.debug("Registry exist image result [" + responseWrap.statusCode + "]" + responseWrap.result);
@@ -313,9 +312,8 @@ public class DockerOpt {
          *
          * @param imageName the image name
          * @return <b>true</b> if success
-         * @throws IOException the io exception
          */
-        public boolean remove(String imageName) throws IOException {
+        public boolean remove(String imageName) {
             String[] item = parseImageInfo(imageName);
             HttpHelper.ResponseWrap responseWrap = $.http.deleteWrap(registryApiUrl + "/repositories/" + item[0] + "/tags/" + item[1], wrapHeader());
             boolean result = responseWrap.statusCode == 200;
@@ -340,13 +338,9 @@ public class DockerOpt {
 
         private Map<String, String> wrapHeader() {
             Map<String, String> header = new HashMap<>();
-            try {
-                header.put("Content-Type", "application/json");
-                header.put("accept", "application/json");
-                header.put("authorization", "Basic " + $.security.encodeStringToBase64(registryUsername + ":" + registryPassword, "UTF-8"));
-            } catch (UnsupportedEncodingException ignore) {
-                throw new RuntimeException(ignore);
-            }
+            header.put("Content-Type", "application/json");
+            header.put("accept", "application/json");
+            header.put("authorization", "Basic " + $.security.encodeStringToBase64(registryUsername + ":" + registryPassword, StandardCharsets.UTF_8));
             return header;
         }
 
@@ -383,16 +377,16 @@ public class DockerOpt {
         /**
          * Add label.
          *
-         * @param label   the label
+         * @param label the label
          * @return <b>true</b> if success
          * @throws IOException the io exception
          */
         public boolean addLabel(Label label) throws IOException {
-                if (null == label.projectId || label.getProjectId() == 0) {
-                    label.setScope("g");
-                } else {
-                    label.setScope("p");
-                }
+            if (null == label.projectId || label.getProjectId() == 0) {
+                label.setScope("g");
+            } else {
+                label.setScope("p");
+            }
             HttpHelper.ResponseWrap responseWrap = $.http.postWrap(registryApiUrl + "/labels", $.json.toJsonString(label), wrapHeader());
             boolean result = responseWrap.statusCode == 201;
             if (result) {

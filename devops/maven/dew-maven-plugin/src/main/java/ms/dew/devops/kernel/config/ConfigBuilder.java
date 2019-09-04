@@ -28,7 +28,6 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -119,8 +118,6 @@ public class ConfigBuilder {
      * @param dockerRegistryUserNameAppendOpt the docker registry user name append opt
      * @param dockerRegistryPasswordAppendOpt the docker registry password append opt
      * @return the result
-     * @throws InvocationTargetException the invocation target exception
-     * @throws IllegalAccessException    the illegal access exception
      */
     public static FinalProjectConfig buildProject(DewConfig dewConfig, AppKindPlugin appKindPlugin, DeployPlugin deployPlugin,
                                                   MavenSession mavenSession, MavenProject mavenProject,
@@ -130,8 +127,7 @@ public class ConfigBuilder {
                                                   String inputKubeBase64Config, Optional<String> dockerHostAppendOpt,
                                                   Optional<String> dockerRegistryUrlAppendOpt,
                                                   Optional<String> dockerRegistryUserNameAppendOpt,
-                                                  Optional<String> dockerRegistryPasswordAppendOpt)
-            throws InvocationTargetException, IllegalAccessException {
+                                                  Optional<String> dockerRegistryPasswordAppendOpt) {
         // 格式化
         inputProfile = inputProfile.toLowerCase();
         dewConfig.setProfiles(
@@ -173,8 +169,7 @@ public class ConfigBuilder {
                                                      String inputKubeBase64Config,
                                                      Optional<String> dockerHostAppendOpt, Optional<String> dockerRegistryUrlAppendOpt,
                                                      Optional<String> dockerRegistryUserNameAppendOpt,
-                                                     Optional<String> dockerRegistryPasswordAppendOpt)
-            throws InvocationTargetException, IllegalAccessException {
+                                                     Optional<String> dockerRegistryPasswordAppendOpt) {
         FinalProjectConfig finalProjectConfig = new FinalProjectConfig();
         if (inputProfile.equalsIgnoreCase(FLAG_DEW_DEVOPS_DEFAULT_PROFILE)) {
             $.bean.copyProperties(finalProjectConfig, dewConfig);

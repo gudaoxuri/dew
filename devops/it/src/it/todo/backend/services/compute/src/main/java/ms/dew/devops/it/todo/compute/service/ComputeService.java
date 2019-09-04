@@ -21,8 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.script.ScriptException;
-
 /**
  * Compute service.
  *
@@ -34,13 +32,12 @@ public class ComputeService {
     private static final Logger logger = LoggerFactory.getLogger(ComputeService.class);
 
     /**
-     * Compute string.
+     * Compute.
      *
      * @param jsCode the js code
      * @return result
-     * @throws ScriptException the script exception
      */
-    public String compute(String jsCode) throws ScriptException {
+    public String compute(String jsCode)  {
         logger.info("Compute : " + jsCode);
         return $.eval(String.valueOf(jsCode)).toString();
     }

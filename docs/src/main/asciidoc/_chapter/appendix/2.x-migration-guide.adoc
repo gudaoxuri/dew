@@ -108,6 +108,7 @@ TIP: 如使用Jenkins进行部署，可跳过选项2，详见：<<dew-jenkins-pi
 * [ ] [Dew Framework] 修改 ``dew-parent`` 的版本号到最新版本
 * [ ] [Dew Framework] 使用IDE全局查询替换 ``com.tairanchina.csp.dew`` 为 ``ms.dew``
 * [ ] [Dew Framework] 鉴权修改，详见 <<devops-best-practices-auth,鉴权处理>>
+* [ ] [Dew Framework] dew-common 升级到 1.5.x , 核心方法的异常均继承自RuntimeException以方便Stream下使用，业务中部分捕获异常需要修改
 
   由于Dew 2.x 不推荐引入独立的服务网关，故需要对鉴权做一定的修改 。
 

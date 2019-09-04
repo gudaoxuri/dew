@@ -56,7 +56,7 @@ public class DDChannel extends AbsChannel {
     }
 
     @Override
-    protected Resp<String> innerSend(String content, String title, Set<String> receivers) throws Exception {
+    protected Resp<String> innerSend(String content, String title, Set<String> receivers) {
         switch (msgType) {
             case "text":
                 if (receivers.isEmpty()) {

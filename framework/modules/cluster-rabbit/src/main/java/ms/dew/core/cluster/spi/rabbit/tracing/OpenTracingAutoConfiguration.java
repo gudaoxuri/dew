@@ -18,10 +18,10 @@ package ms.dew.core.cluster.spi.rabbit.tracing;
 
 
 import com.ecfront.dew.common.$;
-import ms.dew.core.cluster.spi.rabbit.RabbitClusterMQ;
 import io.opentracing.Scope;
 import io.opentracing.Tracer;
 import io.opentracing.propagation.Format;
+import ms.dew.core.cluster.spi.rabbit.RabbitClusterMQ;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -64,13 +64,9 @@ public class OpenTracingAutoConfiguration {
         }
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
         RabbitClusterMQ.setSendBeforeFun((exchange, routingKey, messageProperties) -> {
-            try {
-                // 修改Headers Collections.unmodifiableMap 为可修改
-                $.bean.setValue(messageProperties, "headers", messageProperties.getHeaders().entrySet()
-                        .stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
-            } catch (NoSuchFieldException ignore) {
-                throw new RuntimeException(ignore);
-            }
+            // 修改Headers Collections.unmodifiableMap 为可修改
+            $.bean.setValue(messageProperties, "headers", messageProperties.getHeaders().entrySet()
+                    .stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
             Scope scope = RabbitMqTracingUtils.buildSendSpan(tracer, messageProperties);
             tracer.inject(
                     scope.span().context(),

@@ -21,7 +21,6 @@ import com.ecfront.dew.common.ReportHandler;
 import ms.dew.devops.kernel.exception.ProjectProcessException;
 import org.slf4j.Logger;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -76,7 +75,7 @@ public class ShellHelper {
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new ProjectProcessException("[" + flag + "] Exec error : " + cmd, ex);
-        } catch (IOException | ExecutionException ex) {
+        } catch (ExecutionException ex) {
             throw new ProjectProcessException("[" + flag + "] Exec error : " + cmd, ex);
         }
         if (!isSuccess.get()) {

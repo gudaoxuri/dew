@@ -30,7 +30,6 @@ import ms.dew.devops.kernel.resource.KubeDeploymentBuilder;
 import ms.dew.devops.kernel.resource.KubeServiceBuilder;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -110,9 +109,8 @@ public class KubeReleaseFlow extends BasicFlow {
      * @param config     the project config
      * @param oldVersion the old version
      * @return the old version resources
-     * @throws IOException the io exception
      */
-    private Map<String, Object> fetchOldVersionResources(FinalProjectConfig config, V1ConfigMap oldVersion) throws IOException {
+    private Map<String, Object> fetchOldVersionResources(FinalProjectConfig config, V1ConfigMap oldVersion)  {
         ExtensionsV1beta1Deployment rollbackDeployment = KubeHelper.inst(config.getId()).toResource(
                 $.security.decodeBase64ToString(oldVersion.getData().get(KubeRES.DEPLOYMENT.getVal()), "UTF-8"),
                 ExtensionsV1beta1Deployment.class);
@@ -244,13 +242,10 @@ public class KubeReleaseFlow extends BasicFlow {
             throws ApiException {
         Map<String, String> resources = kubeResources.entrySet()
                 .stream().collect(Collectors.toMap(Map.Entry::getKey,
-                        entry -> {
-                            try {
-                                return $.security.encodeStringToBase64(KubeHelper.inst(config.getId()).toString(entry.getValue()), "UTF-8");
-                            } catch (UnsupportedEncodingException ignore) {
-                                return "";
-                            }
-                        }));
+                        entry ->
+                            $.security.encodeStringToBase64(
+                                    KubeHelper.inst(config.getId()).toString(entry.getValue()), "UTF-8")
+                        ));
         VersionController.addNewVersion(config, appVersion, gitCommit, reRelease, resources, new HashMap<>());
     }
 
