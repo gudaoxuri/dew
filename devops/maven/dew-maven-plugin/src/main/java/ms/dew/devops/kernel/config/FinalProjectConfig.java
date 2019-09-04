@@ -50,6 +50,7 @@ public class FinalProjectConfig extends DewProfile {
     // 如果在重用版本模式下指向被重用的 git commit
     private String imageVersion;
     private String skipReason = "";
+    private SkipCodeEnum skipCode;
     private boolean hasError = false;
     private Set<String> executeSuccessfulMojos = new LinkedHashSet<>();
 
@@ -264,6 +265,24 @@ public class FinalProjectConfig extends DewProfile {
     }
 
     /**
+     * Gets skip code.
+     *
+     * @return the skip code
+     */
+    public SkipCodeEnum getSkipCode() {
+        return skipCode;
+    }
+
+    /**
+     * Sets skip code.
+     *
+     * @param skipCode the skip code
+     */
+    public void setSkipCode(SkipCodeEnum skipCode) {
+        this.skipCode = skipCode;
+    }
+
+    /**
      * Is has error.
      *
      * @return result boolean
@@ -439,6 +458,15 @@ public class FinalProjectConfig extends DewProfile {
         return registryHost + "/"
                 + namespace + "/"
                 + appName + ":" + specTag;
+    }
+
+    public enum SkipCodeEnum {
+
+        // dew文件中配置
+        SELF_CONFIG,
+
+        // 非dew文件中配置
+        NON_SELF_CONFIG
     }
 
 }

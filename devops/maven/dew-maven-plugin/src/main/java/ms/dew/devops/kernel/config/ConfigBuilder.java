@@ -202,7 +202,7 @@ public class ConfigBuilder {
         finalProjectConfig.setTargetDirectory(finalProjectConfig.getDirectory() + "target" + File.separator);
 
         if (finalProjectConfig.getSkip()) {
-            DevOps.SkipProcess.skip(finalProjectConfig, "Configured to skip", false);
+            DevOps.SkipProcess.skip(finalProjectConfig, "Configured to skip", FinalProjectConfig.SkipCodeEnum.SELF_CONFIG, false);
             return finalProjectConfig;
         }
         // 优先使用命令行参数

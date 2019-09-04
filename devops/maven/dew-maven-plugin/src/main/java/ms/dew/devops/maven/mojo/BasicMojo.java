@@ -332,7 +332,7 @@ public abstract class BasicMojo extends AbstractMojo {
             } else {
                 // 此错误不会中止程序
                 MavenSkipProcessor.disabledDefaultBehavior(mavenSession.getCurrentProject().getId());
-                DevOps.SkipProcess.skip(projectConfig, "Internal execution error", true);
+                DevOps.SkipProcess.skip(projectConfig, "Internal execution error", FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, true);
             }
         } catch (GlobalProcessException e) {
             // 此错误会中止程序
@@ -346,7 +346,7 @@ public abstract class BasicMojo extends AbstractMojo {
             e.printStackTrace();
             assert projectConfig != null;
             DevOps.SkipProcess.skip(projectConfig,
-                    "Process error [" + e.getClass().getSimpleName() + "]" + e.getMessage(), true);
+                    "Process error [" + e.getClass().getSimpleName() + "]" + e.getMessage(), FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, true);
             ExecuteEventProcessor.onMojoExecuteFailure(getMojoName(), projectConfig, e);
             throw new ProjectProcessException("Process error", e);
         }

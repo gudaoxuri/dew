@@ -69,7 +69,7 @@ public class NeedProcessChecker {
                 logger.info("Need process checking for " + projectConfig.getAppName());
                 Resp<String> deployAble = projectConfig.getDeployPlugin().deployAble(projectConfig);
                 if (!deployAble.ok()) {
-                    DevOps.SkipProcess.skip(projectConfig, deployAble.getMessage(), false);
+                    DevOps.SkipProcess.skip(projectConfig, deployAble.getMessage(), FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
                     continue;
                 }
                 projectConfig.getDeployPlugin()
@@ -84,7 +84,8 @@ public class NeedProcessChecker {
                                             .ifPresent(lastVersionDeployCommitFromProfile -> {
                                                 if (lastDeployedVersion.equals(lastVersionDeployCommitFromProfile)) {
                                                     DevOps.SkipProcess.skip(projectConfig,
-                                                            "Reuse last version " + lastDeployedVersion + " has been deployed", false);
+                                                            "Reuse last version " + lastDeployedVersion + " has been deployed",
+                                                            FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
                                                 } else {
                                                     logger.info("Reuse last version " + lastVersionDeployCommitFromProfile
                                                             + " from " + projectConfig.getReuseLastVersionFromProfile());
@@ -100,7 +101,7 @@ public class NeedProcessChecker {
                                 List<String> changedFiles = fetchGitDiff(lastDeployedVersion);
                                 // 判断有没有代码变更
                                 if (!hasUnDeployFiles(changedFiles, projectConfig)) {
-                                    DevOps.SkipProcess.skip(projectConfig, "No code changes", false);
+                                    DevOps.SkipProcess.skip(projectConfig, "No code changes", FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
                                 }
                             } catch (GitDiffException e) {
                                 logger.warn("Redeploying [" + projectConfig.getAppName() + "] due to some codes had been reverted or changed.");
@@ -212,8 +213,8 @@ public class NeedProcessChecker {
     private static void dependencyProcess(Collection<FinalProjectConfig> projectConfigs, List<String> needProcessProjects) {
         projectConfigs.stream()
                 // 所有跳过的项目(配置文件跳过的项目除外)
-                .filter(finalProjectConfig -> finalProjectConfig.getSkip() && StringUtils.isNotBlank(finalProjectConfig.getSkipReason())
-                        && null != finalProjectConfig.getDisableReuseVersion())
+                .filter(finalProjectConfig -> finalProjectConfig.getSkip()
+                        && !finalProjectConfig.getSkipCode().equals(FinalProjectConfig.SkipCodeEnum.SELF_CONFIG))
                 // 找到有依赖于需要处理的快照项目
                 .filter(projectConfig ->
                         projectConfig.getMavenProject().getArtifacts().stream()
