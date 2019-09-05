@@ -44,7 +44,7 @@
     </module>
 
     <module name="TreeWalker">
-        <module name="IllegalImport"/>
+        <!--<module name="IllegalImport"/>-->
         <module name="RedundantImport"/>
         <module name="UnusedImports"/>
         <module name="JavadocType">

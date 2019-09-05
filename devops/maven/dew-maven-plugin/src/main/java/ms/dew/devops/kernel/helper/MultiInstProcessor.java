@@ -18,7 +18,6 @@ package ms.dew.devops.kernel.helper;
 
 import com.ecfront.dew.common.$;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,16 +55,12 @@ public abstract class MultiInstProcessor {
             return;
         }
         String hashStr = kind + String.join("-", hashItems);
-        try {
-            String hash = $.security.digest.digest(hashStr, "MD5");
-            if (EXISTS.containsKey(hash)) {
-                INSTANCES.put(kind + "-" + instanceId, INSTANCES.get(EXISTS.get(hash)));
-                return;
-            }
-            EXISTS.put(hash, kind + "-" + instanceId);
-        } catch (NoSuchAlgorithmException ignore) {
-            throw new RuntimeException(ignore);
+        String hash = $.security.digest.digest(hashStr, "MD5");
+        if (EXISTS.containsKey(hash)) {
+            INSTANCES.put(kind + "-" + instanceId, INSTANCES.get(EXISTS.get(hash)));
+            return;
         }
+        EXISTS.put(hash, kind + "-" + instanceId);
         INSTANCES.put(kind + "-" + instanceId, initFun.get());
     }
 

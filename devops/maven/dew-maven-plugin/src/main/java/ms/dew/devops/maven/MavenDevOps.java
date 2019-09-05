@@ -39,8 +39,6 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 
@@ -130,8 +128,7 @@ public class MavenDevOps {
                                             Optional<String> dockerHostAppendOpt,
                                             Optional<String> dockerRegistryUrlAppendOpt,
                                             Optional<String> dockerRegistryUserNameAppendOpt,
-                                            Optional<String> dockerRegistryPasswordAppendOpt)
-                throws IOException, InvocationTargetException, IllegalAccessException {
+                                            Optional<String> dockerRegistryPasswordAppendOpt) {
             logger.info("Init final config ...");
             String basicDirectory = session.getTopLevelProject().getBasedir().getPath() + File.separator;
             // 基础配置

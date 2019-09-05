@@ -21,7 +21,6 @@ import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.release.DockerBuildFlow;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +31,7 @@ import java.util.Map;
  */
 public class JvmServiceSpringBootBuildFlow extends DockerBuildFlow {
 
-    protected void preDockerBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
+    protected void preDockerBuild(FinalProjectConfig config, String flowBasePath) {
         $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/jvmservice_springboot/Dockerfile"), flowBasePath + "Dockerfile");
         $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/jvmservice_springboot/run-java.sh"), flowBasePath + "run-java.sh");
         $.file.copyStreamToPath(DevOps.class.getResourceAsStream("/dockerfile/jvmservice_springboot/debug-java.sh"), flowBasePath + "debug-java.sh");

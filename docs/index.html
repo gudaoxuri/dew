@@ -5179,7 +5179,7 @@ prod deploy:
 <p>在项目代码中添加并配置 <code>.dew</code> 文件（详见 <a href="http://doc.dew.ms/#devops-configuration-dew">.dew 配置详情</a>）</p>
 </li>
 <li>
-<p>若使用 Gitlab Runner 进行部署，需要在项目代码中添加并配置 <code>.gitlab-ci.yml</code> 文件（参考 <a href="../cicd/gitlabci/readme.html#dew-gitlab-ci">Gitlab CI 实现</a>）</p>
+<p>若使用 Gitlab Runner 进行部署，需要在项目代码中添加并配置 <code>.gitlab-ci.yml</code> 文件（参考 <a href="#dew-gitlab-ci">Gitlab CI 实现</a>）</p>
 </li>
 </ol>
 </div>
@@ -7001,12 +7001,6 @@ profiles:
   # 添加测试环境
   test:
     # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
-    namespace: dew-test
-  uat:
-    # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
-    namespace: dew-uat
-  test:
-    # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
     namespace: dew-test</code></pre>
 </div>
 </div>
@@ -7199,7 +7193,7 @@ profiles:
   # 添加uat环境
   uat:
     # 指定仿真环境的namespace
-    namespace: syl-test
+    namespace: dew-uat
   # 添加prod环境
   prod:
     # 指定生产环境的namespace
@@ -9159,6 +9153,9 @@ csp:
 </li>
 <li>
 <p><input type="checkbox" data-item-complete="0"> [Dew Framework] 鉴权修改，详见 <a href="#devops-best-practices-auth">鉴权处理</a></p>
+</li>
+<li>
+<p><input type="checkbox" data-item-complete="0"> [Dew Framework] dew-common 升级到 1.5.x , 核心方法的异常均继承自RuntimeException以方便Stream下使用，业务中部分捕获异常需要修改</p>
 <div class="literalblock">
 <div class="content">
 <pre>由于Dew 2.x 不推荐引入独立的服务网关，故需要对鉴权做一定的修改 。</pre>
@@ -9972,7 +9969,7 @@ prod deploy: # 生产环境部署
 </div>
 <div class="paragraph">
 <p>+
-TIP: 需要安装此插件，如不安装，只用<code>dew-devops.groovy</code>脚本会报错。</p>
+TIP: 需要安装此插件，如不安装，使用<code>dew-devops.groovy</code>脚本会报错。</p>
 </div>
 <div class="paragraph">
 <div class="title">Extended Choice Parameter</div>
@@ -10316,7 +10313,7 @@ TIP: 需要安装此插件，如不安装，只用<code>dew-devops.groovy</code>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-09-03 10:10:07 CST
+Last updated 2019-09-04 08:23:51 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

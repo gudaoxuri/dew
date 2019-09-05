@@ -67,12 +67,8 @@ public class IntAndCleanIT extends BasicProcessor {
                         && image.getRepoTags()[0].startsWith(registryHost + "/dew-"))
                 .forEach(image -> {
                     DockerHelper.inst("").image.remove(image.getRepoTags()[0]);
-                    try {
-                        logger.info("Remove registry image : " + image.getRepoTags()[0]);
-                        DockerHelper.inst("").registry.remove(image.getRepoTags()[0]);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    logger.info("Remove registry image : " + image.getRepoTags()[0]);
+                    DockerHelper.inst("").registry.remove(image.getRepoTags()[0]);
                 });
     }
 

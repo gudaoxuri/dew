@@ -394,15 +394,11 @@ public class Dew {
          * @return 上抛的异常对象
          */
         public static <E extends Throwable> E e(String code, E ex, int customHttpCode) {
-            try {
-                $.bean.setValue(ex, "detailMessage", $.json.createObjectNode()
-                        .put("code", code)
-                        .put("message", ex.getLocalizedMessage())
-                        .put("customHttpCode", customHttpCode)
-                        .toString());
-            } catch (NoSuchFieldException e1) {
-                logger.error("Throw Exception Convert error", e1);
-            }
+            $.bean.setValue(ex, "detailMessage", $.json.createObjectNode()
+                    .put("code", code)
+                    .put("message", ex.getLocalizedMessage())
+                    .put("customHttpCode", customHttpCode)
+                    .toString());
             return ex;
         }
 

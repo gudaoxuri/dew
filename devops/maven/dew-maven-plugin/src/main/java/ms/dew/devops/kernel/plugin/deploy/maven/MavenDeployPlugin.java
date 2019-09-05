@@ -64,12 +64,8 @@ public class MavenDeployPlugin implements DeployPlugin {
                 + mavenProject.getArtifactId()
                 + "/"
                 + version;
-        try {
-            if ($.http.getWrap(repoUrl).statusCode == 200) {
-                return Resp.forbidden("The current version already exists");
-            }
-        } catch (IOException e) {
-            throw new ProjectProcessException(e.getMessage(), e);
+        if ($.http.getWrap(repoUrl).statusCode == 200) {
+            return Resp.forbidden("The current version already exists");
         }
         return Resp.success("");
     }

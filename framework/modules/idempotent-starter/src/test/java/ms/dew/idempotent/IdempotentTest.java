@@ -27,7 +27,6 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -44,11 +43,10 @@ public class IdempotentTest {
     /**
      * Test manual confirm.
      *
-     * @throws IOException          the io exception
      * @throws InterruptedException the interrupted exception
      */
     @Test
-    public void testManualConfirm() throws IOException, InterruptedException {
+    public void testManualConfirm() throws InterruptedException {
         HashMap<String, String> header = new HashMap<String, String>() {
             {
                 put(DewIdempotentConfig.DEFAULT_OPT_ID_FLAG, "0001");
@@ -56,12 +54,8 @@ public class IdempotentTest {
         };
         Thread thread = new Thread(() -> {
             // 第一次请求，正常
-            Resp<String> result = null;
-            try {
-                result = Resp.generic($.http.get(urlPre + "manual-confirm?str=dew-test1", header), String.class);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            Resp<String> result;
+            result = Resp.generic($.http.get(urlPre + "manual-confirm?str=dew-test1", header), String.class);
             Assert.assertTrue(result.ok());
         });
         thread.start();
@@ -85,11 +79,10 @@ public class IdempotentTest {
     /**
      * Test auto confirmed.
      *
-     * @throws IOException          the io exception
      * @throws InterruptedException the interrupted exception
      */
     @Test
-    public void testAutoConfirmed() throws IOException, InterruptedException {
+    public void testAutoConfirmed() throws InterruptedException {
         HashMap<String, String> header = new HashMap<String, String>() {
             {
                 put(DewIdempotentConfig.DEFAULT_OPT_ID_FLAG, "0001");
@@ -113,11 +106,10 @@ public class IdempotentTest {
     /**
      * Test without http.
      *
-     * @throws IOException          the io exception
      * @throws InterruptedException the interrupted exception
      */
     @Test
-    public void testWithoutHttp() throws IOException, InterruptedException {
+    public void testWithoutHttp() throws InterruptedException {
         // 初始化类型为transfer_a的幂等操作，需要手工确认，过期时间为1秒
         DewIdempotent.initOptTypeInfo("transfer_a", true, 1000, StrategyEnum.ITEM);
         // 第一次请求transfer_a类型下的xxxxxxx这个ID，返回不存在，表示可以下一步操作
@@ -137,12 +129,9 @@ public class IdempotentTest {
 
     /**
      * Test normal.
-     *
-     * @throws IOException          the io exception
-     * @throws InterruptedException the interrupted exception
      */
     @Test
-    public void testNormal() throws IOException, InterruptedException {
+    public void testNormal() {
         Resp<String> result = Resp.generic($.http.get(urlPre + "normal?str=dew-test"), String.class);
         Assert.assertTrue(result.ok());
     }

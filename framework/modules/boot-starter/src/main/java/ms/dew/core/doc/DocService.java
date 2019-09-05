@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -58,16 +57,11 @@ public class DocService {
             throws IOException {
         List<String> swaggerJsons = new ArrayList<>();
         for (String url : swaggerJsonUrls) {
-            try {
-                HttpHelper.ResponseWrap result = $.http.getWrap(url);
-                if (result.statusCode == 200) {
-                    swaggerJsons.add(result.result);
-                } else {
-                    logger.warn("Fetch swagger url [" + url + "] error, code:" + result.statusCode);
-                }
-            } catch (IOException e) {
-                logger.error("Fetch swagger url [" + url + "] error.", e);
-                throw e;
+            HttpHelper.ResponseWrap result = $.http.getWrap(url);
+            if (result.statusCode == 200) {
+                swaggerJsons.add(result.result);
+            } else {
+                logger.warn("Fetch swagger url [" + url + "] error, code:" + result.statusCode);
             }
         }
         return doGenerateOfflineDoc(docName, docDesc, visitUrls, swaggerJsons);
@@ -464,11 +458,7 @@ public class DocService {
     }
 
     private String encode(String name) {
-        try {
-            return "_" + $.security.digest.digest(name, "MD5");
-        } catch (NoSuchAlgorithmException e) {
-            return "";
-        }
+        return "_" + $.security.digest.digest(name, "MD5");
     }
 
     private String getTag(String tagName, JsonNode json) {
