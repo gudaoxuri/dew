@@ -188,7 +188,8 @@ public class MavenDevOps {
                         notSkip(DevOps.Config.getProjectConfig(project.getId()), project, false);
                     } else {
                         DevOps.SkipProcess
-                                .skip(DevOps.Config.getProjectConfig(project.getId()), "Not assign to release", false);
+                                .skip(DevOps.Config.getProjectConfig(project.getId()), "Not assign to release",
+                                        FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
                     }
                 });
             }

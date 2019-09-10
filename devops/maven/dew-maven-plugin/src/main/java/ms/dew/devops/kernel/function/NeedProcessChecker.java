@@ -69,7 +69,7 @@ public class NeedProcessChecker {
                 logger.info("Need process checking for " + projectConfig.getAppName());
                 Resp<String> deployAble = projectConfig.getDeployPlugin().deployAble(projectConfig);
                 if (!deployAble.ok()) {
-                    DevOps.SkipProcess.skip(projectConfig, deployAble.getMessage(), false);
+                    DevOps.SkipProcess.skip(projectConfig, deployAble.getMessage(), FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
                     continue;
                 }
                 projectConfig.getDeployPlugin()
@@ -84,7 +84,8 @@ public class NeedProcessChecker {
                                             .ifPresent(lastVersionDeployCommitFromProfile -> {
                                                 if (lastDeployedVersion.equals(lastVersionDeployCommitFromProfile)) {
                                                     DevOps.SkipProcess.skip(projectConfig,
-                                                            "Reuse last version " + lastDeployedVersion + " has been deployed", false);
+                                                            "Reuse last version " + lastDeployedVersion + " has been deployed",
+                                                            FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
                                                 } else {
                                                     logger.info("Reuse last version " + lastVersionDeployCommitFromProfile
                                                             + " from " + projectConfig.getReuseLastVersionFromProfile());
@@ -100,7 +101,7 @@ public class NeedProcessChecker {
                                 List<String> changedFiles = fetchGitDiff(lastDeployedVersion);
                                 // 判断有没有代码变更
                                 if (!hasUnDeployFiles(changedFiles, projectConfig)) {
-                                    DevOps.SkipProcess.skip(projectConfig, "No code changes", false);
+                                    DevOps.SkipProcess.skip(projectConfig, "No code changes", FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
                                 }
                             } catch (GitDiffException e) {
                                 logger.warn("Redeploying [" + projectConfig.getAppName() + "] due to some codes had been reverted or changed.");
@@ -154,23 +155,17 @@ public class NeedProcessChecker {
         while (!Arrays.asList(basePathFile.list()).contains(".git")) {
             basePathFile = basePathFile.getParentFile();
         }
-        String projectPath = projectConfig.getDirectory().substring(basePathFile.getPath().length() + 1).replaceAll("\\\\", "/");
+        String projectPath = projectConfig.getDirectory().replaceAll("\\\\", "/");
         final String basePath = basePathFile.getPath();
-
         // 获取当前项目目录下的工程路径及依赖项目的工程路径
         List<String> collectedProjectPaths = projectConfig.getMavenSession().getProjects().stream()
                 .filter(project -> (project.getBasedir().getPath() + File.separator).startsWith(projectConfig.getDirectory())
                         || projectConfig.getMavenProject().getDependencies().stream()
                         .anyMatch(dependency -> dependency.getArtifactId().equals(project.getArtifactId())))
-                .map(project -> {
-                    if (!project.getBasedir().getPath().equals(basePath)) {
-                        return project.getBasedir().getPath().substring(basePath.length() + 1).replaceAll("\\\\", "/");
-                    }
-                    return basePath;
-                })
+                .map(project -> project.getBasedir().getPath().replaceAll("\\\\", "/"))
                 .collect(Collectors.toList());
         // 找到当前项目变更的文件列表及依赖项目变更的文件列表
-        changedFiles = changedFiles.stream()
+        changedFiles = changedFiles.stream().map(changedFile -> basePath + File.separator + changedFile)
                 .filter(path -> path.startsWith(projectPath) || projectConfig.getMavenSession().getProjects().stream()
                         .anyMatch(project -> path.startsWith((project.getBasedir().getPath() + File.separator)
                                 .substring(project.getBasedir().getPath().length() + 1).replaceAll("\\\\", "/"))))
@@ -179,7 +174,7 @@ public class NeedProcessChecker {
             changedFiles = changedFiles.stream()
                     .filter(path -> {
                         for (String collectedProjectPath : collectedProjectPaths) {
-                            if (path.startsWith(collectedProjectPath)) {
+                            if (path.startsWith(collectedProjectPath) || path.equals(basePath + File.separator + ".dew")) {
                                 return true;
                             }
                         }
@@ -212,8 +207,8 @@ public class NeedProcessChecker {
     private static void dependencyProcess(Collection<FinalProjectConfig> projectConfigs, List<String> needProcessProjects) {
         projectConfigs.stream()
                 // 所有跳过的项目(配置文件跳过的项目除外)
-                .filter(finalProjectConfig -> finalProjectConfig.getSkip() && StringUtils.isNotBlank(finalProjectConfig.getSkipReason())
-                        && null != finalProjectConfig.getDisableReuseVersion())
+                .filter(finalProjectConfig -> finalProjectConfig.getSkip()
+                        && !finalProjectConfig.getSkipCode().equals(FinalProjectConfig.SkipCodeEnum.SELF_CONFIG))
                 // 找到有依赖于需要处理的快照项目
                 .filter(projectConfig ->
                         projectConfig.getMavenProject().getArtifacts().stream()

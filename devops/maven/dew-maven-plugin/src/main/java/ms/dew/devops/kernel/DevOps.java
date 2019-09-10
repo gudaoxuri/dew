@@ -181,7 +181,8 @@ public class DevOps {
                         && !Config.getProjectConfig(Config.getCurrentProjectId()).isHasError()
                         && Config.getProjectConfig(Config.getCurrentProjectId()).getSkipReason().isEmpty()) {
                     DevOps.SkipProcess
-                            .skip(Config.getProjectConfig(Config.getCurrentProjectId()), "Uncaught error", true);
+                            .skip(Config.getProjectConfig(Config.getCurrentProjectId()), "Uncaught error",
+                                    FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, true);
                 }
                 ExecuteEventProcessor.onShutdown(Config.getFinalConfig().getProjects());
             });
@@ -254,14 +255,16 @@ public class DevOps {
         /**
          * Skip this project.
          *
-         * @param config  the config
-         * @param reason  the reason
-         * @param isError the is error
+         * @param config   the config
+         * @param reason   the reason
+         * @param skipCode the skip code
+         * @param isError  the is error
          */
-        public static void skip(FinalProjectConfig config, String reason, boolean isError) {
+        public static void skip(FinalProjectConfig config, String reason, FinalProjectConfig.SkipCodeEnum skipCode, boolean isError) {
             config.setSkip(true);
             config.setHasError(isError);
             config.setSkipReason(reason);
+            config.setSkipCode(skipCode);
             skip(config.getMavenProject());
             logger.info("[" + config.getAppName() + "] Skipped : " + reason);
         }
@@ -287,6 +290,7 @@ public class DevOps {
             config.setSkip(false);
             config.setHasError(false);
             config.setSkipReason("");
+            config.setSkipCode(null);
             unSkip(config.getMavenProject());
             logger.info("[" + config.getAppName() + "] UnSkipped");
         }

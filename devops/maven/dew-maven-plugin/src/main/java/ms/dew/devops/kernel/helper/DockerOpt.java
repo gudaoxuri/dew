@@ -36,12 +36,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -351,9 +347,8 @@ public class DockerOpt {
          * @param labelName the label name
          * @param projectId the project id
          * @return label description
-         * @throws IOException the io exception
          */
-        public Label getLabelByName(String labelName, Integer projectId) throws IOException {
+        public Label getLabelByName(String labelName, Integer projectId) {
             String url = registryApiUrl + "/labels?name=" + labelName;
             if (projectId == null || projectId == 0) {
                 url = url + "&scope=g";
@@ -380,9 +375,8 @@ public class DockerOpt {
          *
          * @param label the label
          * @return <b>true</b> if success
-         * @throws IOException the io exception
          */
-        public boolean addLabel(Label label) throws IOException {
+        public boolean addLabel(Label label) {
             if (null == label.projectId || label.getProjectId() == 0) {
                 label.setScope("g");
             } else {
@@ -404,9 +398,8 @@ public class DockerOpt {
          * @param labelId the label id
          * @param label   label
          * @return <b>true</b> if success
-         * @throws IOException the io exception
          */
-        public boolean updateLabelById(Integer labelId, Label label) throws IOException {
+        public boolean updateLabelById(Integer labelId, Label label) {
             HttpHelper.ResponseWrap responseWrap = $.http.putWrap(registryApiUrl + "/labels/" + labelId,
                     $.json.toJsonString(label), wrapHeader());
             boolean result = responseWrap.statusCode == 200;
@@ -424,9 +417,8 @@ public class DockerOpt {
          *
          * @param projectName the project name
          * @return the project id
-         * @throws IOException the io exception
          */
-        public Integer getProjectIdByName(String projectName) throws IOException {
+        public Integer getProjectIdByName(String projectName) {
             HttpHelper.ResponseWrap responseWrap = $.http.getWrap(registryApiUrl + "/projects?name=" + projectName, wrapHeader());
             boolean result = responseWrap.statusCode == 200;
             Integer projectId = null;
@@ -434,6 +426,27 @@ public class DockerOpt {
                 projectId = (Integer) $.json.toList(responseWrap.result, Map.class).get(0).get("project_id");
             }
             return projectId;
+        }
+
+        /**
+         * Get tags.
+         *
+         * @param nameSpace   the name space
+         * @param projectName the project name
+         * @return the list of tag
+         */
+        public List<Tag> getTags(String nameSpace, String projectName) {
+            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(registryApiUrl + "/repositories/" + nameSpace
+                    + "/" + projectName + "/tags", wrapHeader());
+            boolean result = responseWrap.statusCode == 200;
+            List<Tag> tags = null;
+            if (result) {
+                log.debug("Registry get tags result [" + responseWrap.statusCode + "]" + responseWrap.result);
+                tags = $.json.toList(responseWrap.result, Tag.class);
+            } else {
+                log.error("Registry get tags result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            }
+            return tags;
         }
     }
 
@@ -498,6 +511,32 @@ public class DockerOpt {
 
         public void setDeleted(Boolean deleted) {
             this.deleted = deleted;
+        }
+    }
+
+    /**
+     * Docker label.
+     *
+     * @author Liuhongcheng
+     */
+    public static class Tag {
+        private String name;
+        private Date created;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Date getCreated() {
+            return created;
+        }
+
+        public void setCreated(Date created) {
+            this.created = created;
         }
     }
 
