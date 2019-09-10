@@ -155,23 +155,17 @@ public class NeedProcessChecker {
         while (!Arrays.asList(basePathFile.list()).contains(".git")) {
             basePathFile = basePathFile.getParentFile();
         }
-        String projectPath = projectConfig.getDirectory().substring(basePathFile.getPath().length() + 1).replaceAll("\\\\", "/");
+        String projectPath = projectConfig.getDirectory().replaceAll("\\\\", "/");
         final String basePath = basePathFile.getPath();
-
         // 获取当前项目目录下的工程路径及依赖项目的工程路径
         List<String> collectedProjectPaths = projectConfig.getMavenSession().getProjects().stream()
                 .filter(project -> (project.getBasedir().getPath() + File.separator).startsWith(projectConfig.getDirectory())
                         || projectConfig.getMavenProject().getDependencies().stream()
                         .anyMatch(dependency -> dependency.getArtifactId().equals(project.getArtifactId())))
-                .map(project -> {
-                    if (!project.getBasedir().getPath().equals(basePath)) {
-                        return project.getBasedir().getPath().substring(basePath.length() + 1).replaceAll("\\\\", "/");
-                    }
-                    return basePath;
-                })
+                .map(project -> project.getBasedir().getPath().replaceAll("\\\\", "/"))
                 .collect(Collectors.toList());
         // 找到当前项目变更的文件列表及依赖项目变更的文件列表
-        changedFiles = changedFiles.stream()
+        changedFiles = changedFiles.stream().map(changedFile -> basePath + File.separator + changedFile)
                 .filter(path -> path.startsWith(projectPath) || projectConfig.getMavenSession().getProjects().stream()
                         .anyMatch(project -> path.startsWith((project.getBasedir().getPath() + File.separator)
                                 .substring(project.getBasedir().getPath().length() + 1).replaceAll("\\\\", "/"))))
@@ -180,7 +174,7 @@ public class NeedProcessChecker {
             changedFiles = changedFiles.stream()
                     .filter(path -> {
                         for (String collectedProjectPath : collectedProjectPaths) {
-                            if (path.startsWith(collectedProjectPath)) {
+                            if (path.startsWith(collectedProjectPath) || path.equals(basePath + File.separator + ".dew")) {
                                 return true;
                             }
                         }

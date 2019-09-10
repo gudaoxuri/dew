@@ -27,7 +27,6 @@ import ms.dew.devops.kernel.helper.KubeHelper;
 import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.plugin.deploy.DeployPlugin;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -63,7 +62,7 @@ public class KubernetesDeployPlugin implements DeployPlugin {
     }
 
     @Override
-    public Optional<String> fetchLastDeployedVersionByReuseProfile(FinalProjectConfig config) throws IOException {
+    public Optional<String> fetchLastDeployedVersionByReuseProfile(FinalProjectConfig config) {
         return DockerBuildFlow.ReuseVersionProcessorFactory.getReuseCommit(config);
     }
 

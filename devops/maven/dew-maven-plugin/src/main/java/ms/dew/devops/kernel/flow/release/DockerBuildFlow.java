@@ -22,6 +22,7 @@ import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.BasicFlow;
 import ms.dew.devops.kernel.helper.DockerHelper;
 import ms.dew.devops.kernel.helper.DockerOpt;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,8 +31,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static ms.dew.devops.kernel.config.DewProfile.REUSE_VERSION_TYPE_LABEL;
 import static ms.dew.devops.kernel.config.DewProfile.REUSE_VERSION_TYPE_TAG;
@@ -116,9 +119,8 @@ public class DockerBuildFlow extends BasicFlow {
          * @param config       the config
          * @param flowBasePath the flow base path
          * @return the boolean
-         * @throws IOException the io exception
          */
-        static boolean processBeforeRelease(FinalProjectConfig config, String flowBasePath) throws IOException {
+        static boolean processBeforeRelease(FinalProjectConfig config, String flowBasePath) {
             switch (config.getReuseVersionType()) {
                 case REUSE_VERSION_TYPE_LABEL:
                     return reuseVersionLabelProcessor.processBeforeRelease(config, flowBasePath);
@@ -133,9 +135,8 @@ public class DockerBuildFlow extends BasicFlow {
          * Process after release successful.
          *
          * @param config the config
-         * @throws IOException the io exception
          */
-        static void processAfterReleaseSuccessful(FinalProjectConfig config) throws IOException {
+        static void processAfterReleaseSuccessful(FinalProjectConfig config) {
             switch (config.getReuseVersionType()) {
                 case REUSE_VERSION_TYPE_LABEL:
                     reuseVersionLabelProcessor.processAfterReleaseSuccessful(config);
@@ -154,9 +155,8 @@ public class DockerBuildFlow extends BasicFlow {
          *
          * @param config the config
          * @return the reuse commit
-         * @throws IOException the io exception
          */
-        public static Optional<String> getReuseCommit(FinalProjectConfig config) throws IOException {
+        public static Optional<String> getReuseCommit(FinalProjectConfig config) {
             switch (config.getReuseVersionType()) {
                 case REUSE_VERSION_TYPE_LABEL:
                     return reuseVersionLabelProcessor.getReuseCommit(config);
@@ -183,7 +183,7 @@ public class DockerBuildFlow extends BasicFlow {
     private static class ReuseVersionLabelProcessor implements ReuseVersionProcessor {
 
         @Override
-        public boolean processBeforeRelease(FinalProjectConfig config, String flowBasePath) throws IOException {
+        public boolean processBeforeRelease(FinalProjectConfig config, String flowBasePath) {
             // 判断是否有最近可用的image
             String reuseImageName = getImageNameByLabelName(config);
             if (StringUtils.isEmpty(reuseImageName)) {
@@ -198,7 +198,7 @@ public class DockerBuildFlow extends BasicFlow {
         }
 
         @Override
-        public void processAfterReleaseSuccessful(FinalProjectConfig config) throws IOException {
+        public void processAfterReleaseSuccessful(FinalProjectConfig config) {
             logger.info("Add label : " + config.getCurrImageName());
             Integer projectId = DockerHelper.inst(config.getId()).registry.getProjectIdByName(config.getNamespace());
             DockerOpt.Label label = DockerHelper.inst(config.getId()).registry.getLabelByName(config.getAppName(), projectId);
@@ -215,7 +215,7 @@ public class DockerBuildFlow extends BasicFlow {
         }
 
         @Override
-        public Optional<String> getReuseCommit(FinalProjectConfig config) throws IOException {
+        public Optional<String> getReuseCommit(FinalProjectConfig config) {
             String imageName = getImageNameByLabelName(config);
             if (StringUtils.isEmpty(imageName)) {
                 return Optional.empty();
@@ -223,7 +223,7 @@ public class DockerBuildFlow extends BasicFlow {
             return Optional.of(imageName.substring(imageName.lastIndexOf(":") + 1));
         }
 
-        private String getImageNameByLabelName(FinalProjectConfig config) throws IOException {
+        private String getImageNameByLabelName(FinalProjectConfig config) {
             Integer projectId = DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry
                     .getProjectIdByName(config.getAppendProfile().getNamespace());
             String reuseImageName = null;
@@ -238,7 +238,7 @@ public class DockerBuildFlow extends BasicFlow {
     private static class ReuseVersionTagProcessor implements ReuseVersionProcessor {
 
         @Override
-        public boolean processBeforeRelease(FinalProjectConfig config, String flowBasePath) throws IOException {
+        public boolean processBeforeRelease(FinalProjectConfig config, String flowBasePath) {
             // 判断指定tag的image是否存在
             String reuseImageName = config.getImageName(config.getAppendProfile().getDocker().getRegistryHost(),
                     config.getAppendProfile().getNamespace(), config.getAppName(), DEPLOYED_TAG);
@@ -266,9 +266,17 @@ public class DockerBuildFlow extends BasicFlow {
         }
 
         @Override
-        public Optional<String> getReuseCommit(FinalProjectConfig config) throws IOException {
-            // TODO
-            return Optional.empty();
+        public Optional<String> getReuseCommit(FinalProjectConfig config) {
+            List<DockerOpt.Tag> tags = DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry.getTags(
+                    config.getAppendProfile().getNamespace(), config.getAppName());
+            if (CollectionUtils.isEmpty(tags)) {
+                return Optional.empty();
+            }
+            AtomicReference<Optional<String>> reuseCommitOptional = new AtomicReference<>(Optional.empty());
+            tags.stream().filter(tag -> tag.getName().equals(DEPLOYED_TAG)).findFirst().ifPresent(deployedTag ->
+                    tags.stream().filter(tag -> tag.getCreated().getTime() == deployedTag.getCreated().getTime())
+                            .findFirst().ifPresent(tag -> reuseCommitOptional.set(Optional.of(tag.getName()))));
+            return reuseCommitOptional.get();
         }
     }
 
