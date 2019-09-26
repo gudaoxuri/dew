@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 /**
@@ -72,30 +73,21 @@ public class NeedProcessChecker {
                     DevOps.SkipProcess.skip(projectConfig, deployAble.getMessage(), FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
                     continue;
                 }
+                // 是否需要重用
+                Optional<String> lastVersionDeployCommitFromProfileOptional = getAndSetCommitVersion(projectConfig);
                 projectConfig.getDeployPlugin()
                         .fetchLastDeployedVersion(projectConfig.getId(), projectConfig.getAppName(), projectConfig.getNamespace())
                         .ifPresent(lastDeployedVersion -> {
                             logger.debug("Latest version is " + lastDeployedVersion);
                             if (!projectConfig.getDisableReuseVersion()) {
                                 // 重用版本
-                                try {
-                                    projectConfig.getDeployPlugin()
-                                            .fetchLastDeployedVersionByReuseProfile(projectConfig)
-                                            .ifPresent(lastVersionDeployCommitFromProfile -> {
-                                                if (lastDeployedVersion.equals(lastVersionDeployCommitFromProfile)) {
-                                                    DevOps.SkipProcess.skip(projectConfig,
-                                                            "Reuse last version " + lastDeployedVersion + " has been deployed",
-                                                            FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
-                                                } else {
-                                                    logger.info("Reuse last version " + lastVersionDeployCommitFromProfile
-                                                            + " from " + projectConfig.getReuseLastVersionFromProfile());
-                                                    projectConfig.setGitCommit(lastVersionDeployCommitFromProfile);
-                                                    projectConfig.setImageVersion(lastVersionDeployCommitFromProfile);
-                                                }
-                                            });
-                                } catch (IOException e) {
-                                    logger.error("Fetch reuse version error.", e);
-                                }
+                                lastVersionDeployCommitFromProfileOptional.ifPresent(lastVersionDeployCommitFromProfile -> {
+                                    if (lastDeployedVersion.equals(lastVersionDeployCommitFromProfile)) {
+                                        DevOps.SkipProcess.skip(projectConfig,
+                                                "Reuse last version " + lastDeployedVersion + " has been deployed",
+                                                FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
+                                    }
+                                });
                             }
                             try {
                                 List<String> changedFiles = fetchGitDiff(lastDeployedVersion);
@@ -122,6 +114,31 @@ public class NeedProcessChecker {
         } catch (Throwable e) {
             throw new GlobalProcessException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Get and set commit version.
+     *
+     * @param projectConfig the project config
+     * @return commit version
+     */
+    private static Optional<String> getAndSetCommitVersion(FinalProjectConfig projectConfig) throws IOException {
+        if (!projectConfig.getDisableReuseVersion()) {
+            Optional<String> lastVersionDeployCommitFromProfileOptional = projectConfig.getDeployPlugin()
+                    .fetchLastDeployedVersionByReuseProfile(projectConfig);
+            lastVersionDeployCommitFromProfileOptional.ifPresent(lastVersionDeployCommitFromProfile -> {
+                if (projectConfig.getGitCommit().equals(lastVersionDeployCommitFromProfile)) {
+                    logger.info("Reuse last version " + lastVersionDeployCommitFromProfile
+                            + " from " + projectConfig.getReuseLastVersionFromProfile());
+                    projectConfig.setGitCommit(lastVersionDeployCommitFromProfile);
+                    projectConfig.setImageVersion(lastVersionDeployCommitFromProfile);
+                } else {
+                    projectConfig.setDisableReuseVersion(true);
+                }
+            });
+            return lastVersionDeployCommitFromProfileOptional;
+        }
+        return Optional.empty();
     }
 
     /**
@@ -155,20 +172,21 @@ public class NeedProcessChecker {
         while (!Arrays.asList(basePathFile.list()).contains(".git")) {
             basePathFile = basePathFile.getParentFile();
         }
-        String projectPath = projectConfig.getDirectory().replaceAll("\\\\", "/");
+        String projectPath = projectConfig.getDirectory();
         final String basePath = basePathFile.getPath();
         // 获取当前项目目录下的工程路径及依赖项目的工程路径
         List<String> collectedProjectPaths = projectConfig.getMavenSession().getProjects().stream()
                 .filter(project -> (project.getBasedir().getPath() + File.separator).startsWith(projectConfig.getDirectory())
                         || projectConfig.getMavenProject().getDependencies().stream()
                         .anyMatch(dependency -> dependency.getArtifactId().equals(project.getArtifactId())))
-                .map(project -> project.getBasedir().getPath().replaceAll("\\\\", "/"))
+                .map(project -> project.getBasedir().getPath())
                 .collect(Collectors.toList());
         // 找到当前项目变更的文件列表及依赖项目变更的文件列表
-        changedFiles = changedFiles.stream().map(changedFile -> basePath + File.separator + changedFile)
+        changedFiles = changedFiles.stream().map(changedFile -> basePath + File.separator
+                + changedFile.replaceAll("/", Matcher.quoteReplacement(File.separator)))
                 .filter(path -> path.startsWith(projectPath) || projectConfig.getMavenSession().getProjects().stream()
                         .anyMatch(project -> path.startsWith((project.getBasedir().getPath() + File.separator)
-                                .substring(project.getBasedir().getPath().length() + 1).replaceAll("\\\\", "/"))))
+                                .substring(project.getBasedir().getPath().length() + 1))))
                 .collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(collectedProjectPaths)) {
             changedFiles = changedFiles.stream()
@@ -188,7 +206,7 @@ public class NeedProcessChecker {
         } else if (!projectConfig.getIgnoreChangeFiles().isEmpty()
                 && !$.file.noneMath(changedFiles, new ArrayList<>(projectConfig.getIgnoreChangeFiles()))) {
             // 排除忽略的文件后是否存在未部署的文件
-            logger.info("Found 0 changed files filtered ignore files for " + projectConfig.getAppName());
+            logger.info("Found 0 changed file filtered ignore files for " + projectConfig.getAppName());
             return false;
         }
         return true;
@@ -256,8 +274,7 @@ public class NeedProcessChecker {
                 return;
             }
             ExecuteEventProcessor.init(processingProjects);
-        } catch (
-                Throwable e) {
+        } catch (Throwable e) {
             throw new GlobalProcessException(e.getMessage(), e);
         }
 

@@ -192,6 +192,7 @@ public class DockerBuildFlow extends BasicFlow {
             if (!DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry.exist(reuseImageName)) {
                 return true;
             }
+            logger.info("Reuse image : " + reuseImageName);
             DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).image.pull(reuseImageName, true);
             DockerHelper.inst(config.getId()).image.copy(reuseImageName, config.getCurrImageName());
             return false;
