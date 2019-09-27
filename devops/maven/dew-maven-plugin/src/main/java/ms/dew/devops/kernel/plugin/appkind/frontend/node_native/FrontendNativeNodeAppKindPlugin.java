@@ -46,7 +46,7 @@ public class FrontendNativeNodeAppKindPlugin implements AppKindPlugin {
     @Override
     public void customConfig(FinalProjectConfig projectConfig) {
         if (projectConfig.getApp().getPort() == null) {
-            projectConfig.getApp().setPort(80);
+            projectConfig.getApp().setPort(3000);
         }
         projectConfig.getApp().setHealthCheckEnabled(false);
         projectConfig.getApp().setTraceLogEnabled(false);

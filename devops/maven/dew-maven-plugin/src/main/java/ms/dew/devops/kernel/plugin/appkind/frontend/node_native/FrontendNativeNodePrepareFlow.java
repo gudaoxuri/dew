@@ -35,27 +35,23 @@ import java.util.Optional;
 public class FrontendNativeNodePrepareFlow extends BasicPrepareFlow {
     @Override
     protected boolean needExecutePreparePackageCmd(FinalProjectConfig config, String currentPath) {
-        return new File(currentPath).listFiles((dir, name) -> "node_modules".equals(name)).length == 0;
+        return false;
     }
 
     @Override
     protected Optional<String> getPreparePackageCmd(FinalProjectConfig config, String currentPath) {
-        String cmd = config.getApp().getPreparePackageCmd();
-        if (cmd == null || cmd.trim().isEmpty()) {
-            // 使用默认命令
-            cmd = "npm install";
-        }
-        cmd = "cd " + currentPath + " && " + cmd;
-        return Optional.of(cmd);
+        return Optional.empty();
     }
 
     @Override
     protected Optional<String> getPackageCmd(FinalProjectConfig config, String currentPath) {
-        String cmd = "cp -r " + currentPath + " ~/dist/ && mv ~/dist/ " + currentPath;
-        return Optional.of(cmd);
+        return Optional.empty();
     }
 
     protected void postPrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
+        // 将前端项目文件 全部复制到 前端路径下的dist文件夹内
+        FileUtils.copyDirectory(new File(config.getDirectory()), new File(config.getDirectory() + "dist"));
+
         FileUtils.deleteDirectory(new File(flowBasePath + "dist"));
         Files.move(Paths.get(config.getDirectory() + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
     }

@@ -171,6 +171,10 @@ public class ExecuteEventProcessor {
             if (System.getenv().containsKey("CI_JOB_URL")) {
                 ciJobUrl = System.getenv("CI_JOB_URL");
             }
+            // 环境变量 BUILD_URL 适用于 Jenkins Job 构建时
+            if (System.getenv().containsKey("BUILD_URL")) {
+                ciJobUrl = System.getenv("BUILD_URL");
+            }
             if (ciJobUrl != null) {
                 return ciJobUrl;
             }

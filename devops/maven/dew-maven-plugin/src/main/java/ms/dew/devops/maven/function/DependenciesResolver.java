@@ -81,7 +81,7 @@ public class DependenciesResolver {
                         Collections.singleton(Artifact.SCOPE_COMPILE), mavenSession, new HashSet<>(e.getMissingArtifacts())));
                 return result;
             } catch (ArtifactResolutionException | ArtifactNotFoundException ex) {
-                throw new GlobalProcessException(e.getMessage(), e);
+                throw new GlobalProcessException(ex.getMessage(), ex);
             }
         } catch (ArtifactNotFoundException | ArtifactResolutionException e) {
             throw new GlobalProcessException(e.getMessage(), e);

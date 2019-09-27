@@ -96,7 +96,7 @@ TIP: 注意需要将mvn，node等工具加入环境变量``PATH``中。另外根
 |Parameter        |Description |Tip
 |checkout_enabled | 是否只checkout代码 | 默认为false。为true时，不进行其他stage的执行。
 |git_repo         | 为要部署项目的``SSH``格式的代码地址，在pipeline脚本中，直接使用``${git_repo}``即可获取git代码的值。| TIP: 如果pipeline使用scm的方法进行部署，不建议此参数名设为git_url，因为可能会和
-|branch           | 要进行部署的代码的分支 | 此参数推荐使用Git Paremeter插件来配置。branch的值为去除``origin/``的部分。
+|branch           | 要进行部署的代码的分支 | 此参数推荐使用Git Parameter插件来配置。branch的值为去除``origin/``的部分。
 |jenkins_agent    | 运行Job的Jenkins节点   | 默认根据job名设值，job名包含test的为slave，包含uat/prd/prod的为master；profile为prd/prod的默认为master
 |jenkins_agents   | 指定Job运行的Jenkins节点,多个用,分隔。|如不指定，默认为``master``。
 |profile          | 要部署项目的profile | 如不指定，根据 Job 的名字来自动判断。p.s. 生产环境默认的profile为``prd``。

@@ -21,6 +21,7 @@ import io.kubernetes.client.models.*;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.function.VersionController;
 import ms.dew.devops.kernel.helper.KubeRES;
+import org.codehaus.plexus.util.ReflectionUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -111,6 +112,15 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
                         "{\"op\":\"replace\",\"path\":\"/metadata/labels/"
                                 + key.replaceAll("\\/", "~1")
                                 + "\",\"value\":\"" + value + "\"}"));
+        service.getSpec().getPorts().forEach(port -> {
+            try {
+                ReflectionUtils.getVariablesAndValuesIncludingSuperclasses(port).forEach((k, v) ->
+                        patcher.add("{\"op\":\"replace\",\"path\":\"/spec/ports/" + service.getSpec().getPorts().indexOf(port) + "/" + k + "\", "
+                                + "\"value\": " + v + "}"));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        });
         return patcher;
     }
 
@@ -120,7 +130,7 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
      *
      * @param service     the service
      * @param forwardPort the forward port
-     * @param debugPort  the target port
+     * @param debugPort   the target port
      */
     public void buildDebugPort(V1Service service, int debugPort, int forwardPort) {
         service.getSpec().setType("NodePort");
@@ -148,7 +158,7 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
      *
      * @param service     the service
      * @param forwardPort the forward port
-     * @param debugPort  the target port
+     * @param debugPort   the target port
      */
     public void clearDebugPort(V1Service service, int debugPort, int forwardPort) {
         service.getSpec().setType("ClusterIP");
