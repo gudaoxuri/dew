@@ -4527,6 +4527,7 @@ spec:
   &lt;packaging&gt;pom&lt;/packaging&gt;
 
   &lt;!-- 如果前端工程是原生NodeJS启动方式，请在pom中添加一下配置，如果前端工程是打包成静态文件的方式则不需要添加 --&gt;
+  &lt;!--  默认配置此项的NodeJS项目的端口为3000，如需修改端口，请添加.dew配置文件，设置app.port为指定值。--&gt;
   &lt;properties&gt;
     &lt;frontend.package.type&gt;NATIVE&lt;/frontend.package.type&gt;
   &lt;/properties&gt;
@@ -6578,18 +6579,19 @@ EOF</code></pre>
 <pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml"># 默认环境配置
 namespace: default                      # 命名空间，强烈建议修改为特定的命名空间
 skip: false                             # 是否跳过，为true时表示
-disableReuseVersion:                    # 是否禁用重用版本，e.g. 生产环境重用预发环境的最后一个版本（不用重新打包Docker image)
+disableReuseVersion: false              # 是否禁用重用版本，默认为false。e.g. 生产环境重用预发环境的最后一个版本（不用重新打包Docker image)
                                         # 默认情况前端工程为true（node编译期会混入环境信息导致无法重用），其它工程为false
 reuseLastVersionFromProfile:            # 重用版本的目标环境名称
                                         # 默认会尝试使用 pre-prod/pre-production/uat 为名称（找到当前项目第一个存在的环境）
                                         # 都不存在时需要显式指定
+reuseVersionType: LABEL                 # 重用版本方式，支持两种方式 LABEL(镜像打标签，默认方式) TAG(上传新tag方式)
 ignoreChangeFiles: []                   # 忽略变更文件列表，此列表指定的文件不用于是否有变更要部署的判断依据
                                         # 支持 glob , @see https://en.wikipedia.org/wiki/Glob_(programming)
 app:                                    # 应用配置
-  replicas: 1                           # 部署的副本数
+  replicas: 1                           # 部署的副本数,推荐副本数设为2及以上，便于滚动更新时不中断服务
   revisionHistoryLimit: 3               # 保留的历史版本数
-  port: 8080                            # 端口号，默认情况下前端应用为80(不可修改)，后端服务为8080
-  extendedPorts:                        # 扩展端口，仅用于后端服务
+  port: 8080                            # 端口号，默认情况下前端应用为80(不可修改)，原生NodeJS项目的端口为3000，后端服务为8080
+  extendedPorts: []                     # 扩展端口，仅用于后端服务
   debugPort: 9000                       # 远程调试服务端口号，仅用于后端服务，默认是9000
   healthCheckEnabled: true              # 是否启用健康检查，仅用于后端服务，默认启用
   healthCheckPort:                      # 用于健康检查的端口，仅用于后端服务，如不设置，默认使用app.port的端口
@@ -6609,7 +6611,8 @@ app:                                    # 应用配置
   nodeSelector:                         # 节点亲和性配置
     group: app                          # 默认选择标签为 group=app 的节点
   preparePackageCmd:                    # 预打包命令
-                                        # 前端应用默认为 cd &lt;应用目录&gt; &amp;&amp; set NODE_ENV=&lt;环境名称&gt; &amp;&amp; npm install，发现不存在 node_modules 时执行
+                                        # 前端应用默认为 cd &lt;应用目录&gt; &amp;&amp; set NODE_ENV=&lt;环境名称&gt; &amp;&amp; npm install，
+                                        # 发现不存在 node_modules 或 发现前端项目下 package.json 文件变更 时执行
                                         # 后端服务默认为空
   packageCmd:                           # 打包命令
                                         # 前端应用默认为 cd &lt;应用目录&gt; &amp;&amp; set NODE_ENV=&lt;环境名称&gt; npm run build:&lt;环境名称&gt;
@@ -6999,6 +7002,12 @@ notifies:
       url: https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455
 profiles:
   # 添加测试环境
+  test:
+    # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
+    namespace: dew-test
+  uat:
+    # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
+    namespace: dew-uat
   test:
     # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
     namespace: dew-test</code></pre>
@@ -9155,7 +9164,7 @@ csp:
 <p><input type="checkbox" data-item-complete="0"> [Dew Framework] 鉴权修改，详见 <a href="#devops-best-practices-auth">鉴权处理</a></p>
 </li>
 <li>
-<p><input type="checkbox" data-item-complete="0"> [Dew Framework] dew-common 升级到 1.5.x , 核心方法的异常均继承自RuntimeException以方便Stream下使用，业务中部分捕获异常需要修改</p>
+<p><input type="checkbox" data-item-complete="0"> [Dew Framework] dew-common 升级到 1.5.x , 核心方法的异常均改为非受检异常，继承自RuntimeException以方便Stream下使用，业务中部分捕获异常需要修改</p>
 <div class="literalblock">
 <div class="content">
 <pre>由于Dew 2.x 不推荐引入独立的服务网关，故需要对鉴权做一定的修改 。</pre>
@@ -10160,7 +10169,7 @@ TIP: 需要安装此插件，如不安装，使用<code>dew-devops.groovy</code>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">branch</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">要进行部署的代码的分支</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">此参数推荐使用Git Paremeter插件来配置。branch的值为去除<code>origin/</code>的部分。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">此参数推荐使用Git Parameter插件来配置。branch的值为去除<code>origin/</code>的部分。</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">jenkins_agent</p></td>
