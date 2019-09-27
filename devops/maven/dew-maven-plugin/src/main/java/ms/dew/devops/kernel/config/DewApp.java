@@ -80,7 +80,8 @@ public class DewApp {
     // volume配置
     private List<Map<String, String>> volumes = new ArrayList<>();
     // 预打包命令
-    // 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> && npm install，发现不存在 node_modules 时执行
+    // 前端项目默认为 cd <项目目录> && set NODE_ENV=<环境名称> && npm install，
+    // 发现不存在 node_modules 或 发现前端项目下 package.json 文件变更 时执行
     // 后端服务默认为空
     private String preparePackageCmd;
     // 打包命令
