@@ -15,6 +15,8 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 . `SNAPSHOT` 快照版本，类似Nightly版本，更新频繁此不保证质量，切 *不可* 用于生产环境！
 ====
 
+TIP: ``Dew`` 版本号遵循 https://semver.org/[``semver``] 规范。
+
 ==== 发行记录
 
 ===== 2.0.0-RC(准备中)
@@ -22,10 +24,10 @@ ifndef::imagesdir[:imagesdir: ./docs/src/main/asciidoc/]
 .Features
 
 * 升级到Spring Boot 2.x
-* 实现兼容Spring Cloud与Istio的部署、监控架构
+* 全面支持Kubernetes容器化微服务架构
 * 引入DevOps流程
 * 独立通知功能到``notification``
-* 支持kafka、MQTT的MQ实现
+* 支持MQTT的MQ实现
 * 支持多个Redis连接 <<framework-user-manual-cluster-redis-mutli-connection>>
 * 支持简单的基于角色的URL拦截功能
 * 支持全局请求内容中字符串自动去前后空格（ ``dew.basic.format.auto-trim-from-req = true`` ）

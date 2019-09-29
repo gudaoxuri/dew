@@ -1,5 +1,6 @@
-= Dew:一站式微服务解决方案 [2.x Building...]
-v2.0.0-SNAPSHOT
+= Dew:一站式微服务解决方案
+v2.0.0-rc
+2019-9-29
 :doctype: book
 :encoding: utf-8
 :lang: zh-CN
@@ -13,9 +14,9 @@ include::../../../../README.adoc[]
 
 == 架构设计 Architecture Chapter
 
-参见本书：
+微服务架构设计请参见本书：
 
-https://gudaoxuri.gitbook.io/microservices-architecture/
+https://github.com/gudaoxuri/Microservices-Architecture
 
 == 编码开发 Framework Chapter
 

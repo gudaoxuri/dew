@@ -173,7 +173,7 @@ public class TodoParentApplication {
 }
 ----
 
-[source,xml]
+[source,java]
 .backend/services/kernel/ms.dew.devops.it.todo.kernel.TodoKernelApplication.java
 ----
 // 继承自TodoParentApplication
@@ -245,7 +245,7 @@ public class TodoService {
                     .exchange("http://" + Constants.REST_COMPUTE_SERVICE + "/compute", HttpMethod.PUT, entity, String.class)
                     .getBody();
         }
-        ...
+        // ...
         // 使用Dew的集群MQ功能实现消息点对点发送
         Dew.cluster.mq.request(Constants.MQ_NOTIFY_TODO_ADD, $.json.toJsonString(todo));
         return todo;

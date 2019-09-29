@@ -21,8 +21,8 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.6.1">
-<meta name="author" content="v2.0.0-SNAPSHOT">
-<title>Dew:一站式微服务解决方案 [2.x Building&#8230;&#8203;]</title>
+<meta name="author" content="v2.0.0-rc">
+<title>Dew:一站式微服务解决方案</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -445,9 +445,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
-<h1>Dew:一站式微服务解决方案 [2.x Building&#8230;&#8203;]</h1>
+<h1>Dew:一站式微服务解决方案</h1>
 <div class="details">
-<span id="author" class="author">v2.0.0-SNAPSHOT</span><br>
+<span id="author" class="author">v2.0.0-rc</span><br>
+<span id="revdate">2019-9-29</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -658,23 +659,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Master分支正在构建如下功能：</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>升级到 Spring Boot 2.x</p>
-</li>
-<li>
-<p>全面容器化，以K8s为容器平台，兼容Spring Cloud与Service Mesh两类微服务体系</p>
-</li>
-<li>
-<p>支撑中间件优先使用CNCF下的产品，如使用 jaeger 代替 zipkin</p>
-</li>
-</ol>
+<p><code>Dew</code> 2.x 版本基于 <code> Spring Boot 2.x</code> 容器优先</p>
 </div>
 <div class="paragraph">
-<p>如需要稳定、纯粹的Spring Cloud扩展请切换到 <a href="https://github.com/gudaoxuri/dew/tree/1.5.1-RC">1.5.1-RC</a> tag.</p>
+<p>如需基于 <code>Spring boot 1.x</code> 的非容器版本请切换到 <a href="https://github.com/gudaoxuri/dew/tree/1.5.1-RC">1.5.1-RC</a> tag.</p>
 </div>
 </td>
 </tr>
@@ -698,6 +686,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="imageblock">
 <div class="content">
 <a class="image" href="https://www.apache.org/licenses/LICENSE-2.0.txt"><img src="https://img.shields.io/badge/license-ASF2-blue.svg" alt="Apache License 2"></a>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="https://img.shields.io/maven-central/v/ms.dew/parent-starter" alt="Maven Central">
 </div>
 </div>
 <div class="paragraph">
@@ -926,11 +919,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 |- devops                                  // DevOps部分
 |-  |- maven                               // DevOps使用到的Maven插件
 |-  |-  |- dew-maven-plugin                // DevOps核心插件
+|-  |-  |- dew-maven-agent                 // DevOps部署优化插件
 |-  |- sh                                  // DevOps执行脚本
 |-  |- chart                               // DevOps使用到的Helm Chart
 |-  |-  |- dew-spring-cloud-config         //  Spring Cloud Config Chart
 |-  |- cicd                                // 各CI服务的 CI/CD 配置
 |-  |-  |- gitlabci                        // Gitlab CI CI/CD配置
+|-  |-  |- jenkins                         // Jenkins CI/CD配置
 |-  |- docker                              // DevOps使用到的镜像
 |-  |-  |- dew-devops                      // 集成 Java Maven Node Git 的镜像
 |-  |-  |- dew-k8s-native-client           // 集成 Kuberenetes 及 Docker 的镜像
@@ -946,10 +941,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="架构设计_architecture_chapter"><a class="anchor" href="#架构设计_architecture_chapter"></a>2. 架构设计 Architecture Chapter</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>参见本书：</p>
+<p>微服务架构设计请参见本书：</p>
 </div>
 <div class="paragraph">
-<p><a href="https://gudaoxuri.gitbook.io/microservices-architecture/" class="bare">https://gudaoxuri.gitbook.io/microservices-architecture/</a></p>
+<p><a href="https://github.com/gudaoxuri/Microservices-Architecture" class="bare">https://github.com/gudaoxuri/Microservices-Architecture</a></p>
 </div>
 </div>
 </div>
@@ -1201,7 +1196,7 @@ public class TodoParentApplication {
 <div class="listingblock">
 <div class="title">backend/services/kernel/ms.dew.devops.it.todo.kernel.TodoKernelApplication.java</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">// 继承自TodoParentApplication
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">// 继承自TodoParentApplication
 public class TodoKernelApplication extends TodoParentApplication {
 
     // 启动类
@@ -1270,7 +1265,7 @@ public class TodoService {
                     .exchange("http://" + Constants.REST_COMPUTE_SERVICE + "/compute", HttpMethod.PUT, entity, String.class)
                     .getBody();
         }
-        ...
+        // ...
         // 使用Dew的集群MQ功能实现消息点对点发送
         Dew.cluster.mq.request(Constants.MQ_NOTIFY_TODO_ADD, $.json.toJsonString(todo));
         return todo;
@@ -4566,7 +4561,7 @@ spec:
   &lt;parent&gt;
     &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
-    &lt;version&gt;2.0.0-SNAPSHOT&lt;/version&gt;
+    &lt;version&gt;2.0.0-rc&lt;/version&gt;
   &lt;/parent&gt;
 
   &lt;groupId&gt;ms.dew.devops.it&lt;/groupId&gt;
@@ -7004,12 +6999,6 @@ profiles:
   # 添加测试环境
   test:
     # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
-    namespace: dew-test
-  uat:
-    # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
-    namespace: dew-uat
-  test:
-    # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
     namespace: dew-test</code></pre>
 </div>
 </div>
@@ -7636,6 +7625,18 @@ helm list</pre>
 </tr>
 </table>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<code>Dew</code> 版本号遵循 <a href="https://semver.org/"><code>semver</code></a> 规范。
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect3">
 <h4 id="发行记录"><a class="anchor" href="#发行记录"></a>5.2.2. 发行记录</h4>
@@ -7648,7 +7649,7 @@ helm list</pre>
 <p>升级到Spring Boot 2.x</p>
 </li>
 <li>
-<p>实现兼容Spring Cloud与Istio的部署、监控架构</p>
+<p>全面支持Kubernetes容器化微服务架构</p>
 </li>
 <li>
 <p>引入DevOps流程</p>
@@ -7657,7 +7658,7 @@ helm list</pre>
 <p>独立通知功能到<code>notification</code></p>
 </li>
 <li>
-<p>支持kafka、MQTT的MQ实现</p>
+<p>支持MQTT的MQ实现</p>
 </li>
 <li>
 <p>支持多个Redis连接 <a href="#framework-user-manual-cluster-redis-mutli-connection">多实例支持</a></p>
@@ -9214,7 +9215,7 @@ logging:
   &lt;parent&gt;
     &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
-    &lt;version&gt;2.0.0-SNAPSHOT&lt;/version&gt;
+    &lt;version&gt;2.0.0-rc&lt;/version&gt;
   &lt;/parent&gt;
   &lt;groupId&gt;ms.dew.devops.it&lt;/groupId&gt;
   &lt;artifactId&gt;todo-frontend&lt;/artifactId&gt;
@@ -10322,7 +10323,7 @@ TIP: 需要安装此插件，如不安装，使用<code>dew-devops.groovy</code>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-09-04 08:23:51 CST
+Last updated 2019-09-29 11:03:01 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
