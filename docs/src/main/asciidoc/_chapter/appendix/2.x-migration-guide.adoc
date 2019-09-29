@@ -1,5 +1,5 @@
 [[dew-2-migration-guide]]
-=== Dew 2.x Migration guide[TBD]
+=== Dew 2.x Migration guide
 
 本手册适用于从原生 Spring Cloud 项目及 Dew 1.x 项目迁移到 Dew 2.x 的操作说明。
 
