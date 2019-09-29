@@ -19,7 +19,7 @@ TIP: ``Dew`` 版本号遵循 https://semver.org/[``semver``] 规范。
 
 ==== 发行记录
 
-===== 2.0.0-RC(准备中)
+===== 2.0.0-RC
 
 .Features
 
