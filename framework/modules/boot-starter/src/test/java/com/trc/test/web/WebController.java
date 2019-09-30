@@ -62,7 +62,7 @@ public class WebController {
      * @return the void
      */
     @PostMapping(value = "hash-collision")
-    public Void validCreate(@RequestBody String body) {
+    public Void hashCollision(@RequestBody String body) {
         long start = System.currentTimeMillis();
         JsonNode json = $.json.toJson(body);
         System.out.println("to Json Use time :" + ((System.currentTimeMillis() - start) / 1000));
