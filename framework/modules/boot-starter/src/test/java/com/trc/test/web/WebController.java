@@ -16,9 +16,11 @@
 
 package com.trc.test.web;
 
+import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.common.StandardCode;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -40,6 +42,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Map;
 
 /**
  * Web controller.
@@ -51,6 +54,26 @@ import java.time.LocalTime;
 @RequestMapping(value = "/test/")
 @Validated
 public class WebController {
+
+    /**
+     * Hash 碰撞测试.
+     *
+     * @param body the body
+     * @return the void
+     */
+    @PostMapping(value = "hash-collision")
+    public Void validCreate(@RequestBody String body) {
+        long start = System.currentTimeMillis();
+        JsonNode json = $.json.toJson(body);
+        System.out.println("to Json Use time :" + ((System.currentTimeMillis() - start) / 1000));
+        start = System.currentTimeMillis();
+        $.json.toObject(body, UserDTO.class);
+        System.out.println("to User Use time :" + ((System.currentTimeMillis() - start) / 1000));
+        start = System.currentTimeMillis();
+        Map<String, Integer> map = $.json.toMap(json.get("dos"), String.class, Integer.class);
+        System.out.println("to Map Use time :" + ((System.currentTimeMillis() - start) / 1000));
+        return null;
+    }
 
     /**
      * Success resp.

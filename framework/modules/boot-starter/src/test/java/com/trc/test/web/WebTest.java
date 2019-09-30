@@ -32,6 +32,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Web test.
@@ -52,10 +54,24 @@ public class WebTest {
      * @throws Exception the exception
      */
     public void testAll() throws Exception {
+        testHashCollision();
         testResponseFormat();
         testValidation();
         testTimeConvert();
         testAutoTrim();
+    }
+
+    private void testHashCollision() {
+        String body = IntStream.range(0, 914748)
+                .mapToObj(i -> "\"" + i + "\":0")
+                .collect(Collectors.joining(",", "{\"idCard\":\"110101201709013174\",\"age\":20,\"phone\":\"18651111111\",\"dos\":{", "}}"));
+        long start = System.currentTimeMillis();
+        testRestTemplate.postForObject("/test/hash-collision", body, Void.class);
+        /* String str = $.http.post(url + "/valid-create", body);*/
+        System.out.println("Use time :" + ((System.currentTimeMillis() - start) / 1000));
+        /*WebExampleController.User user = $.json.toObject(str, WebExampleController.User.class);
+        Assert.assertEquals("110101201709013174", user.getIdCard());
+*/
     }
 
     private void testResponseFormat() throws Exception {
