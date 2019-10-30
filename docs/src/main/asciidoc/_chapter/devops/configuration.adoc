@@ -66,7 +66,7 @@ app:                                    # 应用配置
   volumeMounts: []                      # 卷安装配置
   volumes: []                           # 卷配置，如果使用公用卷配置，请自行在项目对应的namespace下安装pv，pvc及endpoints
   annotations: {}                       # 自定义annotations
-  lables: {}                            # 自定义lables
+  labels: {}                            # 自定义labels
   env: {}                               # 自定义env，key对应一个env的name，value对应一个env的value
 docker:                                 # Docker配置
   host:                                 # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375

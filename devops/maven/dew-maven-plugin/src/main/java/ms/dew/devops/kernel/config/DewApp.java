@@ -102,8 +102,8 @@ public class DewApp {
     private Map<String, Quantity> containerResourcesRequests = new HashMap<>();
     // annotations配置
     private Map<String, String> annotations = new HashMap<>();
-    // lables配置
-    private Map<String, String> lables = new HashMap<>();
+    // labels配置
+    private Map<String, String> labels = new HashMap<>();
     // env配置
     private Map<String, String> env = new HashMap<>();
 
@@ -666,21 +666,21 @@ public class DewApp {
     }
 
     /**
-     * Gets lables.
+     * Gets labels.
      *
-     * @return the lables
+     * @return the labels
      */
-    public Map<String, String> getLables() {
-        return lables;
+    public Map<String, String> getLabels() {
+        return labels;
     }
 
     /**
-     * Sets lables.
+     * Sets labels.
      *
-     * @param lables the lables
+     * @param labels the labels
      */
-    public void setLables(Map<String, String> lables) {
-        this.lables = lables;
+    public void setLabels(Map<String, String> labels) {
+        this.labels = labels;
     }
 
     /**

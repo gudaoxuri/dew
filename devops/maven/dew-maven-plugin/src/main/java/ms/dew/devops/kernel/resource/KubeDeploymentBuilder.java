@@ -53,7 +53,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         labels.put(VersionController.FLAG_KUBE_RESOURCE_APP_VERSION, config.getAppVersion());
         labels.put("group", config.getAppGroup());
         labels.put("provider", "dew");
-        labels.putAll(config.getApp().getLables());
+        labels.putAll(config.getApp().getLabels());
 
         Map<String, String> selectorLabels = new HashMap<>(labels);
         selectorLabels.remove("version");

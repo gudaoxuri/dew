@@ -24,7 +24,7 @@ TIP: ``Dew`` 版本号遵循 https://semver.org/[``semver``] 规范。
 
 .Features
 
-* 支持自定义annotations/lables/env
+* 支持自定义annotations/labels/env
 
 .Improvement
 
