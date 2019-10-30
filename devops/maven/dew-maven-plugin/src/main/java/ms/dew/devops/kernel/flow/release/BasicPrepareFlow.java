@@ -72,9 +72,17 @@ public abstract class BasicPrepareFlow extends BasicFlow {
     protected void postPrepareBuild(FinalProjectConfig config, String flowBasePath) throws IOException {
     }
 
+    /**
+     * Exists reuse version.
+     * @param config the config
+     * @return the boolean
+     */
+    protected abstract boolean existsReuseVersion(FinalProjectConfig config);
+
     @Override
     protected void process(FinalProjectConfig config, String flowBasePath) throws IOException {
-        if (null != config.getDisableReuseVersion() && !config.getDisableReuseVersion()) {
+        if (null != config.getDisableReuseVersion() && !config.getDisableReuseVersion()
+                && existsReuseVersion(config)) {
             // 重用模式下不用再执行准备操作
             return;
         }

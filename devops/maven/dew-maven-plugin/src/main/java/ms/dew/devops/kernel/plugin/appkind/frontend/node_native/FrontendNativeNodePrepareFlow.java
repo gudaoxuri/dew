@@ -55,4 +55,9 @@ public class FrontendNativeNodePrepareFlow extends BasicPrepareFlow {
         FileUtils.deleteDirectory(new File(flowBasePath + "dist"));
         Files.move(Paths.get(config.getDirectory() + "dist"), Paths.get(flowBasePath + "dist"), StandardCopyOption.REPLACE_EXISTING);
     }
+
+    @Override
+    protected boolean existsReuseVersion(FinalProjectConfig config) {
+        return false;
+    }
 }

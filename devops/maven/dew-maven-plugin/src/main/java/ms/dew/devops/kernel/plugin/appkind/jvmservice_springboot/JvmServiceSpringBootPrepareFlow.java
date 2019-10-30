@@ -19,6 +19,7 @@ package ms.dew.devops.kernel.plugin.appkind.jvmservice_springboot;
 import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
 import ms.dew.devops.kernel.flow.release.BasicPrepareFlow;
+import ms.dew.devops.kernel.flow.release.DockerBuildFlow;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -55,5 +56,10 @@ public class JvmServiceSpringBootPrepareFlow extends BasicPrepareFlow {
                         put("finalName", "serv");
                     }
                 }, config);
+    }
+
+    @Override
+    protected boolean existsReuseVersion(FinalProjectConfig config) {
+        return DockerBuildFlow.ReuseVersionProcessorFactory.existsReuseVersion(config);
     }
 }

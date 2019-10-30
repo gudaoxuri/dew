@@ -18,6 +18,7 @@ package ms.dew.devops.kernel.config;
 
 import ms.dew.devops.kernel.plugin.appkind.AppKindPlugin;
 import ms.dew.devops.kernel.plugin.deploy.DeployPlugin;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.project.MavenProject;
@@ -442,21 +443,44 @@ public class FinalProjectConfig extends DewProfile {
      * @return the image name
      */
     public String getImageName(String specTag) {
-        return getImageName(getDocker().getRegistryHost(), getNamespace(), getAppName(), specTag);
+        return getImageName(getDocker().getRegistryHost(), getProjectName(), getNamespace(), getAppName(), specTag);
     }
 
     /**
      * Get image name.
      *
      * @param registryHost the registry host
+     * @param projectName  the project name
      * @param namespace    the namespace
      * @param appName      the app name
      * @param specTag      the spec tag
      * @return the image name
      */
-    public String getImageName(String registryHost, String namespace, String appName, String specTag) {
+    public String getImageName(String registryHost, String projectName, String namespace, String appName, String specTag) {
+        return getImageName(registryHost, projectName, namespace, appName, specTag, getProfile());
+    }
+
+    /**
+     * Get image name.
+     *
+     * @param registryHost the registry host
+     * @param projectName  the project name
+     * @param namespace    the namespace
+     * @param appName      the app name
+     * @param specTag      the spec tag
+     * @param profile      the profile
+     * @return the image name
+     */
+    public String getImageName(String registryHost, String projectName, String namespace, String appName, String specTag, String profile) {
+        if (StringUtils.isBlank(projectName)) {
+            projectName = namespace;
+            if (namespace.contains(profile)) {
+                projectName = namespace.substring(namespace.indexOf("-") + 1);
+            }
+        }
         return registryHost + "/"
-                + namespace + "/"
+                + projectName + "/"
+                + profile + "/"
                 + appName + ":" + specTag;
     }
 

@@ -100,6 +100,12 @@ public class DewApp {
     // 容器资源下限，同Kubernetes配置
     // @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
     private Map<String, Quantity> containerResourcesRequests = new HashMap<>();
+    // annotations配置
+    private Map<String, String> annotations = new HashMap<>();
+    // lables配置
+    private Map<String, String> lables = new HashMap<>();
+    // env配置
+    private Map<String, String> env = new HashMap<>();
 
     /**
      * Gets replicas.
@@ -639,5 +645,59 @@ public class DewApp {
      */
     public void setContainerResourcesRequests(Map<String, Quantity> containerResourcesRequests) {
         this.containerResourcesRequests = containerResourcesRequests;
+    }
+
+    /**
+     * Gets annotations.
+     *
+     * @return the annotations
+     */
+    public Map<String, String> getAnnotations() {
+        return annotations;
+    }
+
+    /**
+     * Sets annotations.
+     *
+     * @param annotations the annotations
+     */
+    public void setAnnotations(Map<String, String> annotations) {
+        this.annotations = annotations;
+    }
+
+    /**
+     * Gets lables.
+     *
+     * @return the lables
+     */
+    public Map<String, String> getLables() {
+        return lables;
+    }
+
+    /**
+     * Sets lables.
+     *
+     * @param lables the lables
+     */
+    public void setLables(Map<String, String> lables) {
+        this.lables = lables;
+    }
+
+    /**
+     * Gets env.
+     *
+     * @return the env
+     */
+    public Map<String, String> getEnv() {
+        return env;
+    }
+
+    /**
+     * Sets env.
+     *
+     * @param env the env
+     */
+    public void setEnv(Map<String, String> env) {
+        this.env = env;
     }
 }

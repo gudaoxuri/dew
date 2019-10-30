@@ -18,6 +18,7 @@ package ms.dew.devops.maven.function;
 
 import ms.dew.devops.kernel.DevOps;
 import ms.dew.devops.kernel.config.FinalProjectConfig;
+import ms.dew.devops.kernel.flow.release.DockerBuildFlow;
 import ms.dew.devops.kernel.util.ExecuteOnceProcessor;
 import ms.dew.devops.maven.MavenDevOps;
 import org.apache.maven.execution.MavenSession;
@@ -46,7 +47,8 @@ public class MavenSkipProcessor {
                 .forEach(MavenSkipProcessor::disabledDefaultBehavior);
         // 已装配模块是否处理判断
         for (FinalProjectConfig config : DevOps.Config.getFinalConfig().getProjects().values()) {
-            if (config.getDisableReuseVersion() != null && !config.getDisableReuseVersion()) {
+            if (config.getDisableReuseVersion() != null && !config.getDisableReuseVersion()
+                    && DockerBuildFlow.ReuseVersionProcessorFactory.existsReuseVersion(config)) {
                 // 重用版本模式下强制跳过单元测试，不需要部署
                 disabledDefaultBehavior(config.getId());
                 continue;
