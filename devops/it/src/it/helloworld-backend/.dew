@@ -9,3 +9,6 @@ profiles:
   test:
     # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
     namespace: dew-test
+  uat:
+    # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
+    namespace: dew-uat

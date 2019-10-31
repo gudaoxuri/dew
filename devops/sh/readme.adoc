@@ -55,3 +55,4 @@ TIP: 若不使用MinIO作为缓存存储，请参考 https://gitlab.com/charts/g
 创建项目：用于给需要部署的项目来创建一个部署的命名空间等。
 详见： <<what-for-dew-devops,创建项目>>
 
+TIP: ``变更信息`` 新增可以通过指定 profile 来使得有不同 profile 前缀的命名空间使用相同的 harbor project 来拉取镜像。

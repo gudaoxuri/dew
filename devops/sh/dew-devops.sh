@@ -26,6 +26,8 @@ PROJECT_NAMESPACE=devops-example
 DEW_HARBOR_USER_NAME=${PROJECT_NAMESPACE}
 DEW_HARBOR_USER_PASSWORD=Dew\!123456
 DEW_HARBOR_USER_EMAIL=${DEW_HARBOR_USER_NAME}@dew.ms
+HARBOR_PROJECT_PUBLIC_ENABLED="false"
+CREATE_PROJECT_NAMESPACE_SKIP="false"
 DOCKERD_URL=tcp://dockerd.dew.ms:2375
 
 MINIO_HOST=minio.dew.ms:9000
@@ -358,7 +360,71 @@ check_harbor_admin_account(){
     done
 }
 
+check_harbor_password(){
+  local user_name=$1
+  local user_password=$2
+  check_password=$(curl -X POST  -d "principal=${user_name}&password=${user_password}" "${HARBOR_REGISTRY_URL}/c/login"  -o /dev/nullrl -s -w %{http_code} -k)
+    while [[ ${check_password} -eq 401 || ${check_password} -eq 403 ]];do
+        echo
+        echo "* Password or account maybe not right.Please retype account and password."
+        waiting_input "Please input Harbor account" "" "Y"
+        user_name=${GENERAL_INPUT_ANSWER}
+        waiting_input "Please input password" "" "Y" "Y"
+        user_password=${GENERAL_INPUT_ANSWER}
+        check_password=$(curl -X POST  -d "principal=${user_name}&password=${user_password}" "${HARBOR_REGISTRY_URL}/c/login"  -o /dev/nullrl -s -w %{http_code} -k)
+    done
+}
 
+check_harbor_project_auth(){
+  local project_name=$1
+  check_project_auth=$(curl -X GET "${HARBOR_REGISTRY_URL}/api/projects?name=${project_name}" -H "accept: application/json" -k -s | grep -w '"'${project_name}'"' | wc -l)
+    if [[ ${check_project_auth} -ne 1 ]];then
+        echo
+        echo "The projects [${project_name}] maybe not public.You should input an account which belong it."
+        waiting_input "Please input Harbor account" "" "Y"
+        user_name=${GENERAL_INPUT_ANSWER}
+        waiting_input "Please input password" "" "Y" "Y"
+        user_password=${GENERAL_INPUT_ANSWER}
+        check_harbor_user_project_auth ${user_name} ${user_password} ${project_name}
+    fi
+}
+
+check_harbor_user_project_auth(){
+  local user_name=$1
+  local user_password=$2
+  local project_name=$3
+  USER_AUTHORIZATION=$(echo -n ${user_name}:${user_password} | base64)
+  check_project_auth=$(curl -X GET "${HARBOR_REGISTRY_URL}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${USER_AUTHORIZATION}" -k -s | grep -w '"'${project_name}'"' | wc -l)
+    while [[ ${check_project_auth} -ne 1 ]];do
+        echo
+        echo "* Password or account maybe not right,or account[${user_name}] not belong to project [${project_name}].Please retype account and password."
+        waiting_input "Please input Harbor account" "" "Y"
+        user_name=${GENERAL_INPUT_ANSWER}
+        waiting_input "Please input password" "" "Y" "Y"
+        user_password=${GENERAL_INPUT_ANSWER}
+        USER_AUTHORIZATION=$(echo -n ${user_name}:${user_password} | base64)
+        check_project_auth=$(curl -X GET "${HARBOR_REGISTRY_URL}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${USER_AUTHORIZATION}" -k -s | grep -w '"'${project_name}'"' | wc -l)
+    done
+    HARBOR_PROJECT_PUBLIC_ENABLED="false"
+}
+
+check_harbor_project_public_enabled(){
+    local project_name=$1
+    # If harbor project exists and is public,will not create secret for pull images.
+    check_project_public=$(curl "${HARBOR_REGISTRY_URL}/api/projects?name=${project_name}" -H "accept: application/json" -k -s | grep -w ${project_name} | wc -l)
+    if [[ ${check_project_public} == 1 ]]; then
+        HARBOR_PROJECT_PUBLIC_ENABLED="true"
+    fi
+    # if project not exists,ask for if create public harbor project.
+    check_project_exists=$(curl "${HARBOR_REGISTRY_URL}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l)
+    if [[ ${check_project_exists} -lt 1 ]]; then
+        waiting_input_YN  "Would you want your harbor project be public? " "N"
+        public_enable_answer=${GENERAL_INPUT_ANSWER}
+        if [[ ${public_enable_answer} == "Y" ]]; then
+            HARBOR_PROJECT_PUBLIC_ENABLED="true"
+        fi
+    fi
+}
 # ------------------
 # Init
 # ------------------
@@ -619,51 +685,24 @@ EOF
 # ------------------
 # Create a project
 # ------------------
+project_namespace_exists_check(){
+    local namespace=$1
+    echo "$(kubectl get ns | awk '{print $1}'| grep -P '^'${namespace}'$' | wc -l)"
+}
 
-project_create_check(){
-    echo "Tips: Before creating your project, you need to initialize your Kubernetes cluster."
-    echo
-    check_harbor_admin_account
+project_namespace_create_check(){
+    local namespace=$1
+    check_ns_exists=$(kubectl get ns | awk '{print $1}'| grep -P '^'${namespace}'$' | wc -l)
 
-    echo
-    echo
-    echo "# The name of project would be used for creating Harbor project, Harbor user account and Kubernetes namespace."
-    echo "# Project name must consist of lower case alphanumeric characters or '-' "
-    echo "# and must start and end with an alphanumeric character,"
-    echo "# and the length must be greater than two."
-
-    local project_name_regex="^([a-z0-9]+-?[a-z0-9]+)+$"
-    waiting_input_check_regex "Please input project name" ${project_name_regex} "Y" ""
-    local project_name=${GENERAL_INPUT_ANSWER}
-
-    # Checking whether Kubernetes namespace exists.
-    check_ns_exists=$(kubectl get ns | grep -w ${project_name} | wc -l)
     while [[ "${check_ns_exists}" -gt 0 ]];do
-        waiting_input_check_regex "* There is already existing the same namespace, please retype another project name" ${project_name_regex} "Y" ""
-        project_name=${GENERAL_INPUT_ANSWER}
-        check_ns_exists=$(kubectl get ns | grep -w ${project_name} | wc -l)
+        waiting_input_check_regex "* There is already existing the same namespace, please retype another namespace" ${namespace} "Y" ""
+        namespace=${GENERAL_INPUT_ANSWER}
+        check_ns_exists=$(kubectl get ns | awk '{print $1}'| grep -P '^'${namespace}'$'| wc -l)
     done
-    # Checking whether Harbor project name exists.
-    check_project_exists=$(curl "${HARBOR_REGISTRY_URL}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l)
-    while [[ "${check_project_exists}" -gt 0 ]];do
-        waiting_input_check_regex "* The project name already exists, please retype again" ${project_name_regex} "Y" ""
-        project_name=${GENERAL_INPUT_ANSWER}
-        check_ns_exists=$(kubectl get ns | grep -w ${project_name} | wc -l)
-        while [[ "${check_ns_exists}" -gt 0 ]];do
-            read -e -p "There is already existing the same namespace, please retype another project name: " project_name
-            while [[ ! "${project_name}" =~ ${project_name_regex} ]]; do
-                read -p "The project name format is not right,please retype again: " -e project_name
-            done
-            check_ns_exists=$(kubectl get ns | grep -w ${project_name} | wc -l)
-        done
+}
 
-        check_project_exists=$(curl "${HARBOR_REGISTRY_URL}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l)
-    done
-
-    PROJECT_NAMESPACE=${project_name}
-    DEW_HARBOR_USER_NAME=${PROJECT_NAMESPACE}
-    DEW_HARBOR_USER_EMAIL=${DEW_HARBOR_USER_NAME}@dew.ms
-
+project_harbor_user_create_check(){
+    local project_name=$1
     # Checking whether user account exists.
     check_user_exists=$(curl "${HARBOR_REGISTRY_URL}/api/users?username=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l)
     while [[ "${check_user_exists}" -gt 0 ]]; do
@@ -690,8 +729,6 @@ project_create_check(){
     fi
     echo
 
-
-
     # The e-mail format checking.
     echo
     echo "# E-mail is used for binding the Harbor user account that you created above."
@@ -709,46 +746,121 @@ project_create_check(){
     DEW_HARBOR_USER_EMAIL=${user_email}
 }
 
+project_create_check(){
+    echo "Tips: Before creating your project, you need to initialize your Kubernetes cluster."
+    echo
+    check_harbor_admin_account
+
+    echo
+    echo
+
+    echo "# The [profile] is used for creating the Kubernetes namespace prefix."
+    echo "# The name of [project] would be used for creating Harbor project, Harbor user account."
+    echo "# If [profile] is null,the value of [project] will be used for Kubernetes namespace;"
+    echo "# Conversely,the namespace will be <profile>-<project> "
+    echo "# Project name must consist of lower case alphanumeric characters or '-' "
+    echo "# and must start and end with an alphanumeric character,"
+    echo "# and the length must be greater than two."
+
+    local project_name_regex="^([a-z0-9]+-?[a-z0-9]+)+$"
+    local profile_regex="^([a-z0-9]?-?[a-z0-9]+)+$"
+    read -e -p "Please input profile: " profile
+    if [[ ${profile} != "" ]]; then
+        while [[ ${profile} != "" && ! "${profile}" =~ ${profile_regex} ]]; do
+            read -e -p "* The format of [profile] is not right,please retype:" profile
+        done
+    fi
+
+    waiting_input_check_regex "Please input project name" ${project_name_regex} "Y" ""
+    local project_name=${GENERAL_INPUT_ANSWER}
+
+    # Checking whether Kubernetes namespace exists.
+    if [[ ${profile} == "" ]]; then
+        PROJECT_NAMESPACE=${project_name}
+    else
+        PROJECT_NAMESPACE=${profile}-${project_name}
+    fi
+    check_ns_exists=$(project_namespace_exists_check ${PROJECT_NAMESPACE})
+    if [[ ${check_ns_exists} -gt 0 ]]; then
+        echo "Namespace [${PROJECT_NAMESPACE}] already exists."
+        waiting_input_YN "Would you like to update the imagePullSecret for [${PROJECT_NAMESPACE}] namespace ?" "N"
+           local answer_update_secret=${GENERAL_INPUT_ANSWER}
+         if [[ ${answer_update_secret} == "N" ]]; then
+             echo "The script finished."
+             exit;
+         fi
+         CREATE_PROJECT_NAMESPACE_SKIP="true"
+    fi
+    check_harbor_project_public_enabled ${project_name}
+    # Checking whether Harbor project name exists.
+    check_project_exists=$(curl "${HARBOR_REGISTRY_URL}/api/projects?name=${project_name}" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -k -s | grep -w ${project_name} | wc -l)
+    if  [[ "${check_project_exists}" -gt 0 ]];then
+        echo "Harbor project [${project_name}] already exists."
+        check_harbor_project_auth ${project_name}
+        NEED_CREATE_PROJECT_USER="false"
+    else
+        DEW_HARBOR_USER_NAME=${project_name}
+        DEW_HARBOR_USER_EMAIL=${DEW_HARBOR_USER_NAME}@dew.ms
+        project_harbor_user_create_check ${project_name}
+        NEED_CREATE_PROJECT_USER="true"
+    fi
+
+}
+
 project_create(){
-    echo
-    echo "# Starting to create the Harbor user account."
-    ADMIN_AUTHORIZATION=$(echo -n ${HARBOR_REGISTRY_ADMIN}:${HARBOR_REGISTRY_ADMIN_PASSWORD} | base64)
 
-    create_user_result=$(curl -X POST "${HARBOR_REGISTRY_URL}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"email\": \"${DEW_HARBOR_USER_EMAIL}\", \"username\": \"${DEW_HARBOR_USER_NAME}\", \"password\": \"${DEW_HARBOR_USER_PASSWORD}\", \"realname\": \"${DEW_HARBOR_USER_NAME}\", \"comment\": \"init\"}" -o /dev/nullrl -s -w %{http_code} -k)
-    if [[ "${create_user_result}" -ne 201 ]]; then
-        echo "Failed to create user account, the script to end, please retry it later."
-        exit;
+    if [[ ${NEED_CREATE_PROJECT_USER} == "true" ]]; then
+        if [[ ${HARBOR_PROJECT_PUBLIC_ENABLED} == "false" ]]; then
+            echo
+            echo "# Starting to create the Harbor user account."
+            ADMIN_AUTHORIZATION=$(echo -n ${HARBOR_REGISTRY_ADMIN}:${HARBOR_REGISTRY_ADMIN_PASSWORD} | base64)
+            create_user_result=$(curl -X POST "${HARBOR_REGISTRY_URL}/api/users" -H "accept: application/json" -H "authorization: Basic ${ADMIN_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"email\": \"${DEW_HARBOR_USER_EMAIL}\", \"username\": \"${DEW_HARBOR_USER_NAME}\", \"password\": \"${DEW_HARBOR_USER_PASSWORD}\", \"realname\": \"${DEW_HARBOR_USER_NAME}\", \"comment\": \"init\"}" -o /dev/nullrl -s -w %{http_code} -k)
+            if [[ "${create_user_result}" -ne 201 ]]; then
+                echo "Failed to create user account, the script to end, please retry it later."
+                exit;
+            fi
+            echo "Created Harbor user account [${DEW_HARBOR_USER_NAME}] successfully.The password is ${DEW_HARBOR_USER_PASSWORD}."
+            USER_AUTHORIZATION=$(echo -n ${DEW_HARBOR_USER_NAME}:${DEW_HARBOR_USER_PASSWORD} | base64)
+        else
+            USER_AUTHORIZATION=${ADMIN_AUTHORIZATION}
+        fi
+
+        echo
+        echo "# Starting to create Harbor project."
+        create_project_result_code=$(curl -X POST "${HARBOR_REGISTRY_URL}/api/projects" -H "accept: application/json" -H "authorization: Basic ${USER_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"project_name\": \"${DEW_HARBOR_USER_NAME}\",\"metadata\":{\"public\":\"${HARBOR_PROJECT_PUBLIC_ENABLED}\"}}" -o /dev/nullrl -s -w %{http_code} -k)
+        if [[ "${create_project_result_code}" -ne 201 ]]; then
+            echo "Failed to create project, the script to end, please retry it later."
+            exit;
+        fi
+        echo "The project [${PROJECT_NAMESPACE}] is created successfully."
     fi
-    echo "Created Harbor user account [${DEW_HARBOR_USER_NAME}] successfully.The password is ${DEW_HARBOR_USER_PASSWORD}."
-
     echo
-    echo "# Starting to create Harbor project."
-    USER_AUTHORIZATION=$(echo -n ${DEW_HARBOR_USER_NAME}:${DEW_HARBOR_USER_PASSWORD} | base64)
-
-    create_project_result_code=$(curl -X POST "${HARBOR_REGISTRY_URL}/api/projects" -H "accept: application/json" -H "authorization: Basic ${USER_AUTHORIZATION}" -H "Content-Type: application/json" -d "{ \"project_name\": \"${PROJECT_NAMESPACE}\"}" -o /dev/nullrl -s -w %{http_code} -k)
-    if [[ "${create_project_result_code}" -ne 201 ]]; then
-        echo "Failed to create project, the script to end, please retry it later."
-        exit;
+    if [[ ${CREATE_PROJECT_NAMESPACE_SKIP} == "false" ]]; then
+        echo "# Starting to initialize the project in the Kubernetes Cluster."
+        kubectl create namespace ${PROJECT_NAMESPACE}
     fi
-    echo "The project [${PROJECT_NAMESPACE}] is created successfully."
 
-    echo
-    echo "# Starting to initialize the project in the Kubernetes Cluster."
-    kubectl create namespace ${PROJECT_NAMESPACE}
+    check_rolebinding_exists=$(kubectl get rolebinding -n ${PROJECT_NAMESPACE} | awk '{print $1}'| grep -P '^'default:service-discovery-client'$' | wc -l)
+    if [[ ${check_rolebinding_exists} != 1 ]]; then
+        kubectl create rolebinding default:service-discovery-client \
+            -n ${PROJECT_NAMESPACE} \
+            --clusterrole service-discovery-client \
+            --serviceaccount ${PROJECT_NAMESPACE}:default
+    fi
 
-    kubectl create rolebinding default:service-discovery-client \
-        -n ${PROJECT_NAMESPACE} \
-        --clusterrole service-discovery-client \
-        --serviceaccount ${PROJECT_NAMESPACE}:default
+    if [[ ${HARBOR_PROJECT_PUBLIC_ENABLED} == "false" ]]; then
+        check_secret_exists=$(kubectl get secret -n ${PROJECT_NAMESPACE} | awk '{print $1}'| grep -P '^'dew-registry'$' | wc -l)
+        if [[ ${check_secret_exists} == 1 ]]; then
+          kubectl delete secret -n ${PROJECT_NAMESPACE} dew-registry
+        fi
+        kubectl -n ${PROJECT_NAMESPACE} create secret docker-registry dew-registry \
+            --docker-server=${HARBOR_REGISTRY_URL} \
+            --docker-username=${DEW_HARBOR_USER_NAME} \
+            --docker-password=${DEW_HARBOR_USER_PASSWORD}
 
-    kubectl -n ${PROJECT_NAMESPACE} create secret docker-registry dew-registry \
-        --docker-server=${HARBOR_REGISTRY_URL} \
-        --docker-username=${DEW_HARBOR_USER_NAME} \
-        --docker-password=${DEW_HARBOR_USER_PASSWORD} \
-        --docker-email=${DEW_HARBOR_USER_EMAIL}
-
-    kubectl -n ${PROJECT_NAMESPACE} patch serviceaccount default \
-        -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
+        kubectl -n ${PROJECT_NAMESPACE} patch serviceaccount default \
+            -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
+    fi
 
     waiting_input_YN "If you want to create the Ingress for your project?" "Y"
     local answer_create_ingress=${GENERAL_INPUT_ANSWER}
