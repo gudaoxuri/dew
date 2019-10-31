@@ -4438,6 +4438,41 @@ spec:
 </div>
 <div class="sect3">
 <h4 id="devops-user-manual-import"><a class="anchor" href="#devops-user-manual-import"></a>4.2.1. 引入方式</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>若您的项目模块内部使用 <code>spring-boot-maven-plugin</code> 打包，请移除，避免容器化之后，服务启动时出现以下报错</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code>...
+Caused by: java.lang.reflect.InvocationTargetException
+	... 1024 more
+Caused by: java.lang.StackOverflowError
+	at java.util.concurrent.ConcurrentHashMap.putVal(ConcurrentHashMap.java:1012)
+...</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>为了保证项目的maven包正常发布，请在根pom.xml中配置<code>dependencyManagement</code></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
 <div class="sect4">
 <h5 id="使用_code_dew_framework_code"><a class="anchor" href="#使用_code_dew_framework_code"></a>使用 <code>Dew Framework</code></h5>
 <div class="paragraph">
@@ -4561,7 +4596,7 @@ spec:
   &lt;parent&gt;
     &lt;groupId&gt;ms.dew&lt;/groupId&gt;
     &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
-    &lt;version&gt;2.0.0-rc&lt;/version&gt;
+    &lt;version&gt;2.1.0-SNAPSHOT&lt;/version&gt;
   &lt;/parent&gt;
 
   &lt;groupId&gt;ms.dew.devops.it&lt;/groupId&gt;
@@ -5258,6 +5293,18 @@ sh dew-devops.sh</code></pre>
 <div class="title">Create a project</div>
 <p>创建项目：用于给需要部署的项目来创建一个部署的命名空间等。
 详见： <a href="#what-for-dew-devops">创建项目</a></p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<code>变更信息</code> 新增可以通过指定 profile 来使得有不同 profile 前缀的命名空间使用相同的 harbor project 来拉取镜像。
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -6579,6 +6626,7 @@ disableReuseVersion: false              # 是否禁用重用版本，默认为fa
 reuseLastVersionFromProfile:            # 重用版本的目标环境名称
                                         # 默认会尝试使用 pre-prod/pre-production/uat 为名称（找到当前项目第一个存在的环境）
                                         # 都不存在时需要显式指定
+projectName:                            # 工程名称(docker镜像仓库名称)
 reuseVersionType: LABEL                 # 重用版本方式，支持两种方式 LABEL(镜像打标签，默认方式) TAG(上传新tag方式)
 ignoreChangeFiles: []                   # 忽略变更文件列表，此列表指定的文件不用于是否有变更要部署的判断依据
                                         # 支持 glob , @see https://en.wikipedia.org/wiki/Glob_(programming)
@@ -6621,6 +6669,9 @@ app:                                    # 应用配置
                                         # @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
   volumeMounts: []                      # 卷安装配置
   volumes: []                           # 卷配置，如果使用公用卷配置，请自行在项目对应的namespace下安装pv，pvc及endpoints
+  annotations: {}                       # 自定义annotations
+  labels: {}                            # 自定义labels
+  env: {}                               # 自定义env，key对应一个env的name，value对应一个env的value
 docker:                                 # Docker配置
   host:                                 # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
   registryUrl:                          # Docker Registry Url  e.g. https://harbor.dew.ms/v2
@@ -6999,7 +7050,10 @@ profiles:
   # 添加测试环境
   test:
     # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
-    namespace: dew-test</code></pre>
+    namespace: dew-test
+  uat:
+    # 指定测试环境的namespace，此namespace需要在Kubernetes及harbor中已存在
+    namespace: dew-uat</code></pre>
 </div>
 </div>
 <div class="olist arabic">
@@ -7640,6 +7694,28 @@ helm list</pre>
 </div>
 <div class="sect3">
 <h4 id="发行记录"><a class="anchor" href="#发行记录"></a>5.2.2. 发行记录</h4>
+<div class="sect4">
+<h5 id="2_1_0_snapshot"><a class="anchor" href="#2_1_0_snapshot"></a>2.1.0-SNAPSHOT</h5>
+<div class="ulist">
+<div class="title">Features</div>
+<ul>
+<li>
+<p>支持自定义annotations/labels/env</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Improvement</div>
+<ul>
+<li>
+<p>优化Docker镜像打包流程</p>
+</li>
+<li>
+<p>优化项目镜像复用发布流程</p>
+</li>
+</ul>
+</div>
+</div>
 <div class="sect4">
 <h5 id="2_0_0_rc"><a class="anchor" href="#2_0_0_rc"></a>2.0.0-RC</h5>
 <div class="ulist">
@@ -9027,8 +9103,41 @@ sh dew-devops.sh
 </tr>
 </table>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p>dew-devops.sh 2.0.x 到 Dew 2.1.X 的变更记录</p>
+<div class="ulist">
+<ul>
+<li>
+<p>支持不同 profile 使用相同的 harbor project<br>
+namespace 由&lt;profile&gt;-&lt;project&gt;组成，如果 profile 为空，namespace 为&lt;project&gt;</p>
+</li>
+<li>
+<p>支持更新已存在的 namespace 下的 secret/dew-registry</p>
+</li>
+<li>
+<p>创建 harbor project的时候，可选是否把project进行公开</p>
 </li>
 </ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+因 Dew DevOps 2.0.x 到 2.1.X 的变更，原有namespace下的 secret/dew-registry 需要手动更新，并在 harbor 上创建对应的project。
+</td>
+</tr>
+</table>
 </div>
 <div id="dew-spring-cloud-config" class="ulist checklist">
 <ul class="checklist">
@@ -9124,7 +9233,7 @@ redis:
 spring:
   servlet:
     multipart:
-      enalbed: true
+      enabled: true
       max-file-size: 100MB
       max-request-size: 100MB</pre>
 </div>
@@ -9176,6 +9285,9 @@ csp:
 <p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 删除所有 <code>eureka</code> / <code>zuul</code> 相关的配置</p>
 </li>
 <li>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 服务发现使用 spring-cloud-starter-kubernetes-ribbon ,各服务的服务名为spring.application.name的值。注意服务名为小写。</p>
+</li>
+<li>
 <p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 修改项目中的 <code>Spring Cloud Config</code> 配置</p>
 <div class="literalblock">
 <div class="content">
@@ -9220,6 +9332,8 @@ logging:
   &lt;groupId&gt;ms.dew.devops.it&lt;/groupId&gt;
   &lt;artifactId&gt;todo-frontend&lt;/artifactId&gt;
   &lt;packaging&gt;pom&lt;/packaging&gt;
+  &lt;!-- 如果前端工程是原生NodeJS启动方式，请在pom中添加一下配置，如果前端工程是打包成静态文件的方式则不需要添加 --&gt;
+  &lt;!--  默认配置此项的NodeJS项目的端口为3000，如需修改端口，请为该前端模块添加.dew配置文件，并设置app.port为指定值。--&gt;
   &lt;properties&gt;
       &lt;frontend.package.type&gt;NATIVE&lt;/frontend.package.type&gt;
   &lt;/properties&gt;
@@ -9268,6 +9382,9 @@ logging:
 </div>
 </li>
 <li>
+<p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 项目模块的pom.xml内去除 <code>spring-boot-maven-plugin</code> 插件</p>
+</li>
+<li>
 <p><input type="checkbox" data-item-complete="0"> [Dew DevOps] 在项目中添加<code>.dew</code>配置，详见 <a href="#devops-configuration-dew">.dew 配置</a></p>
 <div class="literalblock">
 <div class="content">
@@ -9283,6 +9400,8 @@ notify:
 profiles:
   test:                 # 环境对应的 profile
     namespace: dew-test # 各环境对应的 namespace 为必填项
+    app:
+      replicas: 2       # 设置各服务的实例个数，推荐设为 2及2个以上，便于滚动更新时不中断服务
   uat:
     namespace: dew-uat
   prod:
@@ -10323,7 +10442,7 @@ TIP: 需要安装此插件，如不安装，使用<code>dew-devops.groovy</code>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-09-29 11:03:01 CST
+Last updated 2019-10-30 14:57:28 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

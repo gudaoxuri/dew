@@ -18,6 +18,14 @@
 +
 TIP: 如使用Jenkins进行部署，可跳过选项2，详见：<<dew-jenkins-pipeline,Dew Jenkins Pipeline 部署>>
 
+- dew-devops.sh 2.0.x 到 Dew 2.1.X 的变更记录
+** 支持不同 profile 使用相同的 harbor project +
+   namespace 由<profile>-<project>组成，如果 profile 为空，namespace 为<project>
+** 支持更新已存在的 namespace 下的 secret/dew-registry
+** 创建 harbor project的时候，可选是否把project进行公开
+
+TIP: 因 Dew DevOps 2.0.x 到 2.1.X 的变更，原有namespace下的 secret/dew-registry 需要手动更新，并在 harbor 上创建对应的project。
+
 [[dew-spring-cloud-config]]
 * [ ] 安装并设置Spring Cloud Config
 
@@ -87,7 +95,7 @@ TIP: 如使用Jenkins进行部署，可跳过选项2，详见：<<dew-jenkins-pi
   spring:
     servlet:
       multipart:
-        enalbed: true
+        enabled: true
         max-file-size: 100MB
         max-request-size: 100MB
 
@@ -113,6 +121,7 @@ TIP: 如使用Jenkins进行部署，可跳过选项2，详见：<<dew-jenkins-pi
   由于Dew 2.x 不推荐引入独立的服务网关，故需要对鉴权做一定的修改 。
 
 * [ ] [Dew DevOps] 删除所有 ``eureka`` / ``zuul`` 相关的配置
+* [ ] [Dew DevOps] 服务发现使用 spring-cloud-starter-kubernetes-ribbon ,各服务的服务名为spring.application.name的值。注意服务名为小写。
 * [ ] [Dew DevOps] 修改项目中的 ``Spring Cloud Config`` 配置
 
   spring:
@@ -148,6 +157,8 @@ TIP: 如使用Jenkins进行部署，可跳过选项2，详见：<<dew-jenkins-pi
     <groupId>ms.dew.devops.it</groupId>
     <artifactId>todo-frontend</artifactId>
     <packaging>pom</packaging>
+    <!-- 如果前端工程是原生NodeJS启动方式，请在pom中添加一下配置，如果前端工程是打包成静态文件的方式则不需要添加 -->
+    <!--  默认配置此项的NodeJS项目的端口为3000，如需修改端口，请为该前端模块添加.dew配置文件，并设置app.port为指定值。-->
     <properties>
         <frontend.package.type>NATIVE</frontend.package.type>
     </properties>
@@ -185,6 +196,8 @@ TIP: 如使用Jenkins进行部署，可跳过选项2，详见：<<dew-jenkins-pi
       <version><最新的版本></version>
   </parent>
 
+* [ ] [Dew DevOps] 项目模块的pom.xml内去除 `spring-boot-maven-plugin` 插件
+
 * [ ] [Dew DevOps] 在项目中添加``.dew``配置，详见 <<devops-configuration-dew,.dew 配置>>
 
   # 在根目录添加 .dew ，至少添加 使用到的 profile 及 namespace 信息
@@ -199,6 +212,8 @@ TIP: 如使用Jenkins进行部署，可跳过选项2，详见：<<dew-jenkins-pi
   profiles:
     test:                 # 环境对应的 profile
       namespace: dew-test # 各环境对应的 namespace 为必填项
+      app:
+        replicas: 2       # 设置各服务的实例个数，推荐设为 2及2个以上，便于滚动更新时不中断服务
     uat:
       namespace: dew-uat
     prod:

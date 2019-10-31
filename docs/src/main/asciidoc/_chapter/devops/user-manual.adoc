@@ -8,6 +8,21 @@ NOTE: ``Dew`` DevOps部分的核心是由 ``dew-maven-plugin`` 实现。
 [[devops-user-manual-import]]
 ==== 引入方式
 
+[TIP]
+====
+* 若您的项目模块内部使用 ``spring-boot-maven-plugin`` 打包，请移除，避免容器化之后，服务启动时出现以下报错
+```
+...
+Caused by: java.lang.reflect.InvocationTargetException
+	... 1024 more
+Caused by: java.lang.StackOverflowError
+	at java.util.concurrent.ConcurrentHashMap.putVal(ConcurrentHashMap.java:1012)
+...
+```
+* 为了保证项目的maven包正常发布，请在根pom.xml中配置``dependencyManagement``
+
+====
+
 ===== 使用 ``Dew Framework``
 
 如果您的项目使用 ``Dew Framework`` 构建则只要确保引入了 ``parent-starter`` 即可。
