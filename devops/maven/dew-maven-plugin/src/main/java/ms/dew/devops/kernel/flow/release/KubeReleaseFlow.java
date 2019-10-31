@@ -28,6 +28,7 @@ import ms.dew.devops.kernel.helper.KubeHelper;
 import ms.dew.devops.kernel.helper.KubeRES;
 import ms.dew.devops.kernel.resource.KubeDeploymentBuilder;
 import ms.dew.devops.kernel.resource.KubeServiceBuilder;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -59,7 +60,9 @@ public class KubeReleaseFlow extends BasicFlow {
             logger.debug("Delete old version from kubernetes resources and docker images");
             removeOldVersions(config);
         }
-        DockerBuildFlow.ReuseVersionProcessorFactory.processAfterReleaseSuccessful(config);
+        if (!config.getDisableReuseVersion() || StringUtils.isNotEmpty(config.getReuseLastVersionFromProfile())) {
+            DockerBuildFlow.ReuseVersionProcessorFactory.processAfterReleaseSuccessful(config);
+        }
     }
 
     /**
@@ -110,7 +113,7 @@ public class KubeReleaseFlow extends BasicFlow {
      * @param oldVersion the old version
      * @return the old version resources
      */
-    private Map<String, Object> fetchOldVersionResources(FinalProjectConfig config, V1ConfigMap oldVersion)  {
+    private Map<String, Object> fetchOldVersionResources(FinalProjectConfig config, V1ConfigMap oldVersion) {
         ExtensionsV1beta1Deployment rollbackDeployment = KubeHelper.inst(config.getId()).toResource(
                 $.security.decodeBase64ToString(oldVersion.getData().get(KubeRES.DEPLOYMENT.getVal()), "UTF-8"),
                 ExtensionsV1beta1Deployment.class);
@@ -243,9 +246,9 @@ public class KubeReleaseFlow extends BasicFlow {
         Map<String, String> resources = kubeResources.entrySet()
                 .stream().collect(Collectors.toMap(Map.Entry::getKey,
                         entry ->
-                            $.security.encodeStringToBase64(
-                                    KubeHelper.inst(config.getId()).toString(entry.getValue()), "UTF-8")
-                        ));
+                                $.security.encodeStringToBase64(
+                                        KubeHelper.inst(config.getId()).toString(entry.getValue()), "UTF-8")
+                ));
         VersionController.addNewVersion(config, appVersion, gitCommit, reRelease, resources, new HashMap<>());
     }
 

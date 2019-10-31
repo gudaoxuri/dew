@@ -39,6 +39,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Docker操作函数类.
@@ -423,7 +424,9 @@ public class DockerOpt {
             boolean result = responseWrap.statusCode == 200;
             Integer projectId = null;
             if (result) {
-                projectId = (Integer) $.json.toList(responseWrap.result, Map.class).get(0).get("project_id");
+                projectId = (Integer) $.json.toList(responseWrap.result, Map.class).stream()
+                        .filter(project -> project.get("name").toString().equals(projectName))
+                        .collect(Collectors.toList()).get(0).get("project_id");
             }
             return projectId;
         }

@@ -46,12 +46,14 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         if (config.getApp().getTraceLogEnabled()) {
             annotations.put("sidecar.jaegertracing.io/inject", "true");
         }
+        annotations.putAll(config.getApp().getAnnotations());
 
         Map<String, String> labels = new HashMap<>();
         labels.put("app", config.getAppName());
         labels.put(VersionController.FLAG_KUBE_RESOURCE_APP_VERSION, config.getAppVersion());
         labels.put("group", config.getAppGroup());
         labels.put("provider", "dew");
+        labels.putAll(config.getApp().getLabels());
 
         Map<String, String> selectorLabels = new HashMap<>(labels);
         selectorLabels.remove("version");
@@ -61,9 +63,6 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         if (config.getApp().getNodeSelector().isEmpty()) {
             nodeSelectors.put("group", "app");
         }
-
-        V1ResourceRequirements re = new V1ResourceRequirements();
-        re.setRequests(config.getApp().getContainerResourcesRequests());
 
         List<V1ContainerPort> ports = new ArrayList<>();
         ports.add(new V1ContainerPortBuilder()
@@ -112,6 +111,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
             }
         });
         env.putAll(config.getDeployPlugin().getEnv(config));
+        env.putAll(config.getApp().getEnv());
         if (!env.isEmpty()) {
             containerBuilder.withEnv(env.entrySet().stream().map(e ->
                     new V1EnvVarBuilder()

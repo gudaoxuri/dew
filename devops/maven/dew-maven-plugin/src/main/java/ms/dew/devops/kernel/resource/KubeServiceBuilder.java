@@ -44,6 +44,7 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
         if (config.getApp().getTraceLogEnabled()) {
             annotations.put("sidecar.jaegertracing.io/inject", "true");
         }
+        annotations.putAll(config.getApp().getAnnotations());
 
         Map<String, String> labels = new HashMap<>();
         labels.put("app", config.getAppName());
@@ -51,6 +52,7 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
         labels.put("group", config.getAppGroup());
         labels.put("provider", "dew");
         labels.put("expose", "true");
+        labels.putAll(config.getApp().getLabels());
 
         Map<String, String> selectorLabels = new HashMap<>(labels);
         selectorLabels.remove("version");

@@ -154,7 +154,7 @@ public class DockerBuildFlow extends BasicFlow {
          * Gets reuse commit.
          *
          * @param config the config
-         * @return the reuse commit
+         * @return the boolean
          */
         public static Optional<String> getReuseCommit(FinalProjectConfig config) {
             switch (config.getReuseVersionType()) {
@@ -164,6 +164,23 @@ public class DockerBuildFlow extends BasicFlow {
                     return reuseVersionTagProcessor.getReuseCommit(config);
                 default:
                     return Optional.empty();
+            }
+        }
+
+        /**
+         * Exists reuse version.
+         *
+         * @param config the config
+         * @return the boolean
+         */
+        public static boolean existsReuseVersion(FinalProjectConfig config) {
+            switch (config.getReuseVersionType()) {
+                case REUSE_VERSION_TYPE_LABEL:
+                    return reuseVersionLabelProcessor.existsReuseVersion(config);
+                case REUSE_VERSION_TYPE_TAG:
+                    return reuseVersionTagProcessor.existsReuseVersion(config);
+                default:
+                    return false;
             }
         }
     }
@@ -177,6 +194,8 @@ public class DockerBuildFlow extends BasicFlow {
         void processAfterReleaseSuccessful(FinalProjectConfig config) throws IOException;
 
         Optional<String> getReuseCommit(FinalProjectConfig config) throws IOException;
+
+        boolean existsReuseVersion(FinalProjectConfig config);
 
     }
 
@@ -201,11 +220,16 @@ public class DockerBuildFlow extends BasicFlow {
         @Override
         public void processAfterReleaseSuccessful(FinalProjectConfig config) {
             logger.info("Add label : " + config.getCurrImageName());
-            Integer projectId = DockerHelper.inst(config.getId()).registry.getProjectIdByName(config.getNamespace());
-            DockerOpt.Label label = DockerHelper.inst(config.getId()).registry.getLabelByName(config.getAppName(), projectId);
+            String projectName = config.getNamespace();
+            if (config.getNamespace().contains(config.getProfile())) {
+                projectName = config.getNamespace().substring(config.getNamespace().indexOf("-") + 1);
+            }
+            Integer projectId = DockerHelper.inst(config.getId()).registry.getProjectIdByName(projectName);
+            DockerOpt.Label label = DockerHelper.inst(config.getId()).registry
+                    .getLabelByName(config.getAppName() + "-" + config.getProfile(), projectId);
             if (label == null) {
                 label = new DockerOpt.Label();
-                label.setName(config.getAppName());
+                label.setName(config.getAppName() + "-" + config.getProfile());
                 label.setDescription(config.getCurrImageName());
                 label.setProjectId(projectId);
                 DockerHelper.inst(config.getId()).registry.addLabel(label);
@@ -224,11 +248,28 @@ public class DockerBuildFlow extends BasicFlow {
             return Optional.of(imageName.substring(imageName.lastIndexOf(":") + 1));
         }
 
+        @Override
+        public boolean existsReuseVersion(FinalProjectConfig config) {
+            String projectName = config.getProjectName();
+            if (StringUtils.isBlank(projectName) && config.getAppendProfile().getNamespace().contains(config.getReuseLastVersionFromProfile())) {
+                projectName = config.getAppendProfile().getNamespace().substring(config.getAppendProfile().getNamespace().indexOf("-") + 1);
+            }
+            Integer projectId = DockerHelper.inst(config.getId()).registry.getProjectIdByName(projectName);
+            DockerOpt.Label label = DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry
+                    .getLabelByName(config.getAppName() + "-" + config.getReuseLastVersionFromProfile(), projectId);
+            if (null == label) {
+                return false;
+            }
+            return DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry.exist(label.getDescription());
+        }
+
         private String getImageNameByLabelName(FinalProjectConfig config) {
             Integer projectId = DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry
-                    .getProjectIdByName(config.getAppendProfile().getNamespace());
+                    .getProjectIdByName(StringUtils.isBlank(config.getProjectName()) ? config.getAppendProfile().getNamespace()
+                            .substring(config.getAppendProfile().getNamespace().indexOf("-") + 1) : config.getProjectName());
             String reuseImageName = null;
-            DockerOpt.Label label = DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry.getLabelByName(config.getAppName(), projectId);
+            DockerOpt.Label label = DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry
+                    .getLabelByName(config.getAppName() + "-" + config.getReuseLastVersionFromProfile(), projectId);
             if (label != null) {
                 reuseImageName = label.getDescription();
             }
@@ -242,7 +283,8 @@ public class DockerBuildFlow extends BasicFlow {
         public boolean processBeforeRelease(FinalProjectConfig config, String flowBasePath) {
             // 判断指定tag的image是否存在
             String reuseImageName = config.getImageName(config.getAppendProfile().getDocker().getRegistryHost(),
-                    config.getAppendProfile().getNamespace(), config.getAppName(), DEPLOYED_TAG);
+                    config.getProjectName(), config.getAppendProfile().getNamespace(), config.getAppName(),
+                    DEPLOYED_TAG, config.getReuseLastVersionFromProfile());
             if (DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry.exist(reuseImageName)) {
                 // 从目标环境的镜像仓库拉取镜像到本地
                 DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).image.pull(reuseImageName, true);
@@ -268,8 +310,13 @@ public class DockerBuildFlow extends BasicFlow {
 
         @Override
         public Optional<String> getReuseCommit(FinalProjectConfig config) {
+            String namespace = config.getAppendProfile().getNamespace();
+            if (config.getAppendProfile().getNamespace().contains(config.getReuseLastVersionFromProfile())) {
+                namespace = config.getAppendProfile().getNamespace().substring(config.getAppendProfile().getNamespace().indexOf("-") + 1);
+            }
+            namespace = namespace + "/" + config.getReuseLastVersionFromProfile();
             List<DockerOpt.Tag> tags = DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry.getTags(
-                    config.getAppendProfile().getNamespace(), config.getAppName());
+                    namespace, config.getAppName());
             if (CollectionUtils.isEmpty(tags)) {
                 return Optional.empty();
             }
@@ -278,6 +325,14 @@ public class DockerBuildFlow extends BasicFlow {
                     tags.stream().filter(tag -> tag.getCreated().getTime() == deployedTag.getCreated().getTime())
                             .findFirst().ifPresent(tag -> reuseCommitOptional.set(Optional.of(tag.getName()))));
             return reuseCommitOptional.get();
+        }
+
+        @Override
+        public boolean existsReuseVersion(FinalProjectConfig config) {
+            return DockerHelper.inst(config.getId() + DevOps.APPEND_FLAG).registry
+                    .exist(config.getImageName(config.getAppendProfile().getDocker().getRegistryHost(),
+                            config.getProjectName(), config.getAppendProfile().getNamespace(), config.getAppName(),
+                            DEPLOYED_TAG, config.getReuseLastVersionFromProfile()));
         }
     }
 

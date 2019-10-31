@@ -39,7 +39,10 @@ import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
 
 import java.io.File;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -102,7 +105,7 @@ public class MavenDevOps {
                         dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt);
                 DevOps.Init.init(mockClasspath);
                 Config.initMavenProject(session, pluginManager);
-                initAssignDeploymentProjects(inputAssignationProjects, session.getProjectDependencyGraph().getSortedProjects());
+                initAssignDeploymentProjects(inputAssignationProjects);
                 // 特殊Mojo处理
                 if (session.getGoals().stream().map(String::toLowerCase)
                         .anyMatch(s ->
@@ -181,17 +184,19 @@ public class MavenDevOps {
             }
         }
 
-        private static void initAssignDeploymentProjects(String assignationProjects, List<MavenProject> projects) {
+        private static void initAssignDeploymentProjects(String assignationProjects) {
             if (null != assignationProjects) {
-                projects.forEach(project -> {
-                    if (Arrays.asList(assignationProjects.split(",")).contains(project.getArtifactId())) {
-                        notSkip(DevOps.Config.getProjectConfig(project.getId()), project, false);
-                    } else {
-                        DevOps.SkipProcess
-                                .skip(DevOps.Config.getProjectConfig(project.getId()), "Not assign to release",
+                DevOps.Config.getFinalConfig().getProjects().values().stream()
+                        .filter(projectConfig -> projectConfig.getSkip()
+                                && !FinalProjectConfig.SkipCodeEnum.SELF_CONFIG.equals(projectConfig.getSkipCode()))
+                        .forEach(projectConfig -> {
+                            if (Arrays.asList(assignationProjects.split(",")).contains(projectConfig.getAppName())) {
+                                notSkip(DevOps.Config.getProjectConfig(projectConfig.getId()), projectConfig.getMavenProject(), false);
+                            } else {
+                                DevOps.SkipProcess.skip(DevOps.Config.getProjectConfig(projectConfig.getId()), "Not assign to release",
                                         FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
-                    }
-                });
+                            }
+                        });
             }
         }
 
