@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import javax.servlet.ServletContext;
  * Swagger配置.
  *
  * @author gudaoxuri
- * @link https://springfox.github.io/springfox/docs/snapshot/#customizing-the-swagger-endpoints
+ * @see <a href="https://springfox.github.io/springfox/docs/snapshot/#customizing-the-swagger-endpoints">Springfox Configuration</a>
  */
 @Configuration
 @ConditionalOnProperty(prefix = "dew.basic.doc", name = "enabled", havingValue = "true", matchIfMissing = true)

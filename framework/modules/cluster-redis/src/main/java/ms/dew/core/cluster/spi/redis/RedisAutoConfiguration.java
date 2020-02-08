@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,8 +102,8 @@ public class RedisAutoConfiguration {
         for (Map.Entry<String, RedisProperties> prop : properties.entrySet()) {
             LettuceConnectionFactory redisConnectionFactory =
                     new MultiConnectionConfiguration(prop.getValue(),
-                            sentinelConfigurationProvider, clusterConfigurationProvider, builderCustomizers)
-                            .redisConnectionFactory(clientResources);
+                            sentinelConfigurationProvider, clusterConfigurationProvider)
+                            .redisConnectionFactory(builderCustomizers,clientResources);
             redisConnectionFactory.afterPropertiesSet();
             RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
             redisTemplate.setConnectionFactory(redisConnectionFactory);

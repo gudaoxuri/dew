@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -217,6 +217,7 @@ public class VersionController {
      *
      * @param config the FinalProjectConfig
      * @return the app current version
+     * @throws ApiException the api exception
      */
     public static String getAppCurrentVersion(FinalProjectConfig config) throws ApiException {
         V1Service service = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(), KubeRES.SERVICE, V1Service.class);
@@ -228,6 +229,7 @@ public class VersionController {
      *
      * @param config the FinalProjectConfig
      * @return the app version
+     * @throws ApiException the api exception
      */
     public static Map<String, V1ConfigMap> getAppVersions(FinalProjectConfig config) throws ApiException {
         return VersionController

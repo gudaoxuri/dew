@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
  * Docker操作函数类.
  *
  * @author gudaoxuri
- * @link https://github.com/docker-java/docker-java/wiki
+ * @see <a href="https://github.com/docker-java/docker-java/wiki">Docker Java 操作</a>
  */
 public class DockerOpt {
 
@@ -90,7 +90,7 @@ public class DockerOpt {
      * @param registryUrl      registry地址， e.g. https://harbor.dew.env/v2
      * @param registryUsername registry用户名
      * @param registryPassword registry密码
-     * @link https://docs.docker.com/install/linux/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections
+     * @see <a href="https://docs.docker.com/install/linux/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections">The Docker Daemon Listens For Connections</a>
      */
     protected DockerOpt(Logger log, String host, String registryUrl, String registryUsername, String registryPassword) {
         this.log = log;
@@ -286,8 +286,7 @@ public class DockerOpt {
 
     /**
      * Harbor Registry API.
-     *
-     * @link https ://raw.githubusercontent.com/goharbor/harbor/master/docs/swagger.yaml
+     * @see <a href="https://raw.githubusercontent.com/goharbor/harbor/master/docs/swagger.yaml">Goharbor API</a>
      */
     public class Registry {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,6 +72,7 @@ public class MavenDevOps {
          * @param inputDockerRegistryPassword     the input docker registry password
          * @param inputKubeBase64Config           the input kube base 64 config
          * @param inputAssignationProjects        the assignation projects
+         * @param rollbackVersion                 the rollback version
          * @param dockerHostAppendOpt             the docker host append opt
          * @param dockerRegistryUrlAppendOpt      the docker registry url append opt
          * @param dockerRegistryUserNameAppendOpt the docker registry user name append opt

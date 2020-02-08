@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2019. the original author or authors.
+  ~ Copyright 2020. the original author or authors.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -3657,7 +3657,7 @@ management: # 文档生成地址前缀为 /management.endpoints.web.base-path
 </div>
 </div>
 <div class="paragraph">
-<p>在线API文档请访问 <code>http(s)://&lt;host&gt;:&lt;port&gt;/doc.html</code></p>
+<p>在线API文档请访问 <code>http(s)://&lt;host&gt;:&lt;port&gt;/swagger-ui.html</code></p>
 </div>
 <div class="paragraph">
 <p>离线API文档会生成Asciidoc格式，可通过软件转换成HTML及PDF版本。</p>
@@ -7702,6 +7702,12 @@ helm list</pre>
 <li>
 <p>支持自定义annotations/labels/env</p>
 </li>
+<li>
+<p>JDK升级到11</p>
+</li>
+<li>
+<p>依赖包升级 Spring Boot:2.2.4.RELEASE，Spring Cloud:2.2.1.RELEASE，……</p>
+</li>
 </ul>
 </div>
 <div class="ulist">
@@ -7712,6 +7718,9 @@ helm list</pre>
 </li>
 <li>
 <p>优化项目镜像复用发布流程</p>
+</li>
+<li>
+<p><code>swagger-bootstrap-ui</code> 替换回 <code>springfox-swagger-ui</code></p>
 </li>
 </ul>
 </div>
@@ -10442,7 +10451,7 @@ TIP: 需要安装此插件，如不安装，使用<code>dew-devops.groovy</code>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-10-30 14:57:28 CST
+Last updated 2019-09-29 11:03:01 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

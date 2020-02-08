@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.slf4j.Logger;
  * Kubernetes操作函数类.
  *
  * @author gudaoxuri
- * @link https://github.com/kubernetes-client/java
+ * @see <a href="https://github.com/kubernetes-client/java">Kubernetes Client</a>
  */
 public class KubeHelper extends MultiInstProcessor {
 

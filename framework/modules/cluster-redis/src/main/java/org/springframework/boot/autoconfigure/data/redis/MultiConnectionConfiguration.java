@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,13 @@
 
 package org.springframework.boot.autoconfigure.data.redis;
 
+import io.lettuce.core.resource.ClientResources;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+
+import java.net.UnknownHostException;
 
 /**
  * 多连接实例配置.
@@ -29,9 +33,13 @@ public class MultiConnectionConfiguration extends LettuceConnectionConfiguration
 
     public MultiConnectionConfiguration(RedisProperties properties,
                                         ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider,
-                                        ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider,
-                                        ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers) {
-        super(properties, sentinelConfigurationProvider, clusterConfigurationProvider, builderCustomizers);
+                                        ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider) {
+        super(properties, sentinelConfigurationProvider, clusterConfigurationProvider);
     }
 
+    @Override
+    public LettuceConnectionFactory redisConnectionFactory(ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers,
+                                                           ClientResources clientResources) throws UnknownHostException {
+        return super.redisConnectionFactory(builderCustomizers, clientResources);
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public abstract class MultiInstProcessor {
     /**
      * 初始化多实例.
      * <p>
-     * 实例类型+实例Id 全局唯一，通过 <tt>hashItems</tt> 区别是否共享实例对象
+     * 实例类型+实例Id 全局唯一，通过 hashItems 区别是否共享实例对象
      *
      * @param <T>        实例Type
      * @param kind       实例类型

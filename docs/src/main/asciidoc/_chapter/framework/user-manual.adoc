@@ -1054,7 +1054,7 @@ management: # 文档生成地址前缀为 /management.endpoints.web.base-path
 
 ----
 
-在线API文档请访问 ``http(s)://<host>:<port>/doc.html``
+在线API文档请访问 ``http(s)://<host>:<port>/swagger-ui.html``
 
 离线API文档会生成Asciidoc格式，可通过软件转换成HTML及PDF版本。
 

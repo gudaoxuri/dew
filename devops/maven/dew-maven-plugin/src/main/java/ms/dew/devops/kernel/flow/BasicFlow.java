@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,12 +34,16 @@ import java.nio.file.Paths;
  */
 public abstract class BasicFlow {
 
+    /**
+     * The Logger.
+     */
     protected Logger logger = DewLog.build(this.getClass());
 
     /**
      * 执行流程.
      *
-     * @param mojoName the mojo name
+     * @param projectId the project id
+     * @param mojoName  the mojo name
      * @return the process result
      * @throws ApiException the api exception
      * @throws IOException  the io exception

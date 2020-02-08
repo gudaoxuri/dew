@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
  * Kubernetes操作函数类.
  *
  * @author gudaoxuri
- * @link https://github.com/kubernetes-client/java
+ * @see <a href="https://github.com/kubernetes-client/java">Kubernetes Client</a>
  */
 public class KubeOpt {
 
@@ -687,7 +687,7 @@ public class KubeOpt {
      * @param namespace the namespace
      * @param res       the res
      * @throws ApiException the api exception
-     * @link http://jsonpatch.com/
+     * @see <a href="http://jsonpatch.com/">Jsonpatch</a>
      */
     public void patch(String name, List<String> patchers, String namespace, KubeRES res) throws ApiException {
         List<JsonObject> jsonPatchers = patchers.stream()
@@ -1052,6 +1052,7 @@ public class KubeOpt {
      * @param name      the name
      * @param container the container
      * @param namespace the namespace
+     * @param cmd       the cmd
      * @return result list
      * @throws ApiException the api exception
      * @throws IOException  the io exception
