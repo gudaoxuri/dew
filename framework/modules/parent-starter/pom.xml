@@ -89,9 +89,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:https://github.com/gudaoxuri/dew-framework.git</connection>
-        <developerConnection>scm:git:https://github.com/gudaoxuri/dew-framework.git</developerConnection>
-        <url>https://github.com/gudaoxuri/dew-framework.git</url>
+        <connection>scm:git:https://github.com/ideal-world/dew.git</connection>
+        <developerConnection>scm:git:https://github.com/ideal-world/dew.git</developerConnection>
+        <url>https://github.com/ideal-world/dew.git</url>
     </scm>
 
     <dependencyManagement>
@@ -315,7 +315,6 @@
                             <charset>${project.build.sourceEncoding}</charset>
                             <encoding>${project.build.sourceEncoding}</encoding>
                             <docencoding>${project.build.sourceEncoding}</docencoding>
-                            <additionalparam>-Xdoclint:none</additionalparam>
                         </configuration>
                         <executions>
                             <execution>
@@ -395,7 +394,7 @@
                     <plugin>
                         <groupId>org.sonarsource.scanner.maven</groupId>
                         <artifactId>sonar-maven-plugin</artifactId>
-                        <version>3.6.0.1398</version>
+                        <version>3.7.0.1746</version>
                     </plugin>
                 </plugins>
             </build>

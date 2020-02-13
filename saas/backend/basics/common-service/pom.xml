@@ -20,27 +20,38 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ms.dew</groupId>
-    <artifactId>build</artifactId>
-    <name>0 Dew Build</name>
-    <packaging>pom</packaging>
+    <parent>
+        <groupId>group.idealworld.dew</groupId>
+        <artifactId>saas-parent</artifactId>
+        <version>2.1.0-SNAPSHOT</version>
+        <relativePath>../../../</relativePath>
+    </parent>
+
+    <artifactId>saas-common-service</artifactId>
+    <name>5.2.2 Dew SAAS Basics Common Service</name>
+    <packaging>jar</packaging>
     <version>2.1.0-SNAPSHOT</version>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>${project.build.sourceEncoding}</project.reporting.outputEncoding>
-        <maven.compiler.encoding>${project.build.sourceEncoding}</maven.compiler.encoding>
-
-        <maven.install.skip>true</maven.install.skip>
-        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
-    <modules>
-        <module>framework</module>
-        <module>devops</module>
-        <module>examples</module>
-        <module>docs</module>
-        <module>saas</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>group.idealworld.dew</groupId>
+            <artifactId>saas-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ms.dew</groupId>
+            <artifactId>cloud-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ms.dew</groupId>
+            <artifactId>cluster-spi-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>
