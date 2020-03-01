@@ -57,6 +57,10 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
     private Map<String, Set<String>> roleAuth = new HashMap<>();
 
     BasicHandlerInterceptor() {
+        if (Dew.dewConfig == null) {
+            // 未启用web的情况下，Dew加载滞后，忽略
+            return;
+        }
         if (Dew.dewConfig.getSecurity().getRouter().isEnabled()) {
             blackUris = formatUris(Dew.dewConfig.getSecurity().getRouter().getBlackUri());
             Dew.dewConfig.getSecurity().getRouter().getRoleAuth()
