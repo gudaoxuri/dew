@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  ms.dew.core.hbase.HBaseAutoConfiguration
+  group.idealworld.dew.core.hbase.HBaseAutoConfiguration

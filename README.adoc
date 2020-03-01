@@ -10,9 +10,9 @@
 image::https://img.shields.io/travis/gudaoxuri/dew.svg[link="https://travis-ci.org/gudaoxuri/dew"]
 image::https://api.codacy.com/project/badge/Grade/aacfdad1579043f0a2c1928b53096b7b[link="https://app.codacy.com/app/gudaoxuri/dew?utm_source=github.com&utm_medium=referral&utm_content=gudaoxuri/dew&utm_campaign=Badge_Grade_Dashboard"]
 image::https://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2",link="https://www.apache.org/licenses/LICENSE-2.0.txt"]
-image::https://img.shields.io/maven-central/v/ms.dew/parent-starter[Maven Central]
+image::https://img.shields.io/maven-central/v/group.idealworld.dew/parent-starter[Maven Central]
 
-微服务一站式解决方案( http://doc.dew.ms )，提供：架构指南、容器优先/兼容Spring Cloud与Istio的框架、最佳实践及DevOps标准化流程。
+微服务一站式解决方案( http://doc.dew.idealworld.group )，提供：架构指南、容器优先/兼容Spring Cloud与Istio的框架、最佳实践及DevOps标准化流程。
 
 [quote,]
 ____

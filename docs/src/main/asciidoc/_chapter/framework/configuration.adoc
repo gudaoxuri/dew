@@ -173,7 +173,7 @@ management:
 logging:
   level:
     ROOT: INFO
-    ms.dew: DEBUG                     # Dew目录日志配置
+    group.idealworld.dew: DEBUG                     # Dew目录日志配置
     org.springframework.jdbc.core: TRACE
                                       # Jdbc目录日志配置
 ----

@@ -161,7 +161,7 @@ yum install -y gitlab-ce
 # 按需修改，可修改说明见: https://docs.gitlab.com/omnibus/settings/
 vi /etc/gitlab/gitlab.rb
 -
-external_url 'http://gitlab.dew.ms'
+external_url 'http://gitlab.dew.idealworld.group'
 ...
 -
 gitlab-ctl reconfigure
@@ -183,11 +183,11 @@ TIP: https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md
 ----
 # Harbor安装步骤略过
 # 登录Harbor docker login <host> -u <user> -p <password>
-docker login harbor.dew.ms -u admin -p Harbor12345
+docker login harbor.dew.idealworld.group -u admin -p Harbor12345
 # e.g. 上传镜像
 docker pull dewms/devops:latest
-docker tag dewms/devops:latest harbor.dew.ms/dewms/devops:latest
-docker push harbor.dew.ms/dewms/devops:latest
+docker tag dewms/devops:latest harbor.dew.idealworld.group/dewms/devops:latest
+docker push harbor.dew.idealworld.group/dewms/devops:latest
 ----
 
 ==== Dnsmasq
@@ -203,18 +203,18 @@ systemctl start dnsmasq
 
 # 编辑本机的 /etc/hosts 添加映射
 -
-x.x.x.x gitlab.dew.ms
-x.x.x.x config.dew.ms
-x.x.x.x harbor.dew.ms
-x.x.x.x maven.dew.ms
-x.x.x.x minio.dew.ms
-x.x.x.x nfs.dew.ms
-x.x.x.x es.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
-x.x.x.x kibana.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
-x.x.x.x prometheus.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
-x.x.x.x alertmanager.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
-x.x.x.x grafana.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
-x.x.x.x jaeger.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x gitlab.dew.idealworld.group
+x.x.x.x config.dew.idealworld.group
+x.x.x.x harbor.dew.idealworld.group
+x.x.x.x maven.dew.idealworld.group
+x.x.x.x minio.dew.idealworld.group
+x.x.x.x nfs.dew.idealworld.group
+x.x.x.x es.dew.idealworld.group # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x kibana.dew.idealworld.group # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x prometheus.dew.idealworld.group # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x alertmanager.dew.idealworld.group # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x grafana.dew.idealworld.group # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x jaeger.dew.idealworld.group # IP为 group=devops 的任意一台Kubernetes Node节点
 ...
 -
 
@@ -266,7 +266,7 @@ chmod +x minio
 # 再执行
 nohup ./minio server /mnt/data &
 
-# 添加域名到客户机hosts并访问 http://minio.dew.ms:9000
+# 添加域名到客户机hosts并访问 http://minio.dew.idealworld.group:9000
 # 修改访问AccessKey和SecretKey， e.g. dew / Dew123456
 # 创建名为 app-cache 的bucket用于缓存gitlab ci runner(或其它CI/CD服务）的构建缓存
 ----
@@ -330,7 +330,7 @@ metadata:
   name: gluster-2replicas-sc
 provisioner: kubernetes.io/glusterfs
 parameters:
-  resturl: "http://gluster.dew.ms"
+  resturl: "http://gluster.dew.idealworld.group"
   restuser: "dew"
   restuserkey: "Dew123456"
   volumetype: "replicate:2"

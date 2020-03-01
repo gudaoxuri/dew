@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-import ms.dew.devops.it.verify.HelloWorldLibraryVerify
+import HelloWorldLibraryVerify
 
 new HelloWorldLibraryVerify().verify(basedir)

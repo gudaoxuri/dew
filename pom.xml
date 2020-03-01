@@ -20,7 +20,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ms.dew</groupId>
+    <groupId>group.idealworld.dew</groupId>
     <artifactId>build</artifactId>
     <name>0 Dew Build</name>
     <packaging>pom</packaging>

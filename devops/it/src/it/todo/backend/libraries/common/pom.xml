@@ -21,7 +21,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>ms.dew.devops.it</groupId>
+        <groupId>group.idealworld.dew.devops.it</groupId>
         <artifactId>todo-parent</artifactId>
         <version>2.1.0-SNAPSHOT</version>
         <relativePath>../../..</relativePath>
@@ -37,7 +37,7 @@
     <dependencies>
         <!-- 引用 cloud-starter 实现分布式能力  -->
         <dependency>
-            <groupId>ms.dew</groupId>
+            <groupId>group.idealworld.dew</groupId>
             <artifactId>cloud-starter</artifactId>
         </dependency>
         <!-- 添加JPA支持  -->

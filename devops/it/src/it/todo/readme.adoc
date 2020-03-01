@@ -1,6 +1,6 @@
 ==== DevOps示例 : To-Do
 
-本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.ms
+本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.idealworld.group
 
 .说明
 此示例用于演示以下功能：
@@ -38,7 +38,7 @@ include::./backend/services/notifier/.dew[]
 
 .前置准备
 
-. 执行 ``dew-devops.sh`` 初始化项目对应的uat和prod环境（详见 http://doc.dew.ms/#devops-user-manual ）
+. 执行 ``dew-devops.sh`` 初始化项目对应的uat和prod环境（详见 http://doc.dew.idealworld.group/#devops-user-manual ）
 
 .手工执行
 ----

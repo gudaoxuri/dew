@@ -8,7 +8,7 @@
 
 [NOTE]
 ====
-本文各服务使用 ``x.dew.ms`` 做为访问的域名，可根据实际情况替换。
+本文各服务使用 ``x.dew.idealworld.group`` 做为访问的域名，可根据实际情况替换。
 ====
 
 ==== 服务规划
@@ -25,12 +25,12 @@ TIP: 常规的项目研发多会分 ``开发(dev)、测试(test)、预发(pre-pr
 |===
 |分类                 | 域名/主机名              | 服务             | 备注
 
-| 公共支撑服务         | domain:gitlab.dew.ms   | Gitlab           | Gitlab及其CI/CD服务
-| 公共支撑服务         | domain:harbor.dew.ms   | Harbor           | Docker私有库服务
-| 公共支撑服务         | domain:maven.dew.ms    | Maven            | Maven私有库服务
+| 公共支撑服务         | domain:gitlab.dew.idealworld.group   | Gitlab           | Gitlab及其CI/CD服务
+| 公共支撑服务         | domain:harbor.dew.idealworld.group   | Harbor           | Docker私有库服务
+| 公共支撑服务         | domain:maven.dew.idealworld.group    | Maven            | Maven私有库服务
 | 环境相关的支撑服务    | /                      | Dnsmasq          | 轻量级DNS解析服务
-| 环境相关的支撑服务    | domain:minio.dew.ms    | Minio            | 分布式对象存储服务，用于CI/CD时做为分布式缓存
-| 环境相关的支撑服务    | domain:nfs.dew.ms      | NFS              | 用于Kuernetes persistent volumes的文件存储服务，生产环境建议使用云厂商的分布式文件存储或 CephFS，支持的类型见
+| 环境相关的支撑服务    | domain:minio.dew.idealworld.group    | Minio            | 分布式对象存储服务，用于CI/CD时做为分布式缓存
+| 环境相关的支撑服务    | domain:nfs.dew.idealworld.group      | NFS              | 用于Kuernetes persistent volumes的文件存储服务，生产环境建议使用云厂商的分布式文件存储或 CephFS，支持的类型见
                                                                    https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes
 | 容器集群            | hostname:k8s-X         | Docker           | Docker容器服务，部署到所有Kubernetes所在的节点
 | 容器集群            | hostname:k8s-X         | <CNI>            | Kubernetes CNI服务，部署到所有Kubernetes所在的节点，本文使用 Flannel
@@ -109,7 +109,7 @@ EOF
 mkdir -p /etc/systemd/system/docker.service.d/
 cat >>/etc/systemd/system/docker.service.d/http-proxy.conf <<EOF
 [Service]
-Environment="HTTP_PROXY=http://<代理host>:<代理端口>" "HTTPS_PROXY=http://<代理host>:<代理端口>" "NO_PROXY=localhost,127.0.0.1,dew.ms"
+Environment="HTTP_PROXY=http://<代理host>:<代理端口>" "HTTPS_PROXY=http://<代理host>:<代理端口>" "NO_PROXY=localhost,127.0.0.1,dew.idealworld.group"
 EOF
 
 systemctl daemon-reload
@@ -264,7 +264,7 @@ kubectl -n kube-system edit cm coredns
 data:
   Corefile: |
     ...
-    dew.ms:53 {
+    dew.idealworld.group:53 {
         errors
         cache 30
         proxy . x.x.x.x
@@ -387,14 +387,14 @@ helm install stable/kubernetes-dashboard --name dew-dashboard --namespace kube-s
     --set serviceAccount.create=true \
     --set ingress.enabled=true \
     --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/backend-protocol"="HTTPS" \
-    --set ingress.hosts={dashboard.dew.ms} \
-    --set ingress.tls[0].hosts={dashboard.dew.ms},ingress.tls[0].secretName=kubernetes-dashboard-certs \
+    --set ingress.hosts={dashboard.dew.idealworld.group} \
+    --set ingress.tls[0].hosts={dashboard.dew.idealworld.group},ingress.tls[0].secretName=kubernetes-dashboard-certs \
     --set nodeSelector.group=devops
 
 # 获取Token
 kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep dew-dashboard-kubernetes-dashboard | awk '{print $1}')
 
-# 添加域名到客户机hosts并访问 https://dashboard.dew.ms
+# 添加域名到客户机hosts并访问 https://dashboard.dew.idealworld.group
 ----
 
 TIP: 另一款 Kubernetes Dashboard 推荐：link:https://github.com/herbrandson/k8dash[k8dash]
@@ -436,7 +436,7 @@ spec:
   persistentVolumeReclaimPolicy: Recycle
   nfs:
     path: /data/nfs/elasticsearch/${i}
-    server: nfs.dew.ms
+    server: nfs.dew.idealworld.group
 EOF
 done
 
@@ -457,7 +457,7 @@ helm install --name dew-elasticsearch elastic/elasticsearch --namespace devops -
     --set fsGroup=0 \
     --set clusterHealthCheckParams="" \
     --set ingress.enabled=true \
-    --set ingress.hosts={es.dew.ms} \
+    --set ingress.hosts={es.dew.idealworld.group} \
     --set nodeSelector.group=devops
 ----
 
@@ -491,7 +491,7 @@ spec:
   persistentVolumeReclaimPolicy: Recycle
   nfs:
     path: /data/nfs/kibana
-    server: nfs.dew.ms
+    server: nfs.dew.idealworld.group
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -518,7 +518,7 @@ helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 
     --set image.tag="6.6.1" \
     --set env."ELASTICSEARCH_URL"="http://dew-elasticsearch-master:9200" \
     --set service.internalPort=5601 \
-    --set ingress.enabled=true,ingress.hosts={kibana.dew.ms} \
+    --set ingress.enabled=true,ingress.hosts={kibana.dew.idealworld.group} \
     --set dashboardImport.enabled=true \
     --set dashboardImport.dashboards."k8s"="https://raw.githubusercontent.com/monotek/kibana-dashboards/master/k8s-fluentd-elasticsearch.json" \
     --set serviceAccount.create=true,serviceAccountName=kibana \
@@ -581,7 +581,7 @@ spec:
   persistentVolumeReclaimPolicy: Recycle
   nfs:
     path: /data/nfs/${app}/${i}
-    server: nfs.dew.ms
+    server: nfs.dew.idealworld.group
 EOF
 done
 ----
@@ -608,7 +608,7 @@ spec:
   persistentVolumeReclaimPolicy: Recycle
   nfs:
     path: /data/nfs/grafana
-    server: nfs.dew.ms
+    server: nfs.dew.idealworld.group
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -655,9 +655,9 @@ kubectl -n devops create secret generic dew-prometheus-operator-etcd \
 helm install stable/prometheus-operator --name dew-prometheus-operator --namespace devops --version=5.0.10 \
     --set kubelet.serviceMonitor.https=true \
     --set prometheus.ingress.enabled=true \
-    --set prometheus.ingress.hosts={prometheus.dew.ms} \
+    --set prometheus.ingress.hosts={prometheus.dew.idealworld.group} \
     --set alertmanager.ingress.enabled=true \
-    --set alertmanager.ingress.hosts={alertmanager.dew.ms} \
+    --set alertmanager.ingress.hosts={alertmanager.dew.idealworld.group} \
     --set prometheusOperator.securityContext.runAsNonRoot=false \
     --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
     --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
@@ -673,7 +673,7 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     --set grafana.adminPassword=Dew123456 \
     --set grafana.defaultDashboardsEnabled=true \
     --set grafana.ingress.enabled=true \
-    --set grafana.ingress.hosts={grafana.dew.ms} \
+    --set grafana.ingress.hosts={grafana.dew.idealworld.group} \
     --set grafana.sidecar.dashboards.enabled=true \
     --set grafana.sidecar.dashboards.searchNamespace="devops"\
     --set grafana.sidecar.dashboards.label=grafana_dashboard \
@@ -686,7 +686,7 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     --set grafana.'grafana\.ini'.smtp.password=XXXXX \
     --set grafana.'grafana\.ini'.smtp.from_address="XXXXX@163.com" \
     --set grafana.'grafana\.ini'.smtp.skip_verify=true \
-    --set grafana.'grafana\.ini'.server.root_url="http://grafana.dew.ms" \
+    --set grafana.'grafana\.ini'.server.root_url="http://grafana.dew.idealworld.group" \
     --set grafana.persistence.enabled=true \
     --set grafana.persistence.existingClaim=grafana \
     --set prometheusOperator.nodeSelector.group=devops \
@@ -697,9 +697,9 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
 
 
 # grafana默认用户名：admin
-# 访问 http://prometheus.dew.ms
-# 访问 http://alertmanager.dew.ms
-# 访问 http://grafana.dew.ms
+# 访问 http://prometheus.dew.idealworld.group
+# 访问 http://alertmanager.dew.idealworld.group
+# 访问 http://grafana.dew.idealworld.group
 ----
 
 .常见问题
@@ -878,7 +878,7 @@ metadata:
   name: jaeger-query
 spec:
   rules:
-    - host: jaeger.dew.ms
+    - host: jaeger.dew.idealworld.group
       http:
         paths:
           - backend:

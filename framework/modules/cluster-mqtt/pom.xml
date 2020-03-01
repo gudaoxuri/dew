@@ -21,7 +21,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>ms.dew</groupId>
+        <groupId>group.idealworld.dew</groupId>
         <artifactId>parent-starter</artifactId>
         <version>2.1.0-SNAPSHOT</version>
         <relativePath>../parent-starter</relativePath>
@@ -38,7 +38,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>ms.dew</groupId>
+            <groupId>group.idealworld.dew</groupId>
             <artifactId>cluster-common</artifactId>
         </dependency>
         <dependency>
@@ -51,11 +51,11 @@
             <version>${mqtt.version}</version>
         </dependency>
         <dependency>
-            <groupId>ms.dew</groupId>
+            <groupId>group.idealworld.dew</groupId>
             <artifactId>cluster-common-test</artifactId>
         </dependency>
         <dependency>
-            <groupId>ms.dew</groupId>
+            <groupId>group.idealworld.dew</groupId>
             <artifactId>test-starter</artifactId>
         </dependency>
     </dependencies>

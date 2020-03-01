@@ -26,7 +26,7 @@
         <version>2.2.4.RELEASE</version>
     </parent>
 
-    <groupId>ms.dew</groupId>
+    <groupId>group.idealworld.dew</groupId>
     <artifactId>parent-starter</artifactId>
     <name>1.0.0 Dew Parent Starter</name>
     <description>Dew 父工程</description>
@@ -89,9 +89,9 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:https://github.com/ideal-world/dew.git</connection>
-        <developerConnection>scm:git:https://github.com/ideal-world/dew.git</developerConnection>
-        <url>https://github.com/ideal-world/dew.git</url>
+        <connection>scm:git:https://github.com/gudaoxuri/dew.git</connection>
+        <developerConnection>scm:git:https://github.com/gudaoxuri/dew.git</developerConnection>
+        <url>https://github.com/gudaoxuri/dew</url>
     </scm>
 
     <dependencyManagement>
@@ -103,64 +103,64 @@
                 <version>${dew-common.version}</version>
             </dependency>
             <dependency>
-                <groupId>ms.dew</groupId>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>notification</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <!-- Modules -->
             <dependency>
-                <groupId>ms.dew</groupId>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>boot-starter</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>ms.dew</groupId>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>cloud-starter</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>ms.dew</groupId>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>idempotent-starter</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>ms.dew</groupId>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>jdbc-starter</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <!-- Cluster -->
             <dependency>
-                <groupId>ms.dew</groupId>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>cluster-common</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>ms.dew</groupId>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>cluster-spi-redis</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>ms.dew</groupId>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>cluster-spi-rabbit</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>ms.dew</groupId>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>cluster-spi-hazelcast</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>ms.dew</groupId>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>cluster-spi-mqtt</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>ms.dew</groupId>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>cluster-spi-kafka</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
-                <groupId>ms.dew</groupId>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>hbase-starter</artifactId>
                 <version>${dew.version}</version>
             </dependency>
@@ -177,20 +177,20 @@
             </dependency>
             <!-- InitTest -->
             <dependency>
-                <groupId>ms.dew</groupId>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>cluster-common-test</artifactId>
                 <version>${dew.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>ms.dew</groupId>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>test-starter</artifactId>
                 <version>${dew.version}</version>
                 <scope>test</scope>
             </dependency>
             <!-- Others -->
             <dependency>
-                <groupId>ms.dew</groupId>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>auth-sdk-starter</artifactId>
                 <version>${dew.version}</version>
             </dependency>
@@ -277,7 +277,7 @@
                         </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>ms.dew</groupId>
+                        <groupId>group.idealworld.dew</groupId>
                         <artifactId>dew-maven-plugin</artifactId>
                         <version>2.1.0-SNAPSHOT</version>
                         <executions>

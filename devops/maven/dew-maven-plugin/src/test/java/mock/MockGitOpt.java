@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package mock;
 
-import ms.dew.devops.kernel.helper.GitOpt;
+import group.idealworld.dew.devops.kernel.helper.GitOpt;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;

@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-import ms.dew.devops.it.verify.TodoVerify
+import TodoVerify
 
 new TodoVerify().verify(basedir)

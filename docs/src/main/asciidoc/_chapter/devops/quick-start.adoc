@@ -19,8 +19,8 @@ TIP: 体验环境要求安装 Java(>=8)、Maven、NodeJS(>=8)
 sh dew-devops.sh
 # 添加本地Host映射
 -
-x.x.x.x todo-uat.dew.ms
-x.x.x.x todo-api-uat.dew.ms
+x.x.x.x todo-uat.dew.idealworld.group
+x.x.x.x todo-api-uat.dew.idealworld.group
 -
 # ======= 前置准备 =======
 git clone https://github.com/dew-ms/devops-example-todo.git
@@ -30,7 +30,7 @@ mvn install -Dmaven.test.skip=true
 # 部署到Kubernetes
 mvn -P devops deploy -Ddew_devops_profile=uat
 
-# 打开浏览器，输入 http://todo-uat.dew.ms，切换到移动模式体验
+# 打开浏览器，输入 http://todo-uat.dew.idealworld.group，切换到移动模式体验
 ----
 
 [[what-for-dew-devops]]
@@ -52,14 +52,14 @@ mvn -P devops deploy -Ddew_devops_profile=uat
     namespace: dew-uat
   spec:
     rules:
-    - host: todo-api-uat.dew.ms
+    - host: todo-api-uat.dew.idealworld.group
       http:
         paths:
         - backend:
             serviceName: todo-kernel
             servicePort: 8080
           path: /
-    - host: todo-uat.dew.ms
+    - host: todo-uat.dew.idealworld.group
       http:
         paths:
         - backend:

@@ -66,7 +66,7 @@ NOTE: 这里只关注后端的实现，前端代码不展开说明。
 ----
 <!-- 引用 Dew的 parent-starter -->
 <parent>
-    <groupId>ms.dew</groupId>
+    <groupId>group.idealworld.dew</groupId>
     <artifactId>parent-starter</artifactId>
     <version>...</version>
 </parent>
@@ -82,7 +82,7 @@ NOTE: 这里只关注后端的实现，前端代码不展开说明。
 <dependencies>
     <!-- 引用 cloud-starter 实现分布式能力  -->
     <dependency>
-        <groupId>ms.dew</groupId>
+        <groupId>group.idealworld.dew</groupId>
         <artifactId>cloud-starter</artifactId>
     </dependency>
     <!-- 添加JPA支持  -->
@@ -104,16 +104,16 @@ TIP: 详见 <<framework-user-manual-import>>
 
     <dependencies>
         <dependency>
-            <groupId>ms.dew.devops.it</groupId>
+            <groupId>group.idealworld.dew.devops.it</groupId>
             <artifactId>todo-common</artifactId>
         </dependency>
         <!-- 引用 cluster-spi-redis 实现Dew集群能力的Redis实现 -->
         <dependency>
-            <groupId>ms.dew</groupId>
+            <groupId>group.idealworld.dew</groupId>
             <artifactId>cluster-spi-redis</artifactId>
         </dependency>
         <dependency>
-            <groupId>ms.dew</groupId>
+            <groupId>group.idealworld.dew</groupId>
             <artifactId>test-starter</artifactId>
             <!--仅用于演示， 启用内嵌的Redis及 H2-->
             <scope>compile</scope>
@@ -161,7 +161,7 @@ todo-compute:
 ----
 
 [source,java]
-.backend/libraries/common/ms.dew.devops.it.todo.common.TodoParentApplication.java
+.backend/libraries/common/group.idealworld.dew.devops.it.todo.common.TodoParentApplication.java
 ----
 /**
  * 空实现，做为所有组件启动类的父类
@@ -174,7 +174,7 @@ public class TodoParentApplication {
 ----
 
 [source,java]
-.backend/services/kernel/ms.dew.devops.it.todo.kernel.TodoKernelApplication.java
+.backend/services/kernel/group.idealworld.dew.devops.it.todo.kernel.TodoKernelApplication.java
 ----
 // 继承自TodoParentApplication
 public class TodoKernelApplication extends TodoParentApplication {
@@ -188,7 +188,7 @@ public class TodoKernelApplication extends TodoParentApplication {
 ----
 
 [source,java]
-.backend/services/kernel/ms.dew.devops.it.todo.kernel.controller.TodoController.java
+.backend/services/kernel/group.idealworld.dew.devops.it.todo.kernel.controller.TodoController.java
 ----
 @RestController
 // Swagger文档注解
@@ -217,7 +217,7 @@ public class TodoController {
 ----
 
 [source,java]
-.backend/services/kernel/ms.dew.devops.it.todo.kernel.service.TodoService.java
+.backend/services/kernel/group.idealworld.dew.devops.it.todo.kernel.service.TodoService.java
 ----
 @Service
 public class TodoService {
@@ -256,7 +256,7 @@ public class TodoService {
 ----
 
 [source,java]
-.backend/services/notifier/ms.dew.devops.it.todo.notifier.controller.NotifierController.java
+.backend/services/notifier/group.idealworld.dew.devops.it.todo.notifier.controller.NotifierController.java
 ----
 @RestController
 public class NotifierController {

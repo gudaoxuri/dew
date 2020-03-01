@@ -2,14 +2,14 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    dew.ms/git-commit: "@ignore@"
-    dew.ms/scm-url: "@ignore@"
+    dew.idealworld.group/git-commit: "@ignore@"
+    dew.idealworld.group/scm-url: "@ignore@"
   labels:
     app: helloworld-frontend
     provider: dew
     version: "@ignore@"
     expose: 'true'
-    group: ms.dew.devops.it
+    group: group.idealworld.dew.devops.it
   name: helloworld-frontend
   namespace: dew-test
 spec:
@@ -20,4 +20,4 @@ spec:
     targetPort: 80
   selector:
     app: helloworld-frontend
-    group: ms.dew.devops.it
+    group: group.idealworld.dew.devops.it

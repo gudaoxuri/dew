@@ -2,13 +2,13 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   annotations:
-    dew.ms/git-commit: "@ignore@"
-    dew.ms/scm-url: "@ignore@"
+    dew.idealworld.group/git-commit: "@ignore@"
+    dew.idealworld.group/scm-url: "@ignore@"
   labels:
     app: helloworld-frontend
     provider: dew
     version: "@ignore@"
-    group: ms.dew.devops.it
+    group: group.idealworld.dew.devops.it
   name: helloworld-frontend
   namespace: dew-test
 spec:
@@ -17,17 +17,17 @@ spec:
   selector:
     matchLabels:
       app: helloworld-frontend
-      group: ms.dew.devops.it
+      group: group.idealworld.dew.devops.it
   template:
     metadata:
       annotations:
-        dew.ms/git-commit: "@ignore@"
-        dew.ms/scm-url: "@ignore@"
+        dew.idealworld.group/git-commit: "@ignore@"
+        dew.idealworld.group/scm-url: "@ignore@"
       labels:
         app: helloworld-frontend
         provider: dew
         version: "@ignore@"
-        group: ms.dew.devops.it
+        group: group.idealworld.dew.devops.it
     spec:
       containers:
       - image: "@ignore@"

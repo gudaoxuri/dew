@@ -16,7 +16,7 @@
 
 项目准备：
 
-. 在项目代码中添加并配置 ``.dew`` 文件（详见 http://doc.dew.ms/#devops-configuration-dew[.dew 配置详情]）
+. 在项目代码中添加并配置 ``.dew`` 文件（详见 http://doc.dew.idealworld.group/#devops-configuration-dew[.dew 配置详情]）
 . 若使用 Gitlab Runner 进行部署，需要在项目代码中添加并配置 ``.gitlab-ci.yml`` 文件（参考 <<dew-gitlab-ci,Gitlab CI 实现>>）
 
 ===== 使用方式
@@ -48,7 +48,7 @@ TIP: 若不使用MinIO作为缓存存储，请参考 https://gitlab.com/charts/g
 |runners.image | runner的默认容器镜像，为了保证能使用最新的Dew DevOps功能，建议使用dewms/devops:latest；或者也可使用基于此镜像的自定义镜像
 |runners.tags | 用于Gitlab CI 触发部署的runner的tag，此脚本中，tags和项目的profile保持一致。也可在执行脚本时自行修改。
 |runners.env.dew_devops_profile | 此为指定部署项目的profile，默认与runners.tags只保持一致。可在执行脚本时自行修改。
-|runners.env.dew_devops_XXX | 更多runner.env配置项，详见： http://doc.dew.ms/#maven_%E9%85%8D%E7%BD%AE[Maven 配置]
+|runners.env.dew_devops_XXX | 更多runner.env配置项，详见： http://doc.dew.idealworld.group/#maven_%E9%85%8D%E7%BD%AE[Maven 配置]
 |===
 
 .Create a project

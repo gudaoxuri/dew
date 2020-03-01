@@ -41,7 +41,7 @@ a|
 spring:
    cloud:
      config:
-       uri: http://config.dew.ms
+       uri: http://config.dew.idealworld.group
 ----
 |===
 

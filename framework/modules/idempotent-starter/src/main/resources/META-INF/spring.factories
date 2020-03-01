@@ -1,4 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  ms.dew.idempotent.interceptor.IdempotentWebMvcConfigurer
+  group.idealworld.dew.idempotent.interceptor.IdempotentWebMvcConfigurer
 
 

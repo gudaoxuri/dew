@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  ms.dew.test.DewTestAutoConfiguration
+  group.idealworld.dew.test.DewTestAutoConfiguration

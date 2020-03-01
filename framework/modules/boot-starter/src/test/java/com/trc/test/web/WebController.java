@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import ms.dew.Dew;
-import ms.dew.core.web.validation.CreateGroup;
-import ms.dew.core.web.validation.IdNumber;
-import ms.dew.core.web.validation.Phone;
-import ms.dew.core.web.validation.UpdateGroup;
+import group.idealworld.dew.Dew;
+import group.idealworld.dew.core.web.validation.CreateGroup;
+import group.idealworld.dew.core.web.validation.IdNumber;
+import group.idealworld.dew.core.web.validation.Phone;
+import group.idealworld.dew.core.web.validation.UpdateGroup;
 import org.junit.Assert;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.validation.annotation.Validated;

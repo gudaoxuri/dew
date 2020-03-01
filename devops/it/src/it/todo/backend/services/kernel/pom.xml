@@ -21,7 +21,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>ms.dew.devops.it</groupId>
+        <groupId>group.idealworld.dew.devops.it</groupId>
         <artifactId>todo-parent</artifactId>
         <version>2.1.0-SNAPSHOT</version>
         <relativePath>../../..</relativePath>
@@ -36,16 +36,16 @@
 
     <dependencies>
         <dependency>
-            <groupId>ms.dew.devops.it</groupId>
+            <groupId>group.idealworld.dew.devops.it</groupId>
             <artifactId>todo-common</artifactId>
         </dependency>
         <!-- 引用 cluster-spi-redis 实现Dew集群能力的Redis实现 -->
         <dependency>
-            <groupId>ms.dew</groupId>
+            <groupId>group.idealworld.dew</groupId>
             <artifactId>cluster-spi-redis</artifactId>
         </dependency>
         <dependency>
-            <groupId>ms.dew</groupId>
+            <groupId>group.idealworld.dew</groupId>
             <artifactId>test-starter</artifactId>
             <!--仅用于演示， 启用内嵌的Redis及 H2-->
             <scope>compile</scope>

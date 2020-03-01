@@ -71,7 +71,7 @@ image::./images/devops-jenkins/manual/pipeline-dew.jpg[width="70%",height="70%"]
 .参数说明：
 - branch 为部署代码的分支
 - profile 为部署代码的环境配置
-- devops_appended_cmd 为 Dew 部署命令的附加值，可为空。详细可查 link:http://doc.dew.ms/#devops-user-manual[Dew DevOps]。
+- devops_appended_cmd 为 Dew 部署命令的附加值，可为空。详细可查 link:http://doc.dew.idealworld.group/#devops-user-manual[Dew DevOps]。
 - devops_assign_services 为指定部署的服务，为空时部署全部服务。可多选。
 - devops_phase 为部署的类型，默认为 deploy（部署服务）。对应值说明见：<<../../README.adoc#devops_phase,devops_phase>>
 +
@@ -91,5 +91,5 @@ A:
 此为正常现象。参数化构建时，因为参数不同时，会执行不同的脚本内容。
 
 
-  
+
 

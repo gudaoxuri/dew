@@ -5,7 +5,7 @@ dew:
     desc: Dew多租户的RBAC权限服务
     webSite:
     doc:
-      base-packages: ["ms.dew.auth.controller"]
+      base-packages: ["group.idealworld.dew.auth.controller"]
   security:
     cors:
       allow-headers: X-Requested-With,Content-Type,Authorization,X-Platform-Info,X-Device-Info

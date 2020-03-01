@@ -16,7 +16,7 @@
 
 import Taro from '@tarojs/taro'
 
-export const API_URL = process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:8080/api' : 'http://todo-api-'+process.env.NODE_ENV+'.dew.ms/api'
+export const API_URL = process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:8080/api' : 'http://todo-api-'+process.env.NODE_ENV+'.dew.idealworld.group/api'
 
 console.log(Taro.getEnv())
 

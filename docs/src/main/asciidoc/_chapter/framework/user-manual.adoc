@@ -18,7 +18,7 @@ IMPORTANT: 本手册只介绍 ``Dew`` 框架部分的扩展功能！
 ----
 <!--引入Dew父依赖，也可以使用import方式-->
 <parent>
-    <groupId>ms.dew</groupId>
+    <groupId>group.idealworld.dew</groupId>
     <artifactId>parent-starter</artifactId>
     <!--生产环境请选择合适的版本!-->
     <version>${dew.version}</version>
@@ -27,7 +27,7 @@ IMPORTANT: 本手册只介绍 ``Dew`` 框架部分的扩展功能！
 <dependencies>
     <!--引入需要的模块-->
     <dependency>
-        <groupId>ms.dew</groupId>
+        <groupId>group.idealworld.dew</groupId>
         <artifactId>对应模块名，见下文</artifactId>
     </dependency>
 </dependencies>
@@ -250,24 +250,24 @@ TIP: 完整使用手册见 https://gudaoxuri.github.io/dew-common/
 .依赖
 ----
 <dependency>
-    <groupId>ms.dew</groupId>
+    <groupId>group.idealworld.dew</groupId>
     <artifactId>boot-starter</artifactId>
 </dependency>
 <!--引入集群依赖，可选redis/hazelcast/rabbit-->
 <dependency>
-    <groupId>ms.dew</groupId>
+    <groupId>group.idealworld.dew</groupId>
     <artifactId>cluster-spi-redis</artifactId>
 </dependency>
 <dependency>
-    <groupId>ms.dew</groupId>
+    <groupId>group.idealworld.dew</groupId>
     <artifactId>cluster-spi-hazelcast</artifactId>
 </dependency>
 <dependency>
-    <groupId>ms.dew</groupId>
+    <groupId>group.idealworld.dew</groupId>
     <artifactId>cluster-spi-rabbit</artifactId>
 </dependency>
 <dependency>
-    <groupId>ms.dew</groupId>
+    <groupId>group.idealworld.dew</groupId>
     <artifactId>cluster-spi-mqtt</artifactId>
 </dependency>
 ----
@@ -320,7 +320,7 @@ TIP: 集群服务的使用入口统一为： `Dew.cluster.XX`
 [source,java]
 .API
 ----
-include::../../../../../../framework/modules/cluster-common/src/main/java/ms/dew/core/cluster/ClusterCache.java[]
+include::../../../../../../framework/modules/cluster-common/src/main/java/group/idealworld/dew/core/cluster/ClusterCache.java[]
 ----
 
 [source,java]
@@ -377,7 +377,7 @@ Dew.cluster.cache.set("name", "xxxxx")
 [source,java]
 .API
 ----
-include::../../../../../../framework/modules/cluster-common/src/main/java/ms/dew/core/cluster/ClusterMap.java[]
+include::../../../../../../framework/modules/cluster-common/src/main/java/group/idealworld/dew/core/cluster/ClusterMap.java[]
 ----
 
 [source,java]
@@ -400,7 +400,7 @@ mapObj.get("test");
 [source,java]
 .API
 ----
-include::../../../../../../framework/modules/cluster-common/src/main/java/ms/dew/core/cluster/ClusterLock.java[]
+include::../../../../../../framework/modules/cluster-common/src/main/java/group/idealworld/dew/core/cluster/ClusterLock.java[]
 ----
 
 [source,java]
@@ -428,7 +428,7 @@ lock.tryLockWithFun(0, 1000, () -> {
 [source,java]
 .API
 ----
-include::../../../../../../framework/modules/cluster-common/src/main/java/ms/dew/core/cluster/ClusterMQ.java[]
+include::../../../../../../framework/modules/cluster-common/src/main/java/group/idealworld/dew/core/cluster/ClusterMQ.java[]
 ----
 
 [source,java]
@@ -470,7 +470,7 @@ MQ的HA开启后，您可以以多线程的方式消费消息，处理过程中�
 [source,java]
 .API
 ----
-include::../../../../../../framework/modules/cluster-common/src/main/java/ms/dew/core/cluster/ClusterElection.java[]
+include::../../../../../../framework/modules/cluster-common/src/main/java/group/idealworld/dew/core/cluster/ClusterElection.java[]
 ----
 
 [source,java]
@@ -895,7 +895,7 @@ public Resp<Void> logout() {
 [source,java]
 .AuthAdapter
 ----
-include::../../../../../../framework/modules/boot-starter/src/main/java/ms/dew/core/auth/AuthAdapter.java[]
+include::../../../../../../framework/modules/boot-starter/src/main/java/group/idealworld/dew/core/auth/AuthAdapter.java[]
 ----
 
 ``Dew`` 默认实现了基于 ``Dew.cluster.cache`` 的适配器以支持上述功能，
@@ -932,7 +932,7 @@ Dew.auth = new CustomAuthAdapter() // 或 Bean实例
 .依赖
 ----
 <dependency>
-    <groupId>ms.dew</groupId>
+    <groupId>group.idealworld.dew</groupId>
     <artifactId>test-starter</artifactId>
 </dependency>
 ----
@@ -969,7 +969,7 @@ spring:
 ----
 <!--引入幂等支持-->
 <dependency>
-    <groupId>ms.dew</groupId>
+    <groupId>group.idealworld.dew</groupId>
     <artifactId>idempotent-starter</artifactId>
 </dependency>
 ----
@@ -1112,7 +1112,7 @@ TIP: 使用 `<maven.test.skip>true</maven.test.skip>` 可跳过特定模块的�
 .依赖
 ----
 <dependency>
-    <groupId>ms.dew</groupId>
+    <groupId>group.idealworld.dew</groupId>
     <artifactId>hbase-starter</artifactId>
 </dependency>
 ----

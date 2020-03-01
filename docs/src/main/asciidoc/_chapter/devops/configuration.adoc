@@ -69,8 +69,8 @@ app:                                    # 应用配置
   labels: {}                            # 自定义labels
   env: {}                               # 自定义env，key对应一个env的name，value对应一个env的value
 docker:                                 # Docker配置
-  host:                                 # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-  registryUrl:                          # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+  host:                                 # Dockerd的Host e.g. tcp://dockerd.dew.idealworld.group:2375
+  registryUrl:                          # Docker Registry Url  e.g. https://harbor.dew.idealworld.group/v2
   registryUserName:                     # Docker Registry 用户名，此项建议使用Maven方式配置
   registryPassword:                     # Docker Registry 密码，此项建议使用Maven方式配置
   image:                                # Docker 镜像
@@ -231,8 +231,8 @@ profiles:
 dew_devops_profile                           # 指定的环境
 dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
 # ============= 发布与回滚使用 =============
-dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.idealworld.group:2375
+dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.idealworld.group/v2
 dew_devops_docker_registry_username          # Docker Registry 用户名
 dew_devops_docker_registry_password          # Docker Registry 密码
 dew_devops_assignation_projects              # 指定部署应用artifactId  多个以逗号分隔

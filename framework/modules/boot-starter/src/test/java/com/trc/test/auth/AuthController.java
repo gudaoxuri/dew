@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,9 @@ package com.trc.test.auth;
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
-import ms.dew.Dew;
-import ms.dew.core.DewContext;
-import ms.dew.core.auth.dto.OptInfo;
+import group.idealworld.dew.Dew;
+import group.idealworld.dew.core.DewContext;
+import group.idealworld.dew.core.auth.dto.OptInfo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;

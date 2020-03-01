@@ -18,24 +18,24 @@
 set -o pipefail
 set -u
 
-HARBOR_REGISTRY_URL=https://harbor.dew.ms
+HARBOR_REGISTRY_URL=https://harbor.dew.idealworld.group
 HARBOR_REGISTRY_ADMIN=admin
 HARBOR_REGISTRY_ADMIN_PASSWORD=Harbor12345
 HARBOR_REGISTRY_PASSWORD_REGEX="(?=^.{8,20}$)(?=^[^\s]*$)(?=.*\d)(?=.*[A-Z])(?=.*[a-z])"
 PROJECT_NAMESPACE=devops-example
 DEW_HARBOR_USER_NAME=${PROJECT_NAMESPACE}
 DEW_HARBOR_USER_PASSWORD=Dew\!123456
-DEW_HARBOR_USER_EMAIL=${DEW_HARBOR_USER_NAME}@dew.ms
+DEW_HARBOR_USER_EMAIL=${DEW_HARBOR_USER_NAME}@dew.idealworld.group
 HARBOR_PROJECT_PUBLIC_ENABLED="false"
 CREATE_PROJECT_NAMESPACE_SKIP="false"
-DOCKERD_URL=tcp://dockerd.dew.ms:2375
+DOCKERD_URL=tcp://dockerd.dew.idealworld.group:2375
 
-MINIO_HOST=minio.dew.ms:9000
+MINIO_HOST=minio.dew.idealworld.group:9000
 MINIO_ACCESS_KEY=dew
 MINIO_SECRET_KEY=Dew123456
 MINIO_BUCKET_NAME=dew
 
-GITLAB_URL=http://gitlab.dew.ms
+GITLAB_URL=http://gitlab.dew.idealworld.group
 GITLAB_RUNNER_NAMESPACE=devops
 GITLAB_RUNNER_NAME=dew-runner
 GITLAB_RUNNER_IMAGE=dewms/devops:2.0.0-rc
@@ -43,7 +43,7 @@ GITLAB_RUNNER_REG_TOKEN=3mezus8cX9qAjkrNY4B
 GITLAB_RUNNER_PROFILE=test
 
 KUBERNETES_CONFIG=$(echo $(base64 < /etc/kubernetes/admin.conf) |  tr -d " ")
-INGRESS_HOST_EXAMPLE="test.dew.ms/api user-service:8080"
+INGRESS_HOST_EXAMPLE="test.dew.idealworld.group/api user-service:8080"
 
 # ------------------
 # Params dealing
@@ -800,7 +800,7 @@ project_create_check(){
         NEED_CREATE_PROJECT_USER="false"
     else
         DEW_HARBOR_USER_NAME=${project_name}
-        DEW_HARBOR_USER_EMAIL=${DEW_HARBOR_USER_NAME}@dew.ms
+        DEW_HARBOR_USER_EMAIL=${DEW_HARBOR_USER_NAME}@dew.idealworld.group
         project_harbor_user_create_check ${project_name}
         NEED_CREATE_PROJECT_USER="true"
     fi

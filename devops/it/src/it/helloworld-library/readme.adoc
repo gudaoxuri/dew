@@ -1,6 +1,6 @@
 ==== DevOps示例 : Helloworld类库
 
-本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.ms
+本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.idealworld.group
 
 .说明
 此示例用于演示类库的自动化部署到Maven。

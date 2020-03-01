@@ -4,7 +4,7 @@ dew:
     version: 1.0
     website: www.trc.com
     doc:
-      base-package: ms.dew.auth.controller
+      base-package: group.idealworld.dew.auth.controller
 
 spring:
   redis:

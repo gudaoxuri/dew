@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package org.apache.maven.lifecycle.internal;
 
-import ms.dew.devops.agent.SkipCheck;
+import group.idealworld.dew.devops.agent.SkipCheck;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.CumulativeScopeArtifactFilter;
@@ -138,7 +138,7 @@ public class MojoExecutor
         if (SkipCheck.skip(session.getCurrentProject().getBasedir())
                 && mojoExecutions.stream().map(MojoExecution::getGoal).map(String::toLowerCase)
                 .anyMatch(s ->
-                        s.contains("ms.dew:dew-maven-plugin:release")
+                        s.contains("group.idealworld.dew:dew-maven-plugin:release")
                                 || s.contains("dew:release")
                                 || s.contains("deploy"))) {
             return;

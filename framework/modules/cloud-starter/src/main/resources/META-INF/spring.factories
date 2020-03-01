@@ -1,3 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  ms.dew.core.CloudAutoConfiguration,\
-  ms.dew.core.hystrix.NotifyAutoConfiguration
+  group.idealworld.dew.core.CloudAutoConfiguration,\
+  group.idealworld.dew.core.hystrix.NotifyAutoConfiguration

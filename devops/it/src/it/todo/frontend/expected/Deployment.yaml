@@ -2,13 +2,13 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   annotations:
-    dew.ms/git-commit: "@ignore@"
-    dew.ms/scm-url: "@ignore@"
+    dew.idealworld.group/git-commit: "@ignore@"
+    dew.idealworld.group/scm-url: "@ignore@"
   labels:
     app: todo-frontend
     provider: dew
     version: "@ignore@"
-    group: ms.dew.devops.it
+    group: group.idealworld.dew.devops.it
   name: todo-frontend
   namespace: dew-prod
 spec:
@@ -17,17 +17,17 @@ spec:
   selector:
     matchLabels:
       app: todo-frontend
-      group: ms.dew.devops.it
+      group: group.idealworld.dew.devops.it
   template:
     metadata:
       annotations:
-        dew.ms/git-commit: "@ignore@"
-        dew.ms/scm-url: "@ignore@"
+        dew.idealworld.group/git-commit: "@ignore@"
+        dew.idealworld.group/scm-url: "@ignore@"
       labels:
         app: todo-frontend
         provider: dew
         version: "@ignore@"
-        group: ms.dew.devops.it
+        group: group.idealworld.dew.devops.it
     spec:
       containers:
       - image: "@ignore@"

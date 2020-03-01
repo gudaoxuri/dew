@@ -33,7 +33,7 @@ TIP: 因 Dew DevOps 2.0.x 到 2.1.X 的变更，原有namespace下的 secret/dew
   helm repo add helm-dew-spring-cloud-config https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/chart/dew-spring-cloud-config/
   # 安装，注意域名要能被Kubernetes Pod访问
   helm install helm-dew-spring-cloud-config/dew-spring-cloud-config --name dew-spring-cloud-config --namespace devops \
-      --set ingress.hosts={config.dew.ms}
+      --set ingress.hosts={config.dew.idealworld.group}
   # 修改配置，修改后需要删除Pod以实现重启获取最新配置
   kubectl -n devops edit cm custom-config
   # e.g.
@@ -42,7 +42,7 @@ TIP: 因 Dew DevOps 2.0.x 到 2.1.X 的变更，原有namespace下的 secret/dew
   #     config:
   #       server:
   #         git:
-  #           uri: https://gitlab.dew.ms/env/dew.git
+  #           uri: https://gitlab.dew.idealworld.group/env/dew.git
   #           username: cdman
   #           password: cdman123
   #   security:
@@ -114,7 +114,7 @@ TIP: 因 Dew DevOps 2.0.x 到 2.1.X 的变更，原有namespace下的 secret/dew
 
 
 * [ ] [Dew Framework] 修改 ``dew-parent`` 的版本号到最新版本
-* [ ] [Dew Framework] 使用IDE全局查询替换 ``com.tairanchina.csp.dew`` 为 ``ms.dew``
+* [ ] [Dew Framework] 使用IDE全局查询替换 ``com.tairanchina.csp.dew`` 为 ``group.idealworld.dew``
 * [ ] [Dew Framework] 鉴权修改，详见 <<devops-best-practices-auth,鉴权处理>>
 * [ ] [Dew Framework] dew-common 升级到 1.5.x , 核心方法的异常均改为非受检异常，继承自RuntimeException以方便Stream下使用，业务中部分捕获异常需要修改
 
@@ -127,7 +127,7 @@ TIP: 因 Dew DevOps 2.0.x 到 2.1.X 的变更，原有namespace下的 secret/dew
   spring:
     cloud:
       config:
-        uri: # 配置中心的URL（见下文 DevOps实现 说明）, e.g. http://config.dew.ms
+        uri: # 配置中心的URL（见下文 DevOps实现 说明）, e.g. http://config.dew.idealworld.group
         username:  # 配置中心访问用户名
         password:  # 配置中心访问密码
         label:  # 加载的Git分支名
@@ -139,7 +139,7 @@ TIP: 因 Dew DevOps 2.0.x 到 2.1.X 的变更，原有namespace下的 secret/dew
   logging:
     level:
       ROOT: INFO
-      ms.dew: DEBUG                       # Dew目录日志配置
+      group.idealworld.dew: DEBUG                       # Dew目录日志配置
       org.springframework.jdbc.core: TRACE# Jdbc目录日志配置
 
 * [ ] [Dew DevOps] 为前端工程添加 ``pom.xml`` ，e.g.
@@ -150,11 +150,11 @@ TIP: 因 Dew DevOps 2.0.x 到 2.1.X 的变更，原有namespace下的 secret/dew
            xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-      <groupId>ms.dew</groupId>
+      <groupId>group.idealworld.dew</groupId>
       <artifactId>parent-starter</artifactId>
       <version>2.0.0-rc</version>
     </parent>
-    <groupId>ms.dew.devops.it</groupId>
+    <groupId>group.idealworld.dew.devops.it</groupId>
     <artifactId>todo-frontend</artifactId>
     <packaging>pom</packaging>
     <!-- 如果前端工程是原生NodeJS启动方式，请在pom中添加一下配置，如果前端工程是打包成静态文件的方式则不需要添加 -->
@@ -191,7 +191,7 @@ TIP: 因 Dew DevOps 2.0.x 到 2.1.X 的变更，原有namespace下的 secret/dew
 * [ ] [Dew DevOps] 为没有继承 ``parent-starter`` 的工程添加 ``parent-starter`` 模块，以实现DevOps功能，此模块没有任何依赖，故引入不会产生副作用
 
   <parent>
-      <groupId>ms.dew</groupId>
+      <groupId>group.idealworld.dew</groupId>
       <artifactId>parent-starter</artifactId>
       <version><最新的版本></version>
   </parent>

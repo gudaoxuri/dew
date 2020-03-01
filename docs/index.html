@@ -690,11 +690,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://img.shields.io/maven-central/v/ms.dew/parent-starter" alt="Maven Central">
+<img src="https://img.shields.io/maven-central/v/group.idealworld.dew/parent-starter" alt="Maven Central">
 </div>
 </div>
 <div class="paragraph">
-<p>微服务一站式解决方案( <a href="http://doc.dew.ms" class="bare">http://doc.dew.ms</a> )，提供：架构指南、容器优先/兼容Spring Cloud与Istio的框架、最佳实践及DevOps标准化流程。</p>
+<p>微服务一站式解决方案( <a href="http://doc.dew.idealworld.group" class="bare">http://doc.dew.idealworld.group</a> )，提供：架构指南、容器优先/兼容Spring Cloud与Istio的框架、最佳实践及DevOps标准化流程。</p>
 </div>
 <div class="quoteblock">
 <blockquote>
@@ -1066,7 +1066,7 @@ cd frontend &amp;&amp; npm install &amp;&amp; npm run dev:h5
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;!-- 引用 Dew的 parent-starter --&gt;
 &lt;parent&gt;
-    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
     &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
     &lt;version&gt;...&lt;/version&gt;
 &lt;/parent&gt;
@@ -1082,7 +1082,7 @@ cd frontend &amp;&amp; npm install &amp;&amp; npm run dev:h5
 &lt;dependencies&gt;
     &lt;!-- 引用 cloud-starter 实现分布式能力  --&gt;
     &lt;dependency&gt;
-        &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+        &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
         &lt;artifactId&gt;cloud-starter&lt;/artifactId&gt;
     &lt;/dependency&gt;
     &lt;!-- 添加JPA支持  --&gt;
@@ -1114,16 +1114,16 @@ cd frontend &amp;&amp; npm install &amp;&amp; npm run dev:h5
 
     &lt;dependencies&gt;
         &lt;dependency&gt;
-            &lt;groupId&gt;ms.dew.devops.it&lt;/groupId&gt;
+            &lt;groupId&gt;group.idealworld.dew.devops.it&lt;/groupId&gt;
             &lt;artifactId&gt;todo-common&lt;/artifactId&gt;
         &lt;/dependency&gt;
         &lt;!-- 引用 cluster-spi-redis 实现Dew集群能力的Redis实现 --&gt;
         &lt;dependency&gt;
-            &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+            &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
             &lt;artifactId&gt;cluster-spi-redis&lt;/artifactId&gt;
         &lt;/dependency&gt;
         &lt;dependency&gt;
-            &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+            &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
             &lt;artifactId&gt;test-starter&lt;/artifactId&gt;
             &lt;!--仅用于演示， 启用内嵌的Redis及 H2--&gt;
             &lt;scope&gt;compile&lt;/scope&gt;
@@ -1181,7 +1181,7 @@ todo-compute:
 </div>
 </div>
 <div class="listingblock">
-<div class="title">backend/libraries/common/ms.dew.devops.it.todo.common.TodoParentApplication.java</div>
+<div class="title">backend/libraries/common/group.idealworld.dew.devops.it.todo.common.TodoParentApplication.java</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">/**
  * 空实现，做为所有组件启动类的父类
@@ -1194,7 +1194,7 @@ public class TodoParentApplication {
 </div>
 </div>
 <div class="listingblock">
-<div class="title">backend/services/kernel/ms.dew.devops.it.todo.kernel.TodoKernelApplication.java</div>
+<div class="title">backend/services/kernel/group.idealworld.dew.devops.it.todo.kernel.TodoKernelApplication.java</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">// 继承自TodoParentApplication
 public class TodoKernelApplication extends TodoParentApplication {
@@ -1208,7 +1208,7 @@ public class TodoKernelApplication extends TodoParentApplication {
 </div>
 </div>
 <div class="listingblock">
-<div class="title">backend/services/kernel/ms.dew.devops.it.todo.kernel.controller.TodoController.java</div>
+<div class="title">backend/services/kernel/group.idealworld.dew.devops.it.todo.kernel.controller.TodoController.java</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">@RestController
 // Swagger文档注解
@@ -1237,7 +1237,7 @@ public class TodoController {
 </div>
 </div>
 <div class="listingblock">
-<div class="title">backend/services/kernel/ms.dew.devops.it.todo.kernel.service.TodoService.java</div>
+<div class="title">backend/services/kernel/group.idealworld.dew.devops.it.todo.kernel.service.TodoService.java</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">@Service
 public class TodoService {
@@ -1276,7 +1276,7 @@ public class TodoService {
 </div>
 </div>
 <div class="listingblock">
-<div class="title">backend/services/notifier/ms.dew.devops.it.todo.notifier.controller.NotifierController.java</div>
+<div class="title">backend/services/notifier/group.idealworld.dew.devops.it.todo.notifier.controller.NotifierController.java</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">@RestController
 public class NotifierController {
@@ -1337,7 +1337,7 @@ public class NotifierController {
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;!--引入Dew父依赖，也可以使用import方式--&gt;
 &lt;parent&gt;
-    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
     &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
     &lt;!--生产环境请选择合适的版本!--&gt;
     &lt;version&gt;${dew.version}&lt;/version&gt;
@@ -1346,7 +1346,7 @@ public class NotifierController {
 &lt;dependencies&gt;
     &lt;!--引入需要的模块--&gt;
     &lt;dependency&gt;
-        &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+        &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
         &lt;artifactId&gt;对应模块名，见下文&lt;/artifactId&gt;
     &lt;/dependency&gt;
 &lt;/dependencies&gt;
@@ -1734,24 +1734,24 @@ $.field.validateMobile("18657120000")
 <div class="title">依赖</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
     &lt;artifactId&gt;boot-starter&lt;/artifactId&gt;
 &lt;/dependency&gt;
 &lt;!--引入集群依赖，可选redis/hazelcast/rabbit--&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
     &lt;artifactId&gt;cluster-spi-redis&lt;/artifactId&gt;
 &lt;/dependency&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
     &lt;artifactId&gt;cluster-spi-hazelcast&lt;/artifactId&gt;
 &lt;/dependency&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
     &lt;artifactId&gt;cluster-spi-rabbit&lt;/artifactId&gt;
 &lt;/dependency&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
     &lt;artifactId&gt;cluster-spi-mqtt&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -1816,7 +1816,7 @@ dew:
 <div class="title">API</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">/*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1831,7 +1831,7 @@ dew:
  * limitations under the License.
  */
 
-package ms.dew.core.cluster;
+package group.idealworld.dew.core.cluster;
 
 import java.util.List;
 import java.util.Map;
@@ -2271,7 +2271,7 @@ Dew.cluster.cache.set("name", "xxxxx")</pre>
 <div class="title">API</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">/*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2286,7 +2286,7 @@ Dew.cluster.cache.set("name", "xxxxx")</pre>
  * limitations under the License.
  */
 
-package ms.dew.core.cluster;
+package group.idealworld.dew.core.cluster;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -2503,7 +2503,7 @@ mapObj.get("test");</code></pre>
 <div class="title">API</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">/*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2518,7 +2518,7 @@ mapObj.get("test");</code></pre>
  * limitations under the License.
  */
 
-package ms.dew.core.cluster;
+package group.idealworld.dew.core.cluster;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -2630,7 +2630,7 @@ lock.tryLockWithFun(0, 1000, () -&gt; {
 <div class="title">API</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">/*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2645,9 +2645,9 @@ lock.tryLockWithFun(0, 1000, () -&gt; {
  * limitations under the License.
  */
 
-package ms.dew.core.cluster;
+package group.idealworld.dew.core.cluster;
 
-import ms.dew.core.cluster.dto.MessageWrap;
+import group.idealworld.dew.core.cluster.dto.MessageWrap;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -2844,7 +2844,7 @@ MQ的HA开启后，您可以以多线程的方式消费消息，处理过程中�
 <div class="title">API</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">/*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -2859,7 +2859,7 @@ MQ的HA开启后，您可以以多线程的方式消费消息，处理过程中�
  * limitations under the License.
  */
 
-package ms.dew.core.cluster;
+package group.idealworld.dew.core.cluster;
 
 /**
  * 领导者选举服务.
@@ -3408,7 +3408,7 @@ public Resp&lt;Void&gt; logout() {
 <div class="title">AuthAdapter</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">/*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -3423,10 +3423,10 @@ public Resp&lt;Void&gt; logout() {
  * limitations under the License.
  */
 
-package ms.dew.core.auth;
+package group.idealworld.dew.core.auth;
 
-import ms.dew.Dew;
-import ms.dew.core.auth.dto.OptInfo;
+import group.idealworld.dew.Dew;
+import group.idealworld.dew.core.auth.dto.OptInfo;
 
 import java.util.Optional;
 
@@ -3519,7 +3519,7 @@ Dew.auth = new CustomAuthAdapter() // 或 Bean实例</code></pre>
 <div class="title">依赖</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
     &lt;artifactId&gt;test-starter&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -3559,7 +3559,7 @@ spring:
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;!--引入幂等支持--&gt;
 &lt;dependency&gt;
-    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
     &lt;artifactId&gt;idempotent-starter&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -3738,7 +3738,7 @@ swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，�
 <div class="title">依赖</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
     &lt;artifactId&gt;hbase-starter&lt;/artifactId&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
@@ -3961,7 +3961,7 @@ management:
 logging:
   level:
     ROOT: INFO
-    ms.dew: DEBUG                     # Dew目录日志配置
+    group.idealworld.dew: DEBUG                     # Dew目录日志配置
     org.springframework.jdbc.core: TRACE
                                       # Jdbc目录日志配置</code></pre>
 </div>
@@ -4300,8 +4300,8 @@ RedisCacheManager cacheManager() {
 sh dew-devops.sh
 # 添加本地Host映射
 -
-x.x.x.x todo-uat.dew.ms
-x.x.x.x todo-api-uat.dew.ms
+x.x.x.x todo-uat.dew.idealworld.group
+x.x.x.x todo-api-uat.dew.idealworld.group
 -
 # ======= 前置准备 =======
 git clone https://github.com/dew-ms/devops-example-todo.git
@@ -4311,7 +4311,7 @@ mvn install -Dmaven.test.skip=true
 # 部署到Kubernetes
 mvn -P devops deploy -Ddew_devops_profile=uat
 
-# 打开浏览器，输入 http://todo-uat.dew.ms，切换到移动模式体验</pre>
+# 打开浏览器，输入 http://todo-uat.dew.idealworld.group，切换到移动模式体验</pre>
 </div>
 </div>
 </div>
@@ -4346,14 +4346,14 @@ metadata:
   namespace: dew-uat
 spec:
   rules:
-  - host: todo-api-uat.dew.ms
+  - host: todo-api-uat.dew.idealworld.group
     http:
       paths:
       - backend:
           serviceName: todo-kernel
           servicePort: 8080
         path: /
-  - host: todo-uat.dew.ms
+  - host: todo-uat.dew.idealworld.group
     http:
       paths:
       - backend:
@@ -4491,7 +4491,7 @@ Caused by: java.lang.StackOverflowError
     &lt;build&gt;
         &lt;plugins&gt;
             &lt;plugin&gt;
-                &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+                &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
                 &lt;artifactId&gt;dew-maven-plugin&lt;/artifactId&gt;
                 &lt;!--生产环境请选择合适的版本!--&gt;
                 &lt;version&gt;${dew.version}&lt;/version&gt;
@@ -4573,7 +4573,7 @@ Caused by: java.lang.StackOverflowError
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
 &lt;!--
-  ~ Copyright 2019. the original author or authors.
+  ~ Copyright 2020. the original author or authors.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -4594,12 +4594,12 @@ Caused by: java.lang.StackOverflowError
   &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
 
   &lt;parent&gt;
-    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
     &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
     &lt;version&gt;2.1.0-SNAPSHOT&lt;/version&gt;
   &lt;/parent&gt;
 
-  &lt;groupId&gt;ms.dew.devops.it&lt;/groupId&gt;
+  &lt;groupId&gt;group.idealworld.dew.devops.it&lt;/groupId&gt;
   &lt;artifactId&gt;todo-frontend&lt;/artifactId&gt;
   &lt;packaging&gt;pom&lt;/packaging&gt;
 
@@ -4675,8 +4675,8 @@ mvn -P devops deploy
 # ====================== 附加参数 ======================
 # dew_devops_profile                           # 指定的环境
 # dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
-# dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-# dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+# dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.idealworld.group:2375
+# dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.idealworld.group/v2
 # dew_devops_docker_registry_username          # Docker Registry 用户名
 # dew_devops_docker_registry_password          # Docker Registry 密码
 # dew_devops_assignation_projects              # 指定部署应用artifactId  多个以逗号分隔
@@ -4859,8 +4859,8 @@ mvn -P devops dew:rollback
 # dew_devops_quiet                             # 是否静默处理
 # dew_devops_profile                           # 指定的环境
 # dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " " 获取
-# dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-# dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+# dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.idealworld.group:2375
+# dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.idealworld.group/v2
 # dew_devops_docker_registry_username          # Docker Registry 用户名
 # dew_devops_docker_registry_password          # Docker Registry 密码</code></pre>
 </div>
@@ -5114,7 +5114,7 @@ prod deploy:
             "profile": "uat",                     // 分支或者环境
             "project": "todo-parent",             // 应用名称
             "successfulFlag": "Successful",       // 成功标识
-            "group": "ms.dew.devops.it",          // 应用group名称
+            "group": "group.idealworld.dew.devops.it",          // 应用group名称
             "message":"***",                      // 错误信息
             "throwable":"**"                      // 错误
 		}
@@ -5207,7 +5207,7 @@ prod deploy:
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>在项目代码中添加并配置 <code>.dew</code> 文件（详见 <a href="http://doc.dew.ms/#devops-configuration-dew">.dew 配置详情</a>）</p>
+<p>在项目代码中添加并配置 <code>.dew</code> 文件（详见 <a href="http://doc.dew.idealworld.group/#devops-configuration-dew">.dew 配置详情</a>）</p>
 </li>
 <li>
 <p>若使用 Gitlab Runner 进行部署，需要在项目代码中添加并配置 <code>.gitlab-ci.yml</code> 文件（参考 <a href="#dew-gitlab-ci">Gitlab CI 实现</a>）</p>
@@ -5285,7 +5285,7 @@ sh dew-devops.sh</code></pre>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">runners.env.dew_devops_XXX</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">更多runner.env配置项，详见： <a href="http://doc.dew.ms/#maven_%E9%85%8D%E7%BD%AE">Maven 配置</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">更多runner.env配置项，详见： <a href="http://doc.dew.idealworld.group/#maven_%E9%85%8D%E7%BD%AE">Maven 配置</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -5338,7 +5338,7 @@ sh dew-devops.sh</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>本文各服务使用 <code>x.dew.ms</code> 做为访问的域名，可根据实际情况替换。</p>
+<p>本文各服务使用 <code>x.dew.idealworld.group</code> 做为访问的域名，可根据实际情况替换。</p>
 </div>
 </td>
 </tr>
@@ -5393,19 +5393,19 @@ sh dew-devops.sh</code></pre>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">公共支撑服务</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">domain:gitlab.dew.ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">domain:gitlab.dew.idealworld.group</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Gitlab</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Gitlab及其CI/CD服务</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">公共支撑服务</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">domain:harbor.dew.ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">domain:harbor.dew.idealworld.group</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Harbor</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Docker私有库服务</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">公共支撑服务</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">domain:maven.dew.ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">domain:maven.dew.idealworld.group</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Maven</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Maven私有库服务</p></td>
 </tr>
@@ -5417,13 +5417,13 @@ sh dew-devops.sh</code></pre>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">环境相关的支撑服务</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">domain:minio.dew.ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">domain:minio.dew.idealworld.group</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Minio</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">分布式对象存储服务，用于CI/CD时做为分布式缓存</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">环境相关的支撑服务</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">domain:nfs.dew.ms</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">domain:nfs.dew.idealworld.group</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">NFS</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">用于Kuernetes persistent volumes的文件存储服务，生产环境建议使用云厂商的分布式文件存储或 CephFS，支持的类型见
                                                                    <a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes" class="bare">https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes</a></p></td>
@@ -5568,7 +5568,7 @@ EOF
 mkdir -p /etc/systemd/system/docker.service.d/
 cat &gt;&gt;/etc/systemd/system/docker.service.d/http-proxy.conf &lt;&lt;EOF
 [Service]
-Environment="HTTP_PROXY=http://&lt;代理host&gt;:&lt;代理端口&gt;" "HTTPS_PROXY=http://&lt;代理host&gt;:&lt;代理端口&gt;" "NO_PROXY=localhost,127.0.0.1,dew.ms"
+Environment="HTTP_PROXY=http://&lt;代理host&gt;:&lt;代理端口&gt;" "HTTPS_PROXY=http://&lt;代理host&gt;:&lt;代理端口&gt;" "NO_PROXY=localhost,127.0.0.1,dew.idealworld.group"
 EOF
 
 systemctl daemon-reload
@@ -5766,7 +5766,7 @@ kubectl -n kube-system edit cm coredns
 data:
   Corefile: |
     ...
-    dew.ms:53 {
+    dew.idealworld.group:53 {
         errors
         cache 30
         proxy . x.x.x.x
@@ -5924,14 +5924,14 @@ helm install stable/kubernetes-dashboard --name dew-dashboard --namespace kube-s
     --set serviceAccount.create=true \
     --set ingress.enabled=true \
     --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/backend-protocol"="HTTPS" \
-    --set ingress.hosts={dashboard.dew.ms} \
-    --set ingress.tls[0].hosts={dashboard.dew.ms},ingress.tls[0].secretName=kubernetes-dashboard-certs \
+    --set ingress.hosts={dashboard.dew.idealworld.group} \
+    --set ingress.tls[0].hosts={dashboard.dew.idealworld.group},ingress.tls[0].secretName=kubernetes-dashboard-certs \
     --set nodeSelector.group=devops
 
 # 获取Token
 kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep dew-dashboard-kubernetes-dashboard | awk '{print $1}')
 
-# 添加域名到客户机hosts并访问 https://dashboard.dew.ms</code></pre>
+# 添加域名到客户机hosts并访问 https://dashboard.dew.idealworld.group</code></pre>
 </div>
 </div>
 <div class="admonitionblock tip">
@@ -5994,7 +5994,7 @@ spec:
   persistentVolumeReclaimPolicy: Recycle
   nfs:
     path: /data/nfs/elasticsearch/${i}
-    server: nfs.dew.ms
+    server: nfs.dew.idealworld.group
 EOF
 done
 
@@ -6015,7 +6015,7 @@ helm install --name dew-elasticsearch elastic/elasticsearch --namespace devops -
     --set fsGroup=0 \
     --set clusterHealthCheckParams="" \
     --set ingress.enabled=true \
-    --set ingress.hosts={es.dew.ms} \
+    --set ingress.hosts={es.dew.idealworld.group} \
     --set nodeSelector.group=devops</code></pre>
 </div>
 </div>
@@ -6070,7 +6070,7 @@ spec:
   persistentVolumeReclaimPolicy: Recycle
   nfs:
     path: /data/nfs/kibana
-    server: nfs.dew.ms
+    server: nfs.dew.idealworld.group
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -6097,7 +6097,7 @@ helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 
     --set image.tag="6.6.1" \
     --set env."ELASTICSEARCH_URL"="http://dew-elasticsearch-master:9200" \
     --set service.internalPort=5601 \
-    --set ingress.enabled=true,ingress.hosts={kibana.dew.ms} \
+    --set ingress.enabled=true,ingress.hosts={kibana.dew.idealworld.group} \
     --set dashboardImport.enabled=true \
     --set dashboardImport.dashboards."k8s"="https://raw.githubusercontent.com/monotek/kibana-dashboards/master/k8s-fluentd-elasticsearch.json" \
     --set serviceAccount.create=true,serviceAccountName=kibana \
@@ -6172,7 +6172,7 @@ spec:
   persistentVolumeReclaimPolicy: Recycle
   nfs:
     path: /data/nfs/${app}/${i}
-    server: nfs.dew.ms
+    server: nfs.dew.idealworld.group
 EOF
 done</code></pre>
 </div>
@@ -6199,7 +6199,7 @@ spec:
   persistentVolumeReclaimPolicy: Recycle
   nfs:
     path: /data/nfs/grafana
-    server: nfs.dew.ms
+    server: nfs.dew.idealworld.group
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -6246,9 +6246,9 @@ kubectl -n devops create secret generic dew-prometheus-operator-etcd \
 helm install stable/prometheus-operator --name dew-prometheus-operator --namespace devops --version=5.0.10 \
     --set kubelet.serviceMonitor.https=true \
     --set prometheus.ingress.enabled=true \
-    --set prometheus.ingress.hosts={prometheus.dew.ms} \
+    --set prometheus.ingress.hosts={prometheus.dew.idealworld.group} \
     --set alertmanager.ingress.enabled=true \
-    --set alertmanager.ingress.hosts={alertmanager.dew.ms} \
+    --set alertmanager.ingress.hosts={alertmanager.dew.idealworld.group} \
     --set prometheusOperator.securityContext.runAsNonRoot=false \
     --set prometheus.prometheusSpec.storageSpec.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
     --set alertmanager.alertmanagerSpec.storage.volumeClaimTemplate.spec.resources.requests.storage=100Gi \
@@ -6264,7 +6264,7 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     --set grafana.adminPassword=Dew123456 \
     --set grafana.defaultDashboardsEnabled=true \
     --set grafana.ingress.enabled=true \
-    --set grafana.ingress.hosts={grafana.dew.ms} \
+    --set grafana.ingress.hosts={grafana.dew.idealworld.group} \
     --set grafana.sidecar.dashboards.enabled=true \
     --set grafana.sidecar.dashboards.searchNamespace="devops"\
     --set grafana.sidecar.dashboards.label=grafana_dashboard \
@@ -6277,7 +6277,7 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     --set grafana.'grafana\.ini'.smtp.password=XXXXX \
     --set grafana.'grafana\.ini'.smtp.from_address="XXXXX@163.com" \
     --set grafana.'grafana\.ini'.smtp.skip_verify=true \
-    --set grafana.'grafana\.ini'.server.root_url="http://grafana.dew.ms" \
+    --set grafana.'grafana\.ini'.server.root_url="http://grafana.dew.idealworld.group" \
     --set grafana.persistence.enabled=true \
     --set grafana.persistence.existingClaim=grafana \
     --set prometheusOperator.nodeSelector.group=devops \
@@ -6288,9 +6288,9 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
 
 
 # grafana默认用户名：admin
-# 访问 http://prometheus.dew.ms
-# 访问 http://alertmanager.dew.ms
-# 访问 http://grafana.dew.ms</code></pre>
+# 访问 http://prometheus.dew.idealworld.group
+# 访问 http://alertmanager.dew.idealworld.group
+# 访问 http://grafana.dew.idealworld.group</code></pre>
 </div>
 </div>
 <div class="quoteblock">
@@ -6529,7 +6529,7 @@ metadata:
   name: jaeger-query
 spec:
   rules:
-    - host: jaeger.dew.ms
+    - host: jaeger.dew.idealworld.group
       http:
         paths:
           - backend:
@@ -6673,8 +6673,8 @@ app:                                    # 应用配置
   labels: {}                            # 自定义labels
   env: {}                               # 自定义env，key对应一个env的name，value对应一个env的value
 docker:                                 # Docker配置
-  host:                                 # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-  registryUrl:                          # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+  host:                                 # Dockerd的Host e.g. tcp://dockerd.dew.idealworld.group:2375
+  registryUrl:                          # Docker Registry Url  e.g. https://harbor.dew.idealworld.group/v2
   registryUserName:                     # Docker Registry 用户名，此项建议使用Maven方式配置
   registryPassword:                     # Docker Registry 密码，此项建议使用Maven方式配置
   image:                                # Docker 镜像
@@ -6848,8 +6848,8 @@ profiles:
 dew_devops_profile                           # 指定的环境
 dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
 # ============= 发布与回滚使用 =============
-dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.idealworld.group:2375
+dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.idealworld.group/v2
 dew_devops_docker_registry_username          # Docker Registry 用户名
 dew_devops_docker_registry_password          # Docker Registry 密码
 dew_devops_assignation_projects              # 指定部署应用artifactId  多个以逗号分隔
@@ -6930,7 +6930,7 @@ dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使
 <pre>spring:
    cloud:
      config:
-       uri: http://config.dew.ms</pre>
+       uri: http://config.dew.idealworld.group</pre>
 </div>
 </div></div></td>
 </tr>
@@ -7031,7 +7031,7 @@ dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使
 <div class="sect3">
 <h4 id="devops示例_helloworld后端服务"><a class="anchor" href="#devops示例_helloworld后端服务"></a>4.6.1. DevOps示例 : Helloworld后端服务</h4>
 <div class="paragraph">
-<p>本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.ms</p>
+<p>本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.idealworld.group</p>
 </div>
 <div class="paragraph">
 <div class="title">说明</div>
@@ -7060,7 +7060,7 @@ profiles:
 <div class="title">前置准备</div>
 <ol class="arabic">
 <li>
-<p>执行 <code>dew-devops.sh</code> 初始化项目对应的test环境（ 详见 <a href="http://doc.dew.ms/#devops-user-manual" class="bare">http://doc.dew.ms/#devops-user-manual</a> ）</p>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的test环境（ 详见 <a href="http://doc.dew.idealworld.group/#devops-user-manual" class="bare">http://doc.dew.idealworld.group/#devops-user-manual</a> ）</p>
 </li>
 </ol>
 </div>
@@ -7088,7 +7088,7 @@ mvn -P devops deploy -Ddew_devops_profile=test</pre>
 <div class="sect3">
 <h4 id="devops示例_helloworld类库"><a class="anchor" href="#devops示例_helloworld类库"></a>4.6.2. DevOps示例 : Helloworld类库</h4>
 <div class="paragraph">
-<p>本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.ms</p>
+<p>本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.idealworld.group</p>
 </div>
 <div class="paragraph">
 <div class="title">说明</div>
@@ -7125,7 +7125,7 @@ mvn -P devops deploy -Ddew_devops_profile=test</pre>
 <div class="sect3">
 <h4 id="devops示例_helloworld前端"><a class="anchor" href="#devops示例_helloworld前端"></a>4.6.3. DevOps示例 : Helloworld前端</h4>
 <div class="paragraph">
-<p>本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.ms</p>
+<p>本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.idealworld.group</p>
 </div>
 <div class="paragraph">
 <div class="title">说明</div>
@@ -7159,7 +7159,7 @@ mvn -P devops deploy -Ddew_devops_profile=test</pre>
 <div class="title">前置准备</div>
 <ol class="arabic">
 <li>
-<p>执行 <code>dew-devops.sh</code> 初始化项目对应的test环境（详见 <a href="http://doc.dew.ms/#devops-user-manual" class="bare">http://doc.dew.ms/#devops-user-manual</a> ）</p>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的test环境（详见 <a href="http://doc.dew.idealworld.group/#devops-user-manual" class="bare">http://doc.dew.idealworld.group/#devops-user-manual</a> ）</p>
 </li>
 </ol>
 </div>
@@ -7187,7 +7187,7 @@ mvn -P devops deploy -Ddew_devops_profile=test</pre>
 <div class="sect3">
 <h4 id="devops示例_to_do"><a class="anchor" href="#devops示例_to_do"></a>4.6.4. DevOps示例 : To-Do</h4>
 <div class="paragraph">
-<p>本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.ms</p>
+<p>本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.idealworld.group</p>
 </div>
 <div class="paragraph">
 <div class="title">说明</div>
@@ -7278,7 +7278,7 @@ docker:
 <div class="title">前置准备</div>
 <ol class="arabic">
 <li>
-<p>执行 <code>dew-devops.sh</code> 初始化项目对应的uat和prod环境（详见 <a href="http://doc.dew.ms/#devops-user-manual" class="bare">http://doc.dew.ms/#devops-user-manual</a> ）</p>
+<p>执行 <code>dew-devops.sh</code> 初始化项目对应的uat和prod环境（详见 <a href="http://doc.dew.idealworld.group/#devops-user-manual" class="bare">http://doc.dew.idealworld.group/#devops-user-manual</a> ）</p>
 </li>
 </ol>
 </div>
@@ -7340,7 +7340,7 @@ mvn -P devops deploy -Ddew_devops_profile=prod</pre>
 <div class="title">/devops/devops-test.properties示例</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-properties" data-lang="properties">#
-# Copyright 2019. the original author or authors.
+# Copyright 2020. the original author or authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -7356,7 +7356,7 @@ mvn -P devops deploy -Ddew_devops_profile=prod</pre>
 #
 dew_devops_docker_host=tcp://10.200.131.215:2375
 # Docker registry url, nullable
-dew_devops_docker_registry_url=https://harbor.dew.ms/v2
+dew_devops_docker_registry_url=https://harbor.dew.idealworld.group/v2
 # Docker registry user name, nullable
 dew_devops_docker_registry_username=dew
 # Docker registry password, nullable
@@ -8471,16 +8471,6 @@ helm list</pre>
 <div class="ulist">
 <ul>
 <li>
-<p>2.3.0</p>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>支持Java 11</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
 <p>2.2.0</p>
 <div class="olist arabic">
 <ol class="arabic">
@@ -8495,7 +8485,7 @@ helm list</pre>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>支持Webflux响应式编程</p>
+<p>支持Java 11</p>
 </li>
 </ol>
 </div>
@@ -8825,7 +8815,7 @@ yum install -y gitlab-ce
 # 按需修改，可修改说明见: https://docs.gitlab.com/omnibus/settings/
 vi /etc/gitlab/gitlab.rb
 -
-external_url 'http://gitlab.dew.ms'
+external_url 'http://gitlab.dew.idealworld.group'
 ...
 -
 gitlab-ctl reconfigure
@@ -8859,11 +8849,11 @@ gitlab-ctl reconfigure
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># Harbor安装步骤略过
 # 登录Harbor docker login &lt;host&gt; -u &lt;user&gt; -p &lt;password&gt;
-docker login harbor.dew.ms -u admin -p Harbor12345
+docker login harbor.dew.idealworld.group -u admin -p Harbor12345
 # e.g. 上传镜像
 docker pull dewms/devops:latest
-docker tag dewms/devops:latest harbor.dew.ms/dewms/devops:latest
-docker push harbor.dew.ms/dewms/devops:latest</code></pre>
+docker tag dewms/devops:latest harbor.dew.idealworld.group/dewms/devops:latest
+docker push harbor.dew.idealworld.group/dewms/devops:latest</code></pre>
 </div>
 </div>
 </div>
@@ -8890,18 +8880,18 @@ systemctl start dnsmasq
 
 # 编辑本机的 /etc/hosts 添加映射
 -
-x.x.x.x gitlab.dew.ms
-x.x.x.x config.dew.ms
-x.x.x.x harbor.dew.ms
-x.x.x.x maven.dew.ms
-x.x.x.x minio.dew.ms
-x.x.x.x nfs.dew.ms
-x.x.x.x es.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
-x.x.x.x kibana.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
-x.x.x.x prometheus.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
-x.x.x.x alertmanager.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
-x.x.x.x grafana.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
-x.x.x.x jaeger.dew.ms # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x gitlab.dew.idealworld.group
+x.x.x.x config.dew.idealworld.group
+x.x.x.x harbor.dew.idealworld.group
+x.x.x.x maven.dew.idealworld.group
+x.x.x.x minio.dew.idealworld.group
+x.x.x.x nfs.dew.idealworld.group
+x.x.x.x es.dew.idealworld.group # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x kibana.dew.idealworld.group # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x prometheus.dew.idealworld.group # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x alertmanager.dew.idealworld.group # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x grafana.dew.idealworld.group # IP为 group=devops 的任意一台Kubernetes Node节点
+x.x.x.x jaeger.dew.idealworld.group # IP为 group=devops 的任意一台Kubernetes Node节点
 ...
 -
 
@@ -8966,7 +8956,7 @@ chmod +x minio
 # 再执行
 nohup ./minio server /mnt/data &amp;
 
-# 添加域名到客户机hosts并访问 http://minio.dew.ms:9000
+# 添加域名到客户机hosts并访问 http://minio.dew.idealworld.group:9000
 # 修改访问AccessKey和SecretKey， e.g. dew / Dew123456
 # 创建名为 app-cache 的bucket用于缓存gitlab ci runner(或其它CI/CD服务）的构建缓存</code></pre>
 </div>
@@ -9052,7 +9042,7 @@ metadata:
   name: gluster-2replicas-sc
 provisioner: kubernetes.io/glusterfs
 parameters:
-  resturl: "http://gluster.dew.ms"
+  resturl: "http://gluster.dew.idealworld.group"
   restuser: "dew"
   restuserkey: "Dew123456"
   volumetype: "replicate:2"
@@ -9158,7 +9148,7 @@ namespace 由&lt;profile&gt;-&lt;project&gt;组成，如果 profile 为空，nam
 helm repo add helm-dew-spring-cloud-config https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/chart/dew-spring-cloud-config/
 # 安装，注意域名要能被Kubernetes Pod访问
 helm install helm-dew-spring-cloud-config/dew-spring-cloud-config --name dew-spring-cloud-config --namespace devops \
-    --set ingress.hosts={config.dew.ms}
+    --set ingress.hosts={config.dew.idealworld.group}
 # 修改配置，修改后需要删除Pod以实现重启获取最新配置
 kubectl -n devops edit cm custom-config
 # e.g.
@@ -9167,7 +9157,7 @@ kubectl -n devops edit cm custom-config
 #     config:
 #       server:
 #         git:
-#           uri: https://gitlab.dew.ms/env/dew.git
+#           uri: https://gitlab.dew.idealworld.group/env/dew.git
 #           username: cdman
 #           password: cdman123
 #   security:
@@ -9277,7 +9267,7 @@ csp:
 <p><input type="checkbox" data-item-complete="0"> [Dew Framework] 修改 <code>dew-parent</code> 的版本号到最新版本</p>
 </li>
 <li>
-<p><input type="checkbox" data-item-complete="0"> [Dew Framework] 使用IDE全局查询替换 <code>com.tairanchina.csp.dew</code> 为 <code>ms.dew</code></p>
+<p><input type="checkbox" data-item-complete="0"> [Dew Framework] 使用IDE全局查询替换 <code>com.tairanchina.csp.dew</code> 为 <code>group.idealworld.dew</code></p>
 </li>
 <li>
 <p><input type="checkbox" data-item-complete="0"> [Dew Framework] 鉴权修改，详见 <a href="#devops-best-practices-auth">鉴权处理</a></p>
@@ -9303,7 +9293,7 @@ csp:
 <pre>spring:
   cloud:
     config:
-      uri: # 配置中心的URL（见下文 DevOps实现 说明）, e.g. http://config.dew.ms
+      uri: # 配置中心的URL（见下文 DevOps实现 说明）, e.g. http://config.dew.idealworld.group
       username:  # 配置中心访问用户名
       password:  # 配置中心访问密码
       label:  # 加载的Git分支名</pre>
@@ -9319,7 +9309,7 @@ csp:
 logging:
   level:
     ROOT: INFO
-    ms.dew: DEBUG                       # Dew目录日志配置
+    group.idealworld.dew: DEBUG                       # Dew目录日志配置
     org.springframework.jdbc.core: TRACE# Jdbc目录日志配置</pre>
 </div>
 </div>
@@ -9334,11 +9324,11 @@ logging:
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
   &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
   &lt;parent&gt;
-    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
     &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
     &lt;version&gt;2.0.0-rc&lt;/version&gt;
   &lt;/parent&gt;
-  &lt;groupId&gt;ms.dew.devops.it&lt;/groupId&gt;
+  &lt;groupId&gt;group.idealworld.dew.devops.it&lt;/groupId&gt;
   &lt;artifactId&gt;todo-frontend&lt;/artifactId&gt;
   &lt;packaging&gt;pom&lt;/packaging&gt;
   &lt;!-- 如果前端工程是原生NodeJS启动方式，请在pom中添加一下配置，如果前端工程是打包成静态文件的方式则不需要添加 --&gt;
@@ -9383,7 +9373,7 @@ logging:
 <div class="literalblock">
 <div class="content">
 <pre>&lt;parent&gt;
-    &lt;groupId&gt;ms.dew&lt;/groupId&gt;
+    &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
     &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
     &lt;version&gt;&lt;最新的版本&gt;&lt;/version&gt;
 &lt;/parent&gt;</pre>
@@ -9572,10 +9562,10 @@ helm repo add helm-dew-spring-cloud-config https://raw.githubusercontent.com/gud
 
 # 1. 安装
 helm install helm-dew-spring-cloud-config/dew-spring-cloud-config --name dew-spring-cloud-config --namespace devops \
-    --set ingress.hosts={config.dew.ms}
+    --set ingress.hosts={config.dew.idealworld.group}
 
 # 2. 测试（Kubernetes集群已安装Ingress controller并暴露80端口）
-curl http://dew:override@config.dew.ms/encrypt -d abc
+curl http://dew:override@config.dew.idealworld.group/encrypt -d abc
 
 # 3. 修改配置，比如加入git设置
 kubectl -n devops edit cm custom-config
@@ -9698,7 +9688,7 @@ test deploy:
     # 执行的操作，可以扩展，但要保留以下代码
     - mvn -P devops deploy
     # 可在此处添加代理
-    # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.ms" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.ms"
+    # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.idealworld.group" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.idealworld.group"
 
 # 用户验收/预发环境部署
 uat deploy:
@@ -9722,7 +9712,7 @@ prod deploy: # 生产环境部署
     # 执行的操作，可以扩展，但要保留以下代码
     - mvn -P devops deploy
     # 可在此处添加代理
-    # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.ms" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.ms"</code></pre>
+    # e.g. -Dhttp.proxyHost=10.200.4.63 -Dhttp.proxyPort=1080 -Dhttps.proxyHost=10.200.4.63 -Dhttps.proxyPort=1080 -Dhttp.nonProxyHosts="localhost|127.0.0.1|*.dew.idealworld.group" -Dhttps.nonProxyHosts="localhost|127.0.0.1|*.dew.idealworld.group"</code></pre>
 </div>
 </div>
 </div>
@@ -10023,7 +10013,7 @@ prod deploy: # 生产环境部署
 <p>profile 为部署代码的环境配置</p>
 </li>
 <li>
-<p>devops_appended_cmd 为 Dew 部署命令的附加值，可为空。详细可查 <a href="http://doc.dew.ms/#devops-user-manual">Dew DevOps</a>。</p>
+<p>devops_appended_cmd 为 Dew 部署命令的附加值，可为空。详细可查 <a href="http://doc.dew.idealworld.group/#devops-user-manual">Dew DevOps</a>。</p>
 </li>
 <li>
 <p>devops_assign_services 为指定部署的服务，为空时部署全部服务。可多选。</p>
@@ -10173,7 +10163,7 @@ TIP: 需要安装此插件，如不安装，使用<code>dew-devops.groovy</code>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">MAVEN_AGENT_URL</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">最新的 dew-maven-agent jar 包的地址；仓库路径：https://oss.sonatype.org/content/repositories/public/ms/dew/dew-maven-agent</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">最新的 dew-maven-agent jar 包的地址；仓库路径：https://oss.sonatype.org/content/repositories/public/group/idealworld/dew/dew-maven-agent</p></td>
 </tr>
 </tbody>
 </table>

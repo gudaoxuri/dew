@@ -2,15 +2,15 @@ apiVersion: v1
 kind: Service
 metadata:
   annotations:
-    dew.ms/git-commit: "@ignore@"
-    dew.ms/scm-url: "@ignore@"
+    dew.idealworld.group/git-commit: "@ignore@"
+    dew.idealworld.group/scm-url: "@ignore@"
     sidecar.jaegertracing.io/inject: 'true'
   labels:
     app: kernel
     provider: dew
     version: "@ignore@"
     expose: 'true'
-    group: ms.dew.devops.it
+    group: group.idealworld.dew.devops.it
   name: kernel
   namespace: dew-prod
 spec:
@@ -21,4 +21,4 @@ spec:
     targetPort: 8080
   selector:
     app: kernel
-    group: ms.dew.devops.it
+    group: group.idealworld.dew.devops.it

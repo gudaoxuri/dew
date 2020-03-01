@@ -38,7 +38,7 @@ Caused by: java.lang.StackOverflowError
     <build>
         <plugins>
             <plugin>
-                <groupId>ms.dew</groupId>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>dew-maven-plugin</artifactId>
                 <!--生产环境请选择合适的版本!-->
                 <version>${dew.version}</version>
@@ -140,8 +140,8 @@ mvn -P devops deploy
 # ====================== 附加参数 ======================
 # dew_devops_profile                           # 指定的环境
 # dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
-# dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-# dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+# dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.idealworld.group:2375
+# dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.idealworld.group/v2
 # dew_devops_docker_registry_username          # Docker Registry 用户名
 # dew_devops_docker_registry_password          # Docker Registry 密码
 # dew_devops_assignation_projects              # 指定部署应用artifactId  多个以逗号分隔
@@ -251,8 +251,8 @@ mvn -P devops dew:rollback
 # dew_devops_quiet                             # 是否静默处理
 # dew_devops_profile                           # 指定的环境
 # dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " " 获取
-# dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.ms:2375
-# dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.ms/v2
+# dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.idealworld.group:2375
+# dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.idealworld.group/v2
 # dew_devops_docker_registry_username          # Docker Registry 用户名
 # dew_devops_docker_registry_password          # Docker Registry 密码
 ----
@@ -416,7 +416,7 @@ image::./images/gitlab-ci-rollback.png[]
             "profile": "uat",                     // 分支或者环境
             "project": "todo-parent",             // 应用名称
             "successfulFlag": "Successful",       // 成功标识
-            "group": "ms.dew.devops.it",          // 应用group名称
+            "group": "group.idealworld.dew.devops.it",          // 应用group名称
             "message":"***",                      // 错误信息
             "throwable":"**"                      // 错误
 		}

@@ -21,7 +21,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>ms.dew</groupId>
+        <groupId>group.idealworld.dew</groupId>
         <artifactId>parent-starter</artifactId>
         <version>2.1.0-SNAPSHOT</version>
         <relativePath>../parent-starter</relativePath>
@@ -43,16 +43,16 @@
             <artifactId>common</artifactId>
         </dependency>
         <dependency>
-            <groupId>ms.dew</groupId>
+            <groupId>group.idealworld.dew</groupId>
             <artifactId>notification</artifactId>
         </dependency>
         <!-- Cluster -->
         <dependency>
-            <groupId>ms.dew</groupId>
+            <groupId>group.idealworld.dew</groupId>
             <artifactId>cluster-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>ms.dew</groupId>
+            <groupId>group.idealworld.dew</groupId>
             <artifactId>cluster-spi-redis</artifactId>
             <optional>true</optional>
         </dependency>
@@ -99,11 +99,11 @@
         </dependency>
         <!-- InitTest -->
         <dependency>
-            <groupId>ms.dew</groupId>
+            <groupId>group.idealworld.dew</groupId>
             <artifactId>cluster-common-test</artifactId>
         </dependency>
         <dependency>
-            <groupId>ms.dew</groupId>
+            <groupId>group.idealworld.dew</groupId>
             <artifactId>test-starter</artifactId>
         </dependency>
     </dependencies>

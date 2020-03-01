@@ -87,5 +87,5 @@ management:
 logging:
   level:
     ROOT: INFO
-    ms.dew: DEBUG
+    group.idealworld.dew: DEBUG
     org.springframework.jdbc.core: TRACE

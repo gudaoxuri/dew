@@ -2,14 +2,14 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   annotations:
-    dew.ms/git-commit: "@ignore@"
-    dew.ms/scm-url: "@ignore@"
+    dew.idealworld.group/git-commit: "@ignore@"
+    dew.idealworld.group/scm-url: "@ignore@"
     sidecar.jaegertracing.io/inject: 'true'
   labels:
     app: notifier
     provider: dew
     version: "@ignore@"
-    group: ms.dew.devops.it
+    group: group.idealworld.dew.devops.it
   name: notifier
   namespace: dew-prod
 spec:
@@ -18,18 +18,18 @@ spec:
   selector:
     matchLabels:
       app: notifier
-      group: ms.dew.devops.it
+      group: group.idealworld.dew.devops.it
   template:
     metadata:
       annotations:
-        dew.ms/git-commit: "@ignore@"
-        dew.ms/scm-url: "@ignore@"
+        dew.idealworld.group/git-commit: "@ignore@"
+        dew.idealworld.group/scm-url: "@ignore@"
         sidecar.jaegertracing.io/inject: 'true'
       labels:
         app: notifier
         provider: dew
         version: "@ignore@"
-        group: ms.dew.devops.it
+        group: group.idealworld.dew.devops.it
     spec:
       containers:
       - env:

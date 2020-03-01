@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  ms.dew.core.cluster.spi.mqtt.MqttAutoConfiguration
+  group.idealworld.dew.core.cluster.spi.mqtt.MqttAutoConfiguration
