@@ -268,7 +268,7 @@ public class NeedProcessChecker {
                     // 这些项目不能跳过
                     DevOps.SkipProcess.unSkip(projectConfig);
                     // 递归依赖于此项目的各项目，这些项目也不能跳过
-                    dependencyProcess(projectConfigs, new ArrayList<String>() {
+                    dependencyProcess(projectConfigs, new ArrayList<>() {
                         {
                             add(projectConfig.getId());
                         }

@@ -144,7 +144,7 @@ public class KubeHelperTest extends BasicTest {
 
         // 避免各pod的startTime相同
         Thread.sleep(1000);
-        KubeHelper.inst("").patch("nginx-deployment", new ArrayList<String>() {
+        KubeHelper.inst("").patch("nginx-deployment", new ArrayList<>() {
             {
                 add("{\"op\":\"replace\",\"path\":\"/spec/replicas\",\"value\":2}");
                 add("{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/image\",\"value\":\"nginx:latest\"}");

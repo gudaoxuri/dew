@@ -107,7 +107,7 @@ public class NotifyTest {
     public void testDD() {
         NotifyConfig ddConfigByText = new NotifyConfig();
         ddConfigByText.setType(NotifyConfig.TYPE_DD);
-        ddConfigByText.setDefaultReceivers(new HashSet<String>() {
+        ddConfigByText.setDefaultReceivers(new HashSet<>() {
             {
                 add("18657120203");
             }
@@ -119,7 +119,7 @@ public class NotifyTest {
         });
         NotifyConfig ddConfigByMarkdown = new NotifyConfig();
         ddConfigByMarkdown.setType(NotifyConfig.TYPE_DD);
-        ddConfigByMarkdown.setDefaultReceivers(new HashSet<String>() {
+        ddConfigByMarkdown.setDefaultReceivers(new HashSet<>() {
             {
                 add("18657120203");
             }
@@ -235,12 +235,12 @@ public class NotifyTest {
     public void testMail() {
         NotifyConfig mailConfig = new NotifyConfig();
         mailConfig.setType(NotifyConfig.TYPE_MAIL);
-        mailConfig.setDefaultReceivers(new HashSet<String>() {
+        mailConfig.setDefaultReceivers(new HashSet<>() {
             {
                 add("i@sunisle.org");
             }
         });
-        mailConfig.setArgs(new HashMap<String, Object>() {
+        mailConfig.setArgs(new HashMap<>() {
             {
                 put("from", "test@ecfront.com");
                 put("host", "smtp.exmail.qq.com");
@@ -250,7 +250,7 @@ public class NotifyTest {
                 put("secure", "ssl");
             }
         });
-        Notify.init(new HashMap<String, NotifyConfig>() {
+        Notify.init(new HashMap<>() {
             {
                 put("mail", mailConfig);
             }
@@ -277,7 +277,7 @@ public class NotifyTest {
                 put("url", "http://localhost:9000/notify");
             }
         });
-        httpConfig.setDefaultReceivers(new HashSet<String>() {
+        httpConfig.setDefaultReceivers(new HashSet<>() {
             {
                 add("jzy");
             }
@@ -290,12 +290,12 @@ public class NotifyTest {
                 put("url", "http://localhost:9000/notify");
             }
         });
-        strategyConfig.setDefaultReceivers(new HashSet<String>() {
+        strategyConfig.setDefaultReceivers(new HashSet<>() {
             {
                 add("jzy");
             }
         });
-        strategyConfig.setDndTimeReceivers(new HashSet<String>() {
+        strategyConfig.setDndTimeReceivers(new HashSet<>() {
             {
                 add("gudaoxuri");
             }
@@ -328,7 +328,7 @@ public class NotifyTest {
             result = Notify.send("http", e, "错误消息");
             Assert.assertTrue(result.ok());
         }
-        result = Notify.send("http", "hi", "指定通知人", new HashSet<String>() {
+        result = Notify.send("http", "hi", "指定通知人", new HashSet<>() {
             {
                 add("sunisle");
             }

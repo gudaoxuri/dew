@@ -104,7 +104,7 @@ public class DewCloudConfig {
         private String notifyTitle = "服务异常";
         private String[] notifyIncludeKeys = new String[]{};
         private String[] notifyExcludeKeys = new String[]{};
-        private Set<String> notifyEventTypes = new HashSet<String>() {
+        private Set<String> notifyEventTypes = new HashSet<>() {
             {
                 add("FAILURE");
                 add("SHORT_CIRCUITED");

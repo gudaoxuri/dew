@@ -211,7 +211,7 @@ public class DockerOpt {
             if (args != null && !args.isEmpty()) {
                 args.forEach(buildImageCmd::withBuildArg);
             }
-            buildImageCmd.withTags(new HashSet<String>() {
+            buildImageCmd.withTags(new HashSet<>() {
                 {
                     add(imageName);
                 }

@@ -60,7 +60,7 @@ public class DefaultScaleFlow extends BasicFlow {
     protected void process(FinalProjectConfig config, String flowBasePath) throws ApiException, IOException {
         if (!autoScale) {
             logger.info("Change replicas number is " + replicas);
-            KubeHelper.inst(config.getId()).patch(config.getAppName(), new ArrayList<String>() {
+            KubeHelper.inst(config.getId()).patch(config.getAppName(), new ArrayList<>() {
                 {
                     add("{\"op\":\"replace\",\"path\":\"/spec/replicas\",\"value\":" + replicas + "}");
                 }

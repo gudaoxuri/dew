@@ -43,7 +43,7 @@ public class MavenAgent {
         File mavenCoreFile = mavenLibPath.listFiles(pathname -> pathname.getName().contains("maven-core-"))[0];
         switch (mavenCoreFile.getName()) {
             case "maven-core-3.6.0.jar":
-                inst.addTransformer(new Transformer("3.6.0", new HashSet<String>() {
+                inst.addTransformer(new Transformer("3.6.0", new HashSet<>() {
                     {
                         add("org/apache/maven/lifecycle/internal/builder/singlethreaded/SingleThreadedBuilder");
                         add("org/apache/maven/lifecycle/internal/MojoExecutor");
@@ -51,7 +51,7 @@ public class MavenAgent {
                 }));
                 break;
             case "maven-core-3.6.1.jar":
-                inst.addTransformer(new Transformer("3.6.1", new HashSet<String>() {
+                inst.addTransformer(new Transformer("3.6.1", new HashSet<>() {
                     {
                         add("org/apache/maven/lifecycle/internal/builder/singlethreaded/SingleThreadedBuilder");
                         add("org/apache/maven/lifecycle/internal/MojoExecutor");
@@ -59,7 +59,7 @@ public class MavenAgent {
                 }));
                 break;
             case "maven-core-3.5.2.jar":
-                inst.addTransformer(new Transformer("3.5.2", new HashSet<String>() {
+                inst.addTransformer(new Transformer("3.5.2", new HashSet<>() {
                     {
                         add("org/apache/maven/lifecycle/internal/builder/singlethreaded/SingleThreadedBuilder");
                         add("org/apache/maven/lifecycle/internal/MojoExecutor");
@@ -67,7 +67,7 @@ public class MavenAgent {
                 }));
                 break;
             case "maven-core-3.3.9.jar":
-                inst.addTransformer(new Transformer("3.3.9", new HashSet<String>() {
+                inst.addTransformer(new Transformer("3.3.9", new HashSet<>() {
                     {
                         add("org/apache/maven/lifecycle/internal/builder/singlethreaded/SingleThreadedBuilder");
                         add("org/apache/maven/lifecycle/internal/MojoExecutor");
@@ -75,7 +75,7 @@ public class MavenAgent {
                 }));
                 break;
             case "maven-core-3.3.3.jar":
-                inst.addTransformer(new Transformer("3.3.3", new HashSet<String>() {
+                inst.addTransformer(new Transformer("3.3.3", new HashSet<>() {
                     {
                         add("org/apache/maven/lifecycle/internal/builder/singlethreaded/SingleThreadedBuilder");
                         add("org/apache/maven/lifecycle/internal/MojoExecutor");
@@ -83,7 +83,7 @@ public class MavenAgent {
                 }));
                 break;
             case "maven-core-3.2.5.jar":
-                inst.addTransformer(new Transformer("3.2.5", new HashSet<String>() {
+                inst.addTransformer(new Transformer("3.2.5", new HashSet<>() {
                     {
                         add("org/apache/maven/lifecycle/internal/builder/singlethreaded/SingleThreadedBuilder");
                         add("org/apache/maven/lifecycle/internal/MojoExecutor");
@@ -91,7 +91,7 @@ public class MavenAgent {
                 }));
                 break;
             case "maven-core-3.0.5.jar":
-                inst.addTransformer(new Transformer("3.0.5", new HashSet<String>() {
+                inst.addTransformer(new Transformer("3.0.5", new HashSet<>() {
                     {
                         add("org/apache/maven/lifecycle/internal/LifecycleStarter");
                         add("org/apache/maven/lifecycle/internal/MojoExecutor");

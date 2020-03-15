@@ -33,6 +33,7 @@ import javax.security.auth.message.AuthException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,14 +48,13 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
     private static final Logger logger = LoggerFactory.getLogger(BasicHandlerInterceptor.class);
 
     private static final String URL_SPLIT = "@";
-    private static final String ROLE_SPLIT = ".";
 
     private AntPathMatcher pathMatcher = new AntPathMatcher();
 
     // [method@uri]
-    private Set<String> blackUris = new HashSet<>();
+    private static Set<String> BLACK_URIS = new HashSet<>();
     // method@uri -> [roleIds]
-    private Map<String, Set<String>> roleAuth = new HashMap<>();
+    private static Map<String, Set<String>> ROLE_AUTH = new HashMap<>();
 
     BasicHandlerInterceptor() {
         if (Dew.dewConfig == null) {
@@ -62,28 +62,54 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
             return;
         }
         if (Dew.dewConfig.getSecurity().getRouter().isEnabled()) {
-            blackUris = formatUris(Dew.dewConfig.getSecurity().getRouter().getBlackUri());
-            Dew.dewConfig.getSecurity().getRouter().getRoleAuth()
-                    .forEach((role, uris) -> formatUris(uris).forEach(uri -> {
-                        if (!roleAuth.containsKey(uri)) {
-                            roleAuth.put(uri, new HashSet<>());
-                        }
-                        roleAuth.get(uri).add(role);
-                    }));
+            fillAuthInfo(Dew.dewConfig.getSecurity().getRouter().getBlackUri(),
+                    Dew.dewConfig.getSecurity().getRouter().getRoleAuth());
         }
     }
 
-    private Set<String> formatUris(Map<String, List<String>> uris) {
-        Set<String> formattedUris = uris.entrySet().stream().filter(entry -> !entry.getKey().equalsIgnoreCase("all"))
-                .flatMap(entry -> entry.getValue().stream().map(uri -> entry.getKey().toLowerCase() + URL_SPLIT + uri))
+    /**
+     * 填充认证信息.
+     *
+     * @param blackUris 接口访问黑名单 http method -> uris
+     * @param roleAuth  接口授权角色 roleName -> http method -> uris
+     */
+    public static void fillAuthInfo(Map<String, List<String>> blackUris,
+                                    Map<String, Map<String, List<String>>> roleAuth) {
+        if (blackUris != null) {
+            BLACK_URIS = formatUris(blackUris);
+        }
+        if (roleAuth != null) {
+            var exchangeRoleAuth = new HashMap<String, Set<String>>();
+            roleAuth
+                    .forEach((role, uris) -> formatUris(uris).forEach(uri -> {
+                        if (!exchangeRoleAuth.containsKey(uri)) {
+                            exchangeRoleAuth.put(uri, new HashSet<>());
+                        }
+                        exchangeRoleAuth.get(uri).add(role);
+                    }));
+            ROLE_AUTH = exchangeRoleAuth;
+        }
+    }
+
+    private static Set<String> formatUris(Map<String, List<String>> uris) {
+        Set<String> formattedUris = uris.entrySet().stream()
+                .filter(entry -> !entry.getKey().equalsIgnoreCase("all")
+                        && !entry.getKey().equalsIgnoreCase("*"))
+                .flatMap(entry -> entry.getValue().stream()
+                        .map(uri -> entry.getKey().toLowerCase() + URL_SPLIT + uri))
                 .collect(Collectors.toSet());
-        uris.entrySet().stream().filter(entry -> entry.getKey().equalsIgnoreCase("all"))
+        uris.entrySet().stream()
+                .filter(entry ->
+                        entry.getKey().equalsIgnoreCase("all")
+                                || entry.getKey().equalsIgnoreCase("*"))
                 .flatMap(entry -> entry.getValue().stream())
                 .forEach(uri -> {
                     formattedUris.add("get" + URL_SPLIT + uri);
                     formattedUris.add("post" + URL_SPLIT + uri);
                     formattedUris.add("put" + URL_SPLIT + uri);
                     formattedUris.add("delete" + URL_SPLIT + uri);
+                    formattedUris.add("patch" + URL_SPLIT + uri);
+                    formattedUris.add("head" + URL_SPLIT + uri);
                 });
         return formattedUris;
     }
@@ -115,7 +141,7 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
             tokenKind = request.getParameter(Dew.dewConfig.getSecurity().getTokenKindFlag());
         }
         if (token != null) {
-            token = URLDecoder.decode(token, "UTF-8");
+            token = URLDecoder.decode(token, StandardCharsets.UTF_8);
             if (Dew.dewConfig.getSecurity().isTokenHash()) {
                 token = $.security.digest.digest(token, "MD5");
             }
@@ -133,16 +159,16 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
             // 兼容requestUri末尾包含/的情况
             final String reqUri = method + URL_SPLIT + request.getRequestURI().replaceAll("/+$", "");
             // 黑名单处理
-            if (blackUris.stream().anyMatch(uri -> pathMatcher.match(uri, reqUri))) {
+            if (BLACK_URIS.stream().anyMatch(uri -> pathMatcher.match(uri, reqUri))) {
                 ErrorController.error(request, response, Integer.parseInt(StandardCode.FORBIDDEN.toString()),
                         String.format("The current [%s][%s] request is not allowed",
                                 request.getMethod(), request.getRequestURI()), AuthException.class.getName());
                 return false;
             }
             // 角色权限处理
-            if (!roleAuth.isEmpty()) {
+            if (!ROLE_AUTH.isEmpty()) {
                 String finalToken = token;
-                boolean pass = roleAuth.keySet().stream()
+                boolean pass = ROLE_AUTH.keySet().stream()
                         .filter(strings -> pathMatcher.match(strings, reqUri))
                         .min(pathMatcher.getPatternComparator(reqUri))
                         .map(matchedUri -> {
@@ -151,17 +177,11 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
                                 // Token不存在
                                 return false;
                             }
-                            Set<String> needRoles = roleAuth.get(matchedUri);
+                            Set<String> needRoles = ROLE_AUTH.get(matchedUri);
                             return Dew.auth.getOptInfo(finalToken)
                                     .map(opt ->
-                                            ((Set<OptInfo.RoleInfo>) opt.getRoleInfo()).stream()
-                                                    .map(role -> {
-                                                        if (StringUtils.isEmpty(role.getTenantCode())) {
-                                                            return role.getCode();
-                                                        } else {
-                                                            return role.getTenantCode() + ROLE_SPLIT + role.getCode();
-                                                        }
-                                                    })
+                                            opt.getRoleInfo().stream()
+                                                    .map(OptInfo.RoleInfo::getCode)
                                                     // 是否找到匹配的角色
                                                     .anyMatch(needRoles::contains))
                                     // Token在缓存中不存在

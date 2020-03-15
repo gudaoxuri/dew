@@ -71,7 +71,7 @@ public class ClusterCacheTest {
         // list
         assert cache.lget("list").isEmpty();
         cache.lpush("list", "1");
-        cache.lmset("list", new ArrayList<String>() {
+        cache.lmset("list", new ArrayList<>() {
             {
                 add("2");
                 add("2");
@@ -85,7 +85,7 @@ public class ClusterCacheTest {
         // set
         assert cache.sget("set").isEmpty();
         cache.sset("set", "1");
-        cache.smset("set", new ArrayList<String>() {
+        cache.smset("set", new ArrayList<>() {
             {
                 add("2");
                 add("2");

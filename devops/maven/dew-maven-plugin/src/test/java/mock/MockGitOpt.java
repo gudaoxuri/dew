@@ -36,7 +36,7 @@ public class MockGitOpt extends GitOpt {
     @Override
     public List<String> diff(String startCommitHash, String endCommitHash) {
         log.warn("Mock diff");
-        return new ArrayList<String>() {
+        return new ArrayList<>() {
             {
                 // 有一个文件变更
                 add("pom.xml");

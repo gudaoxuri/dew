@@ -1158,7 +1158,7 @@ public class KubeOpt {
      */
     public Closeable forward(String name, String namespace, int innerPort, int forwardPort) throws IOException, ApiException {
         AtomicBoolean closed = new AtomicBoolean(false);
-        PortForward.PortForwardResult result = new PortForward().forward(namespace, name, new ArrayList<Integer>() {
+        PortForward.PortForwardResult result = new PortForward().forward(namespace, name, new ArrayList<>() {
             {
                 add(forwardPort);
                 add(innerPort);

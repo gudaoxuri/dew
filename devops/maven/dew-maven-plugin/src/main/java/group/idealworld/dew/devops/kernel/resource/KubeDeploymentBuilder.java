@@ -93,7 +93,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                         .limits(config.getApp().getContainerResourcesLimits()));
         if (!config.getApp().getVolumeMounts().isEmpty()) {
             // 装配volumeMounts配置
-            containerBuilder.withVolumeMounts(new ArrayList<V1VolumeMount>() {
+            containerBuilder.withVolumeMounts(new ArrayList<>() {
                 {
                     config.getApp().getVolumeMounts().forEach(map -> add(new V1VolumeMountBuilder()
                             .withMountPath(map.get("mountPath"))
@@ -123,7 +123,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
         // 装配volume配置
         List<V1Volume> volumes = null;
         if (!config.getApp().getVolumes().isEmpty()) {
-            volumes = new ArrayList<V1Volume>() {{
+            volumes = new ArrayList<>() {{
                 config.getApp().getVolumes().forEach(map -> add(new V1VolumeBuilder()
                         .withName(map.get("name"))
                         .withPersistentVolumeClaim(new V1PersistentVolumeClaimVolumeSource().claimName(map.get("claimName")))

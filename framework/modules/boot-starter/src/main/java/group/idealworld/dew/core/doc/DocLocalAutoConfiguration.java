@@ -47,7 +47,7 @@ public class DocLocalAutoConfiguration {
     @Bean
     public DocController docController() {
         return new DocController(() ->
-                new ArrayList<String>() {
+                new ArrayList<>() {
                     {
                         add((localSSLKeyStore == null || localSSLKeyStore.isEmpty() ? "http" : "https")
                                 + "://localhost:" + Dew.Info.webPort + localContextPath + "/v2/api-docs");
