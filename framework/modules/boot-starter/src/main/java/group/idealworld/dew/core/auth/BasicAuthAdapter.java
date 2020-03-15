@@ -66,7 +66,7 @@ public class BasicAuthAdapter implements AuthAdapter {
     }
 
     @Override
-    public <E extends OptInfo> Optional<E> getOptInfo(String token) {
+    public <E extends OptInfo<E>> Optional<E> getOptInfo(String token) {
         String optInfoStr = cache.get(TOKEN_INFO_FLAG + token);
         if (optInfoStr != null && !optInfoStr.isEmpty()) {
             return Optional.of($.json.toObject(optInfoStr, DewContext.getOptInfoClazz()));
@@ -85,7 +85,7 @@ public class BasicAuthAdapter implements AuthAdapter {
     }
 
     @Override
-    public <E extends OptInfo> void setOptInfo(E optInfo) {
+    public <E extends OptInfo<E>> void setOptInfo(E optInfo) {
         Dew.dewConfig.getSecurity().getTokenKinds().putIfAbsent(optInfo.getTokenKind(), new DewConfig.Security.TokenKind());
         if (!cache.setnx(TOKEN_INFO_FLAG + optInfo.getToken(), $.json.toJsonString(optInfo),
                 Dew.dewConfig.getSecurity().getTokenKinds().get(optInfo.getTokenKind()).getExpireSec())) {
@@ -107,7 +107,7 @@ public class BasicAuthAdapter implements AuthAdapter {
         tokenKinds.keySet().stream()
                 // 按创建时间倒序
                 .sorted((i1, i2) ->
-                        Long.compare(Long.valueOf(i2.split("##")[1]), Long.valueOf(i1.split("##")[1])))
+                        Long.compare(Long.parseLong(i2.split("##")[1]), Long.parseLong(i1.split("##")[1])))
                 // 按 token kind 分组
                 .collect(Collectors.groupingBy(i -> i.split("##")[0]))
                 .forEach((key, value) -> {

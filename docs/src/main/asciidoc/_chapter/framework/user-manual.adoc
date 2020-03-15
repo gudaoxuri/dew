@@ -852,12 +852,11 @@ public Resp<String> login(@RequestBody LoginDTO loginDTO) {
             .setToken(token)
             .setName(user.getName())
             .setMobile(user.getPhone())
-            .setRoleInfo(new HashSet<OptInfo.RoleInfo>() {
+            .setRoleInfo(new HashSet<>() {
                 {
                     add(new OptInfo.RoleInfo()
                             .setCode(userDTO.getRole())
                             .setName("..")
-                            .setTenantCode("")
                     );
                 }
             }));

@@ -87,12 +87,11 @@ public class AuthController {
                 .setTokenKind(Dew.context().getTokenKind())
                 .setName(userDTO.getName())
                 .setMobile(userDTO.getPhone())
-                .setRoleInfo(new HashSet<OptInfo.RoleInfo>() {
+                .setRoleInfo(new HashSet<>() {
                     {
                         add(new OptInfo.RoleInfo()
                                 .setCode(userDTO.getRole())
                                 .setName("..")
-                                .setTenantCode("")
                         );
                     }
                 })

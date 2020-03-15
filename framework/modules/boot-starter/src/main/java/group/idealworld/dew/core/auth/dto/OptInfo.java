@@ -68,8 +68,6 @@ public class OptInfo<E> {
         private String code;
         @ApiModelProperty(value = "角色显示名称", required = true)
         private String name;
-        @ApiModelProperty(value = "租户编码", required = true)
-        private String tenantCode;
 
         /**
          * Gets code.
@@ -108,26 +106,6 @@ public class OptInfo<E> {
          */
         public RoleInfo setName(String name) {
             this.name = name;
-            return this;
-        }
-
-        /**
-         * Gets tenant code.
-         *
-         * @return the tenant code
-         */
-        public String getTenantCode() {
-            return tenantCode;
-        }
-
-        /**
-         * Sets tenant code.
-         *
-         * @param tenantCode the tenant code
-         * @return the tenant code
-         */
-        public RoleInfo setTenantCode(String tenantCode) {
-            this.tenantCode = tenantCode;
             return this;
         }
     }

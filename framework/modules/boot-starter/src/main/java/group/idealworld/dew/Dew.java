@@ -41,7 +41,6 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.lang.annotation.Annotation;
 import java.net.InetAddress;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -159,7 +158,7 @@ public class Dew {
 
         logger.info("Load Dew funs...");
         // Load Immediately
-        Set<Class<?>> loadOrders = $.clazz.scan(Dew.class.getPackage().getName(), new HashSet<Class<? extends Annotation>>() {
+        Set<Class<?>> loadOrders = $.clazz.scan(Dew.class.getPackage().getName(), new HashSet<>() {
             {
                 add(DewLoadImmediately.class);
             }

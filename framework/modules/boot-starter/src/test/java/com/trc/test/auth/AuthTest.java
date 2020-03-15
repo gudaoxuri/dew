@@ -63,20 +63,20 @@ public class AuthTest {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(Dew.dewConfig.getSecurity().getTokenFlag(), token);
-        Resp<OptInfoExt> bussinessResult = Resp.generic(
+        Resp<OptInfoExt> businessResult = Resp.generic(
                 testRestTemplate.exchange("/auth/business/someopt",
                         HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody(), OptInfoExt.class);
-        Assert.assertEquals("200", bussinessResult.getCode());
-        Assert.assertEquals("331023395739483150", bussinessResult.getBody().getIdCard());
+        Assert.assertEquals("200", businessResult.getCode());
+        Assert.assertEquals("331023395739483150", businessResult.getBody().getIdCard());
 
 
         testRouter(headers);
 
         testRestTemplate.exchange("/auth/logout", HttpMethod.DELETE, new HttpEntity<>(null, headers), Resp.class);
-        bussinessResult = Resp.generic(
+        businessResult = Resp.generic(
                 testRestTemplate.exchange("/auth/business/someopt",
                         HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody(), OptInfoExt.class);
-        Assert.assertEquals("401", bussinessResult.getCode());
+        Assert.assertEquals("401", businessResult.getCode());
 
 
         testTokenKind(loginDTO);
