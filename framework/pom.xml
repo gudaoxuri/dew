@@ -46,8 +46,8 @@
         <module>modules/idempotent-starter</module>
         <module>modules/cloud-starter</module>
         <module>modules/test-starter</module>
-        <module>components/auth-sdk-starter</module>
-        <module>components/auth</module>
+       <!-- <module>components/auth-sdk-starter</module>
+        <module>components/auth</module>-->
         <module>components/config</module>
     </modules>
 
