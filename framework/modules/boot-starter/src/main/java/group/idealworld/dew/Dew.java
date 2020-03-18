@@ -109,7 +109,7 @@ public class Dew {
      * @throws ClassNotFoundException the class not found exception
      */
     @PostConstruct
-    private void init() throws IOException, ClassNotFoundException {
+    private void init() {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
 
         logger.info("Load Dew basic info...");

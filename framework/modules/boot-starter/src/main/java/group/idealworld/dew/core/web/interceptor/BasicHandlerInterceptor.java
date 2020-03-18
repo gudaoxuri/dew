@@ -70,8 +70,8 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
     /**
      * 填充认证信息.
      *
-     * @param blackUris 接口访问黑名单 http method -> uris
-     * @param roleAuth  接口授权角色 roleName -> http method -> uris
+     * @param blackUris 接口访问黑名单 http method - uris
+     * @param roleAuth  接口授权角色 roleName - http method - uris
      */
     public static void fillAuthInfo(Map<String, List<String>> blackUris,
                                     Map<String, Map<String, List<String>>> roleAuth) {

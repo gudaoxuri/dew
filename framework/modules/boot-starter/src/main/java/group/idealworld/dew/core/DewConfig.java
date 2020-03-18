@@ -728,9 +728,9 @@ public class DewConfig {
 
         private SecurityCORS cors = new SecurityCORS();
 
-        private String tokenFlag = "X-Dew-Token";
+        private String tokenFlag = "Dew-Token";
 
-        private String tokenKindFlag = "X-Dew-Token-Kind";
+        private String tokenKindFlag = "Dew-Token-Kind";
 
         private boolean tokenInHeader = true;
 
@@ -873,7 +873,7 @@ public class DewConfig {
         public static class SecurityCORS {
 
             private String allowOrigin = "*";
-            private String allowMethods = "POST,GET,OPTIONS,PUT,DELETE,HEAD";
+            private String allowMethods = "POST,GET,OPTIONS,PUT,PATCH,DELETE,HEAD";
             private String allowHeaders = "x-requested-with,content-type";
 
             /**

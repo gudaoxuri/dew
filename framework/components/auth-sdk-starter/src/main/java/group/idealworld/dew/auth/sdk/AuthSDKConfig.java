@@ -34,15 +34,15 @@ public class AuthSDKConfig {
     /**
      * The constant HTTP_ACCESS_TOKEN.
      */
-    public static final String HTTP_ACCESS_TOKEN = "X-Access-Token";
+    public static final String HTTP_ACCESS_TOKEN = "Dew-Access-Token";
     /**
      * The constant HTTP_USER_TOKEN.
      */
-    public static final String HTTP_USER_TOKEN = "X-User-Token";
+    public static final String HTTP_USER_TOKEN = "Dew-User-Token";
     /**
      * The constant HTTP_URI.
      */
-    public static final String HTTP_URI = "X-Uri";
+    public static final String HTTP_URI = "Dew-Uri";
 
     private String serverUrl = "";
 

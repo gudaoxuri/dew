@@ -53,24 +53,22 @@ public class NetUtils {
         }
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-            if (interfaces != null) {
-                while (interfaces.hasMoreElements()) {
-                    try {
-                        NetworkInterface network = interfaces.nextElement();
-                        Enumeration<InetAddress> addresses = network.getInetAddresses();
-                        while (addresses.hasMoreElements()) {
-                            try {
-                                InetAddress address = addresses.nextElement();
-                                if (isValidAddress(address)) {
-                                    return address;
-                                }
-                            } catch (Exception e) {
-                                logger.warn("Failed to retrieving ip address, " + e.getMessage(), e);
+            while (interfaces.hasMoreElements()) {
+                try {
+                    NetworkInterface network = interfaces.nextElement();
+                    Enumeration<InetAddress> addresses = network.getInetAddresses();
+                    while (addresses.hasMoreElements()) {
+                        try {
+                            InetAddress address = addresses.nextElement();
+                            if (isValidAddress(address)) {
+                                return address;
                             }
+                        } catch (Exception e) {
+                            logger.warn("Failed to retrieving ip address, " + e.getMessage(), e);
                         }
-                    } catch (Exception e) {
-                        logger.warn("Failed to retrieving ip address, " + e.getMessage(), e);
                     }
+                } catch (Exception e) {
+                    logger.warn("Failed to retrieving ip address, " + e.getMessage(), e);
                 }
             }
         } catch (Exception e) {
