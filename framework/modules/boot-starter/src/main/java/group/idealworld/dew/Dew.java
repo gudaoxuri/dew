@@ -17,7 +17,9 @@
 package group.idealworld.dew;
 
 import com.ecfront.dew.common.$;
+import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.common.StandardCode;
+import com.ecfront.dew.common.exception.RTException;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import group.idealworld.dew.core.DewConfig;
 import group.idealworld.dew.core.DewContext;
@@ -269,7 +271,7 @@ public class Dew {
          * 获取真实IP.
          *
          * @param request 请求信息
-         * @return 真实的IP
+         * @return 真实的IP real ip
          */
         public static String getRealIP(HttpServletRequest request) {
             Map<String, String> requestHeader = new HashMap<>();
@@ -286,7 +288,7 @@ public class Dew {
          *
          * @param requestHeader     请求头信息
          * @param defaultRemoteAddr 缺省的IP地址
-         * @return 真实的IP
+         * @return 真实的IP real ip
          */
         public static String getRealIP(Map<String, String> requestHeader, String defaultRemoteAddr) {
             Map<String, String> formattedRequestHeader = new HashMap<>();
@@ -360,7 +362,7 @@ public class Dew {
          * @param <E>  上抛的异常类型
          * @param code 异常编码
          * @param ex   上抛的异常对象
-         * @return 上抛的异常对象
+         * @return 上抛的异常对象 e
          */
         public static <E extends Throwable> E e(String code, E ex) {
             return e(code, ex, -1);
@@ -375,10 +377,10 @@ public class Dew {
          * @param code           异常编码
          * @param ex             上抛的异常对象
          * @param customHttpCode 自定义Http状态码
-         * @return 上抛的异常对象
+         * @return 上抛的异常对象 e
          */
         public static <E extends Throwable> E e(String code, E ex, StandardCode customHttpCode) {
-            return e(code, ex, Integer.valueOf(customHttpCode.toString()));
+            return e(code, ex, Integer.parseInt(customHttpCode.toString()));
         }
 
         /**
@@ -390,13 +392,31 @@ public class Dew {
          * @param code           异常编码
          * @param ex             上抛的异常对象
          * @param customHttpCode 自定义Http状态码
-         * @return 上抛的异常对象
+         * @return 上抛的异常对象 e
          */
         public static <E extends Throwable> E e(String code, E ex, int customHttpCode) {
             $.bean.setValue(ex, "detailMessage", $.json.createObjectNode()
                     .put("code", code)
                     .put("message", ex.getLocalizedMessage())
                     .put("customHttpCode", customHttpCode)
+                    .toString());
+            return ex;
+        }
+
+        /**
+         * 统一异常处理.
+         * <p>
+         * 返回Http状态码为200
+         *
+         * @param resp 统一返回对象
+         * @return 上抛的异常对象
+         */
+        public static RTException e(Resp<?> resp) {
+            var ex = new RTException(resp.getMessage());
+            $.bean.setValue(ex, "detailMessage", $.json.createObjectNode()
+                    .put("code", resp.getCode())
+                    .put("message", resp.getMessage())
+                    .put("customHttpCode", 200)
                     .toString());
             return ex;
         }

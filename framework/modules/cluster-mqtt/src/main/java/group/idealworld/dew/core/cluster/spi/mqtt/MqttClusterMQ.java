@@ -16,6 +16,7 @@
 
 package group.idealworld.dew.core.cluster.spi.mqtt;
 
+import com.ecfront.dew.common.exception.RTUnsupportedEncodingException;
 import group.idealworld.dew.core.cluster.AbsClusterMQ;
 import group.idealworld.dew.core.cluster.dto.MessageWrap;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -69,12 +70,12 @@ public class MqttClusterMQ extends AbsClusterMQ {
 
     @Override
     protected boolean doRequest(String address, String message, Optional<Map<String, Object>> header, boolean confirm) {
-        throw new UnsupportedOperationException("MQTT doesn't support point-to-point mode");
+        throw new RTUnsupportedEncodingException("MQTT doesn't support point-to-point mode");
     }
 
     @Override
     protected void doResponse(String address, Consumer<MessageWrap> consumer) {
-        throw new UnsupportedOperationException("MQTT doesn't support point-to-point mode");
+        throw new RTUnsupportedEncodingException("MQTT doesn't support point-to-point mode");
     }
 
     @Override

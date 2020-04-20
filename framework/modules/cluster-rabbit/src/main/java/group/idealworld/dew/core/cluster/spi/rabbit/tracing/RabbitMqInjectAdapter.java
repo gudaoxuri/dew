@@ -16,6 +16,7 @@
 
 package group.idealworld.dew.core.cluster.spi.rabbit.tracing;
 
+import com.ecfront.dew.common.exception.RTUnsupportedEncodingException;
 import com.rabbitmq.client.AMQP;
 import io.opentracing.propagation.TextMap;
 
@@ -47,6 +48,6 @@ class RabbitMqInjectAdapter implements TextMap {
 
     @Override
     public Iterator<Map.Entry<String, String>> iterator() {
-        throw new UnsupportedOperationException("iterator should never be used with Tracer.inject()");
+        throw new RTUnsupportedEncodingException("iterator should never be used with Tracer.inject()");
     }
 }

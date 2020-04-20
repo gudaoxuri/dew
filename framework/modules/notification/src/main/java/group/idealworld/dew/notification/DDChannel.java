@@ -19,6 +19,7 @@ package group.idealworld.dew.notification;
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.HttpHelper;
 import com.ecfront.dew.common.Resp;
+import com.ecfront.dew.common.exception.RTUnsupportedEncodingException;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -81,7 +82,7 @@ public class DDChannel extends AbsChannel {
                 }
                 break;
             default:
-                throw new UnsupportedOperationException("[msgType] only support text/markdown");
+                throw new RTUnsupportedEncodingException("[msgType] only support text/markdown");
         }
         HttpHelper.ResponseWrap result = $.http.postWrap(ddUrl,
                 "{\n"

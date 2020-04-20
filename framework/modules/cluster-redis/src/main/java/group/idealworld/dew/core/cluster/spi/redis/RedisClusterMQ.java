@@ -16,6 +16,7 @@
 
 package group.idealworld.dew.core.cluster.spi.redis;
 
+import com.ecfront.dew.common.exception.RTUnsupportedEncodingException;
 import group.idealworld.dew.core.cluster.AbsClusterMQ;
 import group.idealworld.dew.core.cluster.dto.MessageWrap;
 import org.springframework.data.redis.core.RedisCallback;
@@ -48,7 +49,7 @@ public class RedisClusterMQ extends AbsClusterMQ {
     @Override
     protected boolean doPublish(String topic, String message, Optional<Map<String, Object>> header, boolean confirm) {
         if (confirm) {
-            throw new UnsupportedOperationException("Hazelcast doesn't support confirm mode");
+            throw new RTUnsupportedEncodingException("Hazelcast doesn't support confirm mode");
         }
         redisTemplate.execute((RedisCallback<Void>) connection -> {
             connection.publish(topic.getBytes(), message.getBytes());
@@ -70,7 +71,7 @@ public class RedisClusterMQ extends AbsClusterMQ {
     @Override
     protected boolean doRequest(String address, String message, Optional<Map<String, Object>> header, boolean confirm) {
         if (confirm) {
-            throw new UnsupportedOperationException("Hazelcast doesn't support confirm mode");
+            throw new RTUnsupportedEncodingException("Hazelcast doesn't support confirm mode");
         }
         redisTemplate.execute((RedisCallback<Void>) connection -> {
             connection.lPush(address.getBytes(), message.getBytes());

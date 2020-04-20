@@ -3363,12 +3363,11 @@ public Resp&lt;String&gt; login(@RequestBody LoginDTO loginDTO) {
             .setToken(token)
             .setName(user.getName())
             .setMobile(user.getPhone())
-            .setRoleInfo(new HashSet&lt;OptInfo.RoleInfo&gt;() {
+            .setRoleInfo(new HashSet&lt;&gt;() {
                 {
                     add(new OptInfo.RoleInfo()
                             .setCode(userDTO.getRole())
                             .setName("..")
-                            .setTenantCode("")
                     );
                 }
             }));
@@ -3443,7 +3442,7 @@ public interface AuthAdapter {
      * @param &lt;E&gt; 扩展操作用户信息类型
      * @return 操作用户信息
      */
-    default &lt;E extends OptInfo&gt; Optional&lt;E&gt; getOptInfo() {
+    default &lt;E extends OptInfo&lt;E&gt;&gt; Optional&lt;E&gt; getOptInfo() {
         return Dew.context().optInfo();
     }
 
@@ -3454,7 +3453,7 @@ public interface AuthAdapter {
      * @param token 登录Token
      * @return 操作用户信息
      */
-    &lt;E extends OptInfo&gt; Optional&lt;E&gt; getOptInfo(String token);
+    &lt;E extends OptInfo&lt;E&gt;&gt; Optional&lt;E&gt; getOptInfo(String token);
 
     /**
      * 设置操作用户信息类型.
@@ -3462,7 +3461,7 @@ public interface AuthAdapter {
      * @param &lt;E&gt;     扩展操作用户信息类型
      * @param optInfo 扩展操作用户信息
      */
-    &lt;E extends OptInfo&gt; void setOptInfo(E optInfo);
+    &lt;E extends OptInfo&lt;E&gt;&gt; void setOptInfo(E optInfo);
 
     /**
      * 删除当前登录的操作用户信息.

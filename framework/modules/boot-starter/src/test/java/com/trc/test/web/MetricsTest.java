@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,10 +36,9 @@ public class MetricsTest {
     /**
      * Test metric.
      *
-     * @throws IOException          the io exception
      * @throws InterruptedException the interrupted exception
      */
-    public void testMetric() throws IOException, InterruptedException {
+    public void testMetric() throws InterruptedException {
         for (int i = 0; i < 100; i++) {
             testRestTemplate.getForObject("/test/valid-method-spring/2", String.class);
             Thread.sleep(5);

@@ -16,6 +16,7 @@
 
 package group.idealworld.dew.core.cluster.spi.hazelcast;
 
+import com.ecfront.dew.common.exception.RTUnsupportedEncodingException;
 import com.hazelcast.client.HazelcastClientNotActiveException;
 import group.idealworld.dew.core.cluster.AbsClusterMQ;
 import group.idealworld.dew.core.cluster.dto.MessageWrap;
@@ -45,7 +46,7 @@ public class HazelcastClusterMQ extends AbsClusterMQ {
     @Override
     protected boolean doPublish(String topic, String message, Optional<Map<String, Object>> header, boolean confirm) {
         if (confirm) {
-            throw new UnsupportedOperationException("Hazelcast doesn't support confirm mode");
+            throw new RTUnsupportedEncodingException("Hazelcast doesn't support confirm mode");
         }
         hazelcastAdapter.getHazelcastInstance().getTopic(topic).publish(message);
         return true;
@@ -60,7 +61,7 @@ public class HazelcastClusterMQ extends AbsClusterMQ {
     @Override
     protected boolean doRequest(String address, String message, Optional<Map<String, Object>> header, boolean confirm) {
         if (confirm) {
-            throw new UnsupportedOperationException("Hazelcast doesn't support confirm mode");
+            throw new RTUnsupportedEncodingException("Hazelcast doesn't support confirm mode");
         }
         return hazelcastAdapter.getHazelcastInstance().getQueue(address).add(message);
     }

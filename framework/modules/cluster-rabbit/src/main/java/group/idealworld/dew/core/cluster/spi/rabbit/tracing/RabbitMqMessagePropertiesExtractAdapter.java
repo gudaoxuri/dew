@@ -16,6 +16,7 @@
 
 package group.idealworld.dew.core.cluster.spi.rabbit.tracing;
 
+import com.ecfront.dew.common.exception.RTUnsupportedEncodingException;
 import io.opentracing.propagation.TextMap;
 
 import java.util.HashMap;
@@ -53,6 +54,6 @@ class RabbitMqMessagePropertiesExtractAdapter implements TextMap {
 
     @Override
     public void put(String key, String value) {
-        throw new UnsupportedOperationException("Should be used only with tracer#extract()");
+        throw new RTUnsupportedEncodingException("Should be used only with tracer#extract()");
     }
 }
