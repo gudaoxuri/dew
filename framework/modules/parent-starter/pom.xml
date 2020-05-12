@@ -31,7 +31,7 @@
     <name>1.0.0 Dew Parent Starter</name>
     <description>Dew 父工程</description>
     <packaging>pom</packaging>
-    <version>2.1.0-SNAPSHOT</version>
+    <version>2.1.0-RC</version>
 
     <properties>
         <java.version>11</java.version>
@@ -47,13 +47,13 @@
         <checkstyle.config.path>../../checkstyle/checkstyle.xml</checkstyle.config.path>
 
         <finalName>${project.artifactId}</finalName>
-        <dew.version>2.1.0-SNAPSHOT</dew.version>
+        <dew.version>2.1.0-RC</dew.version>
 
         <guava.version>20.0</guava.version>
         <hbase.version>2.0.0</hbase.version>
 
         <spring-cloud.version>2.2.1.RELEASE</spring-cloud.version>
-        <dew-common.version>2.0.0-SNAPSHOT</dew-common.version>
+        <dew-common.version>2.0.0</dew-common.version>
         <swagger.version>2.9.2</swagger.version>
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.host.url></sonar.host.url>
@@ -279,7 +279,7 @@
                     <plugin>
                         <groupId>group.idealworld.dew</groupId>
                         <artifactId>dew-maven-plugin</artifactId>
-                        <version>2.1.0-SNAPSHOT</version>
+                        <version>2.1.0-RC</version>
                         <executions>
                             <execution>
                                 <goals>

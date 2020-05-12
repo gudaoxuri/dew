@@ -19,8 +19,7 @@ TIP: ``Dew`` 版本号遵循 https://semver.org/[``semver``] 规范。
 
 ==== 发行记录
 
-
-===== 2.1.0-SNAPSHOT
+===== 2.1.0-RC
 
 .Features
 
@@ -28,12 +27,14 @@ TIP: ``Dew`` 版本号遵循 https://semver.org/[``semver``] 规范。
 * JDK升级到11
 * 依赖包升级 Spring Boot:2.2.4.RELEASE，Spring Cloud:2.2.1.RELEASE，……
 
-
 .Improvement
 
 * 优化Docker镜像打包流程
 * 优化项目镜像复用发布流程
 * ``swagger-bootstrap-ui`` 替换回 ``springfox-swagger-ui``
+* 包名由 ``ms.dew`` 更改为 ``group.idealworld.dew
+* 移除 ``auth`` 组件，该组件由功能更丰富的 https://github.com/ideal-world/dew-saas/tree/master/apps/ident 取代
+* 多项细节优化
 
 ===== 2.0.0-RC
 

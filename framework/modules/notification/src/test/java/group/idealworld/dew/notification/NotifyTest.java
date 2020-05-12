@@ -112,7 +112,7 @@ public class NotifyTest {
                 add("18657120203");
             }
         });
-        ddConfigByText.setArgs(new HashMap<String, Object>() {
+        ddConfigByText.setArgs(new HashMap<>() {
             {
                 put("url", "https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455");
             }
@@ -124,13 +124,13 @@ public class NotifyTest {
                 add("18657120203");
             }
         });
-        ddConfigByMarkdown.setArgs(new HashMap<String, Object>() {
+        ddConfigByMarkdown.setArgs(new HashMap<>() {
             {
                 put("url", "https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455");
                 put("msgType", "markdown");
             }
         });
-        Notify.init(new HashMap<String, NotifyConfig>() {
+        Notify.init(new HashMap<>() {
             {
                 put("dd_text", ddConfigByText);
                 put("dd_markdown", ddConfigByMarkdown);
