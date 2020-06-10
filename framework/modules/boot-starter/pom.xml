@@ -56,6 +56,11 @@
             <artifactId>cluster-spi-redis</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- GraalVM兼容处理 -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
         <!-- Others -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

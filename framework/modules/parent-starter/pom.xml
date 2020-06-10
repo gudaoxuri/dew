@@ -50,6 +50,7 @@
         <dew.version>3.0.0-SNAPSHOT</dew.version>
 
         <guava.version>20.0</guava.version>
+        <jakarta.validation.version>2.0.2</jakarta.validation.version>
         <hbase.version>2.0.0</hbase.version>
 
         <dew-common.version>3.0.0-SNAPSHOT</dew-common.version>
@@ -176,6 +177,11 @@
                 <artifactId>test-starter</artifactId>
                 <version>${dew.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta.validation.version}</version>
             </dependency>
             <!-- Others -->
             <dependency>
