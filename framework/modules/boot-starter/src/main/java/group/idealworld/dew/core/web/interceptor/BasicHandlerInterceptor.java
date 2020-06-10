@@ -52,7 +52,7 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
     private AntPathMatcher pathMatcher = new AntPathMatcher();
 
     // [method@uri]
-    private static Set<String> BLACK_URIS = new HashSet<>();
+    private static Set<String> BLOCK_URIS = new HashSet<>();
     // method@uri -> [roleIds]
     private static Map<String, Set<String>> ROLE_AUTH = new HashMap<>();
 
@@ -62,7 +62,7 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
             return;
         }
         if (Dew.dewConfig.getSecurity().getRouter().isEnabled()) {
-            fillAuthInfo(Dew.dewConfig.getSecurity().getRouter().getBlackUri(),
+            fillAuthInfo(Dew.dewConfig.getSecurity().getRouter().getBlockUri(),
                     Dew.dewConfig.getSecurity().getRouter().getRoleAuth());
         }
     }
@@ -70,13 +70,13 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
     /**
      * 填充认证信息.
      *
-     * @param blackUris 接口访问黑名单 http method - uris
+     * @param blockUris 接口访问阻止单 http method - uris
      * @param roleAuth  接口授权角色 roleName - http method - uris
      */
-    public static void fillAuthInfo(Map<String, List<String>> blackUris,
+    public static void fillAuthInfo(Map<String, List<String>> blockUris,
                                     Map<String, Map<String, List<String>>> roleAuth) {
-        if (blackUris != null) {
-            BLACK_URIS = formatUris(blackUris);
+        if (blockUris != null) {
+            BLOCK_URIS = formatUris(blockUris);
         }
         if (roleAuth != null) {
             var exchangeRoleAuth = new HashMap<String, Set<String>>();
@@ -149,7 +149,7 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
         if (tokenKind == null) {
             tokenKind = OptInfo.DEFAULT_TOKEN_KIND_FLAG;
         }
-        // 请求黑名单拦截
+        // 请求阻止名单拦截
         if (Dew.dewConfig.getSecurity().getRouter().isEnabled()) {
             // 兼容requestUri末尾包含/的情况
             String method = request.getMethod().toLowerCase();
@@ -158,8 +158,8 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
             }
             // 兼容requestUri末尾包含/的情况
             final String reqUri = method + URL_SPLIT + request.getRequestURI().replaceAll("/+$", "");
-            // 黑名单处理
-            if (BLACK_URIS.stream().anyMatch(uri -> pathMatcher.match(uri, reqUri))) {
+            // 阻止名单处理
+            if (BLOCK_URIS.stream().anyMatch(uri -> pathMatcher.match(uri, reqUri))) {
                 ErrorController.error(request, response, Integer.parseInt(StandardCode.FORBIDDEN.toString()),
                         String.format("The current [%s][%s] request is not allowed",
                                 request.getMethod(), request.getRequestURI()), AuthException.class.getName());

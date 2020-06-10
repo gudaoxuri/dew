@@ -937,7 +937,7 @@ public class DewConfig {
         public static class Router {
 
             private boolean enabled = false;
-            private Map<String, List<String>> blackUri = new LinkedHashMap<>();
+            private Map<String, List<String>> blockUri = new LinkedHashMap<>();
             private Map<String, Map<String, List<String>>> roleAuth = new LinkedHashMap<>();
 
             /**
@@ -959,21 +959,21 @@ public class DewConfig {
             }
 
             /**
-             * Get black uri list.
+             * Get block uri list.
              *
-             * @return Map The request url method with black urs
+             * @return Map The request url method with block uris
              */
-            public Map<String, List<String>> getBlackUri() {
-                return blackUri;
+            public Map<String, List<String>> getBlockUri() {
+                return blockUri;
             }
 
             /**
-             * Sets black uris.
+             * Sets block uris.
              *
-             * @param blackUri black uri list
+             * @param blockUri block uri list
              */
-            public void setBlackUri(Map<String, List<String>> blackUri) {
-                this.blackUri = blackUri;
+            public void setBlockUri(Map<String, List<String>> blockUri) {
+                this.blockUri = blockUri;
             }
 
             /**

@@ -84,7 +84,7 @@ public class AuthTest {
     }
 
     private void testRouter(HttpHeaders headers) {
-        // blackUri
+        // blockUri
         AuthController.UserDTO userDTO = new AuthController.UserDTO();
         userDTO.setIdCard("331023395739483150");
         userDTO.setName("辰");

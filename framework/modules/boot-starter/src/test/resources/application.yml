@@ -47,7 +47,7 @@ dew:
     token-hash: false
     router:
       enabled: true
-      blackUri:
+      blockUri:
         post: ["/auth/register/*","/auth/re?","/user/**","/tes{t}"]
       roleAuth:
         admin:
