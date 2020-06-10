@@ -1,6 +1,6 @@
 = Dew:一站式微服务解决方案
-v2.0.0-rc
-2019-9-29
+v3.0.0-SNAPSHOT
+2020-6-10
 :doctype: book
 :encoding: utf-8
 :lang: zh-CN
@@ -67,6 +67,8 @@ include::_chapter/appendix/proxies.adoc[]
 include::_chapter/appendix/middleware.adoc[]
 
 include::_chapter/appendix/2.x-migration-guide.adoc[]
+
+include::_chapter/appendix/3.x-migration-guide.adoc[]
 
 === 内置Image与Chart
 

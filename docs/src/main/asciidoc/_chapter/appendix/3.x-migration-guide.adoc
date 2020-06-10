@@ -1,0 +1,10 @@
+[[dew-3-migration-guide]]
+=== Dew 3.x Migration guide
+
+本手册适用于从原生 Spring Cloud 项目及 Dew 2.x 项目迁移到 Dew 3.x 的操作说明。
+
+==== 迁移步骤
+
+[options="interactive"]
+
+* [ ] [配置] ``dew.security.router.black-uri`` 更名为 ``dew.security.router.block-uri``

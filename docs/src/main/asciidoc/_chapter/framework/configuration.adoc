@@ -64,8 +64,8 @@ dew:                                    # Dew 参数key前缀
     token-hash: false                   # Token值是否需要hash，用于解决token值有特殊字符的情况
     router:                             # 路由功能
       enabled: false                    # 是否启用
-      black-uri:                        # URL黑名单，支持ant风格
-        <Http Method>: [<URLs>]         # URL黑名单列表，Method = all 表示所有方法
+      block-uri:                        # URL阻止单，支持ant风格
+        <Http Method>: [<URLs>]         # URL阻止单列表，Method = all 表示所有方法
       role-auth:                        # 角色认证
         <Role Code>:                    # 角色编码，角色可以带租户，使用.分隔，e.g. tenant1.admin / tenant2.admin
           <Http Method>: [<URLs>]       # 只有该角色才能访问的URL，支持ant风格，支持继承与重写，Method = all 表示所有方法
