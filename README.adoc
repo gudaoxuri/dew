@@ -1,6 +1,8 @@
 [NOTE]
 ====
-``Dew`` 2.x 版本基于 `` Spring Boot 2.x`` 容器优先
+本分支构建 ``Dew`` 3.x 版本，此版本移除了 `Spring Cloud`，服务调度完全基于 `Istio` 以进一步简化服务开发。
+
+最新稳定版是 `2.1.0-rc` 请切换到 https://github.com/gudaoxuri/dew/tree/2.1.0-rc[2.1.0-RC] tag.
 
 如需基于 ``Spring boot 1.x`` 的非容器版本请切换到 https://github.com/gudaoxuri/dew/tree/1.5.1-RC[1.5.1-RC] tag.
 ====
@@ -105,7 +107,6 @@ ____
 |-  |- modules
 |-  |-  |- parent-starter                  // 父Pom模块
 |-  |-  |- boot-starter                    // 核心模块，包含Spring Boot Web相关依赖
-|-  |-  |- cloud-starter                   // Cloud模块，包含Spring Cloud Kuberenetes相关依赖
 |-  |-  |- cluster-common                  // 集群能力接口
 |-  |-  |- cluster-common-test             // 集群测试模块
 |-  |-  |- cluster-hazelcast               // Hazelcast集群能力实现

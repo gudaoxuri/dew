@@ -24,7 +24,7 @@
     <artifactId>build-framework</artifactId>
     <name>1 Dew Framework Build</name>
     <packaging>pom</packaging>
-    <version>2.1.0-RC</version>
+    <version>3.0.0-SNAPSHOT</version>
 
     <properties>
         <maven.install.skip>true</maven.install.skip>
@@ -44,9 +44,7 @@
         <module>modules/notification</module>
         <module>modules/boot-starter</module>
         <module>modules/idempotent-starter</module>
-        <module>modules/cloud-starter</module>
         <module>modules/test-starter</module>
-        <module>components/config</module>
     </modules>
 
 </project>

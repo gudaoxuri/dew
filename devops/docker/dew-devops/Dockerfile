@@ -9,7 +9,7 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
     && apt-get install -y nodejs
 
 # ----------------- Add maven agent
-ARG MAVEN_AGENT_URL=https://oss.sonatype.org/content/repositories/public/group/idealworld/dew/dew-maven-agent/2.1.0-RC/dew-maven-agent-2.1.0-RC.jar
+ARG MAVEN_AGENT_URL=https://oss.sonatype.org/content/repositories/public/group/idealworld/dew/dew-maven-agent/3.0.0-SNAPSHOT/dew-maven-agent-3.0.0-SNAPSHOT.jar
 
 RUN mkdir -p /opt/maven/ \
     && mkdir -p /opt/jar/ \

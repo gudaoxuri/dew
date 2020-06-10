@@ -80,10 +80,9 @@ NOTE: 这里只关注后端的实现，前端代码不展开说明。
 <!-- ... -->
 
 <dependencies>
-    <!-- 引用 cloud-starter 实现分布式能力  -->
     <dependency>
         <groupId>group.idealworld.dew</groupId>
-        <artifactId>cloud-starter</artifactId>
+        <artifactId>boot-starter</artifactId>
     </dependency>
     <!-- 添加JPA支持  -->
     <dependency>

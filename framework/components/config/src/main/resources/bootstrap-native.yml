@@ -1,8 +1,0 @@
-spring:
-  profiles:
-    active: native
-  cloud:
-    config:
-      server:
-        native:
-          searchLocations: classpath:/native_config

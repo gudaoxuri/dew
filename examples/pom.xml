@@ -24,7 +24,7 @@
     <artifactId>build-example</artifactId>
     <name>3 Dew Example Build</name>
     <packaging>pom</packaging>
-    <version>2.1.0-RC</version>
+    <version>3.0.0-SNAPSHOT</version>
 
     <properties>
         <maven.install.skip>true</maven.install.skip>
@@ -38,9 +38,6 @@
         <module>cluster-example</module>
         <module>idempotent-example</module>
         <module>auth-example</module>
-        <module>cloud-example</module>
-        <module>tracing-invoke1-example</module>
-        <module>tracing-invoke2-example</module>
         <module>hbase-example</module>
     </modules>
 

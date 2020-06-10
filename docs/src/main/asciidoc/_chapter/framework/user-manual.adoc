@@ -57,7 +57,6 @@ TIP: ``parent-starter`` 中已包含各模块的版本，引用模块依赖时�
 
 | parent-starter      | 父Pom模块
 | boot-starter        | 核心模块，包含Spring Boot Web相关依赖
-| cloud-starter       | Cloud模块，包含Spring Cloud Kuberenetes相关依赖
 | cluster-common      | 集群能力接口
 | cluster-hazelcast   | Hazelcast集群能力实现
 | cluster-rabbit      | RabbitMQ集群能力实现

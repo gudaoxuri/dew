@@ -88,7 +88,7 @@ public class NotifyTest {
         os.close();
     }
 
-    private static void startHttpServer(int port, String path) throws InterruptedException {
+    private static void startHttpServer(int port, String path)  {
         HttpServer server = null;
         try {
             server = HttpServer.create(new InetSocketAddress(port), 0);
@@ -267,12 +267,12 @@ public class NotifyTest {
      * @throws InterruptedException the interrupted exception
      */
     @Test
-    public void testHttp() throws IOException, InterruptedException {
+    public void testHttp() throws InterruptedException {
         startHttpServer(9000, "notify");
 
         NotifyConfig httpConfig = new NotifyConfig();
         httpConfig.setType(NotifyConfig.TYPE_HTTP);
-        httpConfig.setArgs(new HashMap<String, Object>() {
+        httpConfig.setArgs(new HashMap<>() {
             {
                 put("url", "http://localhost:9000/notify");
             }
@@ -285,7 +285,7 @@ public class NotifyTest {
 
         NotifyConfig strategyConfig = new NotifyConfig();
         strategyConfig.setType(NotifyConfig.TYPE_HTTP);
-        strategyConfig.setArgs(new HashMap<String, Object>() {
+        strategyConfig.setArgs(new HashMap<>() {
             {
                 put("url", "http://localhost:9000/notify");
             }

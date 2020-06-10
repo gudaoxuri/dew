@@ -44,7 +44,7 @@ public class ClusterLockTest {
             try {
                 assert lock.tryLock();
                 logger.info("Locked1 > " + Thread.currentThread().getId());
-                Thread.sleep(2000);
+                Thread.sleep(2100);
             } catch (Exception e) {
                 logger.error(e.getMessage());
             } finally {
