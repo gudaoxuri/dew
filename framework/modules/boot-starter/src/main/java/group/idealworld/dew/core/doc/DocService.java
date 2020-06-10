@@ -53,8 +53,7 @@ public class DocService {
      * @return the resp
      * @throws IOException the io exception
      */
-    public Resp<String> generateOfflineDoc(String docName, String docDesc, Map<String, String> visitUrls, List<String> swaggerJsonUrls)
-            throws IOException {
+    public Resp<String> generateOfflineDoc(String docName, String docDesc, Map<String, String> visitUrls, List<String> swaggerJsonUrls) {
         List<String> swaggerJsons = new ArrayList<>();
         for (String url : swaggerJsonUrls) {
             HttpHelper.ResponseWrap result = $.http.getWrap(url);

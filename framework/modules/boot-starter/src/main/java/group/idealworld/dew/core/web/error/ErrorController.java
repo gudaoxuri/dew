@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import group.idealworld.dew.Dew;
 import group.idealworld.dew.core.DewConfig;
 import org.apache.catalina.connector.RequestFacade;
-import org.hibernate.validator.internal.metadata.descriptor.ConstraintDescriptorImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -164,8 +163,8 @@ public class ErrorController extends AbstractErrorController {
                     .forEach(cv ->
                             errorExt.add($.json.createObjectNode()
                                     .put("field", "")
-                                    .put("reason", ((ConstraintDescriptorImpl<?>) cv.getConstraintDescriptor())
-                                            .getAnnotationType().getSimpleName())
+                                    .put("reason", cv.getConstraintDescriptor()
+                                            .getAnnotation().annotationType().getSimpleName())
                                     .put("msg", cv.getMessage()))
                     );
             message += DETAIL_FLAG + $.json.toJsonString(errorExt);

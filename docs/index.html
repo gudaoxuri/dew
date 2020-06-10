@@ -21,7 +21,7 @@
 <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.6.1">
-<meta name="author" content="v2.0.0-rc">
+<meta name="author" content="v3.0.0-SNAPSHOT">
 <title>Dew:一站式微服务解决方案</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -447,8 +447,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Dew:一站式微服务解决方案</h1>
 <div class="details">
-<span id="author" class="author">v2.0.0-rc</span><br>
-<span id="revdate">2019-9-29</span>
+<span id="author" class="author">v3.0.0-SNAPSHOT</span><br>
+<span id="revdate">2020-6-10</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -628,19 +628,24 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#迁移步骤">6.3.2. 迁移步骤</a></li>
 </ul>
 </li>
-<li><a href="#内置image与chart">6.4. 内置Image与Chart</a>
+<li><a href="#dew-3-migration-guide">6.4. Dew 3.x Migration guide</a>
 <ul class="sectlevel3">
-<li><a href="#dew_docker_image_集成kubectl与helm">6.4.1. Dew Docker Image : 集成Kubectl与Helm</a></li>
-<li><a href="#dew_docker_image_集成ci_cd能力">6.4.2. Dew Docker Image : 集成CI/CD能力</a></li>
-<li><a href="#dew_docker_image_spring_cloud_config">6.4.3. Dew Docker Image : Spring Cloud Config</a></li>
-<li><a href="#helm-chart-spring-cloud-config">6.4.4. Dew Helm Chart : Spring Cloud Config</a></li>
+<li><a href="#迁移步骤_2">6.4.1. 迁移步骤</a></li>
 </ul>
 </li>
-<li><a href="#支持的ci_cd服务">6.5. 支持的CI/CD服务</a>
+<li><a href="#内置image与chart">6.5. 内置Image与Chart</a>
 <ul class="sectlevel3">
-<li><a href="#dew-devops-maven-agent">6.5.1. Dew DevOps Maven Agent</a></li>
-<li><a href="#dew-gitlab-ci">6.5.2. Dew CI/CD : Gitlab CI 实现</a></li>
-<li><a href="#dew-jenkins-pipeline">6.5.3. Dew DevOps : Jenkins Pipeline 部署</a></li>
+<li><a href="#dew_docker_image_集成kubectl与helm">6.5.1. Dew Docker Image : 集成Kubectl与Helm</a></li>
+<li><a href="#dew_docker_image_集成ci_cd能力">6.5.2. Dew Docker Image : 集成CI/CD能力</a></li>
+<li><a href="#dew_docker_image_spring_cloud_config">6.5.3. Dew Docker Image : Spring Cloud Config</a></li>
+<li><a href="#helm-chart-spring-cloud-config">6.5.4. Dew Helm Chart : Spring Cloud Config</a></li>
+</ul>
+</li>
+<li><a href="#支持的ci_cd服务">6.6. 支持的CI/CD服务</a>
+<ul class="sectlevel3">
+<li><a href="#dew-devops-maven-agent">6.6.1. Dew DevOps Maven Agent</a></li>
+<li><a href="#dew-gitlab-ci">6.6.2. Dew CI/CD : Gitlab CI 实现</a></li>
+<li><a href="#dew-jenkins-pipeline">6.6.3. Dew DevOps : Jenkins Pipeline 部署</a></li>
 </ul>
 </li>
 </ul>
@@ -659,7 +664,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </td>
 <td class="content">
 <div class="paragraph">
-<p><code>Dew</code> 2.x 版本基于 <code> Spring Boot 2.x</code> 容器优先</p>
+<p>本分支构建 <code>Dew</code> 3.x 版本，此版本移除了 <code>Spring Cloud</code>，服务调度完全基于 <code>Istio</code> 以进一步简化服务开发。</p>
+</div>
+<div class="paragraph">
+<p>最新稳定版是 <code>2.1.0-rc</code> 请切换到 <a href="https://github.com/gudaoxuri/dew/tree/2.1.0-rc">2.1.0-RC</a> tag.</p>
 </div>
 <div class="paragraph">
 <p>如需基于 <code>Spring boot 1.x</code> 的非容器版本请切换到 <a href="https://github.com/gudaoxuri/dew/tree/1.5.1-RC">1.5.1-RC</a> tag.</p>
@@ -900,7 +908,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 |-  |- modules
 |-  |-  |- parent-starter                  // 父Pom模块
 |-  |-  |- boot-starter                    // 核心模块，包含Spring Boot Web相关依赖
-|-  |-  |- cloud-starter                   // Cloud模块，包含Spring Cloud Kuberenetes相关依赖
 |-  |-  |- cluster-common                  // 集群能力接口
 |-  |-  |- cluster-common-test             // 集群测试模块
 |-  |-  |- cluster-hazelcast               // Hazelcast集群能力实现
@@ -1080,10 +1087,9 @@ cd frontend &amp;&amp; npm install &amp;&amp; npm run dev:h5
 <pre class="prettyprint highlight"><code class="language-xml" data-lang="xml">&lt;!-- ... --&gt;
 
 &lt;dependencies&gt;
-    &lt;!-- 引用 cloud-starter 实现分布式能力  --&gt;
     &lt;dependency&gt;
         &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
-        &lt;artifactId&gt;cloud-starter&lt;/artifactId&gt;
+        &lt;artifactId&gt;boot-starter&lt;/artifactId&gt;
     &lt;/dependency&gt;
     &lt;!-- 添加JPA支持  --&gt;
     &lt;dependency&gt;
@@ -1399,10 +1405,6 @@ public class NotifierController {
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">boot-starter</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">核心模块，包含Spring Boot Web相关依赖</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">cloud-starter</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Cloud模块，包含Spring Cloud Kuberenetes相关依赖</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">cluster-common</p></td>
@@ -3267,8 +3269,8 @@ public class WebController {
     token-hash: false                   # Token值是否需要hash，用于解决token值有特殊字符的情况
     router:                             # 路由功能
       enabled: false                    # 是否启用
-      black-uri:                        # URL黑名单，支持ant风格
-        &lt;Http Method&gt;: [&lt;URLs&gt;]         # URL黑名单列表，Method = all 表示所有方法
+      block-uri:                        # URL阻止单，支持ant风格
+        &lt;Http Method&gt;: [&lt;URLs&gt;]         # URL阻止单列表，Method = all 表示所有方法
       role-auth:                        # 角色认证
         &lt;Role Code&gt;:                    # 角色编码，角色可以带租户，使用.分隔，e.g. tenant1.admin / tenant2.admin
           &lt;Http Method&gt;: [&lt;URLs&gt;]       # 只有该角色才能访问的URL，支持ant风格，支持继承与重写，Method = all 表示所有方法
@@ -3851,8 +3853,8 @@ HBaseTemplate 其他使用方法可以详见 hbase-starter 模块下的 test 内
     token-hash: false                   # Token值是否需要hash，用于解决token值有特殊字符的情况
     router:                             # 路由功能
       enabled: false                    # 是否启用
-      black-uri:                        # URL黑名单，支持ant风格
-        &lt;Http Method&gt;: [&lt;URLs&gt;]         # URL黑名单列表，Method = all 表示所有方法
+      block-uri:                        # URL阻止单，支持ant风格
+        &lt;Http Method&gt;: [&lt;URLs&gt;]         # URL阻止单列表，Method = all 表示所有方法
       role-auth:                        # 角色认证
         &lt;Role Code&gt;:                    # 角色编码，角色可以带租户，使用.分隔，e.g. tenant1.admin / tenant2.admin
           &lt;Http Method&gt;: [&lt;URLs&gt;]       # 只有该角色才能访问的URL，支持ant风格，支持继承与重写，Method = all 表示所有方法
@@ -3860,9 +3862,6 @@ HBaseTemplate 其他使用方法可以详见 hbase-starter 模块下的 test 内
       &lt;Kind&gt;:                           # Token类型名称，比如 PC/Android/... ，默认会创建名为 DEFAULT 的类型
         expire-sec: 86400               # Token 过期时间（秒）
         revision-history-limit: 0       # Token 保留的历史版本数量， 0表示不保留历史版本，即有新的登录时会删除此类型下之前所有的Token
-  cloud:                                # 需要引入 cloud-starter 模块
-    trace-log:                          # 追踪日志配置
-      enabled: true                     # 是否启用服务API调用（追踪）日志，默认为true
     error:                              # 错误配置
       enabled: false                    # 启用降级邮件通知，默认为false
       notify-flag: __HYSTRIX__          # 默认的通知标识
@@ -7694,7 +7693,38 @@ helm list</pre>
 <div class="sect3">
 <h4 id="发行记录"><a class="anchor" href="#发行记录"></a>5.2.2. 发行记录</h4>
 <div class="sect4">
-<h5 id="2_1_0_rc"><a class="anchor" href="#2_1_0_rc"></a>3.0.0-SNAPSHOT</h5>
+<h5 id="3_0_0_rc_开发中"><a class="anchor" href="#3_0_0_rc_开发中"></a>3.0.0-RC（开发中）</h5>
+<div class="ulist">
+<div class="title">Features</div>
+<ul>
+<li>
+<p>支持 <code>Istio</code></p>
+</li>
+<li>
+<p>支持 <code>K3s</code></p>
+</li>
+<li>
+<p>支持 <code>GraalVM</code></p>
+</li>
+<li>
+<p>删除 <code>Spring Cloud`支持，由 `Kubernetes/K3s + Istio</code> 替代</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Improvement</div>
+<ul>
+<li>
+<p>依赖包升级 Spring Boot:2.3.0.RELEASE</p>
+</li>
+<li>
+<p>使用 <code>block list</code> 代替 <code>black list</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect4">
+<h5 id="2_1_0_rc"><a class="anchor" href="#2_1_0_rc"></a>2.1.0-RC</h5>
 <div class="ulist">
 <div class="title">Features</div>
 <ul>
@@ -8479,11 +8509,17 @@ helm list</pre>
 <div class="ulist">
 <ul>
 <li>
-<p>2.2.0</p>
+<p>3.0.0</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
+<p>支持GraalVM</p>
+</li>
+<li>
 <p>支持Istio体系</p>
+</li>
+<li>
+<p>去除Spring Cloud依赖</p>
 </li>
 </ol>
 </div>
@@ -9481,9 +9517,25 @@ prod deploy: # 生产环境部署
 </div>
 </div>
 <div class="sect2">
-<h3 id="内置image与chart"><a class="anchor" href="#内置image与chart"></a>6.4. 内置Image与Chart</h3>
+<h3 id="dew-3-migration-guide"><a class="anchor" href="#dew-3-migration-guide"></a>6.4. Dew 3.x Migration guide</h3>
+<div class="paragraph">
+<p>本手册适用于从原生 Spring Cloud 项目及 Dew 2.x 项目迁移到 Dew 3.x 的操作说明。</p>
+</div>
 <div class="sect3">
-<h4 id="dew_docker_image_集成kubectl与helm"><a class="anchor" href="#dew_docker_image_集成kubectl与helm"></a>6.4.1. Dew Docker Image : 集成Kubectl与Helm</h4>
+<h4 id="迁移步骤_2"><a class="anchor" href="#迁移步骤_2"></a>6.4.1. 迁移步骤</h4>
+<div class="ulist checklist">
+<ul class="checklist">
+<li>
+<p><input type="checkbox" data-item-complete="0"> [配置] <code>dew.security.router.black-uri</code> 更名为 <code>dew.security.router.block-uri</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="内置image与chart"><a class="anchor" href="#内置image与chart"></a>6.5. 内置Image与Chart</h3>
+<div class="sect3">
+<h4 id="dew_docker_image_集成kubectl与helm"><a class="anchor" href="#dew_docker_image_集成kubectl与helm"></a>6.5.1. Dew Docker Image : 集成Kubectl与Helm</h4>
 <div class="paragraph">
 <p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
@@ -9510,7 +9562,7 @@ helm list
 </div>
 </div>
 <div class="sect3">
-<h4 id="dew_docker_image_集成ci_cd能力"><a class="anchor" href="#dew_docker_image_集成ci_cd能力"></a>6.4.2. Dew Docker Image : 集成CI/CD能力</h4>
+<h4 id="dew_docker_image_集成ci_cd能力"><a class="anchor" href="#dew_docker_image_集成ci_cd能力"></a>6.5.2. Dew Docker Image : 集成CI/CD能力</h4>
 <div class="paragraph">
 <p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
@@ -9539,7 +9591,7 @@ npm version
 </div>
 </div>
 <div class="sect3">
-<h4 id="dew_docker_image_spring_cloud_config"><a class="anchor" href="#dew_docker_image_spring_cloud_config"></a>6.4.3. Dew Docker Image : Spring Cloud Config</h4>
+<h4 id="dew_docker_image_spring_cloud_config"><a class="anchor" href="#dew_docker_image_spring_cloud_config"></a>6.5.3. Dew Docker Image : Spring Cloud Config</h4>
 <div class="paragraph">
 <p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
@@ -9558,7 +9610,7 @@ docker run -d --name dew-spring-cloud-config \
 </div>
 </div>
 <div class="sect3">
-<h4 id="helm-chart-spring-cloud-config"><a class="anchor" href="#helm-chart-spring-cloud-config"></a>6.4.4. Dew Helm Chart : Spring Cloud Config</h4>
+<h4 id="helm-chart-spring-cloud-config"><a class="anchor" href="#helm-chart-spring-cloud-config"></a>6.5.4. Dew Helm Chart : Spring Cloud Config</h4>
 <div class="paragraph">
 <p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
@@ -9592,9 +9644,9 @@ git add --all</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="支持的ci_cd服务"><a class="anchor" href="#支持的ci_cd服务"></a>6.5. 支持的CI/CD服务</h3>
+<h3 id="支持的ci_cd服务"><a class="anchor" href="#支持的ci_cd服务"></a>6.6. 支持的CI/CD服务</h3>
 <div class="sect3">
-<h4 id="dew-devops-maven-agent"><a class="anchor" href="#dew-devops-maven-agent"></a>6.5.1. Dew DevOps Maven Agent</h4>
+<h4 id="dew-devops-maven-agent"><a class="anchor" href="#dew-devops-maven-agent"></a>6.6.1. Dew DevOps Maven Agent</h4>
 <div class="paragraph">
 <p>本插件为Dew微服务体系的组成部分，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
@@ -9614,7 +9666,7 @@ mvn -P devops deploy &lt;其它命令&gt;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="dew-gitlab-ci"><a class="anchor" href="#dew-gitlab-ci"></a>6.5.2. Dew CI/CD : Gitlab CI 实现</h4>
+<h4 id="dew-gitlab-ci"><a class="anchor" href="#dew-gitlab-ci"></a>6.6.2. Dew CI/CD : Gitlab CI 实现</h4>
 <div class="paragraph">
 <p>此为Gitlab CI上的 CI/CD 处理，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
@@ -9725,7 +9777,7 @@ prod deploy: # 生产环境部署
 </div>
 </div>
 <div class="sect3">
-<h4 id="dew-jenkins-pipeline"><a class="anchor" href="#dew-jenkins-pipeline"></a>6.5.3. Dew DevOps : Jenkins Pipeline 部署</h4>
+<h4 id="dew-jenkins-pipeline"><a class="anchor" href="#dew-jenkins-pipeline"></a>6.6.3. Dew DevOps : Jenkins Pipeline 部署</h4>
 <div class="paragraph">
 <p>此为 使用 Dew DevOps 进行部署项目的 Jenkins Pipeline 部署方式的说明。Dew DevOps 集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
@@ -10449,7 +10501,7 @@ TIP: 需要安装此插件，如不安装，使用<code>dew-devops.groovy</code>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-09-29 11:03:01 CST
+Last updated 2020-06-10 18:52:55 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

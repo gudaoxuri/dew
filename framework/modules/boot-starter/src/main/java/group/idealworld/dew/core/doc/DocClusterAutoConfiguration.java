@@ -17,14 +17,7 @@
 package group.idealworld.dew.core.doc;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.cloud.client.ServiceInstance;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.stream.Collectors;
 
 /**
  * Doc cluster auto configuration.
@@ -32,24 +25,9 @@ import java.util.stream.Collectors;
  * @author gudaoxuri
  */
 @Configuration
-@ConditionalOnClass(DiscoveryClient.class)
+// TODO 不使用Spring Cloud的集群文档发现方案
+// @ConditionalOnClass(DiscoveryClient.class)
 public class DocClusterAutoConfiguration {
 
-    @Autowired
-    private DiscoveryClient discoveryClient;
-
-    /**
-     * Doc controller doc controller.
-     *
-     * @return the doc controller
-     */
-    @Bean
-    public DocController docController() {
-        return new DocController(() ->
-                discoveryClient.getServices().stream().map(serviceId -> {
-                    ServiceInstance instance = discoveryClient.getInstances(serviceId).get(0);
-                    return instance.getUri() + "/v2/api-docs";
-                }).collect(Collectors.toList()));
-    }
 
 }
