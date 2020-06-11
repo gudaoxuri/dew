@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ public class WebTest {
         Assert.assertEquals("A000", resultEntity.getBody().getCode());
     }
 
-    private void testValidation() throws Exception {
+    private void testValidation() {
         // group:create
         WebController.UserDTO userDTO = new WebController.UserDTO();
         userDTO.setAge(11);

@@ -88,7 +88,7 @@ public class NotifyTest {
         os.close();
     }
 
-    private static void startHttpServer(int port, String path)  {
+    private static void startHttpServer(int port, String path) {
         HttpServer server = null;
         try {
             server = HttpServer.create(new InetSocketAddress(port), 0);

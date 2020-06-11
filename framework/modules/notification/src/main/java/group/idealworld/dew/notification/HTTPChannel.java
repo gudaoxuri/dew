@@ -21,7 +21,6 @@ import com.ecfront.dew.common.HttpHelper;
 import com.ecfront.dew.common.Resp;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * HTTP通知.
@@ -49,13 +48,14 @@ public class HTTPChannel extends AbsChannel {
     }
 
     @Override
-    protected Resp<String> innerSend(String content, String title, Set<String> receivers) throws Exception {
+    protected Resp<String> innerSend(String content, String title, Set<String> receivers) {
+        var jsonReceivers = $.json.createArrayNode();
+        receivers.forEach(jsonReceivers::add);
         HttpHelper.ResponseWrap result = $.http.postWrap(httpUrl,
-                "{\n"
-                        + "    \"title\": \"" + title + "\",\n"
-                        + "    \"content\": \"" + content + "\",\n"
-                        + "    \"receivers\": [" + receivers.stream().map(r -> "\"" + r + "\"").collect(Collectors.joining(",")) + "]\n"
-                        + " }");
+                $.json.createObjectNode()
+                        .put("title", title)
+                        .put("content", content)
+                        .set("receivers", jsonReceivers));
         return result.statusCode == 200 ? Resp.success("") : Resp.badRequest(result.statusCode + "");
     }
 

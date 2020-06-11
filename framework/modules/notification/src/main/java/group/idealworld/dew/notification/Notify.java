@@ -255,10 +255,10 @@ public class Notify {
         if (!notifyConfig.getStrategy().getDndTime().isEmpty()) {
             String[] dndTime = notifyConfig.getStrategy().getDndTime().split("-");
             Calendar time = Calendar.getInstance();
-            long currentTime = Long.valueOf(new SimpleDateFormat("yyyyMMddHHmm").format(time.getTime()));
-            int currentShortTime = Integer.valueOf(new SimpleDateFormat("HHmm").format(time.getTime()));
-            int dndStartShortTime = Integer.valueOf(dndTime[0].replace(":", ""));
-            int dndEndShortTime = Integer.valueOf(dndTime[1].replace(":", ""));
+            long currentTime = Long.parseLong(new SimpleDateFormat("yyyyMMddHHmm").format(time.getTime()));
+            int currentShortTime = Integer.parseInt(new SimpleDateFormat("HHmm").format(time.getTime()));
+            int dndStartShortTime = Integer.parseInt(dndTime[0].replace(":", ""));
+            int dndEndShortTime = Integer.parseInt(dndTime[1].replace(":", ""));
             if (dndEndShortTime == dndStartShortTime) {
                 // 全天
                 isDNDTime = true;
@@ -271,7 +271,7 @@ public class Notify {
                 time.add(Calendar.DATE, 1);
             }
             if (currentTime > notifyContext.lastDNDEndTime.getAndSet(
-                    Long.valueOf(new SimpleDateFormat("yyyyMMdd")
+                    Long.parseLong(new SimpleDateFormat("yyyyMMdd")
                             .format(time.getTime()) + dndTime[1].replace(":", "")))) {
                 // 已在后几个免扰周期
                 notifyContext.currentForceSendTimes.set(0);

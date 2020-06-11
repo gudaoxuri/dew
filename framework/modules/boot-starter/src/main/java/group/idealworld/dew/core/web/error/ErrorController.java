@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController;
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
@@ -99,7 +100,11 @@ public class ErrorController extends AbstractErrorController {
                     .contentType(MediaType.APPLICATION_JSON_UTF8)
                     .body(((Resp.FallbackException) specialError).getMessage());
         }
-        Map<String, Object> error = getErrorAttributes(request, true);
+        Map<String, Object> error = getErrorAttributes(request,
+                ErrorAttributeOptions.of(ErrorAttributeOptions.Include.STACK_TRACE,
+                        ErrorAttributeOptions.Include.BINDING_ERRORS,
+                        ErrorAttributeOptions.Include.EXCEPTION,
+                        ErrorAttributeOptions.Include.MESSAGE));
         String path;
         String exClass = "";
         if (error.containsKey("path")) {
@@ -179,8 +184,6 @@ public class ErrorController extends AbstractErrorController {
             }
             message += DETAIL_FLAG + $.json.toJsonString(errorExt);
         }
-
-        logger.error("Request [{}-{}] {} , error {} : {}", request.getMethod(), path, Dew.context().getSourceIP(), busCode, message);
         if (specialError instanceof ConstraintViolationException) {
             busCode = "400";
             httpCode = 400;
@@ -192,6 +195,7 @@ public class ErrorController extends AbstractErrorController {
         } else {
             httpCode = 200;
         }
+        logger.error("Request [{}-{}] {} , error {} : {}", request.getMethod(), path, Dew.context().getSourceIP(), busCode, message);
         Resp resp = Resp.customFail(busCode + "", "[" + exMsg + "]" + message);
         String body = $.json.toJsonString(resp);
         return new Object[]{httpCode, body};
