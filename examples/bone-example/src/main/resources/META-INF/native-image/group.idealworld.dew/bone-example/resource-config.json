@@ -1,0 +1,14 @@
+{
+  "resources":[
+    {"pattern":"\\Qorg/springframework/boot/autoconfigure/ImportAutoConfigurationImportSelector.class\\E"},
+    {"pattern":"\\Qgroup/idealworld/dew/DewStartup.class\\E"},
+    {"pattern":"\\Qgroup/idealworld/dew/Dew.class\\E"},
+    {"pattern":"\\Qgroup/idealworld/dew/core/web/error/ErrorAutoConfiguration.class\\E"},
+    {"pattern":"\\Qgroup/idealworld/dew/core/web/interceptor/InterceptorWebAutoConfiguration.class\\E"},
+    {"pattern":"\\Qgroup/idealworld/dew/core/web/interceptor/AutoTrimConfiguration.class\\E"},
+    {"pattern":"\\Qgroup/idealworld/dew/core/basic/utils/convert/ConvertAutoConfiguration.class\\E"},
+    {"pattern":"\\Qgroup/idealworld/dew/core/auth/AuthAutoConfiguration.class\\E"},
+    {"pattern":"\\Qgroup/idealworld/dew/core/doc/DocAutoConfiguration.class\\E"}
+  ],
+  "bundles":[]
+}

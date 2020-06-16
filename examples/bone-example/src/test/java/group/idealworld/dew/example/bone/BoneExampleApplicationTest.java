@@ -16,24 +16,21 @@
 
 package group.idealworld.dew.example.bone;
 
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
+
+import org.junit.Test;
 
 /**
- * 工程启动类.
+ * The type Bone example application test.
  *
  * @author gudaoxuri
  */
-@SpringBootApplication(proxyBeanMethods = false)
-public class BoneExampleApplication {
+public class BoneExampleApplicationTest {
 
     /**
-     * The entry point of application.
-     *
-     * @param args the input arguments
+     * Test.
      */
-    public static void main(String[] args) {
-        new SpringApplicationBuilder(BoneExampleApplication.class).run(args);
-    }
+    @Test
+    public void test(){
 
+    }
 }

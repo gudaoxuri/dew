@@ -1,0 +1,20 @@
+[
+{
+  "name":"group.idealworld.dew.example.bone.BoneExampleApplicationTest",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true,
+  "allPublicConstructors":true
+},
+{
+  "name":"java.lang.Object",
+  "allDeclaredFields":true,
+  "allDeclaredMethods":true
+},
+{
+  "name":"org.junit.runner.Description",
+  "methods":[{"name":"createSuiteDescription","parameterTypes":["java.lang.String","java.lang.annotation.Annotation[]"] }]
+},
+{
+  "name":"org.junit.runner.RunWith"
+}
+]

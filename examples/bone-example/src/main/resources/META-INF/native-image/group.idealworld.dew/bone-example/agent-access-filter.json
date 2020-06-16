@@ -1,0 +1,19 @@
+{
+  "rules": [
+    {
+      "excludeClasses": "org.apache.maven.surefire.**"
+    },
+    {
+      "excludeClasses": "com.oracle.truffle.**"
+    },
+    {
+      "excludeClasses": "org.graalvm.**"
+    },
+    {
+      "excludeClasses": "junit.framework.**"
+    },
+    {
+      "excludeClasses": "sun.**"
+    }
+  ]
+}
