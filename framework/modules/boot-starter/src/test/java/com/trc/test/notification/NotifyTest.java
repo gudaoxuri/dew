@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package group.idealworld.dew.notification;
+package com.trc.test.notification;
 
 
 import com.ecfront.dew.common.$;
@@ -23,6 +23,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
+import group.idealworld.dew.notification.Notify;
+import group.idealworld.dew.notification.NotifyConfig;
 import org.junit.Assert;
 import org.junit.Test;
 

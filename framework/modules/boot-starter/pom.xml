@@ -56,6 +56,12 @@
             <artifactId>cluster-spi-redis</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- Notification -->
+        <dependency>
+            <groupId>org.simplejavamail</groupId>
+            <artifactId>simple-java-mail</artifactId>
+            <version>${simple-java-mail.version}</version>
+        </dependency>
         <!-- Others -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

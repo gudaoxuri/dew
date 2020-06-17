@@ -1,5 +1,5 @@
 /*
- * Copyright 2019. the original author or authors.
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package com.trc.test;
 import com.trc.test.auth.AuthTest;
 import com.trc.test.cluster.ClusterTest;
 import com.trc.test.doc.DocTest;
-import com.trc.test.notify.NotifyTest;
+import com.trc.test.notification.NotifyIntegrationTest;
 import com.trc.test.web.MetricsTest;
 import com.trc.test.web.WebTest;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class AllTest {
     private AuthTest authTest;
 
     @Resource
-    private NotifyTest notifyTest;
+    private NotifyIntegrationTest notifyIntegrationTest;
 
     @Resource
     private DocTest docTest;
@@ -68,7 +68,7 @@ public class AllTest {
         clusterTest.testAll();
         webTest.testAll();
         authTest.testAll();
-        notifyTest.testAll();
+        notifyIntegrationTest.testAll();
         docTest.testAll();
         metricsTest.testMetric();
     }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package group.idealworld.dew.notification;
+package group.idealworld.dew.core.notification;
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.HttpHelper;

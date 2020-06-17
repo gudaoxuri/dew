@@ -14,37 +14,30 @@
  * limitations under the License.
  */
 
-package group.idealworld.dew.notification;
+package com.trc.test.notification;
 
-import java.util.Set;
+
+import com.ecfront.dew.common.Resp;
+import group.idealworld.dew.Dew;
+import org.junit.Assert;
+import org.springframework.stereotype.Component;
 
 /**
- * 通知通道.
+ * The type Notify integration test.
  *
  * @author gudaoxuri
  */
-public interface Channel {
+@Component
+public class NotifyIntegrationTest {
 
     /**
-     * 初始化通道.
+     * Test all.
      *
-     * @param notifyConfig the notify config
+     * @throws Exception the exception
      */
-    void init(NotifyConfig notifyConfig);
-
-    /**
-     * 销毁通道.
-     */
-    void destroy();
-
-    /**
-     * 发送消息.
-     *
-     * @param content   消息内容
-     * @param title     消息标题
-     * @param receivers 接收人列表
-     * @return 是否成功
-     */
-    boolean send(String content, String title, Set<String> receivers);
+    public void testAll()  {
+        Resp<Void> result = Dew.notify.send("flag1", "测试消息，默认通知人", "测试");
+        Assert.assertTrue(result.ok());
+    }
 
 }
