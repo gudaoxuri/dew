@@ -16,12 +16,12 @@
 
 package group.idealworld.dew.devops.kernel.flow.scale;
 
-import io.kubernetes.client.ApiException;
 import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
 import group.idealworld.dew.devops.kernel.flow.BasicFlow;
 import group.idealworld.dew.devops.kernel.helper.KubeHelper;
 import group.idealworld.dew.devops.kernel.helper.KubeRES;
 import group.idealworld.dew.devops.kernel.resource.KubeHorizontalPodAutoscalerBuilder;
+import io.kubernetes.client.openapi.ApiException;
 
 import java.io.IOException;
 import java.util.ArrayList;

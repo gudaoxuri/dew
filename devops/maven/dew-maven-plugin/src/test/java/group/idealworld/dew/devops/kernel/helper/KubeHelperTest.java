@@ -19,8 +19,8 @@ package group.idealworld.dew.devops.kernel.helper;
 import com.ecfront.dew.common.$;
 import group.idealworld.dew.devops.BasicTest;
 import group.idealworld.dew.devops.kernel.util.DewLog;
-import io.kubernetes.client.ApiException;
-import io.kubernetes.client.models.*;
+import io.kubernetes.client.openapi.ApiException;
+import io.kubernetes.client.openapi.models.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -93,7 +93,7 @@ public class KubeHelperTest extends BasicTest {
                         -> extensionsApi
                         .listNamespacedDeploymentCall(
                                 deployment.getMetadata().getNamespace(),
-                                null, null, null, null, "name=test-nginx", 1, null, null, Boolean.TRUE, null, null),
+                                null, null, null, null, "name=test-nginx", 1, null, null, Boolean.TRUE, null),
                 resp -> {
                     System.out.printf("%s : %s%n", resp.type, $.json.toJsonString(resp.object.getStatus()));
                     if (resp.object.getStatus().getReadyReplicas() != null
@@ -105,7 +105,7 @@ public class KubeHelperTest extends BasicTest {
                                     .list("name=nginx", "ns-test", KubeRES.POD, V1Pod.class)
                                     .stream().filter(pod ->
                                             pod.getStatus().getPhase().equalsIgnoreCase("Running")
-                                                    && pod.getStatus().getContainerStatuses().stream().allMatch(V1ContainerStatus::isReady)
+                                                    && pod.getStatus().getContainerStatuses().stream().allMatch(V1ContainerStatus::getReady)
                                     )
                                     .count();
                             if (2 != runningPodSize) {

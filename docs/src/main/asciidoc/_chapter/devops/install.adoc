@@ -3,7 +3,7 @@
 
 [IMPORTANT]
 ====
-本文会给出使用代理与不使用代理的安装、配置方式，但强烈推荐使用代理方式，详见 <<proxies>> 。
+本文会给出使用代理与不使用代理的安装、配置方式，但强烈推荐使用代理方式。
 ====
 
 [NOTE]
@@ -78,15 +78,15 @@ TIP: https://kubernetes.io/docs/setup/cri/#docker
 .安装配置
 [source,bash]
 ----
-yum install -y yum-utils \
-  device-mapper-persistent-data \
-  lvm2
+yum install -y yum-utils
 
 yum-config-manager \
     --add-repo \
     https://download.docker.com/linux/centos/docker-ce.repo
 
-yum install -y docker-ce-18.06.2.ce
+yum install docker-ce docker-ce-cli containerd.io
+
+systemctl start docker
 
 mkdir /etc/docker
 
@@ -144,6 +144,8 @@ systemctl restart docker
 -
 ----
 
+IMPORTANT: 生产环境注意做好相应端口的安全策略或是启用证书
+
 ==== Kubernetes
 
 TIP: https://kubernetes.io/docs/setup/independent/install-kubeadm/
@@ -172,7 +174,7 @@ net.bridge.bridge-nf-call-iptables = 1
 EOF
 
 sysctl --system
-K8S_VERSION="1.14.1-0"
+K8S_VERSION="1.18"
 yum install -y kubelet-${K8S_VERSION} kubeadm-${K8S_VERSION} kubectl-${K8S_VERSION} --disableexcludes=kubernetes
 systemctl enable --now kubelet
 
@@ -191,7 +193,7 @@ kubeadm init \
     --pod-network-cidr=10.244.0.0/16
 
 # 初始化Kubernetes，二选一，不使用代理方式，通过image-repository 及 --kubernetes-version 避免被墙，注意版本与yum安装的版本对应
-K8S_VERSION="1.14.1"
+K8S_VERSION="1.18"
 kubeadm init \
     --image-repository registry.aliyuncs.com/google_containers \
     --kubernetes-version ${K8S_VERSION} \
@@ -233,14 +235,14 @@ TIP: https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/
 ----
 # 执行上一步输出的 kubeadm join ...
 
-# 完成后在master上执行情况如下（以1.14.1版本为例）
+# 完成后在master上执行情况如下（以1.18版本为例）
 kubectl get no
 -
-k8s-master1   Ready    master   22m     v1.14.1
-k8s-node1     Ready    <none>   11m     v1.14.1
-k8s-node2     Ready    <none>   8m54s   v1.14.1
-k8s-node3     Ready    <none>   8m51s   v1.14.1
-k8s-node4     Ready    <none>   8m49s   v1.14.1
+k8s-master1   Ready    master   22m     v1.18
+k8s-node1     Ready    <none>   11m     v1.18
+k8s-node2     Ready    <none>   8m54s   v1.18
+k8s-node3     Ready    <none>   8m51s   v1.18
+k8s-node4     Ready    <none>   8m49s   v1.18
 -
 ----
 
@@ -274,46 +276,17 @@ data:
 
 ==== Helm
 
-TIP: https://docs.helm.sh/using_helm/#installing-helm
+TIP: https://helm.sh/docs/intro/install/
 
 .安装配置
 [source,bash]
 ----
-curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
-
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: tiller
-  namespace: kube-system
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: tiller
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-admin
-subjects:
-  - kind: ServiceAccount
-    name: tiller
-    namespace: kube-system
-EOF
-
-# 初始化服务，二选一，使用代理方式
-helm init --service-account tiller
-
-# 初始化服务，二选一，不使用代理方式，需要指定镜像，注意tiller版本和helm版本对应
-helm init --service-account tiller -i registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.13.1
-# 或者初始化之后更换镜像
-kubectl set image deployment/tiller-deploy tiller=registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.13.1 -n kube-system
-
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+# 添加charts repo
+helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+helm repo update
 # 查看helm版本
 helm version
-
-kubectl get pod -n kube-system -l app=helm
 ----
 
 ==== Metrics Server
@@ -355,12 +328,10 @@ Nginx ingress ConfigMap配置： https://github.com/kubernetes/ingress-nginx/blo
 .安装配置
 [source,bash]
 ----
-# 不使用代理，添加 --set defaultBackend.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/defaultbackend
 # 使用如下方式将80 443暴露出来
-helm install stable/nginx-ingress --name dew-nginx --namespace nginx-ingress --version=1.4.0 \
+helm install dew-nginx stable/nginx-ingress --namespace nginx-ingress \
     --set controller.kind=DaemonSet \
     --set controller.hostNetwork=true \
-    --set controller.stats.enabled=true \
     --set controller.metrics.enabled=true \
     --set nodeSelector.group=devops
 ----
@@ -940,3 +911,145 @@ spec:
    app: jaeger-demo
 EOF
 ----
+
+=== 开发环境安装配置
+
+开发环境推荐使用Docker for desktop安装Docker和Kubernetes的基础环境，大陆安装可参见 https://github.com/AliyunContainerService/k8s-for-docker-desktop 此项目。
+
+Windows用户建议升级到Windows 10 2004版本及以上，启用WSL2。
+
+
+编辑本机的hosts添加映射
+
+  127.0.0.1 dockerd.dew.test
+  127.0.0.1 harbor.dew.test
+  127.0.0.1 notary.dew.test
+  127.0.0.1 maven.dew.test
+  127.0.0.1 gitlab.dew.test
+
+=== 准备
+
+[source,bash]
+----
+# 创建namespaces
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx-ingress
+  labels:
+    name: nginx-ingress
+EOF
+
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: devops
+  labels:
+    name: devops
+EOF
+----
+
+==== Helm
+
+TIP: https://helm.sh/docs/intro/install/
+
+.安装配置
+[source,bash]
+----
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+# 添加charts repo
+helm repo remove stable && helm repo add stable http://mirror.azure.cn/kubernetes/charts/
+helm repo update
+# 查看helm版本
+helm version
+----
+
+==== Nginx Ingress Controller
+TIP: chart: https://github.com/helm/charts/tree/master/stable/nginx-ingress +
+源码：https://github.com/kubernetes/ingress-nginx +
+官网：https://kubernetes.github.io/ingress-nginx/ +
+Nginx ingress ConfigMap配置： https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/configmap.md
+
+.安装配置
+[source,bash]
+----
+# 使用如下方式将80 443暴露出来
+helm install dew-nginx stable/nginx-ingress --namespace nginx-ingress \
+    --set controller.kind=DaemonSet \
+    --set controller.hostNetwork=true \
+    --set controller.metrics.enabled=true
+
+# 删除 helm uninstall dew-nginx --namespace nginx-ingress
+----
+
+==== Harbor
+TIP: chart: https://github.com/goharbor/harbor-helm
+
+.安装配置
+[source,bash]
+----
+helm repo add harbor https://helm.goharbor.io
+helm repo update
+helm install dew-harbor harbor/harbor --namespace devops \
+    --set expose.ingress.hosts.core=harbor.dew.test \
+    --set expose.ingress.hosts.notary=notary.dew.test \
+    --set externalURL=https://harbor.dew.test
+
+# 删除 helm uninstall dew-harbor --namespace devops
+
+# 添加 ``"insecure-registries": ["harbor.dew.test"]`` 到 /etc/docker/daemon.json
+# 登录Harbor docker login <host> -u <user> -p <password>
+docker login harbor.dew.test -u admin -p Harbor12345
+# e.g. 上传镜像
+docker pull dewms/devops:latest
+docker tag dewms/devops:latest harbor.dew.test/dewms/devops:latest
+docker push harbor.dew.test/dewms/devops:latest
+----
+
+==== Sonatype Nexus
+TIP: https://github.com/Oteemo/charts/tree/master/charts/sonatype-nexus
+
+.安装配置
+[source,bash]
+----
+helm repo add oteemocharts https://oteemo.github.io/charts
+helm repo update
+helm install dew-nexus oteemocharts/sonatype-nexus --namespace devops \
+    --set ingress.enabled=true \
+    --set nexusProxy.env.nexusHttpHost=maven.dew.test \
+    --set nexusProxy.env.nexusDockerHost=maven.dew.test \
+
+# 用户名 admin 密码 admin123
+----
+for i in {0..2}; do
+mkdir -p /data/pv/harbor-{i}
+cat <<EOF | kubectl -n devops apply -f -
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+labels:
+app: harbor
+name: harbor-${i}
+spec:
+capacity:
+storage: 5Gi
+accessModes:
+- ReadWriteOnce
+persistentVolumeReclaimPolicy: Recycle
+storageClassName: local-storage
+local:
+path: /data/pv/harbor-${i}
+nodeAffinity:
+required:
+nodeSelectorTerms:
+- matchExpressions:
+- key: app
+operator: In
+values:
+- harbor-${i}
+EOF
+done
+
+==== Gitlab

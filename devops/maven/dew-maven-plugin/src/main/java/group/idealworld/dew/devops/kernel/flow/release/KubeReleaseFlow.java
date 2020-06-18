@@ -17,6 +17,7 @@
 package group.idealworld.dew.devops.kernel.flow.release;
 
 import com.ecfront.dew.common.$;
+import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
 import group.idealworld.dew.devops.kernel.exception.ProjectProcessException;
 import group.idealworld.dew.devops.kernel.flow.BasicFlow;
 import group.idealworld.dew.devops.kernel.function.VersionController;
@@ -25,9 +26,8 @@ import group.idealworld.dew.devops.kernel.helper.KubeHelper;
 import group.idealworld.dew.devops.kernel.helper.KubeRES;
 import group.idealworld.dew.devops.kernel.resource.KubeDeploymentBuilder;
 import group.idealworld.dew.devops.kernel.resource.KubeServiceBuilder;
-import io.kubernetes.client.ApiException;
-import io.kubernetes.client.models.*;
-import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
+import io.kubernetes.client.openapi.ApiException;
+import io.kubernetes.client.openapi.models.*;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -173,7 +173,7 @@ public class KubeReleaseFlow extends BasicFlow {
                 (coreApi, extensionsApi, rbacAuthorizationApi, autoscalingApi)
                         -> extensionsApi.listNamespacedDeploymentCall(deploymentRes.getMetadata().getNamespace(),
                         null, null, null, null,
-                        select, 1, null, null, Boolean.TRUE, null, null),
+                        select, 1, null, null, Boolean.TRUE, null),
                 resp -> {
                     // Ready Pod数量是否等于设定的数量
                     if (resp.object.getStatus().getReadyReplicas() != null
@@ -185,7 +185,7 @@ public class KubeReleaseFlow extends BasicFlow {
                                     .list(select, deploymentRes.getMetadata().getNamespace(), KubeRES.POD, V1Pod.class)
                                     .stream().filter(pod ->
                                             pod.getStatus().getPhase().equalsIgnoreCase("Running")
-                                                    && pod.getStatus().getContainerStatuses().stream().allMatch(V1ContainerStatus::isReady)
+                                                    && pod.getStatus().getContainerStatuses().stream().allMatch(V1ContainerStatus::getReady)
                                     )
                                     .count();
                             while (resp.object.getSpec().getReplicas() != runningPodSize) {
@@ -193,7 +193,7 @@ public class KubeReleaseFlow extends BasicFlow {
                                         .list(select, deploymentRes.getMetadata().getNamespace(), KubeRES.POD, V1Pod.class)
                                         .stream().filter(pod ->
                                                 pod.getStatus().getPhase().equalsIgnoreCase("Running")
-                                                        && pod.getStatus().getContainerStatuses().stream().allMatch(V1ContainerStatus::isReady)
+                                                        && pod.getStatus().getContainerStatuses().stream().allMatch(V1ContainerStatus::getReady)
                                         )
                                         .count();
                                 // 之前版本没有销毁

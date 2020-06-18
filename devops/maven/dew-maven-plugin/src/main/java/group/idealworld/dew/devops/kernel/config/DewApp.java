@@ -17,7 +17,7 @@
 package group.idealworld.dew.devops.kernel.config;
 
 import io.kubernetes.client.custom.Quantity;
-import io.kubernetes.client.models.V1ContainerPort;
+import io.kubernetes.client.openapi.models.V1ContainerPort;
 
 import java.util.ArrayList;
 import java.util.HashMap;

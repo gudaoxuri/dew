@@ -127,15 +127,11 @@ ____
 |-  |-  |- dew-maven-plugin                // DevOps核心插件
 |-  |-  |- dew-maven-agent                 // DevOps部署优化插件
 |-  |- sh                                  // DevOps执行脚本
-|-  |- chart                               // DevOps使用到的Helm Chart
-|-  |-  |- dew-spring-cloud-config         //  Spring Cloud Config Chart
 |-  |- cicd                                // 各CI服务的 CI/CD 配置
 |-  |-  |- gitlabci                        // Gitlab CI CI/CD配置
 |-  |-  |- jenkins                         // Jenkins CI/CD配置
 |-  |- docker                              // DevOps使用到的镜像
 |-  |-  |- dew-devops                      // 集成 Java Maven Node Git 的镜像
-|-  |-  |- dew-k8s-native-client           // 集成 Kuberenetes 及 Docker 的镜像
-|-  |-  |- dew-spring-cloud-config         // Spring Cloud Config 镜像
 |-  |- it                                  // 集成测试
 |- docs                                    // 文档
 ----

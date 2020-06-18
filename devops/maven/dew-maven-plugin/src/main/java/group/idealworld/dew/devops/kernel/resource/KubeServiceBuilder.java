@@ -16,11 +16,11 @@
 
 package group.idealworld.dew.devops.kernel.resource;
 
-import io.kubernetes.client.custom.IntOrString;
-import io.kubernetes.client.models.*;
 import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
 import group.idealworld.dew.devops.kernel.function.VersionController;
 import group.idealworld.dew.devops.kernel.helper.KubeRES;
+import io.kubernetes.client.custom.IntOrString;
+import io.kubernetes.client.openapi.models.*;
 import org.codehaus.plexus.util.ReflectionUtils;
 
 import java.util.ArrayList;

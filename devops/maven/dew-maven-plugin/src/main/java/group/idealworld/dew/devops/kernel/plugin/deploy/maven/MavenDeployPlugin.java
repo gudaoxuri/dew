@@ -18,11 +18,11 @@ package group.idealworld.dew.devops.kernel.plugin.deploy.maven;
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
+import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
 import group.idealworld.dew.devops.kernel.exception.ProjectProcessException;
 import group.idealworld.dew.devops.kernel.function.VersionController;
 import group.idealworld.dew.devops.kernel.plugin.deploy.DeployPlugin;
-import io.kubernetes.client.ApiException;
-import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
+import io.kubernetes.client.openapi.ApiException;
 import org.apache.maven.project.MavenProject;
 
 import java.io.IOException;

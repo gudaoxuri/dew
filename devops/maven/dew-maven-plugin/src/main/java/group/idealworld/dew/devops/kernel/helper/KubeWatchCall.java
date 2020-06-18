@@ -16,12 +16,12 @@
 
 package group.idealworld.dew.devops.kernel.helper;
 
-import com.squareup.okhttp.Call;
-import io.kubernetes.client.ApiException;
-import io.kubernetes.client.apis.AutoscalingV2beta2Api;
-import io.kubernetes.client.apis.CoreV1Api;
-import io.kubernetes.client.apis.ExtensionsV1beta1Api;
-import io.kubernetes.client.apis.RbacAuthorizationV1Api;
+import io.kubernetes.client.openapi.ApiException;
+import io.kubernetes.client.openapi.apis.AutoscalingV2beta2Api;
+import io.kubernetes.client.openapi.apis.CoreV1Api;
+import io.kubernetes.client.openapi.apis.ExtensionsV1beta1Api;
+import io.kubernetes.client.openapi.apis.RbacAuthorizationV1Api;
+import okhttp3.Call;
 
 /**
  * Kubernetes watch 回调.

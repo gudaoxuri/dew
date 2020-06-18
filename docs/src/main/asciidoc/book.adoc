@@ -62,8 +62,6 @@ include::../../../../ROADMAP.adoc[]
 
 == 附录 Appendix
 
-include::_chapter/appendix/proxies.adoc[]
-
 include::_chapter/appendix/middleware.adoc[]
 
 include::_chapter/appendix/2.x-migration-guide.adoc[]
@@ -72,13 +70,7 @@ include::_chapter/appendix/3.x-migration-guide.adoc[]
 
 === 内置Image与Chart
 
-include::../../../../devops/docker/dew-k8s-native-client/readme.adoc[]
-
 include::../../../../devops/docker/dew-devops/readme.adoc[]
-
-include::../../../../devops/docker/dew-spring-cloud-config/readme.adoc[]
-
-include::../../../../devops/chart/dew-spring-cloud-config/readme.adoc[]
 
 === 支持的CI/CD服务
 

@@ -102,7 +102,7 @@ public class DockerOpt {
         }
         if (registryUrl != null) {
             registryUrl = registryUrl.endsWith("/") ? registryUrl.substring(0, registryUrl.length() - 1) : registryUrl;
-            registryApiUrl = registryUrl.substring(0, registryUrl.lastIndexOf("/") + 1) + "api";
+            registryApiUrl = registryUrl.substring(0, registryUrl.lastIndexOf("/") + 1) + "api/v2.0";
             defaultAuthConfig = new AuthConfig()
                     .withRegistryAddress(registryUrl)
                     .withUsername(registryUsername)
@@ -286,6 +286,7 @@ public class DockerOpt {
 
     /**
      * Harbor Registry API.
+     *
      * @see <a href="https://raw.githubusercontent.com/goharbor/harbor/master/docs/swagger.yaml">Goharbor API</a>
      */
     public class Registry {
@@ -298,7 +299,9 @@ public class DockerOpt {
          */
         public boolean exist(String imageName) {
             String[] item = parseImageInfo(imageName);
-            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(registryApiUrl + "/repositories/" + item[0] + "/tags/" + item[1], wrapHeader());
+            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(
+                    registryApiUrl + "/projects/" + item[0] + "/repositories/" + item[1] + "/artifacts/" + item[2] + "/tags",
+                    wrapHeader());
             log.debug("Registry exist image result [" + responseWrap.statusCode + "]" + responseWrap.result);
             return responseWrap.statusCode == 200;
         }
@@ -311,7 +314,9 @@ public class DockerOpt {
          */
         public boolean remove(String imageName) {
             String[] item = parseImageInfo(imageName);
-            HttpHelper.ResponseWrap responseWrap = $.http.deleteWrap(registryApiUrl + "/repositories/" + item[0] + "/tags/" + item[1], wrapHeader());
+            HttpHelper.ResponseWrap responseWrap = $.http.deleteWrap(
+                    registryApiUrl + "/projects/" + item[0] + "/repositories/" + item[1] + "/artifacts/" + item[2] + "/tags/" + item[2],
+                    wrapHeader());
             boolean result = responseWrap.statusCode == 200;
             if (result) {
                 log.debug("Registry remove image result [" + responseWrap.statusCode + "]" + responseWrap.result);
@@ -324,12 +329,15 @@ public class DockerOpt {
         private String[] parseImageInfo(String imageName) {
             String[] imageFragment = imageName.split(":");
             String tag = imageFragment.length == 2 ? imageFragment[1] : "latest";
-            if (imageName.split("/").length == 1) {
-                // 不带host
-                return new String[]{imageFragment[0], tag};
-            } else {
-                return new String[]{imageFragment[0].substring(imageFragment[0].indexOf("/") + 1), tag};
+            String image = imageFragment[0];
+            if (image.split("/").length == 3) {
+                // 带host，先去除
+                image = image.substring(image.indexOf("/") + 1);
             }
+            return new String[]{
+                    image.substring(0, image.indexOf("/")),
+                    image.substring(image.indexOf("/") + 1),
+                    tag};
         }
 
         private Map<String, String> wrapHeader() {

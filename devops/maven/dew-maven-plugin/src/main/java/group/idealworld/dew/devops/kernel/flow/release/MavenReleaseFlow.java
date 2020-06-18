@@ -16,11 +16,11 @@
 
 package group.idealworld.dew.devops.kernel.flow.release;
 
+import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
 import group.idealworld.dew.devops.kernel.flow.BasicFlow;
 import group.idealworld.dew.devops.kernel.function.VersionController;
-import io.kubernetes.client.ApiException;
-import io.kubernetes.client.models.V1ConfigMap;
-import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
+import io.kubernetes.client.openapi.ApiException;
+import io.kubernetes.client.openapi.models.V1ConfigMap;
 
 import java.io.IOException;
 import java.util.HashMap;

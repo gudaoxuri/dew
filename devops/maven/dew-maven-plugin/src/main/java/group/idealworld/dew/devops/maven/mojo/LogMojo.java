@@ -17,7 +17,7 @@
 package group.idealworld.dew.devops.maven.mojo;
 
 import group.idealworld.dew.devops.kernel.DevOps;
-import io.kubernetes.client.ApiException;
+import io.kubernetes.client.openapi.ApiException;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import java.io.IOException;

@@ -9,7 +9,6 @@ docker build -t dewms/devops .
 docker build -t dewms/devops --build-arg MAVEN_AGENT_URL=<> .
 
 
-
 # 测试
 docker run -it dewms/devops
 -

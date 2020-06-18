@@ -16,11 +16,11 @@
 
 package group.idealworld.dew.devops.kernel.resource;
 
-import io.kubernetes.client.models.V1ConfigMap;
-import io.kubernetes.client.models.V1ConfigMapBuilder;
-import io.kubernetes.client.models.V1ObjectMetaBuilder;
-import group.idealworld.dew.devops.kernel.helper.KubeRES;
 import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
+import group.idealworld.dew.devops.kernel.helper.KubeRES;
+import io.kubernetes.client.openapi.models.V1ConfigMap;
+import io.kubernetes.client.openapi.models.V1ConfigMapBuilder;
+import io.kubernetes.client.openapi.models.V1ObjectMetaBuilder;
 
 import java.util.Map;
 

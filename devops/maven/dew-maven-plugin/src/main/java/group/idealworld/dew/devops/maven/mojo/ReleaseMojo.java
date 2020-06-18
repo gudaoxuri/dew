@@ -18,7 +18,7 @@ package group.idealworld.dew.devops.maven.mojo;
 
 import group.idealworld.dew.devops.kernel.DevOps;
 import group.idealworld.dew.devops.kernel.function.StatusReporter;
-import io.kubernetes.client.ApiException;
+import io.kubernetes.client.openapi.ApiException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.ResolutionScope;

@@ -1,11 +1,11 @@
-FROM maven:3.6.1-jdk-8
+FROM maven:3.6.3-jdk-11
 
 # ----------------- Add git client
 
 RUN apt-get install git
 
 # ----------------- Add node
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - \
     && apt-get install -y nodejs
 
 # ----------------- Add maven agent

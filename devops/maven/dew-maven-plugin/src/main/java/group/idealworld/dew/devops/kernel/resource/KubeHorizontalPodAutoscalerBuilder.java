@@ -16,9 +16,9 @@
 
 package group.idealworld.dew.devops.kernel.resource;
 
-import io.kubernetes.client.models.*;
-import group.idealworld.dew.devops.kernel.helper.KubeRES;
 import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
+import group.idealworld.dew.devops.kernel.helper.KubeRES;
+import io.kubernetes.client.openapi.models.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
