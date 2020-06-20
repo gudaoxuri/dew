@@ -17,10 +17,7 @@
 package group.idealworld.dew.devops.kernel.helper;
 
 import io.kubernetes.client.openapi.ApiException;
-import io.kubernetes.client.openapi.apis.AutoscalingV2beta2Api;
-import io.kubernetes.client.openapi.apis.CoreV1Api;
-import io.kubernetes.client.openapi.apis.ExtensionsV1beta1Api;
-import io.kubernetes.client.openapi.apis.RbacAuthorizationV1Api;
+import io.kubernetes.client.openapi.apis.*;
 import okhttp3.Call;
 
 /**
@@ -36,13 +33,14 @@ public interface KubeWatchCall {
      * Call.
      *
      * @param coreApi              the core api
+     * @param appsApi              the apps api
      * @param extensionsApi        the extensions api
      * @param rbacAuthorizationApi the rbac authorization api
      * @param autoscalingApi       the autoscaling api
      * @return the call
      * @throws ApiException the api exception
      */
-    Call call(CoreV1Api coreApi, ExtensionsV1beta1Api extensionsApi,
+    Call call(CoreV1Api coreApi, AppsV1Api appsApi, ExtensionsV1beta1Api extensionsApi,
               RbacAuthorizationV1Api rbacAuthorizationApi, AutoscalingV2beta2Api autoscalingApi) throws ApiException;
 
 }

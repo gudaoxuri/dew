@@ -16,7 +16,7 @@
 
 package group.idealworld.dew.devops.it;
 
-import io.kubernetes.client.ApiException;
+import io.kubernetes.client.openapi.ApiException;
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +75,7 @@ public abstract class BasicProcessor {
      * @throws ApiException the api exception
      */
     @Before
-    public void loadConfig() throws IOException, ApiException {
+    public void loadConfig() throws IOException {
         String configPath = Paths.get("").toFile().getAbsoluteFile().getParentFile().getAbsolutePath() + File.separator + "devops-test.properties";
         logger.info("Load config from " + configPath);
         Properties properties = new Properties();

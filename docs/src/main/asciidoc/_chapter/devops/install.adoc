@@ -873,7 +873,7 @@ EOF
 
 # 手工添加示例如下：
 cat <<EOF | kubectl apply -f -
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
@@ -949,6 +949,24 @@ metadata:
   labels:
     name: devops
 EOF
+
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dew-test
+  labels:
+    name: dew-test
+EOF
+
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dew-uat
+  labels:
+    name: dew-uat
+EOF
 ----
 
 ==== Helm
@@ -1023,33 +1041,5 @@ helm install dew-nexus oteemocharts/sonatype-nexus --namespace devops \
 
 # 用户名 admin 密码 admin123
 ----
-for i in {0..2}; do
-mkdir -p /data/pv/harbor-{i}
-cat <<EOF | kubectl -n devops apply -f -
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-labels:
-app: harbor
-name: harbor-${i}
-spec:
-capacity:
-storage: 5Gi
-accessModes:
-- ReadWriteOnce
-persistentVolumeReclaimPolicy: Recycle
-storageClassName: local-storage
-local:
-path: /data/pv/harbor-${i}
-nodeAffinity:
-required:
-nodeSelectorTerms:
-- matchExpressions:
-- key: app
-operator: In
-values:
-- harbor-${i}
-EOF
-done
 
 ==== Gitlab

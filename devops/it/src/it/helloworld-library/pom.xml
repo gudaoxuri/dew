@@ -34,10 +34,10 @@
         <maven.install.skip>false</maven.install.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
         <sonar.skip>true</sonar.skip>
-        <dew_devops_it_repository_id>trc-releases</dew_devops_it_repository_id>
-        <dew_devops_it_repository_url>http://121.41.17.205:18081/nexus/content/repositories/releases/</dew_devops_it_repository_url>
-        <dew_devops_it_snapshotRepository_id>trc-snapshots</dew_devops_it_snapshotRepository_id>
-        <dew_devops_it_snapshotRepository_url>http://121.41.17.205:18081/nexus/content/repositories/snapshots/</dew_devops_it_snapshotRepository_url>
+        <dew_devops_it_repository_id>dew-test-releases</dew_devops_it_repository_id>
+        <dew_devops_it_repository_url>https://maven.dew.test/repository/maven-releases/</dew_devops_it_repository_url>
+        <dew_devops_it_snapshotRepository_id>dew-test-snapshots</dew_devops_it_snapshotRepository_id>
+        <dew_devops_it_snapshotRepository_url>https://maven.dew.test/repository/maven-snapshots/</dew_devops_it_snapshotRepository_url>
     </properties>
 
     <dependencies>

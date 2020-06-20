@@ -23,7 +23,7 @@ import group.idealworld.dew.devops.kernel.helper.KubeHelper;
 import group.idealworld.dew.devops.kernel.helper.KubeRES;
 import group.idealworld.dew.devops.kernel.resource.KubeDeploymentBuilder;
 import io.kubernetes.client.openapi.ApiException;
-import io.kubernetes.client.openapi.models.ExtensionsV1beta1Deployment;
+import io.kubernetes.client.openapi.models.V1Deployment;
 
 import java.util.Date;
 import java.util.stream.Collectors;
@@ -43,7 +43,7 @@ public class DefaultRefreshFlow extends BasicFlow {
                 KubeHelper.inst(
                         config.getId()).list("app=" + config.getAppName()
                                 + ",version=" + VersionController.getAppCurrentVersion(config), config.getNamespace(),
-                        KubeRES.DEPLOYMENT, ExtensionsV1beta1Deployment.class)
+                        KubeRES.DEPLOYMENT, V1Deployment.class)
                         .stream()
                         .filter(deploy -> config.getAppName().equals(deploy.getMetadata().getName()))
                         .flatMap(deploy -> deploy.getSpec().getTemplate().getSpec().getContainers()

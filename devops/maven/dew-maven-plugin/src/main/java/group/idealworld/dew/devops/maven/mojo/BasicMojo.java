@@ -368,25 +368,25 @@ public abstract class BasicMojo extends AbstractMojo {
         formatParameters(FLAG_DEW_DEVOPS_DOCKER_REGISTRY_PASSWORD, formattedProperties)
                 .ifPresent(obj -> dockerRegistryPassword = obj);
         formatParameters(FLAG_DEW_DEVOPS_QUIET, formattedProperties)
-                .ifPresent(obj -> quiet = Boolean.valueOf(obj));
+                .ifPresent(obj -> quiet = Boolean.parseBoolean(obj));
         formatParameters(FLAG_DEW_DEVOPS_POD_NAME, formattedProperties)
                 .ifPresent(obj -> podName = obj);
         formatParameters(FLAG_DEW_DEVOPS_LOG_FOLLOW, formattedProperties)
-                .ifPresent(obj -> follow = Boolean.valueOf(obj));
+                .ifPresent(obj -> follow = Boolean.parseBoolean(obj));
         formatParameters(FLAG_DEW_DEVOPS_DEBUG_FORWARD_PORT, formattedProperties)
-                .ifPresent(obj -> forwardPort = Integer.valueOf(obj));
+                .ifPresent(obj -> forwardPort = Integer.parseInt(obj));
         formatParameters(FLAG_DEW_DEVOPS_SCALE_REPLICAS, formattedProperties)
-                .ifPresent(obj -> replicas = Integer.valueOf(obj));
+                .ifPresent(obj -> replicas = Integer.parseInt(obj));
         formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO, formattedProperties)
-                .ifPresent(obj -> autoScale = Boolean.valueOf(obj));
+                .ifPresent(obj -> autoScale = Boolean.parseBoolean(obj));
         formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MIN, formattedProperties)
-                .ifPresent(obj -> minReplicas = Integer.valueOf(obj));
+                .ifPresent(obj -> minReplicas = Integer.parseInt(obj));
         formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_REPLICAS_MAX, formattedProperties)
-                .ifPresent(obj -> maxReplicas = Integer.valueOf(obj));
+                .ifPresent(obj -> maxReplicas = Integer.parseInt(obj));
         formatParameters(FLAG_DEW_DEVOPS_SCALE_AUTO_CPU_AVG, formattedProperties)
-                .ifPresent(obj -> cpuAvg = Integer.valueOf(obj));
+                .ifPresent(obj -> cpuAvg = Integer.parseInt(obj));
         formatParameters(FLAG_DEW_DEVOPS_VERSION_HISTORY, formattedProperties)
-                .ifPresent(obj -> history = Boolean.valueOf(obj));
+                .ifPresent(obj -> history = Boolean.parseBoolean(obj));
         formatParameters(FLAG_DEW_DEVOPS_ROLLBACK_VERSION, formattedProperties)
                 .ifPresent(obj -> rollbackVersion = obj);
         formatParameters(FLAG_DEW_DEVOPS_MOCK_CLASS_PATH, formattedProperties)

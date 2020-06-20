@@ -305,7 +305,7 @@ pipeline {
  参数化构建参数：
    · 部署相关参数
         profile                 部署的代码profile；若不指定，默认根据job名匹配设值
-        kube_config             Kubernetes集群的admin.conf的base64值；默认根据job名设值
+        kube_config             Kubernetes集群的kube config的base64值；默认根据job名设值
         jenkins_agent           运行Job的Jenkins节点；默认根据job名设值，job名包含test的为slave，包含uat/prd/prod的为master；profile为prd/prod的默认为master
         devops_mvn_thread       默认为单线程
         devops_phase            默认为deploy

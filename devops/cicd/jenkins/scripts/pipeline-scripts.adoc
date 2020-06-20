@@ -79,7 +79,7 @@ image::./images/devops-jenkins/pipeline-scm.jpg[width="70%",height="70%"]
 |DEW_DEVOPS_HARBOR_PASSWORD         |Harbor管理员账号的密码
 |DEW_DEVOPS_PROJECT_PROFILE_XXX     |部署代码的profile，e.g. DEW_DEVOPS_PROJECT_PROFILE_TEST=test
 |DEW_DEVOPS_KUBE_CONFIG_XXXX        |项目要部署的K8S集群的kube_config的base64加密的值，通过在该集群的master节点，执行此命令
-``echo $(cat /etc/kubernetes/admin.conf\| base64) \| tr -d " "``获取,注意admin.conf变更时及时更新此值。 +
+``echo $(cat ~/.kube/config | base64) | tr -d " "``获取,注意配置变更时及时更新此值。 +
 参数名举例： DEW_DEVOPS_KUBE_CONFIG_TEST，DEW_DEVOPS_KUBE_CONFIG_UAT，DEW_DEVOPS_KUBE_CONFIG_PRD,DEW_DEVOPS_KUBE_CONFIG
 |MAVEN_OPTS                         |值一般为``-javaagent:/opt/jar/dew-maven-agent.jar  -Dorg.apache.maven.user-settings=/opt/maven/conf/settings.xml`` +
 此参数需和``dew-maven-agent-update``脚本结合使用。
@@ -100,7 +100,7 @@ TIP: 注意需要将mvn，node等工具加入环境变量``PATH``中。另外根
 |jenkins_agent    | 运行Job的Jenkins节点   | 默认根据job名设值，job名包含test的为slave，包含uat/prd/prod的为master；profile为prd/prod的默认为master
 |jenkins_agents   | 指定Job运行的Jenkins节点,多个用,分隔。|如不指定，默认为``master``。
 |profile          | 要部署项目的profile | 如不指定，根据 Job 的名字来自动判断。p.s. 生产环境默认的profile为``prd``。
-|kube_config      | Kubernetes集群的admin.conf的base64值 | 默认根据job名设值
+|kube_config      | Kubernetes集群的kube config的base64值 | 默认根据job名设值
 |maven_debug      | 是否启用mvnDebug进行调试 | 默认不启用
 |===
 +

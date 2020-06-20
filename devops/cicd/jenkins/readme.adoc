@@ -30,7 +30,7 @@ image::./images/devops-jenkins/manual/pipeline-scm.jpg[]
 | git_repo              | 需要部署项目的代码地址
 | branch                | 需要部署项目的代码分支，格式为：origin/master
 | profile               | 需要部署项目的配置profile，如不设置，默认根据 Pipeline Job名称中包含的关键字来匹配，匹配关键字： test/uat/prd/prod
-| kube_config           | 需要将项目部署在的 Kubernetes 集群的 kube config 的base64 的值,通过在Kubernetes集群中执行``$(cat /etc/kubernetes/admin.conf\| base64) \| tr -d " " `` 获取；如不设置，默认根据Pipeline Job的名字找到已有的全局环境变量中的 DEW_DEVOPS_KUBE_CONFIG_XXXX 。请确保该参数有值可取。
+| kube_config           | 需要将项目部署在的 Kubernetes 集群的 kube config 的base64 的值,通过在Kubernetes集群中执行``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取；如不设置，默认根据Pipeline Job的名字找到已有的全局环境变量中的 DEW_DEVOPS_KUBE_CONFIG_XXXX 。请确保该参数有值可取。
 | devops_phase          | 需要执行的Dew DevOps类型，不填时默认为 deploy
 | devops_mvn_thread     | 部署项目的线程数，如不设置，将单线程部署，部署速度较慢。
 | devops_assign_services| 指定部署的服务名，以各模块的artifactId，多个以``,``逗号分隔。

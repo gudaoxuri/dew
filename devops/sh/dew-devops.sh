@@ -42,7 +42,7 @@ GITLAB_RUNNER_IMAGE=dewms/devops:3.0.0-SNAPSHOT
 GITLAB_RUNNER_REG_TOKEN=3mezus8cX9qAjkrNY4B
 GITLAB_RUNNER_PROFILE=test
 
-KUBERNETES_CONFIG=$(echo $(base64 < /etc/kubernetes/admin.conf) |  tr -d " ")
+KUBERNETES_CONFIG=$(echo $(base64 < ~/.kube/config) |  tr -d " ")
 INGRESS_HOST_EXAMPLE="test.dew.idealworld.group/api user-service:8080"
 
 # ------------------

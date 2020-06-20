@@ -49,6 +49,8 @@ public class MavenDeployPlugin implements DeployPlugin {
                     || mavenProject.getDistributionManagement().getSnapshotRepository().getUrl().trim().isEmpty()) {
                 return Resp.forbidden("Maven distribution snapshot repository not found");
             }
+            // SNAPSHOT每次都要发
+            return Resp.success("");
         } else if (mavenProject.getDistributionManagement() == null
                 || mavenProject.getDistributionManagement().getRepository() == null
                 || mavenProject.getDistributionManagement().getRepository().getUrl() == null
@@ -63,7 +65,8 @@ public class MavenDeployPlugin implements DeployPlugin {
                 + "/"
                 + mavenProject.getArtifactId()
                 + "/"
-                + version;
+                + version
+                + "/maven-metadata.xml";
         if ($.http.getWrap(repoUrl).statusCode == 200) {
             return Resp.forbidden("The current version already exists");
         }

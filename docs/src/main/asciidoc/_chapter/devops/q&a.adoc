@@ -1,0 +1,13 @@
+[[devops-q-and-a]]
+=== DevOps常见问题
+
+==== javax.net.ssl.SSLHandshakeException: extension (5) should not be presented in certificate_request
+
+JDK Bug，升级JDK版本或加上 ``-Djdk.tls.client.protocols=TLSv1.2``
+
+@See https://github.com/kubernetes-client/java/issues/893 +
+@See https://bugs.openjdk.java.net/browse/JDK-8236039
+
+==== PKIX path building failed: sun.security.provider.certpath.SunCert PathBuilderException: unable to find valid certification path to requested target
+
+-Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true

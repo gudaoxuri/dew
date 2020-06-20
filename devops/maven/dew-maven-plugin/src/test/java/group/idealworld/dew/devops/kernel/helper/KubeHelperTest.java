@@ -41,11 +41,9 @@ public class KubeHelperTest extends BasicTest {
 
     /**
      * Before.
-     *
-     * @throws IOException the io exception
      */
     @Before
-    public void before() throws IOException {
+    public void before() {
         KubeHelper.init("", DewLog.build(this.getClass()), defaultKubeConfig);
     }
 
@@ -87,10 +85,10 @@ public class KubeHelperTest extends BasicTest {
         Assert.assertEquals("Active",
                 KubeHelper.inst("").read("ns-test", KubeRES.NAME_SPACE, V1Namespace.class).getStatus().getPhase());
 
-        ExtensionsV1beta1Deployment deployment = buildDeployment();
+        V1Deployment deployment = buildDeployment();
         CountDownLatch cdl = new CountDownLatch(1);
-        final String watchId = KubeHelper.inst("").watch((coreApi, extensionsApi, rbacAuthorizationApi, autoscalingApi)
-                        -> extensionsApi
+        final String watchId = KubeHelper.inst("").watch((coreApi, appApi, extensionsApi, rbacAuthorizationApi, autoscalingApi)
+                        -> appApi
                         .listNamespacedDeploymentCall(
                                 deployment.getMetadata().getNamespace(),
                                 null, null, null, null, "name=test-nginx", 1, null, null, Boolean.TRUE, null),
@@ -119,7 +117,7 @@ public class KubeHelperTest extends BasicTest {
                     }
 
                 },
-                ExtensionsV1beta1Deployment.class);
+                V1Deployment.class);
         Assert.assertFalse(
                 KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(), KubeRES.DEPLOYMENT));
         KubeHelper.inst("").apply(deployment);
@@ -130,17 +128,17 @@ public class KubeHelperTest extends BasicTest {
                 "",
                 deployment.getMetadata().getNamespace(),
                 KubeRES.DEPLOYMENT,
-                ExtensionsV1beta1Deployment.class).size());
+                V1Deployment.class).size());
         Assert.assertEquals(0, KubeHelper.inst("").list(
                 "name=nginx",
                 deployment.getMetadata().getNamespace(),
                 KubeRES.DEPLOYMENT,
-                ExtensionsV1beta1Deployment.class).size());
+                V1Deployment.class).size());
         Assert.assertEquals(1, KubeHelper.inst("").list(
                 "name=test-nginx",
                 deployment.getMetadata().getNamespace(),
                 KubeRES.DEPLOYMENT,
-                ExtensionsV1beta1Deployment.class).size());
+                V1Deployment.class).size());
 
         // 避免各pod的startTime相同
         Thread.sleep(1000);
@@ -150,10 +148,10 @@ public class KubeHelperTest extends BasicTest {
                 add("{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/image\",\"value\":\"nginx:latest\"}");
             }
         }, "ns-test", KubeRES.DEPLOYMENT);
-        ExtensionsV1beta1Deployment fetchedDeployment = KubeHelper.inst("").read(deployment.getMetadata().getName(),
+        V1Deployment fetchedDeployment = KubeHelper.inst("").read(deployment.getMetadata().getName(),
                 deployment.getMetadata().getNamespace(),
                 KubeRES.DEPLOYMENT,
-                ExtensionsV1beta1Deployment.class);
+                V1Deployment.class);
 
         Assert.assertEquals(2, fetchedDeployment.getSpec().getReplicas().intValue());
         Assert.assertEquals("nginx:latest", fetchedDeployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
@@ -178,7 +176,7 @@ public class KubeHelperTest extends BasicTest {
                         "-c",
                         "ls -l"
                 });
-        Assert.assertEquals("total 8", execResult.get(0));
+        Assert.assertTrue(execResult.get(0).contains("total"));
 
         /* Closeable closeable = KubeHelper.inst("").forward(podName, deployment.getMetadata().getNamespace(), 80, 8081);
 
@@ -200,41 +198,47 @@ public class KubeHelperTest extends BasicTest {
         Assert.assertFalse(KubeHelper.inst("").exist("ns-test", KubeRES.NAME_SPACE));
     }
 
-    private ExtensionsV1beta1Deployment buildDeployment() {
-        return new ExtensionsV1beta1DeploymentBuilder()
+    private V1Deployment buildDeployment() {
+        return new V1DeploymentBuilder()
                 .withKind(KubeRES.DEPLOYMENT.getVal())
-                .withApiVersion("extensions/v1beta1")
+                .withApiVersion("apps/v1")
                 .withMetadata(new V1ObjectMetaBuilder()
                         .withName("nginx-deployment")
                         .withNamespace("ns-test")
-                        .withLabels(new HashMap<String, String>() {
+                        .withLabels(new HashMap<>() {
                             {
                                 put("name", "test-nginx");
                             }
                         })
                         .build())
-                .withSpec(new ExtensionsV1beta1DeploymentSpecBuilder()
+                .withSpec(new V1DeploymentSpecBuilder()
                         .withReplicas(1)
-                        .withTemplate(new V1PodTemplateSpecBuilder()
-                                .withMetadata(new V1ObjectMetaBuilder()
-                                        .withLabels(new HashMap<String, String>() {
-                                            {
-                                                put("app", "nginx");
-                                            }
-                                        })
-                                        .build())
-                                .withSpec(new V1PodSpecBuilder()
-                                        .withContainers(new V1ContainerBuilder()
-                                                .withName("nginx")
-                                                .withImage("nginx:1.7.9")
-                                                .withPorts(new V1ContainerPortBuilder()
-                                                        .withContainerPort(80)
-                                                        .build()
-                                                )
-                                                .build())
+                        .withSelector(new V1LabelSelectorBuilder()
+                                .withMatchLabels(new HashMap<>() {
+                                    {
+                                        put("app", "nginx");
+                                    }
+                                }).build())
+                .withTemplate(new V1PodTemplateSpecBuilder()
+                        .withMetadata(new V1ObjectMetaBuilder()
+                                .withLabels(new HashMap<>() {
+                                    {
+                                        put("app", "nginx");
+                                    }
+                                })
+                                .build())
+                        .withSpec(new V1PodSpecBuilder()
+                                .withContainers(new V1ContainerBuilder()
+                                        .withName("nginx")
+                                        .withImage("nginx:1.7.9")
+                                        .withPorts(new V1ContainerPortBuilder()
+                                                .withContainerPort(80)
+                                                .build()
+                                        )
                                         .build())
                                 .build())
-                        .build()).build();
+                        .build())
+                .build()).build();
     }
 
 

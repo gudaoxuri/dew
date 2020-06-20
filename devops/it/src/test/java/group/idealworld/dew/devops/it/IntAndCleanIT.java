@@ -16,13 +16,13 @@
 
 package group.idealworld.dew.devops.it;
 
-import io.kubernetes.client.ApiException;
-import io.kubernetes.client.models.*;
 import group.idealworld.dew.devops.kernel.helper.DockerHelper;
 import group.idealworld.dew.devops.kernel.helper.KubeHelper;
 import group.idealworld.dew.devops.kernel.helper.KubeRES;
 import group.idealworld.dew.devops.kernel.helper.YamlHelper;
 import group.idealworld.dew.devops.kernel.util.DewLog;
+import io.kubernetes.client.openapi.ApiException;
+import io.kubernetes.client.openapi.models.*;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -81,7 +81,7 @@ public class IntAndCleanIT extends BasicProcessor {
                         e.printStackTrace();
                     }
                 });
-        KubeHelper.inst("").list("", namespaces, KubeRES.DEPLOYMENT, ExtensionsV1beta1Deployment.class)
+        KubeHelper.inst("").list("", namespaces, KubeRES.DEPLOYMENT, V1Deployment.class)
                 .forEach(res -> {
                     try {
                         KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeRES.DEPLOYMENT);
@@ -89,7 +89,7 @@ public class IntAndCleanIT extends BasicProcessor {
                         e.printStackTrace();
                     }
                 });
-        KubeHelper.inst("").list("", namespaces, KubeRES.REPLICA_SET, V1beta1ReplicaSet.class)
+        KubeHelper.inst("").list("", namespaces, KubeRES.REPLICA_SET, V1ReplicaSet.class)
                 .forEach(res -> {
                     try {
                         KubeHelper.inst("").delete(res.getMetadata().getName(), res.getMetadata().getNamespace(), KubeRES.REPLICA_SET);

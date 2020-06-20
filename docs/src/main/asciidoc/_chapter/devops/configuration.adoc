@@ -78,7 +78,7 @@ docker:                                 # Docker配置
                                         # 后端服务应用默认使用 openjdk:8-alpine
 kube:                                   # Kubernetes配置
   base64Config:                         # Kubernetes Base64 后的配置，此项建议使用Maven方式配置
-                                        # 使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
+                                        # 使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 notifies:                               # 通知配置
   - type: DD                            # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
     defaultReceivers: []                # 默认接收人列表，钉钉为手机号，邮件为邮箱
@@ -229,7 +229,7 @@ profiles:
 ----
 # ============= 公共场景使用 =============
 dew_devops_profile                           # 指定的环境
-dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
+dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 # ============= 发布与回滚使用 =============
 dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.idealworld.group:2375
 dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.idealworld.group/v2

@@ -150,7 +150,7 @@ public class MavenDevOps {
             for (MavenProject project : session.getProjectDependencyGraph().getSortedProjects()) {
                 DevOps.SkipProcess.unSkip(project);
                 Optional<AppKindPlugin> appKindPluginOpt = AppKindPluginSelector.select(project);
-                if (!appKindPluginOpt.isPresent()) {
+                if (appKindPluginOpt.isEmpty()) {
                     DevOps.SkipProcess.skip(project);
                     continue;
                 }

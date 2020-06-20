@@ -33,12 +33,12 @@ import java.util.stream.Collectors;
  *
  * @author gudaoxuri
  */
-public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1beta1Deployment> {
+public class KubeDeploymentBuilder implements KubeResourceBuilder<V1Deployment> {
 
     public static final String FLAG_CONTAINER_NAME = "dew-app";
 
     @Override
-    public ExtensionsV1beta1Deployment build(FinalProjectConfig config) {
+    public V1Deployment build(FinalProjectConfig config) {
 
         Map<String, String> annotations = new HashMap<>();
         annotations.put(VersionController.FLAG_KUBE_RESOURCE_GIT_COMMIT, config.getGitCommit());
@@ -154,16 +154,16 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<ExtensionsV1be
                             .withFailureThreshold(config.getApp().getReadinessFailureThreshold())
                             .build());
         }
-        ExtensionsV1beta1DeploymentBuilder builder = new ExtensionsV1beta1DeploymentBuilder();
+        V1DeploymentBuilder builder = new V1DeploymentBuilder();
         builder.withKind(KubeRES.DEPLOYMENT.getVal())
-                .withApiVersion("extensions/v1beta1")
+                .withApiVersion("apps/v1")
                 .withMetadata(new V1ObjectMetaBuilder()
                         .withAnnotations(annotations)
                         .withLabels(labels)
                         .withName(config.getAppName())
                         .withNamespace(config.getNamespace())
                         .build())
-                .withSpec(new ExtensionsV1beta1DeploymentSpecBuilder()
+                .withSpec(new V1DeploymentSpecBuilder()
                         .withReplicas(config.getApp().getReplicas())
                         .withRevisionHistoryLimit(config.getApp().getRevisionHistoryLimit())
                         .withSelector(new V1LabelSelectorBuilder()

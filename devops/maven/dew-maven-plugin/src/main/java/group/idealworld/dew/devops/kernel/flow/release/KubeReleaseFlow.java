@@ -114,13 +114,13 @@ public class KubeReleaseFlow extends BasicFlow {
      * @return the old version resources
      */
     private Map<String, Object> fetchOldVersionResources(FinalProjectConfig config, V1ConfigMap oldVersion) {
-        ExtensionsV1beta1Deployment rollbackDeployment = KubeHelper.inst(config.getId()).toResource(
+        V1Deployment rollbackDeployment = KubeHelper.inst(config.getId()).toResource(
                 $.security.decodeBase64ToString(oldVersion.getData().get(KubeRES.DEPLOYMENT.getVal()), "UTF-8"),
-                ExtensionsV1beta1Deployment.class);
+                V1Deployment.class);
         V1Service rollbackService = KubeHelper.inst(config.getId()).toResource(
                 $.security.decodeBase64ToString(oldVersion.getData().get(KubeRES.SERVICE.getVal()), "UTF-8"),
                 V1Service.class);
-        return new HashMap<String, Object>() {
+        return new HashMap<>() {
             {
                 put(KubeRES.DEPLOYMENT.getVal(), rollbackDeployment);
                 put(KubeRES.SERVICE.getVal(), rollbackService);
@@ -137,13 +137,13 @@ public class KubeReleaseFlow extends BasicFlow {
      * @throws IOException the io exception
      */
     private Map<String, Object> buildNewVersionResources(FinalProjectConfig config, String flowBasePath) throws IOException {
-        ExtensionsV1beta1Deployment deployment = new KubeDeploymentBuilder().build(config);
+        V1Deployment deployment = new KubeDeploymentBuilder().build(config);
         Files.write(Paths.get(flowBasePath + KubeRES.DEPLOYMENT.getVal() + ".yaml"),
                 KubeHelper.inst(config.getId()).toString(deployment).getBytes(StandardCharsets.UTF_8));
         V1Service service = new KubeServiceBuilder().build(config);
         Files.write(Paths.get(flowBasePath + KubeRES.SERVICE.getVal() + ".yaml"),
                 KubeHelper.inst(config.getId()).toString(service).getBytes(StandardCharsets.UTF_8));
-        return new HashMap<String, Object>() {
+        return new HashMap<>() {
             {
                 put(KubeRES.DEPLOYMENT.getVal(), deployment);
                 put(KubeRES.SERVICE.getVal(), service);
@@ -161,17 +161,17 @@ public class KubeReleaseFlow extends BasicFlow {
      */
     private void deployResources(FinalProjectConfig config, Map<String, Object> kubeResources) throws ApiException, IOException {
         // 部署 deployment
-        ExtensionsV1beta1Deployment deployment = (ExtensionsV1beta1Deployment) kubeResources.get(KubeRES.DEPLOYMENT.getVal());
+        V1Deployment deployment = (V1Deployment) kubeResources.get(KubeRES.DEPLOYMENT.getVal());
         KubeHelper.inst(config.getId()).apply(deployment);
         CountDownLatch cdl = new CountDownLatch(1);
-        ExtensionsV1beta1Deployment deploymentRes = (ExtensionsV1beta1Deployment) kubeResources.get(KubeRES.DEPLOYMENT.getVal());
+        V1Deployment deploymentRes = (V1Deployment) kubeResources.get(KubeRES.DEPLOYMENT.getVal());
         String select = "app="
                 + deploymentRes.getMetadata().getName()
                 + ",group=" + deploymentRes.getMetadata().getLabels().get("group")
                 + ",version=" + deploymentRes.getMetadata().getLabels().get("version");
         String watchId = KubeHelper.inst(config.getId()).watch(
-                (coreApi, extensionsApi, rbacAuthorizationApi, autoscalingApi)
-                        -> extensionsApi.listNamespacedDeploymentCall(deploymentRes.getMetadata().getNamespace(),
+                (coreApi,appsApi, extensionsApi, rbacAuthorizationApi, autoscalingApi)
+                        -> appsApi.listNamespacedDeploymentCall(deploymentRes.getMetadata().getNamespace(),
                         null, null, null, null,
                         select, 1, null, null, Boolean.TRUE, null),
                 resp -> {
@@ -205,7 +205,7 @@ public class KubeReleaseFlow extends BasicFlow {
                         cdl.countDown();
                     }
                 },
-                ExtensionsV1beta1Deployment.class);
+                V1Deployment.class);
         try {
             // 等待 deployment 部署完成
             boolean awaitResult = cdl.await(WAIT_TIMEOUT_MINUTES, TimeUnit.MINUTES);

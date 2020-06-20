@@ -139,7 +139,7 @@ mvn -P devops deploy
 
 # ====================== 附加参数 ======================
 # dew_devops_profile                           # 指定的环境
-# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 # dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.idealworld.group:2375
 # dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.idealworld.group/v2
 # dew_devops_docker_registry_username          # Docker Registry 用户名
@@ -250,7 +250,7 @@ mvn -P devops dew:rollback
 # dew_devops_assignation_projects              # 指定回滚的应用artifactId，多个以逗号分隔。
 # dew_devops_quiet                             # 是否静默处理
 # dew_devops_profile                           # 指定的环境
-# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " " 获取
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 echo $(cat ~/.kube/config | base64) | tr -d " " 获取
 # dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.idealworld.group:2375
 # dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.idealworld.group/v2
 # dew_devops_docker_registry_username          # Docker Registry 用户名
@@ -272,7 +272,7 @@ mvn -P devops dew:unrelease
 # ====================== 附加参数 ======================
 # dew_devops_assignation_projects              # 指定卸载的应用artifactId  多个以逗号分隔
 # dew_devops_profile                           # 指定的环境
-# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 ----
 
 ==== 日志查看
@@ -287,7 +287,7 @@ mvn -P devops dew:log
 
 # ====================== 附加参数 ======================
 # dew_devops_profile                           # 指定的环境
-# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 # dew_devops_podName                           # 要使用的Pod名称，如不填写当存在多个Pod时会要求用户选择
 # dew_devops_log_follow                        # 是否滚动查看日志
 ----

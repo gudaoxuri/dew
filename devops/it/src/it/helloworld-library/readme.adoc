@@ -14,6 +14,7 @@ include::.dew[]
 .手工执行
 ----
 # 参数设置 (win/unix)
+SET/export dew_devops_kube_config=...
 SET/export dew_devops_it_snapshotRepository_id=<私库Id，如私库需要认证则此Id对应的认证信息要添加到 settings.xml中>
 SET/export dew_devops_it_snapshotRepository_url=<私库Url>
 
