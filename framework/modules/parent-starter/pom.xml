@@ -49,6 +49,7 @@
         <finalName>${project.artifactId}</finalName>
         <dew.version>3.0.0-SNAPSHOT</dew.version>
 
+        <guava.version>20.0</guava.version>
         <simple-java-mail.version>5.1.3</simple-java-mail.version>
         <jakarta.validation.version>2.0.2</jakarta.validation.version>
         <hbase.version>2.0.0</hbase.version>
@@ -148,6 +149,11 @@
                 <groupId>group.idealworld.dew</groupId>
                 <artifactId>cluster-spi-kafka</artifactId>
                 <version>${dew.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
             </dependency>
             <dependency>
                 <groupId>group.idealworld.dew</groupId>

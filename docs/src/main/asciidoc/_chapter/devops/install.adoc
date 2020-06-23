@@ -931,6 +931,8 @@ Windows用户建议升级到Windows 10 2004版本及以上，启用WSL2。
 
 [source,bash]
 ----
+# 创建label，这里的node名称为docker-desktop
+kubectl label nodes docker-desktop group=app
 # 创建namespaces
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
@@ -966,6 +968,15 @@ metadata:
   name: dew-uat
   labels:
     name: dew-uat
+EOF
+
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dew-prod
+  labels:
+    name: dew-prod
 EOF
 ----
 
@@ -1024,6 +1035,8 @@ docker login harbor.dew.test -u admin -p Harbor12345
 docker pull dewms/devops:latest
 docker tag dewms/devops:latest harbor.dew.test/dewms/devops:latest
 docker push harbor.dew.test/dewms/devops:latest
+
+# 创建 dew-test / dew-uat / dew-prod 项目
 ----
 
 ==== Sonatype Nexus

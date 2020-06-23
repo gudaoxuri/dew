@@ -1,4 +1,4 @@
-FROM openjdk:8-alpine
+FROM openjdk:11-jre-slim
 
 COPY ./run-java.sh ./
 COPY ./debug-java.sh ./

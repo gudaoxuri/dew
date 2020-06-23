@@ -41,7 +41,7 @@ public class JvmServiceSpringBootBuildFlow extends DockerBuildFlow {
 
     @Override
     protected Map<String, String> packageDockerFileArg(FinalProjectConfig config) {
-        return new HashMap<String, String>() {{
+        return new HashMap<>() {{
             put("PORT", config.getApp().getPort() + "");
         }};
     }

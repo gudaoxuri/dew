@@ -2,10 +2,6 @@ spring:
   application:
     name: kernel
 
-dew:
-  cluster:
-    mq: redis # 使用Redis做为Dew集群的MQ实现
-
 management:
   endpoint:
     health:

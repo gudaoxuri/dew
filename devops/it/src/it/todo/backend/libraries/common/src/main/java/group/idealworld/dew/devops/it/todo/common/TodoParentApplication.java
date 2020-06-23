@@ -16,7 +16,7 @@
 
 package group.idealworld.dew.devops.it.todo.common;
 
-import org.springframework.cloud.client.SpringCloudApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * To-do parent application.
@@ -25,8 +25,8 @@ import org.springframework.cloud.client.SpringCloudApplication;
  *
  * @author gudaoxuri
  */
-// 启用 Spring Cloud 能力
-@SpringCloudApplication
+// 启用 Spring Boot 能力
+@SpringBootApplication
 public class TodoParentApplication {
 
 }

@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Docker helper test.
@@ -43,25 +44,40 @@ public class DockerHelperTest extends BasicTest {
 
     /**
      * Test all.
-     *
      */
     @Test
-    public void testAll()  {
-        DockerHelper.inst("").image.remove("harbor.dew.test/dew-test/test:1.0");
-        DockerHelper.inst("").image.remove(defaultDockerRegistryHost + "/dew-test/test:1.0");
+    public void testAll() {
+        // Init Project
+        DockerHelper.inst("").image.remove("harbor.dew.test/unit-test/test:1.0");
+        DockerHelper.inst("").image.remove(defaultDockerRegistryHost + "/unit-test/test:1.0");
+        DockerHelper.inst("").registry.removeImage(defaultDockerRegistryHost + "/unit-test/test");
+        DockerHelper.inst("").registry.removeImage(defaultDockerRegistryHost + "/unit-test/test_copy");
+        DockerHelper.inst("").registry.deleteProject("unit-test");
+        Assert.assertTrue(DockerHelper.inst("").registry.createProject("unit-test"));
 
         DockerHelper.inst("").image.pull("alpine:3.6", false);
         List<Image> images = DockerHelper.inst("").image.list("alpine:3.6");
         Assert.assertEquals("alpine:3.6", images.get(0).getRepoTags()[0]);
-        DockerHelper.inst("").image.build("harbor.dew.test/dew-test/test:1.0", this.getClass().getResource("/").getPath());
-        DockerHelper.inst("").image.copy("harbor.dew.test/dew-test/test:1.0", defaultDockerRegistryHost + "/dew-test/test:1.0");
-        Assert.assertEquals(1, DockerHelper.inst("").image.list(defaultDockerRegistryHost + "/dew-test/test:1.0").size());
-        DockerHelper.inst("").image.push(defaultDockerRegistryHost + "/dew-test/test:1.0", true);
-        DockerHelper.inst("").image.remove(defaultDockerRegistryHost + "/dew-test/test:1.0");
-        Assert.assertEquals(0, DockerHelper.inst("").image.list(defaultDockerRegistryHost + "/dew-test/test:1.0").size());
-        Assert.assertTrue(DockerHelper.inst("").registry.exist(defaultDockerRegistryHost + "/dew-test/test:1.0"));
-        DockerHelper.inst("").registry.remove(defaultDockerRegistryHost + "/dew-test/test:1.0");
-        Assert.assertFalse(DockerHelper.inst("").registry.exist(defaultDockerRegistryHost + "/dew-test/test:1.0"));
+        DockerHelper.inst("").image.build("harbor.dew.test/unit-test/test:1.0", this.getClass().getResource("/").getPath());
+        DockerHelper.inst("").image.copy("harbor.dew.test/unit-test/test:1.0", defaultDockerRegistryHost + "/unit-test/test:1.0");
+        Assert.assertEquals(1, DockerHelper.inst("").image.list(defaultDockerRegistryHost + "/unit-test/test:1.0").size());
+        DockerHelper.inst("").image.push(defaultDockerRegistryHost + "/unit-test/test:1.0", true);
+        DockerHelper.inst("").image.remove(defaultDockerRegistryHost + "/unit-test/test:1.0");
+        Assert.assertEquals(0, DockerHelper.inst("").image.list(defaultDockerRegistryHost + "/unit-test/test:1.0").size());
+        Assert.assertTrue(DockerHelper.inst("").registry.existImage(defaultDockerRegistryHost + "/unit-test/test:1.0"));
+        // Test Copy Image
+        Assert.assertTrue(DockerHelper.inst("").registry.copyImage("unit-test/test:1.0", "unit-test","test_copy"));
+        // Test Remove Image
+        DockerHelper.inst("").registry.removeImage(defaultDockerRegistryHost + "/unit-test/test:1.0");
+        Assert.assertFalse(DockerHelper.inst("").registry.existImage(defaultDockerRegistryHost + "/unit-test/test:1.0"));
+
+        // Test label
+        Assert.assertNull(DockerHelper.inst("").registry.getLabel("commit", Optional.of("unit-test")));
+        Assert.assertTrue(DockerHelper.inst("").registry.createOrUpdateLabel("commit", "ssssss", Optional.of("unit-test")));
+        Assert.assertEquals("ssssss", DockerHelper.inst("").registry.getLabel("commit", Optional.of("unit-test")).getDescription());
+        Assert.assertTrue(DockerHelper.inst("").registry.createOrUpdateLabel("commit", "ccccc", Optional.of("unit-test")));
+        Assert.assertEquals("ccccc", DockerHelper.inst("").registry.getLabel("commit", Optional.of("unit-test")).getDescription());
+
     }
 
 }

@@ -16,6 +16,8 @@
 [NOTE]
 ====
 默认情况下Dew会视 ``prod`` 标识为生产环境，``uat`` 为仿真环境，生产环境会重用（Docker Image重用）仿真或预发环境的最后一个版本。
+
+本工程需要启用redis服务，配置见工程参数。
 ====
 
 [source,yml]
@@ -48,8 +50,6 @@ SET/export dew_devops_docker_host=...
 SET/export dew_devops_docker_registry_url=...
 SET/export dew_devops_docker_registry_username=...
 SET/export dew_devops_docker_registry_password=...
-SET/export dew_devops_it_snapshotRepository_id=<私库Id，如私库需要认证则此Id对应的认证信息要添加到 settings.xml中>
-SET/export dew_devops_it_snapshotRepository_url=<私库Url>
 
 # 执行如下maven命令(发布到uat环境)
 mvn -P devops deploy -Ddew_devops_profile=uat

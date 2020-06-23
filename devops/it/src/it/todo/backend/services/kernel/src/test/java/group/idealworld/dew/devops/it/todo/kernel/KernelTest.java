@@ -27,8 +27,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
-
 /**
  * Kernel test.
  *
@@ -44,15 +42,14 @@ public class KernelTest {
     /**
      * Test all.
      *
-     * @throws IOException          the io exception
      * @throws InterruptedException the interrupted exception
      */
     @Test
-    public void testAll() throws IOException, InterruptedException {
+    public void testAll() throws InterruptedException {
         for (int i = 0; i < 20; i++) {
             Todo todo = testRestTemplate.postForObject("/api", "Item " + i, Todo.class);
             Assert.assertEquals("Item " + i, todo.getContent());
-            Assert.assertTrue(todo.getCreateTime() != null);
+            Assert.assertNotNull(todo.getCreateTime());
             Thread.sleep(1);
             if (i >= 15) {
                 testRestTemplate.delete("/api/" + todo.getId());

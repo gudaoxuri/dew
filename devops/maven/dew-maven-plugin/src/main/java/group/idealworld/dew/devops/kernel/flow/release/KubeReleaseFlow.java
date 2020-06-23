@@ -61,7 +61,7 @@ public class KubeReleaseFlow extends BasicFlow {
             removeOldVersions(config);
         }
         if (!config.getDisableReuseVersion() || StringUtils.isNotEmpty(config.getReuseLastVersionFromProfile())) {
-            DockerBuildFlow.ReuseVersionProcessorFactory.processAfterReleaseSuccessful(config);
+            DockerBuildFlow.processAfterReleaseSuccessful(config);
         }
     }
 
@@ -273,7 +273,7 @@ public class KubeReleaseFlow extends BasicFlow {
                 // 删除本地 image (不包含其它节点)
                 DockerHelper.inst(config.getId()).image.remove(config.getImageName(oldGitCommit));
                 // 删除 registry 中的 image
-                DockerHelper.inst(config.getId()).registry.remove(config.getImageName(oldGitCommit));
+                DockerHelper.inst(config.getId()).registry.removeImage(config.getImageName(oldGitCommit));
             }
             if (enabled) {
                 // 保留要求的版本数量

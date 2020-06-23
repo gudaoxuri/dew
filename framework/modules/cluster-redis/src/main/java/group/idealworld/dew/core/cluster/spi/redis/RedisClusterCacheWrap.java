@@ -33,9 +33,8 @@ public class RedisClusterCacheWrap implements ClusterCacheWrap {
     private static final ConcurrentHashMap<String, ClusterCache> CACHE_CONTAINER = new ConcurrentHashMap<>();
 
     RedisClusterCacheWrap(Map<String, RedisTemplate<String, String>> redisTemplates) {
-        redisTemplates.forEach((k, v) -> {
-            CACHE_CONTAINER.put(k, new RedisClusterCache(v));
-        });
+        redisTemplates.forEach((k, v) ->
+                CACHE_CONTAINER.put(k, new RedisClusterCache(v)));
     }
 
     @Override

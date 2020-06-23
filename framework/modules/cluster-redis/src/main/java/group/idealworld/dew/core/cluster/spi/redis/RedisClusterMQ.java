@@ -49,7 +49,7 @@ public class RedisClusterMQ extends AbsClusterMQ {
     @Override
     protected boolean doPublish(String topic, String message, Optional<Map<String, Object>> header, boolean confirm) {
         if (confirm) {
-            throw new RTUnsupportedEncodingException("Hazelcast doesn't support confirm mode");
+            throw new RTUnsupportedEncodingException("Redis doesn't support confirm mode");
         }
         redisTemplate.execute((RedisCallback<Void>) connection -> {
             connection.publish(topic.getBytes(), message.getBytes());
@@ -71,7 +71,7 @@ public class RedisClusterMQ extends AbsClusterMQ {
     @Override
     protected boolean doRequest(String address, String message, Optional<Map<String, Object>> header, boolean confirm) {
         if (confirm) {
-            throw new RTUnsupportedEncodingException("Hazelcast doesn't support confirm mode");
+            throw new RTUnsupportedEncodingException("Redis doesn't support confirm mode");
         }
         redisTemplate.execute((RedisCallback<Void>) connection -> {
             connection.lPush(address.getBytes(), message.getBytes());

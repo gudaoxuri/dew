@@ -33,10 +33,6 @@ public class DewProfile {
 
     protected static final Logger logger = DewLog.build(DewProfile.class);
 
-    public static final String REUSE_VERSION_TYPE_LABEL = "LABEL";
-
-    public static final String REUSE_VERSION_TYPE_TAG = "TAG";
-
     // 环境名称，内部使用，不需要显式指定
     private String profile;
     // 命名空间
@@ -47,10 +43,6 @@ public class DewProfile {
     private Boolean disableReuseVersion;
     // 重用版本的目标环境名称，默认会尝试使用 pre-prod/pre-production/uat 为名称（找到当前项目第一个存在的环境），都不存在时需要显式指定
     private String reuseLastVersionFromProfile;
-    // 重用版本方式，支持两种方式 LABEL(镜像打标签，默认方式) TAG(上传新tag方式)
-    private String reuseVersionType = REUSE_VERSION_TYPE_LABEL;
-    // 工程名称
-    private String projectName;
     // 忽略变更文件列表，此列表指定的文件不用于是否有变更要部署的判断依据
     // 支持 glob , @see https://en.wikipedia.org/wiki/Glob_(programming)
     private Set<String> ignoreChangeFiles = new HashSet<>();
@@ -151,42 +143,6 @@ public class DewProfile {
      */
     public void setReuseLastVersionFromProfile(String reuseLastVersionFromProfile) {
         this.reuseLastVersionFromProfile = reuseLastVersionFromProfile;
-    }
-
-    /**
-     * Gets reuse version type.
-     *
-     * @return the reuse version type
-     */
-    public String getReuseVersionType() {
-        return reuseVersionType;
-    }
-
-    /**
-     * Sets reuse version type.
-     *
-     * @param reuseVersionType the reuse version type
-     */
-    public void setReuseVersionType(String reuseVersionType) {
-        this.reuseVersionType = reuseVersionType;
-    }
-
-    /**
-     * Gets project name.
-     *
-     * @return the project name
-     */
-    public String getProjectName() {
-        return projectName;
-    }
-
-    /**
-     * Sets project name.
-     *
-     * @param projectName the project name
-     */
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
     }
 
     /**

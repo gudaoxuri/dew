@@ -48,7 +48,7 @@ public class MavenSkipProcessor {
         // 已装配模块是否处理判断
         for (FinalProjectConfig config : DevOps.Config.getFinalConfig().getProjects().values()) {
             if (config.getDisableReuseVersion() != null && !config.getDisableReuseVersion()
-                    && DockerBuildFlow.ReuseVersionProcessorFactory.existsReuseVersion(config)) {
+                    && DockerBuildFlow.existsReuseVersion(config)) {
                 // 重用版本模式下强制跳过单元测试，不需要部署
                 disabledDefaultBehavior(config.getId());
                 continue;

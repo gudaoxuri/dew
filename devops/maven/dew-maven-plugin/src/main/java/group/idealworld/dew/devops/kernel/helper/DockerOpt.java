@@ -20,26 +20,20 @@ import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.HttpHelper;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.command.BuildImageCmd;
-import com.github.dockerjava.api.command.PullImageCmd;
-import com.github.dockerjava.api.command.PushImageCmd;
+import com.github.dockerjava.api.command.*;
 import com.github.dockerjava.api.model.AuthConfig;
 import com.github.dockerjava.api.model.BuildResponseItem;
 import com.github.dockerjava.api.model.PullResponseItem;
 import com.github.dockerjava.api.model.PushResponseItem;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
-import com.github.dockerjava.core.command.BuildImageResultCallback;
-import com.github.dockerjava.core.command.PullImageResultCallback;
 import com.github.dockerjava.core.command.PushImageResultCallback;
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * Docker操作函数类.
@@ -199,7 +193,7 @@ public class DockerOpt {
         }
 
         /**
-         * Build string.
+         * Build.
          *
          * @param imageName      the image name
          * @param dockerfilePath the dockerfile path
@@ -207,9 +201,25 @@ public class DockerOpt {
          * @return image id
          */
         public String build(String imageName, String dockerfilePath, Map<String, String> args) {
+            return build(imageName, dockerfilePath, args, null);
+        }
+
+        /**
+         * Build.
+         *
+         * @param imageName      the image name
+         * @param dockerfilePath the dockerfile path
+         * @param args           the args
+         * @param labels         the labels
+         * @return image id
+         */
+        public String build(String imageName, String dockerfilePath, Map<String, String> args, Map<String, String> labels) {
             BuildImageCmd buildImageCmd = docker.buildImageCmd(new File(dockerfilePath));
             if (args != null && !args.isEmpty()) {
                 args.forEach(buildImageCmd::withBuildArg);
+            }
+            if (labels != null && !labels.isEmpty()) {
+                buildImageCmd.withLabels(labels);
             }
             buildImageCmd.withTags(new HashSet<>() {
                 {
@@ -223,6 +233,17 @@ public class DockerOpt {
                     log.debug(item.toString());
                 }
             }).awaitImageId();
+        }
+
+        /**
+         * Inspect inspect image.
+         *
+         * @param imageName the image name
+         * @return the inspect image response
+         */
+        public InspectImageResponse inspect(String imageName) {
+            InspectImageCmd inspectImageCmd = docker.inspectImageCmd(imageName);
+            return inspectImageCmd.exec();
         }
 
         /**
@@ -292,43 +313,85 @@ public class DockerOpt {
     public class Registry {
 
         /**
-         * Exist.
+         * Exist Image.
          *
          * @param imageName the image name
          * @return <b>true</b> if exist
          */
-        public boolean exist(String imageName) {
+        public boolean existImage(String imageName) {
             String[] item = parseImageInfo(imageName);
-            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(
-                    registryApiUrl + "/projects/" + item[0] + "/repositories/" + item[1] + "/artifacts/" + item[2] + "/tags",
-                    wrapHeader());
-            log.debug("Registry exist image result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            HttpHelper.ResponseWrap responseWrap;
+            if (item[2] == null) {
+                responseWrap = $.http.getWrap(
+                        registryApiUrl + "/projects/" + item[0] + "/repositories/" + item[1],
+                        wrapHeader());
+                log.debug("Registry exist image result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            } else {
+                responseWrap = $.http.getWrap(
+                        registryApiUrl + "/projects/" + item[0] + "/repositories/" + item[1] + "/artifacts/" + item[2] + "/tags",
+                        wrapHeader());
+                log.debug("Registry exist image tag result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            }
             return responseWrap.statusCode == 200;
         }
 
         /**
-         * Remove.
+         * Remove Image.
          *
          * @param imageName the image name
          * @return <b>true</b> if success
          */
-        public boolean remove(String imageName) {
+        public boolean removeImage(String imageName) {
             String[] item = parseImageInfo(imageName);
-            HttpHelper.ResponseWrap responseWrap = $.http.deleteWrap(
-                    registryApiUrl + "/projects/" + item[0] + "/repositories/" + item[1] + "/artifacts/" + item[2] + "/tags/" + item[2],
-                    wrapHeader());
-            boolean result = responseWrap.statusCode == 200;
-            if (result) {
-                log.debug("Registry remove image result [" + responseWrap.statusCode + "]" + responseWrap.result);
-            } else {
+            HttpHelper.ResponseWrap responseWrap;
+            if (item[2] == null) {
+                // remove Image
+                responseWrap = $.http.deleteWrap(
+                        registryApiUrl + "/projects/" + item[0] + "/repositories/" + item[1],
+                        wrapHeader());
+                if (responseWrap.statusCode == 200) {
+                    log.debug("Registry remove image result [" + responseWrap.statusCode + "]" + responseWrap.result);
+                    return true;
+                }
                 log.error("Registry remove image result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            } else {
+                // remove Tag
+                responseWrap = $.http.deleteWrap(
+                        registryApiUrl + "/projects/" + item[0] + "/repositories/" + item[1] + "/artifacts/" + item[2] + "/tags/" + item[2],
+                        wrapHeader());
+                if (responseWrap.statusCode == 200) {
+                    log.debug("Registry remove image tag result [" + responseWrap.statusCode + "]" + responseWrap.result);
+                    return true;
+                }
+                log.error("Registry remove image tag result [" + responseWrap.statusCode + "]" + responseWrap.result);
             }
-            return result;
+            return false;
+        }
+
+        /**
+         * Copy Image.
+         *
+         * @param fromImageName    the from image name
+         * @param toProjectName    the to project name
+         * @param toRepositoryName the to repository name
+         * @return the boolean
+         */
+        public boolean copyImage(String fromImageName, String toProjectName, String toRepositoryName) {
+            HttpHelper.ResponseWrap responseWrap = $.http.postWrap(
+                    registryApiUrl + "/projects/" + toProjectName + "/repositories/" + toRepositoryName + "/artifacts?from=" + fromImageName,
+                    "",
+                    wrapHeader());
+            if (responseWrap.statusCode == 201) {
+                log.debug("Registry copy image result [" + responseWrap.statusCode + "]" + responseWrap.result);
+                return true;
+            }
+            log.error("Registry copy image result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            return false;
         }
 
         private String[] parseImageInfo(String imageName) {
             String[] imageFragment = imageName.split(":");
-            String tag = imageFragment.length == 2 ? imageFragment[1] : "latest";
+            String tag = imageFragment.length == 2 ? imageFragment[1] : null;
             String image = imageFragment[0];
             if (image.split("/").length == 3) {
                 // 带host，先去除
@@ -340,84 +403,122 @@ public class DockerOpt {
                     tag};
         }
 
-        private Map<String, String> wrapHeader() {
-            Map<String, String> header = new HashMap<>();
-            header.put("Content-Type", "application/json");
-            header.put("accept", "application/json");
-            header.put("authorization", "Basic "
-                    + $.security.encodeStringToBase64(registryUsername + ":" + registryPassword, StandardCharsets.UTF_8));
-            return header;
+        /**
+         * Create or update label.
+         *
+         * @param labelName   the label name
+         * @param labelValue  the label value
+         * @param projectName the project name
+         * @return <b>true</b> if success
+         */
+        public boolean createOrUpdateLabel(String labelName, String labelValue, Optional<String> projectName) {
+            Integer projectId = 0;
+            if (projectName.isPresent()) {
+                projectId = getProjectIdByName(projectName.get());
+                if (projectId == null) {
+                    log.error("Registry create or update label by project [" + projectName + "] not exist");
+                    return false;
+                }
+            }
+            Label label = getLabel(labelName, projectName);
+            if (label == null) {
+                label = new Label();
+                label.name = labelName;
+                label.description = labelValue;
+                label.deleted = false;
+                label.scope = projectName.isPresent() ? "p" : "g";
+                label.projectId = projectId;
+                HttpHelper.ResponseWrap responseWrap = $.http.postWrap(registryApiUrl + "/labels",
+                        $.json.toJsonString(label), wrapHeader());
+                if (responseWrap.statusCode == 201) {
+                    log.debug("Registry add label result [" + responseWrap.statusCode + "]" + responseWrap.result);
+                    return true;
+                }
+                log.error("Registry add label result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            } else {
+                label.description = labelValue;
+                HttpHelper.ResponseWrap responseWrap = $.http.putWrap(registryApiUrl + "/labels/" + label.getId(),
+                        $.json.toJsonString(label), wrapHeader());
+                if (responseWrap.statusCode == 200) {
+                    log.debug("Registry update label result [" + responseWrap.statusCode + "]" + responseWrap.result);
+                    return true;
+                }
+                log.error("Registry update label result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            }
+            return false;
         }
 
         /**
          * Get label description by name.
          *
-         * @param labelName the label name
-         * @param projectId the project id
+         * @param labelName   the label name
+         * @param projectName the project name
          * @return label description
          */
-        public Label getLabelByName(String labelName, Integer projectId) {
+        public Label getLabel(String labelName, Optional<String> projectName) {
             String url = registryApiUrl + "/labels?name=" + labelName;
-            if (projectId == null || projectId == 0) {
+            if (projectName.isEmpty()) {
                 url = url + "&scope=g";
             } else {
+                Integer projectId = getProjectIdByName(projectName.get());
+                if (projectId == null) {
+                    log.error("Registry get labels by project [" + projectName + "] not exist");
+                    return null;
+                }
                 url = url + "&scope=p&project_id=" + projectId;
             }
             HttpHelper.ResponseWrap responseWrap = $.http.getWrap(url, wrapHeader());
-            boolean result = responseWrap.statusCode == 200;
-            Label label = null;
-            if (result) {
-                log.debug("Registry get labels result [" + responseWrap.statusCode + "]" + responseWrap.result);
+            if (responseWrap.statusCode == 200) {
+                log.debug("Registry get labels result [" + responseWrap.statusCode + "]" + $.json.toJson(responseWrap.result));
                 List<Label> data = $.json.toList(responseWrap.result, Label.class);
-                if (CollectionUtils.isNotEmpty(data)) {
-                    label = data.get(0);
+                if (data.isEmpty()) {
+                    return null;
                 }
-            } else {
-                log.error("Registry get labels result [" + responseWrap.statusCode + "]" + responseWrap.result);
+                return data.get(0);
             }
-            return label;
+            log.error("Registry get labels result [" + responseWrap.statusCode + "]" + $.json.toJson(responseWrap.result));
+            return null;
         }
 
         /**
-         * Add label.
+         * Create project.
          *
-         * @param label the label
-         * @return <b>true</b> if success
+         * @param projectName the project name
+         * @return the boolean
          */
-        public boolean addLabel(Label label) {
-            if (null == label.projectId || label.getProjectId() == 0) {
-                label.setScope("g");
-            } else {
-                label.setScope("p");
+        public boolean createProject(String projectName) {
+            HttpHelper.ResponseWrap responseWrap = $.http.postWrap(registryApiUrl + "/projects", new HashMap<>() {
+                {
+                    put("project_name", projectName);
+                }
+            }, wrapHeader());
+            if (responseWrap.statusCode == 201) {
+                log.debug("Registry create project result [" + responseWrap.statusCode + "]");
+                return true;
             }
-            HttpHelper.ResponseWrap responseWrap = $.http.postWrap(registryApiUrl + "/labels", $.json.toJsonString(label), wrapHeader());
-            boolean result = responseWrap.statusCode == 201;
-            if (result) {
-                log.debug("Registry add label result [" + responseWrap.statusCode + "]" + responseWrap.result);
-            } else {
-                log.error("Registry add label result [" + responseWrap.statusCode + "]" + responseWrap.result);
-            }
-            return result;
+            log.error("Registry create project result [" + responseWrap.statusCode + "]");
+            return false;
         }
 
         /**
-         * Update label.
+         * Delete project.
          *
-         * @param labelId the label id
-         * @param label   label
-         * @return <b>true</b> if success
+         * @param projectName the project name
+         * @return the boolean
          */
-        public boolean updateLabelById(Integer labelId, Label label) {
-            HttpHelper.ResponseWrap responseWrap = $.http.putWrap(registryApiUrl + "/labels/" + labelId,
-                    $.json.toJsonString(label), wrapHeader());
-            boolean result = responseWrap.statusCode == 200;
-            if (result) {
-                log.debug("Registry add label result [" + responseWrap.statusCode + "]" + responseWrap.result);
-            } else {
-                log.error("Registry add label result [" + responseWrap.statusCode + "]" + responseWrap.result);
+        public boolean deleteProject(String projectName) {
+            Integer projectId = getProjectIdByName(projectName);
+            if (projectId == null) {
+                log.error("Registry delete project [" + projectName + "] not exist");
+                return false;
             }
-            return result;
-
+            HttpHelper.ResponseWrap responseWrap = $.http.deleteWrap(registryApiUrl + "/projects/" + projectId, wrapHeader());
+            if (responseWrap.statusCode == 200) {
+                log.debug("Registry delete project result [" + responseWrap.statusCode + "]");
+                return true;
+            }
+            log.error("Registry delete project result [" + responseWrap.statusCode + "]");
+            return false;
         }
 
         /**
@@ -428,38 +529,25 @@ public class DockerOpt {
          */
         public Integer getProjectIdByName(String projectName) {
             HttpHelper.ResponseWrap responseWrap = $.http.getWrap(registryApiUrl + "/projects?name=" + projectName, wrapHeader());
-            boolean result = responseWrap.statusCode == 200;
-            Integer projectId = null;
-            if (result) {
-                projectId = (Integer) $.json.toList(responseWrap.result, Map.class).stream()
-                        .filter(project -> project.get("name").toString().equals(projectName))
-                        .collect(Collectors.toList()).get(0).get("project_id");
+            if (responseWrap.statusCode == 200
+                    && responseWrap.result != null
+                    && !responseWrap.result.isBlank()
+                    && !responseWrap.result.equals("null")) {
+                return (Integer) $.json.toList(responseWrap.result, Map.class).get(0).get("project_id");
             }
-            return projectId;
+            return null;
         }
 
-        /**
-         * Get tags.
-         *
-         * @param nameSpace   the name space
-         * @param projectName the project name
-         * @return the list of tag
-         */
-        public List<Tag> getTags(String nameSpace, String projectName) {
-            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(registryApiUrl + "/repositories/" + nameSpace
-                    + "/" + projectName + "/tags", wrapHeader());
-            boolean result = responseWrap.statusCode == 200;
-            List<Tag> tags = null;
-            if (result) {
-                log.debug("Registry get tags result [" + responseWrap.statusCode + "]" + responseWrap.result);
-                tags = $.json.toList(responseWrap.result, Tag.class);
-            } else {
-                log.error("Registry get tags result [" + responseWrap.statusCode + "]" + responseWrap.result);
-            }
-            return tags;
+        private Map<String, String> wrapHeader() {
+            Map<String, String> header = new HashMap<>();
+            header.put("Content-Type", "application/json");
+            header.put("accept", "application/json");
+            header.put("authorization", "Basic "
+                    + $.security.encodeStringToBase64(registryUsername + ":" + registryPassword, StandardCharsets.UTF_8));
+            return header;
         }
+
     }
-
 
     /**
      * Docker label.
@@ -475,78 +563,112 @@ public class DockerOpt {
         private String scope;
         private Boolean deleted;
 
+        /**
+         * Gets id.
+         *
+         * @return the id
+         */
         public Integer getId() {
             return id;
         }
 
+        /**
+         * Sets id.
+         *
+         * @param id the id
+         */
         public void setId(Integer id) {
             this.id = id;
         }
 
+        /**
+         * Gets name.
+         *
+         * @return the name
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Sets name.
+         *
+         * @param name the name
+         */
         public void setName(String name) {
             this.name = name;
         }
 
+        /**
+         * Gets description.
+         *
+         * @return the description
+         */
         public String getDescription() {
             return description;
         }
 
+        /**
+         * Sets description.
+         *
+         * @param description the description
+         */
         public void setDescription(String description) {
             this.description = description;
         }
 
+        /**
+         * Gets project id.
+         *
+         * @return the project id
+         */
         public Integer getProjectId() {
             return projectId;
         }
 
+        /**
+         * Sets project id.
+         *
+         * @param projectId the project id
+         */
         public void setProjectId(Integer projectId) {
             this.projectId = projectId;
         }
 
+        /**
+         * Gets scope.
+         *
+         * @return the scope
+         */
         public String getScope() {
             return scope;
         }
 
+        /**
+         * Sets scope.
+         *
+         * @param scope the scope
+         */
         public void setScope(String scope) {
             this.scope = scope;
         }
 
+        /**
+         * Gets deleted.
+         *
+         * @return the deleted
+         */
         public Boolean getDeleted() {
             return deleted;
         }
 
+        /**
+         * Sets deleted.
+         *
+         * @param deleted the deleted
+         */
         public void setDeleted(Boolean deleted) {
             this.deleted = deleted;
-        }
-    }
-
-    /**
-     * Docker label.
-     *
-     * @author Liuhongcheng
-     */
-    public static class Tag {
-        private String name;
-        private Date created;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public Date getCreated() {
-            return created;
-        }
-
-        public void setCreated(Date created) {
-            this.created = created;
         }
     }
 

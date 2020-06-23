@@ -93,13 +93,13 @@
         </dependency>
     </dependencies>
 
-     <modules>
-       <!--  <module>src/it/helloworld-library</module>
-         <module>src/it/helloworld-backend</module>
-         <module>src/it/helloworld-frontend</module>
-         <module>src/it/multi-ports-demo</module>
-         <module>src/it/todo</module>-->
-     </modules>
+    <modules>
+        <!--<module>src/it/helloworld-library</module>
+        <module>src/it/helloworld-backend</module>
+        <module>src/it/helloworld-frontend</module>
+        <module>src/it/multi-ports-demo</module>
+        <module>src/it/todo</module>-->
+    </modules>
 
     <build>
         <plugins>

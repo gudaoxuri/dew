@@ -1,12 +1,4 @@
 spring:
   application:
     name: notifier
-  redis:
-    host: localhost
-    port: 6379
-    database: 0
-
-dew:
-  cluster:
-    mq: redis
 

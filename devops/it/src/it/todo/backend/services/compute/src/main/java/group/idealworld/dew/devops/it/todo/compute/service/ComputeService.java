@@ -17,6 +17,7 @@
 package group.idealworld.dew.devops.it.todo.compute.service;
 
 import com.ecfront.dew.common.$;
+import com.ecfront.dew.common.ScriptHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,7 @@ public class ComputeService {
      */
     public String compute(String jsCode)  {
         logger.info("Compute : " + jsCode);
-        return $.eval(String.valueOf(jsCode)).toString();
+        return $.eval(ScriptHelper.ScriptKind.JS,String.class,jsCode);
     }
 
 }

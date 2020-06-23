@@ -40,9 +40,8 @@ public class NotifierController {
     @PostConstruct
     public void processTodoAddEvent() {
         // 使用Dew的集群MQ功能实现消息点对点接收
-        Dew.cluster.mq.response(Constants.MQ_NOTIFY_TODO_ADD, todo -> {
-            logger.info("Received add todo event :" + todo);
-        });
+        Dew.cluster.mq.response(Constants.MQ_NOTIFY_TODO_ADD, todo ->
+                logger.info("Received add todo event :" + todo));
     }
 
     /**
@@ -50,9 +49,8 @@ public class NotifierController {
      */
     @PostConstruct
     public void processTodoDelEvent() {
-        Dew.cluster.mq.response(Constants.MQ_NOTIFY_TODO_DEL, todoId -> {
-            logger.info("Received delete todo event :" + todoId);
-        });
+        Dew.cluster.mq.response(Constants.MQ_NOTIFY_TODO_DEL, todoId ->
+                logger.info("Received delete todo event :" + todoId));
     }
 
 }

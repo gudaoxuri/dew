@@ -63,7 +63,7 @@ public class KubernetesDeployPlugin implements DeployPlugin {
 
     @Override
     public Optional<String> fetchLastDeployedVersionByReuseProfile(FinalProjectConfig config) {
-        return DockerBuildFlow.ReuseVersionProcessorFactory.getReuseCommit(config);
+        return DockerBuildFlow.getReuseCommit(config);
     }
 
     @Override

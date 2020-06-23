@@ -86,7 +86,7 @@ public abstract class BasicPrepareFlow extends BasicFlow {
             // 重用模式下不用再执行准备操作
             return;
         }
-        if (null != config.getCurrImageName() && DockerHelper.inst(config.getId()).registry.exist(config.getCurrImageName())) {
+        if (null != config.getCurrImageName() && DockerHelper.inst(config.getId()).registry.existImage(config.getCurrImageName())) {
             // 镜像已存在不用再执行准备操作
             return;
         }

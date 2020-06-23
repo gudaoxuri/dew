@@ -50,7 +50,7 @@ public class JvmServiceSpringBootPrepareFlow extends BasicPrepareFlow {
                 "spring-boot-maven-plugin",
                 null,
                 "repackage",
-                new HashMap<String, String>() {
+                new HashMap<>() {
                     {
                         put("outputDirectory", flowBasePath);
                         put("finalName", "serv");
@@ -60,6 +60,6 @@ public class JvmServiceSpringBootPrepareFlow extends BasicPrepareFlow {
 
     @Override
     protected boolean existsReuseVersion(FinalProjectConfig config) {
-        return DockerBuildFlow.ReuseVersionProcessorFactory.existsReuseVersion(config);
+        return DockerBuildFlow.existsReuseVersion(config);
     }
 }

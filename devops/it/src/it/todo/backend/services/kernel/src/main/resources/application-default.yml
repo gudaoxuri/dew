@@ -1,0 +1,6 @@
+server:
+  port: 8080
+
+todo-compute:
+  ribbon: # 使用自定义ribbon列表
+    listOfServers: localhost:8082

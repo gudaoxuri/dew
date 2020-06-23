@@ -1,4 +1,4 @@
 skip: true
 docker:
-  # 使用自定义的Image，默认JVM类型项目的Image为openjdk:8-alpine
-  image: openjdk:8
+  # 使用自定义的Image
+  image: openjdk:11

@@ -88,6 +88,13 @@
             <artifactId>spring-boot-starter-mail</artifactId>
             <optional>true</optional>
         </dependency>
+        <!--Fixed version conflicts-->
+        <!-- springfox.documentation.schema.DefaultModelDependencyProvider.dependentModels(DefaultModelDependencyProvider.java:79)
+ -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
         <!-- InitTest -->
         <dependency>
             <groupId>group.idealworld.dew</groupId>

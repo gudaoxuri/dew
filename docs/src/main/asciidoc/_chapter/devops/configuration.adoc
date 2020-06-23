@@ -22,8 +22,6 @@ disableReuseVersion: false              # 是否禁用重用版本，默认为fa
 reuseLastVersionFromProfile:            # 重用版本的目标环境名称
                                         # 默认会尝试使用 pre-prod/pre-production/uat 为名称（找到当前项目第一个存在的环境）
                                         # 都不存在时需要显式指定
-projectName:                            # 工程名称(docker镜像仓库名称)
-reuseVersionType: LABEL                 # 重用版本方式，支持两种方式 LABEL(镜像打标签，默认方式) TAG(上传新tag方式)
 ignoreChangeFiles: []                   # 忽略变更文件列表，此列表指定的文件不用于是否有变更要部署的判断依据
                                         # 支持 glob , @see https://en.wikipedia.org/wiki/Glob_(programming)
 app:                                    # 应用配置

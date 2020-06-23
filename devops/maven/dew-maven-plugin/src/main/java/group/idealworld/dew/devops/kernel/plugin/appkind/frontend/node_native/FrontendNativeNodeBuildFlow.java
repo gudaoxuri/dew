@@ -46,7 +46,7 @@ public class FrontendNativeNodeBuildFlow extends DockerBuildFlow {
 
     @Override
     protected Map<String, String> packageDockerFileArg(FinalProjectConfig config) {
-        return new HashMap<String, String>() {{
+        return new HashMap<>() {{
             String packageCmd = config.getApp().getPackageCmd();
             String cmd = StringUtils.isNotBlank(packageCmd) ? packageCmd : " npm run " + config.getProfile();
             put("startCmd", cmd);
