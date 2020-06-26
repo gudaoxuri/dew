@@ -3,7 +3,9 @@
 * 3.0.0
 
 . 支持GraalVM
-. 支持Istio体系
+. 支持Service Mesh
+. 支持K3s
+. 支持Swagger转SDK
 . 去除Spring Cloud依赖
 
 * 2.1.0

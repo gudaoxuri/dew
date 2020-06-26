@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-@import "./assets/css/theme.scss";
 @import "~taro-ui/dist/style/index.scss";
-@import "./assets/font-awesome/font-awesome.scss";
-@import "./assets/font/iconfont.scss";
 
 .page {
   display: flex;
@@ -32,8 +29,6 @@ view {
 
 .dew-body {
   padding-bottom: 60px;
-  padding-bottom: calc(constant(safe-area-inset-bottom) + 60px);
-  padding-bottom: calc(env(safe-area-inset-bottom) + 60px);
 
   .panel {
     margin: 80px 0 56px;

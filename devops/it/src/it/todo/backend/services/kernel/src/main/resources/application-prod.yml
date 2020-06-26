@@ -1,13 +1,10 @@
 spring:
   redis: # Redis配置
-    host: localhost
+    host: 172.25.208.23
     port: 6378
     database: 0
     password: 123456
 
 todo:
   service:
-    compute: http://127.0.0.1:8082
-
-server:
-  port: 8080
+    compute: http://compute:8080

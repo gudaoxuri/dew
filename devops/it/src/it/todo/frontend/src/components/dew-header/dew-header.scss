@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@import "../../assets/css/theme.scss";
-
 .dew-header {
   position: relative;
   padding: 100px 60px 30px;
@@ -29,8 +27,8 @@
     width: 60px;
     height: 10px;
     border-radius: 5px;
-    background: $color-brand-light;
-    box-shadow: 2px 2px 4px 0 rgba($color: $color-brand-light, $alpha: 0.5);
+    background: #5454ea;
+    box-shadow: 2px 2px 4px 0 rgba($color: #5454ea, $alpha: 0.5);
   }
 
   &__title {

@@ -926,6 +926,10 @@ Windows用户建议升级到Windows 10 2004版本及以上，启用WSL2。
   127.0.0.1 notary.dew.test
   127.0.0.1 maven.dew.test
   127.0.0.1 gitlab.dew.test
+  127.0.0.1 todo-uat-api.dew.test
+  127.0.0.1 todo-uat.dew.test
+  127.0.0.1 todo-prod-api.dew.test
+  127.0.0.1 todo-prod.dew.test
 
 === 准备
 
@@ -977,6 +981,32 @@ metadata:
   name: dew-prod
   labels:
     name: dew-prod
+EOF
+
+# 创建 Ingress
+cat <<EOF | kubectl apply -f -
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+  name: dew-ingress
+  namespace: dew-uat
+spec:
+  rules:
+  - host: todo-uat-api.dew.test
+    http:
+      paths:
+      - backend:
+          serviceName: kernel
+          servicePort: 8080
+        path: /
+  - host: todo-uat.dew.test
+    http:
+      paths:
+      - backend:
+          serviceName: todo-frontend
+          servicePort: 80
+        path: /
 EOF
 ----
 
@@ -1036,7 +1066,8 @@ docker pull dewms/devops:latest
 docker tag dewms/devops:latest harbor.dew.test/dewms/devops:latest
 docker push harbor.dew.test/dewms/devops:latest
 
-# 创建 dew-test / dew-uat / dew-prod 项目
+# 添加 dew / Dew123456 用户
+# 创建 dew-test / dew-uat / dew-prod 项目并添加 dew 用户为管理员
 ----
 
 ==== Sonatype Nexus

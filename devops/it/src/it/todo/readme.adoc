@@ -52,9 +52,9 @@ SET/export dew_devops_docker_registry_username=...
 SET/export dew_devops_docker_registry_password=...
 
 # 执行如下maven命令(发布到uat环境)
-mvn -P devops deploy -Ddew_devops_profile=uat
+mvn -P devops deploy -Ddew_devops_profile=uat -T 1C -Ddew_devops_quiet=true
 # 执行如下maven命令(发布到prod环境)
-mvn -P devops deploy -Ddew_devops_profile=prod
+mvn -P devops deploy -Ddew_devops_profile=prod -T 1C -Ddew_devops_quiet=true
 ----
 
 .Gitlab CI执行

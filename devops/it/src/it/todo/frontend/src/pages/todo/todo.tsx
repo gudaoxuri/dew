@@ -17,8 +17,8 @@
 import Taro, {Component, Config} from '@tarojs/taro'
 import {View} from '@tarojs/components'
 import {AtInput, AtList, AtListItem, AtSwipeAction} from 'taro-ui'
-import api from '@services/api'
-import {DewHeader} from '@components/dew-header/dew-header'
+import api from '../../services/api'
+import {DewHeader} from '../../components/dew-header/dew-header'
 import './todo.scss'
 
 const OPTIONS = [

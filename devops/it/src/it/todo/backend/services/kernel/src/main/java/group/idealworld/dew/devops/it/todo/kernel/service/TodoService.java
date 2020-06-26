@@ -31,6 +31,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * To-do service.
@@ -39,6 +40,9 @@ import org.springframework.web.client.RestTemplate;
  */
 @Service
 public class TodoService {
+
+    @Value("${todo.service.compute}")
+    private String computeService;
 
     @Autowired
     private RestTemplate restTemplate;
@@ -79,7 +83,7 @@ public class TodoService {
             HttpEntity<String> entity = new HttpEntity<>(content, headers);
             // 使用Spring的 restTemplate 实现服务间 rest 调用
             content = restTemplate
-                    .exchange("http://" + Constants.REST_COMPUTE_SERVICE + "/compute", HttpMethod.PUT, entity, String.class)
+                    .exchange(computeService + "/compute", HttpMethod.PUT, entity, String.class)
                     .getBody();
         }
         Todo todo = new Todo();

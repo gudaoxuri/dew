@@ -34,9 +34,4 @@ public class Constants {
      */
     public static final String MQ_NOTIFY_TODO_DEL = "todo:notify:todo:del";
 
-    /**
-     * The constant REST_COMPUTE_SERVICE.
-     */
-    public static final String REST_COMPUTE_SERVICE = "compute";
-
 }

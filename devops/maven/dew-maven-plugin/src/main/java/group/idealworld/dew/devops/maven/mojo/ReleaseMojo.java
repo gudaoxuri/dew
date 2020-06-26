@@ -30,7 +30,9 @@ import java.io.IOException;
  *
  * @author gudaoxuri
  */
-@Mojo(name = "release", defaultPhase = LifecyclePhase.DEPLOY, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
+@Mojo(name = "release", defaultPhase = LifecyclePhase.DEPLOY,
+        requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
+        threadSafe = true)
 public class ReleaseMojo extends BasicMojo {
 
     @Override

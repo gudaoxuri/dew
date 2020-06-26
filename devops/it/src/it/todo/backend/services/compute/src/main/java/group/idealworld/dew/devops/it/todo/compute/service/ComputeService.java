@@ -40,7 +40,7 @@ public class ComputeService {
      */
     public String compute(String jsCode)  {
         logger.info("Compute : " + jsCode);
-        return $.eval(ScriptHelper.ScriptKind.JS,String.class,jsCode);
+        return $.eval(ScriptHelper.ScriptKind.JS,Integer.class,jsCode).toString();
     }
 
 }

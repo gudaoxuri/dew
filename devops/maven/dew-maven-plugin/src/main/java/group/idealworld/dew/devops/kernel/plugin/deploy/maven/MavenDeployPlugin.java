@@ -59,7 +59,7 @@ public class MavenDeployPlugin implements DeployPlugin {
             return Resp.forbidden("Maven distribution repository not found");
         }
         String repoUrl = mavenProject.getDistributionManagement().getRepository().getUrl().trim();
-        // TBD auth
+        // TODO auth
         repoUrl = repoUrl.endsWith("/") ? repoUrl : repoUrl + "/";
         repoUrl += mavenProject.getGroupId().replaceAll("\\.", "/")
                 + "/"

@@ -1,2 +1,9 @@
+spring:
+  redis:
+    host: localhost
+    port: 6378
+    database: 0
+    password: 123456
+
 server:
   port: 8081

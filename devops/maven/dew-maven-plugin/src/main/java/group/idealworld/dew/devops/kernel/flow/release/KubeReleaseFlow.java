@@ -28,7 +28,6 @@ import group.idealworld.dew.devops.kernel.resource.KubeDeploymentBuilder;
 import group.idealworld.dew.devops.kernel.resource.KubeServiceBuilder;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.models.*;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -60,9 +59,7 @@ public class KubeReleaseFlow extends BasicFlow {
             logger.debug("Delete old version from kubernetes resources and docker images");
             removeOldVersions(config);
         }
-        if (!config.getDisableReuseVersion() || StringUtils.isNotEmpty(config.getReuseLastVersionFromProfile())) {
-            DockerBuildFlow.processAfterReleaseSuccessful(config);
-        }
+        DockerBuildFlow.processAfterReleaseSuccessful(config);
     }
 
     /**
@@ -170,7 +167,7 @@ public class KubeReleaseFlow extends BasicFlow {
                 + ",group=" + deploymentRes.getMetadata().getLabels().get("group")
                 + ",version=" + deploymentRes.getMetadata().getLabels().get("version");
         String watchId = KubeHelper.inst(config.getId()).watch(
-                (coreApi,appsApi, extensionsApi, rbacAuthorizationApi, autoscalingApi)
+                (coreApi, appsApi, extensionsApi, rbacAuthorizationApi, autoscalingApi)
                         -> appsApi.listNamespacedDeploymentCall(deploymentRes.getMetadata().getNamespace(),
                         null, null, null, null,
                         select, 1, null, null, Boolean.TRUE, null),

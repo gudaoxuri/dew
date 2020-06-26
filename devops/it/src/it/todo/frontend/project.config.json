@@ -1,16 +1,13 @@
 {
-	"miniprogramRoot": "dist/",
-	"projectname": "todo",
-	"description": "",
-	"appid": "wx5b7058690f0d8b9e",
-	"setting": {
-		"urlCheck": false,
-		"es6": false,
-		"postcss": false,
-		"minified": false,
-		"newFeature": true,
-		"autoAudits": false
-	},
-	"compileType": "miniprogram",
-	"condition": {}
+  "miniprogramRoot": "./dist",
+  "projectname": "todo",
+  "description": "todo",
+  "appid": "touristappid",
+  "setting": {
+    "urlCheck": true,
+    "es6": false,
+    "postcss": false,
+    "minified": false
+  },
+  "compileType": "miniprogram"
 }
