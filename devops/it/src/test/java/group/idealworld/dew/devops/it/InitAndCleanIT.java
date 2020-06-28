@@ -33,7 +33,7 @@ import java.net.URL;
  *
  * @author gudaoxuri
  */
-public class IntAndCleanIT extends BasicProcessor {
+public class InitAndCleanIT extends BasicProcessor {
 
     /**
      * Init and clean.

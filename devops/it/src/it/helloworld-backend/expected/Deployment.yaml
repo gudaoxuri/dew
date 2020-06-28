@@ -33,8 +33,10 @@ spec:
     spec:
       containers:
       - env:
-        - name: JAVA_OPTIONS
-          value: ' -Dspring.profiles.active=test -Dserver.port=8080 -Dopentracing.jaeger.log-spans=false
+          - name: JAVA_DEBUG_OPTIONS
+            value: ' -Dspring.profiles.active=test -Dserver.port=9000'
+          - name: JAVA_OPTIONS
+            value: ' -Dspring.profiles.active=test -Dserver.port=8080 -Dopentracing.jaeger.log-spans=false
             -Dopentracing.jaeger.probabilistic-sampler.sampling-rate=0.1 -Dopentracing.spring.web.skip-pattern=/api-docs.*|/swagger.*|.*\\.png|.*\\.css|.*\\.js|.*\\.html|/favicon.ico|/hystrix.stream|/actuator.*
             -Dmanagement.endpoints.web.exposure.include=* -Dmanagement.metrics.tags.application=helloworld-backend'
         image: "@ignore@"

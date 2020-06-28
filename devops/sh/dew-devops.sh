@@ -18,7 +18,7 @@
 set -o pipefail
 set -u
 
-HARBOR_REGISTRY_URL=https://harbor.dew.idealworld.group
+HARBOR_REGISTRY_URL=https://harbor.dew.test
 HARBOR_REGISTRY_ADMIN=admin
 HARBOR_REGISTRY_ADMIN_PASSWORD=Harbor12345
 HARBOR_REGISTRY_PASSWORD_REGEX="(?=^.{8,20}$)(?=^[^\s]*$)(?=.*\d)(?=.*[A-Z])(?=.*[a-z])"
@@ -30,12 +30,12 @@ HARBOR_PROJECT_PUBLIC_ENABLED="false"
 CREATE_PROJECT_NAMESPACE_SKIP="false"
 DOCKERD_URL=tcp://dockerd.dew.idealworld.group:2375
 
-MINIO_HOST=minio.dew.idealworld.group:9000
+MINIO_HOST=minio.dew.test:9000
 MINIO_ACCESS_KEY=dew
 MINIO_SECRET_KEY=Dew123456
 MINIO_BUCKET_NAME=dew
 
-GITLAB_URL=http://gitlab.dew.idealworld.group
+GITLAB_URL=http://gitlab.dew.test
 GITLAB_RUNNER_NAMESPACE=devops
 GITLAB_RUNNER_NAME=dew-runner
 GITLAB_RUNNER_IMAGE=dewms/devops:3.0.0-SNAPSHOT
@@ -43,7 +43,7 @@ GITLAB_RUNNER_REG_TOKEN=3mezus8cX9qAjkrNY4B
 GITLAB_RUNNER_PROFILE=test
 
 KUBERNETES_CONFIG=$(echo $(base64 < ~/.kube/config) |  tr -d " ")
-INGRESS_HOST_EXAMPLE="test.dew.idealworld.group/api user-service:8080"
+INGRESS_HOST_EXAMPLE="test.dew.test/api user-service:8080"
 
 # ------------------
 # Params dealing

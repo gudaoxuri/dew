@@ -965,6 +965,14 @@ metadata:
     name: dew-test
 EOF
 
+kubectl -n dew-test create secret docker-registry dew-registry \
+ --docker-server=https://harbor.dew.test/v2 \
+ --docker-username=dew \
+ --docker-password=Dew123456
+
+kubectl -n dew-test patch serviceaccount default \
+ -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
+
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Namespace
@@ -974,6 +982,14 @@ metadata:
     name: dew-uat
 EOF
 
+kubectl -n dew-uat create secret docker-registry dew-registry \
+ --docker-server=https://harbor.dew.test/v2 \
+ --docker-username=dew \
+ --docker-password=Dew123456
+
+kubectl -n dew-uat patch serviceaccount default \
+ -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
+
 cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Namespace
@@ -982,6 +998,14 @@ metadata:
   labels:
     name: dew-prod
 EOF
+
+kubectl -n dew-prod create secret docker-registry dew-registry \
+ --docker-server=https://harbor.dew.test/v2 \
+ --docker-username=dew \
+ --docker-password=Dew123456
+
+kubectl -n dew-prod patch serviceaccount default \
+ -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
 
 # 创建 Ingress
 cat <<EOF | kubectl apply -f -
