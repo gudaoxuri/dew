@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # This script is modified from https://github.com/fabric8io-images/run-java-sh
 
@@ -233,8 +233,8 @@ java_options() {
 }
 
 run() {
-  echo exec java $(java_options) -jar ./serv.jar
-  exec java $(java_options) -jar ./serv.jar
+  echo exec java $(java_options) org.springframework.boot.loader.JarLauncher
+  exec java $(java_options) org.springframework.boot.loader.JarLauncher
 }
 
 init_limit_env_vars

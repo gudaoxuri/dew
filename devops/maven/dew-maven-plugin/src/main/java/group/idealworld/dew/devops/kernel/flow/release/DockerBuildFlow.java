@@ -109,7 +109,7 @@ public abstract class DockerBuildFlow extends BasicFlow {
             // 如果存在自定义镜像则替换默认的镜像
             logger.debug("Using custom image : " + config.getDocker().getImage().trim());
             String dockerFileContent = $.file.readAllByFile(new File(flowBasePath + "Dockerfile"), "UTF-8");
-            dockerFileContent = dockerFileContent.replaceAll("FROM .*", "FROM " + config.getDocker().getImage().trim());
+            dockerFileContent = dockerFileContent.replaceAll("FROM [^\\s]*", "FROM " + config.getDocker().getImage().trim());
             Files.write(Paths.get(flowBasePath + "Dockerfile"), dockerFileContent.getBytes());
         }
         DockerHelper.inst(config.getId()).image.build(config.getCurrImageName(),

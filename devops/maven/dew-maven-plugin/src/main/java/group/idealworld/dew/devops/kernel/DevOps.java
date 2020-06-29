@@ -16,12 +16,12 @@
 
 package group.idealworld.dew.devops.kernel;
 
-import group.idealworld.dew.devops.kernel.exception.ProjectProcessException;
-import group.idealworld.dew.devops.kernel.function.ExecuteEventProcessor;
-import group.idealworld.dew.devops.kernel.helper.DockerHelper;
 import group.idealworld.dew.devops.kernel.config.DewProfile;
 import group.idealworld.dew.devops.kernel.config.FinalConfig;
 import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
+import group.idealworld.dew.devops.kernel.exception.ProjectProcessException;
+import group.idealworld.dew.devops.kernel.function.ExecuteEventProcessor;
+import group.idealworld.dew.devops.kernel.helper.DockerHelper;
 import group.idealworld.dew.devops.kernel.helper.KubeHelper;
 import group.idealworld.dew.devops.kernel.util.DewLog;
 import group.idealworld.dew.devops.kernel.util.ExecuteOnceProcessor;
@@ -326,12 +326,21 @@ public class DevOps {
          * @param projectConfig the final project config
          */
         public static void invoke(String groupId, String artifactId, String version,
-                                  String goal, Map<String, String> configuration,
+                                  String goal, Map<String, Object> configuration,
                                   FinalProjectConfig projectConfig
         ) {
             logger.debug("invoke groupId = " + groupId + " ,artifactId = " + artifactId + " ,version = " + version);
             List<MojoExecutor.Element> config = configuration.entrySet().stream()
-                    .map(item -> element(item.getKey(), item.getValue()))
+                    .map(item -> {
+                        if (item.getValue() instanceof Map<?, ?>) {
+                            var eles = ((Map<?, ?>) item.getValue()).entrySet().stream()
+                                    .map(subItem -> element(subItem.getKey().toString(), subItem.getValue().toString()))
+                                    .collect(Collectors.toList());
+                            return element(item.getKey(), eles.toArray(new Element[eles.size()]));
+                        } else {
+                            return element(item.getKey(), item.getValue().toString());
+                        }
+                    })
                     .collect(Collectors.toList());
             org.apache.maven.model.Plugin plugin;
             if (version == null) {
