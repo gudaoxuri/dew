@@ -48,12 +48,18 @@ public class JvmServiceSpringBootPrepareFlow extends BasicPrepareFlow {
     protected void postPrepareBuild(FinalProjectConfig config, String flowBasePath) {
         DevOps.Invoke.invoke("org.springframework.boot",
                 "spring-boot-maven-plugin",
-                null,
+                // TODO 自动发现
+                "2.3.1.RELEASE",
                 "repackage",
                 new HashMap<>() {
                     {
-                        put("outputDirectory", flowBasePath);
                         put("finalName", "serv");
+                        put("outputDirectory", flowBasePath);
+                        put("layers", new HashMap<>() {
+                            {
+                                put("enabled", "true");
+                            }
+                        });
                     }
                 }, config);
     }
