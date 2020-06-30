@@ -260,6 +260,7 @@
                 </plugins>
             </build>
         </profile>
+
         <profile>
             <id>devops</id>
             <build>

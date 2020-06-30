@@ -1,0 +1,28 @@
+{{>licenseInfo}}
+package {{formatPackage groupId}}.{{formatPackage artifactId}};
+
+{{#apiInfo.apis}}import {{package}}.{{classFilename}};
+{{/apiInfo.apis}}
+import {{formatPackage groupId}}.{{formatPackage artifactId}}.invoker.Configuration;
+
+/**
+* {{artifactId}} 入口.
+*
+* @author dewms
+*/
+public class {{formatClassName artifactId}} {
+
+    /**
+    * 初始化方法.
+    *
+    * @param basePath 服务器地址
+    */
+    public static void init(String basePath){
+        Configuration.getDefaultApiClient().setBasePath(basePath);
+    }
+
+{{#apiInfo.apis}}
+    public static final {{classFilename}} {{classVarName}} = new {{classFilename}}();
+{{/apiInfo.apis}}
+
+}
