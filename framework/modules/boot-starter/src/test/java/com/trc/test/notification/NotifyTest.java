@@ -23,8 +23,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import group.idealworld.dew.notification.Notify;
-import group.idealworld.dew.notification.NotifyConfig;
+import group.idealworld.dew.core.notification.Notify;
+import group.idealworld.dew.core.notification.NotifyConfig;
 import org.junit.Assert;
 import org.junit.Test;
 

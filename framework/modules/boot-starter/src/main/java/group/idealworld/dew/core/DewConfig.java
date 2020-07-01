@@ -16,9 +16,8 @@
 
 package group.idealworld.dew.core;
 
-
 import group.idealworld.dew.core.cluster.ha.dto.HAConfig;
-import group.idealworld.dew.notification.NotifyConfig;
+import group.idealworld.dew.core.notification.NotifyConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.HashMap;

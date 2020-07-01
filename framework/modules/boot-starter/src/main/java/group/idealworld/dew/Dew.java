@@ -30,7 +30,7 @@ import group.idealworld.dew.core.basic.fun.VoidPredicate;
 import group.idealworld.dew.core.basic.loading.DewLoadImmediately;
 import group.idealworld.dew.core.basic.utils.NetUtils;
 import group.idealworld.dew.core.cluster.*;
-import group.idealworld.dew.notification.Notify;
+import group.idealworld.dew.core.notification.Notify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

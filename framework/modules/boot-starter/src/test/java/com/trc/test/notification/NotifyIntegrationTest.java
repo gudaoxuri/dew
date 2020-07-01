@@ -32,10 +32,8 @@ public class NotifyIntegrationTest {
 
     /**
      * Test all.
-     *
-     * @throws Exception the exception
      */
-    public void testAll()  {
+    public void testAll() {
         Resp<Void> result = Dew.notify.send("flag1", "测试消息，默认通知人", "测试");
         Assert.assertTrue(result.ok());
     }
