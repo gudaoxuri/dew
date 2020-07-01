@@ -21,6 +21,19 @@ public class {{formatClassName artifactId}} {
         Configuration.getDefaultApiClient().setBasePath(basePath);
     }
 
+    public static class Auth {
+
+        /**
+        * 设置Token.
+        *
+        * @param token Token
+        */
+        public static void setToken(String token) {
+            Configuration.getDefaultApiClient().setApiKey(token);
+        }
+
+    }
+
 {{#apiInfo.apis}}
     public static final {{classFilename}} {{classVarName}} = new {{classFilename}}();
 {{/apiInfo.apis}}

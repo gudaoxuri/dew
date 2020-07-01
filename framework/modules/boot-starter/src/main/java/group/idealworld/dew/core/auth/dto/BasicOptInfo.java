@@ -17,8 +17,7 @@
 package group.idealworld.dew.core.auth.dto;
 
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 
@@ -28,29 +27,29 @@ import java.time.LocalDateTime;
  * @param <E> 扩展操作用户信息类型
  * @author gudaoxuri
  */
-@ApiModel(value = "操作用户信息")
+@Schema(name = "操作用户信息")
 public class BasicOptInfo<E> extends OptInfo<E> {
 
     /**
      * The Mobile.
      */
-    @ApiModelProperty(value = "手机号", required = true)
+    @Schema(name = "手机号", required = true)
     protected String mobile;
     /**
      * The Email.
      */
-    @ApiModelProperty(value = "邮箱", required = true)
+    @Schema(name = "邮箱", required = true)
     protected String email;
     /**
      * The Name.
      */
-    @ApiModelProperty(value = "姓名", required = true)
+    @Schema(name = "姓名", required = true)
     protected String name;
 
     /**
      * The Last login time.
      */
-    @ApiModelProperty(value = "最后一次登录时间", required = true)
+    @Schema(name = "最后一次登录时间", required = true)
     protected LocalDateTime lastLoginTime;
 
     /**

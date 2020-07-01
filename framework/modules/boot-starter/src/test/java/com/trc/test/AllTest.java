@@ -19,9 +19,7 @@ package com.trc.test;
 
 import com.trc.test.auth.AuthTest;
 import com.trc.test.cluster.ClusterTest;
-import com.trc.test.doc.DocTest;
 import com.trc.test.notification.NotifyIntegrationTest;
-import com.trc.test.web.MetricsTest;
 import com.trc.test.web.WebTest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,12 +50,6 @@ public class AllTest {
     @Resource
     private NotifyIntegrationTest notifyIntegrationTest;
 
-    @Resource
-    private DocTest docTest;
-
-    @Resource
-    private MetricsTest metricsTest;
-
     /**
      * Test all.
      *
@@ -69,8 +61,6 @@ public class AllTest {
         webTest.testAll();
         authTest.testAll();
         notifyIntegrationTest.testAll();
-        docTest.testAll();
-        metricsTest.testMetric();
     }
 
 }

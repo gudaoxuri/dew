@@ -16,7 +16,10 @@
 
 package group.idealworld.dew.example.web;
 
-import io.swagger.annotations.*;
+import group.idealworld.dew.core.DewConfig;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,23 +33,8 @@ import java.util.Map;
  * @author gudaoxuri
  */
 @RestController("example2")
-@Api("示例应用2")
+@Tag(name = "exmaple2", description = "示例应用2说明")
 @Validated // URL 类型的验证需要使用此注解
-@SwaggerDefinition(
-        info = @Info(
-                title = "the title",
-                version = "0.0",
-                description = "My API",
-                license = @License(name = "Apache 2.0", url = "http://foo.bar"),
-                contact = @Contact(url = "http://gigantic-server.com", name = "Fred", email = "Fred@gigagantic-server.com")
-        ),
-        tags = {
-                @Tag(name = "Tag 1", description = "desc 1"),
-                @Tag(name = "Tag 2", description = "desc 2"),
-                @Tag(name = "Tag 3")
-        },
-        basePath = "http://127.0.0.1:809"
-)
 public class WebExample2Controller {
 
     /**
@@ -55,7 +43,8 @@ public class WebExample2Controller {
      * @return result
      */
     @GetMapping("test")
-    @ApiOperation(value = "示例方法")
+    @Operation(summary = "示例方法",
+            security = { @SecurityRequirement(name = DewConfig.DEW_AUTH_DOC_FLAG) })
     public Map<String, Integer> test() {
         return new HashMap<>() {
             {

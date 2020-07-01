@@ -3,16 +3,16 @@ spring:
     name: web-example
 
 server:
-  port: 80 # http端口号
-  tomcat:
-    max-threads: 1000
+  port: 809 # http端口号
+#  servlet:
+#    context-path: /tt
 
 dew:
   basic:
-    name: web
+    name: web示例
     version: 1.0
-    desc: desc
-    web-site: www.dew.idealworld.group
+    desc: 这是一个Web示例
+    web-site: http://www.idealworld.group
     doc:
       base-package: group.idealworld.dew # API文档路径
 

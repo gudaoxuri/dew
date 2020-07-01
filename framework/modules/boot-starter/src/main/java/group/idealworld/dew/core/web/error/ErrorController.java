@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import group.idealworld.dew.Dew;
 import group.idealworld.dew.core.DewConfig;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.apache.catalina.connector.RequestFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.ServletRequestWrapper;
 import javax.servlet.http.HttpServletRequest;
@@ -56,7 +56,7 @@ import java.util.regex.Pattern;
  * @author gudaoxuri
  */
 @RestController
-@ApiIgnore
+@Hidden
 @ConditionalOnWebApplication
 @RequestMapping("${error.path:/error}")
 public class ErrorController extends AbstractErrorController {

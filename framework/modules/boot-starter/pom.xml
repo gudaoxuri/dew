@@ -42,10 +42,6 @@
             <groupId>com.ecfront.dew</groupId>
             <artifactId>common</artifactId>
         </dependency>
-        <dependency>
-            <groupId>group.idealworld.dew</groupId>
-            <artifactId>notification</artifactId>
-        </dependency>
         <!-- Cluster -->
         <dependency>
             <groupId>group.idealworld.dew</groupId>
@@ -55,12 +51,6 @@
             <groupId>group.idealworld.dew</groupId>
             <artifactId>cluster-spi-redis</artifactId>
             <optional>true</optional>
-        </dependency>
-        <!-- Notification -->
-        <dependency>
-            <groupId>org.simplejavamail</groupId>
-            <artifactId>simple-java-mail</artifactId>
-            <version>${simple-java-mail.version}</version>
         </dependency>
         <!-- Others -->
         <dependency>
@@ -76,24 +66,15 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
         </dependency>
+        <!-- Notification -->
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
+            <groupId>org.simplejavamail</groupId>
+            <artifactId>simple-java-mail</artifactId>
+            <version>${simple-java-mail.version}</version>
             <optional>true</optional>
-        </dependency>
-        <!--Fixed version conflicts-->
-        <!-- springfox.documentation.schema.DefaultModelDependencyProvider.dependentModels(DefaultModelDependencyProvider.java:79)
- -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
         </dependency>
         <!-- InitTest -->
         <dependency>

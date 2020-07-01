@@ -17,12 +17,13 @@
 package group.idealworld.dew.example.web;
 
 import com.ecfront.dew.common.Resp;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import group.idealworld.dew.core.web.validation.CreateGroup;
 import group.idealworld.dew.core.web.validation.IdNumber;
 import group.idealworld.dew.core.web.validation.Phone;
 import group.idealworld.dew.core.web.validation.UpdateGroup;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,8 +39,8 @@ import java.util.Map;
  *
  * @author gudaoxuri
  */
-@RestController("")
-@Api("示例应用")
+@RestController()
+@Tag(name = "example", description = "示例应用说明")
 @Validated // URL 类型的验证需要使用此注解
 public class WebExampleController {
 
@@ -49,7 +50,7 @@ public class WebExampleController {
      * @return result
      */
     @GetMapping("example")
-    @ApiOperation(value = "示例方法")
+    @Operation(summary = "示例方法")
     public Map<String, Integer> example() {
         return new HashMap<>();
     }
@@ -124,6 +125,7 @@ public class WebExampleController {
     /**
      * User.
      */
+    @Schema(name = "用户信息")
     public static class User {
 
         // 仅在CreateGroup组下才校验

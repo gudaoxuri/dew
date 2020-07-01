@@ -16,9 +16,7 @@
 
 package group.idealworld.dew.core.auth.dto;
 
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Set;
 
@@ -28,7 +26,7 @@ import java.util.Set;
  * @param <E> 扩展操作用户信息类型
  * @author gudaoxuri
  */
-@ApiModel(value = "操作用户信息")
+@Schema(name = "操作用户信息")
 public class OptInfo<E> {
 
     /**
@@ -39,34 +37,34 @@ public class OptInfo<E> {
     /**
      * The Token.
      */
-    @ApiModelProperty(value = "Token", required = true)
+    @Schema(name = "Token", required = true)
     protected String token;
     /**
      * The Account code.
      */
-    @ApiModelProperty(value = "账号编码", required = true)
+    @Schema(name = "账号编码", required = true)
     protected Object accountCode;
     /**
      * The Token kind.
      */
-    @ApiModelProperty(value = "Token类型")
+    @Schema(name = "Token类型")
     protected String tokenKind = DEFAULT_TOKEN_KIND_FLAG;
 
     /**
      * The Roles.
      */
-    @ApiModelProperty(value = "角色列表", required = true)
+    @Schema(name = "角色列表", required = true)
     protected Set<RoleInfo> roleInfo;
 
 
     /**
      * Role info.
      */
-    @ApiModel(value = "角色信息")
+    @Schema(name = "角色信息")
     public static class RoleInfo {
-        @ApiModelProperty(value = "角色编码", required = true)
+        @Schema(name = "角色编码", required = true)
         private String code;
-        @ApiModelProperty(value = "角色显示名称", required = true)
+        @Schema(name = "角色显示名称", required = true)
         private String name;
 
         /**
@@ -187,6 +185,6 @@ public class OptInfo<E> {
      */
     public E setRoleInfo(Set<RoleInfo> roleInfo) {
         this.roleInfo = roleInfo;
-        return (E)this;
+        return (E) this;
     }
 }

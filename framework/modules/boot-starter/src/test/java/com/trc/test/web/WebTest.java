@@ -74,7 +74,7 @@ public class WebTest {
 */
     }
 
-    private void testResponseFormat() throws Exception {
+    private void testResponseFormat() {
         Resp<String> result = Resp.generic(testRestTemplate.getForObject("/test/success?q=TEST", Resp.class), String.class);
         Assert.assertEquals("successful", result.getBody());
         result = Resp.generic(testRestTemplate.getForObject("/test/badRequest?q=TEST", Resp.class), String.class);

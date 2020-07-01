@@ -26,10 +26,10 @@ import group.idealworld.dew.core.web.validation.CreateGroup;
 import group.idealworld.dew.core.web.validation.IdNumber;
 import group.idealworld.dew.core.web.validation.Phone;
 import group.idealworld.dew.core.web.validation.UpdateGroup;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.junit.Assert;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.validation.annotation.Validated;
@@ -50,7 +50,7 @@ import java.util.Map;
  * @author gudaoxuri
  */
 @RestController
-@Api(value = "测试")
+@Tag(name = "测试", description = "Test API")
 @RequestMapping(value = "/test/")
 @Validated
 public class WebController {
@@ -82,11 +82,9 @@ public class WebController {
      * @return the resp
      */
     @GetMapping(value = "success")
-    @ApiOperation(value = "success")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "q", value = "query", paramType = "query", dataType = "string", required = true),
-    })
-    public Resp<String> success(@RequestParam String q) {
+    @Operation(summary = "success")
+    public Resp<String> success(
+            @Parameter(name = "q", in = ParameterIn.QUERY, required = true) @RequestParam String q) {
         return Resp.success("successful");
     }
 
@@ -97,11 +95,9 @@ public class WebController {
      * @return the resp
      */
     @GetMapping(value = "badRequest")
-    @ApiOperation(value = "badRequest")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "q", value = "query", paramType = "query", dataType = "string", required = true),
-    })
-    public Resp<String> badRequest(@RequestParam String q) {
+    @Operation(summary = "badRequest")
+    public Resp<String> badRequest(
+            @Parameter(name = "q", in = ParameterIn.QUERY, required = true) @RequestParam String q) {
         return Resp.badRequest("badrequest");
     }
 
@@ -113,11 +109,9 @@ public class WebController {
      * @throws Exception the exception
      */
     @GetMapping(value = "customError")
-    @ApiOperation(value = "customError")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "q", value = "query", paramType = "query", dataType = "string", required = true),
-    })
-    public Resp<String> customError(@RequestParam String q) throws Exception {
+    @Operation(summary = "customError")
+    public Resp<String> customError(
+            @Parameter(name = "q", in = ParameterIn.QUERY, required = true) @RequestParam String q) throws Exception {
         throw Dew.E.e("A000", new Exception("io error"));
     }
 
@@ -129,7 +123,7 @@ public class WebController {
      * @throws Exception the exception
      */
     @GetMapping(value = "throws")
-    public Resp<String> throwsE(@RequestParam String q) throws Exception {
+    public Resp<String> throwsE(@RequestParam String q) {
         int i = 1 / 0;
         return Resp.success(i + "");
     }
@@ -142,11 +136,9 @@ public class WebController {
      * @throws IOException the io exception
      */
     @GetMapping(value = "customHttpState")
-    @ApiOperation(value = "customHttpState")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "q", value = "query", paramType = "query", dataType = "string", required = true),
-    })
-    public Resp<String> customHttpState(@RequestParam String q) throws IOException {
+    @Operation(summary = "customHttpState")
+    public Resp<String> customHttpState(
+            @Parameter(name = "q", in = ParameterIn.QUERY, required = true) @RequestParam String q) throws IOException {
         throw Dew.E.e("A000", new IOException("io error"), StandardCode.UNAUTHORIZED);
     }
 

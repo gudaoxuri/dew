@@ -34,6 +34,8 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "dew")
 public class DewConfig {
 
+    public static final String DEW_AUTH_DOC_FLAG = "Dew Auth";
+
     private Basic basic = new Basic();
     private Cluster cluster = new Cluster();
     private Security security = new Security();

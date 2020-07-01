@@ -19,108 +19,97 @@ package group.idealworld.dew.core.doc;
 
 import group.idealworld.dew.Dew;
 import group.idealworld.dew.core.DewConfig;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.springdoc.core.GroupedOpenApi;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
-import springfox.documentation.service.Tag;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.paths.RelativePathProvider;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import javax.servlet.ServletContext;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * Swagger配置.
  *
  * @author gudaoxuri
- * @see <a href="https://springfox.github.io/springfox/docs/snapshot/#customizing-the-swagger-endpoints">Springfox Configuration</a>
+ * @see <a href="https://springdoc.org/migrating-from-springfox.html">migrating-from-springfox</a>
  */
 @Configuration
 @ConditionalOnProperty(prefix = "dew.basic.doc", name = "enabled", havingValue = "true", matchIfMissing = true)
-@EnableSwagger2
-@ImportAutoConfiguration({DocClusterAutoConfiguration.class, DocLocalAutoConfiguration.class})
 public class DocAutoConfiguration {
 
-    /**
-     * The constant FLAG_APPLICATION_NAME.
-     */
-    public static final String FLAG_APPLICATION_NAME = "applicationName";
-
-    @Autowired
-    private DewConfig dewConfig;
-
-    @Value("${server.context-path:}")
-    private String contextPath;
+    private static final List<Function<PathItem, Operation>> OPERATION_GETTERS = Arrays.asList(
+            PathItem::getGet, PathItem::getPost, PathItem::getDelete, PathItem::getHead,
+            PathItem::getOptions, PathItem::getPatch, PathItem::getPut);
 
     /**
-     * Doc service doc service.
+     * Dew default group grouped open api.
      *
-     * @return the doc service
+     * @return the grouped open api
      */
     @Bean
-    public DocService docService() {
-        return new DocService();
+    public GroupedOpenApi dewDefaultGroup() {
+        return GroupedOpenApi.builder()
+                .group("dew-default")
+                .packagesToScan(Dew.dewConfig.getBasic().getDoc().getBasePackage())
+                .build();
     }
 
     /**
-     * Rest api docket.
+     * Dew default api open api.
      *
-     * @param servletContext the servlet context
-     * @return the docket
+     * @return the open api
      */
     @Bean
-    public Docket restApi(ServletContext servletContext) {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .tags(new Tag(FLAG_APPLICATION_NAME, Dew.Info.name))
-                .apiInfo(apiInfo())
-                .select()
-                .apis(RequestHandlerSelectors.basePackage(dewConfig.getBasic().getDoc().getBasePackage()))
-                .paths(PathSelectors.any())
-                .build()
-                /*.securitySchemes(new ArrayList<ApiKey>() {{
-                    add(new ApiKey("access_token", "accessToken", "develop"));
-                }})
-                .globalOperationParameters(new ArrayList<Parameter>() {{
-                    add(new ParameterBuilder()
-                            .name(Dew.dewConfig.getSecurity().getTokenFlag())
-                            .description("token 用于鉴权，部分接口必须传入")
-                            .modelRef(new ModelRef("String"))
-                            .parameterType(Dew.dewConfig.getSecurity().isTokenInHeader() ? "header" : "query")
-                            .hidden(false)
-                            .required(true)
-                            .build());
-                }})*/
-                .pathProvider(new RelativePathProvider(servletContext) {
-                    @Override
-                    public String getApplicationBasePath() {
-                        return contextPath + super.getApplicationBasePath();
-                    }
-                });
-    }
-
-    private ApiInfo apiInfo() {
-        ApiInfoBuilder builder = new ApiInfoBuilder()
-                .title(dewConfig.getBasic().getName())
-                .description(dewConfig.getBasic().getDesc())
-                .termsOfServiceUrl(dewConfig.getBasic().getWebSite())
-                .version(dewConfig.getBasic().getVersion());
-        if (dewConfig.getBasic().getDoc().getContact() != null) {
-            builder.contact(new Contact(
-                    dewConfig.getBasic().getDoc().getContact().getName(),
-                    dewConfig.getBasic().getDoc().getContact().getUrl(),
-                    dewConfig.getBasic().getDoc().getContact().getEmail()
-            ));
+    public OpenAPI dewDefaultAPI() {
+        var openAPI = new OpenAPI()
+                .info(new Info().title(Dew.dewConfig.getBasic().getName())
+                        .description(Dew.dewConfig.getBasic().getDesc())
+                        .version(Dew.dewConfig.getBasic().getVersion())
+                        .termsOfService(Dew.dewConfig.getBasic().getWebSite()));
+        if (Dew.dewConfig.getBasic().getDoc().getContact() != null) {
+            openAPI.getInfo().contact(new Contact()
+                    .name(Dew.dewConfig.getBasic().getDoc().getContact().getName())
+                    .email(Dew.dewConfig.getBasic().getDoc().getContact().getEmail())
+                    .url(Dew.dewConfig.getBasic().getDoc().getContact().getUrl())
+            );
         }
-        return builder.build();
+        // Add Auth
+        openAPI.components(new Components()
+                .addSecuritySchemes(DewConfig.DEW_AUTH_DOC_FLAG, new SecurityScheme()
+                        .type(SecurityScheme.Type.APIKEY)
+                        .name(Dew.dewConfig.getSecurity().getTokenFlag())
+                        .in(Dew.dewConfig.getSecurity().isTokenInHeader()
+                                ? SecurityScheme.In.HEADER : SecurityScheme.In.QUERY))
+        );
+        return openAPI;
+    }
+
+    // TODO Add dynamic auth
+    /*public void addAuthAPI(OpenAPI openAPI) {
+        openAPI.getPaths().forEach((path, item) ->
+                getOperations(item).forEach(operation -> {
+                    operation.setSecurity(new ArrayList<>() {
+                        {
+                            add(new SecurityRequirement().addList(DewConfig.DEW_AUTH_DOC_FLAG));
+                        }
+                    });
+                }));
+    }*/
+
+    private static Stream<Operation> getOperations(PathItem pathItem) {
+        return OPERATION_GETTERS.stream()
+                .map(getter -> getter.apply(pathItem))
+                .filter(Objects::nonNull);
     }
 
 }
