@@ -1,3 +1,53 @@
-==== Dew SDK Generate Maven Plugin
+==== Dew SDK 插件
 
-TBD
+本插件为Dew微服务体系的组成部分，用于SDK的自动生成并上传到Maven仓库。
+
+===== 使用
+
+.Dew体系下的使用
+
+. 使用OpenAPI V3规范（By Swagger）添加API注解
+. 执行 ``mvn deploy -P release``
+
+.非Dew体系下的使用
+
+. 使用OpenAPI V3规范（By Swagger）添加API注解
+. 在项目POM中添加本插件
+. 执行项目自定义的 ``mvn deploy xx`` （需要指定部署的仓库地址）
+
+===== 配置
+
+|===
+|名称 |默认值 |说明
+
+|dew_sdk_gen_skip |false |是否跳过SDK生成
+|dew_sdk_release_skip |false |是否跳过SDK发布
+|dew_main_class | |Main方法所在Class（包名+类名），为空时启用自动发现功能
+|dew_sdk_gen_openapi_path | |自定义http的open API路径，为空时通过单元测试自动生成
+|dew_sdk_gen_lang |java |SDK的语言
+|===
+
+TIP: 目前仅支持java，后续会集成更多语言。
+
+===== 核心逻辑
+
+.OpenAPI文件生成
+
+. 在 maven phase = validate 时触发
+. 如果 dew_sdk_gen_openapi_path 存在，则下载 OpenAPI 文件到 dew-sdkgen 目录，结束
+. 如果 dew_main_class 不存在，则查找 src 下 main class 文件，返回 main class 所在的包
+. 以 testFile.mustache 为模板，注入 main class 等变量生成名为 DewSDKGenTest 的测试类到 main class 所在的同名包下
+. 在 maven phase = test 时触发单元测试，执行 DewSDKGenTest 生成 OpenAPI 文件到 dew-sdkgen 目录
+
+.SDK工程生成
+
+. 在 maven phase = deploy 时触发
+. 自定义 swagger-codegen-maven-plugin ，生成对应的SDK工程，包含了对JDK11支持、统一入口支持等自定义内容
+
+.SDK发布
+
+. 在 maven phase = deploy 时触发
+. 在 SDK工程生成 后调用 maven-invoker-plugin 插件，执行 deploy goal，并传入主工程的Maven仓库地址到 -DaltDeploymentRepository 参数，完成SDK发布
+
+
+

@@ -14,7 +14,7 @@ image::https://api.codacy.com/project/badge/Grade/aacfdad1579043f0a2c1928b53096b
 image::https://img.shields.io/badge/license-ASF2-blue.svg["Apache License 2",link="https://www.apache.org/licenses/LICENSE-2.0.txt"]
 image::https://img.shields.io/maven-central/v/group.idealworld.dew/parent-starter[Maven Central]
 
-微服务一站式解决方案( http://doc.dew.idealworld.group )，提供：架构指南、容器优先/兼容Spring Cloud与Istio的框架、最佳实践及DevOps标准化流程。
+微服务一站式解决方案( http://doc.dew.idealworld.group )，提供：架构指南、容器优先/兼容Spring与Service Mesh的框架、最佳实践及DevOps标准化流程。
 
 [quote,]
 ____
@@ -64,7 +64,7 @@ ____
 . 可替换，只做扩展，尽量不修改基础框架代码，开发人员完全可以直接基于基础框架开发
 . 主流，整合流行的微服务框架
 
-实现上我们选择 `Spring Boot` 这一业界主流框架，对上兼容 `Spring Cloud` 与 `Istio`。
+实现上我们选择 `Spring Boot` 这一业界主流框架，对上兼容 `Spring Boot` 与 `Service Mesh`。
 
 .**标准化DevOps流程**
 
@@ -117,10 +117,8 @@ ____
 |-  |-  |- notification                    // 通知处理模块
 |-  |-  |- test-starter                    // 单元测试模块
 |-  |-  |- hbase-starter                   // Spring Boot HBase Starter 模块
-|-  |- components                          // 集成的服务
-|-  |-  |- auth                            // 认证服务
-|-  |-  |- auth-sdk-starter                // 认证服务SDK
-|-  |-  |- config                          // Spring Cloud服务
+|-  |- assists                             // 框架辅助工具
+|-  |-  |- sdkgen-maven-plugin             // SDK自动生成、上传插件
 |-  |- checkstyle                          // 项目CheckStyle
 |- devops                                  // DevOps部分
 |-  |- maven                               // DevOps使用到的Maven插件

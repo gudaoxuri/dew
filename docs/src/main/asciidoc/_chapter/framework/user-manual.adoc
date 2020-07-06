@@ -1,7 +1,7 @@
 [[framework-user-manual]]
 === 框架使用手册
 
-NOTE: ``Dew`` 框架部分是对 ``Spring Boot/Cloud`` 的扩展，使用之前务必了解相关框架的基础知识。
+NOTE: ``Dew`` 框架部分是对 ``Spring Boot`` 的扩展，使用之前务必了解相关框架的基础知识。
 
 IMPORTANT: 本手册只介绍 ``Dew`` 框架部分的扩展功能！
 
@@ -524,7 +524,7 @@ public Resp<String> test(){
 
 ===== 消息通知
 
-`Dew` 支持发送消息到钉钉、邮件或自定义HTTP地址，默认支持对未捕获异常及Hystrix错误的通知。
+`Dew` 支持发送消息到钉钉、邮件或自定义HTTP地址，默认支持对未捕获异常通知。
 
 [source,xml]
 .通知配置
@@ -583,7 +583,6 @@ Dew.notify.sendAsync("<通知的标识>", "<通知的内容或Throwable>");
 .默认通知标识
 ====
 . 未捕获异常: ``__DEW_ERROR__``，所有未捕获异常（ErrorController）调用此标识发送错误，可通过``dew.basic.format.error-flag`` 修改
-. Hystrix错误: ``__HYSTRIX__``，所有Hystrix错误调用此标识发送错误，可通过``dew.cloud.error.notify-flag`` 修改
 
 要启用以上两个通知请确保``dew.notifies``下有相应的配置。
 ====
@@ -1027,69 +1026,7 @@ Thread.sleep(1000);
 Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "xxxxxxx"));
 ----
 
-==== API文档
-
-[source,yml]
-.配置
-----
-dew:
-  basic:
-    name: # 文档名称
-    version: 1.0 # 文档版本
-    desc: # 文档说明
-    web-site: # 文档站点
-    doc:
-      base-package: # API文档要扫描的根包，多指定到 Controller 包中
-      contact: # 联系人信息，可为空
-        name: # 联系人姓名
-        url: # 联系人URL
-        email: # 联系人邮箱
-
-management: # 文档生成地址前缀为 /management.endpoints.web.base-path
-  endpoints:
-    web:
-      base-path: /management # 可修改成自定义路径，默认为 actuator
-
-----
-
-在线API文档请访问 ``http(s)://<host>:<port>/swagger-ui.html``
-
-离线API文档会生成Asciidoc格式，可通过软件转换成HTML及PDF版本。
-
-[source,txt]
-.使用
-----
-访问任意服务实例:
-
-PUT /{management.endpoints.web.base-path}/doc/offline
-
-{
-	"docName":"", # 文档名称
-	"docDesc":"", # 文档说明
-	"visitUrls":{ # 不同环境的访问地址
-		"":""
-	},
-	"swaggerJsonUrls":[] # swagger.json的URL列表(http://.../v2/api-docs)，可选
-}
-
-swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，为空时分两种情况：
-
-1. 如果是非集群模式（没有注册中心）则只生成本服务的接口文档
-2. 如果是集群模式（注册到注册中心）则会合成此集群下所有的接口文档
-
-示例：
-
-{
-	"docName":"Dew API 文档",
-	"docDesc":"此为Dew的接口文档\n描述可以换行",
-	"visitUrls":{
-		"开发环境":"http://dev.dew.ecfront.com",
-		"测试环境":"http://test.dew.ecfront.com"
-	}
-}
-----
-
-调用此接口后返回Asciidoc格式的文档内容，复制此内容到相应的转换工具中即可生成对应的HTTP或PDF文档。
+include::../../../../../../framework/assists/sdkgen-maven-plugin/readme.adoc[]
 
 ==== 代码质量检查
 

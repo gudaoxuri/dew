@@ -17,6 +17,8 @@
 package group.idealworld.dew.sdkgen.maven;
 
 import group.idealworld.dew.sdkgen.helper.MavenHelper;
+import group.idealworld.dew.sdkgen.process.SDKGenerateProcess;
+import group.idealworld.dew.sdkgen.process.SDKReleaseProcess;
 import io.swagger.codegen.v3.maven.plugin.CodeGenMojo;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
@@ -27,46 +29,49 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import java.io.File;
 import java.util.Map;
 
+import static group.idealworld.dew.sdkgen.Constants.*;
+
 /**
- * The type Sdk gen mojo.
+ * The type SDK Generate mojo.
  *
  * @author gudaoxuri
  */
-@Mojo(name = "generate", defaultPhase = LifecyclePhase.DEPLOY, threadSafe = true)
-public class SDKGenMojo extends CodeGenMojo {
+@Mojo(name = "sdkGen", defaultPhase = LifecyclePhase.DEPLOY, threadSafe = true)
+public class SDKGenerateMojo extends CodeGenMojo {
 
-    private static final String FLAG_DEW_SDK_GEN_SKIP = "dew_sdkgen_skip";
-    private static final String FLAG_DEW_SDK_RELEASE_SKIP = "dew_sdkrelease_skip";
-
+    /**
+     * The Sdk gen skip.
+     */
     @Parameter(property = FLAG_DEW_SDK_GEN_SKIP)
     protected boolean sdkGenSkip;
 
     @Parameter(property = FLAG_DEW_SDK_RELEASE_SKIP)
     protected boolean sdkReleaseSkip;
 
-    @Parameter(name = "language", defaultValue = "group.idealworld.dew.sdkgen.lang.java.DewJavaClientCodegen")
+    @Parameter(name = "language", defaultValue = "java")
     private String language;
 
-    @Parameter(name = "inputSpec")
+    // 父插件 inputSpec 必填，此参数没有意义，实现上会以自定义的路径逻辑覆写
+    @Parameter(name = "inputSpec", defaultValue = ".")
     private String inputSpec;
 
+    /**
+     * The Maven session.
+     */
     @Parameter(defaultValue = "${session}", readonly = true)
     protected MavenSession mavenSession;
 
+    /**
+     * The Maven project.
+     */
     @Parameter(defaultValue = "${project}", readonly = true)
     protected MavenProject mavenProject;
 
     @Component
     private BuildPluginManager pluginManager;
 
-    /**
-     * 扩展功能.
-     *
-     * @throws MojoExecutionException
-     */
     @Override
     public void execute() throws MojoExecutionException {
         Map<String, String> props = MavenHelper.getMavenProperties(mavenSession);
@@ -74,18 +79,18 @@ public class SDKGenMojo extends CodeGenMojo {
                 .ifPresent(obj -> sdkGenSkip = Boolean.parseBoolean(obj));
         MavenHelper.formatParameters(FLAG_DEW_SDK_RELEASE_SKIP, props)
                 .ifPresent(obj -> sdkReleaseSkip = Boolean.parseBoolean(obj));
+        MavenHelper.formatParameters(FLAG_DEW_SDK_GEN_LANG, props)
+                .ifPresent(obj -> language = obj);
         if (sdkGenSkip) {
             return;
         }
-        // 添加默认参数
-        File output = GenerateProcess.process(this, mavenProject, mavenSession, pluginManager, language, inputSpec);
+        var sdkMavenInfo = SDKGenerateProcess.process(this, mavenProject, language);
         super.execute();
         if (sdkReleaseSkip) {
             return;
         }
         // 自动部署
-        DeployProcess.process(mavenProject, mavenSession, pluginManager, output);
-
+        SDKReleaseProcess.process(sdkMavenInfo, mavenProject, mavenSession, pluginManager);
     }
 
 

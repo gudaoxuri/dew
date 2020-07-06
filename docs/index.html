@@ -488,7 +488,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#framework-user-manual-auth">3.2.9. 权限认证</a></li>
 <li><a href="#测试支持">3.2.10. 测试支持</a></li>
 <li><a href="#幂等处理">3.2.11. 幂等处理</a></li>
-<li><a href="#api文档">3.2.12. API文档</a></li>
+<li><a href="#dew_sdk_插件">3.2.12. Dew SDK 插件</a></li>
 <li><a href="#代码质量检查">3.2.13. 代码质量检查</a></li>
 </ul>
 </li>
@@ -496,19 +496,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#code_dew_code_参数">3.3.1. <code>Dew</code> 参数</a></li>
 <li><a href="#code_spring_boot_code_核心参数">3.3.2. <code>Spring boot</code> 核心参数</a></li>
-<li><a href="#code_spring_cloud_code_核心参数">3.3.3. <code>Spring cloud</code> 核心参数</a></li>
 </ul>
 </li>
 <li><a href="#framework-best-practices">3.4. 框架最佳实践</a>
 <ul class="sectlevel3">
 <li><a href="#项目模块设计">3.4.1. 项目模块设计</a></li>
 <li><a href="#代码包设计">3.4.2. 代码包设计</a></li>
-<li><a href="#开发期服务调用">3.4.3. 开发期服务调用</a></li>
-<li><a href="#代码质量管理">3.4.4. 代码质量管理</a></li>
-<li><a href="#code_validated_code_注解">3.4.5. <code>@Validated</code> 注解</a></li>
-<li><a href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据">3.4.6. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</a></li>
-<li><a href="#缓存处理">3.4.7. 缓存处理</a></li>
-<li><a href="#jdbc_批量插入性能问题">3.4.8. jdbc 批量插入性能问题</a></li>
+<li><a href="#代码质量管理">3.4.3. 代码质量管理</a></li>
+<li><a href="#code_validated_code_注解">3.4.4. <code>@Validated</code> 注解</a></li>
+<li><a href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据">3.4.5. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</a></li>
+<li><a href="#缓存处理">3.4.6. 缓存处理</a></li>
+<li><a href="#jdbc_批量插入性能问题">3.4.7. jdbc 批量插入性能问题</a></li>
 </ul>
 </li>
 </ul>
@@ -557,28 +555,38 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#jaeger">4.3.13. Jaeger</a></li>
 </ul>
 </li>
-<li><a href="#devops-configuration">4.4. DevOps配置速查</a>
+<li><a href="#开发环境安装配置">4.4. 开发环境安装配置</a></li>
+<li><a href="#准备">4.5. 准备</a>
 <ul class="sectlevel3">
-<li><a href="#devops-configuration-dew">4.4.1. .dew 配置</a></li>
-<li><a href="#maven_配置">4.4.2. Maven 配置</a></li>
+<li><a href="#helm_2">4.5.1. Helm</a></li>
+<li><a href="#nginx_ingress_controller_2">4.5.2. Nginx Ingress Controller</a></li>
+<li><a href="#harbor">4.5.3. Harbor</a></li>
+<li><a href="#sonatype_nexus">4.5.4. Sonatype Nexus</a></li>
+<li><a href="#gitlab">4.5.5. Gitlab</a></li>
 </ul>
 </li>
-<li><a href="#devops-best-practices">4.5. DevOps最佳实践</a>
+<li><a href="#devops-configuration">4.6. DevOps配置速查</a>
 <ul class="sectlevel3">
-<li><a href="#为什么不用_fabric8">4.5.1. 为什么不用 fabric8</a></li>
-<li><a href="#devops-best-practices-auth">4.5.2. 鉴权处理</a></li>
-<li><a href="#统一配置处理">4.5.3. 统一配置处理</a></li>
-<li><a href="#jvm设置">4.5.4. JVM设置</a></li>
-<li><a href="#配置中心选择">4.5.5. 配置中心选择</a></li>
-<li><a href="#spring_cloud_项目的_dew_gitlab_ci_cd_实践">4.5.6. Spring Cloud 项目的 Dew &amp; Gitlab CI/CD 实践</a></li>
+<li><a href="#devops-configuration-dew">4.6.1. .dew 配置</a></li>
+<li><a href="#maven_配置">4.6.2. Maven 配置</a></li>
 </ul>
 </li>
-<li><a href="#devops示例">4.6. DevOps示例</a>
+<li><a href="#devops-best-practices">4.7. DevOps最佳实践</a>
 <ul class="sectlevel3">
-<li><a href="#devops示例_helloworld后端服务">4.6.1. DevOps示例 : Helloworld后端服务</a></li>
-<li><a href="#devops示例_helloworld类库">4.6.2. DevOps示例 : Helloworld类库</a></li>
-<li><a href="#devops示例_helloworld前端">4.6.3. DevOps示例 : Helloworld前端</a></li>
-<li><a href="#devops示例_to_do">4.6.4. DevOps示例 : To-Do</a></li>
+<li><a href="#为什么不用_fabric8">4.7.1. 为什么不用 fabric8</a></li>
+<li><a href="#devops-best-practices-auth">4.7.2. 鉴权处理</a></li>
+<li><a href="#统一配置处理">4.7.3. 统一配置处理</a></li>
+<li><a href="#jvm设置">4.7.4. JVM设置</a></li>
+<li><a href="#配置中心选择">4.7.5. 配置中心选择</a></li>
+<li><a href="#spring_cloud_项目的_dew_gitlab_ci_cd_实践">4.7.6. Spring Cloud 项目的 Dew &amp; Gitlab CI/CD 实践</a></li>
+</ul>
+</li>
+<li><a href="#devops示例">4.8. DevOps示例</a>
+<ul class="sectlevel3">
+<li><a href="#devops示例_helloworld后端服务">4.8.1. DevOps示例 : Helloworld后端服务</a></li>
+<li><a href="#devops示例_helloworld类库">4.8.2. DevOps示例 : Helloworld类库</a></li>
+<li><a href="#devops示例_helloworld前端">4.8.3. DevOps示例 : Helloworld前端</a></li>
+<li><a href="#devops示例_to_do">4.8.4. DevOps示例 : To-Do</a></li>
 </ul>
 </li>
 </ul>
@@ -602,50 +610,42 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#附录_appendix">6. 附录 Appendix</a>
 <ul class="sectlevel2">
-<li><a href="#proxies">6.1. 代理选择与设置</a>
+<li><a href="#middleware">6.1. 常用中间件安装配置</a>
 <ul class="sectlevel3">
-<li><a href="#安装配置">6.1.1. 安装配置</a></li>
+<li><a href="#postgresql">6.1.1. PostgreSql</a></li>
+<li><a href="#redis">6.1.2. Redis</a></li>
+<li><a href="#mysql">6.1.3. MySQL</a></li>
+<li><a href="#mongo">6.1.4. Mongo</a></li>
+<li><a href="#gitlab_2">6.1.5. Gitlab</a></li>
+<li><a href="#harbor_2">6.1.6. Harbor</a></li>
+<li><a href="#dnsmasq">6.1.7. Dnsmasq</a></li>
+<li><a href="#ntpdate">6.1.8. NTPDate</a></li>
+<li><a href="#minio">6.1.9. Minio</a></li>
+<li><a href="#nfs">6.1.10. NFS</a></li>
+<li><a href="#glusterfs">6.1.11. GlusterFS</a></li>
 </ul>
 </li>
-<li><a href="#middleware">6.2. 常用中间件安装配置</a>
+<li><a href="#dew-2-migration-guide">6.2. Dew 2.x Migration guide</a>
 <ul class="sectlevel3">
-<li><a href="#postgresql">6.2.1. PostgreSql</a></li>
-<li><a href="#redis">6.2.2. Redis</a></li>
-<li><a href="#mysql">6.2.3. MySQL</a></li>
-<li><a href="#mongo">6.2.4. Mongo</a></li>
-<li><a href="#gitlab">6.2.5. Gitlab</a></li>
-<li><a href="#harbor">6.2.6. Harbor</a></li>
-<li><a href="#dnsmasq">6.2.7. Dnsmasq</a></li>
-<li><a href="#ntpdate">6.2.8. NTPDate</a></li>
-<li><a href="#minio">6.2.9. Minio</a></li>
-<li><a href="#nfs">6.2.10. NFS</a></li>
-<li><a href="#glusterfs">6.2.11. GlusterFS</a></li>
+<li><a href="#初始准备">6.2.1. 初始准备</a></li>
+<li><a href="#迁移步骤">6.2.2. 迁移步骤</a></li>
 </ul>
 </li>
-<li><a href="#dew-2-migration-guide">6.3. Dew 2.x Migration guide</a>
+<li><a href="#dew-3-migration-guide">6.3. Dew 3.x Migration guide</a>
 <ul class="sectlevel3">
-<li><a href="#初始准备">6.3.1. 初始准备</a></li>
-<li><a href="#迁移步骤">6.3.2. 迁移步骤</a></li>
+<li><a href="#迁移步骤_2">6.3.1. 迁移步骤</a></li>
 </ul>
 </li>
-<li><a href="#dew-3-migration-guide">6.4. Dew 3.x Migration guide</a>
+<li><a href="#内置image与chart">6.4. 内置Image与Chart</a>
 <ul class="sectlevel3">
-<li><a href="#迁移步骤_2">6.4.1. 迁移步骤</a></li>
+<li><a href="#dew_docker_image_集成ci_cd能力">6.4.1. Dew Docker Image : 集成CI/CD能力</a></li>
 </ul>
 </li>
-<li><a href="#内置image与chart">6.5. 内置Image与Chart</a>
+<li><a href="#支持的ci_cd服务">6.5. 支持的CI/CD服务</a>
 <ul class="sectlevel3">
-<li><a href="#dew_docker_image_集成kubectl与helm">6.5.1. Dew Docker Image : 集成Kubectl与Helm</a></li>
-<li><a href="#dew_docker_image_集成ci_cd能力">6.5.2. Dew Docker Image : 集成CI/CD能力</a></li>
-<li><a href="#dew_docker_image_spring_cloud_config">6.5.3. Dew Docker Image : Spring Cloud Config</a></li>
-<li><a href="#helm-chart-spring-cloud-config">6.5.4. Dew Helm Chart : Spring Cloud Config</a></li>
-</ul>
-</li>
-<li><a href="#支持的ci_cd服务">6.6. 支持的CI/CD服务</a>
-<ul class="sectlevel3">
-<li><a href="#dew-devops-maven-agent">6.6.1. Dew DevOps Maven Agent</a></li>
-<li><a href="#dew-gitlab-ci">6.6.2. Dew CI/CD : Gitlab CI 实现</a></li>
-<li><a href="#dew-jenkins-pipeline">6.6.3. Dew DevOps : Jenkins Pipeline 部署</a></li>
+<li><a href="#dew-devops-maven-agent">6.5.1. Dew DevOps Maven Agent</a></li>
+<li><a href="#dew-gitlab-ci">6.5.2. Dew CI/CD : Gitlab CI 实现</a></li>
+<li><a href="#dew-jenkins-pipeline">6.5.3. Dew DevOps : Jenkins Pipeline 部署</a></li>
 </ul>
 </li>
 </ul>
@@ -702,7 +702,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>微服务一站式解决方案( <a href="http://doc.dew.idealworld.group" class="bare">http://doc.dew.idealworld.group</a> )，提供：架构指南、容器优先/兼容Spring Cloud与Istio的框架、最佳实践及DevOps标准化流程。</p>
+<p>微服务一站式解决方案( <a href="http://doc.dew.idealworld.group" class="bare">http://doc.dew.idealworld.group</a> )，提供：架构指南、容器优先/兼容Spring与Service Mesh的框架、最佳实践及DevOps标准化流程。</p>
 </div>
 <div class="quoteblock">
 <blockquote>
@@ -815,7 +815,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ol>
 </div>
 <div class="paragraph">
-<p>实现上我们选择 <code>Spring Boot</code> 这一业界主流框架，对上兼容 <code>Spring Cloud</code> 与 <code>Istio</code>。</p>
+<p>实现上我们选择 <code>Spring Boot</code> 这一业界主流框架，对上兼容 <code>Spring Boot</code> 与 <code>Service Mesh</code>。</p>
 </div>
 <div class="paragraph">
 <div class="title"><strong>标准化DevOps流程</strong></div>
@@ -918,25 +918,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 |-  |-  |- notification                    // 通知处理模块
 |-  |-  |- test-starter                    // 单元测试模块
 |-  |-  |- hbase-starter                   // Spring Boot HBase Starter 模块
-|-  |- components                          // 集成的服务
-|-  |-  |- auth                            // 认证服务
-|-  |-  |- auth-sdk-starter                // 认证服务SDK
-|-  |-  |- config                          // Spring Cloud服务
+|-  |- assists                             // 框架辅助工具
+|-  |-  |- sdkgen-maven-plugin             // SDK自动生成、上传插件
 |-  |- checkstyle                          // 项目CheckStyle
 |- devops                                  // DevOps部分
 |-  |- maven                               // DevOps使用到的Maven插件
 |-  |-  |- dew-maven-plugin                // DevOps核心插件
 |-  |-  |- dew-maven-agent                 // DevOps部署优化插件
 |-  |- sh                                  // DevOps执行脚本
-|-  |- chart                               // DevOps使用到的Helm Chart
-|-  |-  |- dew-spring-cloud-config         //  Spring Cloud Config Chart
 |-  |- cicd                                // 各CI服务的 CI/CD 配置
 |-  |-  |- gitlabci                        // Gitlab CI CI/CD配置
 |-  |-  |- jenkins                         // Jenkins CI/CD配置
 |-  |- docker                              // DevOps使用到的镜像
 |-  |-  |- dew-devops                      // 集成 Java Maven Node Git 的镜像
-|-  |-  |- dew-k8s-native-client           // 集成 Kuberenetes 及 Docker 的镜像
-|-  |-  |- dew-spring-cloud-config         // Spring Cloud Config 镜像
 |-  |- it                                  // 集成测试
 |- docs                                    // 文档</pre>
 </div>
@@ -1165,12 +1159,6 @@ cd frontend &amp;&amp; npm install &amp;&amp; npm run dev:h5
 <div class="title">backend/services/kernel/resources/bootstrap-default.yml</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yaml" data-lang="yaml">spring:
-  cloud:
-    config:
-      enabled: false  # 关闭统一配置
-    kubernetes:
-      ribbon:
-        enabled: false # 关闭ribbon
   redis: # Redis配置
     host: localhost
     port: 6379
@@ -1192,8 +1180,8 @@ todo-compute:
 <pre class="prettyprint highlight"><code class="language-java" data-lang="java">/**
  * 空实现，做为所有组件启动类的父类
  */
-// 启用 Spring Cloud 能力
-@SpringCloudApplication
+// 启用 Spring Boot 能力
+@SpringBootApplication
 public class TodoParentApplication {
 
 }</code></pre>
@@ -1267,8 +1255,9 @@ public class TodoService {
             headers.setContentType(MediaType.TEXT_PLAIN);
             HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(content, headers);
             // 使用Spring的 restTemplate 实现服务间 rest 调用
+            // computeService 为配置的服务地址，在Kubernetes下为service name + port
             content = restTemplate
-                    .exchange("http://" + Constants.REST_COMPUTE_SERVICE + "/compute", HttpMethod.PUT, entity, String.class)
+                    .exchange(computeService + "/compute", HttpMethod.PUT, entity, String.class)
                     .getBody();
         }
         // ...
@@ -1312,7 +1301,7 @@ public class NotifierController {
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<code>Dew</code> 框架部分是对 <code>Spring Boot/Cloud</code> 的扩展，使用之前务必了解相关框架的基础知识。
+<code>Dew</code> 框架部分是对 <code>Spring Boot</code> 的扩展，使用之前务必了解相关框架的基础知识。
 </td>
 </tr>
 </table>
@@ -2950,7 +2939,7 @@ if (electionFun1.isLeader()) {
 <div class="sect4">
 <h5 id="消息通知"><a class="anchor" href="#消息通知"></a>消息通知</h5>
 <div class="paragraph">
-<p><code>Dew</code> 支持发送消息到钉钉、邮件或自定义HTTP地址，默认支持对未捕获异常及Hystrix错误的通知。</p>
+<p><code>Dew</code> 支持发送消息到钉钉、邮件或自定义HTTP地址，默认支持对未捕获异常通知。</p>
 </div>
 <div class="listingblock">
 <div class="title">通知配置</div>
@@ -3016,9 +3005,6 @@ Dew.notify.sendAsync("&lt;通知的标识&gt;", "&lt;通知的内容或Throwable
 <ol class="arabic">
 <li>
 <p>未捕获异常: <code><em>DEW_ERROR</em></code>，所有未捕获异常（ErrorController）调用此标识发送错误，可通过<code>dew.basic.format.error-flag</code> 修改</p>
-</li>
-<li>
-<p>Hystrix错误: <code><em>HYSTRIX</em></code>，所有Hystrix错误调用此标识发送错误，可通过<code>dew.cloud.error.notify-flag</code> 修改</p>
 </li>
 </ol>
 </div>
@@ -3634,70 +3620,138 @@ Assert.assertEquals(StatusEnum.NOT_EXIST, DewIdempotent.process("transfer_a", "x
 </div>
 </div>
 <div class="sect3">
-<h4 id="api文档"><a class="anchor" href="#api文档"></a>3.2.12. API文档</h4>
-<div class="listingblock">
-<div class="title">配置</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">dew:
-  basic:
-    name: # 文档名称
-    version: 1.0 # 文档版本
-    desc: # 文档说明
-    web-site: # 文档站点
-    doc:
-      base-package: # API文档要扫描的根包，多指定到 Controller 包中
-      contact: # 联系人信息，可为空
-        name: # 联系人姓名
-        url: # 联系人URL
-        email: # 联系人邮箱
-
-management: # 文档生成地址前缀为 /management.endpoints.web.base-path
-  endpoints:
-    web:
-      base-path: /management # 可修改成自定义路径，默认为 actuator</code></pre>
-</div>
-</div>
+<h4 id="dew_sdk_插件"><a class="anchor" href="#dew_sdk_插件"></a>3.2.12. Dew SDK 插件</h4>
 <div class="paragraph">
-<p>在线API文档请访问 <code>http(s)://&lt;host&gt;:&lt;port&gt;/swagger-ui.html</code></p>
+<p>本插件为Dew微服务体系的组成部分，用于SDK的自动生成并上传到Maven仓库。</p>
 </div>
-<div class="paragraph">
-<p>离线API文档会生成Asciidoc格式，可通过软件转换成HTML及PDF版本。</p>
+<div class="sect4">
+<h5 id="使用"><a class="anchor" href="#使用"></a>使用</h5>
+<div class="olist arabic">
+<div class="title">Dew体系下的使用</div>
+<ol class="arabic">
+<li>
+<p>使用OpenAPI V3规范（By Swagger）添加API注解</p>
+</li>
+<li>
+<p>执行 <code>mvn deploy -P release</code></p>
+</li>
+</ol>
 </div>
-<div class="listingblock">
-<div class="title">使用</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-txt" data-lang="txt">访问任意服务实例:
-
-PUT /{management.endpoints.web.base-path}/doc/offline
-
-{
-	"docName":"", # 文档名称
-	"docDesc":"", # 文档说明
-	"visitUrls":{ # 不同环境的访问地址
-		"":""
-	},
-	"swaggerJsonUrls":[] # swagger.json的URL列表(http://.../v2/api-docs)，可选
-}
-
-swaggerJsonUrls 不为空时根据传入的swaggerJsonUrls合成接口文档，为空时分两种情况：
-
-1. 如果是非集群模式（没有注册中心）则只生成本服务的接口文档
-2. 如果是集群模式（注册到注册中心）则会合成此集群下所有的接口文档
-
-示例：
-
-{
-	"docName":"Dew API 文档",
-	"docDesc":"此为Dew的接口文档\n描述可以换行",
-	"visitUrls":{
-		"开发环境":"http://dev.dew.ecfront.com",
-		"测试环境":"http://test.dew.ecfront.com"
-	}
-}</code></pre>
+<div class="olist arabic">
+<div class="title">非Dew体系下的使用</div>
+<ol class="arabic">
+<li>
+<p>使用OpenAPI V3规范（By Swagger）添加API注解</p>
+</li>
+<li>
+<p>在项目POM中添加本插件</p>
+</li>
+<li>
+<p>执行项目自定义的 <code>mvn deploy xx</code> （需要指定部署的仓库地址）</p>
+</li>
+</ol>
 </div>
 </div>
-<div class="paragraph">
-<p>调用此接口后返回Asciidoc格式的文档内容，复制此内容到相应的转换工具中即可生成对应的HTTP或PDF文档。</p>
+<div class="sect4">
+<h5 id="配置"><a class="anchor" href="#配置"></a>配置</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">名称</th>
+<th class="tableblock halign-left valign-top">默认值</th>
+<th class="tableblock halign-left valign-top">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dew_sdk_gen_skip</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否跳过SDK生成</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dew_sdk_release_skip</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否跳过SDK发布</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dew_main_class</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Main方法所在Class（包名+类名），为空时启用自动发现功能</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dew_sdk_gen_openapi_path</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">自定义http的open API路径，为空时通过单元测试自动生成</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">dew_sdk_gen_lang</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">java</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SDK的语言</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+目前仅支持java，后续会集成更多语言。
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="核心逻辑"><a class="anchor" href="#核心逻辑"></a>核心逻辑</h5>
+<div class="olist arabic">
+<div class="title">OpenAPI文件生成</div>
+<ol class="arabic">
+<li>
+<p>在 maven phase = validate 时触发</p>
+</li>
+<li>
+<p>如果 dew_sdk_gen_openapi_path 存在，则下载 OpenAPI 文件到 dew-sdkgen 目录，结束</p>
+</li>
+<li>
+<p>如果 dew_main_class 不存在，则查找 src 下 main class 文件，返回 main class 所在的包</p>
+</li>
+<li>
+<p>以 testFile.mustache 为模板，注入 main class 等变量生成名为 DewSDKGenTest 的测试类到 main class 所在的同名包下</p>
+</li>
+<li>
+<p>在 maven phase = test 时触发单元测试，执行 DewSDKGenTest 生成 OpenAPI 文件到 dew-sdkgen 目录</p>
+</li>
+</ol>
+</div>
+<div class="olist arabic">
+<div class="title">SDK工程生成</div>
+<ol class="arabic">
+<li>
+<p>在 maven phase = deploy 时触发</p>
+</li>
+<li>
+<p>自定义 swagger-codegen-maven-plugin ，生成对应的SDK工程，包含了对JDK11支持、统一入口支持等自定义内容</p>
+</li>
+</ol>
+</div>
+<div class="olist arabic">
+<div class="title">SDK发布</div>
+<ol class="arabic">
+<li>
+<p>在 maven phase = deploy 时触发</p>
+</li>
+<li>
+<p>在 SDK工程生成 后调用 maven-invoker-plugin 插件，执行 deploy goal，并传入主工程的Maven仓库地址到 -DaltDeploymentRepository 参数，完成SDK发布</p>
+</li>
+</ol>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -3864,7 +3918,6 @@ HBaseTemplate 其他使用方法可以详见 hbase-starter 模块下的 test 内
         revision-history-limit: 0       # Token 保留的历史版本数量， 0表示不保留历史版本，即有新的登录时会删除此类型下之前所有的Token
     error:                              # 错误配置
       enabled: false                    # 启用降级邮件通知，默认为false
-      notify-flag: __HYSTRIX__          # 默认的通知标识
       notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED
                                         # 通知的事件类型
       notify-include-keys:              # 需监控的方法key值，与notify-exclude-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
@@ -3874,16 +3927,6 @@ HBaseTemplate 其他使用方法可以详见 hbase-starter 模块下的 test 内
     default-strategy: item              # 设置默认策略，目前支持item(逐条记录)
     default-opt-id-flag: __IDEMPOTENT_OPT_ID__
                                         # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
-  component:                            # 各组件配置
-    auth:                               # 需要引入 auth 组件
-      token-expire-sec: 2592000         # token有效期，默认为30天
-      max-login-error-times: 3          # 最大登录错误次数，默认3次
-      clean-error-time-min: 10          # 登录错误限制登录时间，默认为10分钟
-      password-salt:                    # 密码加盐
-      email-account:                    # 发通知邮件的邮箱账号，比如用来发送用户注册成功邮件
-      sdk:                              # SDK配置
-          server-url:                   # 服务器地址
-          white-list:                   # 白名单，逗号分隔
   mw:                                   # 中间件
     mqtt:                               # MQTT集群实现
       broker:                           # Broker地址，e.g. tcp://127.0.0.1:1883
@@ -3899,57 +3942,44 @@ HBaseTemplate 其他使用方法可以详见 hbase-starter 模块下的 test 内
 spring:                                 # 常用 Spring 配置
   application:
     name:                               # 项目名称,若使用Dew，请配置
-  cloud:
-    config:                             # 统一配置
-      enabled: true                     # 是否启用
-      uri:                              # URL
-      username:                         # 认证用户名
-      password:                         # 认证密码
-    kubernetes:                         # kubernetes相关配置
-      ribbon:                           # 客户端轮询配置
-        enabled: true                   # 是否启用
-    mail:                               # Mail配置，需要hystrix降级通知需加以下配置
-      host: smtp.163.com
-      username:
-      password:
-      properties:
-        mail:
-          smtp:
-            auth: true
-              starttls:
-                enable: true
-                required: true
-    redis:
-      host:                           # Redis主机
-      port:                           # Redis端口
-      database:                       # Redis数据库
-      password:                       # Redis密码
-      lettuce:
-        pool:                         # 连接池配置
-      multi:                          # 多实例支持（Dew功能）
-        &lt;key&gt;:                        # 实例名称
-                                      # 可用 Dew.cluster.caches.instance(&lt;key&gt;) 获取
-                                      # 同时可以用 @Autowired &lt;Key&gt;RedisTemplate 获取Bean
-          host:                       # Redis主机
-          port:                       # Redis端口
-          ...
-    rabbitmq:
-      host:                           # Rabbit主机
-      port:                           # Rabbit端口
-      username:                       # Rabbit用户名
-      password:                       # Rabbit密码
-      virtual-host:                   # Rabbit VH
-    hazelcast:
-      username:
-      password:
-      addresses: ["127.0.0.1"]
+  mail:                               # Mail配置
+    host: smtp.163.com
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+            starttls:
+              enable: true
+              required: true
+  redis:
+    host:                           # Redis主机
+    port:                           # Redis端口
+    database:                       # Redis数据库
+    password:                       # Redis密码
+    lettuce:
+      pool:                         # 连接池配置
+    multi:                          # 多实例支持（Dew功能）
+      &lt;key&gt;:                        # 实例名称
+                                    # 可用 Dew.cluster.caches.instance(&lt;key&gt;) 获取
+                                    # 同时可以用 @Autowired &lt;Key&gt;RedisTemplate 获取Bean
+        host:                       # Redis主机
+        port:                       # Redis端口
+        ...
+  rabbitmq:
+    host:                           # Rabbit主机
+    port:                           # Rabbit端口
+    username:                       # Rabbit用户名
+    password:                       # Rabbit密码
+    virtual-host:                   # Rabbit VH
+  hazelcast:
+    username:
+    password:
+    addresses: ["127.0.0.1"]
 
 server:
   port: 8081                          # 服务端口
-
-&lt;application name&gt;:                   # 自定义服务列表，使用此功能需要设置 spring.cloud.kubernetes.ribbon.enabled = false
-  ribbon:
-    listOfServers: &lt;host&gt;:&lt;port&gt;
 
 management:
   endpoints:
@@ -3975,21 +4005,6 @@ logging:
 </td>
 <td class="content">
 <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html" class="bare">https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html</a>
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect3">
-<h4 id="code_spring_cloud_code_核心参数"><a class="anchor" href="#code_spring_cloud_code_核心参数"></a>3.3.3. <code>Spring cloud</code> 核心参数</h4>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<a href="https://cloud.spring.io/spring-cloud-static/spring-cloud-kubernetes/2.1.0.RC1/single/spring-cloud-kubernetes.html" class="bare">https://cloud.spring.io/spring-cloud-static/spring-cloud-kubernetes/2.1.0.RC1/single/spring-cloud-kubernetes.html</a>
 </td>
 </tr>
 </table>
@@ -4106,32 +4121,7 @@ public void processTodoAddEvent() {
 </div>
 </div>
 <div class="sect3">
-<h4 id="开发期服务调用"><a class="anchor" href="#开发期服务调用"></a>3.4.3. 开发期服务调用</h4>
-<div class="paragraph">
-<p>在 <code>Spring Cloud</code> 体系下，服务间调用需要在Kubernetes环境下，这对开发阶段并不友好，可使用如下方案，模拟多个服务间调用。</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">spring:
-  cloud:
-    kubernetes:
-      ribbon:
-        enabled: false # 禁用服务自动发现
-
-&lt;application name&gt;: # 自定义服务列表，使用此功能需要设置 spring.cloud.kubernetes.ribbon.enabled = false
-  ribbon:
-    listOfServers: &lt;host&gt;:&lt;port&gt;
-
-# e.g.
-
-tracing-invoke2-example:
-  ribbon:
-    listOfServers: localhost:8082</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="代码质量管理"><a class="anchor" href="#代码质量管理"></a>3.4.4. 代码质量管理</h4>
+<h4 id="代码质量管理"><a class="anchor" href="#代码质量管理"></a>3.4.3. 代码质量管理</h4>
 <div class="paragraph">
 <p>推荐使用 <code>checkstyle</code> 管理代码风格，使用方式：</p>
 </div>
@@ -4151,7 +4141,7 @@ mvn -P qa compile
 </div>
 </div>
 <div class="sect3">
-<h4 id="code_validated_code_注解"><a class="anchor" href="#code_validated_code_注解"></a>3.4.5. <code>@Validated</code> 注解</h4>
+<h4 id="code_validated_code_注解"><a class="anchor" href="#code_validated_code_注解"></a>3.4.4. <code>@Validated</code> 注解</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -4183,7 +4173,7 @@ Spring对抽象数据类型校验抛出异常为<code>MethodArgumentNotValidExce
 </div>
 </div>
 <div class="sect3">
-<h4 id="code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据"><a class="anchor" href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据"></a>3.4.6. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</h4>
+<h4 id="code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据"><a class="anchor" href="#code_jackson_code_对于_code_java8_code_时间转换_code_springmvc_code_以_code_jackson_code_接收_code_json_code_数据"></a>3.4.5. <code>jackson</code> 对于 <code>Java8</code> 时间转换（ <code>SpringMVC</code> 以 <code>jackson</code> 接收 <code>json</code> 数据）</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -4208,7 +4198,7 @@ Spring对抽象数据类型校验抛出异常为<code>MethodArgumentNotValidExce
 </div>
 </div>
 <div class="sect3">
-<h4 id="缓存处理"><a class="anchor" href="#缓存处理"></a>3.4.7. 缓存处理</h4>
+<h4 id="缓存处理"><a class="anchor" href="#缓存处理"></a>3.4.6. 缓存处理</h4>
 <div class="paragraph">
 <p><code>Spring Cache</code> 提供了很好的注解式缓存，但默认没有超时，需要根据使用的缓存容器特殊配置</p>
 </div>
@@ -4226,7 +4216,7 @@ RedisCacheManager cacheManager() {
 </div>
 </div>
 <div class="sect3">
-<h4 id="jdbc_批量插入性能问题"><a class="anchor" href="#jdbc_批量插入性能问题"></a>3.4.8. jdbc 批量插入性能问题</h4>
+<h4 id="jdbc_批量插入性能问题"><a class="anchor" href="#jdbc_批量插入性能问题"></a>3.4.7. jdbc 批量插入性能问题</h4>
 <div class="paragraph">
 <p>如果不开启rewriteBatchedStatements=true，那么jdbc会把批量插入当做一行行的单条处理，也就没有达到批量插入的效果</p>
 </div>
@@ -4283,7 +4273,7 @@ RedisCacheManager cacheManager() {
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-体验环境要求安装 Java(&gt;=8)、Maven、NodeJS(&gt;=8)
+体验环境要求安装 Java(&gt;=11)、Maven、NodeJS(&gt;=8)
 </td>
 </tr>
 </table>
@@ -4298,8 +4288,8 @@ RedisCacheManager cacheManager() {
 sh dew-devops.sh
 # 添加本地Host映射
 -
-x.x.x.x todo-uat.dew.idealworld.group
-x.x.x.x todo-api-uat.dew.idealworld.group
+x.x.x.x todo-uat.idealworld.group
+x.x.x.x todo-api-uat.idealworld.group
 -
 # ======= 前置准备 =======
 git clone https://github.com/dew-ms/devops-example-todo.git
@@ -4309,7 +4299,7 @@ mvn install -Dmaven.test.skip=true
 # 部署到Kubernetes
 mvn -P devops deploy -Ddew_devops_profile=uat
 
-# 打开浏览器，输入 http://todo-uat.dew.idealworld.group，切换到移动模式体验</pre>
+# 打开浏览器，输入 http://todo-uat.idealworld.group，切换到移动模式体验</pre>
 </div>
 </div>
 </div>
@@ -4344,18 +4334,18 @@ metadata:
   namespace: dew-uat
 spec:
   rules:
-  - host: todo-api-uat.dew.idealworld.group
+  - host: api-uat.idealworld.group
     http:
       paths:
       - backend:
-          serviceName: todo-kernel
+          serviceName: kernel
           servicePort: 8080
         path: /
-  - host: todo-uat.dew.idealworld.group
+  - host: uat.dew.idealworld.group
     http:
       paths:
       - backend:
-          serviceName: todo-frontend
+          serviceName: frontend
           servicePort: 80
         path: /</pre>
 </div>
@@ -4672,7 +4662,7 @@ mvn -P devops deploy
 
 # ====================== 附加参数 ======================
 # dew_devops_profile                           # 指定的环境
-# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 # dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.idealworld.group:2375
 # dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.idealworld.group/v2
 # dew_devops_docker_registry_username          # Docker Registry 用户名
@@ -4726,7 +4716,7 @@ mvn -P devops deploy
 <div class="ulist">
 <ul>
 <li>
-<p><code>Spring Boot/Cloud</code> 应用需要执行 <code>repackage</code> 以打出 <code>fatjar</code></p>
+<p><code>Spring Boot</code> 应用需要执行 <code>repackage</code> 以打出 <code>fatjar</code></p>
 </li>
 <li>
 <p><code>NodeJS</code> 应用需要执行对应的 <code>node</code> 命令完成打包</p>
@@ -4856,7 +4846,7 @@ mvn -P devops dew:rollback
 # dew_devops_assignation_projects              # 指定回滚的应用artifactId，多个以逗号分隔。
 # dew_devops_quiet                             # 是否静默处理
 # dew_devops_profile                           # 指定的环境
-# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " " 获取
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 echo $(cat ~/.kube/config | base64) | tr -d " " 获取
 # dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.idealworld.group:2375
 # dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.idealworld.group/v2
 # dew_devops_docker_registry_username          # Docker Registry 用户名
@@ -4890,7 +4880,7 @@ mvn -P devops dew:unrelease
 # ====================== 附加参数 ======================
 # dew_devops_assignation_projects              # 指定卸载的应用artifactId  多个以逗号分隔
 # dew_devops_profile                           # 指定的环境
-# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取</code></pre>
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取</code></pre>
 </div>
 </div>
 </div>
@@ -4907,7 +4897,7 @@ mvn -P devops dew:log
 
 # ====================== 附加参数 ======================
 # dew_devops_profile                           # 指定的环境
-# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
+# dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 # dew_devops_podName                           # 要使用的Pod名称，如不填写当存在多个Pod时会要求用户选择
 # dew_devops_log_follow                        # 是否滚动查看日志</code></pre>
 </div>
@@ -5322,7 +5312,7 @@ sh dew-devops.sh</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>本文会给出使用代理与不使用代理的安装、配置方式，但强烈推荐使用代理方式，详见 <a href="#proxies">代理选择与设置</a> 。</p>
+<p>本文会给出使用代理与不使用代理的安装、配置方式，但强烈推荐使用代理方式。</p>
 </div>
 </td>
 </tr>
@@ -5535,15 +5525,15 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub root@k8s-X</code></pre>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">yum install -y yum-utils \
-  device-mapper-persistent-data \
-  lvm2
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">yum install -y yum-utils
 
 yum-config-manager \
     --add-repo \
     https://download.docker.com/linux/centos/docker-ce.repo
 
-yum install -y docker-ce-18.06.2.ce
+yum install docker-ce docker-ce-cli containerd.io
+
+systemctl start docker
 
 mkdir /etc/docker
 
@@ -5602,6 +5592,18 @@ systemctl restart docker
 -</code></pre>
 </div>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+生产环境注意做好相应端口的安全策略或是启用证书
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect3">
 <h4 id="kubernetes"><a class="anchor" href="#kubernetes"></a>4.3.4. Kubernetes</h4>
@@ -5641,7 +5643,7 @@ net.bridge.bridge-nf-call-iptables = 1
 EOF
 
 sysctl --system
-K8S_VERSION="1.14.1-0"
+K8S_VERSION="1.18"
 yum install -y kubelet-${K8S_VERSION} kubeadm-${K8S_VERSION} kubectl-${K8S_VERSION} --disableexcludes=kubernetes
 systemctl enable --now kubelet</code></pre>
 </div>
@@ -5669,7 +5671,7 @@ kubeadm init \
     --pod-network-cidr=10.244.0.0/16
 
 # 初始化Kubernetes，二选一，不使用代理方式，通过image-repository 及 --kubernetes-version 避免被墙，注意版本与yum安装的版本对应
-K8S_VERSION="1.14.1"
+K8S_VERSION="1.18"
 kubeadm init \
     --image-repository registry.aliyuncs.com/google_containers \
     --kubernetes-version ${K8S_VERSION} \
@@ -5731,14 +5733,14 @@ kubectl create ns devops</code></pre>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 执行上一步输出的 kubeadm join ...
 
-# 完成后在master上执行情况如下（以1.14.1版本为例）
+# 完成后在master上执行情况如下（以1.18版本为例）
 kubectl get no
 -
-k8s-master1   Ready    master   22m     v1.14.1
-k8s-node1     Ready    &lt;none&gt;   11m     v1.14.1
-k8s-node2     Ready    &lt;none&gt;   8m54s   v1.14.1
-k8s-node3     Ready    &lt;none&gt;   8m51s   v1.14.1
-k8s-node4     Ready    &lt;none&gt;   8m49s   v1.14.1
+k8s-master1   Ready    master   22m     v1.18
+k8s-node1     Ready    &lt;none&gt;   11m     v1.18
+k8s-node2     Ready    &lt;none&gt;   8m54s   v1.18
+k8s-node3     Ready    &lt;none&gt;   8m51s   v1.18
+k8s-node4     Ready    &lt;none&gt;   8m49s   v1.18
 -</code></pre>
 </div>
 </div>
@@ -5782,7 +5784,7 @@ data:
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-<a href="https://docs.helm.sh/using_helm/#installing-helm" class="bare">https://docs.helm.sh/using_helm/#installing-helm</a>
+<a href="https://helm.sh/docs/intro/install/" class="bare">https://helm.sh/docs/intro/install/</a>
 </td>
 </tr>
 </table>
@@ -5790,41 +5792,12 @@ data:
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">curl https://raw.githubusercontent.com/helm/helm/master/scripts/get | bash
-
-cat &lt;&lt;EOF | kubectl apply -f -
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: tiller
-  namespace: kube-system
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: tiller
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-admin
-subjects:
-  - kind: ServiceAccount
-    name: tiller
-    namespace: kube-system
-EOF
-
-# 初始化服务，二选一，使用代理方式
-helm init --service-account tiller
-
-# 初始化服务，二选一，不使用代理方式，需要指定镜像，注意tiller版本和helm版本对应
-helm init --service-account tiller -i registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.13.1
-# 或者初始化之后更换镜像
-kubectl set image deployment/tiller-deploy tiller=registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.13.1 -n kube-system
-
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+# 添加charts repo
+helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+helm repo update
 # 查看helm版本
-helm version
-
-kubectl get pod -n kube-system -l app=helm</code></pre>
+helm version</code></pre>
 </div>
 </div>
 </div>
@@ -5889,12 +5862,10 @@ Nginx ingress ConfigMap配置： <a href="https://github.com/kubernetes/ingress-
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 不使用代理，添加 --set defaultBackend.image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/defaultbackend
-# 使用如下方式将80 443暴露出来
-helm install stable/nginx-ingress --name dew-nginx --namespace nginx-ingress --version=1.4.0 \
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 使用如下方式将80 443暴露出来
+helm install dew-nginx stable/nginx-ingress --namespace nginx-ingress \
     --set controller.kind=DaemonSet \
     --set controller.hostNetwork=true \
-    --set controller.stats.enabled=true \
     --set controller.metrics.enabled=true \
     --set nodeSelector.group=devops</code></pre>
 </div>
@@ -6551,7 +6522,7 @@ EOF
 
 # 手工添加示例如下：
 cat &lt;&lt;EOF | kubectl apply -f -
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
@@ -6593,7 +6564,263 @@ EOF</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="devops-configuration"><a class="anchor" href="#devops-configuration"></a>4.4. DevOps配置速查</h3>
+<h3 id="开发环境安装配置"><a class="anchor" href="#开发环境安装配置"></a>4.4. 开发环境安装配置</h3>
+<div class="paragraph">
+<p>开发环境推荐使用Docker for desktop安装Docker和Kubernetes的基础环境，大陆安装可参见 <a href="https://github.com/AliyunContainerService/k8s-for-docker-desktop" class="bare">https://github.com/AliyunContainerService/k8s-for-docker-desktop</a> 此项目。</p>
+</div>
+<div class="paragraph">
+<p>Windows用户建议升级到Windows 10 2004版本及以上，启用WSL2。</p>
+</div>
+<div class="paragraph">
+<p>编辑本机的hosts添加映射</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>127.0.0.1 dockerd.dew.test
+127.0.0.1 harbor.dew.test
+127.0.0.1 notary.dew.test
+127.0.0.1 maven.dew.test
+127.0.0.1 gitlab.dew.test
+127.0.0.1 todo-uat-api.dew.test
+127.0.0.1 todo-uat.dew.test
+127.0.0.1 todo-prod-api.dew.test
+127.0.0.1 todo-prod.dew.test</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="准备"><a class="anchor" href="#准备"></a>4.5. 准备</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 创建label，这里的node名称为docker-desktop
+kubectl label nodes docker-desktop group=app
+# 创建namespaces
+cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx-ingress
+  labels:
+    name: nginx-ingress
+EOF
+
+cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: devops
+  labels:
+    name: devops
+EOF
+
+cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dew-test
+  labels:
+    name: dew-test
+EOF
+
+kubectl -n dew-test create secret docker-registry dew-registry \
+ --docker-server=https://harbor.dew.test/v2 \
+ --docker-username=dew \
+ --docker-password=Dew123456
+
+kubectl -n dew-test patch serviceaccount default \
+ -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
+
+cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dew-uat
+  labels:
+    name: dew-uat
+EOF
+
+kubectl -n dew-uat create secret docker-registry dew-registry \
+ --docker-server=https://harbor.dew.test/v2 \
+ --docker-username=dew \
+ --docker-password=Dew123456
+
+kubectl -n dew-uat patch serviceaccount default \
+ -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
+
+cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dew-prod
+  labels:
+    name: dew-prod
+EOF
+
+kubectl -n dew-prod create secret docker-registry dew-registry \
+ --docker-server=https://harbor.dew.test/v2 \
+ --docker-username=dew \
+ --docker-password=Dew123456
+
+kubectl -n dew-prod patch serviceaccount default \
+ -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
+
+# 创建 Ingress
+cat &lt;&lt;EOF | kubectl apply -f -
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+  name: dew-ingress
+  namespace: dew-uat
+spec:
+  rules:
+  - host: todo-uat-api.dew.test
+    http:
+      paths:
+      - backend:
+          serviceName: kernel
+          servicePort: 8080
+        path: /
+  - host: todo-uat.dew.test
+    http:
+      paths:
+      - backend:
+          serviceName: todo-frontend
+          servicePort: 80
+        path: /
+EOF</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="helm_2"><a class="anchor" href="#helm_2"></a>4.5.1. Helm</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://helm.sh/docs/intro/install/" class="bare">https://helm.sh/docs/intro/install/</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+# 添加charts repo
+helm repo remove stable &amp;&amp; helm repo add stable http://mirror.azure.cn/kubernetes/charts/
+helm repo update
+# 查看helm版本
+helm version</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="nginx_ingress_controller_2"><a class="anchor" href="#nginx_ingress_controller_2"></a>4.5.2. Nginx Ingress Controller</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+chart: <a href="https://github.com/helm/charts/tree/master/stable/nginx-ingress" class="bare">https://github.com/helm/charts/tree/master/stable/nginx-ingress</a><br>
+源码：https://github.com/kubernetes/ingress-nginx<br>
+官网：https://kubernetes.github.io/ingress-nginx/<br>
+Nginx ingress ConfigMap配置： <a href="https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/configmap.md" class="bare">https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/configmap.md</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># 使用如下方式将80 443暴露出来
+helm install dew-nginx stable/nginx-ingress --namespace nginx-ingress \
+    --set controller.kind=DaemonSet \
+    --set controller.hostNetwork=true \
+    --set controller.metrics.enabled=true
+
+# 删除 helm uninstall dew-nginx --namespace nginx-ingress</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="harbor"><a class="anchor" href="#harbor"></a>4.5.3. Harbor</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+chart: <a href="https://github.com/goharbor/harbor-helm" class="bare">https://github.com/goharbor/harbor-helm</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">helm repo add harbor https://helm.goharbor.io
+helm repo update
+helm install dew-harbor harbor/harbor --namespace devops \
+    --set expose.ingress.hosts.core=harbor.dew.test \
+    --set expose.ingress.hosts.notary=notary.dew.test \
+    --set externalURL=https://harbor.dew.test
+
+# 删除 helm uninstall dew-harbor --namespace devops
+
+# 添加 ``"insecure-registries": ["harbor.dew.test"]`` 到 /etc/docker/daemon.json
+# 登录Harbor docker login &lt;host&gt; -u &lt;user&gt; -p &lt;password&gt;
+docker login harbor.dew.test -u admin -p Harbor12345
+# e.g. 上传镜像
+docker pull dewms/devops:latest
+docker tag dewms/devops:latest harbor.dew.test/dewms/devops:latest
+docker push harbor.dew.test/dewms/devops:latest
+
+# 添加 dew / Dew123456 用户
+# 创建 dew-test / dew-uat / dew-prod 项目并添加 dew 用户为管理员</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="sonatype_nexus"><a class="anchor" href="#sonatype_nexus"></a>4.5.4. Sonatype Nexus</h4>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="https://github.com/Oteemo/charts/tree/master/charts/sonatype-nexus" class="bare">https://github.com/Oteemo/charts/tree/master/charts/sonatype-nexus</a>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">安装配置</div>
+<div class="content">
+<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">helm repo add oteemocharts https://oteemo.github.io/charts
+helm repo update
+helm install dew-nexus oteemocharts/sonatype-nexus --namespace devops \
+    --set ingress.enabled=true \
+    --set nexusProxy.env.nexusHttpHost=maven.dew.test \
+    --set nexusProxy.env.nexusDockerHost=maven.dew.test \
+
+# 用户名 admin 密码 admin123</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="gitlab"><a class="anchor" href="#gitlab"></a>4.5.5. Gitlab</h4>
+
+</div>
+</div>
+<div class="sect2">
+<h3 id="devops-configuration"><a class="anchor" href="#devops-configuration"></a>4.6. DevOps配置速查</h3>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -6612,7 +6839,7 @@ EOF</code></pre>
 </table>
 </div>
 <div class="sect3">
-<h4 id="devops-configuration-dew"><a class="anchor" href="#devops-configuration-dew"></a>4.4.1. .dew 配置</h4>
+<h4 id="devops-configuration-dew"><a class="anchor" href="#devops-configuration-dew"></a>4.6.1. .dew 配置</h4>
 <div class="listingblock">
 <div class="title">配置说明</div>
 <div class="content">
@@ -6678,7 +6905,7 @@ docker:                                 # Docker配置
                                         # 后端服务应用默认使用 openjdk:8-alpine
 kube:                                   # Kubernetes配置
   base64Config:                         # Kubernetes Base64 后的配置，此项建议使用Maven方式配置
-                                        # 使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
+                                        # 使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 notifies:                               # 通知配置
   - type: DD                            # 通知的类型，DD=钉钉 MAIL=邮件，邮件方式需要有配置spring.mail下相关的smtp信息 HTTP=自定义HTTP Hook
     defaultReceivers: []                # 默认接收人列表，钉钉为手机号，邮件为邮箱
@@ -6836,13 +7063,13 @@ profiles:
 </div>
 </div>
 <div class="sect3">
-<h4 id="maven_配置"><a class="anchor" href="#maven_配置"></a>4.4.2. Maven 配置</h4>
+<h4 id="maven_配置"><a class="anchor" href="#maven_配置"></a>4.6.2. Maven 配置</h4>
 <div class="listingblock">
 <div class="title">配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-bash" data-lang="bash"># ============= 公共场景使用 =============
 dew_devops_profile                           # 指定的环境
-dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`` 获取
+dew_devops_kube_config                       # Kubernetes Base64 后的配置，使用 ``echo $(cat ~/.kube/config | base64) | tr -d " "`` 获取
 # ============= 发布与回滚使用 =============
 dew_devops_docker_host                       # Dockerd的Host e.g. tcp://dockerd.dew.idealworld.group:2375
 dew_devops_docker_registry_url               # Docker Registry Url  e.g. https://harbor.dew.idealworld.group/v2
@@ -6867,9 +7094,9 @@ dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使
 </div>
 </div>
 <div class="sect2">
-<h3 id="devops-best-practices"><a class="anchor" href="#devops-best-practices"></a>4.5. DevOps最佳实践</h3>
+<h3 id="devops-best-practices"><a class="anchor" href="#devops-best-practices"></a>4.7. DevOps最佳实践</h3>
 <div class="sect3">
-<h4 id="为什么不用_fabric8"><a class="anchor" href="#为什么不用_fabric8"></a>4.5.1. 为什么不用 fabric8</h4>
+<h4 id="为什么不用_fabric8"><a class="anchor" href="#为什么不用_fabric8"></a>4.7.1. 为什么不用 fabric8</h4>
 <div class="paragraph">
 <p>Fabric8的maven插件( <a href="https://github.com/fabric8io/docker-maven-plugin" class="bare">https://github.com/fabric8io/docker-maven-plugin</a> )比较成熟，并且被 Spring Cloud Kubernetes 官方推荐( <a href="https://github.com/fabric8-quickstarts/spring-boot-ribbon" class="bare">https://github.com/fabric8-quickstarts/spring-boot-ribbon</a> )。</p>
 </div>
@@ -6880,7 +7107,7 @@ dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使
 </div>
 </div>
 <div class="sect3">
-<h4 id="devops-best-practices-auth"><a class="anchor" href="#devops-best-practices-auth"></a>4.5.2. 鉴权处理</h4>
+<h4 id="devops-best-practices-auth"><a class="anchor" href="#devops-best-practices-auth"></a>4.7.2. 鉴权处理</h4>
 <div class="paragraph">
 <p>在传统的Spring Cloud工程中多使用网关（如 Zuul、Spring Cloud Gateway）做统一的认证处理，但在Kubernetes下使用了 <code>ingress</code> ，如果再加上网关会导致多了一层转发。
 并且Kubernetes使用自身的Service已经实现了网关的服务发现，所以再引入网关就显得累赘了。</p>
@@ -6890,10 +7117,10 @@ dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使
 </div>
 </div>
 <div class="sect3">
-<h4 id="统一配置处理"><a class="anchor" href="#统一配置处理"></a>4.5.3. 统一配置处理</h4>
+<h4 id="统一配置处理"><a class="anchor" href="#统一配置处理"></a>4.7.3. 统一配置处理</h4>
 <div class="paragraph">
 <p>Spring Cloud Kubernetes 实现了基于ConfigMap/Secrets的统一配置管理，但由于后者暂未解决版本化管理、自定义密钥的加解密及友好的配置编辑能力，
-故推荐使用Spring Cloud Config， <code>dew</code> 基于Spring Cloud Config封装了Chart，详见 <a href="#helm-chart-spring-cloud-config">Dew Helm Chart : Spring Cloud Config</a> 。</p>
+故推荐使用Spring Cloud Config， <code>dew</code> 基于Spring Cloud Config封装了Chart，详见 <a href="#helm-chart-spring-cloud-config">[helm-chart-spring-cloud-config]</a> 。</p>
 </div>
 <div class="paragraph">
 <p>统一配置服务建议多个项目共享一套，为方便开发调试，故此服务建议使用URL调用而非ServiceId，e.g:</p>
@@ -6934,7 +7161,7 @@ dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使
 </table>
 </div>
 <div class="sect3">
-<h4 id="jvm设置"><a class="anchor" href="#jvm设置"></a>4.5.4. JVM设置</h4>
+<h4 id="jvm设置"><a class="anchor" href="#jvm设置"></a>4.7.4. JVM设置</h4>
 <div class="paragraph">
 <p>在 <code>app.runOptions</code> 配置中可以指定 JVM 的参数（比如 <code>-Xms -Xmx</code>），但同时也可以通过 <code>app.containerResourcesLimits</code> 和 <code>app.containerResourcesRequests</code> 指定容器资源的上下限，两者如何配合？</p>
 </div>
@@ -6987,14 +7214,14 @@ dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使
 </div>
 </div>
 <div class="sect3">
-<h4 id="配置中心选择"><a class="anchor" href="#配置中心选择"></a>4.5.5. 配置中心选择</h4>
+<h4 id="配置中心选择"><a class="anchor" href="#配置中心选择"></a>4.7.5. 配置中心选择</h4>
 <div class="paragraph">
 <p>由于 <code>spring-cloud-kubernetes</code> 使用的配置方案并不直观、无法实现版本留存、修改审计、配置加密（非摘要），
-所以 <code>dew</code> 建议使用 <code>Spring Cloud Config</code> ，<code>dew</code> 提供了其 helm 版本，详见 <a href="#helm-chart-spring-cloud-config">Dew Helm Chart : Spring Cloud Config</a> 。</p>
+所以 <code>dew</code> 建议使用 <code>Spring Cloud Config</code> ，<code>dew</code> 提供了其 helm 版本，详见 <a href="#helm-chart-spring-cloud-config">[helm-chart-spring-cloud-config]</a> 。</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="spring_cloud_项目的_dew_gitlab_ci_cd_实践"><a class="anchor" href="#spring_cloud_项目的_dew_gitlab_ci_cd_实践"></a>4.5.6. Spring Cloud 项目的 Dew &amp; Gitlab CI/CD 实践</h4>
+<h4 id="spring_cloud_项目的_dew_gitlab_ci_cd_实践"><a class="anchor" href="#spring_cloud_项目的_dew_gitlab_ci_cd_实践"></a>4.7.6. Spring Cloud 项目的 Dew &amp; Gitlab CI/CD 实践</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -7023,9 +7250,9 @@ dew_devops_scale_auto_cpu_averageUtilization # 自动伸缩条件：CPU平均使
 </div>
 </div>
 <div class="sect2">
-<h3 id="devops示例"><a class="anchor" href="#devops示例"></a>4.6. DevOps示例</h3>
+<h3 id="devops示例"><a class="anchor" href="#devops示例"></a>4.8. DevOps示例</h3>
 <div class="sect3">
-<h4 id="devops示例_helloworld后端服务"><a class="anchor" href="#devops示例_helloworld后端服务"></a>4.6.1. DevOps示例 : Helloworld后端服务</h4>
+<h4 id="devops示例_helloworld后端服务"><a class="anchor" href="#devops示例_helloworld后端服务"></a>4.8.1. DevOps示例 : Helloworld后端服务</h4>
 <div class="paragraph">
 <p>本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.idealworld.group</p>
 </div>
@@ -7082,7 +7309,7 @@ mvn -P devops deploy -Ddew_devops_profile=test</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="devops示例_helloworld类库"><a class="anchor" href="#devops示例_helloworld类库"></a>4.6.2. DevOps示例 : Helloworld类库</h4>
+<h4 id="devops示例_helloworld类库"><a class="anchor" href="#devops示例_helloworld类库"></a>4.8.2. DevOps示例 : Helloworld类库</h4>
 <div class="paragraph">
 <p>本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.idealworld.group</p>
 </div>
@@ -7104,6 +7331,7 @@ mvn -P devops deploy -Ddew_devops_profile=test</pre>
 <div class="title">手工执行</div>
 <div class="content">
 <pre># 参数设置 (win/unix)
+SET/export dew_devops_kube_config=...
 SET/export dew_devops_it_snapshotRepository_id=&lt;私库Id，如私库需要认证则此Id对应的认证信息要添加到 settings.xml中&gt;
 SET/export dew_devops_it_snapshotRepository_url=&lt;私库Url&gt;
 
@@ -7119,7 +7347,7 @@ mvn -P devops deploy -Ddew_devops_profile=test</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="devops示例_helloworld前端"><a class="anchor" href="#devops示例_helloworld前端"></a>4.6.3. DevOps示例 : Helloworld前端</h4>
+<h4 id="devops示例_helloworld前端"><a class="anchor" href="#devops示例_helloworld前端"></a>4.8.3. DevOps示例 : Helloworld前端</h4>
 <div class="paragraph">
 <p>本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.idealworld.group</p>
 </div>
@@ -7181,7 +7409,7 @@ mvn -P devops deploy -Ddew_devops_profile=test</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="devops示例_to_do"><a class="anchor" href="#devops示例_to_do"></a>4.6.4. DevOps示例 : To-Do</h4>
+<h4 id="devops示例_to_do"><a class="anchor" href="#devops示例_to_do"></a>4.8.4. DevOps示例 : To-Do</h4>
 <div class="paragraph">
 <p>本示例为Dew微服务体系的组成部分，使用说明参见：http://doc.dew.idealworld.group</p>
 </div>
@@ -7224,6 +7452,9 @@ mvn -P devops deploy -Ddew_devops_profile=test</pre>
 <div class="paragraph">
 <p>默认情况下Dew会视 <code>prod</code> 标识为生产环境，<code>uat</code> 为仿真环境，生产环境会重用（Docker Image重用）仿真或预发环境的最后一个版本。</p>
 </div>
+<div class="paragraph">
+<p>本工程需要启用redis服务，配置见工程参数。</p>
+</div>
 </td>
 </tr>
 </table>
@@ -7252,8 +7483,8 @@ profiles:
 <div class="title">/kernel/.dew配置说明</div>
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">docker:
-  # 使用自定义的Image，默认JVM类型项目的Image为openjdk:8-alpine
-  image: openjdk:8
+  # 使用自定义的Image
+  image: openjdk:11
 app:
     # 资源上限设定
     containerResourcesLimits:
@@ -7266,8 +7497,8 @@ app:
 <div class="content">
 <pre class="prettyprint highlight"><code class="language-yml" data-lang="yml">skip: true
 docker:
-  # 使用自定义的Image，默认JVM类型项目的Image为openjdk:8-alpine
-  image: openjdk:8</code></pre>
+  # 使用自定义的Image
+  image: openjdk:11</code></pre>
 </div>
 </div>
 <div class="olist arabic">
@@ -7287,13 +7518,11 @@ SET/export dew_devops_docker_host=...
 SET/export dew_devops_docker_registry_url=...
 SET/export dew_devops_docker_registry_username=...
 SET/export dew_devops_docker_registry_password=...
-SET/export dew_devops_it_snapshotRepository_id=&lt;私库Id，如私库需要认证则此Id对应的认证信息要添加到 settings.xml中&gt;
-SET/export dew_devops_it_snapshotRepository_url=&lt;私库Url&gt;
 
 # 执行如下maven命令(发布到uat环境)
-mvn -P devops deploy -Ddew_devops_profile=uat
+mvn -P devops deploy -Ddew_devops_profile=uat -T 1C -Ddew_devops_quiet=true
 # 执行如下maven命令(发布到prod环境)
-mvn -P devops deploy -Ddew_devops_profile=prod</pre>
+mvn -P devops deploy -Ddew_devops_profile=prod -T 1C -Ddew_devops_quiet=true</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -7457,7 +7686,7 @@ dew_devops_it_snapshotRepository_url=http://xx.xx.xx/nexus/content/repositories/
 </table>
 </div>
 <div class="sect4">
-<h5 id="调试环境安装配置"><a class="anchor" href="#调试环境安装配置"></a>调试环境安装配置</h5>
+<h5 id="调试环境安装配置_tbd"><a class="anchor" href="#调试环境安装配置_tbd"></a>调试环境安装配置（TBD）</h5>
 <div class="admonitionblock important">
 <table>
 <tr>
@@ -7469,7 +7698,7 @@ dew_devops_it_snapshotRepository_url=http://xx.xx.xx/nexus/content/repositories/
 <p>Kubernetes、Docker环境要求使用代理。</p>
 </div>
 <div class="paragraph">
-<p>详见 <a href="#proxies">代理选择与设置</a></p>
+<p>详见 <a href="#proxies">[proxies]</a></p>
 </div>
 </td>
 </tr>
@@ -7707,6 +7936,12 @@ helm list</pre>
 <li>
 <p>删除 <code>Spring Cloud`支持，由 `Kubernetes/K3s + Istio</code> 替代</p>
 </li>
+<li>
+<p>支持根据Swagger文档自动生成并上传SDk到maven仓库（By sdkgen-maven-plugin 插件）</p>
+</li>
+<li>
+<p>支持 OpenAPI V3</p>
+</li>
 </ul>
 </div>
 <div class="ulist">
@@ -7717,6 +7952,9 @@ helm list</pre>
 </li>
 <li>
 <p>使用 <code>block list</code> 代替 <code>black list</code></p>
+</li>
+<li>
+<p>使用 <code>springdoc-openapi</code> 替换 <code>springfox-swagger</code></p>
 </li>
 </ul>
 </div>
@@ -8514,7 +8752,13 @@ helm list</pre>
 <p>支持GraalVM</p>
 </li>
 <li>
-<p>支持Istio体系</p>
+<p>支持Service Mesh</p>
+</li>
+<li>
+<p>支持K3s</p>
+</li>
+<li>
+<p>支持Swagger转SDK</p>
 </li>
 <li>
 <p>去除Spring Cloud依赖</p>
@@ -8580,107 +8824,9 @@ helm list</pre>
 <h2 id="附录_appendix"><a class="anchor" href="#附录_appendix"></a>6. 附录 Appendix</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="proxies"><a class="anchor" href="#proxies"></a>6.1. 代理选择与设置</h3>
-<div class="exampleblock">
-<div class="content">
-<div class="paragraph">
-<p>Kubernetes自身及周边生态对大陆网络的支持不好（当然不是他们的原因），主流的解决方案有两个：</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>使用国内镜像仓库替换，比如 <code>registry.cn-hangzhou.aliyuncs.com/google_containers</code> 下有很多替代的镜像，但不全</p>
-</li>
-<li>
-<p>使用代理，比如 shadowsocks</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>镜像替换的方案一方面非官方镜像会存在安全隐患，另一方面并不是所有镜像都有替换版本，所以我们推荐使用代理的方式。</p>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>市场上有很多提供方案实现网络代理，这里不一一赘述，做为一名国内的程序员拥有自己的代理是标配。</p>
-</div>
-<div class="paragraph">
-<p>下面推荐一个免费稳定的代理方案，一个稳定的方案要求IP随时可切换、机房众多、线路质量高、服务商不会跑路，以此为前提免费的方案只能选择AWS或GCP，只要一张双币信用卡就可以免费使用一年，开通的方式请自行google。</p>
-</div>
-<div class="paragraph">
-<p>代理的技术自然是选择 <code>shadowsocks</code> , 下面以 <code>centos 7.x</code> 为例进行安装设置</p>
-</div>
+<h3 id="middleware"><a class="anchor" href="#middleware"></a>6.1. 常用中间件安装配置</h3>
 <div class="sect3">
-<h4 id="安装配置"><a class="anchor" href="#安装配置"></a>6.1.1. 安装配置</h4>
-<div class="listingblock">
-<div class="content">
-<pre># ---------- Shadowsocks 安装（Centos 7）----------
-
-# 切换到root
-sudo -i
-
-curl "https://bootstrap.pypa.io/get-pip.py" -o "get-pip.py"
-python get-pip.py
-# 使用官方最新版本
-pip install https://github.com/shadowsocks/shadowsocks/archive/master.zip -U
-# 可以开多个端口，密码请修改
-# method，加密算法选择参见 https://shadowsocks.org/en/spec/AEAD-Ciphers.html
-# 不要使用80 8080 808等Web服务常用端口
-cat &gt;&gt;/etc/shadowsocks.json &lt;&lt;EOF
-{
-    "server":"0.0.0.0",
-    "port_password": {
-        "4456": "123456",
-        "6788": "123456"
-    },
-    "local_port":1080,
-    "timeout":600,
-    "method":"aes-256-gcm"
-}
-EOF
-cat &gt;&gt;/etc/systemd/system/shadowsocks.service &lt;&lt;EOF
-[Unit]
-Description=Shadowsocks
-
-[Service]
-TimeoutStartSec=0
-ExecStart=/usr/bin/ssserver -c /etc/shadowsocks.json
-
-[Install]
-WantedBy=multi-user.target
-EOF
-systemctl enable shadowsocks
-systemctl start shadowsocks
-systemctl status shadowsocks -l
-
-# ---------- BBR 优化 ----------
-# 参考 https://www.vultr.com/docs/how-to-deploy-google-bbr-on-centos-7
-
-sudo -i
-rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
-rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
-yum --enablerepo=elrepo-kernel install kernel-ml -y
-egrep ^menuentry /etc/grub2.cfg | cut -f 2 -d \'
-# 选择上一步输出的kernel所在行号，从0开始
-grub2-set-default 0
-# 重启
-reboot
-
-sudo -i
-echo 'net.core.default_qdisc=fq' | tee -a /etc/sysctl.conf
-echo 'net.ipv4.tcp_congestion_control=bbr' | tee -a /etc/sysctl.conf
-sysctl -p
-sysctl net.ipv4.tcp_available_congestion_control
-sysctl -n net.ipv4.tcp_congestion_control
-# 看到显示 bbr 即为完成</pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="middleware"><a class="anchor" href="#middleware"></a>6.2. 常用中间件安装配置</h3>
-<div class="sect3">
-<h4 id="postgresql"><a class="anchor" href="#postgresql"></a>6.2.1. PostgreSql</h4>
+<h4 id="postgresql"><a class="anchor" href="#postgresql"></a>6.1.1. PostgreSql</h4>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
@@ -8719,7 +8865,7 @@ ALTER USER postgres WITH PASSWORD 'Dew!123456';
 </div>
 </div>
 <div class="sect3">
-<h4 id="redis"><a class="anchor" href="#redis"></a>6.2.2. Redis</h4>
+<h4 id="redis"><a class="anchor" href="#redis"></a>6.1.2. Redis</h4>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
@@ -8743,7 +8889,7 @@ systemctl start redis</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="mysql"><a class="anchor" href="#mysql"></a>6.2.3. MySQL</h4>
+<h4 id="mysql"><a class="anchor" href="#mysql"></a>6.1.3. MySQL</h4>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
@@ -8785,7 +8931,7 @@ exit;
 </div>
 </div>
 <div class="sect3">
-<h4 id="mongo"><a class="anchor" href="#mongo"></a>6.2.4. Mongo</h4>
+<h4 id="mongo"><a class="anchor" href="#mongo"></a>6.1.4. Mongo</h4>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
@@ -8835,7 +8981,7 @@ mongod --auth --port 27017 \
 </div>
 </div>
 <div class="sect3">
-<h4 id="gitlab"><a class="anchor" href="#gitlab"></a>6.2.5. Gitlab</h4>
+<h4 id="gitlab_2"><a class="anchor" href="#gitlab_2"></a>6.1.5. Gitlab</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -8873,7 +9019,7 @@ gitlab-ctl reconfigure
 </div>
 </div>
 <div class="sect3">
-<h4 id="harbor"><a class="anchor" href="#harbor"></a>6.2.6. Harbor</h4>
+<h4 id="harbor_2"><a class="anchor" href="#harbor_2"></a>6.1.6. Harbor</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -8900,7 +9046,7 @@ docker push harbor.dew.idealworld.group/dewms/devops:latest</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="dnsmasq"><a class="anchor" href="#dnsmasq"></a>6.2.7. Dnsmasq</h4>
+<h4 id="dnsmasq"><a class="anchor" href="#dnsmasq"></a>6.1.7. Dnsmasq</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -8955,7 +9101,7 @@ nameserver x.x.x.x # IP当前节点 应放在所有nameserver的最上面
 </div>
 </div>
 <div class="sect3">
-<h4 id="ntpdate"><a class="anchor" href="#ntpdate"></a>6.2.8. NTPDate</h4>
+<h4 id="ntpdate"><a class="anchor" href="#ntpdate"></a>6.1.8. NTPDate</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -8979,7 +9125,7 @@ echo '*/1 * * * * root ntpdate cn.pool.ntp.org' &gt;&gt; /etc/crontab</code></pr
 </div>
 </div>
 <div class="sect3">
-<h4 id="minio"><a class="anchor" href="#minio"></a>6.2.9. Minio</h4>
+<h4 id="minio"><a class="anchor" href="#minio"></a>6.1.9. Minio</h4>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
@@ -9017,7 +9163,7 @@ nohup ./minio server /mnt/data &amp;
 </div>
 </div>
 <div class="sect3">
-<h4 id="nfs"><a class="anchor" href="#nfs"></a>6.2.10. NFS</h4>
+<h4 id="nfs"><a class="anchor" href="#nfs"></a>6.1.10. NFS</h4>
 <div class="listingblock">
 <div class="title">安装配置</div>
 <div class="content">
@@ -9055,7 +9201,7 @@ showmount -e localhost</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="glusterfs"><a class="anchor" href="#glusterfs"></a>6.2.11. GlusterFS</h4>
+<h4 id="glusterfs"><a class="anchor" href="#glusterfs"></a>6.1.11. GlusterFS</h4>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -9112,12 +9258,12 @@ kubectl get pv,pvc</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="dew-2-migration-guide"><a class="anchor" href="#dew-2-migration-guide"></a>6.3. Dew 2.x Migration guide</h3>
+<h3 id="dew-2-migration-guide"><a class="anchor" href="#dew-2-migration-guide"></a>6.2. Dew 2.x Migration guide</h3>
 <div class="paragraph">
 <p>本手册适用于从原生 Spring Cloud 项目及 Dew 1.x 项目迁移到 Dew 2.x 的操作说明。</p>
 </div>
 <div class="sect3">
-<h4 id="初始准备"><a class="anchor" href="#初始准备"></a>6.3.1. 初始准备</h4>
+<h4 id="初始准备"><a class="anchor" href="#初始准备"></a>6.2.1. 初始准备</h4>
 <div class="ulist checklist">
 <ul class="checklist">
 <li>
@@ -9216,7 +9362,7 @@ kubectl -n devops edit cm custom-config
 </div>
 </div>
 <div class="sect3">
-<h4 id="迁移步骤"><a class="anchor" href="#迁移步骤"></a>6.3.2. 迁移步骤</h4>
+<h4 id="迁移步骤"><a class="anchor" href="#迁移步骤"></a>6.2.2. 迁移步骤</h4>
 <div class="ulist checklist">
 <ul class="checklist">
 <li>
@@ -9515,12 +9661,12 @@ prod deploy: # 生产环境部署
 </div>
 </div>
 <div class="sect2">
-<h3 id="dew-3-migration-guide"><a class="anchor" href="#dew-3-migration-guide"></a>6.4. Dew 3.x Migration guide</h3>
+<h3 id="dew-3-migration-guide"><a class="anchor" href="#dew-3-migration-guide"></a>6.3. Dew 3.x Migration guide</h3>
 <div class="paragraph">
 <p>本手册适用于从原生 Spring Cloud 项目及 Dew 2.x 项目迁移到 Dew 3.x 的操作说明。</p>
 </div>
 <div class="sect3">
-<h4 id="迁移步骤_2"><a class="anchor" href="#迁移步骤_2"></a>6.4.1. 迁移步骤</h4>
+<h4 id="迁移步骤_2"><a class="anchor" href="#迁移步骤_2"></a>6.3.1. 迁移步骤</h4>
 <div class="ulist checklist">
 <ul class="checklist">
 <li>
@@ -9531,36 +9677,9 @@ prod deploy: # 生产环境部署
 </div>
 </div>
 <div class="sect2">
-<h3 id="内置image与chart"><a class="anchor" href="#内置image与chart"></a>6.5. 内置Image与Chart</h3>
+<h3 id="内置image与chart"><a class="anchor" href="#内置image与chart"></a>6.4. 内置Image与Chart</h3>
 <div class="sect3">
-<h4 id="dew_docker_image_集成kubectl与helm"><a class="anchor" href="#dew_docker_image_集成kubectl与helm"></a>6.5.1. Dew Docker Image : 集成Kubectl与Helm</h4>
-<div class="paragraph">
-<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre># 直接使用docker hub镜像或手工打包：
-docker build -t dewms/k8s-native-client .
-
-# 测试
-
-# 获取当前的kube config
-KUBE_CONFIG=`echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "`
-# 进入容器
-docker run -it -e KUBE_CONFIG=$KUBE_CONFIG dewms/k8s-native-client
--
-# 添加kube config
-echo -n $KUBE_CONFIG | base64 -d &gt; $HOME/.kube/config
-# 正确显示kubernetes信息
-kubectl version
-# 正确显示helm信息（如果存在的话）
-helm list
--</pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="dew_docker_image_集成ci_cd能力"><a class="anchor" href="#dew_docker_image_集成ci_cd能力"></a>6.5.2. Dew Docker Image : 集成CI/CD能力</h4>
+<h4 id="dew_docker_image_集成ci_cd能力"><a class="anchor" href="#dew_docker_image_集成ci_cd能力"></a>6.4.1. Dew Docker Image : 集成CI/CD能力</h4>
 <div class="paragraph">
 <p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
@@ -9570,7 +9689,6 @@ helm list
 docker build -t dewms/devops .
 或
 docker build -t dewms/devops --build-arg MAVEN_AGENT_URL=&lt;&gt; .
-
 
 
 # 测试
@@ -9588,63 +9706,11 @@ npm version
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="dew_docker_image_spring_cloud_config"><a class="anchor" href="#dew_docker_image_spring_cloud_config"></a>6.5.3. Dew Docker Image : Spring Cloud Config</h4>
-<div class="paragraph">
-<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre># 直接使用docker hub镜像或手工打包：
-docker build -t dewms/spring-cloud-config .
-
-# 运行示例
-docker run -d --name dew-spring-cloud-config \
-    -p 8080:8080 \
-    -e spring.profiles.active=prod \
-    -v /opt/config:/config \
-    dewms/spring-cloud-config</pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="helm-chart-spring-cloud-config"><a class="anchor" href="#helm-chart-spring-cloud-config"></a>6.5.4. Dew Helm Chart : Spring Cloud Config</h4>
-<div class="paragraph">
-<p>本镜像为Dew微服务体系的组成部分，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
-</div>
-<div class="listingblock">
-<div class="title">使用</div>
-<div class="content">
-<pre># 0. 添加库
-helm repo add helm-dew-spring-cloud-config https://raw.githubusercontent.com/gudaoxuri/dew/master/devops/chart/dew-spring-cloud-config/
-
-# 1. 安装
-helm install helm-dew-spring-cloud-config/dew-spring-cloud-config --name dew-spring-cloud-config --namespace devops \
-    --set ingress.hosts={config.dew.idealworld.group}
-
-# 2. 测试（Kubernetes集群已安装Ingress controller并暴露80端口）
-curl http://dew:override@config.dew.idealworld.group/encrypt -d abc
-
-# 3. 修改配置，比如加入git设置
-kubectl -n devops edit cm custom-config
-
-# 4. 配置修改后需要删除Pod以实现重启获取最新配置</pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">发布</div>
-<div class="content">
-<pre class="prettyprint highlight"><code class="language-bash" data-lang="bash">helm package .
-helm repo index .
-git add --all</code></pre>
-</div>
-</div>
-</div>
 </div>
 <div class="sect2">
-<h3 id="支持的ci_cd服务"><a class="anchor" href="#支持的ci_cd服务"></a>6.6. 支持的CI/CD服务</h3>
+<h3 id="支持的ci_cd服务"><a class="anchor" href="#支持的ci_cd服务"></a>6.5. 支持的CI/CD服务</h3>
 <div class="sect3">
-<h4 id="dew-devops-maven-agent"><a class="anchor" href="#dew-devops-maven-agent"></a>6.6.1. Dew DevOps Maven Agent</h4>
+<h4 id="dew-devops-maven-agent"><a class="anchor" href="#dew-devops-maven-agent"></a>6.5.1. Dew DevOps Maven Agent</h4>
 <div class="paragraph">
 <p>本插件为Dew微服务体系的组成部分，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
@@ -9664,7 +9730,7 @@ mvn -P devops deploy &lt;其它命令&gt;</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="dew-gitlab-ci"><a class="anchor" href="#dew-gitlab-ci"></a>6.6.2. Dew CI/CD : Gitlab CI 实现</h4>
+<h4 id="dew-gitlab-ci"><a class="anchor" href="#dew-gitlab-ci"></a>6.5.2. Dew CI/CD : Gitlab CI 实现</h4>
 <div class="paragraph">
 <p>此为Gitlab CI上的 CI/CD 处理，集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
@@ -9775,7 +9841,7 @@ prod deploy: # 生产环境部署
 </div>
 </div>
 <div class="sect3">
-<h4 id="dew-jenkins-pipeline"><a class="anchor" href="#dew-jenkins-pipeline"></a>6.6.3. Dew DevOps : Jenkins Pipeline 部署</h4>
+<h4 id="dew-jenkins-pipeline"><a class="anchor" href="#dew-jenkins-pipeline"></a>6.5.3. Dew DevOps : Jenkins Pipeline 部署</h4>
 <div class="paragraph">
 <p>此为 使用 Dew DevOps 进行部署项目的 Jenkins Pipeline 部署方式的说明。Dew DevOps 集成说明参见： <a href="#Devops-chapter">Dew Devops 部署运维</a></p>
 </div>
@@ -9862,7 +9928,11 @@ prod deploy: # 生产环境部署
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">kube_config</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">需要将项目部署在的 Kubernetes 集群的 kube config 的base64 的值,通过在Kubernetes集群中执行<code>$(cat /etc/kubernetes/admin.conf| base64) | tr -d " " </code> 获取；如不设置，默认根据Pipeline Job的名字找到已有的全局环境变量中的 DEW_DEVOPS_KUBE_CONFIG_XXXX 。请确保该参数有值可取。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">需要将项目部署在的 Kubernetes 集群的 kube config 的base64 的值,通过在Kubernetes集群中执行``echo $(cat ~/.kube/config</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">base64)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">tr -d " "`` 获取；如不设置，默认根据Pipeline Job的名字找到已有的全局环境变量中的 DEW_DEVOPS_KUBE_CONFIG_XXXX 。请确保该参数有值可取。</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">devops_phase</p></td>
@@ -10288,7 +10358,11 @@ TIP: 需要安装此插件，如不安装，使用<code>dew-devops.groovy</code>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">DEW_DEVOPS_KUBE_CONFIG_XXXX</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">项目要部署的K8S集群的kube_config的base64加密的值，通过在该集群的master节点，执行此命令
-<code>echo $(cat /etc/kubernetes/admin.conf| base64) | tr -d " "</code>获取,注意admin.conf变更时及时更新此值。<br>
+``echo $(cat ~/.kube/config</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">base64)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">tr -d " "``获取,注意配置变更时及时更新此值。<br>
 参数名举例： DEW_DEVOPS_KUBE_CONFIG_TEST，DEW_DEVOPS_KUBE_CONFIG_UAT，DEW_DEVOPS_KUBE_CONFIG_PRD,DEW_DEVOPS_KUBE_CONFIG</p></td>
 </tr>
 <tr>
@@ -10365,7 +10439,7 @@ TIP: 需要安装此插件，如不安装，使用<code>dew-devops.groovy</code>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">kube_config</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes集群的admin.conf的base64值</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Kubernetes集群的kube config的base64值</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">默认根据job名设值</p></td>
 </tr>
 <tr>
@@ -10499,7 +10573,7 @@ TIP: 需要安装此插件，如不安装，使用<code>dew-devops.groovy</code>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-06-10 18:52:55 CST
+Last updated 2020-06-17 08:30:46 CST
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

@@ -75,7 +75,6 @@ dew:                                    # Dew 参数key前缀
         revision-history-limit: 0       # Token 保留的历史版本数量， 0表示不保留历史版本，即有新的登录时会删除此类型下之前所有的Token
     error:                              # 错误配置
       enabled: false                    # 启用降级邮件通知，默认为false
-      notify-flag: __HYSTRIX__          # 默认的通知标识
       notify-event-types: FAILURE,SHORT_CIRCUITED,TIMEOUT,THREAD_POOL_REJECTED,SEMAPHORE_REJECTED
                                         # 通知的事件类型
       notify-include-keys:              # 需监控的方法key值，与notify-exclude-keys互斥，client类名+#+方法名，for example:  ExampleClient#deleteExe(int,String)
@@ -85,16 +84,6 @@ dew:                                    # Dew 参数key前缀
     default-strategy: item              # 设置默认策略，目前支持item(逐条记录)
     default-opt-id-flag: __IDEMPOTENT_OPT_ID__
                                         # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
-  component:                            # 各组件配置
-    auth:                               # 需要引入 auth 组件
-      token-expire-sec: 2592000         # token有效期，默认为30天
-      max-login-error-times: 3          # 最大登录错误次数，默认3次
-      clean-error-time-min: 10          # 登录错误限制登录时间，默认为10分钟
-      password-salt:                    # 密码加盐
-      email-account:                    # 发通知邮件的邮箱账号，比如用来发送用户注册成功邮件
-      sdk:                              # SDK配置
-          server-url:                   # 服务器地址
-          white-list:                   # 白名单，逗号分隔
   mw:                                   # 中间件
     mqtt:                               # MQTT集群实现
       broker:                           # Broker地址，e.g. tcp://127.0.0.1:1883
@@ -110,57 +99,44 @@ dew:                                    # Dew 参数key前缀
 spring:                                 # 常用 Spring 配置
   application:
     name:                               # 项目名称,若使用Dew，请配置
-  cloud:
-    config:                             # 统一配置
-      enabled: true                     # 是否启用
-      uri:                              # URL
-      username:                         # 认证用户名
-      password:                         # 认证密码
-    kubernetes:                         # kubernetes相关配置
-      ribbon:                           # 客户端轮询配置
-        enabled: true                   # 是否启用
-    mail:                               # Mail配置，需要hystrix降级通知需加以下配置
-      host: smtp.163.com
-      username:
-      password:
-      properties:
-        mail:
-          smtp:
-            auth: true
-              starttls:
-                enable: true
-                required: true
-    redis:
-      host:                           # Redis主机
-      port:                           # Redis端口
-      database:                       # Redis数据库
-      password:                       # Redis密码
-      lettuce:
-        pool:                         # 连接池配置
-      multi:                          # 多实例支持（Dew功能）
-        <key>:                        # 实例名称
-                                      # 可用 Dew.cluster.caches.instance(<key>) 获取
-                                      # 同时可以用 @Autowired <Key>RedisTemplate 获取Bean
-          host:                       # Redis主机
-          port:                       # Redis端口
-          ...
-    rabbitmq:
-      host:                           # Rabbit主机
-      port:                           # Rabbit端口
-      username:                       # Rabbit用户名
-      password:                       # Rabbit密码
-      virtual-host:                   # Rabbit VH
-    hazelcast:
-      username:
-      password:
-      addresses: ["127.0.0.1"]
+  mail:                               # Mail配置
+    host: smtp.163.com
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          auth: true
+            starttls:
+              enable: true
+              required: true
+  redis:
+    host:                           # Redis主机
+    port:                           # Redis端口
+    database:                       # Redis数据库
+    password:                       # Redis密码
+    lettuce:
+      pool:                         # 连接池配置
+    multi:                          # 多实例支持（Dew功能）
+      <key>:                        # 实例名称
+                                    # 可用 Dew.cluster.caches.instance(<key>) 获取
+                                    # 同时可以用 @Autowired <Key>RedisTemplate 获取Bean
+        host:                       # Redis主机
+        port:                       # Redis端口
+        ...
+  rabbitmq:
+    host:                           # Rabbit主机
+    port:                           # Rabbit端口
+    username:                       # Rabbit用户名
+    password:                       # Rabbit密码
+    virtual-host:                   # Rabbit VH
+  hazelcast:
+    username:
+    password:
+    addresses: ["127.0.0.1"]
 
 server:
   port: 8081                          # 服务端口
-
-<application name>:                   # 自定义服务列表，使用此功能需要设置 spring.cloud.kubernetes.ribbon.enabled = false
-  ribbon:
-    listOfServers: <host>:<port>
 
 management:
   endpoints:
@@ -179,8 +155,5 @@ logging:
 
 TIP: https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
 
-==== `Spring cloud` 核心参数
-
-TIP: https://cloud.spring.io/spring-cloud-static/spring-cloud-kubernetes/2.1.0.RC1/single/spring-cloud-kubernetes.html
 
 

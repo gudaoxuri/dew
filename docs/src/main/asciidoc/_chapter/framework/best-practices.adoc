@@ -82,29 +82,6 @@ X Build Project                 // 构建工程
     }
     ----
 
-==== 开发期服务调用
-
-在 `Spring Cloud` 体系下，服务间调用需要在Kubernetes环境下，这对开发阶段并不友好，可使用如下方案，模拟多个服务间调用。
-
-[source,yml]
-----
-spring:
-  cloud:
-    kubernetes:
-      ribbon:
-        enabled: false # 禁用服务自动发现
-
-<application name>: # 自定义服务列表，使用此功能需要设置 spring.cloud.kubernetes.ribbon.enabled = false
-  ribbon:
-    listOfServers: <host>:<port>
-
-# e.g.
-
-tracing-invoke2-example:
-  ribbon:
-    listOfServers: localhost:8082
-----
-
 ==== 代码质量管理
 
 推荐使用 ``checkstyle`` 管理代码风格，使用方式：

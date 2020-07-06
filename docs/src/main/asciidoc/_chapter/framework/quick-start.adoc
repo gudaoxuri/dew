@@ -138,12 +138,6 @@ TIP: 详见 <<framework-user-manual-cluster>>
 .backend/services/kernel/resources/bootstrap-default.yml
 ----
 spring:
-  cloud:
-    config:
-      enabled: false  # 关闭统一配置
-    kubernetes:
-      ribbon:
-        enabled: false # 关闭ribbon
   redis: # Redis配置
     host: localhost
     port: 6379
@@ -165,8 +159,8 @@ todo-compute:
 /**
  * 空实现，做为所有组件启动类的父类
  */
-// 启用 Spring Cloud 能力
-@SpringCloudApplication
+// 启用 Spring Boot 能力
+@SpringBootApplication
 public class TodoParentApplication {
 
 }
