@@ -125,7 +125,7 @@ public class WebExampleController {
     /**
      * User.
      */
-    @Schema(name = "用户信息")
+    @Schema(title = "用户信息")
     public static class User {
 
         // 仅在CreateGroup组下才校验

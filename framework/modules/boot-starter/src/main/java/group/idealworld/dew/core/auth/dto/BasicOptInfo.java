@@ -27,29 +27,29 @@ import java.time.LocalDateTime;
  * @param <E> 扩展操作用户信息类型
  * @author gudaoxuri
  */
-@Schema(name = "操作用户信息")
+@Schema(title = "操作用户信息")
 public class BasicOptInfo<E> extends OptInfo<E> {
 
     /**
      * The Mobile.
      */
-    @Schema(name = "手机号", required = true)
+    @Schema(title = "手机号", required = true)
     protected String mobile;
     /**
      * The Email.
      */
-    @Schema(name = "邮箱", required = true)
+    @Schema(title = "邮箱", required = true)
     protected String email;
     /**
      * The Name.
      */
-    @Schema(name = "姓名", required = true)
+    @Schema(title = "姓名", required = true)
     protected String name;
 
     /**
      * The Last login time.
      */
-    @Schema(name = "最后一次登录时间", required = true)
+    @Schema(title = "最后一次登录时间", required = true)
     protected LocalDateTime lastLoginTime;
 
     /**

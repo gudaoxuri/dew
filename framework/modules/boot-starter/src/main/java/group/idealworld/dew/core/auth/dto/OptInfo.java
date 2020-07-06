@@ -26,7 +26,7 @@ import java.util.Set;
  * @param <E> 扩展操作用户信息类型
  * @author gudaoxuri
  */
-@Schema(name = "操作用户信息")
+@Schema(title = "操作用户信息")
 public class OptInfo<E> {
 
     /**
@@ -37,34 +37,34 @@ public class OptInfo<E> {
     /**
      * The Token.
      */
-    @Schema(name = "Token", required = true)
+    @Schema(title = "Token", required = true)
     protected String token;
     /**
      * The Account code.
      */
-    @Schema(name = "账号编码", required = true)
+    @Schema(title = "账号编码", required = true)
     protected Object accountCode;
     /**
      * The Token kind.
      */
-    @Schema(name = "Token类型")
+    @Schema(title = "Token类型")
     protected String tokenKind = DEFAULT_TOKEN_KIND_FLAG;
 
     /**
      * The Roles.
      */
-    @Schema(name = "角色列表", required = true)
+    @Schema(title = "角色列表", required = true)
     protected Set<RoleInfo> roleInfo;
 
 
     /**
      * Role info.
      */
-    @Schema(name = "角色信息")
+    @Schema(title = "角色信息")
     public static class RoleInfo {
-        @Schema(name = "角色编码", required = true)
+        @Schema(title = "角色编码", required = true)
         private String code;
-        @Schema(name = "角色显示名称", required = true)
+        @Schema(title = "角色显示名称", required = true)
         private String name;
 
         /**
