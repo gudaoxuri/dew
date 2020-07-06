@@ -17,9 +17,9 @@
 package group.idealworld.dew.devops.kernel.function;
 
 import com.ecfront.dew.common.$;
+import group.idealworld.dew.core.notification.Notify;
+import group.idealworld.dew.core.notification.NotifyConfig;
 import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
-import group.idealworld.dew.notification.Notify;
-import group.idealworld.dew.notification.NotifyConfig;
 
 import java.util.Arrays;
 import java.util.HashMap;

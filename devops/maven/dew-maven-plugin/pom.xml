@@ -41,7 +41,29 @@
         </dependency>
         <dependency>
             <groupId>group.idealworld.dew</groupId>
-            <artifactId>notification</artifactId>
+            <artifactId>boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>group.idealworld.dew</groupId>
+                    <artifactId>cluster-common</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-validation</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-actuator</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springdoc</groupId>
+                    <artifactId>springdoc-openapi-ui</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.docker-java</groupId>

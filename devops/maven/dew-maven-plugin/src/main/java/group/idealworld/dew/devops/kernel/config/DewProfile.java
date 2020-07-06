@@ -16,8 +16,8 @@
 
 package group.idealworld.dew.devops.kernel.config;
 
+import group.idealworld.dew.core.notification.NotifyConfig;
 import group.idealworld.dew.devops.kernel.util.DewLog;
-import group.idealworld.dew.notification.NotifyConfig;
 import org.slf4j.Logger;
 
 import java.util.HashSet;

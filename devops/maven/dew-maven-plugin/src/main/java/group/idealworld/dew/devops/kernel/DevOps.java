@@ -16,6 +16,8 @@
 
 package group.idealworld.dew.devops.kernel;
 
+import group.idealworld.dew.core.notification.Notify;
+import group.idealworld.dew.core.notification.NotifyConfig;
 import group.idealworld.dew.devops.kernel.config.DewProfile;
 import group.idealworld.dew.devops.kernel.config.FinalConfig;
 import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
@@ -26,8 +28,6 @@ import group.idealworld.dew.devops.kernel.helper.KubeHelper;
 import group.idealworld.dew.devops.kernel.util.DewLog;
 import group.idealworld.dew.devops.kernel.util.ExecuteOnceProcessor;
 import group.idealworld.dew.devops.kernel.util.ExitMonitorProcessor;
-import group.idealworld.dew.notification.Notify;
-import group.idealworld.dew.notification.NotifyConfig;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.slf4j.Logger;
