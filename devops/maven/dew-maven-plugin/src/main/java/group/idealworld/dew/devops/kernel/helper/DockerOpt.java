@@ -50,7 +50,7 @@ public class DockerOpt {
     /**
      * Registry operation.
      */
-    public Registry registry = new Registry();
+    public Registry registry;
     /**
      * Log.
      */
@@ -86,7 +86,9 @@ public class DockerOpt {
      * @param registryPassword registry密码
      * @see <a href="https://docs.docker.com/install/linux/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections">The Docker Daemon Listens For Connections</a>
      */
-    protected DockerOpt(Logger log, String host, String registryUrl, String registryUsername, String registryPassword) {
+    protected DockerOpt(Logger log,
+                        String host, String registryUrl,
+                        String registryUsername, String registryPassword) {
         this.log = log;
         this.registryUsername = registryUsername;
         this.registryPassword = registryPassword;
@@ -103,6 +105,11 @@ public class DockerOpt {
                     .withPassword(registryPassword);
         }
         docker = DockerClientBuilder.getInstance(builder.build()).build();
+        if (registryApiUrl.contains("github.com")) {
+            registry = new GithubPackagesRegistry();
+        } else {
+            registry = new HarborRegistry();
+        }
     }
 
     /**
@@ -306,11 +313,9 @@ public class DockerOpt {
     }
 
     /**
-     * Harbor Registry API.
-     *
-     * @see <a href="https://raw.githubusercontent.com/goharbor/harbor/master/docs/swagger.yaml">Goharbor API</a>
+     * Docker Registry API.
      */
-    public class Registry {
+    public interface Registry {
 
         /**
          * Exist Image.
@@ -318,6 +323,99 @@ public class DockerOpt {
          * @param imageName the image name
          * @return <b>true</b> if exist
          */
+        boolean existImage(String imageName);
+
+        /**
+         * Remove Image.
+         *
+         * @param imageName the image name
+         * @return <b>true</b> if success
+         */
+        boolean removeImage(String imageName);
+
+        /**
+         * Copy Image.
+         *
+         * @param fromImageName    the from image name
+         * @param toProjectName    the to project name
+         * @param toRepositoryName the to repository name
+         * @return the boolean
+         */
+        boolean copyImage(String fromImageName, String toProjectName, String toRepositoryName);
+
+        /**
+         * Create or update label.
+         *
+         * @param labelName   the label name
+         * @param labelValue  the label value
+         * @param projectName the project name
+         * @return <b>true</b> if success
+         */
+        boolean createOrUpdateLabel(String labelName, String labelValue, Optional<String> projectName);
+
+        /**
+         * Get label description by name.
+         *
+         * @param labelName   the label name
+         * @param projectName the project name
+         * @return label description
+         */
+        Label getLabel(String labelName, Optional<String> projectName);
+
+        /**
+         * Create project.
+         *
+         * @param projectName the project name
+         * @return the boolean
+         */
+        boolean createProject(String projectName);
+
+        /**
+         * Delete project.
+         *
+         * @param projectName the project name
+         * @return the boolean
+         */
+        boolean deleteProject(String projectName);
+
+        /**
+         * Get project id by name.
+         *
+         * @param projectName the project name
+         * @return the project id
+         */
+        Integer getProjectIdByName(String projectName);
+
+        /**
+         * Parse image info string [ ].
+         *
+         * @param imageName the image name
+         * @return the string [ ]
+         */
+        default String[] parseImageInfo(String imageName) {
+            String[] imageFragment = imageName.split(":");
+            String tag = imageFragment.length == 2 ? imageFragment[1] : null;
+            String image = imageFragment[0];
+            if (image.split("/").length == 3) {
+                // 带host，先去除
+                image = image.substring(image.indexOf("/") + 1);
+            }
+            return new String[]{
+                    image.substring(0, image.indexOf("/")),
+                    image.substring(image.indexOf("/") + 1),
+                    tag};
+        }
+
+    }
+
+    /**
+     * Harbor Registry API.
+     *
+     * @see <a href="https://raw.githubusercontent.com/goharbor/harbor/master/docs/swagger.yaml">Goharbor API</a>
+     */
+    public class HarborRegistry implements Registry {
+
+        @Override
         public boolean existImage(String imageName) {
             String[] item = parseImageInfo(imageName);
             HttpHelper.ResponseWrap responseWrap;
@@ -335,12 +433,7 @@ public class DockerOpt {
             return responseWrap.statusCode == 200;
         }
 
-        /**
-         * Remove Image.
-         *
-         * @param imageName the image name
-         * @return <b>true</b> if success
-         */
+        @Override
         public boolean removeImage(String imageName) {
             String[] item = parseImageInfo(imageName);
             HttpHelper.ResponseWrap responseWrap;
@@ -368,14 +461,7 @@ public class DockerOpt {
             return false;
         }
 
-        /**
-         * Copy Image.
-         *
-         * @param fromImageName    the from image name
-         * @param toProjectName    the to project name
-         * @param toRepositoryName the to repository name
-         * @return the boolean
-         */
+        @Override
         public boolean copyImage(String fromImageName, String toProjectName, String toRepositoryName) {
             HttpHelper.ResponseWrap responseWrap = $.http.postWrap(
                     registryApiUrl + "/projects/" + toProjectName + "/repositories/" + toRepositoryName + "/artifacts?from=" + fromImageName,
@@ -389,28 +475,7 @@ public class DockerOpt {
             return false;
         }
 
-        private String[] parseImageInfo(String imageName) {
-            String[] imageFragment = imageName.split(":");
-            String tag = imageFragment.length == 2 ? imageFragment[1] : null;
-            String image = imageFragment[0];
-            if (image.split("/").length == 3) {
-                // 带host，先去除
-                image = image.substring(image.indexOf("/") + 1);
-            }
-            return new String[]{
-                    image.substring(0, image.indexOf("/")),
-                    image.substring(image.indexOf("/") + 1),
-                    tag};
-        }
-
-        /**
-         * Create or update label.
-         *
-         * @param labelName   the label name
-         * @param labelValue  the label value
-         * @param projectName the project name
-         * @return <b>true</b> if success
-         */
+        @Override
         public boolean createOrUpdateLabel(String labelName, String labelValue, Optional<String> projectName) {
             Integer projectId = 0;
             if (projectName.isPresent()) {
@@ -448,13 +513,7 @@ public class DockerOpt {
             return false;
         }
 
-        /**
-         * Get label description by name.
-         *
-         * @param labelName   the label name
-         * @param projectName the project name
-         * @return label description
-         */
+        @Override
         public Label getLabel(String labelName, Optional<String> projectName) {
             String url = registryApiUrl + "/labels?name=" + labelName;
             if (projectName.isEmpty()) {
@@ -480,12 +539,7 @@ public class DockerOpt {
             return null;
         }
 
-        /**
-         * Create project.
-         *
-         * @param projectName the project name
-         * @return the boolean
-         */
+        @Override
         public boolean createProject(String projectName) {
             HttpHelper.ResponseWrap responseWrap = $.http.postWrap(registryApiUrl + "/projects", new HashMap<>() {
                 {
@@ -500,12 +554,7 @@ public class DockerOpt {
             return false;
         }
 
-        /**
-         * Delete project.
-         *
-         * @param projectName the project name
-         * @return the boolean
-         */
+        @Override
         public boolean deleteProject(String projectName) {
             Integer projectId = getProjectIdByName(projectName);
             if (projectId == null) {
@@ -521,12 +570,7 @@ public class DockerOpt {
             return false;
         }
 
-        /**
-         * Get project id by name.
-         *
-         * @param projectName the project name
-         * @return the project id
-         */
+        @Override
         public Integer getProjectIdByName(String projectName) {
             HttpHelper.ResponseWrap responseWrap = $.http.getWrap(registryApiUrl + "/projects?name=" + projectName, wrapHeader());
             if (responseWrap.statusCode == 200
@@ -541,12 +585,70 @@ public class DockerOpt {
         private Map<String, String> wrapHeader() {
             Map<String, String> header = new HashMap<>();
             header.put("Content-Type", "application/json");
-            header.put("accept", "application/json");
-            header.put("authorization", "Basic "
+            header.put("Accept", "application/json");
+            header.put("Authorization", "Basic "
                     + $.security.encodeStringToBase64(registryUsername + ":" + registryPassword, StandardCharsets.UTF_8));
             return header;
         }
 
+    }
+
+    /**
+     * Github Packages Registry API.
+     *
+     * @see <a href="https://docs.github.com/en/rest/reference/repos">Github Packages API</a>
+     */
+    public class GithubPackagesRegistry implements Registry {
+
+
+        private Map<String, String> wrapHeader() {
+            Map<String, String> header = new HashMap<>();
+            header.put("Content-Type", "application/json");
+            header.put("Accept", "application/vnd.github.v3+json");
+            // Github API 中的 Password 对应的就是 Token
+            header.put("Authorization", "token " + registryPassword);
+            return header;
+        }
+
+        @Override
+        public boolean existImage(String imageName) {
+            return false;
+        }
+
+        @Override
+        public boolean removeImage(String imageName) {
+            return false;
+        }
+
+        @Override
+        public boolean copyImage(String fromImageName, String toProjectName, String toRepositoryName) {
+            return false;
+        }
+
+        @Override
+        public boolean createOrUpdateLabel(String labelName, String labelValue, Optional<String> projectName) {
+            return false;
+        }
+
+        @Override
+        public Label getLabel(String labelName, Optional<String> projectName) {
+            return null;
+        }
+
+        @Override
+        public boolean createProject(String projectName) {
+            return false;
+        }
+
+        @Override
+        public boolean deleteProject(String projectName) {
+            return false;
+        }
+
+        @Override
+        public Integer getProjectIdByName(String projectName) {
+            return null;
+        }
     }
 
     /**
@@ -672,4 +774,18 @@ public class DockerOpt {
         }
     }
 
+
+    /**
+     * The enum Registry kind.
+     */
+    public enum RegistryKind {
+        /**
+         * Harbor registry kind.
+         */
+        HARBOR,
+        /**
+         * Github packages registry kind.
+         */
+        GITHUB_PACKAGES
+    }
 }

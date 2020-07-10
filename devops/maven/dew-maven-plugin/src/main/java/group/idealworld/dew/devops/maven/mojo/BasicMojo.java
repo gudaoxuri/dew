@@ -315,7 +315,6 @@ public abstract class BasicMojo extends AbstractMojo {
         } catch (ConfigException e) {
             // 此错误会中止程序
             logger.error("Init Process error", e);
-            e.printStackTrace();
             ExecuteEventProcessor.onGlobalProcessError(e);
             throw e;
         }

@@ -239,6 +239,9 @@ public class ExecuteEventProcessor {
         public void onMojoExecute(String mojoName, String flag, String profile,
                                   String appShowName, String appGroup,
                                   String message, Throwable throwable) {
+            if (skipNotify()) {
+                return;
+            }
             StringBuilder content = new StringBuilder();
             content.append("![](http://doc.dew.idealworld.group/images/devops-notify/" + (throwable != null ? "failure" : "successful") + ".png)")
                     .append("\n")
@@ -366,7 +369,7 @@ public class ExecuteEventProcessor {
             if (skipNotify()) {
                 return;
             }
-            Map<String, Object> message = new HashMap<String, Object>() {
+            Map<String, Object> message = new HashMap<>() {
                 {
                     put("profile", profile);
                     put("projects", appShowNames);
