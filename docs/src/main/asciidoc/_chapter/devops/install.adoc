@@ -1,9 +1,16 @@
 [[devops-env-install]]
-=== 测试、生产环境安装配置
+=== 开发/测试环境安装配置
 
 [IMPORTANT]
 ====
 本文会给出使用代理与不使用代理的安装、配置方式，但强烈推荐使用代理方式。
+====
+
+NOTE
+====
+开发环境推荐使用Docker for desktop安装Docker和Kubernetes的基础环境，大陆地区安装可参见 https://github.com/AliyunContainerService/k8s-for-docker-desktop 此项目。
+
+Windows用户建议升级到Windows 10 2004版本及以上，启用WSL2。
 ====
 
 [NOTE]
@@ -23,20 +30,19 @@ TIP: 常规的项目研发多会分 ``开发(dev)、测试(test)、预发(pre-pr
 
 .推荐的服务列表
 |===
-|分类                 | 域名/主机名              | 服务             | 备注
+|分类                 | 域名/主机名                                  | 服务             | 备注
 
-| 公共支撑服务         | domain:gitlab.dew.idealworld.group   | Gitlab           | Gitlab及其CI/CD服务
-| 公共支撑服务         | domain:harbor.dew.idealworld.group   | Harbor           | Docker私有库服务
-| 公共支撑服务         | domain:maven.dew.idealworld.group    | Maven            | Maven私有库服务
-| 环境相关的支撑服务    | /                      | Dnsmasq          | 轻量级DNS解析服务
-| 环境相关的支撑服务    | domain:minio.dew.idealworld.group    | Minio            | 分布式对象存储服务，用于CI/CD时做为分布式缓存
-| 环境相关的支撑服务    | domain:nfs.dew.idealworld.group      | NFS              | 用于Kuernetes persistent volumes的文件存储服务，生产环境建议使用云厂商的分布式文件存储或 CephFS，支持的类型见
+| 公共支撑服务         | domain:gitlab.dew.idealworld.group          | Gitlab           | Gitlab及其CI/CD服务
+| 公共支撑服务         | domain:harbor/notary.dew.idealworld.group   | Harbor           | Docker私有库服务
+| 公共支撑服务         | domain:maven.dew.idealworld.group           | Maven            | Maven私有库服务
+| 环境相关的支撑服务    | /                                           | Dnsmasq          | 轻量级DNS解析服务
+| 环境相关的支撑服务    | domain:minio.dew.idealworld.group           | Minio            | 分布式对象存储服务，用于CI/CD时做为分布式缓存
+| 环境相关的支撑服务    | domain:nfs.dew.idealworld.group             | NFS              | 用于Kuernetes persistent volumes的文件存储服务，生产环境建议使用云厂商的分布式文件存储或 CephFS，支持的类型见
                                                                    https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes
-| 容器集群            | hostname:k8s-X         | Docker           | Docker容器服务，部署到所有Kubernetes所在的节点
-| 容器集群            | hostname:k8s-X         | <CNI>            | Kubernetes CNI服务，部署到所有Kubernetes所在的节点，本文使用 Flannel
-| 容器集群            | hostname:k8s-masterX   | Kubernetes Master| Kubernetes Master服务，可做HA
-| 容器集群            | hostname:k8s-masterX   | Helm tiller      | Helm服务，部署到Kubernetes Master所在节点
-| 容器集群            | hostname:k8s-nodeX     | Kubernetes Node  | Kubernetes Node服务，至少3个节点
+| 容器集群            | hostname:k8s-X                              | Docker           | Docker容器服务，部署到所有Kubernetes所在的节点
+| 容器集群            | hostname:k8s-X                              | <CNI>            | Kubernetes CNI服务，部署到所有Kubernetes所在的节点，本文使用 Flannel
+| 容器集群            | hostname:k8s-masterX                        | Kubernetes Master| Kubernetes Master服务，可做HA
+| 容器集群            | hostname:k8s-nodeX                          | Kubernetes Node  | Kubernetes Node服务，至少3个节点
 |===
 
 [IMPORTANT]
@@ -71,25 +77,23 @@ ssh-keygen -t rsa
 ssh-copy-id -i ~/.ssh/id_rsa.pub root@k8s-X
 ----
 
-==== Docker
+==== 核心组件
 
-TIP: https://kubernetes.io/docs/setup/cri/#docker
+===== Docker
+
+TIP: https://kubernetes.io/docs/setup/production-environment/container-runtimes/
 
 .安装配置
 [source,bash]
 ----
-yum install -y yum-utils
+yum install -y yum-utils device-mapper-persistent-data lvm2
 
-yum-config-manager \
-    --add-repo \
-    https://download.docker.com/linux/centos/docker-ce.repo
+yum-config-manager --add-repo \
+  https://download.docker.com/linux/centos/docker-ce.repo
 
 yum install docker-ce docker-ce-cli containerd.io
 
-systemctl start docker
-
 mkdir /etc/docker
-
 cat > /etc/docker/daemon.json <<EOF
 {
   "exec-opts": ["native.cgroupdriver=systemd"],
@@ -97,6 +101,11 @@ cat > /etc/docker/daemon.json <<EOF
   "log-opts": {
     "max-size": "100m"
   },
+  "insecure-registries": ["harbor.dew.idealworld.group"],
+  "hosts":[
+    "unix:///var/run/docker.sock",
+    "tcp://0.0.0.0:2375"
+  ],
   "storage-driver": "overlay2",
   "storage-opts": [
     "overlay2.override_kernel_check=true"
@@ -104,55 +113,48 @@ cat > /etc/docker/daemon.json <<EOF
 }
 EOF
 
+mkdir -p /etc/systemd/system/docker.service.d
 
 # 添加代理（可选）
-mkdir -p /etc/systemd/system/docker.service.d/
 cat >>/etc/systemd/system/docker.service.d/http-proxy.conf <<EOF
 [Service]
 Environment="HTTP_PROXY=http://<代理host>:<代理端口>" "HTTPS_PROXY=http://<代理host>:<代理端口>" "NO_PROXY=localhost,127.0.0.1,dew.idealworld.group"
 EOF
+
+# dew-maven-plugin 需要调用 docker 服务，推荐使用独立的一个Docker节点，暴露 DockerD 服务。
+# 详见 https://docs.docker.com/config/daemon/
+
+cat >>/etc/systemd/system/docker.service.d/docker.conf <<EOF
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd
+EOF
+-
 
 systemctl daemon-reload
 systemctl restart docker
 systemctl enable docker
 ----
 
-dew-maven-plugin 需要调用 docker 服务，推荐使用独立的一个Docker节点，暴露 DockerD 服务。
-
-.暴露DOCKER_HOST
-[source,bash]
-----
-# 详见 https://docs.docker.com/config/daemon/
-
-mkdir -p /etc/systemd/system/docker.service.d/
-vi /etc/systemd/system/docker.service.d/docker.conf
--
-[Service]
-ExecStart=
-ExecStart=/usr/bin/dockerd
--
-vi /etc/docker/daemon.json
--
-{
-  "hosts":[
-    "unix:///var/run/docker.sock",
-    "tcp://0.0.0.0:2375"
-  ]
-}
-systemctl daemon-reload
-systemctl restart docker
--
-----
-
 IMPORTANT: 生产环境注意做好相应端口的安全策略或是启用证书
 
-==== Kubernetes
+===== Kubernetes（与K3s二选一）
 
-TIP: https://kubernetes.io/docs/setup/independent/install-kubeadm/
+TIP: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
 
 .安装配置
 [source,bash]
 ----
+setenforce 0
+sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
+
+cat <<EOF >  /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+
+sysctl --system
+
 # 使用阿里云镜像加速下载
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
@@ -165,22 +167,14 @@ gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
         http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
 EOF
 
-setenforce 0
-sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
 
-cat <<EOF >  /etc/sysctl.d/k8s.conf
-net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1
-EOF
-
-sysctl --system
 K8S_VERSION="1.18"
 yum install -y kubelet-${K8S_VERSION} kubeadm-${K8S_VERSION} kubectl-${K8S_VERSION} --disableexcludes=kubernetes
 systemctl enable --now kubelet
 
 ----
 
-TIP: https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/
+TIP: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/
 
 .Master安装配置
 [source,bash]
@@ -207,17 +201,16 @@ mkdir -p $HOME/.kube
 cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 chown $(id -u):$(id -g) $HOME/.kube/config
 
+export KUBECONFIG=/etc/kubernetes/admin.conf
+
 # 查看集群状态
 kubectl get cs
 
 # 安装flannel
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/a70459be0084506e4ec919aa1c114638878db11b/Documentation/kube-flannel.yml
+kubectl apply -f https://docs.projectcalico.org/v3.14/manifests/calico.yaml
 
 # 都为Running后表示完成
 kubectl get pods --all-namespaces
-
-# 创建命名空间，方便后文使用
-kubectl create ns devops
 ----
 
 [NOTE]
@@ -228,7 +221,7 @@ kubectl create ns devops
 ``kubectl taint nodes --all node-role.kubernetes.io/master-``
 ====
 
-TIP: https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/
+TIP: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/
 
 .Node安装配置
 [source,bash]
@@ -244,17 +237,6 @@ k8s-node2     Ready    <none>   8m54s   v1.18
 k8s-node3     Ready    <none>   8m51s   v1.18
 k8s-node4     Ready    <none>   8m49s   v1.18
 -
-----
-
-.Master HA配置
-----
-# @see https://kubernetes.io/docs/setup/independent/high-availability/
-----
-
-.Node功能划分（打label）
-----
-kubectl label nodes k8s-nodeX k8s-nodeX ...  group=app
-kubectl label nodes k8s-nodeX k8s-nodeX ...  group=devops
 ----
 
 .添加外部DNS服务，如dnsmasq
@@ -274,28 +256,13 @@ data:
 -
 ----
 
-==== Helm
-
-TIP: https://helm.sh/docs/intro/install/
-
-.安装配置
-[source,bash]
-----
-curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-# 添加charts repo
-helm repo add stable https://kubernetes-charts.storage.googleapis.com/
-helm repo update
-# 查看helm版本
-helm version
-----
-
-==== Metrics Server
+===== Metrics Server（仅Kuberentes可用）
 
 TIP: 若要使用HPA(Horizontal Pod Autoscaler)，需要安装 resource metrics API,官方推荐 Metrics Server +
 @see https://github.com/kubernetes-incubator/metrics-server +
 helm chart: https://github.com/helm/charts/tree/master/stable/metrics-server
 
-.安装配置
+.安装配置（新版未验证）
 [source,bash]
 ----
 git clone https://github.com/kubernetes-incubator/metrics-server.git
@@ -319,11 +286,99 @@ kubectl top node
 kubectl top pod
 ----
 
-==== Nginx Ingress Controller
+===== K3s（与Kuberntes二选一）
+
+.安装配置
+[source,bash]
+----
+# Docker 修改
+# K3s使用的是cgroupfs
+# 去掉 /etc/docker/daemon.json 中的 "exec-opts": ["native.cgroupdriver=systemd"]
+# systemctl daemon-reload
+# systemctl restart docker
+
+# 安装Server
+curl -sfL https://docs.rancher.cn/k3s/k3s-install.sh | INSTALL_K3S_MIRROR=cn INSTALL_K3S_EXEC="server --docker --no-deploy traefik" sh -
+# 获取Token
+cat /var/lib/rancher/k3s/server/token
+# 安装Agent
+curl -sfL https://docs.rancher.cn/k3s/k3s-install.sh | \
+  INSTALL_K3S_MIRROR=cn INSTALL_K3S_EXEC="--docker --no-deploy traefik --no-deploy servicelb" \
+  K3S_URL=https://<SERVER IP>:6443 K3S_TOKEN=<TOKEN> sh -
+
+# 查看k3s状态
+k3s kubectl get nodes -o wide
+
+# 安装Kubectl
+# 使用阿里云镜像加速下载
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=http://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=0
+repo_gpgcheck=0
+gpgkey=http://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg
+        http://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg
+EOF
+yum install -y kubectl
+cp /etc/rancher/k3s/k3s.yaml   ~/.kube/config
+
+# 使用kubectl查看k3s状态
+kubectl get nodes -o wide
+kubectl get pod -n kube-system
+----
+
+===== Kubernetes/K3s前置配置
+
+.安装配置
+[source,bash]
+----
+# 创建分组
+kubectl label nodes <NODE NAME X> group=app
+kubectl label nodes <NODE NAME Y> group=devops
+
+# 创建namespaces
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx-ingress
+  labels:
+    name: nginx-ingress
+EOF
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: devops
+  labels:
+    name: devops
+EOF
+----
+
+===== Helm
+
+TIP: https://helm.sh/docs/intro/install/
+
+.安装配置
+[source,bash]
+----
+curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+# 添加charts repo
+helm repo remove stable
+helm repo add stable http://mirror.azure.cn/kubernetes/charts/
+helm repo update
+# 查看helm版本
+helm version
+----
+
+===== Nginx Ingress Controller
+
 TIP: chart: https://github.com/helm/charts/tree/master/stable/nginx-ingress +
 源码：https://github.com/kubernetes/ingress-nginx +
 官网：https://kubernetes.github.io/ingress-nginx/ +
-Nginx ingress ConfigMap配置： https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/configmap.md#max-worker-connections
+Nginx ingress ConfigMap配置： https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/configmap.md
 
 .安装配置
 [source,bash]
@@ -332,109 +387,111 @@ Nginx ingress ConfigMap配置： https://github.com/kubernetes/ingress-nginx/blo
 helm install dew-nginx stable/nginx-ingress --namespace nginx-ingress \
     --set controller.kind=DaemonSet \
     --set controller.hostNetwork=true \
-    --set controller.metrics.enabled=true \
-    --set nodeSelector.group=devops
+    --set defaultBackend.enabled=false \
+    --set controller.metrics.enabled=true
+
+# 删除 helm uninstall dew-nginx --namespace nginx-ingress
 ----
 
-==== Dashboard
+===== Harbor
+
+====== 非容器化安装（推荐）
+
+TIP: https://github.com/goharbor/harbor/blob/master/docs/install-config/_index.md
+
+====== 容器化安装
+
+TIP: chart: https://github.com/goharbor/harbor-helm
 
 .安装配置
 [source,bash]
 ----
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Secret
-metadata:
-  labels:
-    k8s-app: kubernetes-dashboard
-  name: kubernetes-dashboard-certs
-  namespace: kube-system
-type: Opaque
-EOF
+helm repo add harbor https://helm.goharbor.io
+helm repo update
+helm install dew-harbor harbor/harbor --namespace devops \
+    --set expose.type=ingress \
+    --set expose.ingress.hosts.core=harbor.dew.idealworld.group \
+    --set expose.ingress.hosts.notary=notary.dew.idealworld.group \
+    --set externalURL=https://harbor.dew.idealworld.group \
+    --set core.nodeSelector.group=devops \
+    --set portal.nodeSelector.group=devops \
+    --set jobservice.nodeSelector.group=devops \
+    --set registry.nodeSelector.group=devops \
+    --set chartmuseum.nodeSelector.group=devops \
+    --set clair.nodeSelector.group=devops \
+    --set notary.nodeSelector.group=devops \
+    --set database.internal.nodeSelector.group=devops \
+    --set redis.internal.nodeSelector.group=devops
 
-# 安装，不使用代理方式需要加上 --set image.repository=registry.cn-hangzhou.aliyuncs.com/google_containers/kubernetes-dashboard-amd64
-helm install stable/kubernetes-dashboard --name dew-dashboard --namespace kube-system --version=1.4.0 \
-    --set rbac.clusterAdminRole=true \
-    --set serviceAccount.create=true \
-    --set ingress.enabled=true \
-    --set-string ingress.annotations."nginx\.ingress\.kubernetes\.io/backend-protocol"="HTTPS" \
-    --set ingress.hosts={dashboard.dew.idealworld.group} \
-    --set ingress.tls[0].hosts={dashboard.dew.idealworld.group},ingress.tls[0].secretName=kubernetes-dashboard-certs \
-    --set nodeSelector.group=devops
+# 删除 helm uninstall dew-harbor --namespace devops
 
-# 获取Token
-kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep dew-dashboard-kubernetes-dashboard | awk '{print $1}')
-
-# 添加域名到客户机hosts并访问 https://dashboard.dew.idealworld.group
+# 添加 ``"insecure-registries": ["harbor.dew.idealworld.group"]`` 到 /etc/docker/daemon.json
+# 登录Harbor docker login <host> -u <user> -p <password>
+docker login harbor.dew.idealworld.group -u admin -p Harbor12345<请修改>
+# e.g. 上传镜像
+docker pull dewms/devops:latest
+docker tag dewms/devops:latest harbor.dew.idealworld.group/dewms/devops:latest
+docker push harbor.dew.idealworld.group/dewms/devops:latest
 ----
 
-TIP: 另一款 Kubernetes Dashboard 推荐：link:https://github.com/herbrandson/k8dash[k8dash]
+===== Gitlab
 
-==== Elasticsearch
+====== 非容器化安装（推荐）
 
-TIP: https://github.com/elastic/helm-charts/blob/master/elasticsearch 注意仔细查看各参数设值的说明。 +
-     * 暂不推荐Elasticsearch使用容器化。
+TIP: https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package
 
 .安装配置
 [source,bash]
 ----
-app=dew-elasticsearch
-size=200Gi
+curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
+yum install -y gitlab-ce
 
-# 使用NFS存储，创建PV
+# 按需修改，可修改说明见: https://docs.gitlab.com/omnibus/settings/
+vi /etc/gitlab/gitlab.rb
+-
+external_url 'http://gitlab.dew.idealworld.group'
+...
+-
+gitlab-ctl reconfigure
 
-# 根据replicas的个数来决定下面PV的创建个数
-# 在NFS节点中创建NFS目录
-for i in {0..1}; do
-mkdir -p /data/nfs/elasticsearch/${i}
-chmod 775 /data/nfs/elasticsearch/${i}
-done
-
-# 在Kubernetes Master节点中创建PV
-for i in {0..1}; do
-cat <<EOF | kubectl -n devops apply -f -
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  labels:
-    app: ${app}
-  name: ${app}-${i}
-spec:
-  capacity:
-    storage: ${size}
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Recycle
-  nfs:
-    path: /data/nfs/elasticsearch/${i}
-    server: nfs.dew.idealworld.group
-EOF
-done
-
-# 使用helm安装
-helm repo add elastic https://helm.elastic.co
-
-# 若使用 StorageClass，只需设置 --set volumeClaimTemplate.storageClassName="yourscname" 无需创建PV
-# TIP : 请注意chart版本及对应参数名的变更
-helm install --name dew-elasticsearch elastic/elasticsearch --namespace devops --version=6.5.0 \
-    --set imageTag=6.6.1 \
-    --set clusterName=dew-elasticsearch \
-    --set nodeGroup=master \
-    --set masterService=dew-elasticsearch-master \
-    --set replicas=2 \
-    --set minimumMasterNodes=2 \
-    --set volumeClaimTemplate.storageClassName="" \
-    --set volumeClaimTemplate.resources.requests.storage=200Gi \
-    --set fsGroup=0 \
-    --set clusterHealthCheckParams="" \
-    --set ingress.enabled=true \
-    --set ingress.hosts={es.dew.idealworld.group} \
-    --set nodeSelector.group=devops
+# 浏览器访问并修改root密码
 ----
 
-TIP: 其他Elasticsearch的helm chart : https://github.com/helm/charts/tree/master/stable/elasticsearch
+.HA配置
+----
+# @see https://about.gitlab.com/solutions/high-availability/
+----
 
-==== Kibana
+===== Sonatype Nexus
+
+====== 非容器化安装（推荐）
+
+TIP: https://help.sonatype.com/repomanager3/installation
+
+====== 容器化安装
+
+TIP: https://github.com/Oteemo/charts/tree/master/charts/sonatype-nexus
+
+.部署化部署
+[source,bash]
+----
+helm repo add oteemocharts https://oteemo.github.io/charts
+helm repo update
+helm install dew-nexus oteemocharts/sonatype-nexus --namespace devops \
+    --set ingress.enabled=true \
+    --set nexusProxy.env.nexusHttpHost=maven.dew.idealworld.group \
+    --set nexusProxy.env.nexusDockerHost=maven.dew.idealworld.group
+
+# 用户名 admin 密码 admin123
+----
+
+==== 监控组件
+
+===== Elasticsearch
+
+TIP: 建议非容器化部署
+
+===== Kibana
 
 TIP: https://github.com/helm/charts/tree/master/stable/kibana
 
@@ -503,7 +560,7 @@ helm install --name dew-kibana stable/kibana --namespace devops --version=2.2.0 
     --set nodeSelector.group=devops
 ----
 
-==== Prometheus & Grafana
+===== Prometheus & Grafana
 
 TIP: https://github.com/helm/charts/tree/master/stable/prometheus-operator
 
@@ -750,7 +807,7 @@ helm install stable/prometheus-operator --name dew-prometheus-operator --namespa
     EOF
     -
 
-==== Fluentd
+===== Fluentd
 
 TIP: https://github.com/kiwigrid/helm-charts/tree/master/charts/fluentd-elasticsearch +
      https://kiwigrid.github.io/
@@ -793,7 +850,7 @@ helm install kiwigrid/fluentd-elasticsearch --name dew-fluentd-es --namespace de
     --set configMaps.useDefaults.monitoringConf=false
 ----
 
-==== Jaeger
+===== Jaeger
 
 TIP: https://github.com/jaegertracing/jaeger-operator
 
@@ -912,202 +969,5 @@ spec:
 EOF
 ----
 
-=== 开发环境安装配置
-
-开发环境推荐使用Docker for desktop安装Docker和Kubernetes的基础环境，大陆安装可参见 https://github.com/AliyunContainerService/k8s-for-docker-desktop 此项目。
-
-Windows用户建议升级到Windows 10 2004版本及以上，启用WSL2。
 
 
-编辑本机的hosts添加映射
-
-  127.0.0.1 dockerd.dew.test
-  127.0.0.1 harbor.dew.test
-  127.0.0.1 notary.dew.test
-  127.0.0.1 maven.dew.test
-  127.0.0.1 gitlab.dew.test
-  127.0.0.1 todo-uat-api.dew.test
-  127.0.0.1 todo-uat.dew.test
-  127.0.0.1 todo-prod-api.dew.test
-  127.0.0.1 todo-prod.dew.test
-
-=== 准备
-
-[source,bash]
-----
-# 创建label，这里的node名称为docker-desktop
-kubectl label nodes docker-desktop group=app
-# 创建namespaces
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: nginx-ingress
-  labels:
-    name: nginx-ingress
-EOF
-
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: devops
-  labels:
-    name: devops
-EOF
-
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: dew-test
-  labels:
-    name: dew-test
-EOF
-
-kubectl -n dew-test create secret docker-registry dew-registry \
- --docker-server=https://harbor.dew.test/v2 \
- --docker-username=dew \
- --docker-password=Dew123456
-
-kubectl -n dew-test patch serviceaccount default \
- -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
-
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: dew-uat
-  labels:
-    name: dew-uat
-EOF
-
-kubectl -n dew-uat create secret docker-registry dew-registry \
- --docker-server=https://harbor.dew.test/v2 \
- --docker-username=dew \
- --docker-password=Dew123456
-
-kubectl -n dew-uat patch serviceaccount default \
- -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
-
-cat <<EOF | kubectl apply -f -
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: dew-prod
-  labels:
-    name: dew-prod
-EOF
-
-kubectl -n dew-prod create secret docker-registry dew-registry \
- --docker-server=https://harbor.dew.test/v2 \
- --docker-username=dew \
- --docker-password=Dew123456
-
-kubectl -n dew-prod patch serviceaccount default \
- -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
-
-# 创建 Ingress
-cat <<EOF | kubectl apply -f -
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  annotations:
-  name: dew-ingress
-  namespace: dew-uat
-spec:
-  rules:
-  - host: todo-uat-api.dew.test
-    http:
-      paths:
-      - backend:
-          serviceName: kernel
-          servicePort: 8080
-        path: /
-  - host: todo-uat.dew.test
-    http:
-      paths:
-      - backend:
-          serviceName: todo-frontend
-          servicePort: 80
-        path: /
-EOF
-----
-
-==== Helm
-
-TIP: https://helm.sh/docs/intro/install/
-
-.安装配置
-[source,bash]
-----
-curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
-# 添加charts repo
-helm repo remove stable && helm repo add stable http://mirror.azure.cn/kubernetes/charts/
-helm repo update
-# 查看helm版本
-helm version
-----
-
-==== Nginx Ingress Controller
-TIP: chart: https://github.com/helm/charts/tree/master/stable/nginx-ingress +
-源码：https://github.com/kubernetes/ingress-nginx +
-官网：https://kubernetes.github.io/ingress-nginx/ +
-Nginx ingress ConfigMap配置： https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/configmap.md
-
-.安装配置
-[source,bash]
-----
-# 使用如下方式将80 443暴露出来
-helm install dew-nginx stable/nginx-ingress --namespace nginx-ingress \
-    --set controller.kind=DaemonSet \
-    --set controller.hostNetwork=true \
-    --set controller.metrics.enabled=true
-
-# 删除 helm uninstall dew-nginx --namespace nginx-ingress
-----
-
-==== Harbor
-TIP: chart: https://github.com/goharbor/harbor-helm
-
-.安装配置
-[source,bash]
-----
-helm repo add harbor https://helm.goharbor.io
-helm repo update
-helm install dew-harbor harbor/harbor --namespace devops \
-    --set expose.ingress.hosts.core=harbor.dew.test \
-    --set expose.ingress.hosts.notary=notary.dew.test \
-    --set externalURL=https://harbor.dew.test
-
-# 删除 helm uninstall dew-harbor --namespace devops
-
-# 添加 ``"insecure-registries": ["harbor.dew.test"]`` 到 /etc/docker/daemon.json
-# 登录Harbor docker login <host> -u <user> -p <password>
-docker login harbor.dew.test -u admin -p Harbor12345
-# e.g. 上传镜像
-docker pull dewms/devops:latest
-docker tag dewms/devops:latest harbor.dew.test/dewms/devops:latest
-docker push harbor.dew.test/dewms/devops:latest
-
-# 添加 dew / Dew123456 用户
-# 创建 dew-test / dew-uat / dew-prod 项目并添加 dew 用户为管理员
-----
-
-==== Sonatype Nexus
-TIP: https://github.com/Oteemo/charts/tree/master/charts/sonatype-nexus
-
-.安装配置
-[source,bash]
-----
-helm repo add oteemocharts https://oteemo.github.io/charts
-helm repo update
-helm install dew-nexus oteemocharts/sonatype-nexus --namespace devops \
-    --set ingress.enabled=true \
-    --set nexusProxy.env.nexusHttpHost=maven.dew.test \
-    --set nexusProxy.env.nexusDockerHost=maven.dew.test \
-
-# 用户名 admin 密码 admin123
-----
-
-==== Gitlab

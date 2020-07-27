@@ -5,3 +5,97 @@
 # 执行测试
 mvn verify
 ----
+
+===== 手工初始化
+
+编辑本机的hosts添加映射，E.g.
+
+  127.0.0.1 dockerd.dew.test
+  127.0.0.1 harbor.dew.test
+  127.0.0.1 notary.dew.test
+  127.0.0.1 maven.dew.test
+  127.0.0.1 gitlab.dew.test
+  127.0.0.1 todo-uat-api.dew.test
+  127.0.0.1 todo-uat.dew.test
+  127.0.0.1 todo-prod-api.dew.test
+  127.0.0.1 todo-prod.dew.test
+
+[source,bash]
+----
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dew-test
+  labels:
+    name: dew-test
+EOF
+
+kubectl -n dew-test create secret docker-registry dew-registry \
+ --docker-server=https://harbor.dew.test/v2 \
+ --docker-username=dew \
+ --docker-password=Dew123456
+
+kubectl -n dew-test patch serviceaccount default \
+ -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
+
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dew-uat
+  labels:
+    name: dew-uat
+EOF
+
+kubectl -n dew-uat create secret docker-registry dew-registry \
+ --docker-server=https://harbor.dew.test/v2 \
+ --docker-username=dew \
+ --docker-password=Dew123456
+
+kubectl -n dew-uat patch serviceaccount default \
+ -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
+
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dew-prod
+  labels:
+    name: dew-prod
+EOF
+
+kubectl -n dew-prod create secret docker-registry dew-registry \
+ --docker-server=https://harbor.dew.test/v2 \
+ --docker-username=dew \
+ --docker-password=Dew123456
+
+kubectl -n dew-prod patch serviceaccount default \
+ -p '{"imagePullSecrets": [{"name": "dew-registry"}]}'
+
+# 创建 Ingress
+cat <<EOF | kubectl apply -f -
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+  name: dew-ingress
+  namespace: dew-uat
+spec:
+  rules:
+  - host: todo-uat-api.dew.test
+    http:
+      paths:
+      - backend:
+          serviceName: kernel
+          servicePort: 8080
+        path: /
+  - host: todo-uat.dew.test
+    http:
+      paths:
+      - backend:
+          serviceName: todo-frontend
+          servicePort: 80
+        path: /
+EOF
+----

@@ -148,48 +148,6 @@ mongod --auth --port 27017 \
 # @see https://docs.mongodb.com/manual/core/replica-set-high-availability/
 ----
 
-==== Gitlab
-
-TIP: https://docs.gitlab.com/omnibus/README.html#installation-and-configuration-using-omnibus-package
-
-.安装配置
-[source,bash]
-----
-curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | sudo bash
-yum install -y gitlab-ce
-
-# 按需修改，可修改说明见: https://docs.gitlab.com/omnibus/settings/
-vi /etc/gitlab/gitlab.rb
--
-external_url 'http://gitlab.dew.idealworld.group'
-...
--
-gitlab-ctl reconfigure
-
-# 浏览器访问并修改root密码
-----
-
-.HA配置
-----
-# @see https://about.gitlab.com/solutions/high-availability/
-----
-
-==== Harbor
-
-TIP: https://github.com/goharbor/harbor/blob/master/docs/installation_guide.md
-
-.镜像存储
-[source,bash]
-----
-# Harbor安装步骤略过
-# 登录Harbor docker login <host> -u <user> -p <password>
-docker login harbor.dew.idealworld.group -u admin -p Harbor12345
-# e.g. 上传镜像
-docker pull dewms/devops:latest
-docker tag dewms/devops:latest harbor.dew.idealworld.group/dewms/devops:latest
-docker push harbor.dew.idealworld.group/dewms/devops:latest
-----
-
 ==== Dnsmasq
 
 TIP: dnsmasq为轻量级的DNS解析工具，也可用类似的工具替代。
@@ -201,7 +159,7 @@ yum install -y dnsmasq
 systemctl enable dnsmasq
 systemctl start dnsmasq
 
-# 编辑本机的 /etc/hosts 添加映射
+# 编辑本机的 /etc/hosts 添加映射，E.g.
 -
 x.x.x.x gitlab.dew.idealworld.group
 x.x.x.x config.dew.idealworld.group
