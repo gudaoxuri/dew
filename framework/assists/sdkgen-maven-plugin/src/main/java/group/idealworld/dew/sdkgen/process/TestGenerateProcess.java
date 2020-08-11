@@ -87,22 +87,31 @@ public class TestGenerateProcess {
     }
 
     private static String scanMainClassPath(File basePath) {
-        return scanMainClassPath(null, Objects.requireNonNull(new File(basePath.getPath() + File.separator + "src" + File.separator + "main")
+        String[] mainClassPath = {null};
+        scanMainClassPath(null, Objects.requireNonNull(new File(basePath.getPath() + File.separator + "src" + File.separator + "main")
                 .listFiles((dir, name) ->
                         // TODO 其它语言
                         name.equals("java") || name.equals("scala") || name.equals("groovy")
-                )));
+                )), mainClassPath);
+        if (mainClassPath[0] == null) {
+            throw new RuntimeException("No main method found.");
+        } else {
+            return mainClassPath[0];
+        }
     }
 
-    private static String scanMainClassPath(String classPackage, File[] files) {
+    private static void scanMainClassPath(String classPackage, File[] files, String[] foundMainClassPath) {
         for (File file : files) {
+            if (foundMainClassPath[0] != null) {
+                return;
+            }
             if (file.isDirectory()) {
-                return scanMainClassPath(
+                scanMainClassPath(
                         // 为空时表示第一次进入，文件名为java scala groovy 等，要忽略
                         classPackage == null
                                 ? "" : classPackage.isBlank()
                                 ? file.getName() : classPackage + "." + file.getName(),
-                        Objects.requireNonNull(file.listFiles()));
+                        Objects.requireNonNull(file.listFiles()), foundMainClassPath);
             } else {
                 var fileContent = $.file.readAllByFile(file, StandardCharsets.UTF_8);
                 if (fileContent.contains("@SpringBootApplication")
@@ -110,11 +119,10 @@ public class TestGenerateProcess {
                         || fileContent.contains("def main(")
                         || fileContent.contains("static void main(")
                 ) {
-                    return classPackage;
+                    foundMainClassPath[0] = classPackage;
                 }
             }
         }
-        throw new RuntimeException("No main method found.");
     }
 
     @SneakyThrows
