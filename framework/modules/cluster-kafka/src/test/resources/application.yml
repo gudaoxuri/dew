@@ -1,0 +1,23 @@
+dew:
+  cluster:
+    mq: kafka
+
+spring:
+  kafka:
+    consumer:
+      group-id: test
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      enable-auto-commit: true
+      bootstrap-servers: ["10.200.168.10:9092","10.200.168.11:9092","10.200.168.12:9092"]
+      auto-offset-reset: latest
+      client-id: ceshi
+      max-poll-records: 10
+    producer:
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      key-deserializer: org.apache.kafka.common.serialization.StringSerializer
+      bootstrap-servers: ["10.200.168.10:9092","10.200.168.11:9092","10.200.168.12:9092"]
+      retries: 3
+      acks: 1
+      client-id: ceshi1
+

@@ -52,6 +52,8 @@
         <simple-java-mail.version>5.1.3</simple-java-mail.version>
         <jakarta.validation.version>2.0.2</jakarta.validation.version>
         <hbase.version>2.0.0</hbase.version>
+        <kafka.version>2.1.1</kafka.version>
+        <spring.kafka.version>2.2.7.RELEASE</spring.kafka.version>
 
         <dew-common.version>3.0.0-SNAPSHOT</dew-common.version>
         <springdoc.version>1.4.2</springdoc.version>
@@ -184,6 +186,16 @@
                         <artifactId>hadoop-aws</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>${kafka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.kafka</groupId>
+                <artifactId>spring-kafka</artifactId>
+                <version>${spring.kafka.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

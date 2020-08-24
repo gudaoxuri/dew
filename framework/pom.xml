@@ -40,6 +40,7 @@
         <module>modules/cluster-hazelcast</module>
         <module>modules/cluster-rabbit</module>
         <module>modules/cluster-mqtt</module>
+        <module>modules/cluster-kafka</module>
         <module>modules/hbase-starter</module>
         <module>modules/boot-starter</module>
         <module>modules/idempotent-starter</module>
