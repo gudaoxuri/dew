@@ -32,7 +32,7 @@ import java.util.Map;
  *
  * @author gudaoxuri
  */
-@RestController("example2")
+@RestController
 @Tag(name = "exmaple2", description = "示例应用2说明")
 @Validated // URL 类型的验证需要使用此注解
 public class WebExample2Controller {

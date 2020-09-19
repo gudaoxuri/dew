@@ -39,7 +39,7 @@ import java.util.Map;
  *
  * @author gudaoxuri
  */
-@RestController()
+@RestController
 @Tag(name = "example", description = "示例应用说明")
 @Validated // URL 类型的验证需要使用此注解
 public class WebExampleController {

@@ -50,7 +50,7 @@ import java.util.Map;
  * @author gudaoxuri
  */
 @RestController
-@Tag(name = "测试", description = "Test API")
+@Tag(name = "test", description = "Test API")
 @RequestMapping(value = "/test/")
 @Validated
 public class WebController {
