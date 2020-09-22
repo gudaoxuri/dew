@@ -42,10 +42,10 @@ import static group.idealworld.dew.sdkgen.Constants.*;
 public class SDKGenerateMojo extends CodeGenMojo {
 
     /**
-     * The Sdk gen skip.
+     * The Sdk gen.
      */
-    @Parameter(property = FLAG_DEW_SDK_GEN_SKIP)
-    protected boolean sdkGenSkip;
+    @Parameter(property = FLAG_DEW_SDK_GEN)
+    protected boolean sdkGen;
 
     @Parameter(property = FLAG_DEW_SDK_RELEASE_SKIP)
     protected boolean sdkReleaseSkip;
@@ -75,13 +75,13 @@ public class SDKGenerateMojo extends CodeGenMojo {
     @Override
     public void execute() throws MojoExecutionException {
         Map<String, String> props = MavenHelper.getMavenProperties(mavenSession);
-        MavenHelper.formatParameters(FLAG_DEW_SDK_GEN_SKIP, props)
-                .ifPresent(obj -> sdkGenSkip = Boolean.parseBoolean(obj));
+        MavenHelper.formatParameters(FLAG_DEW_SDK_GEN, props)
+                .ifPresent(obj -> sdkGen = Boolean.parseBoolean(obj));
         MavenHelper.formatParameters(FLAG_DEW_SDK_RELEASE_SKIP, props)
                 .ifPresent(obj -> sdkReleaseSkip = Boolean.parseBoolean(obj));
         MavenHelper.formatParameters(FLAG_DEW_SDK_GEN_LANG, props)
                 .ifPresent(obj -> language = obj);
-        if (sdkGenSkip) {
+        if (!sdkGen) {
             return;
         }
         var sdkMavenInfo = SDKGenerateProcess.process(this, mavenProject, language);

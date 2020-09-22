@@ -33,7 +33,6 @@
     <packaging>jar</packaging>
 
     <properties>
-        <mqtt.version>1.2.1</mqtt.version>
     </properties>
 
     <dependencies>

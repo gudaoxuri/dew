@@ -17,11 +17,12 @@
 package group.idealworld.dew.core.notification;
 
 import com.ecfront.dew.common.Resp;
-import org.simplejavamail.email.Email;
+import org.simplejavamail.api.email.Email;
+import org.simplejavamail.api.mailer.Mailer;
+import org.simplejavamail.api.mailer.MailerRegularBuilder;
+import org.simplejavamail.api.mailer.config.TransportStrategy;
 import org.simplejavamail.email.EmailBuilder;
-import org.simplejavamail.mailer.Mailer;
 import org.simplejavamail.mailer.MailerBuilder;
-import org.simplejavamail.mailer.config.TransportStrategy;
 
 import java.util.Set;
 
@@ -44,7 +45,7 @@ public class MAILChannel extends AbsChannel {
             String username = (String) notifyConfig.getArgs().get("username");
             String password = (String) notifyConfig.getArgs().get("password");
             String secure = (String) notifyConfig.getArgs().getOrDefault("secure", "");
-            MailerBuilder.MailerRegularBuilder builder = MailerBuilder
+            MailerRegularBuilder builder = MailerBuilder
                     .withSMTPServer(host, port, username, password);
             switch (secure.toLowerCase()) {
                 case "tls":

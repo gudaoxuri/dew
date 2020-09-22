@@ -39,10 +39,10 @@ import static group.idealworld.dew.sdkgen.Constants.*;
 public class TestGenerateMojo extends AbstractMojo {
 
     /**
-     * The Sdk gen skip.
+     * The Sdk gen.
      */
-    @Parameter(property = FLAG_DEW_SDK_GEN_SKIP)
-    protected boolean sdkGenSkip;
+    @Parameter(property = FLAG_DEW_SDK_GEN)
+    protected boolean sdkGen;
 
     @Parameter(name = FLAG_DEW_MAIN_CLASS)
     private String mainClass;
@@ -62,14 +62,14 @@ public class TestGenerateMojo extends AbstractMojo {
     @Override
     public void execute() {
         Map<String, String> props = MavenHelper.getMavenProperties(mavenSession);
-        MavenHelper.formatParameters(FLAG_DEW_SDK_GEN_SKIP, props)
-                .ifPresent(obj -> sdkGenSkip = Boolean.parseBoolean(obj));
+        MavenHelper.formatParameters(FLAG_DEW_SDK_GEN, props)
+                .ifPresent(obj -> sdkGen = Boolean.parseBoolean(obj));
         MavenHelper.formatParameters(FLAG_DEW_MAIN_CLASS, props)
                 .ifPresent(obj -> mainClass = obj);
         MavenHelper.formatParameters(FLAG_DEW_SDK_GEN_OPENAPI_PATH, props)
                 .ifPresent(obj -> openAPIPath = obj);
-        if (sdkGenSkip) {
-            log.debug("Parameter [{}=true], skip the SDK generation.", FLAG_DEW_SDK_GEN_SKIP);
+        if (!sdkGen) {
+            log.debug("Parameter [{}=false], skip the SDK generation.", FLAG_DEW_SDK_GEN);
             return;
         }
         TestGenerateProcess.process(mavenSession.getCurrentProject().getBasedir(), openAPIPath, mainClass);

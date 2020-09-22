@@ -33,7 +33,6 @@
     <packaging>jar</packaging>
 
     <properties>
-        <opentracing.version>0.31.0</opentracing.version>
     </properties>
 
     <dependencies>

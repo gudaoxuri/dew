@@ -24,9 +24,9 @@ package group.idealworld.dew.sdkgen;
 public class Constants {
 
     /**
-     * The constant FLAG_DEW_SDK_GEN_SKIP.
+     * The constant FLAG_DEW_SDK_GEN.
      */
-    public static final String FLAG_DEW_SDK_GEN_SKIP = "dew_sdk_gen_skip";
+    public static final String FLAG_DEW_SDK_GEN = "dew_sdk_gen";
     /**
      * The constant FLAG_DEW_SDK_RELEASE_SKIP.
      */

@@ -20,7 +20,7 @@
 |===
 |名称 |默认值 |说明
 
-|dew_sdk_gen_skip |false |是否跳过SDK生成
+|dew_sdk_gen |false |是否生成SDK
 |dew_sdk_release_skip |false |是否跳过SDK发布
 |dew_main_class | |Main方法所在Class（包名+类名），为空时启用自动发现功能
 |dew_sdk_gen_openapi_path | |自定义http的open API路径，为空时通过单元测试自动生成

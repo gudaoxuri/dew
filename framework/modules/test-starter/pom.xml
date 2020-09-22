@@ -33,7 +33,6 @@
     <packaging>jar</packaging>
 
     <properties>
-        <embedded-redis.version>0.6</embedded-redis.version>
     </properties>
 
     <dependencies>
