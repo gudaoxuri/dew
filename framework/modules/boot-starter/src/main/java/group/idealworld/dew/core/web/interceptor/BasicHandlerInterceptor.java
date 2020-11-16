@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 import javax.security.auth.message.AuthException;
 import javax.servlet.http.HttpServletRequest;
@@ -43,13 +43,13 @@ import java.util.stream.Collectors;
  * @author gudaoxuri
  * @author gjason
  */
-public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
+public class BasicHandlerInterceptor implements AsyncHandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(BasicHandlerInterceptor.class);
 
     private static final String URL_SPLIT = "@";
 
-    private AntPathMatcher pathMatcher = new AntPathMatcher();
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     // [method@uri]
     private static Set<String> BLOCK_URIS = new HashSet<>();
@@ -128,7 +128,7 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
         response.setDateHeader("Expires", 0);
 
         if (request.getMethod().equalsIgnoreCase("OPTIONS") || request.getMethod().equalsIgnoreCase("HEAD")) {
-            return super.preHandle(request, response, handler);
+            return true;
         }
 
         String token;
@@ -169,7 +169,7 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
             if (!ROLE_AUTH.isEmpty()) {
                 String finalToken = token;
                 boolean pass = ROLE_AUTH.keySet().stream()
-                        .filter(strings -> pathMatcher.match(strings, reqUri))
+                        .filter(strings -> pathMatcher.matchStart(strings, reqUri))
                         .min(pathMatcher.getPatternComparator(reqUri))
                         .map(matchedUri -> {
                             // 找到需要鉴权的URI
@@ -209,7 +209,7 @@ public class BasicHandlerInterceptor extends HandlerInterceptorAdapter {
                 request.getMethod(),
                 request.getRequestURI(),
                 request.getQueryString() == null ? "" : "?" + request.getQueryString(), Dew.context().getSourceIP());
-        return super.preHandle(request, response, handler);
+        return true;
     }
 
 }

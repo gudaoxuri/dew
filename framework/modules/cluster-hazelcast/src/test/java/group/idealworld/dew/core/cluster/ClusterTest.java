@@ -17,26 +17,26 @@
 package group.idealworld.dew.core.cluster;
 
 import com.hazelcast.core.Hazelcast;
-import group.idealworld.dew.core.cluster.test.ClusterLockTest;
-import group.idealworld.dew.core.cluster.test.ClusterMQTest;
-import group.idealworld.dew.core.cluster.test.ClusterMapTest;
 import group.idealworld.dew.core.cluster.spi.hazelcast.HazelcastClusterLockWrap;
 import group.idealworld.dew.core.cluster.spi.hazelcast.HazelcastClusterMQ;
 import group.idealworld.dew.core.cluster.spi.hazelcast.HazelcastClusterMapWrap;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import group.idealworld.dew.core.cluster.test.ClusterLockTest;
+import group.idealworld.dew.core.cluster.test.ClusterMQTest;
+import group.idealworld.dew.core.cluster.test.ClusterMapTest;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Cluster test.
  *
  * @author gudaoxuri
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootApplication
 @SpringBootTest
 public class ClusterTest {
@@ -51,7 +51,7 @@ public class ClusterTest {
     /**
      * Init.
      */
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         Hazelcast.newHazelcastInstance();
     }

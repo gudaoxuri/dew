@@ -16,17 +16,17 @@
 
 package group.idealworld.dew.core.cluster;
 
-import group.idealworld.dew.core.cluster.test.ClusterMQTest;
 import group.idealworld.dew.core.cluster.spi.mqtt.MqttClusterMQ;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import group.idealworld.dew.core.cluster.test.ClusterMQTest;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
@@ -36,10 +36,10 @@ import java.util.concurrent.CountDownLatch;
  *
  * @author gudaoxuri
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootApplication
 @SpringBootTest
-@Ignore("Need start mqtt server, e.g. docker run -it -p 1883:1883 -p 9001:9001 eclipse-mosquitto")
+@Disabled("Need start mqtt server, e.g. docker run -it -p 1883:1883 -p 9001:9001 eclipse-mosquitto")
 public class ClusterTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterMQTest.class);

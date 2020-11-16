@@ -30,7 +30,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -230,10 +230,10 @@ public class WebController {
                                          @RequestParam("date") LocalDate localDate,
                                          @RequestParam("time") LocalTime localTime,
                                          @RequestParam("instant") Instant instant) {
-        Assert.assertNotNull(localDate);
-        Assert.assertNotNull(localDateTime);
-        Assert.assertNotNull(localTime);
-        Assert.assertNotNull(instant);
+        Assertions.assertNotNull(localDate);
+        Assertions.assertNotNull(localDateTime);
+        Assertions.assertNotNull(localTime);
+        Assertions.assertNotNull(instant);
         return Resp.success(null);
     }
 
@@ -245,7 +245,7 @@ public class WebController {
      */
     @PostMapping("time/body")
     public Resp<String> timeConvertBody(@RequestBody TimeDTO timeDTO) {
-        Assert.assertNotNull(timeDTO);
+        Assertions.assertNotNull(timeDTO);
         return Resp.success(null);
     }
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright 2019. the original author or authors.
+# Copyright 2020. the original author or authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# ======================================================
 set -o pipefail
 set -u
 
@@ -38,7 +37,7 @@ MINIO_BUCKET_NAME=dew
 GITLAB_URL=http://gitlab.dew.test
 GITLAB_RUNNER_NAMESPACE=devops
 GITLAB_RUNNER_NAME=dew-runner
-GITLAB_RUNNER_IMAGE=dewms/devops:3.0.0-SNAPSHOT
+GITLAB_RUNNER_IMAGE=dewms/devops:3.0.0-Beta1
 GITLAB_RUNNER_REG_TOKEN=3mezus8cX9qAjkrNY4B
 GITLAB_RUNNER_PROFILE=test
 

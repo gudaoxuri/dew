@@ -19,7 +19,7 @@ package com.trc.test.auth;
 
 import com.ecfront.dew.common.Resp;
 import group.idealworld.dew.Dew;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -49,16 +49,16 @@ public class AuthTest {
         userDTO.setPhone("15957199704");
         userDTO.setRole("admin");
         Resp registerResult = testRestTemplate.postForObject("/auth/register", userDTO, Resp.class);
-        Assert.assertEquals("200", registerResult.getCode());
+        Assertions.assertEquals("200", registerResult.getCode());
 
         AuthController.LoginDTO loginDTO = new AuthController.LoginDTO();
         loginDTO.setIdCard(userDTO.getIdCard());
         loginDTO.setPassword(userDTO.getPassword() + "1");
         Resp<String> loginResult = testRestTemplate.postForObject("/auth/login", loginDTO, Resp.class);
-        Assert.assertEquals("ASXXX0", loginResult.getCode());
+        Assertions.assertEquals("ASXXX0", loginResult.getCode());
         loginDTO.setPassword(userDTO.getPassword());
         loginResult = Resp.generic(testRestTemplate.postForObject("/auth/login", loginDTO, Resp.class), String.class);
-        Assert.assertEquals("200", loginResult.getCode());
+        Assertions.assertEquals("200", loginResult.getCode());
         String token = loginResult.getBody();
 
         HttpHeaders headers = new HttpHeaders();
@@ -66,8 +66,8 @@ public class AuthTest {
         Resp<OptInfoExt> businessResult = Resp.generic(
                 testRestTemplate.exchange("/auth/business/someopt",
                         HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody(), OptInfoExt.class);
-        Assert.assertEquals("200", businessResult.getCode());
-        Assert.assertEquals("331023395739483150", businessResult.getBody().getIdCard());
+        Assertions.assertEquals("200", businessResult.getCode());
+        Assertions.assertEquals("331023395739483150", businessResult.getBody().getIdCard());
 
 
         testRouter(headers);
@@ -76,7 +76,7 @@ public class AuthTest {
         businessResult = Resp.generic(
                 testRestTemplate.exchange("/auth/business/someopt",
                         HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody(), OptInfoExt.class);
-        Assert.assertEquals("401", businessResult.getCode());
+        Assertions.assertEquals("401", businessResult.getCode());
 
 
         testTokenKind(loginDTO);
@@ -93,31 +93,31 @@ public class AuthTest {
 
         //["/auth/register/*","/auth/re?","/user/**","/tes[t]"]
         Resp registerResult = testRestTemplate.postForObject("/auth/register/user", userDTO, Resp.class);
-        Assert.assertEquals("403", registerResult.getCode());
+        Assertions.assertEquals("403", registerResult.getCode());
         registerResult = testRestTemplate.postForObject("/auth/reg", userDTO, Resp.class);
-        Assert.assertEquals("403", registerResult.getCode());
+        Assertions.assertEquals("403", registerResult.getCode());
         registerResult = testRestTemplate.postForObject("/user/register/hello", userDTO, Resp.class);
-        Assert.assertEquals("403", registerResult.getCode());
+        Assertions.assertEquals("403", registerResult.getCode());
         registerResult = testRestTemplate.postForObject("/test", userDTO, Resp.class);
-        Assert.assertEquals("403", registerResult.getCode());
+        Assertions.assertEquals("403", registerResult.getCode());
 
         // roleAuth
         // 没有token
         registerResult = testRestTemplate.exchange("/mgr/register/user",
                 HttpMethod.GET, new HttpEntity<>(null, null), Resp.class).getBody();
-        Assert.assertEquals("401", registerResult.getCode());
+        Assertions.assertEquals("401", registerResult.getCode());
         // admin访问只有user允可的url
         registerResult = testRestTemplate.exchange("/user/only-user-role/xx",
                 HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody();
-        Assert.assertEquals("401", registerResult.getCode());
+        Assertions.assertEquals("401", registerResult.getCode());
         // admin访问只有admin允可的url
         registerResult = testRestTemplate.exchange("/mgr/register/user",
                 HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody();
-        Assert.assertEquals("404", registerResult.getCode());
+        Assertions.assertEquals("404", registerResult.getCode());
         // admin访问admin和user允可的url
         registerResult = testRestTemplate.exchange("/user/u1",
                 HttpMethod.GET, new HttpEntity<>(null, headers), Resp.class).getBody();
-        Assert.assertEquals("404", registerResult.getCode());
+        Assertions.assertEquals("404", registerResult.getCode());
     }
 
     private void testTokenKind(AuthController.LoginDTO loginDTO) {
@@ -138,13 +138,13 @@ public class AuthTest {
                 testRestTemplate.exchange("/auth/business/someopt",
                         HttpMethod.GET, new HttpEntity<>(null, httpHeaders), Resp.class).getBody(),
                 OptInfoExt.class);
-        Assert.assertEquals("401", bussinessResult.getCode());
+        Assertions.assertEquals("401", bussinessResult.getCode());
         httpHeaders.set(Dew.dewConfig.getSecurity().getTokenFlag(), token2);
         bussinessResult = Resp.generic(
                 testRestTemplate.exchange("/auth/business/someopt",
                         HttpMethod.GET, new HttpEntity<>(null, httpHeaders), Resp.class).getBody(),
                 OptInfoExt.class);
-        Assert.assertEquals("200", bussinessResult.getCode());
+        Assertions.assertEquals("200", bussinessResult.getCode());
 
 
         // Mobile保留1个历史版本
@@ -167,21 +167,21 @@ public class AuthTest {
                 testRestTemplate.exchange("/auth/business/someopt",
                         HttpMethod.GET, new HttpEntity<>(null, httpHeaders), Resp.class).getBody(),
                 OptInfoExt.class);
-        Assert.assertEquals("401", bussinessResult.getCode());
+        Assertions.assertEquals("401", bussinessResult.getCode());
         // Token4有效
         httpHeaders.set(Dew.dewConfig.getSecurity().getTokenFlag(), token4);
         bussinessResult = Resp.generic(
                 testRestTemplate.exchange("/auth/business/someopt",
                         HttpMethod.GET, new HttpEntity<>(null, httpHeaders), Resp.class).getBody(),
                 OptInfoExt.class);
-        Assert.assertEquals("200", bussinessResult.getCode());
+        Assertions.assertEquals("200", bussinessResult.getCode());
         // Token5有效
         httpHeaders.set(Dew.dewConfig.getSecurity().getTokenFlag(), token5);
         bussinessResult = Resp.generic(
                 testRestTemplate.exchange("/auth/business/someopt",
                         HttpMethod.GET, new HttpEntity<>(null, httpHeaders), Resp.class).getBody(),
                 OptInfoExt.class);
-        Assert.assertEquals("200", bussinessResult.getCode());
+        Assertions.assertEquals("200", bussinessResult.getCode());
     }
 
 

@@ -16,8 +16,9 @@
 
 package group.idealworld.dew.core.cluster.test;
 
-import group.idealworld.dew.core.cluster.ClusterMQ;
+import com.ecfront.dew.common.$;
 import group.idealworld.dew.core.cluster.Cluster;
+import group.idealworld.dew.core.cluster.ClusterMQ;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +101,7 @@ public class ClusterMQTest {
                     assert message.getHeader().get().containsKey("h");
                 }
                 conflictFlag.add(message.getBody());
-                logger.info("response instance 1: req_resp>>" + message);
+                logger.info("response instance 1: req_resp>>" + $.json.toJsonString(message));
                 waiting.countDown();
             }
         })).start();
@@ -112,13 +113,13 @@ public class ClusterMQTest {
                     assert message.getHeader().get().containsKey("h");
                 }
                 conflictFlag.add(message.getBody());
-                logger.info("response instance 2: req_resp>>" + message);
+                logger.info("response instance 2: req_resp>>" + $.json.toJsonString(message));
                 waiting.countDown();
             }
         })).start();
         Thread.sleep(1000);
         for (int i = 0; i < 10; i++) {
-            mq.request("test_rep_resp", "msgA" + i, new HashMap<String, Object>() {
+            mq.request("test_rep_resp", "msgA" + i, new HashMap<>() {
                 {
                     put("h", "001");
                 }

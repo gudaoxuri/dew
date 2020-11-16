@@ -18,23 +18,23 @@ package group.idealworld.dew.core.cluster;
 
 import group.idealworld.dew.core.cluster.spi.rabbit.RabbitClusterMQ;
 import group.idealworld.dew.core.cluster.test.ClusterMQTest;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Cluster test.
  *
  * @author gudaoxuri
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootApplication
 @SpringBootTest
-@Ignore("Need start rabbit server e.g. docker run -it -p 15672:15672 -p 25672:25672 -p 5671:5671 -p 5672:5672 -p 4369:4369 rabbitmq:management")
+@Disabled("Need start rabbit server e.g. docker run -it -p 15672:15672 -p 25672:25672 -p 5671:5671 -p 5672:5672 -p 4369:4369 rabbitmq:management")
 public class ClusterTest {
 
     @Autowired

@@ -21,11 +21,11 @@ import com.trc.test.auth.AuthTest;
 import com.trc.test.cluster.ClusterTest;
 import com.trc.test.notification.NotifyIntegrationTest;
 import com.trc.test.web.WebTest;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.annotation.Resource;
 
@@ -34,7 +34,7 @@ import javax.annotation.Resource;
  *
  * @author gudaoxuri
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = BootTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class AllTest {
 

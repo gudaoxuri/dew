@@ -19,7 +19,7 @@ package com.trc.test.notification;
 
 import com.ecfront.dew.common.Resp;
 import group.idealworld.dew.Dew;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.stereotype.Component;
 
 /**
@@ -35,7 +35,7 @@ public class NotifyIntegrationTest {
      */
     public void testAll() {
         Resp<Void> result = Dew.notify.send("flag1", "测试消息，默认通知人", "测试");
-        Assert.assertTrue(result.ok());
+        Assertions.assertTrue(result.ok());
     }
 
 }

@@ -23,12 +23,12 @@
     <parent>
         <groupId>group.idealworld.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0-Beta1</version>
         <relativePath>../parent-starter</relativePath>
     </parent>
 
     <artifactId>hbase-starter</artifactId>
-    <name>1.2.5 Spring Boot Starter HBase</name>
+    <name>1.2.5 Dew HBase Starter</name>
     <description>HBase spring boot 实现</description>
     <packaging>jar</packaging>
 

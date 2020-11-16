@@ -18,19 +18,19 @@ package group.idealworld.dew.core.cluster;
 
 import group.idealworld.dew.core.cluster.spi.redis.*;
 import group.idealworld.dew.core.cluster.test.*;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 /**
  * Cluster test.
  *
  * @author gudaoxuri
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootApplication
 @SpringBootTest
 public class ClusterTest {

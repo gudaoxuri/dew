@@ -22,8 +22,6 @@ import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 
-import java.net.UnknownHostException;
-
 /**
  * 多连接实例配置.
  *
@@ -39,7 +37,8 @@ public class MultiConnectionConfiguration extends LettuceConnectionConfiguration
 
     @Override
     public LettuceConnectionFactory redisConnectionFactory(ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers,
-                                                           ClientResources clientResources) throws UnknownHostException {
+                                                           ClientResources clientResources) {
         return super.redisConnectionFactory(builderCustomizers, clientResources);
     }
+
 }

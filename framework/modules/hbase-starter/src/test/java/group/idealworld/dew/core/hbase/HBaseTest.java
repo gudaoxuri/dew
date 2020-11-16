@@ -21,15 +21,15 @@ import org.apache.hadoop.hbase.client.ColumnFamilyDescriptorBuilder;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.TableDescriptorBuilder;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -39,10 +39,10 @@ import java.io.IOException;
  *
  * @author 迹_Jason
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootApplication
 @SpringBootTest
-@Ignore("Need start hbase server")
+@Disabled("Need start hbase server")
 public class HBaseTest {
 
     private static final String TABLE_NAME = "DMP:hbaseDemo";
@@ -86,7 +86,7 @@ public class HBaseTest {
         String st = hbaseTemplate
                 .get(TABLE_NAME, ROW_KEY, FAMILY_NAME, QUALIFIER_NAME,
                         (result, row) -> Bytes.toString(result.value()));
-        Assert.assertEquals(VALUE, st);
+        Assertions.assertEquals(VALUE, st);
     }
 
     /**
@@ -94,7 +94,7 @@ public class HBaseTest {
      *
      * @throws IOException the io exception
      */
-    @After
+    @AfterEach
     public void after() throws IOException {
         hbaseTemplate.getConnection().getAdmin().disableTable(TableName.valueOf(TABLE_NAME));
         hbaseTemplate.getConnection().getAdmin().deleteTable(TableName.valueOf(TABLE_NAME));

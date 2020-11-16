@@ -32,7 +32,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  *
  * @author gudaoxuri
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = TodoKernelApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class KernelTest {
 

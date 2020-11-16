@@ -25,8 +25,8 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import group.idealworld.dew.core.notification.Notify;
 import group.idealworld.dew.core.notification.NotifyConfig;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -172,7 +172,7 @@ public class NotifyTest {
                 + "java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)\n"
                 + "org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)\n"
                 + "java.lang.Thread.run(Thread.java:745)\n");
-        Assert.assertTrue(result.ok());
+        Assertions.assertTrue(result.ok());
 
         result = Notify.send("dd_markdown", "测试消息，带符号$$ com.trc.test.web.WebController.customHttpState(WebController.java:73)\n"
                 + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n"
@@ -188,7 +188,7 @@ public class NotifyTest {
                 + "sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n"
                 + "java.lang.reflect.Method.invoke(Method.java:497)\n"
                 + "java.lang.Thread.run(Thread.java:745)\n", "错误消息");
-        Assert.assertTrue(result.ok());
+        Assertions.assertTrue(result.ok());
 
         result = Notify.send("dd_markdown",
                 "![](http://dew.idealworld.group/images/failure.png)"
@@ -209,7 +209,7 @@ public class NotifyTest {
                         + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n"
                         + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n",
                 "DevOps通知");
-        Assert.assertTrue(result.ok());
+        Assertions.assertTrue(result.ok());
 
         result = Notify.send("dd_markdown",
                 "# The execution result \n"
@@ -226,7 +226,7 @@ public class NotifyTest {
                         + "\n"
                         + "-----------------\n",
                 "DevOps完成通知");
-        Assert.assertTrue(result.ok());
+        Assertions.assertTrue(result.ok());
 
     }
 
@@ -259,7 +259,7 @@ public class NotifyTest {
         }, flag -> "test");
 
         Resp<Void> result = Notify.send("mail", "test");
-        Assert.assertTrue(result.ok());
+        Assertions.assertTrue(result.ok());
     }
 
     /**
@@ -321,34 +321,34 @@ public class NotifyTest {
 
         // Http test
         Resp<Void> result = Notify.send("http", "hi", "正常消息");
-        Assert.assertTrue(result.ok());
+        Assertions.assertTrue(result.ok());
         Notify.sendAsync("http", "hi", "异步消息");
         try {
             int i = 1 / 0;
             System.out.println(i);
         } catch (Exception e) {
             result = Notify.send("http", e, "错误消息");
-            Assert.assertTrue(result.ok());
+            Assertions.assertTrue(result.ok());
         }
         result = Notify.send("http", "hi", "指定通知人", new HashSet<>() {
             {
                 add("sunisle");
             }
         });
-        Assert.assertTrue(result.ok());
+        Assertions.assertTrue(result.ok());
 
         result = Notify.send("strategy", "免扰时间，不发送", "免扰消息");
-        Assert.assertTrue(result.getMessage().contains("Do Not Disturb time"));
+        Assertions.assertTrue(result.getMessage().contains("Do Not Disturb time"));
         result = Notify.send("strategy", "2s只会发一次,此条消息不应被收到", "免扰消息");
-        Assert.assertTrue(result.getMessage().contains("Notify frequency"));
+        Assertions.assertTrue(result.getMessage().contains("Notify frequency"));
         result = Notify.send("strategy", "2s只会发一次,此条消息不应被收到", "免扰消息");
-        Assert.assertTrue(result.getMessage().contains("Notify frequency"));
+        Assertions.assertTrue(result.getMessage().contains("Notify frequency"));
         Thread.sleep(2100);
         result = Notify.send("strategy", "免扰时间，不发送", "免扰消息");
-        Assert.assertTrue(result.getMessage().contains("Do Not Disturb time"));
+        Assertions.assertTrue(result.getMessage().contains("Do Not Disturb time"));
         Thread.sleep(2100);
         result = Notify.send("strategy", "免扰时间，达到4次(包含1次延迟通知)，发送", "策略消息");
-        Assert.assertTrue(result.ok());
+        Assertions.assertTrue(result.ok());
         cdl.await(10, TimeUnit.SECONDS);
     }
 

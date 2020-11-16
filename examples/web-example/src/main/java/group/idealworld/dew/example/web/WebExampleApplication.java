@@ -26,7 +26,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
  *
  * @author gudaoxuri
  */
-@SpringBootApplication
+@SpringBootApplication(proxyBeanMethods = false)
 public class WebExampleApplication {
 
     public static void main(String[] args) {

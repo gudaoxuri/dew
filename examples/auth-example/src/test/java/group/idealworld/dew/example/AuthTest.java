@@ -19,11 +19,11 @@ package group.idealworld.dew.example;
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
 import group.idealworld.dew.example.auth.AuthExampleApplication;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.HashMap;
 
@@ -32,7 +32,7 @@ import java.util.HashMap;
  *
  * @author gudaoxuri
  */
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = AuthExampleApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class AuthTest {
 
@@ -55,7 +55,7 @@ public class AuthTest {
                 put("_token_", token);
             }
         }), Void.class);
-        Assert.assertTrue(resp.ok());
+        Assertions.assertTrue(resp.ok());
         // 模拟用户注销
         $.http.delete(url + "/auth/logout", new HashMap<String, String>() {
             {
@@ -67,7 +67,7 @@ public class AuthTest {
                 put("_token_", token);
             }
         }), Void.class);
-        Assert.assertFalse(resp.ok());
+        Assertions.assertFalse(resp.ok());
     }
 
 }

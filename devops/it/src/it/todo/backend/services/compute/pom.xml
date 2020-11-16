@@ -23,7 +23,7 @@
     <parent>
         <groupId>group.idealworld.dew.devops.it</groupId>
         <artifactId>todo-parent</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0-Beta1</version>
         <relativePath>../../..</relativePath>
     </parent>
 

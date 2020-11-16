@@ -1,11 +1,6 @@
 [[devops-env-install]]
 === 开发/测试环境安装配置
 
-[IMPORTANT]
-====
-本文会给出使用代理与不使用代理的安装、配置方式，但强烈推荐使用代理方式。
-====
-
 NOTE
 ====
 开发环境推荐使用Docker for desktop安装Docker和Kubernetes的基础环境，大陆地区安装可参见 https://github.com/AliyunContainerService/k8s-for-docker-desktop 此项目。
@@ -41,8 +36,8 @@ TIP: 常规的项目研发多会分 ``开发(dev)、测试(test)、预发(pre-pr
                                                                    https://kubernetes.io/docs/concepts/storage/persistent-volumes/#types-of-persistent-volumes
 | 容器集群            | hostname:k8s-X                              | Docker           | Docker容器服务，部署到所有Kubernetes所在的节点
 | 容器集群            | hostname:k8s-X                              | <CNI>            | Kubernetes CNI服务，部署到所有Kubernetes所在的节点，本文使用 Flannel
-| 容器集群            | hostname:k8s-masterX                        | Kubernetes Master| Kubernetes Master服务，可做HA
-| 容器集群            | hostname:k8s-nodeX                          | Kubernetes Node  | Kubernetes Node服务，至少3个节点
+| 容器集群            | hostname:k8s-master-X                       | Kubernetes Master| Kubernetes Master服务，可做HA
+| 容器集群            | hostname:k8s-node-X                         | Kubernetes Node  | Kubernetes Node服务，至少3个节点
 |===
 
 [IMPORTANT]
@@ -231,40 +226,30 @@ TIP: https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/creat
 # 完成后在master上执行情况如下（以1.18版本为例）
 kubectl get no
 -
-k8s-master1   Ready    master   22m     v1.18
-k8s-node1     Ready    <none>   11m     v1.18
-k8s-node2     Ready    <none>   8m54s   v1.18
-k8s-node3     Ready    <none>   8m51s   v1.18
-k8s-node4     Ready    <none>   8m49s   v1.18
--
-----
-
-.添加外部DNS服务，如dnsmasq
-[source,bash]
-----
-# 编辑Kubernetes的DNS，加上dew.ms的代理
-kubectl -n kube-system edit cm coredns
--
-data:
-  Corefile: |
-    ...
-    dew.idealworld.group:53 {
-        errors
-        cache 30
-        proxy . x.x.x.x
-    }
+k8s-master-1   Ready    master   22m     v1.18
+k8s-node-1     Ready    <none>   11m     v1.18
+k8s-node-2     Ready    <none>   8m54s   v1.18
+k8s-node-3     Ready    <none>   8m51s   v1.18
+k8s-node-4     Ready    <none>   8m49s   v1.18
 -
 ----
 
 ===== Metrics Server（仅Kuberentes可用）
 
-TIP: 若要使用HPA(Horizontal Pod Autoscaler)，需要安装 resource metrics API,官方推荐 Metrics Server +
-@see https://github.com/kubernetes-incubator/metrics-server +
+TIP: 若要使用HPA(Horizontal Pod Autoscaler)，需要安装 resource metrics API,官方推荐 Metrics Server
+（https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/）
+
+@see https://github.com/kubernetes-sigs/metrics-server
+
+
 helm chart: https://github.com/helm/charts/tree/master/stable/metrics-server
 
-.安装配置（新版未验证）
+.安装配置
 [source,bash]
 ----
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.3.7/components.yaml
+
+
 git clone https://github.com/kubernetes-incubator/metrics-server.git
 # Kuberneters V1.8以上执行
 kubectl create -f metrics-server/deploy/1.8+/
@@ -355,6 +340,23 @@ metadata:
   labels:
     name: devops
 EOF
+----
+
+.添加外部DNS服务（可选），如dnsmasq
+[source,bash]
+----
+# 编辑Kubernetes的DNS，加上dew.idealworld.group的代理
+kubectl -n kube-system edit cm coredns
+-
+data:
+  Corefile: |
+    ...
+    dew.idealworld.group:53 {
+        errors
+        cache 30
+        proxy . x.x.x.x
+    }
+-
 ----
 
 ===== Helm
