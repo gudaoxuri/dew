@@ -729,6 +729,8 @@ public class DewConfig {
 
         private SecurityCORS cors = new SecurityCORS();
 
+        private boolean authEnabled = true;
+
         private String tokenFlag = "Dew-Token";
 
         private String tokenKindFlag = "Dew-Token-Kind";
@@ -740,6 +742,14 @@ public class DewConfig {
         private Router router = new Router();
 
         private Map<String, TokenKind> tokenKinds = new HashMap<>();
+
+        public boolean isAuthEnabled() {
+            return authEnabled;
+        }
+
+        public void setAuthEnabled(boolean authEnabled) {
+            this.authEnabled = authEnabled;
+        }
 
         /**
          * Gets cors.

@@ -61,7 +61,7 @@ public class BasicHandlerInterceptor implements AsyncHandlerInterceptor {
             // 未启用web的情况下，Dew加载滞后，忽略
             return;
         }
-        if (Dew.dewConfig.getSecurity().getRouter().isEnabled()) {
+        if (Dew.dewConfig.getSecurity().isAuthEnabled() && Dew.dewConfig.getSecurity().getRouter().isEnabled()) {
             fillAuthInfo(Dew.dewConfig.getSecurity().getRouter().getBlockUri(),
                     Dew.dewConfig.getSecurity().getRouter().getRoleAuth());
         }
@@ -128,6 +128,15 @@ public class BasicHandlerInterceptor implements AsyncHandlerInterceptor {
         response.setDateHeader("Expires", 0);
 
         if (request.getMethod().equalsIgnoreCase("OPTIONS") || request.getMethod().equalsIgnoreCase("HEAD")) {
+            return true;
+        }
+
+        logger.trace("[{}] {}{} from {}",
+                request.getMethod(),
+                request.getRequestURI(),
+                request.getQueryString() == null ? "" : "?" + request.getQueryString(), Dew.Util.getRealIP(request));
+
+        if (!Dew.dewConfig.getSecurity().isAuthEnabled()) {
             return true;
         }
 
@@ -204,11 +213,6 @@ public class BasicHandlerInterceptor implements AsyncHandlerInterceptor {
         context.setToken(token);
         context.setTokenKind(tokenKind);
         DewContext.setContext(context);
-
-        logger.trace("[{}] {}{} from {}",
-                request.getMethod(),
-                request.getRequestURI(),
-                request.getQueryString() == null ? "" : "?" + request.getQueryString(), Dew.context().getSourceIP());
         return true;
     }
 
