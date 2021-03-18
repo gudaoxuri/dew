@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package group.idealworld.dew.devops.kernel.config;
 import group.idealworld.dew.devops.BasicTest;
 import group.idealworld.dew.devops.kernel.helper.YamlHelper;
 import group.idealworld.dew.devops.kernel.util.DewLog;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * 配置构建测试.
@@ -55,13 +55,13 @@ public class TestConfigBuilder extends BasicTest {
 
         basicConfigStr = ConfigBuilder.mergeProfiles(basicConfigStr);
         DewConfig basicConfig = YamlHelper.toObject(DewConfig.class, basicConfigStr);
-        Assert.assertEquals("dew-test", basicConfig.getProfiles().get("test").getNamespace());
-        Assert.assertTrue(basicConfig.getProfiles().get("test").getSkip());
-        Assert.assertEquals(2, basicConfig.getProfiles().get("test").getApp().getReplicas().intValue());
-        Assert.assertEquals(2, basicConfig.getProfiles().get("test").getApp().getRevisionHistoryLimit().intValue());
-        Assert.assertEquals(8080, basicConfig.getProfiles().get("test").getApp().getPort().intValue());
-        Assert.assertEquals("*.yaml", basicConfig.getProfiles().get("test").getIgnoreChangeFiles().iterator().next());
-        Assert.assertEquals("127.0.0.1", basicConfig.getProfiles().get("test").getDocker().getHost());
+        Assertions.assertEquals("dew-test", basicConfig.getProfiles().get("test").getNamespace());
+        Assertions.assertTrue(basicConfig.getProfiles().get("test").getSkip());
+        Assertions.assertEquals(2, basicConfig.getProfiles().get("test").getApp().getReplicas().intValue());
+        Assertions.assertEquals(2, basicConfig.getProfiles().get("test").getApp().getRevisionHistoryLimit().intValue());
+        Assertions.assertEquals(8080, basicConfig.getProfiles().get("test").getApp().getPort().intValue());
+        Assertions.assertEquals("*.yaml", basicConfig.getProfiles().get("test").getIgnoreChangeFiles().iterator().next());
+        Assertions.assertEquals("127.0.0.1", basicConfig.getProfiles().get("test").getDocker().getHost());
 
         String projectConfigStr =
                 "namespace: dew-spec\n"
@@ -84,15 +84,15 @@ public class TestConfigBuilder extends BasicTest {
         projectConfigStr = ConfigBuilder.mergeProject(basicConfigStr, projectConfigStr);
         DewConfig projectConfig = YamlHelper.toObject(DewConfig.class, projectConfigStr);
 
-        Assert.assertEquals("dew-spec", projectConfig.getNamespace());
-        Assert.assertEquals("dew-test-spec", projectConfig.getProfiles().get("test").getNamespace());
-        Assert.assertFalse(projectConfig.getProfiles().get("test").getSkip());
-        Assert.assertEquals(4, projectConfig.getProfiles().get("test").getApp().getReplicas().intValue());
-        Assert.assertEquals(5, projectConfig.getProfiles().get("test").getApp().getRevisionHistoryLimit().intValue());
-        Assert.assertEquals(8080, projectConfig.getProfiles().get("test").getApp().getPort().intValue());
-        Assert.assertEquals("*.yaml", projectConfig.getProfiles().get("test").getIgnoreChangeFiles().iterator().next());
-        Assert.assertEquals("127.0.0.2", projectConfig.getProfiles().get("test").getDocker().getHost());
-        Assert.assertEquals("sunisle", projectConfig.getProfiles().get("test").getDocker().getRegistryUserName());
+        Assertions.assertEquals("dew-spec", projectConfig.getNamespace());
+        Assertions.assertEquals("dew-test-spec", projectConfig.getProfiles().get("test").getNamespace());
+        Assertions.assertFalse(projectConfig.getProfiles().get("test").getSkip());
+        Assertions.assertEquals(4, projectConfig.getProfiles().get("test").getApp().getReplicas().intValue());
+        Assertions.assertEquals(5, projectConfig.getProfiles().get("test").getApp().getRevisionHistoryLimit().intValue());
+        Assertions.assertEquals(8080, projectConfig.getProfiles().get("test").getApp().getPort().intValue());
+        Assertions.assertEquals("*.yaml", projectConfig.getProfiles().get("test").getIgnoreChangeFiles().iterator().next());
+        Assertions.assertEquals("127.0.0.2", projectConfig.getProfiles().get("test").getDocker().getHost());
+        Assertions.assertEquals("sunisle", projectConfig.getProfiles().get("test").getDocker().getRegistryUserName());
 
     }
 }

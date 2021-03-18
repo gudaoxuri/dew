@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package group.idealworld.dew.devops;
 
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -62,7 +62,7 @@ public abstract class BasicTest {
      *
      * @throws IOException the io exception
      */
-    @BeforeClass
+    @BeforeAll
     public static void initTest() throws IOException {
         Properties properties = new Properties();
         properties.load(
