@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@
 package group.idealworld.dew.devops.kernel.helper;
 
 import group.idealworld.dew.devops.kernel.util.DewLog;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Yaml helper test.
@@ -31,7 +31,7 @@ public class YamlHelperTest {
     /**
      * Before.
      */
-    @Before
+    @BeforeEach
     public void before() {
         YamlHelper.init(DewLog.build(this.getClass()));
     }
@@ -53,19 +53,19 @@ public class YamlHelperTest {
                         + "  c1: valc1_new\n"
                         + "  c2: valc2\n"
                         + "fd: vald");
-        Assert.assertEquals("valc1_new", o.getFc().getC1());
-        Assert.assertEquals("valc2", o.getFc().getC2());
-        Assert.assertEquals("vala", o.getFa());
-        Assert.assertEquals("valb", o.getFb());
-        Assert.assertNull(o.getFd());
+        Assertions.assertEquals("valc1_new", o.getFc().getC1());
+        Assertions.assertEquals("valc2", o.getFc().getC2());
+        Assertions.assertEquals("vala", o.getFa());
+        Assertions.assertEquals("valb", o.getFb());
+        Assertions.assertNull(o.getFd());
         o.setFd(false);
         String yaml = YamlHelper.toString(o);
         o = YamlHelper.toObject(TestYaml.class, yaml);
-        Assert.assertEquals("valc1_new", o.getFc().getC1());
-        Assert.assertEquals("valc2", o.getFc().getC2());
-        Assert.assertEquals("vala", o.getFa());
-        Assert.assertEquals("valb", o.getFb());
-        Assert.assertFalse(o.getFd());
+        Assertions.assertEquals("valc1_new", o.getFc().getC1());
+        Assertions.assertEquals("valc2", o.getFc().getC2());
+        Assertions.assertEquals("vala", o.getFa());
+        Assertions.assertEquals("valb", o.getFb());
+        Assertions.assertFalse(o.getFd());
     }
 
 }

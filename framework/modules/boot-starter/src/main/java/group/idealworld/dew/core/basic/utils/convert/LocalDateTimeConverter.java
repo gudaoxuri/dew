@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package group.idealworld.dew.core.basic.utils.convert;
 
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -32,7 +32,7 @@ import java.time.format.DateTimeFormatter;
 public class LocalDateTimeConverter implements Converter<String, LocalDateTime> {
     @Override
     public LocalDateTime convert(String str) {
-        if (StringUtils.isEmpty(str)) {
+        if (ObjectUtils.isEmpty(str)) {
             return null;
         }
         if (str.matches("[1-9][0-9]+")) {

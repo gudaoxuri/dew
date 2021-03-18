@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import group.idealworld.dew.devops.BasicTest;
 import group.idealworld.dew.devops.kernel.util.DewLog;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.models.*;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class KubeHelperTest extends BasicTest {
     /**
      * Before.
      */
-    @Before
+    @BeforeEach
     public void before() {
         KubeHelper.init("", DewLog.build(this.getClass()), defaultKubeConfig);
     }
@@ -79,10 +79,10 @@ public class KubeHelperTest extends BasicTest {
     public void testAll() throws IOException, ApiException, InterruptedException {
         KubeHelper.inst("").delete("ns-test", KubeRES.NAME_SPACE);
 
-        Assert.assertFalse(KubeHelper.inst("").exist("ns-test", KubeRES.NAME_SPACE));
+        Assertions.assertFalse(KubeHelper.inst("").exist("ns-test", KubeRES.NAME_SPACE));
         KubeHelper.inst("").create($.file.readAllByClassPath("ns-test.yaml", "UTF-8"));
-        Assert.assertTrue(KubeHelper.inst("").exist("ns-test", KubeRES.NAME_SPACE));
-        Assert.assertEquals("Active",
+        Assertions.assertTrue(KubeHelper.inst("").exist("ns-test", KubeRES.NAME_SPACE));
+        Assertions.assertEquals("Active",
                 KubeHelper.inst("").read("ns-test", KubeRES.NAME_SPACE, V1Namespace.class).getStatus().getPhase());
 
         V1Deployment deployment = buildDeployment();
@@ -91,7 +91,7 @@ public class KubeHelperTest extends BasicTest {
                         -> appApi
                         .listNamespacedDeploymentCall(
                                 deployment.getMetadata().getNamespace(),
-                                null, null, null, null, "name=test-nginx", 1, null, null, Boolean.TRUE, null),
+                                null, null, null, null, "name=test-nginx", 1, null, null, null, null,null),
                 resp -> {
                     System.out.printf("%s : %s%n", resp.type, $.json.toJsonString(resp.object.getStatus()));
                     if (resp.object.getStatus().getReadyReplicas() != null
@@ -118,23 +118,23 @@ public class KubeHelperTest extends BasicTest {
 
                 },
                 V1Deployment.class);
-        Assert.assertFalse(
+        Assertions.assertFalse(
                 KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(), KubeRES.DEPLOYMENT));
         KubeHelper.inst("").apply(deployment);
-        Assert.assertTrue(
+        Assertions.assertTrue(
                 KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(), KubeRES.DEPLOYMENT));
 
-        Assert.assertEquals(1, KubeHelper.inst("").list(
+        Assertions.assertEquals(1, KubeHelper.inst("").list(
                 "",
                 deployment.getMetadata().getNamespace(),
                 KubeRES.DEPLOYMENT,
                 V1Deployment.class).size());
-        Assert.assertEquals(0, KubeHelper.inst("").list(
+        Assertions.assertEquals(0, KubeHelper.inst("").list(
                 "name=nginx",
                 deployment.getMetadata().getNamespace(),
                 KubeRES.DEPLOYMENT,
                 V1Deployment.class).size());
-        Assert.assertEquals(1, KubeHelper.inst("").list(
+        Assertions.assertEquals(1, KubeHelper.inst("").list(
                 "name=test-nginx",
                 deployment.getMetadata().getNamespace(),
                 KubeRES.DEPLOYMENT,
@@ -153,9 +153,9 @@ public class KubeHelperTest extends BasicTest {
                 KubeRES.DEPLOYMENT,
                 V1Deployment.class);
 
-        Assert.assertEquals(2, fetchedDeployment.getSpec().getReplicas().intValue());
-        Assert.assertEquals("nginx:latest", fetchedDeployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
-        Assert.assertEquals("test-nginx", fetchedDeployment.getMetadata().getLabels().get("name"));
+        Assertions.assertEquals(2, fetchedDeployment.getSpec().getReplicas().intValue());
+        Assertions.assertEquals("nginx:latest", fetchedDeployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+        Assertions.assertEquals("test-nginx", fetchedDeployment.getMetadata().getLabels().get("name"));
 
         cdl.await();
 
@@ -176,12 +176,12 @@ public class KubeHelperTest extends BasicTest {
                         "-c",
                         "ls -l"
                 });
-        Assert.assertTrue(execResult.get(0).contains("total"));
+        Assertions.assertTrue(execResult.get(0).contains("total"));
 
         /* Closeable closeable = KubeHelper.inst("").forward(podName, deployment.getMetadata().getNamespace(), 80, 8081);
 
-        Assert.assertTrue($.http.get("http://127.0.0.1:8081").contains("Welcome to nginx!"));
-        Assert.assertTrue($.http.get("http://127.0.0.1:8081").contains("Welcome to nginx!"));
+        Assertions.assertTrue($.http.get("http://127.0.0.1:8081").contains("Welcome to nginx!"));
+        Assertions.assertTrue($.http.get("http://127.0.0.1:8081").contains("Welcome to nginx!"));
 
         closeable.close();
         */
@@ -195,7 +195,7 @@ public class KubeHelperTest extends BasicTest {
 
         KubeHelper.inst("").stopWatch(watchId);
         KubeHelper.inst("").delete("ns-test", KubeRES.NAME_SPACE);
-        Assert.assertFalse(KubeHelper.inst("").exist("ns-test", KubeRES.NAME_SPACE));
+        Assertions.assertFalse(KubeHelper.inst("").exist("ns-test", KubeRES.NAME_SPACE));
     }
 
     private V1Deployment buildDeployment() {

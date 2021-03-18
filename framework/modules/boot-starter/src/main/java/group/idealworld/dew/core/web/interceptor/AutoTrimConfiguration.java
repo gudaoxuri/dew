@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.io.IOException;
 
@@ -43,7 +43,7 @@ public class AutoTrimConfiguration extends SimpleModule {
             @Override
             public String deserialize(JsonParser jsonParser, DeserializationContext ctx) throws IOException {
                 String value = jsonParser.getValueAsString();
-                if (StringUtils.isEmpty(value)) {
+                if (ObjectUtils.isEmpty(value)) {
                     return value;
                 }
                 return value.trim();

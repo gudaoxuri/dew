@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 
 import javax.security.auth.message.AuthException;
@@ -182,7 +182,7 @@ public class BasicHandlerInterceptor implements AsyncHandlerInterceptor {
                         .min(pathMatcher.getPatternComparator(reqUri))
                         .map(matchedUri -> {
                             // 找到需要鉴权的URI
-                            if (StringUtils.isEmpty(finalToken)) {
+                            if (ObjectUtils.isEmpty(finalToken)) {
                                 // Token不存在
                                 return false;
                             }

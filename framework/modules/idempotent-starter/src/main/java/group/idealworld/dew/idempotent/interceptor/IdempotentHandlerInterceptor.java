@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@
 package group.idealworld.dew.idempotent.interceptor;
 
 import group.idealworld.dew.Dew;
-import group.idealworld.dew.idempotent.DewIdempotentConfig;
 import group.idealworld.dew.core.web.error.ErrorController;
 import group.idealworld.dew.idempotent.DewIdempotent;
+import group.idealworld.dew.idempotent.DewIdempotentConfig;
 import group.idealworld.dew.idempotent.annotations.Idempotent;
 import group.idealworld.dew.idempotent.strategy.StrategyEnum;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -55,12 +55,12 @@ public class IdempotentHandlerInterceptor extends HandlerInterceptorAdapter {
         }
         // 参数设置
         String optType = "[" + request.getMethod() + "]" + Dew.Info.name + "/" + request.getRequestURI();
-        String optIdFlag = StringUtils.isEmpty(idempotent.optIdFlag()) ? dewIdempotentConfig.getDefaultOptIdFlag() : idempotent.optIdFlag();
+        String optIdFlag = ObjectUtils.isEmpty(idempotent.optIdFlag()) ? dewIdempotentConfig.getDefaultOptIdFlag() : idempotent.optIdFlag();
         String optId = request.getHeader(optIdFlag);
-        if (StringUtils.isEmpty(optId)) {
+        if (ObjectUtils.isEmpty(optId)) {
             optId = request.getParameter(optIdFlag);
         }
-        if (StringUtils.isEmpty(optId)) {
+        if (ObjectUtils.isEmpty(optId)) {
             // optId不存在，表示忽略幂等检查，强制执行
             return super.preHandle(request, response, handler);
         }

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright 2020. the original author or authors.
+# Copyright 2021. the original author or authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ MINIO_BUCKET_NAME=dew
 GITLAB_URL=http://gitlab.dew.test
 GITLAB_RUNNER_NAMESPACE=devops
 GITLAB_RUNNER_NAME=dew-runner
-GITLAB_RUNNER_IMAGE=dewms/devops:3.0.0-Beta1
+GITLAB_RUNNER_IMAGE=dewms/devops:3.0.0-Beta2
 GITLAB_RUNNER_REG_TOKEN=3mezus8cX9qAjkrNY4B
 GITLAB_RUNNER_PROFILE=test
 

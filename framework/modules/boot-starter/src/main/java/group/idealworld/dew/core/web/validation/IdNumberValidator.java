@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package group.idealworld.dew.core.web.validation;
 
 import com.ecfront.dew.common.$;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -36,6 +36,6 @@ public class IdNumberValidator implements ConstraintValidator<IdNumber, String> 
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return StringUtils.isEmpty(value) || $.field.validateIdNumber(value);
+        return ObjectUtils.isEmpty(value) || $.field.validateIdNumber(value);
     }
 }

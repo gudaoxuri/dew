@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright 2020. the original author or authors.
+  ~ Copyright 2021. the original author or authors.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -24,12 +24,12 @@
     <parent>
         <groupId>group.idealworld.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>3.0.0-Beta1</version>
+        <version>3.0.0-Beta2</version>
     </parent>
 
     <groupId>group.idealworld.dew.devops.it</groupId>
     <artifactId>todo-parent</artifactId>
-    <version>3.0.0-Beta1</version>
+    <version>3.0.0-Beta2</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -53,7 +53,7 @@
             <dependency>
                 <groupId>group.idealworld.dew.devops.it</groupId>
                 <artifactId>todo-common</artifactId>
-                <version>3.0.0-Beta1</version>
+                <version>3.0.0-Beta2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

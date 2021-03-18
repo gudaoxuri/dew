@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ public abstract class BasicPrepareFlow extends BasicFlow {
                 logger.warn("Prepare package command needs to be executed, but the command does not exist");
                 throw new ProjectProcessException("Prepare package command needs to be executed, but the command does not exist");
             }
-            result = ShellHelper.execCmd("preparePackageCmd", new HashMap<String, String>() {
+            result = ShellHelper.execCmd("preparePackageCmd", new HashMap<>() {
                 {
                     put("NODE_ENV", config.getProfile());
                 }
@@ -121,7 +121,7 @@ public abstract class BasicPrepareFlow extends BasicFlow {
                 throw new ProjectProcessException("Prepare package command execution failed");
             }
         }
-        result = ShellHelper.execCmd("packageCmd", new HashMap<String, String>() {
+        result = ShellHelper.execCmd("packageCmd", new HashMap<>() {
             {
                 put("NODE_ENV", config.getProfile());
             }

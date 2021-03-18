@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 import org.springframework.validation.beanvalidation.MethodValidationPostProcessor;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -140,16 +140,16 @@ public class ErrorController extends AbstractErrorController {
         String message = msg;
         String busCode = String.valueOf(httpCode);
         int customHttpCode = -1;
-        if (!StringUtils.isEmpty(exClass) && Dew.dewConfig.getBasic().getErrorMapping().containsKey(exClass)) {
+        if (!ObjectUtils.isEmpty(exClass) && Dew.dewConfig.getBasic().getErrorMapping().containsKey(exClass)) {
             // Found Error Mapping
             DewConfig.Basic.ErrorMapping errorMapping = Dew.dewConfig.getBasic().getErrorMapping().get(exClass);
-            if (!StringUtils.isEmpty(errorMapping.getHttpCode())) {
+            if (!ObjectUtils.isEmpty(errorMapping.getHttpCode())) {
                 customHttpCode = errorMapping.getHttpCode();
             }
-            if (!StringUtils.isEmpty(errorMapping.getBusinessCode())) {
+            if (!ObjectUtils.isEmpty(errorMapping.getBusinessCode())) {
                 busCode = errorMapping.getBusinessCode();
             }
-            if (!StringUtils.isEmpty(errorMapping.getMessage())) {
+            if (!ObjectUtils.isEmpty(errorMapping.getMessage())) {
                 message = errorMapping.getMessage();
             }
         }

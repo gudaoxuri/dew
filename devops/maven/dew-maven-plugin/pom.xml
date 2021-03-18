@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2020. the original author or authors.
+  ~ Copyright 2021. the original author or authors.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -21,13 +21,13 @@
     <parent>
         <groupId>group.idealworld.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>3.0.0-Beta1</version>
+        <version>3.0.0-Beta2</version>
         <relativePath>../../../framework/modules/parent-starter</relativePath>
     </parent>
 
     <artifactId>dew-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>3.0.0-Beta1</version>
+    <version>3.0.0-Beta2</version>
     <name>2.0 Dew DevOps Maven Plugin</name>
 
     <properties>
@@ -68,28 +68,28 @@
         <dependency>
             <groupId>com.github.docker-java</groupId>
             <artifactId>docker-java</artifactId>
-            <version>3.2.3</version>
+            <version>${docker-java.version}</version>
         </dependency>
         <dependency>
             <groupId>io.kubernetes</groupId>
             <artifactId>client-java</artifactId>
-            <version>8.0.2</version>
+            <version>${k8s-client-java.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
-            <version>3.6.0</version>
+            <version>${maven-plugin.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.6.0</version>
+            <version>${maven-plugin.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.twdata.maven</groupId>
             <artifactId>mojo-executor</artifactId>
-            <version>2.3.0</version>
+            <version>${mojo-executor.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>maven-plugin-api</artifactId>
@@ -116,17 +116,16 @@
         <dependency>
             <groupId>org.apache.maven.resolver</groupId>
             <artifactId>maven-resolver-api</artifactId>
-            <version>1.3.3</version>
+            <version>${maven-resolver-api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
             <artifactId>jansi</artifactId>
-            <version>1.18</version>
+            <version>${jansi.version}</version>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -136,7 +135,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>${maven-plugin.version}</version>
             </plugin>
         </plugins>
     </build>

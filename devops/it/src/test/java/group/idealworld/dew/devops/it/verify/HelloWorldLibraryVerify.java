@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class HelloWorldLibraryVerify extends BasicProcessor implements Verify {
     @Override
     public void doVerify(String buildPath, String expectedResPath) throws Exception {
         loadConfig();
-        String metaData = $.http.get(itSnapshotRepositoryUrl + "group/idealworld/dew/devops/it/helloworld-library/3.0.0-Beta1/maven-metadata.xml");
+        String metaData = $.http.get(itSnapshotRepositoryUrl + "group/idealworld/dew/devops/it/helloworld-library/3.0.0-Beta2/maven-metadata.xml");
         Document doc = JOOX.builder().parse(new ByteArrayInputStream(metaData.getBytes()));
         String lastUpdateTime = JOOX.$(doc).find("lastUpdated").get(0).getTextContent();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");

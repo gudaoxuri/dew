@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package group.idealworld.dew.core.basic.utils.convert;
 
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -31,7 +31,7 @@ public class LocalTimeConverter implements Converter<String, LocalTime> {
 
     @Override
     public LocalTime convert(String str) {
-        if (StringUtils.isEmpty(str)) {
+        if (ObjectUtils.isEmpty(str)) {
             return null;
         }
         return LocalTime.parse(str, DateTimeFormatter.ofPattern("HH:mm:ss"));

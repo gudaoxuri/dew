@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -170,7 +170,7 @@ public class KubeReleaseFlow extends BasicFlow {
                 (coreApi, appsApi, extensionsApi, rbacAuthorizationApi, autoscalingApi)
                         -> appsApi.listNamespacedDeploymentCall(deploymentRes.getMetadata().getNamespace(),
                         null, null, null, null,
-                        select, 1, null, null, Boolean.TRUE, null),
+                        select, 1, null, null, null,Boolean.TRUE, null),
                 resp -> {
                     // Ready Pod数量是否等于设定的数量
                     if (resp.object.getStatus().getReadyReplicas() != null

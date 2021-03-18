@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -181,7 +181,7 @@ public class KubeOpt {
             typeToken = new TypeToken<Watch.Response<V1ClusterRoleBinding>>() {
             };
         }
-        Watch<T> watch = Watch.createWatch(client, call.call(coreApi,appsApi, extensionsApi,
+        Watch<T> watch = Watch.createWatch(client, call.call(coreApi, appsApi, extensionsApi,
                 rbacAuthorizationApi, autoscalingApi), typeToken.getType());
         watchMap.put(watchId, watch);
         executorService.execute(() -> {
@@ -395,63 +395,63 @@ public class KubeOpt {
         switch (res) {
             case NAME_SPACE:
                 resource = coreApi.listNamespace(
-                        null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                        null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case INGRESS:
                 resource = extensionsApi.listNamespacedIngress(
-                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case SERVICE:
                 resource = coreApi.listNamespacedService(
-                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case DEPLOYMENT:
                 resource = appsApi.listNamespacedDeployment(
-                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case REPLICA_SET:
                 resource = appsApi.listNamespacedReplicaSet(
-                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case POD:
                 resource = coreApi.listNamespacedPod(
-                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case SECRET:
                 resource = coreApi.listNamespacedSecret(
-                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case CONFIG_MAP:
                 resource = coreApi.listNamespacedConfigMap(
-                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case SERVICE_ACCOUNT:
                 resource = coreApi.listNamespacedServiceAccount(
-                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case DAEMON_SET:
                 resource = appsApi.listNamespacedDaemonSet(
-                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case ROLE:
                 resource = rbacAuthorizationApi.listNamespacedRole(
-                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case ROLE_BINDING:
                 resource = rbacAuthorizationApi.listNamespacedRoleBinding(
-                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case CLUSTER_ROLE:
                 resource = rbacAuthorizationApi.listClusterRole(
-                        null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                        null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case CLUSTER_ROLE_BINDING:
                 resource = rbacAuthorizationApi.listClusterRoleBinding(
-                        null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                        null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case HORIZONTAL_POD_AUTOSCALER:
                 resource = autoscalingApi.listNamespacedHorizontalPodAutoscaler(
-                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null).getItems();
+                        namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             default:
                 throw new ApiException("The resource [" + res.getVal() + "] operation NOT implementation");
