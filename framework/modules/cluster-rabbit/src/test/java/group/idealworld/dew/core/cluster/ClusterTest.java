@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,23 +18,26 @@ package group.idealworld.dew.core.cluster;
 
 import group.idealworld.dew.core.cluster.spi.rabbit.RabbitClusterMQ;
 import group.idealworld.dew.core.cluster.test.ClusterMQTest;
-import org.junit.jupiter.api.Disabled;
+import group.idealworld.dew.test.RabbitMQExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * Cluster test.
  *
  * @author gudaoxuri
  */
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, RabbitMQExtension.class})
+@ContextConfiguration(initializers = RabbitMQExtension.Initializer.class)
 @SpringBootApplication
 @SpringBootTest
-@Disabled("Need start rabbit server e.g. docker run -it -p 15672:15672 -p 25672:25672 -p 5671:5671 -p 5672:5672 -p 4369:4369 rabbitmq:management")
+@Testcontainers
 public class ClusterTest {
 
     @Autowired

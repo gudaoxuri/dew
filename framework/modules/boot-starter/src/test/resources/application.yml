@@ -71,7 +71,7 @@ spring:
       write_dates_as_timestamps: false
   redis:
     host: 127.0.0.1
-    port: 6379
+    port: 6379 # 以 testcontainer 为准
     database: 0
     lettuce:
       pool:

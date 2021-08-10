@@ -26,7 +26,6 @@ import io.swagger.v3.oas.annotations.Hidden;
 import org.apache.catalina.connector.RequestFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorController;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
@@ -58,7 +57,7 @@ import java.util.regex.Pattern;
 @RestController
 @Hidden
 @ConditionalOnWebApplication
-@RequestMapping("${error.path:/error}")
+@RequestMapping(value = "${server.error.path:${error.path:/error}}")
 public class ErrorController extends AbstractErrorController {
 
     private static final Logger logger = LoggerFactory.getLogger(ErrorController.class);
@@ -71,9 +70,6 @@ public class ErrorController extends AbstractErrorController {
     private static final String SPECIAL_ERROR_FLAG = "org.springframework.boot.web.servlet.error.DefaultErrorAttributes.ERROR";
 
     private static final String DETAIL_FLAG = "\tDetail:";
-
-    @Value("${error.path:/error}")
-    private String errorPath;
 
     /**
      * Instantiates a new Error controller.
@@ -97,7 +93,7 @@ public class ErrorController extends AbstractErrorController {
         if (specialError instanceof Resp.FallbackException) {
             return ResponseEntity
                     .status(FALL_BACK_STATUS)
-                    .contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .contentType(MediaType.APPLICATION_JSON)
                     .body(((Resp.FallbackException) specialError).getMessage());
         }
         Map<String, Object> error = getErrorAttributes(request,
@@ -131,7 +127,7 @@ public class ErrorController extends AbstractErrorController {
             Dew.notify.sendAsync(Dew.dewConfig.getBasic().getFormat().getErrorFlag(),
                     (Throwable) specialError, ((Throwable) specialError).getMessage());
         }
-        return ResponseEntity.status(httpCode).contentType(MediaType.APPLICATION_JSON_UTF8).body(result[1]);
+        return ResponseEntity.status(httpCode).contentType(MediaType.APPLICATION_JSON).body(result[1]);
     }
 
     private static Object[] error(HttpServletRequest request,
@@ -196,7 +192,7 @@ public class ErrorController extends AbstractErrorController {
             httpCode = 200;
         }
         logger.error("Request [{}-{}] {} , error {} : {}", request.getMethod(), path, Dew.context().getSourceIP(), busCode, message);
-        Resp resp = Resp.customFail(busCode + "", "[" + exMsg + "]" + message);
+        var resp = Resp.customFail(busCode + "", "[" + exMsg + "]" + message);
         String body = $.json.toJsonString(resp);
         return new Object[]{httpCode, body};
     }
@@ -216,7 +212,7 @@ public class ErrorController extends AbstractErrorController {
             throws IOException {
         Object[] confirmedError = error(request, request.getRequestURI(), statusCode, message, exClass, "", null, null);
         response.setStatus((Integer) confirmedError[0]);
-        response.setContentType(String.valueOf(MediaType.APPLICATION_JSON_UTF8));
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write((String) confirmedError[1]);
         response.getWriter().flush();
         response.getWriter().close();
@@ -230,11 +226,6 @@ public class ErrorController extends AbstractErrorController {
     @Bean
     public MethodValidationPostProcessor methodValidationPostProcessor() {
         return new MethodValidationPostProcessor();
-    }
-
-    @Override
-    public String getErrorPath() {
-        return errorPath;
     }
 
 }

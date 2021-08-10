@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,21 +21,27 @@ import com.trc.test.auth.AuthTest;
 import com.trc.test.cluster.ClusterTest;
 import com.trc.test.notification.NotifyIntegrationTest;
 import com.trc.test.web.WebTest;
+import group.idealworld.dew.test.RedisExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import javax.annotation.Resource;
+
 
 /**
  * All test.
  *
  * @author gudaoxuri
  */
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, RedisExtension.class})
+@ContextConfiguration(initializers = RedisExtension.Initializer.class)
 @SpringBootTest(classes = BootTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@Testcontainers
 public class AllTest {
 
     @Autowired

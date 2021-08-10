@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,11 +21,15 @@ import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.common.StandardCode;
 import group.idealworld.dew.idempotent.strategy.StatusEnum;
 import group.idealworld.dew.idempotent.strategy.StrategyEnum;
+import group.idealworld.dew.test.RedisExtension;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.HashMap;
 
@@ -34,11 +38,14 @@ import java.util.HashMap;
  *
  * @author gudaoxuri
  */
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, RedisExtension.class})
+@ContextConfiguration(initializers = RedisExtension.Initializer.class)
+@SpringBootApplication
 @SpringBootTest(classes = IdempotentApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@Testcontainers
 public class IdempotentTest {
 
-    private String urlPre = "http://localhost:8080/idempotent/";
+    private final String urlPre = "http://localhost:8080/idempotent/";
 
     /**
      * Test manual confirm.

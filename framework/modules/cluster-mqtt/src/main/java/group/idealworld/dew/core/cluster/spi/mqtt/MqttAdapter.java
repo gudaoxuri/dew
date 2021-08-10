@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@
 package group.idealworld.dew.core.cluster.spi.mqtt;
 
 import group.idealworld.dew.core.cluster.Cluster;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttClientPersistence;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.eclipse.paho.client.mqttv3.persist.MqttDefaultFilePersistence;
+import org.eclipse.paho.mqttv5.client.MqttClient;
+import org.eclipse.paho.mqttv5.client.MqttClientPersistence;
+import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
+import org.eclipse.paho.mqttv5.client.persist.MemoryPersistence;
+import org.eclipse.paho.mqttv5.client.persist.MqttDefaultFilePersistence;
+import org.eclipse.paho.mqttv5.common.MqttException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +36,7 @@ public class MqttAdapter {
     private static final Logger logger = LoggerFactory.getLogger(MqttAdapter.class);
 
     private MqttClient client;
-    private MqttConfig mqttConfig;
+    private final MqttConfig mqttConfig;
 
     MqttAdapter(MqttConfig mqttConfig) throws MqttException {
         this.mqttConfig = mqttConfig;
@@ -44,28 +44,23 @@ public class MqttAdapter {
     }
 
     private void init() throws MqttException {
-        String clientId = mqttConfig.getClientId();
+        var clientId = mqttConfig.getClientId();
         if (clientId == null || clientId.trim().isEmpty()) {
             clientId = "Dew_Cluster_" + Cluster.instanceId;
         }
         MqttClientPersistence persistence;
-        switch (mqttConfig.getPersistence().toLowerCase()) {
-            case "memory":
-                persistence = new MemoryPersistence();
-                break;
-            default:
-                persistence = new MqttDefaultFilePersistence();
+        if ("memory".equalsIgnoreCase(mqttConfig.getPersistence())) {
+            persistence = new MemoryPersistence();
+        } else {
+            persistence = new MqttDefaultFilePersistence();
         }
         client = new MqttClient(mqttConfig.getBroker(), clientId, persistence);
-        MqttConnectOptions connOpts = new MqttConnectOptions();
+        var connOpts = new MqttConnectionOptions();
         if (mqttConfig.getUserName() != null) {
             connOpts.setUserName(mqttConfig.getUserName());
         }
         if (mqttConfig.getPassword() != null) {
-            connOpts.setPassword(mqttConfig.getPassword().toCharArray());
-        }
-        if (mqttConfig.getCleanSession() != null) {
-            connOpts.setCleanSession(mqttConfig.getCleanSession());
+            connOpts.setPassword(mqttConfig.getPassword().getBytes());
         }
         if (mqttConfig.getTimeoutSec() != null) {
             connOpts.setConnectionTimeout(mqttConfig.getTimeoutSec());
@@ -73,6 +68,7 @@ public class MqttAdapter {
         if (mqttConfig.getKeepAliveIntervalSec() != null) {
             connOpts.setKeepAliveInterval(mqttConfig.getKeepAliveIntervalSec());
         }
+        connOpts.setAutomaticReconnect(true);
         logger.info("[" + clientId + "] Connecting to broker: " + mqttConfig.getBroker());
         client.connect(connOpts);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

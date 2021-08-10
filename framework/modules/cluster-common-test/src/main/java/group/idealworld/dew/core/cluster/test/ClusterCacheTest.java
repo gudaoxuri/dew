@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ public class ClusterCacheTest {
     public void test(ClusterCache cache, ClusterCache authCache) throws InterruptedException {
         cache.flushdb();
         assert !cache.exists("key");
+        assert cache.getSet("key", "keyxx") == null;
         cache.set("key", "value");
         assert cache.get("key").equals("value");
         assert cache.getSet("key", "new_value").equals("value");

@@ -1,3 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  group.idealworld.dew.core.cluster.spi.rabbit.RabbitAutoConfiguration, \
-  group.idealworld.dew.core.cluster.spi.rabbit.tracing.OpenTracingAutoConfiguration
+  group.idealworld.dew.core.cluster.spi.rabbit.RabbitAutoConfiguration

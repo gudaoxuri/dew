@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package group.idealworld.dew.core.cluster;
 
 import group.idealworld.dew.core.cluster.spi.mqtt.MqttClusterMQ;
 import group.idealworld.dew.core.cluster.test.ClusterMQTest;
-import org.junit.jupiter.api.Disabled;
+import group.idealworld.dew.test.MqttExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -26,9 +26,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.HashMap;
 import java.util.concurrent.CountDownLatch;
 
 /**
@@ -36,10 +37,11 @@ import java.util.concurrent.CountDownLatch;
  *
  * @author gudaoxuri
  */
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, MqttExtension.class})
+@ContextConfiguration(initializers = MqttExtension.Initializer.class)
 @SpringBootApplication
 @SpringBootTest
-@Disabled("Need start mqtt server, e.g. docker run -it -p 1883:1883 -p 9001:9001 eclipse-mosquitto")
+@Testcontainers
 public class ClusterTest {
 
     private static final Logger logger = LoggerFactory.getLogger(ClusterMQTest.class);
@@ -54,51 +56,17 @@ public class ClusterTest {
      */
     @Test
     public void testMQ() throws InterruptedException {
-        for (int i = 0; i < 10; i++) {
-            mq.publish("test_pub_sub", "msgA" + i, new HashMap<String, Object>() {
-                {
-                    put("h", "001");
-                }
-            });
-            mq.publish("test_pub_sub", "msgB" + i);
-        }
-    }
-
-    /**
-     * Start sub 1.
-     *
-     * @throws InterruptedException the interrupted exception
-     */
-    @Test
-    public void startSub1() throws InterruptedException {
         CountDownLatch waiting = new CountDownLatch(20);
         new Thread(() -> mq.subscribe("test_pub_sub", message -> {
             assert message.getBody().contains("msg");
-            if (message.getBody().contains("msgA") && mq.supportHeader()) {
-                assert message.getHeader().get().containsKey("h");
-            }
             logger.info("subscribe instance 1: pub_sub>>" + message);
             waiting.countDown();
         })).start();
-        waiting.await();
-    }
-
-    /**
-     * Start sub 2.
-     *
-     * @throws InterruptedException the interrupted exception
-     */
-    @Test
-    public void startSub2() throws InterruptedException {
-        CountDownLatch waiting = new CountDownLatch(20);
-        new Thread(() -> mq.subscribe("test_pub_sub", message -> {
-            assert message.getBody().contains("msg");
-            if (message.getBody().contains("msgA") && mq.supportHeader()) {
-                assert message.getHeader().get().containsKey("h");
-            }
-            logger.info("subscribe instance 2: pub_sub>>" + message);
-            waiting.countDown();
-        })).start();
+        Thread.sleep(100);
+        for (int i = 0; i < 10; i++) {
+            mq.publish("test_pub_sub", "msgA" + i);
+            mq.publish("test_pub_sub", "msgB" + i);
+        }
         waiting.await();
     }
 

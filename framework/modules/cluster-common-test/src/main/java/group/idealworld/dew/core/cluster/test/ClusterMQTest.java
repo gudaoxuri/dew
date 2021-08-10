@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package group.idealworld.dew.core.cluster.test;
 
-import com.ecfront.dew.common.$;
 import group.idealworld.dew.core.cluster.Cluster;
 import group.idealworld.dew.core.cluster.ClusterMQ;
 import org.slf4j.Logger;
@@ -74,7 +73,7 @@ public class ClusterMQTest {
         })).start();
         Thread.sleep(2000);
         for (int i = 0; i < 10; i++) {
-            mq.publish("test_pub_sub", "msgA" + i, new HashMap<String, Object>() {
+            mq.publish("test_pub_sub", "msgA" + i, new HashMap<>() {
                 {
                     put("h", "001");
                 }
@@ -101,7 +100,7 @@ public class ClusterMQTest {
                     assert message.getHeader().get().containsKey("h");
                 }
                 conflictFlag.add(message.getBody());
-                logger.info("response instance 1: req_resp>>" + $.json.toJsonString(message));
+                logger.info("response instance 1: req_resp>>" + message);
                 waiting.countDown();
             }
         })).start();
@@ -113,7 +112,7 @@ public class ClusterMQTest {
                     assert message.getHeader().get().containsKey("h");
                 }
                 conflictFlag.add(message.getBody());
-                logger.info("response instance 2: req_resp>>" + $.json.toJsonString(message));
+                logger.info("response instance 2: req_resp>>" + message);
                 waiting.countDown();
             }
         })).start();

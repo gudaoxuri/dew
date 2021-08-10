@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,26 @@ package group.idealworld.dew.core.cluster;
 
 import group.idealworld.dew.core.cluster.spi.redis.*;
 import group.idealworld.dew.core.cluster.test.*;
+import group.idealworld.dew.test.RedisExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
  * Cluster test.
  *
  * @author gudaoxuri
  */
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, RedisExtension.class})
+@ContextConfiguration(initializers = RedisExtension.Initializer.class)
 @SpringBootApplication
 @SpringBootTest
+@Testcontainers
 public class ClusterTest {
 
     @Autowired
@@ -63,7 +68,7 @@ public class ClusterTest {
      */
     @Test
     public void testCache() throws InterruptedException {
-        new ClusterCacheTest().test(redisClusterCacheWrap.instance(), redisClusterCacheWrap.instance("auth"));
+        new ClusterCacheTest().test(redisClusterCacheWrap.instance(), redisClusterCacheWrap.instance("other"));
     }
 
     /**

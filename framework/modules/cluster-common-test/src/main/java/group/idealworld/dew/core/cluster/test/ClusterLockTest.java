@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class ClusterLockTest {
             try {
                 assert lock.tryLock();
                 logger.info("Locked1 > " + Thread.currentThread().getId());
-                Thread.sleep(2100);
+                Thread.sleep(2300);
             } catch (Exception e) {
                 logger.error(e.getMessage());
             } finally {

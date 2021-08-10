@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,10 @@ package group.idealworld.dew.core.cluster.spi.mqtt;
 import com.ecfront.dew.common.exception.RTUnsupportedEncodingException;
 import group.idealworld.dew.core.cluster.AbsClusterMQ;
 import group.idealworld.dew.core.cluster.dto.MessageWrap;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.mqttv5.client.IMqttMessageListener;
+import org.eclipse.paho.mqttv5.common.MqttException;
+import org.eclipse.paho.mqttv5.common.MqttMessage;
+import org.eclipse.paho.mqttv5.common.MqttSubscription;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -43,7 +45,7 @@ public class MqttClusterMQ extends AbsClusterMQ {
     @Override
     protected boolean doPublish(String topic, String message, Optional<Map<String, Object>> header, boolean confirm) {
         try {
-            MqttMessage mqttMessage = new MqttMessage(message.getBytes());
+            var mqttMessage = new MqttMessage(message.getBytes());
             if (confirm) {
                 mqttMessage.setQos(1);
             } else {
@@ -60,9 +62,14 @@ public class MqttClusterMQ extends AbsClusterMQ {
     @Override
     protected void doSubscribe(String topic, Consumer<MessageWrap> consumer) {
         try {
-            mqttAdapter.getClient().subscribe(topic,
-                    (t, mqttMessage) ->
-                            consumer.accept(new MessageWrap(t, new String(mqttMessage.getPayload(), StandardCharsets.UTF_8))));
+            // At most once (0)
+            // At least once (1)
+            // Exactly once (2)
+            mqttAdapter.getClient().subscribe(new MqttSubscription[]{new MqttSubscription(topic, 2)},
+                    new IMqttMessageListener[]{
+                            (t, mqttMessage) ->
+                                    consumer.accept(new MessageWrap(t, new String(mqttMessage.getPayload(), StandardCharsets.UTF_8)))
+                    });
         } catch (MqttException e) {
             logger.error("[MQ] Mqtt subscribe error.", e);
         }

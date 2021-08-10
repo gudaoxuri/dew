@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.ecfront.dew.common.Resp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.*;
@@ -67,8 +68,10 @@ public class Notify {
         notifyConfigMap.forEach((key, value) -> {
             Channel channel = null;
             try {
-                channel = (Channel) Class.forName(Notify.class.getPackage().getName() + "." + value.getType() + "Channel").newInstance();
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                channel = (Channel) Class.forName(Notify.class.getPackage().getName() + "." + value.getType() + "Channel")
+                        .getDeclaredConstructor().newInstance();
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+                    | NoSuchMethodException | InvocationTargetException e) {
                 logger.error("Not exist notify type:" + value.getType());
                 throw new RuntimeException(e);
             }
