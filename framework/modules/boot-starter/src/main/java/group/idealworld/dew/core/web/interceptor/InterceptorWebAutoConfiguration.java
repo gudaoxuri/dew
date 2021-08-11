@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package group.idealworld.dew.core.web.interceptor;
 
+import group.idealworld.dew.Dew;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -49,8 +50,21 @@ public class InterceptorWebAutoConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        BasicHandlerInterceptor basicHandlerInterceptor = new BasicHandlerInterceptor();
-        registry.addInterceptor(basicHandlerInterceptor).excludePathPatterns("/error/**");
+        if (Dew.dewConfig == null) {
+            // 未启用web的情况下，Dew加载滞后，忽略
+            return;
+        }
+        if (!Dew.dewConfig.getSecurity().isAuthEnabled()) {
+            return;
+        }
+        if (Dew.dewConfig.getSecurity().isIdentInfoEnabled()) {
+            registry.addInterceptor(new IdentInfoHandlerInterceptor()).excludePathPatterns("/error/**");
+        } else {
+            registry.addInterceptor(new TokenHandlerInterceptor()).excludePathPatterns("/error/**");
+        }
+        if (Dew.dewConfig.getSecurity().getRouter().isEnabled()) {
+            registry.addInterceptor(new RouterHandlerInterceptor()).excludePathPatterns("/error/**");
+        }
     }
 
     @Override

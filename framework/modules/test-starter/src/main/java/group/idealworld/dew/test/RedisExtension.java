@@ -24,6 +24,9 @@ import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
+
+import java.time.Duration;
 
 public class RedisExtension implements BeforeAllCallback {
 
@@ -35,6 +38,8 @@ public class RedisExtension implements BeforeAllCallback {
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
         redisContainer.start();
+        redisContainer.waitingFor((new LogMessageWaitStrategy()).withRegEx("Ready to accept connections").withTimes(1))
+                .withStartupTimeout(Duration.ofSeconds(60L));
         logger.info("Test Redis port: " + redisContainer.getFirstMappedPort());
     }
 

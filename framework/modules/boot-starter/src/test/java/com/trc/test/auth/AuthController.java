@@ -20,12 +20,10 @@ import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
 import group.idealworld.dew.Dew;
 import group.idealworld.dew.core.DewContext;
-import group.idealworld.dew.core.auth.dto.OptInfo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -80,22 +78,15 @@ public class AuthController {
             throw Dew.E.e("ASXXX0", new Exception("密码错误"));
         }
         String token = $.field.createUUID();
-        Dew.auth.setOptInfo(new OptInfoExt()
-                .setIdCard(userDTO.getIdCard())
-                .setAccountCode(loginDTO.getIdCard())
-                .setToken(token)
-                .setTokenKind(Dew.context().getTokenKind())
-                .setName(userDTO.getName())
-                .setMobile(userDTO.getPhone())
-                .setRoleInfo(new HashSet<>() {
-                    {
-                        add(new OptInfo.RoleInfo()
-                                .setCode(userDTO.getRole())
-                                .setName("..")
-                        );
-                    }
-                })
-        );
+        var optInfo = new OptInfoExt();
+        optInfo.setIdCard(userDTO.getIdCard());
+        optInfo.setAccountCode(loginDTO.getIdCard());
+        optInfo.setToken(token);
+        optInfo.setTokenKind(Dew.context().getTokenKind());
+        optInfo.setName(userDTO.getName());
+        optInfo.setMobile(userDTO.getPhone());
+        optInfo.setRoles(new String[]{userDTO.getRole()});
+        Dew.auth.setOptInfo(optInfo);
         return Resp.success(token);
     }
 

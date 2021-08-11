@@ -24,11 +24,10 @@ import java.time.LocalDateTime;
 /**
  * 基础操作用户信息.
  *
- * @param <E> 扩展操作用户信息类型
  * @author gudaoxuri
  */
 @Schema(title = "操作用户信息")
-public class BasicOptInfo<E> extends OptInfo<E> {
+public class BasicOptInfo extends OptInfo {
 
     /**
      * The Mobile.
@@ -52,84 +51,35 @@ public class BasicOptInfo<E> extends OptInfo<E> {
     @Schema(title = "最后一次登录时间", required = true)
     protected LocalDateTime lastLoginTime;
 
-    /**
-     * Gets mobile.
-     *
-     * @return the mobile
-     */
     public String getMobile() {
         return mobile;
     }
 
-    /**
-     * Sets mobile.
-     *
-     * @param mobile the mobile
-     * @return the mobile
-     */
-    public E setMobile(String mobile) {
+    public void setMobile(String mobile) {
         this.mobile = mobile;
-        return (E) this;
     }
 
-    /**
-     * Gets email.
-     *
-     * @return the email
-     */
     public String getEmail() {
         return email;
     }
 
-    /**
-     * Sets email.
-     *
-     * @param email the email
-     * @return the email
-     */
-    public E setEmail(String email) {
+    public void setEmail(String email) {
         this.email = email;
-        return (E) this;
     }
 
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * Sets name.
-     *
-     * @param name the name
-     * @return the name
-     */
-    public E setName(String name) {
+    public void setName(String name) {
         this.name = name;
-        return (E) this;
     }
 
-    /**
-     * Gets last login time.
-     *
-     * @return the last login time
-     */
     public LocalDateTime getLastLoginTime() {
         return lastLoginTime;
     }
 
-    /**
-     * Sets last login time.
-     *
-     * @param lastLoginTime the last login time
-     * @return the last login time
-     */
-    public E setLastLoginTime(LocalDateTime lastLoginTime) {
+    public void setLastLoginTime(LocalDateTime lastLoginTime) {
         this.lastLoginTime = lastLoginTime;
-        return (E) this;
     }
-
 }

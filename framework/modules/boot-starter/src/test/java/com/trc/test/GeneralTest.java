@@ -34,7 +34,7 @@ import javax.annotation.Resource;
 
 
 /**
- * All test.
+ * General test.
  *
  * @author gudaoxuri
  */
@@ -42,7 +42,7 @@ import javax.annotation.Resource;
 @ContextConfiguration(initializers = RedisExtension.Initializer.class)
 @SpringBootTest(classes = BootTestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @Testcontainers
-public class AllTest {
+public class GeneralTest {
 
     @Autowired
     private ClusterTest clusterTest;

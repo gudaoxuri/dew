@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,14 +38,14 @@ public class ClusterTest {
      * @throws InterruptedException the interrupted exception
      */
     public void testAll() throws InterruptedException {
-        logger.info("Testing MQ");
-        new ClusterMQTest().test(Dew.cluster.mq);
         logger.info("Testing Cache");
         new ClusterCacheTest().test(Dew.cluster.cache, null);
         logger.info("Testing Lock");
         new ClusterLockTest().test(Dew.cluster.lock.instance("test"));
         logger.info("Testing Map");
         new ClusterMapTest().test(Dew.cluster.map.instance("test", ClusterMapTest.TestMapObj.class));
+        logger.info("Testing MQ");
+        new ClusterMQTest().test(Dew.cluster.mq);
         logger.info("Testing Election");
         new ClusterElectionTest().test(Dew.cluster.election.instance("test"));
     }

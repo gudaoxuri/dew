@@ -42,20 +42,21 @@ dew:
         minIntervalSec: 0
 
   security:
+    ident-info-enabled: false
     token-flag: _token_
     token-in-header: true
     token-hash: false
     router:
       enabled: true
       blockUri:
-        post: ["/auth/register/*","/auth/re?","/user/**","/tes{t}"]
+        post: [ "/auth/register/*","/auth/re?","/user/**","/tes{t}" ]
       roleAuth:
         admin:
-          all: ["/mgr/**"]
-          get: ["/user/**"]
+          all: [ "/mgr/**" ]
+          get: [ "/user/**" ]
         user:
-          get: ["/user/**","/user/only-user-role/**"]
-          post: ["/user/"]
+          get: [ "/user/**","/user/only-user-role/**" ]
+          post: [ "/user/" ]
     token-kinds:
       DEFAULT:
         revisionHistoryLimit: 1

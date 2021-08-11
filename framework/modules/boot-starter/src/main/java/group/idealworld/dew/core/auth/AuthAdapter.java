@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public interface AuthAdapter {
      * @param <E> 扩展操作用户信息类型
      * @return 操作用户信息
      */
-    default <E extends OptInfo<E>> Optional<E> getOptInfo() {
+    default <E extends OptInfo> Optional<E> getOptInfo() {
         return Dew.context().optInfo();
     }
 
@@ -45,7 +45,7 @@ public interface AuthAdapter {
      * @param token 登录Token
      * @return 操作用户信息
      */
-    <E extends OptInfo<E>> Optional<E> getOptInfo(String token);
+    <E extends OptInfo> Optional<E> getOptInfo(String token);
 
     /**
      * 设置操作用户信息类型.
@@ -53,7 +53,7 @@ public interface AuthAdapter {
      * @param <E>     扩展操作用户信息类型
      * @param optInfo 扩展操作用户信息
      */
-    <E extends OptInfo<E>> void setOptInfo(E optInfo);
+    <E extends OptInfo> void setOptInfo(E optInfo);
 
     /**
      * 删除当前登录的操作用户信息.

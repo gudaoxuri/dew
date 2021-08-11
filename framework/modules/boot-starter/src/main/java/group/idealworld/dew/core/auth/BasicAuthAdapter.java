@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ public class BasicAuthAdapter implements AuthAdapter {
     }
 
     @Override
-    public <E extends OptInfo<E>> Optional<E> getOptInfo(String token) {
+    public <E extends OptInfo> Optional<E> getOptInfo(String token) {
         String optInfoStr = cache.get(TOKEN_INFO_FLAG + token);
         if (optInfoStr != null && !optInfoStr.isEmpty()) {
             return Optional.of($.json.toObject(optInfoStr, DewContext.getOptInfoClazz()));
@@ -85,7 +85,7 @@ public class BasicAuthAdapter implements AuthAdapter {
     }
 
     @Override
-    public <E extends OptInfo<E>> void setOptInfo(E optInfo) {
+    public <E extends OptInfo> void setOptInfo(E optInfo) {
         Dew.dewConfig.getSecurity().getTokenKinds().putIfAbsent(optInfo.getTokenKind(), new DewConfig.Security.TokenKind());
         if (!cache.setnx(TOKEN_INFO_FLAG + optInfo.getToken(), $.json.toJsonString(optInfo),
                 Dew.dewConfig.getSecurity().getTokenKinds().get(optInfo.getTokenKind()).getExpireSec())) {

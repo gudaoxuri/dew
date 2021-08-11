@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -731,9 +731,13 @@ public class DewConfig {
 
         private boolean authEnabled = true;
 
+        private String identInfoFlag = "Dew-Ident-Info";
+
         private String tokenFlag = "Dew-Token";
 
         private String tokenKindFlag = "Dew-Token-Kind";
+
+        private boolean identInfoEnabled = true;
 
         private boolean tokenInHeader = true;
 
@@ -749,6 +753,22 @@ public class DewConfig {
 
         public void setAuthEnabled(boolean authEnabled) {
             this.authEnabled = authEnabled;
+        }
+
+        public String getIdentInfoFlag() {
+            return identInfoFlag;
+        }
+
+        public void setIdentInfoFlag(String identInfoFlag) {
+            this.identInfoFlag = identInfoFlag;
+        }
+
+        public boolean isIdentInfoEnabled() {
+            return identInfoEnabled;
+        }
+
+        public void setIdentInfoEnabled(boolean identInfoEnabled) {
+            this.identInfoEnabled = identInfoEnabled;
         }
 
         /**
