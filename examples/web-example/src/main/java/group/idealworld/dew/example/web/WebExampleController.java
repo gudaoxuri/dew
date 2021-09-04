@@ -22,6 +22,8 @@ import group.idealworld.dew.core.web.validation.IdNumber;
 import group.idealworld.dew.core.web.validation.Phone;
 import group.idealworld.dew.core.web.validation.UpdateGroup;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.validation.annotation.Validated;
@@ -50,7 +52,7 @@ public class WebExampleController {
      * @return result
      */
     @GetMapping("example")
-    @Operation(summary = "示例方法")
+    @Operation(summary = "示例方法",extensions = {@Extension(name = "FIN_EXT",properties = @ExtensionProperty(name = "REL", value = "s001,s002"))})
     public Map<String, Integer> example() {
         return new HashMap<>();
     }

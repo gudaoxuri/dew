@@ -5,6 +5,8 @@ dew:
     default-expire-ms: 3600000 # 设置默认过期时间，1小时
     default-strategy: item # 设置默认策略，支持 bloom(Bloom Filter)和item(逐条记录)
     default-opt-id-flag: __IDEMPOTENT_OPT_ID__ # 指定幂等操作ID标识，可以位于HTTP Header或请求参数中
+  security:
+    ident-info-enabled: false
 spring:
   application:
     name: Idempotent-example

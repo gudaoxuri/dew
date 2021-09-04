@@ -15,6 +15,5 @@ dew:
     token-flag: _token_
     token-in-header: true
     token-hash: false
-
-
+    ident-info-enabled: false
 

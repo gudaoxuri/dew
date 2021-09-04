@@ -28,3 +28,5 @@ dew:
     lock: redis # 可选 redis/hazelcast
     mq: redis # 可选 redis/hazelcast/rabbit
     election: redis # 可选 redis/eureka
+  security:
+    ident-info-enabled: false

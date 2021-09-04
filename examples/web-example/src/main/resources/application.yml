@@ -15,6 +15,8 @@ dew:
     web-site: http://www.idealworld.group
     doc:
       base-package: group.idealworld.dew # API文档路径
+  security:
+    ident-info-enabled: false
 
 management:
   endpoints:

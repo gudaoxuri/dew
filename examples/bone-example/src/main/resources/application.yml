@@ -4,3 +4,7 @@ spring:
 
 bone-example:
   some-prop: prop1
+
+dew:
+  security:
+    ident-info-enabled: false
