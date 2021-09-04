@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class YamlHelper {
             options.setIndent(2);
             Representer representer = new io.kubernetes.client.util.Yaml.CustomRepresenter();
             representer.getPropertyUtils().setSkipMissingProperties(true);
-            yaml = new Yaml(new io.kubernetes.client.util.Yaml.CustomConstructor(), representer, options);
+            yaml = new Yaml(representer, options);
         }
     }
 

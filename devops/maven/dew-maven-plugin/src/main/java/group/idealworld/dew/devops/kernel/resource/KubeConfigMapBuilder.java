@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,7 @@ package group.idealworld.dew.devops.kernel.resource;
 import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
 import group.idealworld.dew.devops.kernel.helper.KubeRES;
 import io.kubernetes.client.openapi.models.V1ConfigMap;
-import io.kubernetes.client.openapi.models.V1ConfigMapBuilder;
-import io.kubernetes.client.openapi.models.V1ObjectMetaBuilder;
+import io.kubernetes.client.openapi.models.V1ObjectMeta;
 
 import java.util.Map;
 
@@ -47,17 +46,14 @@ public class KubeConfigMapBuilder implements KubeResourceBuilder<V1ConfigMap> {
      * @return the config map
      */
     public V1ConfigMap build(String name, String namespace, Map<String, String> labels, Map<String, String> data) {
-        V1ConfigMapBuilder builder = new V1ConfigMapBuilder();
-        builder.withKind(KubeRES.CONFIG_MAP.getVal())
-                .withApiVersion("v1")
-                .withData(data)
-                .withMetadata(new V1ObjectMetaBuilder()
-                        .withName(name)
-                        .withNamespace(namespace)
-                        .withLabels(labels)
-                        .build())
-                .build();
-        return builder.build();
+        return new V1ConfigMap()
+                .kind(KubeRES.CONFIG_MAP.getVal())
+                .apiVersion("v1")
+                .data(data)
+                .metadata(new V1ObjectMeta()
+                        .name(name)
+                        .namespace(namespace)
+                        .labels(labels));
     }
 
 }

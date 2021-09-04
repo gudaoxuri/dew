@@ -20,7 +20,10 @@ import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
 import group.idealworld.dew.devops.kernel.function.VersionController;
 import group.idealworld.dew.devops.kernel.helper.KubeRES;
 import io.kubernetes.client.custom.IntOrString;
-import io.kubernetes.client.openapi.models.*;
+import io.kubernetes.client.openapi.models.V1ObjectMeta;
+import io.kubernetes.client.openapi.models.V1Service;
+import io.kubernetes.client.openapi.models.V1ServicePort;
+import io.kubernetes.client.openapi.models.V1ServiceSpec;
 import org.codehaus.plexus.util.ReflectionUtils;
 
 import java.util.ArrayList;
@@ -60,38 +63,31 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
         selectorLabels.remove("provider");
 
         List<V1ServicePort> ports = new ArrayList<>();
-        ports.add(new V1ServicePortBuilder()
-                .withName("http")
-                .withPort(config.getApp().getPort())
-                .withProtocol("TCP")
-                .withTargetPort(new IntOrString(config.getApp().getPort()))
-                .build());
+        ports.add(new V1ServicePort()
+                .name("http")
+                .port(config.getApp().getPort())
+                .protocol("TCP")
+                .targetPort(new IntOrString(config.getApp().getPort())));
         if (config.getApp().getExtendedPorts() != null) {
             config.getApp().getExtendedPorts().forEach(port -> {
-                ports.add(new V1ServicePortBuilder()
-                        .withName(port.getName())
-                        .withPort(port.getContainerPort())
-                        .withProtocol(port.getProtocol())
-                        .withTargetPort(new IntOrString(port.getContainerPort()))
-                        .build());
+                ports.add(new V1ServicePort()
+                        .name(port.getName())
+                        .port(port.getContainerPort())
+                        .protocol(port.getProtocol())
+                        .targetPort(new IntOrString(port.getContainerPort())));
             });
         }
-
-        V1ServiceBuilder builder = new V1ServiceBuilder();
-        builder.withKind(KubeRES.SERVICE.getVal())
-                .withApiVersion("v1")
-                .withMetadata(new V1ObjectMetaBuilder()
-                        .withAnnotations(annotations)
-                        .withLabels(labels)
-                        .withName(config.getAppName())
-                        .withNamespace(config.getNamespace())
-                        .build())
-                .withSpec(new V1ServiceSpecBuilder()
-                        .withSelector(selectorLabels)
-                        .withPorts(ports)
-                        .build())
-                .build();
-        return builder.build();
+        return new V1Service()
+                .kind(KubeRES.SERVICE.getVal())
+                .apiVersion("v1")
+                .metadata(new V1ObjectMeta()
+                        .annotations(annotations)
+                        .labels(labels)
+                        .name(config.getAppName())
+                        .namespace(config.getNamespace()))
+                .spec(new V1ServiceSpec()
+                        .selector(selectorLabels)
+                        .ports(ports));
     }
 
     /**
@@ -137,20 +133,18 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
     public void buildDebugPort(V1Service service, int debugPort, int forwardPort) {
         service.getSpec().setType("NodePort");
         if (service.getSpec().getPorts().stream().noneMatch(v1ServicePort -> v1ServicePort.getPort() == forwardPort)) {
-            service.getSpec().getPorts().add(new V1ServicePortBuilder()
-                    .withName("http-debug")
-                    .withPort(forwardPort)
-                    .withProtocol("TCP")
-                    .withTargetPort(new IntOrString(forwardPort))
-                    .build());
+            service.getSpec().getPorts().add(new V1ServicePort()
+                    .name("http-debug")
+                    .port(forwardPort)
+                    .protocol("TCP")
+                    .targetPort(new IntOrString(forwardPort)));
         }
         if (service.getSpec().getPorts().stream().noneMatch(v1ServicePort -> v1ServicePort.getPort() == debugPort)) {
-            service.getSpec().getPorts().add(new V1ServicePortBuilder()
-                    .withName("http-new")
-                    .withPort(debugPort)
-                    .withProtocol("TCP")
-                    .withTargetPort(new IntOrString(debugPort))
-                    .build());
+            service.getSpec().getPorts().add(new V1ServicePort()
+                    .name("http-new")
+                    .port(debugPort)
+                    .protocol("TCP")
+                    .targetPort(new IntOrString(debugPort)));
         }
     }
 

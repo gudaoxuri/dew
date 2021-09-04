@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,43 +48,35 @@ public class KubeHorizontalPodAutoscalerBuilder implements KubeResourceBuilder<V
     public V2beta2HorizontalPodAutoscaler build(FinalProjectConfig config, int minReplicas, int maxReplicas, int cpuAvg) {
         List<V2beta2MetricSpec> metrics = new ArrayList<>();
         if (cpuAvg != 0) {
-            metrics.add(new V2beta2MetricSpecBuilder()
-                    .withType("Resource")
-                    .withResource(new V2beta2ResourceMetricSourceBuilder()
-                            .withName("cpu")
-                            .withTarget(new V2beta2MetricTargetBuilder()
-                                    .withType("Utilization")
-                                    .withAverageUtilization(cpuAvg)
-                                    .build())
-                            .build())
-                    .build());
+            metrics.add(new V2beta2MetricSpec()
+                    .type("Resource")
+                    .resource(new V2beta2ResourceMetricSource()
+                            .name("cpu")
+                            .target(new V2beta2MetricTarget()
+                                    .type("Utilization")
+                                    .averageUtilization(cpuAvg))));
         }
-        V2beta2HorizontalPodAutoscalerBuilder builder = new V2beta2HorizontalPodAutoscalerBuilder();
-        builder.withKind(KubeRES.HORIZONTAL_POD_AUTOSCALER.getVal())
-                .withApiVersion("autoscaling/v2beta2")
-                .withMetadata(new V1ObjectMetaBuilder()
-                        .withLabels(new HashMap<String, String>() {
+        return new V2beta2HorizontalPodAutoscaler()
+                .kind(KubeRES.HORIZONTAL_POD_AUTOSCALER.getVal())
+                .apiVersion("autoscaling/v2beta2")
+                .metadata(new V1ObjectMeta()
+                        .labels(new HashMap<String, String>() {
                             {
                                 put("app", config.getAppName());
                                 put("group", config.getAppGroup());
                                 put("provider", "dew");
                             }
                         })
-                        .withName(config.getAppName())
-                        .withNamespace(config.getNamespace())
-                        .build())
-                .withSpec(new V2beta2HorizontalPodAutoscalerSpecBuilder()
-                        .withScaleTargetRef(new V2beta2CrossVersionObjectReferenceBuilder()
-                                .withApiVersion("apps/v1")
-                                .withKind("Deployment")
-                                .withName(config.getAppName())
-                                .build())
-                        .withMinReplicas(minReplicas)
-                        .withMaxReplicas(maxReplicas)
-                        .withMetrics(metrics)
-                        .build())
-                .build();
-        return builder.build();
+                        .name(config.getAppName())
+                        .namespace(config.getNamespace()))
+                .spec(new V2beta2HorizontalPodAutoscalerSpec()
+                        .scaleTargetRef(new V2beta2CrossVersionObjectReference()
+                                .apiVersion("apps/v1")
+                                .kind("Deployment")
+                                .name(config.getAppName()))
+                        .minReplicas(minReplicas)
+                        .maxReplicas(maxReplicas)
+                        .metrics(metrics));
     }
 
 }

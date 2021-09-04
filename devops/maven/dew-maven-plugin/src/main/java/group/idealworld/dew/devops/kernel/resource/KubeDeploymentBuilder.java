@@ -65,11 +65,10 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<V1Deployment> 
         }
 
         List<V1ContainerPort> ports = new ArrayList<>();
-        ports.add(new V1ContainerPortBuilder()
-                .withContainerPort(config.getApp().getPort())
-                .withName("http")
-                .withProtocol("TCP")
-                .build());
+        ports.add(new V1ContainerPort()
+                .containerPort(config.getApp().getPort())
+                .name("http")
+                .protocol("TCP"));
         if (config.getApp().getExtendedPorts() != null) {
             config.getApp().getExtendedPorts().forEach(port -> {
                 if (port.getName() == null || port.getName().isEmpty()) {
@@ -82,22 +81,22 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<V1Deployment> 
             });
         }
 
-        V1ContainerBuilder containerBuilder = new V1ContainerBuilder()
-                .withCommand(config.getApp().getContainerCmd())
-                .withName(FLAG_CONTAINER_NAME)
-                .withImage(config.getCurrImageName())
-                .withImagePullPolicy("IfNotPresent")
-                .withPorts(ports)
-                .withResources(new V1ResourceRequirements()
+        var container = new V1Container()
+                .command(config.getApp().getContainerCmd())
+                .name(FLAG_CONTAINER_NAME)
+                .image(config.getCurrImageName())
+                .imagePullPolicy("IfNotPresent")
+                .ports(ports)
+                .resources(new V1ResourceRequirements()
                         .requests(config.getApp().getContainerResourcesRequests())
                         .limits(config.getApp().getContainerResourcesLimits()));
         if (!config.getApp().getVolumeMounts().isEmpty()) {
             // 装配volumeMounts配置
-            containerBuilder.withVolumeMounts(new ArrayList<>() {
+            container.volumeMounts(new ArrayList<>() {
                 {
-                    config.getApp().getVolumeMounts().forEach(map -> add(new V1VolumeMountBuilder()
-                            .withMountPath(map.get("mountPath"))
-                            .withName(map.get("name")).build())
+                    config.getApp().getVolumeMounts().forEach(map -> add(new V1VolumeMount()
+                            .mountPath(map.get("mountPath"))
+                            .name(map.get("name")))
                     );
                 }
             });
@@ -113,76 +112,66 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<V1Deployment> 
         env.putAll(config.getDeployPlugin().getEnv(config));
         env.putAll(config.getApp().getEnv());
         if (!env.isEmpty()) {
-            containerBuilder.withEnv(env.entrySet().stream().map(e ->
-                    new V1EnvVarBuilder()
-                            .withName(e.getKey())
-                            .withValue(e.getValue())
-                            .build()
+            container.env(env.entrySet().stream().map(e ->
+                    new V1EnvVar()
+                            .name(e.getKey())
+                            .value(e.getValue())
             ).collect(Collectors.toList()));
         }
         // 装配volume配置
         List<V1Volume> volumes = null;
         if (!config.getApp().getVolumes().isEmpty()) {
             volumes = new ArrayList<>() {{
-                config.getApp().getVolumes().forEach(map -> add(new V1VolumeBuilder()
-                        .withName(map.get("name"))
-                        .withPersistentVolumeClaim(new V1PersistentVolumeClaimVolumeSource().claimName(map.get("claimName")))
-                        .build())
+                config.getApp().getVolumes().forEach(map -> add(new V1Volume()
+                        .name(map.get("name"))
+                        .persistentVolumeClaim(new V1PersistentVolumeClaimVolumeSource().claimName(map.get("claimName"))))
                 );
             }};
         }
 
         if (config.getApp().getHealthCheckEnabled()) {
-            containerBuilder.withLivenessProbe(new V1ProbeBuilder()
-                    .withHttpGet(new V1HTTPGetActionBuilder()
-                            .withPath(config.getApp().getLivenessPath())
-                            .withPort(new IntOrString(config.getApp().getHealthCheckPort()))
-                            .withScheme("HTTP")
-                            .build())
-                    .withInitialDelaySeconds(config.getApp().getLivenessInitialDelaySeconds())
-                    .withPeriodSeconds(config.getApp().getLivenessPeriodSeconds())
-                    .withFailureThreshold(config.getApp().getLivenessFailureThreshold())
-                    .build())
-                    .withReadinessProbe(new V1ProbeBuilder()
-                            .withHttpGet(new V1HTTPGetActionBuilder()
-                                    .withPath(config.getApp().getReadinessPath())
-                                    .withPort(new IntOrString(config.getApp().getHealthCheckPort()))
-                                    .withScheme("HTTP")
-                                    .build())
-                            .withInitialDelaySeconds(config.getApp().getReadinessInitialDelaySeconds())
-                            .withPeriodSeconds(config.getApp().getReadinessPeriodSeconds())
-                            .withFailureThreshold(config.getApp().getReadinessFailureThreshold())
-                            .build());
+            container.livenessProbe(new V1Probe()
+                            .httpGet(new V1HTTPGetAction()
+                                    .path(config.getApp().getLivenessPath())
+                                    .port(new IntOrString(config.getApp().getHealthCheckPort()))
+                                    .scheme("HTTP"))
+                            .initialDelaySeconds(config.getApp().getLivenessInitialDelaySeconds())
+                            .periodSeconds(config.getApp().getLivenessPeriodSeconds())
+                            .failureThreshold(config.getApp().getLivenessFailureThreshold()))
+                    .readinessProbe(new V1Probe()
+                            .httpGet(new V1HTTPGetAction()
+                                    .path(config.getApp().getReadinessPath())
+                                    .port(new IntOrString(config.getApp().getHealthCheckPort()))
+                                    .scheme("HTTP"))
+                            .initialDelaySeconds(config.getApp().getReadinessInitialDelaySeconds())
+                            .periodSeconds(config.getApp().getReadinessPeriodSeconds())
+                            .failureThreshold(config.getApp().getReadinessFailureThreshold()));
         }
-        V1DeploymentBuilder builder = new V1DeploymentBuilder();
-        builder.withKind(KubeRES.DEPLOYMENT.getVal())
-                .withApiVersion("apps/v1")
-                .withMetadata(new V1ObjectMetaBuilder()
-                        .withAnnotations(annotations)
-                        .withLabels(labels)
-                        .withName(config.getAppName())
-                        .withNamespace(config.getNamespace())
-                        .build())
-                .withSpec(new V1DeploymentSpecBuilder()
-                        .withReplicas(config.getApp().getReplicas())
-                        .withRevisionHistoryLimit(config.getApp().getRevisionHistoryLimit())
-                        .withSelector(new V1LabelSelectorBuilder()
-                                .withMatchLabels(selectorLabels)
-                                .build())
-                        .withTemplate(new V1PodTemplateSpecBuilder()
-                                .withMetadata(new V1ObjectMetaBuilder()
-                                        .withAnnotations(annotations)
-                                        .withLabels(labels)
-                                        .build())
-                                .withSpec(new V1PodSpecBuilder()
-                                        .withContainers(containerBuilder.build())
-                                        .withNodeSelector(nodeSelectors)
-                                        .withVolumes(volumes)
-                                        .build())
-                                .build())
-                        .build())
-                .build();
-        return builder.build();
+        return new V1Deployment()
+                .kind(KubeRES.DEPLOYMENT.getVal())
+                .apiVersion("apps/v1")
+                .metadata(new V1ObjectMeta()
+                        .annotations(annotations)
+                        .labels(labels)
+                        .name(config.getAppName())
+                        .namespace(config.getNamespace()))
+                .spec(new V1DeploymentSpec()
+                        .replicas(config.getApp().getReplicas())
+                        .revisionHistoryLimit(config.getApp().getRevisionHistoryLimit())
+                        .selector(new V1LabelSelector()
+                                .matchLabels(selectorLabels))
+                        .template(new V1PodTemplateSpec()
+                                .metadata(new V1ObjectMeta()
+                                        .annotations(annotations)
+                                        .labels(labels))
+                                .spec(new V1PodSpec()
+                                        .containers(new ArrayList<>() {
+                                            {
+                                                add(container);
+                                            }
+                                        })
+                                        .nodeSelector(nodeSelectors)
+                                        .volumes(volumes))));
     }
 
 }

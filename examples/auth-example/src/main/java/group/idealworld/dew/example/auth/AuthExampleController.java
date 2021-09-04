@@ -1,5 +1,5 @@
 /*
- * Copyright 2020. the original author or authors.
+ * Copyright 2021. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,12 +72,13 @@ public class AuthExampleController {
         // 实际登录处理
         User user = MOCK_USER_CONTAINER.values().stream().filter(u -> u.getIdCard().equals(loginDTO.getIdCard())).findFirst().get();
         String token = $.field.createUUID();
-        Dew.auth.setOptInfo(new OptInfoExt()
-                .setIdCard(user.getIdCard())
-                .setAccountCode($.field.createShortUUID())
-                .setToken(token)
-                .setName(user.getName())
-                .setMobile(user.getPhone()));
+        var optInfo = new OptInfoExt();
+        optInfo.setIdCard(user.getIdCard());
+        optInfo.setAccountCode($.field.createShortUUID());
+        optInfo.setToken(token);
+        optInfo.setName(user.getName());
+        optInfo.setMobile(user.getPhone());
+        Dew.auth.setOptInfo(optInfo);
         return Resp.success(token);
     }
 
