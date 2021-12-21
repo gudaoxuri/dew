@@ -38,7 +38,7 @@ public class TodoVerify extends BasicProcessor implements Verify {
         loadConfig();
 
         // verify parent
-        String metaData = $.http.get(itSnapshotRepositoryUrl + "group/idealworld/dew/devops/it/todo-parent/3.0.0-Beta2/maven-metadata.xml");
+        String metaData = $.http.get(itSnapshotRepositoryUrl + "group/idealworld/dew/devops/it/todo-parent/3.0.0-Beta3/maven-metadata.xml");
         Document doc = JOOX.builder().parse(new ByteArrayInputStream(metaData.getBytes()));
         String lastUpdateTime = JOOX.$(doc).find("lastUpdated").get(0).getTextContent();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -47,7 +47,7 @@ public class TodoVerify extends BasicProcessor implements Verify {
         Assert.assertTrue("parent | last deploy time check", offsetMinutes < 5);
 
         // verify common
-        metaData = $.http.get(itSnapshotRepositoryUrl + "group/idealworld/dew/devops/it/todo-common/3.0.0-Beta2/maven-metadata.xml");
+        metaData = $.http.get(itSnapshotRepositoryUrl + "group/idealworld/dew/devops/it/todo-common/3.0.0-Beta3/maven-metadata.xml");
         doc = JOOX.builder().parse(new ByteArrayInputStream(metaData.getBytes()));
         lastUpdateTime = JOOX.$(doc).find("lastUpdated").get(0).getTextContent();
         sdf = new SimpleDateFormat("yyyyMMddHHmmss");

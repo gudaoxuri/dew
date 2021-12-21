@@ -737,7 +737,7 @@ public class DewConfig {
 
         private String tokenKindFlag = "Dew-Token-Kind";
 
-        private boolean identInfoEnabled = true;
+        private boolean identInfoEnabled = false;
 
         private boolean tokenInHeader = true;
 

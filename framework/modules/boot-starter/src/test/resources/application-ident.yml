@@ -1,3 +1,6 @@
 dew:
   security:
     ident-info-enabled: true
+
+server:
+  port: 8089

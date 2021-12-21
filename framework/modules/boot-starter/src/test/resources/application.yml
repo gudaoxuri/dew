@@ -42,7 +42,6 @@ dew:
         minIntervalSec: 0
 
   security:
-    ident-info-enabled: false
     token-flag: _token_
     token-in-header: true
     token-hash: false
@@ -79,6 +78,9 @@ spring:
         max-active: 10
         max-idle: 1
         min-idle: 0
+
+server:
+  port: 8088
 
 management:
   endpoints:

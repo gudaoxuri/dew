@@ -156,7 +156,7 @@ public class KubeReleaseFlow extends BasicFlow {
      * @throws ApiException the api exception
      * @throws IOException  the io exception
      */
-    private void deployResources(FinalProjectConfig config, Map<String, Object> kubeResources) throws ApiException, IOException {
+    private void deployResources(FinalProjectConfig config, Map<String, Object> kubeResources) throws ApiException {
         // 部署 deployment
         V1Deployment deployment = (V1Deployment) kubeResources.get(KubeRES.DEPLOYMENT.getVal());
         KubeHelper.inst(config.getId()).apply(deployment);
@@ -167,7 +167,7 @@ public class KubeReleaseFlow extends BasicFlow {
                 + ",group=" + deploymentRes.getMetadata().getLabels().get("group")
                 + ",version=" + deploymentRes.getMetadata().getLabels().get("version");
         String watchId = KubeHelper.inst(config.getId()).watch(
-                (coreApi, appsApi, extensionsApi, rbacAuthorizationApi, autoscalingApi)
+                (coreApi, appsApi, networkingApi, rbacAuthorizationApi, autoscalingApi)
                         -> appsApi.listNamespacedDeploymentCall(deploymentRes.getMetadata().getNamespace(),
                         null, null, null, null,
                         select, 1, null, null, null,Boolean.TRUE, null),

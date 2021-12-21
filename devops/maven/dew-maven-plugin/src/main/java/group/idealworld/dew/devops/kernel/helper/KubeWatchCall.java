@@ -34,13 +34,13 @@ public interface KubeWatchCall {
      *
      * @param coreApi              the core api
      * @param appsApi              the apps api
-     * @param extensionsApi        the extensions api
+     * @param networkingV1Api      the networking api
      * @param rbacAuthorizationApi the rbac authorization api
      * @param autoscalingApi       the autoscaling api
      * @return the call
      * @throws ApiException the api exception
      */
-    Call call(CoreV1Api coreApi, AppsV1Api appsApi, ExtensionsV1beta1Api extensionsApi,
+    Call call(CoreV1Api coreApi, AppsV1Api appsApi, NetworkingV1Api networkingV1Api,
               RbacAuthorizationV1Api rbacAuthorizationApi, AutoscalingV2beta2Api autoscalingApi) throws ApiException;
 
 }

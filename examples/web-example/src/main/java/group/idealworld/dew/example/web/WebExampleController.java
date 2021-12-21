@@ -52,7 +52,7 @@ public class WebExampleController {
      * @return result
      */
     @GetMapping("example")
-    @Operation(summary = "示例方法",extensions = {@Extension(name = "FIN_EXT",properties = @ExtensionProperty(name = "REL", value = "s001,s002"))})
+    @Operation(summary = "示例方法", extensions = {@Extension(name = "FIN_EXT", properties = @ExtensionProperty(name = "REL", value = "s001,s002"))})
     public Map<String, Integer> example() {
         return new HashMap<>();
     }
@@ -60,12 +60,11 @@ public class WebExampleController {
     /**
      * 数据验证示例，针对 CreateGroup 这一标识组的 bean认证.
      *
-     * @param user the user
      * @return the user
      */
     @PostMapping(value = "valid-create")
-    public User validCreate(@Validated(CreateGroup.class) @RequestBody User user) {
-        return user;
+    public RbumCertDto.RbumCertDetailResp validCreate(@Validated(CreateGroup.class) @RequestBody RbumCertDto.RbumCertAddReq rbumCertAddReq) {
+        return new RbumCertDto.RbumCertDetailResp();
     }
 
     /**

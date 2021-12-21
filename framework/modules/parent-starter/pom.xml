@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.3</version>
+        <version>2.6.0</version>
         <relativePath/>
     </parent>
 
@@ -32,7 +32,7 @@
     <name>1.0.0 Dew Parent Starter</name>
     <description>Dew 父工程</description>
     <packaging>pom</packaging>
-    <version>3.0.0-Beta2</version>
+    <version>3.0.0-Beta3</version>
 
     <properties>
         <java.version>11</java.version>
@@ -51,25 +51,25 @@
 
         <main.class></main.class>
         <finalName>${project.artifactId}</finalName>
-        <dew.version>3.0.0-Beta2</dew.version>
+        <dew.version>3.0.0-Beta3</dew.version>
 
         <!--  核心依赖 -->
-        <dew-common.version>3.0.0-beta3</dew-common.version>
+        <dew-common.version>3.0.0-beta4</dew-common.version>
         <simple-java-mail.version>6.6.1</simple-java-mail.version>
         <jakarta.validation.version>2.0.2</jakarta.validation.version>
-        <springdoc.version>1.5.10</springdoc.version>
+        <springdoc.version>1.6.2</springdoc.version>
         <querydsl.version>5.0.0</querydsl.version>
         <!-- hbase-starter依赖 -->
-        <hbase.version>2.4.5</hbase.version>
+        <hbase.version>2.4.8</hbase.version>
         <!-- test-starter依赖 -->
-        <testcontainers.version>1.16.0</testcontainers.version>
+        <testcontainers.version>1.16.2</testcontainers.version>
         <!-- cluster-hazelcast依赖 -->
         <hazelcast.version>3.12.12</hazelcast.version>
         <!-- cluster-mqtt依赖 -->
         <mqtt.version>1.2.5</mqtt.version>
         <!-- DevOps -->
-        <k8s-client-java.version>13.0.0</k8s-client-java.version>
-        <docker-java.version>3.2.11</docker-java.version>
+        <k8s-client-java.version>14.0.0</k8s-client-java.version>
+        <docker-java.version>3.2.12</docker-java.version>
         <maven-plugin.version>3.6.0</maven-plugin.version>
         <mojo-executor.version>2.3.0</mojo-executor.version>
         <maven-resolver-api.version>1.3.3</maven-resolver-api.version>
@@ -90,10 +90,6 @@
         <developer>
             <name>孙豫蕾</name>
             <email>syl_527@163.com</email>
-        </developer>
-        <developer>
-            <name>刘红成</name>
-            <email>249945935@qq.com</email>
         </developer>
     </developers>
 
@@ -275,7 +271,7 @@
                     <plugin>
                         <groupId>group.idealworld.dew</groupId>
                         <artifactId>dew-maven-plugin</artifactId>
-                        <version>3.0.0-Beta2</version>
+                        <version>3.0.0-Beta3</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -342,7 +338,7 @@
                     <plugin>
                         <groupId>group.idealworld.dew</groupId>
                         <artifactId>sdkgen-maven-plugin</artifactId>
-                        <version>3.0.0-Beta2</version>
+                        <version>3.0.0-Beta3</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -367,7 +363,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.0.1</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -463,7 +458,7 @@
                     <plugin>
                         <groupId>org.sonarsource.scanner.maven</groupId>
                         <artifactId>sonar-maven-plugin</artifactId>
-                        <version>3.7.0.1746</version>
+                        <version>3.9.1.2184</version>
                     </plugin>
                 </plugins>
             </build>

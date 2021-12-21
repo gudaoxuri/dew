@@ -20,6 +20,7 @@ import io.lettuce.core.resource.ClientResources;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 
 /**
@@ -29,10 +30,10 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
  */
 public class MultiConnectionConfiguration extends LettuceConnectionConfiguration {
 
-    public MultiConnectionConfiguration(RedisProperties properties,
+    public MultiConnectionConfiguration(RedisProperties properties, ObjectProvider<RedisStandaloneConfiguration> standaloneConfigurationProvider,
                                         ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider,
                                         ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider) {
-        super(properties, sentinelConfigurationProvider, clusterConfigurationProvider);
+        super(properties, standaloneConfigurationProvider, sentinelConfigurationProvider, clusterConfigurationProvider);
     }
 
     @Override

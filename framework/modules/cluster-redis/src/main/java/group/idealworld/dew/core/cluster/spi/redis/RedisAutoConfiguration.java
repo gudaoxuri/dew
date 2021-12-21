@@ -35,6 +35,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -52,11 +53,8 @@ import java.util.Map;
 @EnableConfigurationProperties(MultiRedisConfig.class)
 @Configuration
 @ConditionalOnClass(RedisTemplate.class)
-@ConditionalOnExpression("#{'${dew.cluster.cache}'=='redis' "
-        + "|| '${dew.cluster.mq}'=='redis' "
-        + "|| '${dew.cluster.lock}'=='redis' "
-        + "|| '${dew.cluster.map}'=='redis' "
-        + "|| '${dew.cluster.election}'=='redis'}")
+@ConditionalOnExpression("#{'${dew.cluster.cache}'=='redis' " + "|| '${dew.cluster.mq}'=='redis' " + "|| '${dew.cluster.lock}'=='redis' " + "|| " +
+        "'${dew.cluster.map}'=='redis' " + "|| '${dew.cluster.election}'=='redis'}")
 public class RedisAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisAutoConfiguration.class);
@@ -67,6 +65,8 @@ public class RedisAutoConfiguration {
     @Value("${dew.cluster.config.election-period-sec:60}")
     private int electionPeriodSec;
 
+    @Autowired
+    private ObjectProvider<RedisStandaloneConfiguration> standaloneConfigurationProvider;
     @Autowired
     private ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider;
     @Autowired
@@ -97,13 +97,11 @@ public class RedisAutoConfiguration {
         }
     }
 
-    private void initMultiDS(Map<String, RedisProperties> properties) throws UnknownHostException {
+    private void initMultiDS(Map<String, RedisProperties> properties)  {
         ConfigurableListableBeanFactory beanFactory = ((ConfigurableApplicationContext) applicationContext).getBeanFactory();
         for (Map.Entry<String, RedisProperties> prop : properties.entrySet()) {
-            LettuceConnectionFactory redisConnectionFactory =
-                    new MultiConnectionConfiguration(prop.getValue(),
-                            sentinelConfigurationProvider, clusterConfigurationProvider)
-                            .redisConnectionFactory(builderCustomizers,clientResources);
+            LettuceConnectionFactory redisConnectionFactory = new MultiConnectionConfiguration(prop.getValue(), standaloneConfigurationProvider,
+                    sentinelConfigurationProvider, clusterConfigurationProvider).redisConnectionFactory(builderCustomizers, clientResources);
             redisConnectionFactory.afterPropertiesSet();
             RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
             redisTemplate.setConnectionFactory(redisConnectionFactory);
