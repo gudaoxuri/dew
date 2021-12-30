@@ -116,14 +116,14 @@ public class RocketClusterMQ extends AbsClusterMQ {
                     .build();
             funResult = sendBeforeFun.invoke(topic, sendHeader);
             rocketMQTemplate.syncSend(topic, msg);
-
+            return true;
         } catch (Exception e) {
             logger.error("[MQ] Rocket publish error.", e);
             sendErrorFun.invoke(e, funResult);
             return false;
+        }finally {
+            sendFinishFun.invoke(funResult);
         }
-        sendFinishFun.invoke(funResult);
-        return true;
     }
 
     @Override
@@ -157,13 +157,14 @@ public class RocketClusterMQ extends AbsClusterMQ {
             Message<?> msg = MessageBuilder.withPayload(message).copyHeaders(sendHeader)
                     .build();
             rocketMQTemplate.syncSend(address, msg);
+            return true;
         } catch (Exception e) {
             logger.error("[MQ] Rocket publish error.", e);
             sendErrorFun.invoke(e, funResult);
             return false;
+        }finally {
+            sendFinishFun.invoke(funResult);
         }
-        sendFinishFun.invoke(funResult);
-        return true;
     }
 
     @Override
@@ -193,13 +194,14 @@ public class RocketClusterMQ extends AbsClusterMQ {
                     funResult.set(receiveBeforeFun.invoke(topic, receiveHeader));
                     consumer.accept(new MessageWrap(topic, Optional.of(receiveHeader), Arrays.toString(messageExt.getBody())));
                 });
+                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             } catch (Exception e) {
                 receiveErrorFun.invoke(e, funResult);
                 logger.error("[MQ] Rocket response error.", e);
                 return ConsumeConcurrentlyStatus.RECONSUME_LATER;
+            }finally {
+                receiveFinishFun.invoke(funResult);
             }
-            receiveFinishFun.invoke(funResult);
-            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
         });
     }
 
