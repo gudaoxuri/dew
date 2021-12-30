@@ -1,17 +1,17 @@
 spring:
   application:
     name: cluster-example
-#  redis:
-#    host: localhost
-#    port: 6379
-#    database: 0
-#    password: 123456
-#    lettuce:
-#      pool:
-#        max-active: 10
-#        max-wait: -1
-#        max-idle: 1
-#        min-idle: 0
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    password: 123456
+    lettuce:
+      pool:
+        max-active: 10
+        max-wait: -1
+        max-idle: 1
+        min-idle: 0
 #  rabbitmq:
 #    host: localhost
 #    port: 5672
@@ -20,15 +20,11 @@ spring:
 #    virtual-host: dew
 #  hazelcast:
 #    addresses: ["127.0.0.1"]
-rocketmq:
-  name-server: 172.30.109.173:9876
-  producer:
-    group: rocketmq-group
 
 dew:
   cluster:
     cache: redis
-#    map: redis # 可选 redis/hazelcast
-#    lock: redis # 可选 redis/hazelcast
-    mq: rocket # 可选 redis/hazelcast/rabbit
-#    election: redis # 可选 redis/eureka
+    map: redis # 可选 redis/hazelcast
+    lock: redis # 可选 redis/hazelcast
+    mq: redis # 可选 redis/hazelcast/rabbit
+    election: redis # 可选 redis/eureka
