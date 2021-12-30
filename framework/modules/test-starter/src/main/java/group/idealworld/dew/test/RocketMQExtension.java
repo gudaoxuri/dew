@@ -47,7 +47,7 @@ public class RocketMQExtension implements BeforeAllCallback {
             implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues.of(
-                    "rocketmq.name-server=172.30.109.173:9876",
+                    "rocketmq.name-server=172.30.107.2:9876",
                     "rocketmq.producer.group=rocketmq-group",
                     "dew.cluster.mq=rocket"
             ).applyTo(configurableApplicationContext.getEnvironment());

@@ -31,7 +31,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 /**
  * Cluster test.
  *
- * @author gudaoxuri
+ * @author nipeixuan
  */
 @ExtendWith({SpringExtension.class, RocketMQExtension.class})
 @ContextConfiguration(initializers = RocketMQExtension.Initializer.class)

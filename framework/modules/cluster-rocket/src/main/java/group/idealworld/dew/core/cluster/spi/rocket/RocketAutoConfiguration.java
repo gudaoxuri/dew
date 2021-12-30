@@ -41,10 +41,10 @@ public class RocketAutoConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(RocketAutoConfiguration.class);
 
     @Value("${rocketmq.producer.group}")
-    String groupName;
+    private String groupName;
 
     @Value("${rocketmq.name-server}")
-    String nameServer;
+    private String nameServer;
 
 
     @PostConstruct
