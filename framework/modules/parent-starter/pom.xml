@@ -67,6 +67,7 @@
         <hazelcast.version>3.12.12</hazelcast.version>
         <!-- cluster-mqtt依赖 -->
         <mqtt.version>1.2.5</mqtt.version>
+        <rocket.version>2.1.1</rocket.version>
         <!-- DevOps -->
         <k8s-client-java.version>14.0.0</k8s-client-java.version>
         <docker-java.version>3.2.12</docker-java.version>
@@ -139,6 +140,11 @@
             <dependency>
                 <groupId>group.idealworld.dew</groupId>
                 <artifactId>cluster-spi-rabbit</artifactId>
+                <version>${dew.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>group.idealworld.dew</groupId>
+                <artifactId>cluster-spi-rocket</artifactId>
                 <version>${dew.version}</version>
             </dependency>
             <dependency>
