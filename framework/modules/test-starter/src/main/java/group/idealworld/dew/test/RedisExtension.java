@@ -32,7 +32,7 @@ public class RedisExtension implements BeforeAllCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisExtension.class);
 
-    private static GenericContainer redisContainer = new GenericContainer("redis:6-alpine")
+    private static final GenericContainer redisContainer = new GenericContainer("redis:6-alpine")
             .withExposedPorts(6379);
 
     @Override

@@ -26,7 +26,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
  */
 public class RabbitAdapter {
 
-    private RabbitTemplate rabbitTemplate;
+    private final RabbitTemplate rabbitTemplate;
 
     /**
      * Instantiates a new Rabbit adapter.

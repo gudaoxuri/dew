@@ -26,7 +26,7 @@ import org.apache.rocketmq.spring.core.RocketMQTemplate;
  */
 public class RocketAdapter {
 
-    private RocketMQTemplate rocketMQTemplate;
+    private final RocketMQTemplate rocketMQTemplate;
 
     /**
      * Instantiates a new Rabbit adapter.

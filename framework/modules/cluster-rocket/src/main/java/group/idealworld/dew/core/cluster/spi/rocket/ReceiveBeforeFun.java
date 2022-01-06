@@ -22,7 +22,6 @@ import java.util.Map;
 @FunctionalInterface
 public interface ReceiveBeforeFun {
 
-
-    Object invoke(String topic, Map<String,Object> properties);
+    Object invoke(String topic, Map<String, Object> properties);
 
 }

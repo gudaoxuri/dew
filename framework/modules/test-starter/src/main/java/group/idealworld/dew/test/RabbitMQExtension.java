@@ -30,7 +30,7 @@ public class RabbitMQExtension implements BeforeAllCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(RabbitMQExtension.class);
 
-    private static RabbitMQContainer rabbitMQContainer = new RabbitMQContainer(DockerImageName.parse("rabbitmq:3.7.25-management-alpine"));
+    private static final RabbitMQContainer rabbitMQContainer = new RabbitMQContainer(DockerImageName.parse("rabbitmq:3.7.25-management-alpine"));
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) {

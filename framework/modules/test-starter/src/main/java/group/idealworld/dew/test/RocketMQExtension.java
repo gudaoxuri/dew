@@ -23,33 +23,68 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
+import org.testcontainers.containers.DockerComposeContainer;
 
-import java.time.Duration;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class RocketMQExtension implements BeforeAllCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(RocketMQExtension.class);
 
-//    private static GenericContainer rocketmqContainer = new GenericContainer("apache/rocketmq")
-//            .withExposedPorts(10909);
+    private static final String DOCKER_COMPOSE = "version: '2'\n" +
+            "services:\n" +
+            "  namesrv:\n" +
+            "    image: apache/rocketmq:4.9.2\n" +
+            "    command: sh mqnamesrv\n" +
+            "  broker:\n" +
+            "    image: apache/rocketmq:4.9.2\n" +
+            "    ports:\n" +
+            "      - 10909:10909\n" +
+            "      - 10911:10911\n" +
+            "      - 10912:10912\n" +
+            "    command: sh -c 'echo \"brokerIP1 = 127.0.0.1\" > ../conf/broker.conf && ./mqbroker -n namesrv:9876 -c ../conf/broker" +
+            ".conf'\n" +
+            "    depends_on:\n" +
+            "      - namesrv";
+
+    private static final Path tempFile;
+
+    static {
+        try {
+            tempFile = Files.createTempFile(null, null);
+            Files.write(tempFile, DOCKER_COMPOSE.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static DockerComposeContainer rocketmqContainer =
+            new DockerComposeContainer(tempFile.toFile())
+                    .withExposedService("namesrv_1", 9876);
+//                    .withExposedService("broker_1", 10911)
+//                    .withExposedService("broker_1", 10909)
+//                    .withExposedService("broker_1", 10912);
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
-        //rocketmqContainer.start();
-        //rocketmqContainer.waitingFor((new LogMessageWaitStrategy()).withRegEx("Ready to accept connections").withTimes(1))
-        //        .withStartupTimeout(Duration.ofSeconds(60L));
-//        logger.info("Test Redis port: " + rocketmqContainer.getFirstMappedPort());
+        rocketmqContainer.start();
+        String nameSrvUrl = rocketmqContainer.getServiceHost("namesrv_1", 9876)
+                + ":" +
+                rocketmqContainer.getServicePort("namesrv_1", 9876);
+        logger.info("Test RocketMQ name server url: " + nameSrvUrl);
     }
 
     public static class Initializer
             implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues.of(
-                    "rocketmq.name-server=172.30.107.2:9876",
-                    "rocketmq.producer.group=rocketmq-group",
-                    "dew.cluster.mq=rocket"
+                    "rocketmq.name-server=" + rocketmqContainer.getServiceHost("namesrv_1", 9876)
+                            + ":" +
+                            rocketmqContainer.getServicePort("namesrv_1", 9876),
+                    "rocketmq.producer.group=rocketmq-group"
             ).applyTo(configurableApplicationContext.getEnvironment());
         }
     }

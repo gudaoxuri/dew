@@ -33,7 +33,7 @@ public class MqttExtension implements BeforeAllCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(MqttExtension.class);
 
-    private static GenericContainer mqttContainer = new GenericContainer("eclipse-mosquitto")
+    private static final GenericContainer mqttContainer = new GenericContainer("eclipse-mosquitto")
             .withClasspathResourceMapping("mosquitto.conf", "/mosquitto/config/mosquitto.conf", BindMode.READ_ONLY)
             .withExposedPorts(1883);
 

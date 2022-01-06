@@ -8,18 +8,16 @@ import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
 import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
 import org.apache.rocketmq.client.exception.MQClientException;
 import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
-import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
-import org.apache.rocketmq.remoting.common.RemotingHelper;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -36,11 +34,11 @@ public class RocketClusterMQ extends AbsClusterMQ {
     private static ReceiveFinishFun receiveFinishFun = beforeResult -> {
     };
 
-    private RocketAdapter rocketAdapter;
+    private final RocketAdapter rocketAdapter;
 
-    private String nameServer;
+    private final String nameServer;
 
-    private String groupName;
+    private final String groupName;
 
     public RocketClusterMQ(RocketAdapter rocketAdapter, String nameServer, String groupName) {
         this.rocketAdapter = rocketAdapter;
@@ -112,8 +110,7 @@ public class RocketClusterMQ extends AbsClusterMQ {
         try {
             Map<String, Object> sendHeader = getMQHeader(topic);
             header.ifPresent(sendHeader::putAll);
-            Message<?> msg = MessageBuilder.withPayload(message).copyHeaders(sendHeader)
-                    .build();
+            Message<?> msg = MessageBuilder.withPayload(message).copyHeaders(sendHeader).build();
             funResult = sendBeforeFun.invoke(topic, sendHeader);
             rocketMQTemplate.syncSend(topic, msg);
             return true;
@@ -121,7 +118,7 @@ public class RocketClusterMQ extends AbsClusterMQ {
             logger.error("[MQ] Rocket publish error.", e);
             sendErrorFun.invoke(e, funResult);
             return false;
-        }finally {
+        } finally {
             sendFinishFun.invoke(funResult);
         }
     }
@@ -154,15 +151,14 @@ public class RocketClusterMQ extends AbsClusterMQ {
             Map<String, Object> sendHeader = getMQHeader(address);
             header.ifPresent(sendHeader::putAll);
             funResult = sendBeforeFun.invoke(address, sendHeader);
-            Message<?> msg = MessageBuilder.withPayload(message).copyHeaders(sendHeader)
-                    .build();
+            Message<?> msg = MessageBuilder.withPayload(message).copyHeaders(sendHeader).build();
             rocketMQTemplate.syncSend(address, msg);
             return true;
         } catch (Exception e) {
             logger.error("[MQ] Rocket publish error.", e);
             sendErrorFun.invoke(e, funResult);
             return false;
-        }finally {
+        } finally {
             sendFinishFun.invoke(funResult);
         }
     }
@@ -183,24 +179,24 @@ public class RocketClusterMQ extends AbsClusterMQ {
         }
     }
 
-    private void receiveMessage(String topic, DefaultMQPushConsumer mqConsumer, Consumer<MessageWrap> consumer){
+    private void receiveMessage(String topic, DefaultMQPushConsumer mqConsumer, Consumer<MessageWrap> consumer) {
         mqConsumer.registerMessageListener((MessageListenerConcurrently) (list, context) -> {
-            AtomicReference<Object> funResult = null;
+            var funResults = new CopyOnWriteArrayList<>();
             try {
-                list.parallelStream().forEach((messageExt)->{
-                    Map<String, Object> headers = messageExt.getProperties()
-                            .entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                list.parallelStream().forEach((messageExt) -> {
+                    Map<String, Object> headers = messageExt.getProperties().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
+                            Map.Entry::getValue));
                     Map<String, Object> receiveHeader = setMQHeader(topic, headers);
-                    funResult.set(receiveBeforeFun.invoke(topic, receiveHeader));
-                    consumer.accept(new MessageWrap(topic, Optional.of(receiveHeader), Arrays.toString(messageExt.getBody())));
+                    funResults.add(receiveBeforeFun.invoke(topic, receiveHeader));
+                    consumer.accept(new MessageWrap(topic, Optional.of(receiveHeader), new String(messageExt.getBody(), StandardCharsets.UTF_8)));
                 });
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             } catch (Exception e) {
-                receiveErrorFun.invoke(e, funResult);
+                funResults.forEach(funResult -> receiveErrorFun.invoke(e, funResult));
                 logger.error("[MQ] Rocket response error.", e);
                 return ConsumeConcurrentlyStatus.RECONSUME_LATER;
-            }finally {
-                receiveFinishFun.invoke(funResult);
+            } finally {
+                funResults.forEach(receiveFinishFun::invoke);
             }
         });
     }
@@ -209,4 +205,5 @@ public class RocketClusterMQ extends AbsClusterMQ {
     public boolean supportHeader() {
         return true;
     }
+
 }
