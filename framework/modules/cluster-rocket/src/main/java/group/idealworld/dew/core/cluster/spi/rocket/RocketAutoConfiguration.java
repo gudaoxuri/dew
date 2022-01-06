@@ -41,7 +41,10 @@ public class RocketAutoConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(RocketAutoConfiguration.class);
 
     @Value("${rocketmq.producer.group}")
-    private String groupName;
+    private String producerGroupName;
+
+    @Value("${rocketmq.consumer.group}")
+    private String consumerGroupName;
 
     @Value("${rocketmq.name-server}")
     private String nameServer;
@@ -72,7 +75,7 @@ public class RocketAutoConfiguration {
     @Bean
     @ConditionalOnExpression("'${dew.cluster.mq}'=='rocket'")
     public RocketClusterMQ rocketClusterMQ(RocketAdapter rocketAdapter) {
-        return new RocketClusterMQ(rocketAdapter, nameServer, groupName);
+        return new RocketClusterMQ(rocketAdapter, nameServer, producerGroupName, consumerGroupName);
     }
 
 }

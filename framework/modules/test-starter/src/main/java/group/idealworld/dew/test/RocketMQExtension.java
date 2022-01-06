@@ -84,7 +84,8 @@ public class RocketMQExtension implements BeforeAllCallback {
                     "rocketmq.name-server=" + rocketmqContainer.getServiceHost("namesrv_1", 9876)
                             + ":" +
                             rocketmqContainer.getServicePort("namesrv_1", 9876),
-                    "rocketmq.producer.group=rocketmq-group"
+                    "rocketmq.producer.group=rocketmq-producer-group",
+                    "rocketmq.consumer.group=rocketmq-consumer-group"
             ).applyTo(configurableApplicationContext.getEnvironment());
         }
     }
