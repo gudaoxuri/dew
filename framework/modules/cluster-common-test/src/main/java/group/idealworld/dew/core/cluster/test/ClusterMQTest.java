@@ -54,15 +54,6 @@ public class ClusterMQTest {
      * @throws InterruptedException the interrupted exception
      */
     public void testPubSub(ClusterMQ mq) throws InterruptedException {
-        for (int i = 0; i < 10; i++) {
-            mq.publish("test_pub_sub", "msgA" + i, new HashMap<>() {
-                {
-                    put("h", "001");
-                }
-            });
-            mq.publish("test_pub_sub", "msgB" + i);
-        }
-        Thread.sleep(2000);
         CountDownLatch waiting = new CountDownLatch(40);
         new Thread(() -> mq.subscribe("test_pub_sub", message -> {
             assert message.getBody().contains("msg");
@@ -80,7 +71,15 @@ public class ClusterMQTest {
             logger.info("subscribe instance 2: pub_sub>>" + message);
             waiting.countDown();
         })).start();
-
+        Thread.sleep(2000);
+        for (int i = 0; i < 10; i++) {
+            mq.publish("test_pub_sub", "msgA" + i, new HashMap<>() {
+                {
+                    put("h", "001");
+                }
+            });
+            mq.publish("test_pub_sub", "msgB" + i);
+        }
         waiting.await();
     }
 
@@ -91,16 +90,6 @@ public class ClusterMQTest {
      * @throws InterruptedException the interrupted exception
      */
     public void testReqResp(ClusterMQ mq) throws InterruptedException {
-        for (int i = 0; i < 10; i++) {
-            mq.request("test_rep_resp", "msgA" + i, new HashMap<>() {
-                {
-                    put("h", "001");
-                }
-            });
-            mq.request("test_rep_resp", "msgB" + i);
-        }
-        Thread.sleep(1000);
-
         CountDownLatch waiting = new CountDownLatch(20);
         List<String> conflictFlag = new ArrayList<>();
         new Thread(() -> mq.response("test_rep_resp", message -> {
@@ -127,7 +116,15 @@ public class ClusterMQTest {
                 waiting.countDown();
             }
         })).start();
-
+        Thread.sleep(1000);
+        for (int i = 0; i < 10; i++) {
+            mq.request("test_rep_resp", "msgA" + i, new HashMap<>() {
+                {
+                    put("h", "001");
+                }
+            });
+            mq.request("test_rep_resp", "msgB" + i);
+        }
         waiting.await();
     }
 
