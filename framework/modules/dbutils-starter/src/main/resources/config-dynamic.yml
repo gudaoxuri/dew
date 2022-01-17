@@ -1,0 +1,22 @@
+ds:
+  - code: defalut
+    url: jdbc:h2:mem:db
+    username: sa
+    password:
+    monitor: true
+    pool:
+      initialSize: 0
+      maxActive: 8
+  - code: mysql
+    url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 123456
+    monitor: true
+    pool:
+      initialSize: 0
+      maxActive: 8
+dynamicDS:
+  enabled: true
+  dsCode: default
+  fetchSql: select code,url,username,password,monitor,pool_initialSize,pool_maxActive from multi_ds
+

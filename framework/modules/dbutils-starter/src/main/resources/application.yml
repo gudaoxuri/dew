@@ -1,0 +1,19 @@
+ds:
+  ds[0]:
+    code: default
+    url: jdbc:h2:mem:db
+    username: sa
+    password:
+    monitor: true
+    pool:
+      initialSize: 0
+      maxActive: 8
+  ds[1]:
+    code: mysql
+    url: jdbc:mysql://127.0.0.1:3306/test?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: 123456
+    monitor: true
+    pool:
+      initialSize: 0
+      maxActive: 8
