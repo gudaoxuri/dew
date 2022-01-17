@@ -54,12 +54,15 @@ public class RocketClusterMQ extends AbsClusterMQ {
 
     private final String nameServer;
 
-    private final String groupName;
+    private final String producerGroupName;
 
-    public RocketClusterMQ(RocketAdapter rocketAdapter, String nameServer, String groupName) {
+    private final String consumerGroupName;
+
+    public RocketClusterMQ(RocketAdapter rocketAdapter, String nameServer, String producerGroupName, String consumerGroupName) {
         this.rocketAdapter = rocketAdapter;
         this.nameServer = nameServer;
-        this.groupName = groupName;
+        this.producerGroupName = producerGroupName;
+        this.consumerGroupName = consumerGroupName;
     }
 
     /**
@@ -141,7 +144,7 @@ public class RocketClusterMQ extends AbsClusterMQ {
 
     @Override
     protected void doSubscribe(String topic, Consumer<MessageWrap> consumer) {
-        DefaultMQPushConsumer mqConsumer = new DefaultMQPushConsumer(groupName);
+        DefaultMQPushConsumer mqConsumer = new DefaultMQPushConsumer(producerGroupName);
         mqConsumer.setNamesrvAddr(nameServer);
         mqConsumer.setInstanceName(UUID.randomUUID().toString());
 
@@ -181,7 +184,7 @@ public class RocketClusterMQ extends AbsClusterMQ {
 
     @Override
     protected void doResponse(String address, Consumer<MessageWrap> consumer) {
-        DefaultMQPushConsumer mqConsumer = new DefaultMQPushConsumer(groupName);
+        DefaultMQPushConsumer mqConsumer = new DefaultMQPushConsumer(consumerGroupName);
         mqConsumer.setNamesrvAddr(nameServer);
         mqConsumer.setInstanceName(UUID.randomUUID().toString());
         try {
