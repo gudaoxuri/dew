@@ -67,7 +67,11 @@
         <hazelcast.version>3.12.12</hazelcast.version>
         <!-- cluster-mqtt依赖 -->
         <mqtt.version>1.2.5</mqtt.version>
+        <!-- cluster-rocket依赖 -->
         <rocket.version>2.1.1</rocket.version>
+        <!-- dbutils-starter依赖 -->
+        <commons-dbutils.version>1.7</commons-dbutils.version>
+        <druid.version>1.2.8</druid.version>
         <!-- DevOps -->
         <k8s-client-java.version>14.0.0</k8s-client-java.version>
         <docker-java.version>3.2.12</docker-java.version>

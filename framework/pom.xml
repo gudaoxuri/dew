@@ -40,12 +40,13 @@
         <module>modules/cluster-hazelcast</module>
         <module>modules/cluster-rabbit</module>
         <module>modules/cluster-mqtt</module>
+        <module>modules/cluster-rocket</module>
         <module>modules/hbase-starter</module>
+        <module>modules/dbutils-starter</module>
         <module>modules/boot-starter</module>
         <module>modules/idempotent-starter</module>
         <module>modules/test-starter</module>
         <module>assists/sdkgen-maven-plugin</module>
-        <module>modules/cluster-rocket</module>
     </modules>
 
 </project>

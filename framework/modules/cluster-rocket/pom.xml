@@ -27,7 +27,7 @@
     </parent>
 
     <artifactId>cluster-spi-rocket</artifactId>
-    <name>1.1.4 Dew Cluster Rocket</name>
+    <name>1.1.5 Dew Cluster Rocket</name>
     <description>Dew 集群 Rocket 实现</description>
     <packaging>jar</packaging>
 
