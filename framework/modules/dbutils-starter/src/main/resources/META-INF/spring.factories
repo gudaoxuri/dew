@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  group.idealworld.dew.core.dbutils.DbutilsAutoConfiguration
