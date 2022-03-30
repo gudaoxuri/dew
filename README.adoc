@@ -5,6 +5,8 @@
 最新稳定版是 `2.1.0-rc` 请切换到 https://github.com/gudaoxuri/dew/tree/2.1.0-rc[2.1.0-RC] tag.
 
 如需基于 ``Spring boot 1.x`` 的非容器版本请切换到 https://github.com/gudaoxuri/dew/tree/1.5.1-RC[1.5.1-RC] tag.
+
+基于Rust的微服务框架见： https://github.com/ideal-world/tardis
 ====
 
 == Dew微服务体系 Dew Microservice System
