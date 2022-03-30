@@ -76,6 +76,12 @@
             <version>${simple-java-mail.version}</version>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
+            <version>${jakarta.mail.version}</version>
+            <optional>true</optional>
+        </dependency>
         <!-- InitTest -->
         <dependency>
             <groupId>group.idealworld.dew</groupId>

@@ -24,7 +24,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Idempotent web mvc configurer.
@@ -35,9 +35,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @ConditionalOnWebApplication
 @EnableConfigurationProperties(DewIdempotentConfig.class)
 @Order(10000)
-public class IdempotentWebMvcConfigurer extends WebMvcConfigurerAdapter {
+public class IdempotentWebAutoConfiguration implements WebMvcConfigurer {
 
-    private static final Logger logger = LoggerFactory.getLogger(IdempotentWebMvcConfigurer.class);
+    private static final Logger logger = LoggerFactory.getLogger(IdempotentWebAutoConfiguration.class);
 
     private DewIdempotentConfig dewIdempotentConfig;
 
@@ -47,7 +47,7 @@ public class IdempotentWebMvcConfigurer extends WebMvcConfigurerAdapter {
      *
      * @param dewIdempotentConfig the dew idempotent config
      */
-    public IdempotentWebMvcConfigurer(DewIdempotentConfig dewIdempotentConfig) {
+    public IdempotentWebAutoConfiguration(DewIdempotentConfig dewIdempotentConfig) {
         logger.info("Load Auto Configuration : {}", this.getClass().getName());
         this.dewIdempotentConfig = dewIdempotentConfig;
     }
@@ -55,7 +55,6 @@ public class IdempotentWebMvcConfigurer extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new IdempotentHandlerInterceptor(dewIdempotentConfig)).excludePathPatterns("/error/**");
-        super.addInterceptors(registry);
     }
 
 }
