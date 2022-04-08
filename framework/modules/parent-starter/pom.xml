@@ -80,6 +80,7 @@
         <mojo-executor.version>2.3.0</mojo-executor.version>
         <maven-resolver-api.version>1.3.3</maven-resolver-api.version>
         <jansi.version>1.18</jansi.version>
+        <skywalking.version>8.1.0</skywalking.version>
     </properties>
 
     <developers>
@@ -207,6 +208,17 @@
                         <artifactId>hadoop-aws</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>group.idealworld.dew</groupId>
+                <artifactId>skywalking-starter</artifactId>
+                <version>${dew.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>group.idealworld.dew</groupId>
+                <artifactId>ossutils-starter</artifactId>
+                <version>${dew.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
