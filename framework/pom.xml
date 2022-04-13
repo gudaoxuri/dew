@@ -48,6 +48,7 @@
         <module>modules/test-starter</module>
         <module>assists/sdkgen-maven-plugin</module>
         <module>modules/skywalking-starter</module>
+        <module>modules/ossutils-starter</module>
     </modules>
 
 </project>

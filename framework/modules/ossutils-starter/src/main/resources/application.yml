@@ -1,0 +1,14 @@
+dew:
+  oss:
+    ossType: oss
+    accessKeyId: LTAI5tRrBjmshK7LSZxdJKCP
+    accessKeyIdSecret: J3R7B65hCTI7IHSGAleujtPiHt8rRn
+    endpoint: oss-cn-beijing.aliyuncs.com
+    securityToken: default
+  oss2:
+    ossType: obs
+    endpoint: obs.cn-east-3.myhuaweicloud.com
+    accessKeyId: STMOYGVHG61WTTN3AWDB
+    accessKeyIdSecret: kvSsUD7eJD4ltUH8HTjwloHhVWo5A2uVmZqzUzUN
+    securityToken: default
+
