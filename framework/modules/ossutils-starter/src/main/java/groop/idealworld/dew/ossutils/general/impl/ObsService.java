@@ -61,15 +61,17 @@ public class ObsService implements ObsSpecialExecutor {
      */
     @Override
     public Boolean doesBucketExist(OssCommonParam param){
-        ObsClient obsClient = isNull(param);
         try {
+            ObsClient obsClient = isNull(param);
             return obsClient.headBucket(param.getBucketName());
-        } catch (ObsException e) {
-            logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                    , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
-
+        } catch (Exception e) {
+            if(e instanceof ObsException) {
+                ObsException obsException = (ObsException) e;
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
+                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+            }
+            throw e;
         }
-        return false;
 
     }
 
@@ -83,10 +85,13 @@ public class ObsService implements ObsSpecialExecutor {
         ObsClient obsClient = isNull(param);
         try {
             obsClient.deleteBucket(param.getBucketName());
-        } catch (ObsException e) {
-            logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                    , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
-
+        } catch(Exception e) {
+            if (e instanceof ObsException) {
+                ObsException obsException = (ObsException) e;
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
+                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+            }
+            throw e;
         }
     }
 
@@ -165,13 +170,16 @@ public class ObsService implements ObsSpecialExecutor {
      */
     @Override
     public void uploadObject(OssCommonParam param) {
-        ObsClient obsClient = isNull(param);
         try {
+            ObsClient obsClient = isNull(param);
             obsClient.putObject(param.getBucketName(), param.getObjectName(), new File(param.getPath()));
-        }catch (ObsException e){
-            logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                    , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
-
+        }catch (Exception exception){
+            if(exception instanceof ObsException) {
+                ObsException e = (ObsException) exception;
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
+                        , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
+            }
+            throw exception;
         }
 
     }
@@ -188,10 +196,13 @@ public class ObsService implements ObsSpecialExecutor {
         ObsClient obsClient = isNull(param);
         try {
             obsClient.putObject(param.getBucketName(), param.getObjectName(),inputStream);
-        }catch (ObsException e){
-            logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                    , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
-
+        } catch(Exception e) {
+            if (e instanceof ObsException) {
+                ObsException obsException = (ObsException) e;
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
+                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+            }
+            throw e;
         }
     }
 
@@ -209,12 +220,14 @@ public class ObsService implements ObsSpecialExecutor {
         try {
             ObsObject obsObject = obsClient.getObject(param.getBucketName(), param.getObjectName());
             return obsObject.getObjectContent();
-        }catch (ObsException e){
-            logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                    , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
-
+        } catch(Exception e) {
+            if (e instanceof ObsException) {
+                ObsException obsException = (ObsException) e;
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
+                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+            }
+            throw e;
         }
-        return null;
     }
 
     /**
@@ -244,12 +257,11 @@ public class ObsService implements ObsSpecialExecutor {
             os.flush();
             os.close();
             inputStream.close();
-        }catch (ObsException e){
+        } catch(ObsException e) {
             logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
                     , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
-
-        }catch (IOException e){
-            logger.error(e.getMessage());
+        } catch (IOException e) {
+            logger.error("IOException", e);
         }
     }
 
@@ -264,12 +276,14 @@ public class ObsService implements ObsSpecialExecutor {
         ObsClient obsClient = isNull(param);
         try {
            return obsClient.doesObjectExist(param.getBucketName(), param.getObjectName());
-        }catch (ObsException e){
-            logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                    , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
-
+        } catch(Exception e) {
+            if (e instanceof ObsException) {
+                ObsException obsException = (ObsException) e;
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
+                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+            }
+            throw e;
         }
-        return false;
     }
 
     /**
@@ -282,10 +296,13 @@ public class ObsService implements ObsSpecialExecutor {
         ObsClient obsClient = isNull(param);
         try {
             obsClient.deleteObject(param.getBucketName(), param.getObjectName());
-        }catch (ObsException e){
-            logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                    , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
-
+        } catch(Exception e) {
+            if (e instanceof ObsException) {
+                ObsException obsException = (ObsException) e;
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
+                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+            }
+            throw e;
         }
     }
 
@@ -307,12 +324,14 @@ public class ObsService implements ObsSpecialExecutor {
             request.setHeaders(param.getCustomHeaders());
             TemporarySignatureResponse response = obsClient.createTemporarySignature(request);
             return response.getSignedUrl();
-        }catch (ObsException e){
-            logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                    , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
-
+        } catch(Exception e) {
+            if (e instanceof ObsException) {
+                ObsException obsException = (ObsException) e;
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
+                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+            }
+            throw e;
         }
-        return null;
     }
 
     /**
@@ -332,11 +351,13 @@ public class ObsService implements ObsSpecialExecutor {
             request.setHeaders(param.getCustomHeaders());
             TemporarySignatureResponse response = obsClient.createTemporarySignature(request);
             return response.getSignedUrl();
-        }catch (ObsException e){
-            logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                    , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
-            throw e ;
-
+        } catch(Exception e) {
+            if (e instanceof ObsException) {
+                ObsException obsException = (ObsException) e;
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
+                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+            }
+            throw e;
         }
     }
 
@@ -357,11 +378,13 @@ public class ObsService implements ObsSpecialExecutor {
             request.setHeaders(param.getCustomHeaders());
             TemporarySignatureResponse response = obsClient.createTemporarySignature(request);
             return response.getSignedUrl();
-        }catch (ObsException e){
-            logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                    , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
+        } catch(Exception e) {
+            if (e instanceof ObsException) {
+                ObsException obsException = (ObsException) e;
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
+                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+            }
             throw e;
-
         }
 
     }

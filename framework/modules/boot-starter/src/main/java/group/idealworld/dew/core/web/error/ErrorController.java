@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import group.idealworld.dew.Dew;
 import group.idealworld.dew.core.DewConfig;
-import group.idealworld.dew.core.web.resp.StandardResp;
+import group.idealworld.dew.core.basic.resp.StandardResp;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.apache.catalina.connector.RequestFacade;
 import org.slf4j.Logger;
@@ -128,7 +128,7 @@ public class ErrorController extends AbstractErrorController {
             Dew.notify.sendAsync(Dew.dewConfig.getBasic().getFormat().getErrorFlag(),
                     (Throwable) specialError, ((Throwable) specialError).getMessage());
         }
-        return StandardResp.custom(String.valueOf(httpCode),path,exMsg);
+        return ResponseEntity.status(httpCode).contentType(MediaType.APPLICATION_JSON).body(result[1]);
     }
 
     private static Object[] error(HttpServletRequest request,
@@ -193,7 +193,8 @@ public class ErrorController extends AbstractErrorController {
             httpCode = 200;
         }
         logger.error("Request [{}-{}] {} , error {} : {}", request.getMethod(), path, Dew.context().getSourceIP(), busCode, message);
-        var resp = Resp.customFail(busCode + "", "[" + exMsg + "]" + message);
+
+        var resp =  StandardResp.custom(busCode+"",path,"[" + exMsg + "]" + message);
         String body = $.json.toJsonString(resp);
         return new Object[]{httpCode, body};
     }
