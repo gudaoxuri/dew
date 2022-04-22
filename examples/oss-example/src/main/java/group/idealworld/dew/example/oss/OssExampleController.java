@@ -22,11 +22,13 @@ import groop.idealworld.dew.ossutils.bean.ImageProcessParam;
 import groop.idealworld.dew.ossutils.bean.OssCommonParam;
 import groop.idealworld.dew.ossutils.config.OssConfigProperties;
 import groop.idealworld.dew.ossutils.general.DewOssClient;
-import groop.idealworld.dew.ossutils.general.impl.OssService;
 import groop.idealworld.dew.ossutils.handle.DewOssHandleClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+import com.alibaba.fastjson.JSONObject;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +36,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
+
+
+import java.io.*;
+import java.nio.charset.Charset;
+import java.util.Base64;
+import java.util.Collections;
 
 /**
  * Auth example controller.
@@ -60,7 +67,7 @@ public class OssExampleController {
      */
     @GetMapping(value = "/build")
     public Resp<String> buildOssClient() {
-        DewOssHandleClient ossClient= dewOssClient.buildOssClient(ossConfigProperties);
+        DewOssHandleClient<Object> ossClient= dewOssClient.buildOssClient(ossConfigProperties);
         return Resp.success(ossClient.getOssClient().getClass().getName());
     }
 
@@ -225,10 +232,25 @@ public class OssExampleController {
         DewOssHandleClient ossHandleClient = dewOssClient.buildOssClient(ossConfigProperties);
         dewOssClient.closeClient();
         Object p = OssClientUtil.getOssClient();
-        logger.info(p.getClass().getName());
+        logger.info(getClass().getName());
         return Resp.success("下载成功");
     }
 
+    /**
+     * 关闭客户端
+     * @return the resp
+     */
+    @GetMapping(value = "/test")
+    public Resp<?> test(HttpServletRequest request, String url,String path) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<String> httpEntityCount = new HttpEntity<>(new HttpHeaders() {{
+            set(AUTHORIZATION, "Basic NjAzOGQwZDFjNDVkZTFhZDFjNGJjODgwYThjZDA0MmY3YjViYzg1Mzo=");
+        }});
+        String responseEntity = restTemplate.exchange(url+path, HttpMethod.GET, httpEntityCount, String.class).getBody();
+        JSONObject jsonObject = JSONObject.parseObject(responseEntity);
+        return Resp.success(jsonObject);
+    }
 
 
 }

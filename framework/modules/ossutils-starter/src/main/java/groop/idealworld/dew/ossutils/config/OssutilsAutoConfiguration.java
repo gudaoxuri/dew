@@ -46,6 +46,10 @@ public class OssUtilsAutoConfiguration {
         ossHashMap.put(OssTypeEnum.OSS.getName(),ossService);
         ossHashMap.put(OssTypeEnum.OBS.getName(),obsService);
         ossHashMap.put(OssTypeEnum.MINIO.getName(),minioService);
+        DewOssClient dewOssClient = ossHashMap.get(ossConfigProperties.getOssType());
+        if(dewOssClient == null){
+            throw new IllegalArgumentException("ossType is not support,expect:oss,obs,minio");
+        }
         return ossHashMap.get(ossConfigProperties.getOssType());
     }
 

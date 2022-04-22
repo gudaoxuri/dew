@@ -217,12 +217,6 @@
             </dependency>
             <dependency>
                 <groupId>group.idealworld.dew</groupId>
-                <artifactId>skywalking-starter</artifactId>
-                <version>${dew.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>group.idealworld.dew</groupId>
                 <artifactId>ossutils-starter</artifactId>
                 <version>${dew.version}</version>
             </dependency>
