@@ -3,24 +3,24 @@ package groop.idealworld.dew.ossutils.general.impl;
 import com.aliyun.oss.*;
 import com.aliyun.oss.common.utils.HttpHeaders;
 import com.aliyun.oss.model.*;
-import groop.idealworld.dew.ossutils.Utils.OssClientUtil;
+import com.obs.services.ObsConfiguration;
+import groop.idealworld.dew.ossutils.utils.OssClientUtil;
 import groop.idealworld.dew.ossutils.bean.ImageProcessParam;
 import groop.idealworld.dew.ossutils.bean.OssCommonParam;
+import groop.idealworld.dew.ossutils.general.OssClientInitProcess;
+import groop.idealworld.dew.ossutils.general.OssClientOptProcess;
 import groop.idealworld.dew.ossutils.handle.DewOssHandleClient;
 import groop.idealworld.dew.ossutils.config.OssConfigProperties;
-import groop.idealworld.dew.ossutils.general.OssSpecialExecutor;
-import groop.idealworld.dew.ossutils.handle.OssHandleTool;
+import groop.idealworld.dew.ossutils.utils.OssHandleTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
 import java.io.*;
 import java.net.URL;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,14 +30,10 @@ import java.util.Optional;
  * @description
  **/
 @Service("oss")
-public class OssService implements OssSpecialExecutor {
+public class OssService implements OssClientOptProcess, OssClientInitProcess {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Resource
-    OssConfigProperties ossConfigProperties;
-
-
-
+    private OssConfigProperties ossConfigProperties;
 
     /**
      * 创建存储空间，简单创建
@@ -45,29 +41,28 @@ public class OssService implements OssSpecialExecutor {
      * @param param oss存储空间参数
      */
     @Override
-    public void createBucket(OssCommonParam param) {
-        OSS ossClient = Optional.ofNullable((OSS) OssClientUtil.getOssClient())
-                .orElse((OSS) this.buildOssClient(ossConfigProperties).getOssClient());
+    public Bucket createBucket(OssCommonParam param) {
+        OSS ossClient = isNull(param);
         // 创建CreateBucketRequest对象。
         try {
-            // 创建存储空间。
-            ossClient.createBucket(param.getBucketName());
+            // 创建存储空间。Ï
+            return ossClient.createBucket(param.getBucketName());
         } catch (OSSException oe) {
             logger.error("Caught an OSSException, which means your request made it to OSS," +
                     "but was rejected with an error response for some reason." +
                     "Error Message:{},Error Code:{},Request ID:{},Host ID:{}" +
                     oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+            throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message:" + ce.getMessage());
+            throw ce;
         } finally {
             if (ossClient != null) {
                 ossClient.shutdown();
             }
         }
-
-
     }
 
     /**
@@ -119,10 +114,12 @@ public class OssService implements OssSpecialExecutor {
                             "Request ID:{}," +
                             "Host ID:{}"
                     , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+            throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message:{}", ce.getMessage());
+            throw ce;
         } finally {
             if (ossClient != null) {
                 ossClient.shutdown();
@@ -212,10 +209,12 @@ public class OssService implements OssSpecialExecutor {
                             "Request ID:{}," +
                             "Host ID:{}"
                     , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+            throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message:{}", ce.getMessage());
+            throw ce;
         } finally {
             if (ossClient != null) {
                 ossClient.shutdown();
@@ -244,10 +243,12 @@ public class OssService implements OssSpecialExecutor {
                             "Request ID:{}," +
                             "Host ID:{}"
                     , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+            throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message:{}", ce.getMessage());
+            throw ce;
         } finally {
             if (ossClient != null) {
                 ossClient.shutdown();
@@ -277,18 +278,20 @@ public class OssService implements OssSpecialExecutor {
                             "Request ID:{}," +
                             "Host ID:{}"
                     , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+            throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message:{}", ce.getMessage());
+            throw ce;
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            logger.error("处理文件异常{}===>{}",e.getMessage(), e);
+            throw e;
         } finally {
             if (ossClient != null) {
                 ossClient.shutdown();
             }
         }
-        return null;
     }
 
     /**
@@ -319,10 +322,12 @@ public class OssService implements OssSpecialExecutor {
                             "Request ID:{}," +
                             "Host ID:{}"
                     , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+            throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message: {}" + ce.getMessage());
+            throw ce;
         } catch (Exception e) {
             logger.error("内部处理异常：{}",e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -389,10 +394,12 @@ public class OssService implements OssSpecialExecutor {
                             "Request ID:{}," +
                             "Host ID:{}"
                     , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+            throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message: {}" + ce.getMessage());
+            throw ce;
         } finally {
             if (ossClient != null) {
                 ossClient.shutdown();
@@ -406,27 +413,12 @@ public class OssService implements OssSpecialExecutor {
      * @param param       oss操作常用参数
      */
     @Override
-    public void temporaryUploadFile(OssCommonParam param,FileInputStream inputStream) {
-
+    public void temporaryUploadFile(OssCommonParam param,FileInputStream inputStream){
         OSS ossClient = isExpirationNull(param);
-
         try {
             // 生成签名URL。
             GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(param.getBucketName(), param.getObjectName(), HttpMethod.PUT);
-            // 设置过期时间。
-            request.setExpiration(new Date((System.currentTimeMillis() + param.getExpiration())));
-            Map<String, String> custom = param.getCustomHeaders();
-            if (custom != null) {
-                for (Map.Entry<String, String> entry : custom.entrySet()) {
-                    if (HttpHeaders.CONTENT_TYPE.equals(entry.getKey())) {
-                        request.setContentType(entry.getValue());
-                    } else if (HttpHeaders.CONTENT_MD5.equals(entry.getKey())) {
-                        request.setContentMD5(entry.getValue());
-                    } else {
-                        request.addUserMetadata(entry.getKey(), entry.getValue());
-                    }
-                }
-            }
+            Map<String, String> custom = buildRequest(param,request);
             // 通过HTTP PUT请求生成签名URL。
             URL signedUrl = ossClient.generatePresignedUrl(request);
             logger.info("signed url for putObject: {}", signedUrl);
@@ -439,7 +431,6 @@ public class OssService implements OssSpecialExecutor {
                 fin = inputStream;
             }
 
-
             PutObjectResult result = ossClient.putObject(signedUrl, fin,-1, custom);
         } catch (OSSException oe) {
             logger.error("Caught an OSSException, which means your request made it to OSS, "
@@ -449,10 +440,12 @@ public class OssService implements OssSpecialExecutor {
                             "Request ID:{}," +
                             "Host ID:{}"
                     , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+            throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message: {}" + ce.getMessage());
+            throw ce;
         } catch (FileNotFoundException e) {
             logger.error("file not find");
         } finally {
@@ -462,6 +455,11 @@ public class OssService implements OssSpecialExecutor {
         }
 
 
+    }
+
+    @Override
+    public <T> DewOssHandleClient<T> buildOssClient(OssConfigProperties properties, ObsConfiguration config) {
+        throw new UnsupportedOperationException("not support,please use buildOssClient(OssCommonParam param)");
     }
 
     /**
@@ -477,20 +475,7 @@ public class OssService implements OssSpecialExecutor {
         try {
             // 生成签名URL。
             GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(param.getBucketName(), param.getObjectName(), HttpMethod.PUT);
-            // 设置过期时间。
-            request.setExpiration(new Date((System.currentTimeMillis() + param.getExpiration())));
-            Map<String, String> custom = param.getCustomHeaders();
-            if (custom != null) {
-                for (Map.Entry<String, String> entry : custom.entrySet()) {
-                    if (HttpHeaders.CONTENT_TYPE.equals(entry.getKey())) {
-                        request.setContentType(entry.getValue());
-                    } else if (HttpHeaders.CONTENT_MD5.equals(entry.getKey())) {
-                        request.setContentMD5(entry.getValue());
-                    } else {
-                        request.addUserMetadata(entry.getKey(), entry.getValue());
-                    }
-                }
-            }
+            Map<String, String> custom = buildRequest(param,request);
             URL url = ossClient.generatePresignedUrl(request);
             // 通过HTTP PUT请求生成签名URL。
             return url.toString();
@@ -502,16 +487,17 @@ public class OssService implements OssSpecialExecutor {
                             "Request ID:{}," +
                             "Host ID:{}"
                     , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+            throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message: {}" + ce.getMessage());
+            throw ce;
         }finally {
             if (ossClient != null) {
                 ossClient.shutdown();
             }
         }
-        return null;
     }
 
     /**
@@ -527,21 +513,8 @@ public class OssService implements OssSpecialExecutor {
         try {
             // 生成签名URL。
             GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(param.getBucketName(), param.getObjectName(), HttpMethod.DELETE);
-            // 设置过期时间。
-            request.setExpiration(new Date((System.currentTimeMillis() + param.getExpiration())));
-            Map<String, String> custom = param.getCustomHeaders();
-            if (custom != null) {
-                for (Map.Entry<String, String> entry : custom.entrySet()) {
-                    if (HttpHeaders.CONTENT_TYPE.equals(entry.getKey())) {
-                        request.setContentType(entry.getValue());
-                    } else if (HttpHeaders.CONTENT_MD5.equals(entry.getKey())) {
-                        request.setContentMD5(entry.getValue());
-                    } else {
-                        request.addUserMetadata(entry.getKey(), entry.getValue());
-                    }
-                }
-            }
-            URL url= ossClient.generatePresignedUrl(request);
+            Map<String, String> custom = buildRequest(param,request);
+            URL url = ossClient.generatePresignedUrl(request);
             // 通过HTTP PUT请求生成签名URL。
             return url.toString();
         } catch (OSSException oe) {
@@ -552,16 +525,17 @@ public class OssService implements OssSpecialExecutor {
                             "Request ID:{}," +
                             "Host ID:{}"
                     , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+            throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message: {}" + ce.getMessage());
+            throw ce;
         }finally {
             if (ossClient != null) {
                 ossClient.shutdown();
             }
         }
-        return null;
     }
 
     /**
@@ -587,16 +561,17 @@ public class OssService implements OssSpecialExecutor {
                             "Request ID:{}," +
                             "Host ID:{}"
                     , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+            throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message: {}" + ce.getMessage());
+            throw ce;
         }finally {
             if (ossClient != null) {
                 ossClient.shutdown();
             }
         }
-        return null;
     }
 
     /**
@@ -617,10 +592,12 @@ public class OssService implements OssSpecialExecutor {
                     "but was rejected with an error response for some reason." +
                     "Error Message:{},Error Code:{},Request ID:{},Host ID:{}" +
                     oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+            throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message:" + ce.getMessage());
+            throw ce;
         } finally {
             if (ossClient != null) {
                 ossClient.shutdown();
@@ -652,18 +629,20 @@ public class OssService implements OssSpecialExecutor {
                     "but was rejected with an error response for some reason." +
                     "Error Message:{},Error Code:{},Request ID:{},Host ID:{}" +
                     oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+            throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message:" + ce.getMessage());
+            throw ce;
         } catch (Exception e){
             logger.error("服务内部异常:{}",e.getMessage());
+            throw e;
         } finally {
             if (ossClient != null) {
                 ossClient.shutdown();
             }
         }
-        return null;
     }
 
     private OSS isNull(OssCommonParam param) {
@@ -692,5 +671,32 @@ public class OssService implements OssSpecialExecutor {
         return (OSS) object;
     }
 
+    private Map<String, String> buildRequest(OssCommonParam param,GeneratePresignedUrlRequest request) {
+        request.setExpiration(new Date((System.currentTimeMillis() + param.getExpiration())));
+        Map<String, String> custom = param.getCustomHeaders();
+        if (custom != null) {
+            for (Map.Entry<String, String> entry : custom.entrySet()) {
+                if (HttpHeaders.CONTENT_TYPE.equals(entry.getKey())) {
+                    request.setContentType(entry.getValue());
+                } else if (HttpHeaders.CONTENT_MD5.equals(entry.getKey())) {
+                    request.setContentMD5(entry.getValue());
+                } else {
+                    request.addUserMetadata(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+        return custom;
+    }
 
+    /**
+     * 初始化原始客户端
+     *
+     * @param config
+     * @return
+     */
+    @Override
+    public boolean initClient(OssConfigProperties config) {
+        ossConfigProperties = config;
+        return false;
+    }
 }

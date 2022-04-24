@@ -1,4 +1,7 @@
-package groop.idealworld.dew.ossutils.Utils;
+package groop.idealworld.dew.ossutils.utils;
+
+import groop.idealworld.dew.ossutils.config.OssConfigProperties;
+import groop.idealworld.dew.ossutils.general.DewOssClient;
 
 /**
  * @author yiye
@@ -21,6 +24,10 @@ public class OssClientUtil {
         if(OSS_CLIENT_THREAD_LOCAL.get() != null){
             OSS_CLIENT_THREAD_LOCAL.remove();
         }
+    }
+
+    public static DewOssClient init(OssConfigProperties ossConfigProperties) {
+        return new DewOssClient(ossConfigProperties);
     }
 
 

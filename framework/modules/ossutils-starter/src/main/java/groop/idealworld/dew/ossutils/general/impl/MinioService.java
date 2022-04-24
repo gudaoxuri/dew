@@ -1,10 +1,15 @@
 package groop.idealworld.dew.ossutils.general.impl;
 
-import groop.idealworld.dew.ossutils.Utils.OssClientUtil;
+import com.aliyun.oss.ClientBuilderConfiguration;
+import com.aliyun.oss.model.CreateBucketRequest;
+import com.obs.services.ObsConfiguration;
+import groop.idealworld.dew.ossutils.utils.OssClientUtil;
+import groop.idealworld.dew.ossutils.utils.OssHandleException;
 import groop.idealworld.dew.ossutils.bean.ImageProcessParam;
 import groop.idealworld.dew.ossutils.bean.OssCommonParam;
 import groop.idealworld.dew.ossutils.config.OssConfigProperties;
-import groop.idealworld.dew.ossutils.general.MinioSpecialExecutor;
+import groop.idealworld.dew.ossutils.general.OssClientInitProcess;
+import groop.idealworld.dew.ossutils.general.OssClientOptProcess;
 import groop.idealworld.dew.ossutils.handle.DewOssHandleClient;
 import io.minio.*;
 import io.minio.http.Method;
@@ -14,7 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.Resource;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -25,20 +30,39 @@ import java.util.concurrent.TimeUnit;
  * @description
  **/
 @Service("minio")
-public class MinioService implements MinioSpecialExecutor {
+public class MinioService implements OssClientOptProcess, OssClientInitProcess {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Resource
-    OssConfigProperties ossConfigProperties;
+    private OssConfigProperties ossConfigProperties;
+
+    private MinioClient minioClient;
+
+    /**
+     * 初始化原始客户端
+     *
+     * @param config
+     * @return
+     */
+    @Override
+    public boolean initClient(OssConfigProperties config) {
+        ossConfigProperties = config;
+        minioClient = (MinioClient) buildOssClient(config).getOssClient();
+        if (minioClient == null){
+            logger.error("minio客户端初始化失败");
+            return false;
+        }
+        return true;
+    }
 
     /**
      * 创建存储空间，简单创建
      *
      * @param param oss存储空间参数
+     * @return 结果
      */
     @Override
-    public void createBucket(OssCommonParam param) {
-        MinioClient minioClient =isNull(param);
+    public Boolean createBucket(OssCommonParam param) {
+        OssHandleException.isNull(param);
         try {
             boolean found = minioClient.bucketExists(BucketExistsArgs.builder()
                     .bucket(param.getBucketName())
@@ -49,7 +73,9 @@ public class MinioService implements MinioSpecialExecutor {
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(param.getBucketName()).build());
                 logger.info("bucket is created successfully,bucketName : {}",param.getBucketName());
             }
+            return true;
         } catch (Exception e){
+            logger.error("minio操作异常",e.getMessage());
             throw new RuntimeException("minio操作异常",e);
         }
     }
@@ -62,7 +88,7 @@ public class MinioService implements MinioSpecialExecutor {
      */
     @Override
     public Boolean doesBucketExist(OssCommonParam param){
-        MinioClient minioClient =isNull(param);
+        OssHandleException.isNull(param);
         try {
             return minioClient.bucketExists(BucketExistsArgs.builder()
                     .bucket(param.getBucketName())
@@ -79,7 +105,7 @@ public class MinioService implements MinioSpecialExecutor {
      */
     @Override
     public void deleteBucket(OssCommonParam param) {
-        MinioClient minioClient =isNull(param);
+        OssHandleException.isNull(param);
         try {
             boolean found = minioClient.bucketExists(BucketExistsArgs.builder()
                     .bucket(param.getBucketName())
@@ -144,7 +170,7 @@ public class MinioService implements MinioSpecialExecutor {
      */
     @Override
     public void uploadObject(OssCommonParam param) {
-        MinioClient minioClient = isNull(param);
+        OssHandleException.isNull(param);
         try {
             minioClient.uploadObject(UploadObjectArgs.builder()
                     .bucket(param.getBucketName())
@@ -164,7 +190,7 @@ public class MinioService implements MinioSpecialExecutor {
      */
     @Override
     public void uploadObject(OssCommonParam param, InputStream inputStream) {
-        MinioClient minioClient = isNull(param);
+        OssHandleException.isNull(param);
         try {
             minioClient.putObject(PutObjectArgs.builder()
                     .bucket(param.getBucketName())
@@ -184,7 +210,7 @@ public class MinioService implements MinioSpecialExecutor {
      */
     @Override
     public InputStream downloadFile(OssCommonParam param) {
-        MinioClient minioClient = isNull(param);
+        OssHandleException.isNull(param);
         try {
             return minioClient.getObject(GetObjectArgs.builder()
                     .bucket(param.getBucketName())
@@ -202,7 +228,7 @@ public class MinioService implements MinioSpecialExecutor {
      */
     @Override
     public void downloadFileLocal(OssCommonParam param) {
-        MinioClient minioClient = isNull(param);
+        OssHandleException.isNull(param);
         try {
             minioClient.downloadObject(DownloadObjectArgs.builder()
                     .bucket(param.getBucketName())
@@ -223,7 +249,7 @@ public class MinioService implements MinioSpecialExecutor {
      */
     @Override
     public Boolean doesObjectExist(OssCommonParam param) {
-        MinioClient minioClient = isNull(param);
+        OssHandleException.isNull(param);
         try {
             GetObjectResponse response = minioClient.getObject(GetObjectArgs.builder()
                     .bucket(param.getBucketName())
@@ -242,7 +268,7 @@ public class MinioService implements MinioSpecialExecutor {
      */
     @Override
     public void deleteObject(OssCommonParam param) {
-        MinioClient minioClient = isNull(param);
+        OssHandleException.isNull(param);
         try {
             minioClient.removeObject(RemoveObjectArgs.builder()
                     .bucket(param.getBucketName())
@@ -262,7 +288,7 @@ public class MinioService implements MinioSpecialExecutor {
      */
     @Override
     public String temporaryUploadUrl(OssCommonParam param) {
-        MinioClient minioClient = isExpirationNull(param);
+        OssHandleException.isExpirationNull(param);
         try {
             return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                     .method(Method.PUT)
@@ -283,7 +309,7 @@ public class MinioService implements MinioSpecialExecutor {
      */
     @Override
     public String temporaryDeleteUrl(OssCommonParam param) {
-        MinioClient minioClient = isExpirationNull(param);
+        OssHandleException.isExpirationNull(param);
         try {
             return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                     .method(Method.DELETE)
@@ -304,7 +330,7 @@ public class MinioService implements MinioSpecialExecutor {
      */
     @Override
     public String temporaryUrl(OssCommonParam param) {
-        MinioClient minioClient = isExpirationNull(param);
+        OssHandleException.isExpirationNull(param);
         try {
             return minioClient.getPresignedObjectUrl(GetPresignedObjectUrlArgs.builder()
                     .method(Method.GET)
@@ -326,32 +352,26 @@ public class MinioService implements MinioSpecialExecutor {
      */
     @Override
     public String imageProcess(OssCommonParam param, ImageProcessParam process) {
-        return null;
+        throw new RuntimeException("minio暂不支持图片处理");
     }
 
-    private MinioClient isNull(OssCommonParam param) {
-        if (param == null) {
-            throw new IllegalArgumentException("param必要参数不能为空");
-        }
-        if (!StringUtils.hasLength(param.getBucketName()) || !StringUtils.hasLength(param.getObjectName())){
-            throw new IllegalArgumentException("操作对象存储服务器必要参数不能为空");
-        }
-        return creatClient();
+    @Override
+    public <T> DewOssHandleClient<T> buildOssClient(OssConfigProperties properties, ClientBuilderConfiguration config) {
+        throw new UnsupportedOperationException("not support,please use buildOssClient(OssCommonParam param)");
     }
 
-    private MinioClient isExpirationNull(OssCommonParam param) {
-        isNull(param);
-        if (param.getExpiration() == null || param.getExpiration() <= 0) {
-            throw new IllegalArgumentException("expiration不能为空");
-        }
-        return creatClient();
+    @Override
+    public void createBucket(CreateBucketRequest createBucketRequest) {
+        throw new UnsupportedOperationException("not support");
     }
 
-    private MinioClient creatClient(){
-        Object object = OssClientUtil.getOssClient();
-        if (object == null) {
-            return (MinioClient) this.buildOssClient(ossConfigProperties).getOssClient();
-        }
-        return (MinioClient) object;
+    @Override
+    public void temporaryUploadFile(OssCommonParam param, FileInputStream inputStream) {
+        throw new UnsupportedOperationException("not support");
+    }
+
+    @Override
+    public <T> DewOssHandleClient<T> buildOssClient(OssConfigProperties properties, ObsConfiguration config) {
+        throw new UnsupportedOperationException("not support,please use buildOssClient(OssCommonParam param)");
     }
 }

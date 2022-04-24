@@ -17,11 +17,11 @@
 package group.idealworld.dew.example.oss;
 
 import com.ecfront.dew.common.Resp;
-import groop.idealworld.dew.ossutils.Utils.OssClientUtil;
+import groop.idealworld.dew.ossutils.general.DewOssClient;
+import groop.idealworld.dew.ossutils.utils.OssClientUtil;
 import groop.idealworld.dew.ossutils.bean.ImageProcessParam;
 import groop.idealworld.dew.ossutils.bean.OssCommonParam;
 import groop.idealworld.dew.ossutils.config.OssConfigProperties;
-import groop.idealworld.dew.ossutils.general.DewOssClient;
 import groop.idealworld.dew.ossutils.handle.DewOssHandleClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +36,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-
-
-import java.io.*;
-import java.nio.charset.Charset;
-import java.util.Base64;
-import java.util.Collections;
 
 /**
  * Auth example controller.
@@ -59,7 +53,7 @@ public class OssExampleController {
     private OssConfigProperties ossConfigProperties;
 
     @Resource
-    private DewOssClient dewOssClient ;
+    private DewOssClient dewOssClient;
 
     /**
      * 创建客户端
