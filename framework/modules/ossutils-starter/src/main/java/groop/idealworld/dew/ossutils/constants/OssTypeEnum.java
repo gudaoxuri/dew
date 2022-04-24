@@ -17,18 +17,27 @@ public enum OssTypeEnum {
     OBS("obs"),
     MINIO("minio");
 
-    private String name;
+    private String code;
 
     OssTypeEnum (String name ){
-        this.name = name;
+        this.code = name;
     }
 
-    public String getName() {
-        return name;
+    public String getCode() {
+        return code;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public static boolean contains(String code){
+        for (OssTypeEnum ossTypeEnum : OssTypeEnum.values()) {
+            if (ossTypeEnum.getCode().equals(code)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 

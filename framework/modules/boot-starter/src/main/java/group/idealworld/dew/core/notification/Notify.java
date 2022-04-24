@@ -289,7 +289,7 @@ public class Notify {
             }
         }
         if (delayed) {
-            // 发送延迟通知，清空积累的计数
+            // 发送延迟通知，清空积类的计数
             notifyContext.totalDelayMs.set(0);
             notifyContext.totalNotifyCounter.set(0);
         }

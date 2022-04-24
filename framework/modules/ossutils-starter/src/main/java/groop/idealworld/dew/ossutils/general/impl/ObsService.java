@@ -1,16 +1,19 @@
 package groop.idealworld.dew.ossutils.general.impl;
 
+import com.aliyun.oss.ClientBuilderConfiguration;
+import com.aliyun.oss.model.CreateBucketRequest;
 import com.obs.services.ObsClient;
 import com.obs.services.ObsConfiguration;
 import com.obs.services.exception.ObsException;
 import com.obs.services.model.*;
-import groop.idealworld.dew.ossutils.Utils.OssClientUtil;
+import groop.idealworld.dew.ossutils.utils.OssClientUtil;
 import groop.idealworld.dew.ossutils.bean.ImageProcessParam;
 import groop.idealworld.dew.ossutils.bean.OssCommonParam;
-import groop.idealworld.dew.ossutils.general.ObsSpecialExecutor;
+import groop.idealworld.dew.ossutils.general.OssClientInitProcess;
+import groop.idealworld.dew.ossutils.general.OssClientOptProcess;
 import groop.idealworld.dew.ossutils.handle.DewOssHandleClient;
 import groop.idealworld.dew.ossutils.config.OssConfigProperties;
-import groop.idealworld.dew.ossutils.handle.OssHandleTool;
+import groop.idealworld.dew.ossutils.utils.OssHandleTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -29,7 +32,7 @@ import java.util.Optional;
  * @description
  **/
 @Service("obs")
-public class ObsService implements ObsSpecialExecutor {
+public class ObsService implements OssClientOptProcess, OssClientInitProcess {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Resource
@@ -41,14 +44,15 @@ public class ObsService implements ObsSpecialExecutor {
      * @param param oss存储空间参数
      */
     @Override
-    public void createBucket(OssCommonParam param) {
+    public ObsBucket createBucket(OssCommonParam param) {
         ObsClient obsClient = isNull(param);
         try {
             // 创建桶成功
-            ObsBucket bucket = obsClient.createBucket(param.getBucketName());
+           return obsClient.createBucket(param.getBucketName());
         } catch (ObsException e) {
             logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
                     , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
+            throw e;
         }
 
     }
@@ -127,7 +131,7 @@ public class ObsService implements ObsSpecialExecutor {
      */
     @Override
     public <T> DewOssHandleClient<T> buildOssClient(OssConfigProperties properties, ObsConfiguration config) {
-        Optional.ofNullable(properties).orElseThrow(() -> new NullPointerException("参数不能为空"));
+        Optional.ofNullable(properties).orElseThrow(() -> new IllegalArgumentException("参数不能为空"));
         ObsClient obsClient = (ObsClient) OssClientUtil.getOssClient();
         if (ObjectUtils.isEmpty(obsClient) && ObjectUtils.isEmpty(config)) {
             this.buildOssClient(properties);
@@ -170,8 +174,8 @@ public class ObsService implements ObsSpecialExecutor {
      */
     @Override
     public void uploadObject(OssCommonParam param) {
+        ObsClient obsClient = isNull(param);
         try {
-            ObsClient obsClient = isNull(param);
             obsClient.putObject(param.getBucketName(), param.getObjectName(), new File(param.getPath()));
         }catch (Exception exception){
             if(exception instanceof ObsException) {
@@ -180,6 +184,8 @@ public class ObsService implements ObsSpecialExecutor {
                         , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
             }
             throw exception;
+        } finally {
+            closeClient();
         }
 
     }
@@ -203,6 +209,8 @@ public class ObsService implements ObsSpecialExecutor {
                         , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
             }
             throw e;
+        }  finally {
+            closeClient();
         }
     }
 
@@ -227,6 +235,8 @@ public class ObsService implements ObsSpecialExecutor {
                         , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
             }
             throw e;
+        } finally {
+            closeClient();
         }
     }
 
@@ -260,8 +270,11 @@ public class ObsService implements ObsSpecialExecutor {
         } catch(ObsException e) {
             logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
                     , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
+            throw e;
         } catch (IOException e) {
-            logger.error("IOException", e);
+            logger.error("io fail", e);
+        }  finally {
+            closeClient();
         }
     }
 
@@ -272,7 +285,7 @@ public class ObsService implements ObsSpecialExecutor {
      * @return 结果
      */
     @Override
-    public Boolean doesObjectExist(OssCommonParam param) {
+    public Boolean doesObjectExist(OssCommonParam param){
         ObsClient obsClient = isNull(param);
         try {
            return obsClient.doesObjectExist(param.getBucketName(), param.getObjectName());
@@ -283,6 +296,8 @@ public class ObsService implements ObsSpecialExecutor {
                         , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
             }
             throw e;
+        } finally {
+            closeClient();
         }
     }
 
@@ -292,7 +307,7 @@ public class ObsService implements ObsSpecialExecutor {
      * @param param oss操作常用参数
      */
     @Override
-    public void deleteObject(OssCommonParam param) {
+    public void deleteObject(OssCommonParam param){
         ObsClient obsClient = isNull(param);
         try {
             obsClient.deleteObject(param.getBucketName(), param.getObjectName());
@@ -303,6 +318,8 @@ public class ObsService implements ObsSpecialExecutor {
                         , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
             }
             throw e;
+        }  finally {
+            closeClient();
         }
     }
 
@@ -331,6 +348,8 @@ public class ObsService implements ObsSpecialExecutor {
                         , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
             }
             throw e;
+        } finally {
+            closeClient();
         }
     }
 
@@ -341,7 +360,7 @@ public class ObsService implements ObsSpecialExecutor {
      * @return url
      */
     @Override
-    public String temporaryDeleteUrl(OssCommonParam param) {
+    public String temporaryDeleteUrl(OssCommonParam param)  {
         ObsClient obsClient = isExpirationNull(param);
         try{
 
@@ -358,6 +377,8 @@ public class ObsService implements ObsSpecialExecutor {
                         , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
             }
             throw e;
+        } finally {
+            closeClient();
         }
     }
 
@@ -385,6 +406,8 @@ public class ObsService implements ObsSpecialExecutor {
                         , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
             }
             throw e;
+        }  finally {
+            closeClient();
         }
 
     }
@@ -398,8 +421,9 @@ public class ObsService implements ObsSpecialExecutor {
      */
     @Override
     public String imageProcess(OssCommonParam param, ImageProcessParam process) {
+        ObsClient obsClient = isExpirationNull(param);
         try {
-            ObsClient obsClient = isExpirationNull(param);
+
             TemporarySignatureRequest request = new TemporarySignatureRequest(HttpMethodEnum.GET, param.getExpiration() / 1000);
             request.setBucketName(param.getBucketName());
             request.setObjectKey(param.getObjectName());
@@ -414,7 +438,24 @@ public class ObsService implements ObsSpecialExecutor {
             throw e;
         }catch (Exception e){
             throw new RuntimeException("服务内部异常:"+e.getMessage());
+        } finally {
+            closeClient();
         }
+    }
+
+    @Override
+    public <T> DewOssHandleClient<T> buildOssClient(OssConfigProperties properties, ClientBuilderConfiguration config) {
+        throw new UnsupportedOperationException("not support,please use buildOssClient(OssCommonParam param)");
+    }
+
+    @Override
+    public void createBucket(CreateBucketRequest createBucketRequest) {
+        throw new UnsupportedOperationException("not support");
+    }
+
+    @Override
+    public void temporaryUploadFile(OssCommonParam param, FileInputStream inputStream) {
+        throw new UnsupportedOperationException("not support");
     }
 
     private ObsClient isNull(OssCommonParam param) {
@@ -441,5 +482,17 @@ public class ObsService implements ObsSpecialExecutor {
             return (ObsClient) this.buildOssClient(ossConfigProperties).getOssClient();
         }
         return (ObsClient) object;
+    }
+
+    /**
+     * 初始化原始客户端
+     *
+     * @param config
+     * @return
+     */
+    @Override
+    public boolean initClient(OssConfigProperties config) {
+        ossConfigProperties = config;
+        return false;
     }
 }

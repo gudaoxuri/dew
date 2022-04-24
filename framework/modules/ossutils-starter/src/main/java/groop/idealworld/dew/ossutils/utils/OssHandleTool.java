@@ -1,4 +1,4 @@
-package groop.idealworld.dew.ossutils.handle;
+package groop.idealworld.dew.ossutils.utils;
 
 
 import groop.idealworld.dew.ossutils.bean.ImageProcessParam;
