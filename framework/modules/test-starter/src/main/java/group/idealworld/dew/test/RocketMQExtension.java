@@ -32,7 +32,7 @@ import java.nio.file.Path;
 
 public class RocketMQExtension implements BeforeAllCallback {
 
-    private static final Logger logger = LoggerFactory.getLogger(RocketMQExtension.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RocketMQExtension.class);
 
     private static final String DOCKER_COMPOSE = "version: '2'\n" +
             "services:\n" +
@@ -50,23 +50,23 @@ public class RocketMQExtension implements BeforeAllCallback {
             "    depends_on:\n" +
             "      - namesrv";
 
-    private static final Path tempFile;
+    private static final Path TEMP_FILE;
 
     static {
         try {
-            tempFile = Files.createTempFile(null, null);
-            Files.write(tempFile, DOCKER_COMPOSE.getBytes(StandardCharsets.UTF_8));
+            TEMP_FILE = Files.createTempFile(null, null);
+            Files.write(TEMP_FILE, DOCKER_COMPOSE.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Initializer.
+     */
     public static DockerComposeContainer rocketmqContainer =
-            new DockerComposeContainer(tempFile.toFile())
+            new DockerComposeContainer(TEMP_FILE.toFile())
                     .withExposedService("namesrv_1", 9876);
-//                    .withExposedService("broker_1", 10911)
-//                    .withExposedService("broker_1", 10909)
-//                    .withExposedService("broker_1", 10912);
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
@@ -74,11 +74,19 @@ public class RocketMQExtension implements BeforeAllCallback {
         String nameSrvUrl = rocketmqContainer.getServiceHost("namesrv_1", 9876)
                 + ":" +
                 rocketmqContainer.getServicePort("namesrv_1", 9876);
-        logger.info("Test RocketMQ name server url: " + nameSrvUrl);
+        LOGGER.info("Test RocketMQ name server url: " + nameSrvUrl);
     }
 
+    /**
+     * Initializer.
+     */
     public static class Initializer
             implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+        /**
+         * Initialize.
+         *
+         * @param configurableApplicationContext the application context
+         */
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues.of(
                     "rocketmq.name-server=" + rocketmqContainer.getServiceHost("namesrv_1", 9876)

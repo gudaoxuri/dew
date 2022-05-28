@@ -53,6 +53,7 @@ public abstract class AbsChannel implements Channel {
      * 初始化通道.
      *
      * @param notifyConfig the notify config
+     * @return return true if init success
      */
     protected abstract boolean innerInit(NotifyConfig notifyConfig);
 
@@ -110,6 +111,7 @@ public abstract class AbsChannel implements Channel {
      * @param title     消息标题
      * @param receivers 接收人列表
      * @return 是否成功
+     * @throws Exception the exception
      */
     protected abstract Resp<String> innerSend(String content, String title, Set<String> receivers) throws Exception;
 

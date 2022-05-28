@@ -47,7 +47,7 @@ import java.io.InputStream;
 
 public class OssExampleController {
 
-    private static final Logger logger = LoggerFactory.getLogger(OssExampleController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OssExampleController.class);
 
     @Resource
     private OssConfigProperties ossConfigProperties;
@@ -210,7 +210,7 @@ public class OssExampleController {
         InputStream inputStream = dewOssClient.downloadFile(ossCommonParam);
         try {
             int aa = inputStream.read();
-            logger.info(aa+"");
+            LOGGER.info(aa+"");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -226,7 +226,7 @@ public class OssExampleController {
         DewOssHandleClient ossHandleClient = dewOssClient.buildOssClient(ossConfigProperties);
         dewOssClient.closeClient();
         Object p = OssClientUtil.getOssClient();
-        logger.info(getClass().getName());
+        LOGGER.info(getClass().getName());
         return Resp.success("下载成功");
     }
 

@@ -8,20 +8,21 @@ import java.util.Map;
 
 /**
  * @author yiye
- * @date 2022/4/1
- * @description
  **/
 
 public class OssHandleTool {
 
+    private OssHandleTool() {
+    }
 
     /**
-         * 缩略图处理方法，oss,obs共用
-         * @param process
-         * @return
-         */
+     * 缩略图处理方法，oss,obs共用
+     *
+     * @param process 图片处理参数
+     * @return 处理后的图片url
+     */
     public static String imageProcess(ImageProcessParam process) {
-        StringBuffer style = new StringBuffer();
+        StringBuilder style = new StringBuilder();
         style.append("image/");
         if (process.getResizeRatio() == null) {
             style.append("resize,m_");
@@ -42,7 +43,7 @@ public class OssHandleTool {
         }
 
         if (process.getOtherParam() != null) {
-            style = new StringBuffer();
+            style = new StringBuilder();
             style.append("image/");
             for (Map.Entry<String, String> entry : process.getOtherParam().entrySet()) {
                 style.append(entry.getKey());

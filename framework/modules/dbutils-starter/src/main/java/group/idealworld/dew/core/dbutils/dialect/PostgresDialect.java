@@ -39,7 +39,8 @@ class PostgresDialect implements Dialect {
     }
 
     @Override
-    public String createTableIfNotExist(String tableName, String tableDesc, Map<String, String> fields, Map<String, String> fieldsDesc, List<String> indexFields, List<String> uniqueFields, String pkField) throws SQLException {
+    public String createTableIfNotExist(String tableName, String tableDesc, Map<String, String> fields, Map<String, String> fieldsDesc, List<String> indexFields,
+                                        List<String> uniqueFields, String pkField) throws SQLException {
         StringBuilder sb = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " ( ");
         for (Map.Entry<String, String> field : fields.entrySet()) {
             String f = field.getValue().toLowerCase();
@@ -97,7 +98,8 @@ class PostgresDialect implements Dialect {
         }
         if (indexFields != null && !indexFields.isEmpty()) {
             for (String idxFields : indexFields) {
-                sb.append("CREATE INDEX \"i_").append(tableName).append("_").append(idxFields).append("\" ON \"").append(tableName).append("\" (\"").append(idxFields).append("\");");
+                sb.append("CREATE INDEX \"i_").append(tableName).append("_").append(idxFields).append("\" ON \"").append(tableName).append("\" (\"").append(idxFields).append(
+                        "\");");
             }
         }
         if (tableDesc != null && !tableDesc.isEmpty()) {

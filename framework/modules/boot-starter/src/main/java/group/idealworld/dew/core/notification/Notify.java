@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  */
 public class Notify {
 
-    private static final Logger logger = LoggerFactory.getLogger(Notify.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Notify.class);
 
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
 
@@ -47,13 +47,7 @@ public class Notify {
     private static Map<String, NotifyConfig> notifyConfigMap;
     private static Function<String, String> instanceFetchFun;
 
-    /**
-     * Init.
-     *
-     * @param notifyConfigMap 配置
-     */
-    public static void init(Map<String, NotifyConfig> notifyConfigMap) {
-        Notify.init(notifyConfigMap, flag -> "");
+    private Notify() {
     }
 
     /**
@@ -61,18 +55,17 @@ public class Notify {
      *
      * @param notifyConfigMap  配置
      * @param instanceFetchFun 此函数结果会附到title后面用于区分来自哪个实例
+     * @return the notify
      */
-    public static void init(Map<String, NotifyConfig> notifyConfigMap, Function<String, String> instanceFetchFun) {
+    public static Notify init(Map<String, NotifyConfig> notifyConfigMap, Function<String, String> instanceFetchFun) {
         Notify.notifyConfigMap = notifyConfigMap;
         Notify.instanceFetchFun = instanceFetchFun;
         notifyConfigMap.forEach((key, value) -> {
             Channel channel = null;
             try {
-                channel = (Channel) Class.forName(Notify.class.getPackage().getName() + "." + value.getType() + "Channel")
-                        .getDeclaredConstructor().newInstance();
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-                    | NoSuchMethodException | InvocationTargetException e) {
-                logger.error("Not exist notify type:" + value.getType());
+                channel = (Channel) Class.forName(Notify.class.getPackage().getName() + "." + value.getType() + "Channel").getDeclaredConstructor().newInstance();
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                LOGGER.error("Not exist notify type:" + value.getType());
                 throw new RuntimeException(e);
             }
             channel.init(value);
@@ -85,6 +78,7 @@ public class Notify {
                 NOTIFY_CHANNELS.values().forEach(Channel::destroy);
             }
         }));
+        return new Notify();
     }
 
     /**
@@ -219,9 +213,8 @@ public class Notify {
      * @return the resp
      */
     public static Resp<Void> send(String flag, Throwable content, String title, Set<String> specialReceivers) {
-        return send(flag, content.toString()
-                        + "\n" + Arrays.stream(content.getStackTrace()).map(StackTraceElement::toString).limit(10).collect(Collectors.joining("\n")),
-                title, specialReceivers);
+        return send(flag, content.toString() + "\n" + Arrays.stream(content.getStackTrace()).map(StackTraceElement::toString).limit(10).collect(Collectors.joining("\n")), title,
+                specialReceivers);
     }
 
     /**
@@ -240,7 +233,7 @@ public class Notify {
     private static Resp<Void> send(String flag, String content, String title, Set<String> specialReceivers, boolean delayed) {
         Channel channel = NOTIFY_CHANNELS.getOrDefault(flag, null);
         if (channel == null) {
-            logger.trace("Not found notify flag[" + flag + "] in dew config.");
+            LOGGER.trace("Not found notify flag[" + flag + "] in dew config.");
             return Resp.badRequest("Not found notify flag[" + flag + "] in dew config.");
         }
         NotifyConfig notifyConfig = notifyConfigMap.get(flag);
@@ -248,7 +241,7 @@ public class Notify {
         // 策略处理
         if (!delayed && notifyConfig.getStrategy().getMinIntervalSec() != 0) {
             if (notifyContext.intervalNotifyCounter.getAndIncrement() > 0) {
-                logger.trace("Notify frequency must be > " + notifyConfig.getStrategy().getMinIntervalSec() + "s");
+                LOGGER.trace("Notify frequency must be > " + notifyConfig.getStrategy().getMinIntervalSec() + "s");
                 return Resp.locked("Notify frequency must be > " + notifyConfig.getStrategy().getMinIntervalSec() + "s");
             } else {
                 DELAY_QUEUE.offer(new NotifyDelayed(flag, specialReceivers, notifyConfig.getStrategy().getMinIntervalSec() * 1000));
@@ -273,18 +266,15 @@ public class Notify {
                 isDNDTime = currentShortTime >= dndStartShortTime || currentShortTime <= dndEndShortTime;
                 time.add(Calendar.DATE, 1);
             }
-            if (currentTime > notifyContext.lastDNDEndTime.getAndSet(
-                    Long.parseLong(new SimpleDateFormat("yyyyMMdd")
-                            .format(time.getTime()) + dndTime[1].replace(":", "")))) {
+            if (currentTime > notifyContext.lastDNDEndTime.getAndSet(Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(time.getTime()) + dndTime[1].replace(":", "")))) {
                 // 已在后几个免扰周期
                 notifyContext.currentForceSendTimes.set(0);
             }
-            if (isDNDTime
-                    && notifyConfig.getStrategy().getForceSendTimes() > notifyContext.currentForceSendTimes.incrementAndGet()) {
+            if (isDNDTime && notifyConfig.getStrategy().getForceSendTimes() > notifyContext.currentForceSendTimes.incrementAndGet()) {
                 if (delayed) {
                     DELAY_QUEUE.offer(new NotifyDelayed(flag, specialReceivers, notifyConfig.getStrategy().getMinIntervalSec() * 1000));
                 }
-                logger.trace("Do Not Disturb time and try notify times <=" + notifyConfig.getStrategy().getForceSendTimes());
+                LOGGER.trace("Do Not Disturb time and try notify times <=" + notifyConfig.getStrategy().getForceSendTimes());
                 return Resp.locked("Do Not Disturb time and try notify times <=" + notifyConfig.getStrategy().getForceSendTimes());
             }
         }
@@ -310,7 +300,7 @@ public class Notify {
         if (result) {
             return Resp.success(null);
         } else {
-            logger.warn("Notify send error.");
+            LOGGER.warn("Notify send error.");
             return Resp.serverError("Notify send error.");
         }
     }
@@ -324,14 +314,13 @@ public class Notify {
                     Context notifyContext = NOTIFY_CONTEXT.get(flag);
                     long notifyCounter = notifyContext.intervalNotifyCounter.getAndSet(0);
                     Set<String> specialReceivers = notifyDelayed.getSpecialReceivers();
-                    EXECUTOR_SERVICE.execute(() ->
-                            send(flag, "在最近的["
-                                            + notifyContext.totalDelayMs.addAndGet(notifyDelayed.getDelayMs() / 1000)
-                                            + "]秒内发生了[" + notifyContext.totalNotifyCounter.addAndGet(notifyCounter) + "]次通知请求。",
-                                    "延时通知", specialReceivers, true));
+                    EXECUTOR_SERVICE.execute(() -> send(flag,
+                            "在最近的[" + notifyContext.totalDelayMs.addAndGet(notifyDelayed.getDelayMs() / 1000)
+                                    + "]秒内发生了[" + notifyContext.totalNotifyCounter.addAndGet(notifyCounter)
+                                    + "]次通知请求。", "延时通知", specialReceivers, true));
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    logger.error("Send delay notify error.", e);
+                    LOGGER.error("Send delay notify error.", e);
                 }
             }
         });
@@ -380,7 +369,7 @@ public class Notify {
          * @param specialReceivers the special receivers
          * @param delayMs          the delay ms
          */
-        public NotifyDelayed(String flag, Set<String> specialReceivers, int delayMs) {
+        NotifyDelayed(String flag, Set<String> specialReceivers, int delayMs) {
             this.flag = flag;
             this.specialReceivers = specialReceivers;
             this.delayMs = delayMs;

@@ -29,7 +29,7 @@ import java.util.concurrent.CountDownLatch;
  */
 public class ClusterLockTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClusterLockTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClusterLockTest.class);
 
     /**
      * Test.
@@ -43,13 +43,13 @@ public class ClusterLockTest {
         new Thread(() -> {
             try {
                 assert lock.tryLock();
-                logger.info("Locked1 > " + Thread.currentThread().getId());
+                LOGGER.info("Locked1 > " + Thread.currentThread().getId());
                 Thread.sleep(2300);
             } catch (Exception e) {
-                logger.error(e.getMessage());
+                LOGGER.error(e.getMessage());
             } finally {
                 assert lock.unLock();
-                logger.info("UnLock1 > " + Thread.currentThread().getId());
+                LOGGER.info("UnLock1 > " + Thread.currentThread().getId());
                 waiting.countDown();
             }
         }).start();
@@ -58,16 +58,16 @@ public class ClusterLockTest {
             int hitTimes = 0;
             try {
                 while (!lock.tryLock()) {
-                    logger.info("waiting 1 unlock");
+                    LOGGER.info("waiting 1 unlock");
                     hitTimes++;
                     Thread.sleep(100);
                 }
-                logger.info("Locked2 > " + Thread.currentThread().getId());
+                LOGGER.info("Locked2 > " + Thread.currentThread().getId());
             } catch (Exception e) {
-                logger.error(e.getMessage());
+                LOGGER.error(e.getMessage());
             } finally {
                 assert lock.unLock();
-                logger.info("UnLock2 > " + Thread.currentThread().getId());
+                LOGGER.info("UnLock2 > " + Thread.currentThread().getId());
                 if (hitTimes < 15) {
                     throw new RuntimeException("Waiting times are less than 15");
                 }
@@ -78,15 +78,15 @@ public class ClusterLockTest {
             int hitTimes = 0;
             try {
                 while (!lock.tryLock(1000, 2000)) {
-                    logger.info("waiting 2 unlock");
+                    LOGGER.info("waiting 2 unlock");
                     hitTimes++;
                 }
-                logger.info("Locked3 > " + Thread.currentThread().getId());
+                LOGGER.info("Locked3 > " + Thread.currentThread().getId());
             } catch (Exception e) {
-                logger.error(e.getMessage());
+                LOGGER.error(e.getMessage());
             } finally {
                 assert lock.unLock();
-                logger.info("UnLock3 > " + Thread.currentThread().getId());
+                LOGGER.info("UnLock3 > " + Thread.currentThread().getId());
                 if (hitTimes != 1) {
                     throw new RuntimeException("Waiting times must equals 1");
                 }
@@ -95,7 +95,7 @@ public class ClusterLockTest {
         }).start();
 
         waiting.await();
-        logger.info("test auto release instance");
+        LOGGER.info("test auto release instance");
         assert !lock.isLocked();
         assert lock.tryLock(0, 300);
         assert lock.isLocked();

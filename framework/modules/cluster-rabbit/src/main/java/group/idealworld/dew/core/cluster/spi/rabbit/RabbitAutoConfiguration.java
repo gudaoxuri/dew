@@ -36,11 +36,14 @@ import javax.annotation.PostConstruct;
 @ConditionalOnExpression("#{'${dew.cluster.mq}'=='rabbit'}")
 public class RabbitAutoConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(RabbitAutoConfiguration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitAutoConfiguration.class);
 
+    /**
+     * Init.
+     */
     @PostConstruct
-    public void init() {
-        logger.info("Load Auto Configuration : {}", this.getClass().getName());
+    public void initConf() {
+        LOGGER.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 
     /**

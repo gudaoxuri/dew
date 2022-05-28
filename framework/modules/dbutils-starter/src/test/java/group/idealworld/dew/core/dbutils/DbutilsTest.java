@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -39,7 +40,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @SpringBootTest
 public class DbutilsTest {
 
-    private static final Logger log = LoggerFactory.getLogger(DbutilsTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DbutilsTest.class);
 
     @Autowired
     private DewDB dewDB;
@@ -148,7 +149,7 @@ public class DbutilsTest {
             new Thread(() -> {
                 for (int i1 = 0; i1 < 100; i1++) {
                     try {
-                        log.debug(">>>>>>>>>>>>>>" + count.incrementAndGet());
+                        LOGGER.debug(">>>>>>>>>>>>>>" + count.incrementAndGet());
                         watch.countDown();
                         // find
                         Assert.assertEquals(4, dewDB.find("select * from tuser where age = ?", 22).size());
@@ -187,7 +188,7 @@ public class DbutilsTest {
                     1, "张三", "123", 22, 2333.22);
             dewDB.commit();
         } catch (SQLException e) {
-            log.warn("[DewDBUtils]Has Error!");
+            LOGGER.warn("[DewDBUtils]Has Error!");
         }
         Assert.assertEquals(0, dewDB.count("select * from tuser"));
 

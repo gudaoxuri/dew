@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class DewIdempotent {
 
-    private static final Logger logger = LoggerFactory.getLogger(DewIdempotent.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DewIdempotent.class);
 
     // optType -> IdempotentProcessor
     private static final Map<String, OptTypeInfo> CONTENT = new HashMap<>();
@@ -40,6 +40,9 @@ public class DewIdempotent {
 
     private static ItemProcessor itemProcessor = new ItemProcessor();
     private static BloomFilterProcessor bloomFilterProcessor = new BloomFilterProcessor();
+
+    private DewIdempotent() {
+    }
 
 
     /**
@@ -51,7 +54,7 @@ public class DewIdempotent {
      * @param strategy    策略类型
      */
     public static void initOptTypeInfo(String optType, boolean needConfirm, long expireMs, StrategyEnum strategy) {
-        logger.info("Init OptType[{}] info: needConfirm:{} expireMs:{} strategy:{}", optType, needConfirm, expireMs, strategy.toString());
+        LOGGER.info("Init OptType[{}] info: needConfirm:{} expireMs:{} strategy:{}", optType, needConfirm, expireMs, strategy.toString());
         IdempotentProcessor processor;
         switch (strategy) {
             case ITEM:
@@ -61,7 +64,7 @@ public class DewIdempotent {
                 processor = bloomFilterProcessor;
                 break;
             default:
-                logger.error("Init OptType[{}] error: strategy:{} NOT exist.", strategy.toString());
+                LOGGER.error("Init OptType[{}] error: strategy:{} NOT exist.", strategy.toString());
                 return;
         }
         OptTypeInfo optTypeInfo = new OptTypeInfo();

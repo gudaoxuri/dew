@@ -32,14 +32,14 @@ import javax.annotation.PostConstruct;
 @Configuration
 public class ConvertAutoConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(ConvertAutoConfiguration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConvertAutoConfiguration.class);
 
     /**
      * Init.
      */
     @PostConstruct
     public void init() {
-        logger.info("Load Auto Configuration : {}", this.getClass().getName());
+        LOGGER.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 
     /**

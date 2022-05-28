@@ -81,10 +81,10 @@ public class WebTest {
         Assertions.assertEquals("badrequest", result.getMessage());
         ResponseEntity<Resp> resultEntity = testRestTemplate.getForEntity("/test/customError?q=TEST", Resp.class);
         Assertions.assertEquals(500, resultEntity.getStatusCodeValue());
-        Assertions.assertEquals("A000", resultEntity.getBody().getCode());
+        Assertions.assertTrue(resultEntity.getBody().getCode().contains("A000"));
         resultEntity = testRestTemplate.getForEntity("/test/customHttpState?q=TEST", Resp.class);
         Assertions.assertEquals(401, resultEntity.getStatusCodeValue());
-        Assertions.assertEquals("A000", resultEntity.getBody().getCode());
+        Assertions.assertTrue(resultEntity.getBody().getCode().contains("A000"));
     }
 
     private void testValidation() {
@@ -94,12 +94,12 @@ public class WebTest {
         userDTO.setIdCard("110101201709013173");
         ResponseEntity<Resp> createResult = testRestTemplate.postForEntity("/test/valid-create", userDTO, Resp.class);
         Assertions.assertEquals(200, createResult.getStatusCodeValue());
-        Assertions.assertEquals("400", createResult.getBody().getCode());
+        Assertions.assertTrue(createResult.getBody().getCode().contains("400"));
         Assertions.assertTrue(createResult.getBody().getMessage().contains("Detail"));
         userDTO.setIdCard("110101201709013174");
         createResult = testRestTemplate.postForEntity("/test/valid-create", userDTO, Resp.class);
         Assertions.assertEquals(200, createResult.getStatusCodeValue());
-        Assertions.assertEquals("400", createResult.getBody().getCode());
+        Assertions.assertTrue(createResult.getBody().getCode().contains("400"));
         Assertions.assertTrue(createResult.getBody().getMessage().contains("Detail"));
         userDTO.setPhone("15971997041");
         ResponseEntity<WebController.UserDTO> createSuccessResult = testRestTemplate.postForEntity(
@@ -112,7 +112,7 @@ public class WebTest {
         map.put("idCard", "110101201709013173");
         ResponseEntity<Resp> updateResult = testRestTemplate.postForEntity("/test/valid-update", map, Resp.class);
         Assertions.assertEquals(200, updateResult.getStatusCodeValue());
-        Assertions.assertEquals("400", updateResult.getBody().getCode());
+        Assertions.assertTrue(updateResult.getBody().getCode().contains("400"));
         Assertions.assertTrue(updateResult.getBody().getMessage().contains("Detail"));
         map.put("idCard", "110101201709013174");
         ResponseEntity<WebController.UserDTO> updateSuccessResult = testRestTemplate.postForEntity(
@@ -123,17 +123,17 @@ public class WebTest {
         // path
         ResponseEntity<Resp> pathResult = testRestTemplate.getForEntity("/test/valid-method-spring/1", Resp.class);
         Assertions.assertEquals(200, pathResult.getStatusCodeValue());
-        Assertions.assertEquals("400", pathResult.getBody().getCode());
+        Assertions.assertTrue(pathResult.getBody().getCode().contains("400"));
         Assertions.assertTrue(pathResult.getBody().getMessage().contains("Detail"));
         pathResult = testRestTemplate.getForEntity("/test/valid-method-own/1865712020", Resp.class);
         Assertions.assertEquals(200, pathResult.getStatusCodeValue());
-        Assertions.assertEquals("400", pathResult.getBody().getCode());
+        Assertions.assertTrue(pathResult.getBody().getCode().contains("400"));
         Assertions.assertTrue(pathResult.getBody().getMessage().contains("Detail"));
 
         // error mapping
         ResponseEntity<Resp> mappingResult = testRestTemplate.getForEntity("/test/error-mapping", Resp.class);
         Assertions.assertEquals(401, mappingResult.getStatusCodeValue());
-        Assertions.assertEquals("x00010", mappingResult.getBody().getCode());
+        Assertions.assertTrue(mappingResult.getBody().getCode().contains("x00010"));
         Assertions.assertEquals("[Internal Server Error]认证错误", mappingResult.getBody().getMessage());
         logger.info($.json.toJsonString(mappingResult.getBody()));
     }

@@ -57,7 +57,7 @@ import java.util.Map;
         "'${dew.cluster.map}'=='redis' " + "|| '${dew.cluster.election}'=='redis'}")
 public class RedisAutoConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(RedisAutoConfiguration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RedisAutoConfiguration.class);
 
     @Autowired
     private MultiRedisConfig multiRedisConfig;
@@ -90,7 +90,7 @@ public class RedisAutoConfiguration {
      */
     @PostConstruct
     public void init() throws UnknownHostException {
-        logger.info("Load Auto Configuration : {}", this.getClass().getName());
+        LOGGER.info("Load Auto Configuration : {}", this.getClass().getName());
         REDIS_TEMPLATES.put("", redisTemplate);
         if (!multiRedisConfig.getMulti().isEmpty()) {
             initMultiDS(multiRedisConfig.getMulti());

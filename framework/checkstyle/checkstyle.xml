@@ -56,8 +56,8 @@
     <!-- See https://checkstyle.org/config_sizes.html -->
     <module name="FileLength"/>
     <module name="LineLength">
-        <!--由100修改成150-->
-        <property name="max" value="150"/>
+        <!--由100修改成180-->
+        <property name="max" value="180"/>
         <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
     </module>
 
@@ -80,13 +80,13 @@
         <module name="InvalidJavadocPosition"/>
         <module name="JavadocMethod"/>
         <module name="JavadocType"/>
-        <module name="JavadocVariable">
-            <property name="scope" value="public"/>
-        </module>
+        <!-- <module name="JavadocVariable">-->
+        <!--     <property name="scope" value="public"/>-->
+        <!-- </module>-->
         <module name="JavadocStyle">
             <property name="checkFirstSentence" value="false"/>
         </module>
-        <module name="MissingJavadocMethod"/>
+        <!--<module name="MissingJavadocMethod"/>-->
 
         <!-- Checks for Naming Conventions.                  -->
         <!-- See https://checkstyle.org/config_naming.html -->
@@ -158,11 +158,7 @@
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
 
-        <!-- Checks for class design                         -->
-        <!-- See https://checkstyle.org/config_design.html -->
-        <module name="DesignForExtension">
-            <property name="ignoredAnnotations" value="Override, Test"/> <!--BY Dew 忽略 -->
-        </module>
+        <!-- Checks for class design -->
         <!-- <module name="FinalClass"/>--> <!--BY Dew 过于严格且在内部类时有问题 -->
         <module name="HideUtilityClassConstructor"/>
         <module name="InterfaceIsType"/>

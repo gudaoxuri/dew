@@ -28,6 +28,9 @@ public class NameHelper {
 
     private static final Pattern CLASS_NAME_PATTERN = Pattern.compile("[^a-zA-Z0-9]+(\\w{1})");
 
+    private NameHelper() {
+    }
+
     /**
      * Format package.
      *

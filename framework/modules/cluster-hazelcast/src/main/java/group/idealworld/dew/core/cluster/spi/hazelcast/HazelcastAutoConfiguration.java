@@ -41,7 +41,7 @@ import org.springframework.context.annotation.Configuration;
                 + "|| '${dew.cluster.election}'=='hazelcast'}")
 public class HazelcastAutoConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(HazelcastAutoConfiguration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastAutoConfiguration.class);
 
     private HazelcastConfig hazelcastConfig;
 
@@ -51,7 +51,7 @@ public class HazelcastAutoConfiguration {
      * @param hazelcastConfig the hazelcast config
      */
     public HazelcastAutoConfiguration(HazelcastConfig hazelcastConfig) {
-        logger.info("Load Auto Configuration : {}", this.getClass().getName());
+        LOGGER.info("Load Auto Configuration : {}", this.getClass().getName());
         this.hazelcastConfig = hazelcastConfig;
     }
 

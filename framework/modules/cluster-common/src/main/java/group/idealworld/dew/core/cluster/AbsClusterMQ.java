@@ -139,11 +139,11 @@ public abstract class AbsClusterMQ implements ClusterMQ {
 
     private void receiveMsg(String msgAddr, Consumer<MessageWrap> consumer, boolean isResponse) {
         if (Cluster.haEnabled()) {
-            boolean hasError = Cluster.getClusterHA().mq_findAllUnCommittedMsg(msgAddr).stream().anyMatch(haMsg -> {
+            boolean hasError = Cluster.getClusterHA().mqFindAllUnCommittedMsg(msgAddr).stream().anyMatch(haMsg -> {
                 logger.trace("[MQ] receive by HA {}:{}", msgAddr, haMsg.getMsg());
                 try {
                     consumer.accept(haMsg.getMsg());
-                    Cluster.getClusterHA().mq_afterMsgAcked(haMsg.getMsgId());
+                    Cluster.getClusterHA().mqAfterMsgAcked(haMsg.getMsgId());
                     return false;
                 } catch (Exception e) {
                     logger.error("[MQ] receive by HA error.", e);
@@ -158,9 +158,9 @@ public abstract class AbsClusterMQ implements ClusterMQ {
             logger.trace("[MQ] receive {}:{}", msgAddr, msg);
             try {
                 if (Cluster.haEnabled()) {
-                    String id = Cluster.getClusterHA().mq_afterPollMsg(msgAddr, msg);
+                    String id = Cluster.getClusterHA().mqAfterPollMsg(msgAddr, msg);
                     consumer.accept(msg);
-                    Cluster.getClusterHA().mq_afterMsgAcked(id);
+                    Cluster.getClusterHA().mqAfterMsgAcked(id);
                 } else {
                     consumer.accept(msg);
                 }

@@ -175,8 +175,7 @@ public class KubeOpt {
             typeToken = new TypeToken<Watch.Response<V1ClusterRoleBinding>>() {
             };
         }
-        Watch<T> watch = Watch.createWatch(client, call.call(coreApi, appsApi, networkingV1Api, rbacAuthorizationApi, autoscalingApi),
-                typeToken.getType());
+        Watch<T> watch = Watch.createWatch(client, call.call(coreApi, appsApi, networkingV1Api, rbacAuthorizationApi, autoscalingApi), typeToken.getType());
         watchMap.put(watchId, watch);
         executorService.execute(() -> {
             try {
@@ -374,60 +373,47 @@ public class KubeOpt {
                 resource = coreApi.listNamespace(null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case INGRESS:
-                resource = networkingV1Api.listNamespacedIngress(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null,
-                        null, null).getItems();
+                resource = networkingV1Api.listNamespacedIngress(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case SERVICE:
-                resource = coreApi.listNamespacedService(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null,
-                        null).getItems();
+                resource = coreApi.listNamespacedService(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case DEPLOYMENT:
-                resource = appsApi.listNamespacedDeployment(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null,
-                        null).getItems();
+                resource = appsApi.listNamespacedDeployment(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case REPLICA_SET:
-                resource = appsApi.listNamespacedReplicaSet(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null,
-                        null).getItems();
+                resource = appsApi.listNamespacedReplicaSet(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case POD:
-                resource =
-                        coreApi.listNamespacedPod(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = coreApi.listNamespacedPod(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case SECRET:
-                resource = coreApi.listNamespacedSecret(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null,
-                        null).getItems();
+                resource = coreApi.listNamespacedSecret(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case CONFIG_MAP:
-                resource = coreApi.listNamespacedConfigMap(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null,
-                        null).getItems();
+                resource = coreApi.listNamespacedConfigMap(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case SERVICE_ACCOUNT:
-                resource = coreApi.listNamespacedServiceAccount(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null,
-                        null, null).getItems();
+                resource = coreApi.listNamespacedServiceAccount(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case DAEMON_SET:
-                resource = appsApi.listNamespacedDaemonSet(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null,
-                        null).getItems();
+                resource = appsApi.listNamespacedDaemonSet(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case ROLE:
-                resource = rbacAuthorizationApi.listNamespacedRole(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null,
-                        null, null).getItems();
+                resource = rbacAuthorizationApi.listNamespacedRole(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case ROLE_BINDING:
-                resource = rbacAuthorizationApi.listNamespacedRoleBinding(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null
-                        , null, null, null).getItems();
+                resource = rbacAuthorizationApi.listNamespacedRoleBinding(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case CLUSTER_ROLE:
-                resource =
-                        rbacAuthorizationApi.listClusterRole(null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = rbacAuthorizationApi.listClusterRole(null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case CLUSTER_ROLE_BINDING:
-                resource = rbacAuthorizationApi.listClusterRoleBinding(null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null,
-                        null).getItems();
+                resource = rbacAuthorizationApi.listClusterRoleBinding(null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case HORIZONTAL_POD_AUTOSCALER:
-                resource = autoscalingApi.listNamespacedHorizontalPodAutoscaler(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE
-                        , null, null, null, null).getItems();
+                resource =
+                        autoscalingApi.listNamespacedHorizontalPodAutoscaler(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             default:
                 throw new ApiException("The resource [" + res.getVal() + "] operation NOT implementation");
@@ -556,18 +542,15 @@ public class KubeOpt {
                     break;
                 case INGRESS:
                     var ingressObj = Yaml.loadAs(body, V1Ingress.class);
-                    networkingV1Api.replaceNamespacedIngress(ingressObj.getMetadata().getName(), ingressObj.getMetadata().getNamespace(),
-                            ingressObj, null, null, null);
+                    networkingV1Api.replaceNamespacedIngress(ingressObj.getMetadata().getName(), ingressObj.getMetadata().getNamespace(), ingressObj, null, null, null);
                     break;
                 case SERVICE:
                     var serviceObj = Yaml.loadAs(body, V1Service.class);
-                    coreApi.replaceNamespacedService(serviceObj.getMetadata().getName(), serviceObj.getMetadata().getNamespace(), serviceObj, null,
-                            null, null);
+                    coreApi.replaceNamespacedService(serviceObj.getMetadata().getName(), serviceObj.getMetadata().getNamespace(), serviceObj, null, null, null);
                     break;
                 case DEPLOYMENT:
                     var deploymentObj = Yaml.loadAs(body, V1Deployment.class);
-                    appsApi.replaceNamespacedDeployment(deploymentObj.getMetadata().getName(), deploymentObj.getMetadata().getNamespace(),
-                            deploymentObj, null, null, null);
+                    appsApi.replaceNamespacedDeployment(deploymentObj.getMetadata().getName(), deploymentObj.getMetadata().getNamespace(), deploymentObj, null, null, null);
                     break;
                 case POD:
                     var podObj = Yaml.loadAs(body, V1Pod.class);
@@ -575,33 +558,29 @@ public class KubeOpt {
                     break;
                 case SECRET:
                     var secretObj = Yaml.loadAs(body, V1Secret.class);
-                    coreApi.replaceNamespacedSecret(secretObj.getMetadata().getName(), secretObj.getMetadata().getNamespace(), secretObj, null,
-                            null, null);
+                    coreApi.replaceNamespacedSecret(secretObj.getMetadata().getName(), secretObj.getMetadata().getNamespace(), secretObj, null, null, null);
                     break;
                 case CONFIG_MAP:
                     var configMapObj = Yaml.loadAs(body, V1ConfigMap.class);
-                    coreApi.replaceNamespacedConfigMap(configMapObj.getMetadata().getName(), configMapObj.getMetadata().getNamespace(),
-                            configMapObj, null, null, null);
+                    coreApi.replaceNamespacedConfigMap(configMapObj.getMetadata().getName(), configMapObj.getMetadata().getNamespace(), configMapObj, null, null, null);
                     break;
                 case SERVICE_ACCOUNT:
                     var serviceAccountObj = Yaml.loadAs(body, V1ServiceAccount.class);
-                    coreApi.replaceNamespacedServiceAccount(serviceAccountObj.getMetadata().getName(),
-                            serviceAccountObj.getMetadata().getNamespace(), serviceAccountObj, null, null, null);
+                    coreApi.replaceNamespacedServiceAccount(serviceAccountObj.getMetadata().getName(), serviceAccountObj.getMetadata().getNamespace(), serviceAccountObj, null,
+                            null, null);
                     break;
                 case DAEMON_SET:
                     var daemonSetObj = Yaml.loadAs(body, V1DaemonSet.class);
-                    appsApi.replaceNamespacedDaemonSet(daemonSetObj.getMetadata().getName(), daemonSetObj.getMetadata().getNamespace(),
-                            daemonSetObj, null, null, null);
+                    appsApi.replaceNamespacedDaemonSet(daemonSetObj.getMetadata().getName(), daemonSetObj.getMetadata().getNamespace(), daemonSetObj, null, null, null);
                     break;
                 case ROLE:
                     var roleObj = Yaml.loadAs(body, V1Role.class);
-                    rbacAuthorizationApi.replaceNamespacedRole(roleObj.getMetadata().getName(), roleObj.getMetadata().getNamespace(), roleObj, null
-                            , null, null);
+                    rbacAuthorizationApi.replaceNamespacedRole(roleObj.getMetadata().getName(), roleObj.getMetadata().getNamespace(), roleObj, null, null, null);
                     break;
                 case ROLE_BINDING:
                     var roleBindingObj = Yaml.loadAs(body, V1RoleBinding.class);
-                    rbacAuthorizationApi.replaceNamespacedRoleBinding(roleBindingObj.getMetadata().getName(),
-                            roleBindingObj.getMetadata().getNamespace(), roleBindingObj, null, null, null);
+                    rbacAuthorizationApi.replaceNamespacedRoleBinding(roleBindingObj.getMetadata().getName(), roleBindingObj.getMetadata().getNamespace(), roleBindingObj, null,
+                            null, null);
                     break;
                 case CLUSTER_ROLE:
                     var clusterRoleObj = Yaml.loadAs(body, V1ClusterRole.class);
@@ -609,13 +588,11 @@ public class KubeOpt {
                     break;
                 case CLUSTER_ROLE_BINDING:
                     var clusterRoleBindingObj = Yaml.loadAs(body, V1ClusterRoleBinding.class);
-                    rbacAuthorizationApi.replaceClusterRoleBinding(clusterRoleBindingObj.getMetadata().getName(), clusterRoleBindingObj, null, null
-                            , null);
+                    rbacAuthorizationApi.replaceClusterRoleBinding(clusterRoleBindingObj.getMetadata().getName(), clusterRoleBindingObj, null, null, null);
                     break;
                 case HORIZONTAL_POD_AUTOSCALER:
                     var hpaObj = Yaml.loadAs(body, V2beta2HorizontalPodAutoscaler.class);
-                    autoscalingApi.replaceNamespacedHorizontalPodAutoscaler(hpaObj.getMetadata().getName(), hpaObj.getMetadata().getNamespace(),
-                            hpaObj, null, null, null);
+                    autoscalingApi.replaceNamespacedHorizontalPodAutoscaler(hpaObj.getMetadata().getName(), hpaObj.getMetadata().getNamespace(), hpaObj, null, null, null);
                     break;
                 default:
                     throw new ApiException("The resource [" + basicRes.getKind() + "] operation NOT implementation");
@@ -1004,8 +981,7 @@ public class KubeOpt {
      * @throws ApiException the api exception
      * @throws IOException  the io exception
      */
-    public Closeable exec(String name, String container, String namespace, String[] cmd, Consumer<String> outputFun) throws ApiException,
-            IOException {
+    public Closeable exec(String name, String container, String namespace, String[] cmd, Consumer<String> outputFun) throws ApiException, IOException {
         return exec(name, container, namespace, cmd, outputFun, false);
     }
 

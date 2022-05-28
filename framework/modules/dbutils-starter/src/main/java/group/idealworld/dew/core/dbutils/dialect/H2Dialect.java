@@ -39,7 +39,8 @@ class H2Dialect implements Dialect {
     }
 
     @Override
-    public String createTableIfNotExist(String tableName, String tableDesc, Map<String, String> fields, Map<String, String> fieldsDesc, List<String> indexFields, List<String> uniqueFields, String pkField) throws SQLException {
+    public String createTableIfNotExist(String tableName, String tableDesc, Map<String, String> fields, Map<String, String> fieldsDesc, List<String> indexFields,
+                                        List<String> uniqueFields, String pkField) throws SQLException {
         StringBuilder sb = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " ( ");
         for (Map.Entry<String, String> field : fields.entrySet()) {
             String f = field.getValue().toLowerCase();

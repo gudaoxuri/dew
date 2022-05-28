@@ -11,8 +11,6 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @author yiye
- * @date 2022/4/1
- * @description
  **/
 @Configuration
 @ConditionalOnWebApplication
@@ -20,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 public class OssUtilsAutoConfiguration {
     @Bean
     public DewOssClient initOssClient(OssConfigProperties ossConfigProperties) {
-        if( !OssTypeEnum.contains(ossConfigProperties.getOssType())){
+        if (!OssTypeEnum.contains(ossConfigProperties.getOssType())) {
             throw new IllegalArgumentException("ossType is not support,expect:oss,obs,minio");
         }
         return OssClientUtil.init(ossConfigProperties);

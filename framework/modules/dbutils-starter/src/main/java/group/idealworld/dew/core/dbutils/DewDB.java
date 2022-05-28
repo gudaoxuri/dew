@@ -36,10 +36,10 @@ import java.util.Map;
  */
 public class DewDB {
 
-    private static final Logger logger = LoggerFactory.getLogger(DewDB.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DewDB.class);
 
     private static final Map<String, DewDB> DBS = new HashMap<>();
-    private static final ThreadLocal<Connection> threadLocalConnection = new ThreadLocal<>();
+    private static final ThreadLocal<Connection> THREAD_LOCAL_CONNECTION = new ThreadLocal<>();
 
     private final DSLoader.DSInfo dsInfo;
 
@@ -360,15 +360,15 @@ public class DewDB {
      * 打开事务.
      */
     public void open() {
-        Connection conn = threadLocalConnection.get();
+        Connection conn = THREAD_LOCAL_CONNECTION.get();
         try {
             if (null == conn) {
                 conn = getConnection();
-                threadLocalConnection.set(conn);
+                THREAD_LOCAL_CONNECTION.set(conn);
             }
             conn.setAutoCommit(false);
         } catch (SQLException e) {
-            logger.error("[DewDBUtils]Connection open error", e);
+            LOGGER.error("[DewDBUtils]Connection open error", e);
         }
     }
 
@@ -376,12 +376,12 @@ public class DewDB {
      * 提交事务.
      */
     public void commit() {
-        Connection conn = threadLocalConnection.get();
+        Connection conn = THREAD_LOCAL_CONNECTION.get();
         if (null != conn) {
             try {
                 conn.commit();
             } catch (SQLException e) {
-                logger.error("[DewDBUtils]Connection commit error", e);
+                LOGGER.error("[DewDBUtils]Connection commit error", e);
             }
         }
         close();
@@ -393,31 +393,31 @@ public class DewDB {
      * 发生SQL错误时会自动回滚，但业务错误需要调用此方法手工回滚.
      */
     public void rollback() {
-        Connection conn = threadLocalConnection.get();
+        Connection conn = THREAD_LOCAL_CONNECTION.get();
         if (null != conn) {
             try {
                 conn.rollback();
             } catch (SQLException e) {
-                logger.error("[DewDBUtils]Connection rollback error", e);
+                LOGGER.error("[DewDBUtils]Connection rollback error", e);
             }
         }
         close();
     }
 
     private boolean isCloseConnection() {
-        return null == threadLocalConnection.get();
+        return null == THREAD_LOCAL_CONNECTION.get();
     }
 
     private void close() {
-        Connection conn = threadLocalConnection.get();
+        Connection conn = THREAD_LOCAL_CONNECTION.get();
         if (null != conn) {
             try {
                 if (!conn.isClosed()) {
                     conn.close();
                 }
-                threadLocalConnection.set(null);
+                THREAD_LOCAL_CONNECTION.set(null);
             } catch (SQLException e) {
-                logger.error("[DewDBUtils]Connection close error", e);
+                LOGGER.error("[DewDBUtils]Connection close error", e);
             }
         }
     }
@@ -425,8 +425,8 @@ public class DewDB {
     @SneakyThrows
     private Connection getConnection() {
         try {
-            if (threadLocalConnection.get() != null && !threadLocalConnection.get().isClosed()) {
-                return threadLocalConnection.get();
+            if (THREAD_LOCAL_CONNECTION.get() != null && !THREAD_LOCAL_CONNECTION.get().isClosed()) {
+                return THREAD_LOCAL_CONNECTION.get();
             }
             Connection conn = dsInfo.getDataSource().getConnection();
             if (!conn.isClosed()) {
@@ -434,12 +434,12 @@ public class DewDB {
             }
             //Re-setting connection when connection was close.
             synchronized (DSLoader.class) {
-                logger.warn("[DewDBUtils]Connection info [{}] was close", conn.toString());
+                LOGGER.warn("[DewDBUtils]Connection info [{}] was close", conn.toString());
                 DSLoader.loadPool(dsInfo.getDsConfig(), dsInfo.getDialect());
                 return dsInfo.getDataSource().getConnection();
             }
         } catch (SQLException e) {
-            logger.error("[DewDBUtils]Connection get error.", e);
+            LOGGER.error("[DewDBUtils]Connection get error.", e);
             throw e;
         }
     }

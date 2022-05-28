@@ -28,22 +28,30 @@ import org.testcontainers.utility.DockerImageName;
 
 public class RabbitMQExtension implements BeforeAllCallback {
 
-    private static final Logger logger = LoggerFactory.getLogger(RabbitMQExtension.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMQExtension.class);
 
-    private static final RabbitMQContainer rabbitMQContainer = new RabbitMQContainer(DockerImageName.parse("rabbitmq:3.7.25-management-alpine"));
+    private static final RabbitMQContainer RABBIT_MQ_CONTAINER = new RabbitMQContainer(DockerImageName.parse("rabbitmq:3.7.25-management-alpine"));
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
-        rabbitMQContainer.start();
-        logger.info("Test Rabbit port: " + rabbitMQContainer.getAmqpPort());
+        RABBIT_MQ_CONTAINER.start();
+        LOGGER.info("Test Rabbit port: " + RABBIT_MQ_CONTAINER.getAmqpPort());
     }
 
+    /**
+     * Initializer.
+     */
     public static class Initializer
             implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+        /**
+         * Initialize.
+         *
+         * @param configurableApplicationContext the configurable application context
+         */
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues.of(
-                    "spring.rabbitmq.host=" + rabbitMQContainer.getHost(),
-                    "spring.rabbitmq.port=" + rabbitMQContainer.getAmqpPort()
+                    "spring.rabbitmq.host=" + RABBIT_MQ_CONTAINER.getHost(),
+                    "spring.rabbitmq.port=" + RABBIT_MQ_CONTAINER.getAmqpPort()
             ).applyTo(configurableApplicationContext.getEnvironment());
         }
     }

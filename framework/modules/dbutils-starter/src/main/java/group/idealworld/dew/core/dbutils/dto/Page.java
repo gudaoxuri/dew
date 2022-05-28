@@ -21,10 +21,14 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 分页辅助类
+ * 分页辅助类.
+ *
+ * @param <E> 实体类型
+ * @author gudaoxuri
  */
 @Data
 public class Page<E> {
+
 
     //start with 1
     private long pageNumber;

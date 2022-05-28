@@ -37,7 +37,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Order(10000)
 public class IdempotentWebAutoConfiguration implements WebMvcConfigurer {
 
-    private static final Logger logger = LoggerFactory.getLogger(IdempotentWebAutoConfiguration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IdempotentWebAutoConfiguration.class);
 
     private DewIdempotentConfig dewIdempotentConfig;
 
@@ -48,7 +48,7 @@ public class IdempotentWebAutoConfiguration implements WebMvcConfigurer {
      * @param dewIdempotentConfig the dew idempotent config
      */
     public IdempotentWebAutoConfiguration(DewIdempotentConfig dewIdempotentConfig) {
-        logger.info("Load Auto Configuration : {}", this.getClass().getName());
+        LOGGER.info("Load Auto Configuration : {}", this.getClass().getName());
         this.dewIdempotentConfig = dewIdempotentConfig;
     }
 

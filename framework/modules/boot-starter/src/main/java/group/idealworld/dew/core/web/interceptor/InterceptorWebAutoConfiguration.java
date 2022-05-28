@@ -38,14 +38,14 @@ import javax.annotation.PostConstruct;
 @Order(20000)
 public class InterceptorWebAutoConfiguration implements WebMvcConfigurer {
 
-    private static final Logger logger = LoggerFactory.getLogger(InterceptorWebAutoConfiguration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InterceptorWebAutoConfiguration.class);
 
     /**
      * Init.
      */
     @PostConstruct
     public void init() {
-        logger.info("Load Auto Configuration : {}", this.getClass().getName());
+        LOGGER.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 
     @Override

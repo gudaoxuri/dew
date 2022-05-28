@@ -41,16 +41,16 @@ import java.util.stream.Collectors;
  */
 public class RouterHandlerInterceptor implements AsyncHandlerInterceptor {
 
-    private static final Logger logger = LoggerFactory.getLogger(RouterHandlerInterceptor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RouterHandlerInterceptor.class);
 
     private static final String URL_SPLIT = "@";
 
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     // [method@uri]
-    private static Set<String> BLOCK_URIS = new HashSet<>();
+    private static Set<String> blockUris = new HashSet<>();
     // method@uri -> [roleIds]
-    private static Map<String, Set<String>> ROLE_AUTH = new HashMap<>();
+    private static Map<String, Set<String>> roleAuth = new HashMap<>();
 
     RouterHandlerInterceptor() {
         fillAuthInfo(Dew.dewConfig.getSecurity().getRouter().getBlockUri(),
@@ -66,7 +66,7 @@ public class RouterHandlerInterceptor implements AsyncHandlerInterceptor {
     public static void fillAuthInfo(Map<String, List<String>> blockUris,
                                     Map<String, Map<String, List<String>>> roleAuth) {
         if (blockUris != null) {
-            BLOCK_URIS = formatUris(blockUris);
+            RouterHandlerInterceptor.blockUris = formatUris(blockUris);
         }
         if (roleAuth != null) {
             var exchangeRoleAuth = new HashMap<String, Set<String>>();
@@ -77,7 +77,7 @@ public class RouterHandlerInterceptor implements AsyncHandlerInterceptor {
                         }
                         exchangeRoleAuth.get(uri).add(role);
                     }));
-            ROLE_AUTH = exchangeRoleAuth;
+            RouterHandlerInterceptor.roleAuth = exchangeRoleAuth;
         }
     }
 
@@ -114,15 +114,15 @@ public class RouterHandlerInterceptor implements AsyncHandlerInterceptor {
         // 兼容requestUri末尾包含/的情况
         final String reqUri = method + URL_SPLIT + request.getRequestURI().replaceAll("/+$", "");
         // 阻止名单处理
-        if (BLOCK_URIS.stream().anyMatch(uri -> pathMatcher.match(uri, reqUri))) {
+        if (blockUris.stream().anyMatch(uri -> pathMatcher.match(uri, reqUri))) {
             ErrorController.error(request, response, Integer.parseInt(StandardCode.FORBIDDEN.toString()),
                     String.format("The current [%s][%s] request is not allowed",
                             request.getMethod(), request.getRequestURI()), AuthException.class.getName());
             return false;
         }
         // 角色权限处理
-        if (!ROLE_AUTH.isEmpty()) {
-            boolean pass = ROLE_AUTH.keySet().stream()
+        if (!roleAuth.isEmpty()) {
+            boolean pass = roleAuth.keySet().stream()
                     .filter(strings -> pathMatcher.matchStart(strings, reqUri))
                     .min(pathMatcher.getPatternComparator(reqUri))
                     .map(matchedUri -> {
@@ -131,7 +131,7 @@ public class RouterHandlerInterceptor implements AsyncHandlerInterceptor {
                             // Token不存在
                             return false;
                         }
-                        Set<String> needRoles = ROLE_AUTH.get(matchedUri);
+                        Set<String> needRoles = roleAuth.get(matchedUri);
                         return (Dew.dewConfig.getSecurity().isIdentInfoEnabled()
                                 ? DewContext.getContext().optInfo()
                                 : Dew.auth.getOptInfo(DewContext.getContext().getToken()))

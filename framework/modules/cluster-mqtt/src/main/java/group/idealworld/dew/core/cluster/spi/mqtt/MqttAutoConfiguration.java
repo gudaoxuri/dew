@@ -38,11 +38,14 @@ import javax.annotation.PostConstruct;
 
 public class MqttAutoConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(MqttAutoConfiguration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MqttAutoConfiguration.class);
 
+    /**
+     * Init.
+     */
     @PostConstruct
-    public void init() {
-        logger.info("Load Auto Configuration : {}", this.getClass().getName());
+    public void initConf() {
+        LOGGER.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 
     /**

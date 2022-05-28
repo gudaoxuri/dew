@@ -37,6 +37,8 @@ import static group.idealworld.dew.sdkgen.Constants.GENERATED_BASE_PATH;
  */
 @Slf4j
 public class SDKReleaseProcess {
+    private SDKReleaseProcess() {
+    }
 
     /**
      * Process.

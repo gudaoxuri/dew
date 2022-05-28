@@ -31,10 +31,13 @@ import java.util.regex.Pattern;
  */
 public class NetUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(NetUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NetUtils.class);
     private static final String LOCALHOST = "127.0.0.1";
     private static final String ANYHOST = "0.0.0.0";
     private static final Pattern IP_PATTERN = Pattern.compile("\\d{1,3}(\\.\\d{1,3}){3,5}$");
+
+    private NetUtils() {
+    }
 
     /**
      * Gets local address.
@@ -49,7 +52,7 @@ public class NetUtils {
                 return localAddress;
             }
         } catch (Exception e) {
-            logger.warn("Failed to retrieving ip address, " + e.getMessage(), e);
+            LOGGER.warn("Failed to retrieving ip address, " + e.getMessage(), e);
         }
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
@@ -64,17 +67,17 @@ public class NetUtils {
                                 return address;
                             }
                         } catch (Exception e) {
-                            logger.warn("Failed to retrieving ip address, " + e.getMessage(), e);
+                            LOGGER.warn("Failed to retrieving ip address, " + e.getMessage(), e);
                         }
                     }
                 } catch (Exception e) {
-                    logger.warn("Failed to retrieving ip address, " + e.getMessage(), e);
+                    LOGGER.warn("Failed to retrieving ip address, " + e.getMessage(), e);
                 }
             }
         } catch (Exception e) {
-            logger.warn("Failed to retrieving ip address, " + e.getMessage(), e);
+            LOGGER.warn("Failed to retrieving ip address, " + e.getMessage(), e);
         }
-        logger.error("Could not get local host ip address, will use 127.0.0.1 instead.");
+        LOGGER.error("Could not get local host ip address, will use 127.0.0.1 instead.");
         return localAddress;
     }
 
@@ -83,10 +86,7 @@ public class NetUtils {
             return false;
         }
         String name = address.getHostAddress();
-        return (name != null
-                && !ANYHOST.equals(name)
-                && !LOCALHOST.equals(name)
-                && IP_PATTERN.matcher(name).matches());
+        return (name != null && !ANYHOST.equals(name) && !LOCALHOST.equals(name) && IP_PATTERN.matcher(name).matches());
     }
 
 }

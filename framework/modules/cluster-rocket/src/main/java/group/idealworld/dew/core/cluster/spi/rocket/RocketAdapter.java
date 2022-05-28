@@ -37,16 +37,13 @@ public class RocketAdapter {
         this.rocketMQTemplate = rocketMQTemplate;
     }
 
-    DefaultMQProducer getProducer(){
+    DefaultMQProducer getProducer() {
         return rocketMQTemplate.getProducer();
     }
 
-    RocketMQTemplate getRocketMQTemplate(){
+    RocketMQTemplate getRocketMQTemplate() {
         return this.rocketMQTemplate;
     }
-
-
-
 
 
 }

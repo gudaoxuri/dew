@@ -53,4 +53,6 @@ public class Constants {
      */
     public static final String GENERATED_OPENAPI_FILE_NAME = "openapi.json";
 
+    private Constants() {
+    }
 }

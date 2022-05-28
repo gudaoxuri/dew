@@ -37,6 +37,8 @@ import static group.idealworld.dew.sdkgen.Constants.GENERATED_OPENAPI_FILE_NAME;
  */
 @Slf4j
 public class SDKGenerateProcess {
+    private SDKGenerateProcess() {
+    }
 
     /**
      * Process.

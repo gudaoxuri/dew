@@ -9,8 +9,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @author yiye
- * @date 2022/3/30
- * @description
  **/
 @Configuration
 @ConditionalOnWebApplication

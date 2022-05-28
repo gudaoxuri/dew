@@ -3,13 +3,7 @@ package groop.idealworld.dew.ossutils.bean;
 import java.util.Map;
 
 /**
- * @ProjectName: build
- * @Package: groop.idealworld.dew.ossutils.bean
- * @ClassName: OssComonParam
- * @Author: yiye
- * @Description: oss操作常用参数
- * @Date: 2022/4/5 2:00 上午
- * @Version: 1.0
+ * @author: yiye
  */
 public class OssCommonParam {
     /**

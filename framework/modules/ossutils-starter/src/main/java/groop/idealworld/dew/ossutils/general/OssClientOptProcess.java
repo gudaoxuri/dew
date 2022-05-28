@@ -5,18 +5,14 @@ import com.aliyun.oss.model.CreateBucketRequest;
 import com.obs.services.ObsConfiguration;
 import groop.idealworld.dew.ossutils.bean.ImageProcessParam;
 import groop.idealworld.dew.ossutils.bean.OssCommonParam;
-import groop.idealworld.dew.ossutils.handle.DewOssHandleClient;
 import groop.idealworld.dew.ossutils.config.OssConfigProperties;
+import groop.idealworld.dew.ossutils.handle.DewOssHandleClient;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
  * @author yiye
- * @date 2022/4/1
- * @description
  **/
 public interface OssClientOptProcess {
 
@@ -25,6 +21,7 @@ public interface OssClientOptProcess {
      * 创建存储空间，简单创建
      *
      * @param param oss存储空间参数
+     * @param <T>   存储空间类型
      * @return 结果
      */
     <T> T createBucket(OssCommonParam param);
@@ -47,7 +44,8 @@ public interface OssClientOptProcess {
     /**
      * 创建oss客户端，基本使用的情况下无需手动创建客户端 --简单创建
      *
-     * @param config               oss地址配置信息
+     * @param config oss地址配置信息
+     * @param <T>    客户端类型
      * @return 客户端
      */
     <T> DewOssHandleClient<T> buildOssClient(OssConfigProperties config);
@@ -61,6 +59,7 @@ public interface OssClientOptProcess {
     /**
      * 文件上传
      * 使用minio的时候上传除字符对象外的影像文件需传头部信息 content-type：例如：文件拓展名为avi,对应的content-type是video/mp4
+     *
      * @param param oss操作常用参数
      */
     void uploadObject(OssCommonParam param);
@@ -68,7 +67,8 @@ public interface OssClientOptProcess {
     /**
      * 文件上传 -- 流式上传
      * 使用minio的时候上传除字符对象外的影像文件需传头部信息 content-type：例如：文件拓展名为avi,对应的content-type是video/mp4
-     * @param param oss操作常用参数
+     *
+     * @param param       oss操作常用参数
      * @param inputStream 文件流
      */
     void uploadObject(OssCommonParam param, InputStream inputStream);
@@ -96,16 +96,17 @@ public interface OssClientOptProcess {
      */
     Boolean doesObjectExist(OssCommonParam param);
 
-     /**
+    /**
      * 删除文件
+     *
      * @param param oss操作常用参数
      */
     void deleteObject(OssCommonParam param);
 
 
-
     /**
      * 获取签名上传url --临时授权
+     *
      * @param param oss操作常用参数
      * @return url
      */
@@ -114,6 +115,7 @@ public interface OssClientOptProcess {
 
     /**
      * 获取签名删除URL --临时授权
+     *
      * @param param oss操作常用参数
      * @return url
      */
@@ -131,7 +133,8 @@ public interface OssClientOptProcess {
 
     /**
      * 获取前端缩率图url
-     * @param param oss操作常用参数
+     *
+     * @param param   oss操作常用参数
      * @param process 图片处理参数
      * @return 临时url
      */
@@ -140,29 +143,34 @@ public interface OssClientOptProcess {
     /**
      * 创建oss客户端,基本使用的情况下无需手动创建客户端，个性化配置
      *
-     * @param properties               oss地址配置信息
-     * @param config                   拓展额外配置信息,个性化配置
+     * @param properties oss地址配置信息
+     * @param config     拓展额外配置信息,个性化配置
+     * @param <T>        客户端类型
      * @return 客户端
      */
     <T> DewOssHandleClient<T> buildOssClient(OssConfigProperties properties, ClientBuilderConfiguration config);
+
     /**
      * 简单创建存储空间,个性化需求，createBucketRequest属于oss包中的类
+     *
      * @param createBucketRequest createBucketRequest
      */
     void createBucket(CreateBucketRequest createBucketRequest);
 
     /**
      * 使用签名URL上传文件 --临时授权
-     * @param param oss操作常用参数
+     *
+     * @param param       oss操作常用参数
      * @param inputStream 文件输入流
      */
-    void temporaryUploadFile(OssCommonParam param, FileInputStream inputStream) ;
+    void temporaryUploadFile(OssCommonParam param, FileInputStream inputStream);
 
     /**
      * 创建oss客户端,基本使用的情况下无需手动创建客户端,增加个性化配置
      *
-     * @param properties               oss地址配置信息
-     * @param config       拓展额外配置信息,个性化配置
+     * @param properties oss地址配置信息
+     * @param config     拓展额外配置信息,个性化配置
+     * @param <T>        客户端类型
      * @return 客户端
      */
     <T> DewOssHandleClient<T> buildOssClient(OssConfigProperties properties, ObsConfiguration config);

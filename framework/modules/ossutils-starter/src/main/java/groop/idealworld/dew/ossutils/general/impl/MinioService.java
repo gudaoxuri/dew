@@ -26,8 +26,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author yiye
- * @date 2022/4/1
- * @description
  **/
 @Service("minio")
 public class MinioService implements OssClientOptProcess, OssClientInitProcess {
@@ -47,7 +45,7 @@ public class MinioService implements OssClientOptProcess, OssClientInitProcess {
     public boolean initClient(OssConfigProperties config) {
         ossConfigProperties = config;
         minioClient = (MinioClient) buildOssClient(config).getOssClient();
-        if (minioClient == null){
+        if (minioClient == null) {
             logger.error("minio客户端初始化失败");
             return false;
         }
@@ -67,16 +65,16 @@ public class MinioService implements OssClientOptProcess, OssClientInitProcess {
             boolean found = minioClient.bucketExists(BucketExistsArgs.builder()
                     .bucket(param.getBucketName())
                     .build());
-            if (found){
-                logger.info("mybucket already exists,bucketName:{}",param.getBucketName());
-            }else {
+            if (found) {
+                logger.info("mybucket already exists,bucketName:{}", param.getBucketName());
+            } else {
                 minioClient.makeBucket(MakeBucketArgs.builder().bucket(param.getBucketName()).build());
-                logger.info("bucket is created successfully,bucketName : {}",param.getBucketName());
+                logger.info("bucket is created successfully,bucketName : {}", param.getBucketName());
             }
             return true;
-        } catch (Exception e){
-            logger.error("minio操作异常",e.getMessage());
-            throw new RuntimeException("minio操作异常",e);
+        } catch (Exception e) {
+            logger.error("minio操作异常", e.getMessage());
+            throw new RuntimeException("minio操作异常", e);
         }
     }
 
@@ -87,14 +85,14 @@ public class MinioService implements OssClientOptProcess, OssClientInitProcess {
      * @return 结果
      */
     @Override
-    public Boolean doesBucketExist(OssCommonParam param){
+    public Boolean doesBucketExist(OssCommonParam param) {
         OssHandleException.isNull(param);
         try {
             return minioClient.bucketExists(BucketExistsArgs.builder()
                     .bucket(param.getBucketName())
                     .build());
-        }  catch (Exception e){
-            throw new RuntimeException("minio操作异常",e);
+        } catch (Exception e) {
+            throw new RuntimeException("minio操作异常", e);
         }
     }
 
@@ -110,16 +108,16 @@ public class MinioService implements OssClientOptProcess, OssClientInitProcess {
             boolean found = minioClient.bucketExists(BucketExistsArgs.builder()
                     .bucket(param.getBucketName())
                     .build());
-            if (found){
-                logger.info("mybucket already exists,bucketName:{}",param.getBucketName());
-            }else {
+            if (found) {
+                logger.info("mybucket already exists,bucketName:{}", param.getBucketName());
+            } else {
                 minioClient.removeBucket(RemoveBucketArgs.builder()
                         .bucket(param.getBucketName())
                         .build());
-                logger.info("bucket is remove successfully,bucketName : {}",param.getBucketName());
+                logger.info("bucket is remove successfully,bucketName : {}", param.getBucketName());
             }
-        } catch (Exception e){
-            throw new RuntimeException("minio操作异常",e);
+        } catch (Exception e) {
+            throw new RuntimeException("minio操作异常", e);
         }
     }
 
@@ -145,8 +143,8 @@ public class MinioService implements OssClientOptProcess, OssClientInitProcess {
             } else {
                 ossHandleClient.setOssClient(minioClient);
             }
-        } catch (Exception e){
-            logger.error("捕获的异常：{}",e.getMessage());
+        } catch (Exception e) {
+            logger.error("捕获的异常：{}", e.getMessage());
             throw e;
         }
         return ossHandleClient;
@@ -157,8 +155,8 @@ public class MinioService implements OssClientOptProcess, OssClientInitProcess {
      */
     @Override
     public void closeClient() {
-        MinioClient minioClient =(MinioClient)OssClientUtil.getOssClient();
-        if(!ObjectUtils.isEmpty(minioClient)){
+        MinioClient minioClient = (MinioClient) OssClientUtil.getOssClient();
+        if (!ObjectUtils.isEmpty(minioClient)) {
             OssClientUtil.removeOssClient();
         }
     }
@@ -176,8 +174,8 @@ public class MinioService implements OssClientOptProcess, OssClientInitProcess {
                     .bucket(param.getBucketName())
                     .object(param.getObjectName())
                     .filename(param.getPath()).build());
-        } catch (Exception e){
-            throw new RuntimeException("minio操作异常",e);
+        } catch (Exception e) {
+            throw new RuntimeException("minio操作异常", e);
         }
     }
 
@@ -195,10 +193,10 @@ public class MinioService implements OssClientOptProcess, OssClientInitProcess {
             minioClient.putObject(PutObjectArgs.builder()
                     .bucket(param.getBucketName())
                     .object(param.getObjectName())
-                    .stream(inputStream,-1,1024*1024*10)
+                    .stream(inputStream, -1, 1024 * 1024 * 10)
                     .build());
-        } catch (Exception e){
-            throw new RuntimeException("minio操作异常",e);
+        } catch (Exception e) {
+            throw new RuntimeException("minio操作异常", e);
         }
     }
 
@@ -216,8 +214,8 @@ public class MinioService implements OssClientOptProcess, OssClientInitProcess {
                     .bucket(param.getBucketName())
                     .object(param.getObjectName())
                     .build());
-        } catch (Exception e){
-            throw new RuntimeException("minio操作异常",e);
+        } catch (Exception e) {
+            throw new RuntimeException("minio操作异常", e);
         }
     }
 
@@ -235,9 +233,9 @@ public class MinioService implements OssClientOptProcess, OssClientInitProcess {
                     .object(param.getObjectName())
                     .filename(param.getPath())
                     .build());
-        } catch (Exception e){
-            logger.info("下载文件异常：{}",e.getMessage());
-            throw new RuntimeException("minio操作异常",e);
+        } catch (Exception e) {
+            logger.info("下载文件异常：{}", e.getMessage());
+            throw new RuntimeException("minio操作异常", e);
         }
     }
 
@@ -256,8 +254,8 @@ public class MinioService implements OssClientOptProcess, OssClientInitProcess {
                     .object(param.getObjectName())
                     .build());
             return StringUtils.hasLength(response.object());
-        }catch (Exception e){
-            throw new RuntimeException("minio操作异常",e);
+        } catch (Exception e) {
+            throw new RuntimeException("minio操作异常", e);
         }
     }
 
@@ -274,8 +272,8 @@ public class MinioService implements OssClientOptProcess, OssClientInitProcess {
                     .bucket(param.getBucketName())
                     .object(param.getObjectName())
                     .build());
-        } catch (Exception e){
-            throw new RuntimeException("minio操作异常",e);
+        } catch (Exception e) {
+            throw new RuntimeException("minio操作异常", e);
         }
 
     }
@@ -296,8 +294,8 @@ public class MinioService implements OssClientOptProcess, OssClientInitProcess {
                     .object(param.getObjectName())
                     .expiry(Integer.parseInt(param.getExpiration().toString()), TimeUnit.MILLISECONDS)
                     .build());
-        } catch (Exception e){
-            throw new RuntimeException("minio操作异常",e);
+        } catch (Exception e) {
+            throw new RuntimeException("minio操作异常", e);
         }
     }
 
@@ -317,8 +315,8 @@ public class MinioService implements OssClientOptProcess, OssClientInitProcess {
                     .object(param.getObjectName())
                     .expiry(Integer.parseInt(param.getExpiration().toString()), TimeUnit.MILLISECONDS)
                     .build());
-        } catch (Exception e){
-            throw new RuntimeException("minio操作异常",e);
+        } catch (Exception e) {
+            throw new RuntimeException("minio操作异常", e);
         }
     }
 
@@ -338,8 +336,8 @@ public class MinioService implements OssClientOptProcess, OssClientInitProcess {
                     .object(param.getObjectName())
                     .expiry(Integer.parseInt(param.getExpiration().toString()), TimeUnit.MILLISECONDS)
                     .build());
-        } catch (Exception e){
-            throw new RuntimeException("minio操作异常",e);
+        } catch (Exception e) {
+            throw new RuntimeException("minio操作异常", e);
         }
     }
 

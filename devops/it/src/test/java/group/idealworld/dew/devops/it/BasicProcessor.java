@@ -37,7 +37,7 @@ public abstract class BasicProcessor {
     /**
      * The constant logger.
      */
-    protected static final Logger logger = LoggerFactory.getLogger(BasicProcessor.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(BasicProcessor.class);
 
     /**
      * The Kube config.
@@ -77,7 +77,7 @@ public abstract class BasicProcessor {
     @Before
     public void loadConfig() throws IOException {
         String configPath = Paths.get("").toFile().getAbsoluteFile().getParentFile().getAbsolutePath() + File.separator + "devops-test.properties";
-        logger.info("Load config from " + configPath);
+        LOGGER.info("Load config from " + configPath);
         Properties properties = new Properties();
         properties.load(new FileInputStream(configPath));
         kubeConfig = properties.getProperty("dew_devops_kube_config");

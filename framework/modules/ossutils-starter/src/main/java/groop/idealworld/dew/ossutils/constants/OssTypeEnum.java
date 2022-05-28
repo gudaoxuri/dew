@@ -1,13 +1,7 @@
 package groop.idealworld.dew.ossutils.constants;
 
 /**
- * @ProjectName: build
- * @Package: groop.idealworld.dew.ossutils.constant
- * @ClassName: OssTypeEnum
- * @Author: yiye
- * @Description: oss类型枚举
- * @Date: 2022/4/5 7:14 下午
- * @Version: 1.0
+ * @author: yiye
  */
 public enum OssTypeEnum {
     /**
@@ -19,7 +13,7 @@ public enum OssTypeEnum {
 
     private String code;
 
-    OssTypeEnum (String name ){
+    OssTypeEnum(String name) {
         this.code = name;
     }
 
@@ -31,7 +25,7 @@ public enum OssTypeEnum {
         this.code = code;
     }
 
-    public static boolean contains(String code){
+    public static boolean contains(String code) {
         for (OssTypeEnum ossTypeEnum : OssTypeEnum.values()) {
             if (ossTypeEnum.getCode().equals(code)) {
                 return true;
