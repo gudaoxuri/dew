@@ -4,7 +4,7 @@ import groop.idealworld.dew.ossutils.bean.OssCommonParam;
 import org.springframework.util.StringUtils;
 
 /**
- * @author: yiye
+ * @author yiye
  */
 public class OssHandleException {
 

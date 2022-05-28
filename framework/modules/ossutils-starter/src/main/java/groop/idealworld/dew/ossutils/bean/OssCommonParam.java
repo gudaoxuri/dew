@@ -3,7 +3,7 @@ package groop.idealworld.dew.ossutils.bean;
 import java.util.Map;
 
 /**
- * @author: yiye
+ * @author yiye
  */
 public class OssCommonParam {
     /**

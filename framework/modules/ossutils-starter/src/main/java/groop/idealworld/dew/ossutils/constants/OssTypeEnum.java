@@ -1,7 +1,7 @@
 package groop.idealworld.dew.ossutils.constants;
 
 /**
- * @author: yiye
+ * @author yiye
  */
 public enum OssTypeEnum {
     /**

@@ -16,7 +16,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 /**
- * @author: yiye
+ * @author yiye
  */
 public class DewOssClient implements OssClientOptProcess {
 

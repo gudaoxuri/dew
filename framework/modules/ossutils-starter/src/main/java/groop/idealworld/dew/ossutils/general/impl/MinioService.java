@@ -38,8 +38,8 @@ public class MinioService implements OssClientOptProcess, OssClientInitProcess {
     /**
      * 初始化原始客户端
      *
-     * @param config
-     * @return
+     * @param config 配置
+     * @return 是否初始化成功
      */
     @Override
     public boolean initClient(OssConfigProperties config) {
