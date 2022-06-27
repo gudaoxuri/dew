@@ -33,7 +33,7 @@ public class MySqlExtension implements BeforeAllCallback {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MySqlExtension.class);
 
-    private static final JdbcDatabaseContainer MYSQL_CONTAINER = new MySQLContainer(DockerImageName.parse("8").asCompatibleSubstituteFor("mysql"));
+    private static final JdbcDatabaseContainer MYSQL_CONTAINER = new MySQLContainer(DockerImageName.parse("mysql:8"));
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
