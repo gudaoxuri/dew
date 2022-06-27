@@ -24,7 +24,7 @@
     <artifactId>build-framework</artifactId>
     <name>1 Dew Framework Build</name>
     <packaging>pom</packaging>
-    <version>3.0.0-Beta4</version>
+    <version>3.0.0-Beta5</version>
 
     <properties>
         <maven.install.skip>true</maven.install.skip>
