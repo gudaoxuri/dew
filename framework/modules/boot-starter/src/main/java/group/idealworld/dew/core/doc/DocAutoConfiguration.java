@@ -60,7 +60,7 @@ public class DocAutoConfiguration {
     public GroupedOpenApi dewDefaultGroup() {
         return GroupedOpenApi.builder()
                 .group("dew-default")
-                .packagesToScan(Dew.dewConfig.getBasic().getDoc().getBasePackage())
+                .packagesToScan(Dew.dewConfig.getBasic().getDoc().getBasePackage().split(";"))
                 .build();
     }
 
