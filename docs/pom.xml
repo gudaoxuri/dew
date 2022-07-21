@@ -23,12 +23,12 @@
     <parent>
         <groupId>group.idealworld.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>3.0.0-Beta5</version>
+        <version>3.0.0-Beta7</version>
         <relativePath>../framework/modules/parent-starter</relativePath>
     </parent>
 
     <artifactId>docs</artifactId>
-    <version>3.0.0-Beta5</version>
+    <version>3.0.0-Beta7</version>
     <packaging>pom</packaging>
     <name>4 Dew Docs</name>
 

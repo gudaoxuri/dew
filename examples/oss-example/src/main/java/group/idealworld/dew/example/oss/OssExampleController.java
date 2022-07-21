@@ -57,16 +57,18 @@ public class OssExampleController {
 
     /**
      * 创建客户端
+     *
      * @return the resp
      */
     @GetMapping(value = "/build")
     public Resp<String> buildOssClient() {
-        DewOssHandleClient<Object> ossClient= dewOssClient.buildOssClient(ossConfigProperties);
+        DewOssHandleClient<Object> ossClient = dewOssClient.buildOssClient(ossConfigProperties);
         return Resp.success(ossClient.getOssClient().getClass().getName());
     }
 
     /**
      * 创建桶
+     *
      * @return the resp
      */
     @GetMapping(value = "/createBucket")
@@ -77,6 +79,7 @@ public class OssExampleController {
 
     /**
      * 查询doesBucketExist
+     *
      * @return the resp
      */
     @GetMapping(value = "/doesBucketExist")
@@ -87,12 +90,13 @@ public class OssExampleController {
 
     /**
      * 流式上传文件
+     *
      * @return the resp
      */
     @PutMapping(value = "/uploadObject")
     public Resp<String> uploadObject(HttpServletRequest request, @RequestBody OssCommonParam ossCommonParam) {
         try {
-            dewOssClient.uploadObject(ossCommonParam,new FileInputStream("/Users/yiye/projectSpace/other/dew/examples/oss-example/file/iShot2021-06-18 12.21.34.png"));
+            dewOssClient.uploadObject(ossCommonParam, new FileInputStream("/Users/yiye/projectSpace/other/dew/examples/oss-example/file/iShot2021-06-18 12.21.34.png"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -101,6 +105,7 @@ public class OssExampleController {
 
     /**
      * 查询doesObjectExist
+     *
      * @return the resp
      */
     @GetMapping(value = "/doesObjectExist")
@@ -111,6 +116,7 @@ public class OssExampleController {
 
     /**
      * 删除文件
+     *
      * @return the resp
      */
     @GetMapping(value = "/deleteObject")
@@ -129,11 +135,12 @@ public class OssExampleController {
         ImageProcessParam imageProcessParam = new ImageProcessParam();
         imageProcessParam.setHeight(500);
         imageProcessParam.setWidth(500);
-        return Resp.success(dewOssClient.imageProcess(ossCommonParam,imageProcessParam));
+        return Resp.success(dewOssClient.imageProcess(ossCommonParam, imageProcessParam));
     }
 
     /**
      * 临时删除url
+     *
      * @return the resp
      */
     @GetMapping(value = "/temporaryDeleteUrl")
@@ -146,6 +153,7 @@ public class OssExampleController {
 
     /**
      * 临时上传url
+     *
      * @return the resp
      */
     @GetMapping(value = "/temporaryUploadUrl")
@@ -155,6 +163,7 @@ public class OssExampleController {
 
     /**
      * 临时下载查看url
+     *
      * @return the resp
      */
     @GetMapping(value = "/temporaryUrl")
@@ -164,6 +173,7 @@ public class OssExampleController {
 
     /**
      * 删除bucket
+     *
      * @return the resp
      */
     @GetMapping(value = "/deleteBucket")
@@ -174,6 +184,7 @@ public class OssExampleController {
 
     /**
      * 上传
+     *
      * @return the resp
      */
     @PostMapping(value = "/upload")
@@ -184,6 +195,7 @@ public class OssExampleController {
 
     /**
      * 下载
+     *
      * @return the resp
      */
     @GetMapping(value = "/download")
@@ -194,6 +206,7 @@ public class OssExampleController {
 
     /**
      * 查询文件
+     *
      * @return the resp
      */
     @GetMapping(value = "/doesExit")
@@ -203,6 +216,7 @@ public class OssExampleController {
 
     /**
      * 下载文件流
+     *
      * @return the resp
      */
     @GetMapping(value = "/inputstream")
@@ -210,7 +224,7 @@ public class OssExampleController {
         InputStream inputStream = dewOssClient.downloadFile(ossCommonParam);
         try {
             int aa = inputStream.read();
-            LOGGER.info(aa+"");
+            LOGGER.info(aa + "");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -219,6 +233,7 @@ public class OssExampleController {
 
     /**
      * 关闭客户端
+     *
      * @return the resp
      */
     @GetMapping(value = "/shutdownOssClient")
@@ -232,16 +247,17 @@ public class OssExampleController {
 
     /**
      * 关闭客户端
+     *
      * @return the resp
      */
     @GetMapping(value = "/test")
-    public Resp<?> test(HttpServletRequest request, String url,String path) {
+    public Resp<?> test(HttpServletRequest request, String url, String path) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         HttpEntity<String> httpEntityCount = new HttpEntity<>(new HttpHeaders() {{
             set(AUTHORIZATION, "Basic NjAzOGQwZDFjNDVkZTFhZDFjNGJjODgwYThjZDA0MmY3YjViYzg1Mzo=");
         }});
-        String responseEntity = restTemplate.exchange(url+path, HttpMethod.GET, httpEntityCount, String.class).getBody();
+        String responseEntity = restTemplate.exchange(url + path, HttpMethod.GET, httpEntityCount, String.class).getBody();
         JSONObject jsonObject = JSONObject.parseObject(responseEntity);
         return Resp.success(jsonObject);
     }

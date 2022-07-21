@@ -283,6 +283,10 @@ public class DewConfig {
 
             private String basePackage = "";
 
+            private Map<String, String> requestHeaders = new HashMap<>();
+
+            private Map<String, String> servers = new HashMap<>();
+
             /**
              * Is enabled boolean.
              *
@@ -400,6 +404,21 @@ public class DewConfig {
                 }
             }
 
+            public Map<String, String> getRequestHeaders() {
+                return requestHeaders;
+            }
+
+            public void setRequestHeaders(Map<String, String> requestHeaders) {
+                this.requestHeaders = requestHeaders;
+            }
+
+            public Map<String, String> getServers() {
+                return servers;
+            }
+
+            public void setServers(Map<String, String> servers) {
+                this.servers = servers;
+            }
         }
 
         /**

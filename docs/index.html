@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.16">
-<meta name="author" content="v3.0.0-Beta5">
+<meta name="author" content="v3.0.0-Beta7">
 <title>Dew:一站式微服务解决方案</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -443,7 +443,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Dew:一站式微服务解决方案</h1>
 <div class="details">
-<span id="author" class="author">v3.0.0-Beta5</span><br>
+<span id="author" class="author">v3.0.0-Beta7</span><br>
 <span id="revdate">2020-6-10</span>
 </div>
 <div id="toc" class="toc2">
@@ -559,6 +559,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="paragraph">
 <p>如需基于 <code>Spring boot 1.x</code> 的非容器版本请切换到 <a href="https://github.com/gudaoxuri/dew/tree/1.5.1-RC">1.5.1-RC</a> tag.</p>
+</div>
+<div class="paragraph">
+<p>基于Rust的微服务框架见： <a href="https://github.com/ideal-world/tardis" class="bare">https://github.com/ideal-world/tardis</a></p>
 </div>
 </td>
 </tr>
@@ -1164,13 +1167,13 @@ public class TodoService {
 <pre class="highlight"><code class="language-java" data-lang="java">@RestController
 public class NotifierController {
 
-    private static final Logger logger = LoggerFactory.getLogger(NotifierController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotifierController.class);
 
     @PostConstruct
     public void processTodoAddEvent() {
         // 使用Dew的集群MQ功能实现消息点对点接收
         Dew.cluster.mq.response(Constants.MQ_NOTIFY_TODO_ADD, todo -&gt; {
-            logger.info("Received add todo event :" + todo);
+            LOGGER.info("Received add todo event :" + todo);
         });
     }
 
@@ -1780,6 +1783,7 @@ public interface ClusterCache {
      *
      * @param key   key
      * @param value value
+     * @return 旧值
      */
     String getSet(String key, String value);
 
@@ -2409,7 +2413,10 @@ import org.slf4j.LoggerFactory;
  */
 public interface ClusterLock {
 
-    Logger logger = LoggerFactory.getLogger(ClusterLock.class);
+    /**
+     * The Logger.
+     */
+    Logger LOGGER = LoggerFactory.getLogger(ClusterLock.class);
 
     /**
      * 尝试加锁，加锁成功后执行对应的函数，执行完成自动解锁.
@@ -2425,7 +2432,8 @@ public interface ClusterLock {
      * &lt;p&gt;
      * 推荐使用 {@link #tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun)}
      *
-     * @param fun 加锁成功后执行的函数
+     * @param waitMillSec 等待时间，单位毫秒
+     * @param fun         加锁成功后执行的函数
      */
     void tryLockWithFun(long waitMillSec, VoidProcessFun fun) throws Exception;
 
@@ -2442,6 +2450,8 @@ public interface ClusterLock {
      * 尝试加锁.
      * &lt;p&gt;
      * 推荐使用 {@link #tryLock(long waitMillSec, long leaseMillSec)}
+     *
+     * @return 是否加锁成功
      */
     boolean tryLock();
 
@@ -2451,6 +2461,7 @@ public interface ClusterLock {
      * 推荐使用 {@link #tryLock(long waitMillSec, long leaseMillSec)}
      *
      * @param waitMillSec 等待毫秒数
+     * @return 是否加锁成功
      */
     boolean tryLock(long waitMillSec) throws InterruptedException;
 
@@ -2459,11 +2470,14 @@ public interface ClusterLock {
      *
      * @param waitMillSec  等待毫秒数
      * @param leaseMillSec 锁释放毫秒数，估计值，实际释放时间视各中间件的配置及执行环境会有一定偏差
+     * @return 是否加锁成功
      */
     boolean tryLock(long waitMillSec, long leaseMillSec) throws InterruptedException;
 
     /**
      * 解锁操作，只有加锁的实例及线程才能解锁.
+     *
+     * @return 是否解锁成功
      */
     boolean unLock();
 
@@ -2476,6 +2490,8 @@ public interface ClusterLock {
 
     /**
      * 判断是否有锁.
+     *
+     * @return true:有锁，false:没有锁
      */
     boolean isLocked();
 
@@ -4472,7 +4488,7 @@ Caused by: java.lang.StackOverflowError
   &lt;parent&gt;
     &lt;groupId&gt;group.idealworld.dew&lt;/groupId&gt;
     &lt;artifactId&gt;parent-starter&lt;/artifactId&gt;
-    &lt;version&gt;3.0.0-Beta5&lt;/version&gt;
+    &lt;version&gt;3.0.0-Beta7&lt;/version&gt;
   &lt;/parent&gt;
 
   &lt;groupId&gt;group.idealworld.dew.devops.it&lt;/groupId&gt;
@@ -10167,7 +10183,7 @@ TIP: 需要安装此插件，如不安装，使用<code>dew-devops.groovy</code>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-12-21 09:56:31 +0800
+Last updated 2022-07-21 17:16:29 +0800
 </div>
 </div>
 </body>
