@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.0</version>
+        <version>2.7.3</version>
         <relativePath/>
     </parent>
 
@@ -32,7 +32,7 @@
     <name>1.0.0 Dew Parent Starter</name>
     <description>Dew 父工程</description>
     <packaging>pom</packaging>
-    <version>3.0.0-Beta7</version>
+    <version>3.0.0-RC1</version>
 
     <properties>
         <java.version>11</java.version>
@@ -51,28 +51,28 @@
 
         <main.class></main.class>
         <finalName>${project.artifactId}</finalName>
-        <dew.version>3.0.0-Beta7</dew.version>
+        <dew.version>3.0.0-RC1</dew.version>
 
         <!--  核心依赖 -->
-        <dew-common.version>3.0.0</dew-common.version>
-        <simple-java-mail.version>7.1.1</simple-java-mail.version>
+        <dew-common.version>3.0.1</dew-common.version>
+        <simple-java-mail.version>7.5.0</simple-java-mail.version>
         <jakarta.mail.version>2.1.0</jakarta.mail.version>
         <jakarta.validation.version>2.0.2</jakarta.validation.version>
-        <springdoc.version>1.6.9</springdoc.version>
+        <springdoc.version>1.6.11</springdoc.version>
         <querydsl.version>5.0.0</querydsl.version>
         <!-- hbase-starter依赖 -->
-        <hbase.version>2.4.12</hbase.version>
+        <hbase.version>2.4.14</hbase.version>
         <!-- test-starter依赖 -->
-        <testcontainers.version>1.17.2</testcontainers.version>
+        <testcontainers.version>1.17.3</testcontainers.version>
         <!-- cluster-hazelcast依赖 -->
-        <hazelcast.version>3.12.12</hazelcast.version>
+        <hazelcast.version>3.12.13</hazelcast.version>
         <!-- cluster-mqtt依赖 -->
         <mqtt.version>1.2.5</mqtt.version>
         <!-- cluster-rocket依赖 -->
         <rocket.version>2.2.2</rocket.version>
         <!-- dbutils-starter依赖 -->
         <commons-dbutils.version>1.7</commons-dbutils.version>
-        <druid.version>1.2.10</druid.version>
+        <druid.version>1.2.12</druid.version>
         <!-- DevOps -->
         <k8s-client-java.version>14.0.0</k8s-client-java.version>
         <docker-java.version>3.2.12</docker-java.version>
@@ -298,7 +298,7 @@
                     <plugin>
                         <groupId>group.idealworld.dew</groupId>
                         <artifactId>dew-maven-plugin</artifactId>
-                        <version>3.0.0-Beta7</version>
+                        <version>3.0.0-RC1</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -365,7 +365,7 @@
                     <plugin>
                         <groupId>group.idealworld.dew</groupId>
                         <artifactId>sdkgen-maven-plugin</artifactId>
-                        <version>3.0.0-Beta7</version>
+                        <version>3.0.0-RC1</version>
                         <executions>
                             <execution>
                                 <goals>

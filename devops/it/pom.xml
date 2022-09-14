@@ -24,7 +24,7 @@
     <artifactId>devops-it</artifactId>
     <name>2.2 Dew Devops Integration Tests Build</name>
     <packaging>jar</packaging>
-    <version>3.0.0-Beta7</version>
+    <version>3.0.0-RC1</version>
 
     <properties>
         <java.version>1.8</java.version>
@@ -45,7 +45,7 @@
         <dependency>
             <groupId>group.idealworld.dew</groupId>
             <artifactId>dew-maven-plugin</artifactId>
-            <version>3.0.0-Beta7</version>
+            <version>3.0.0-RC1</version>
         </dependency>
         <dependency>
             <groupId>org.jooq</groupId>

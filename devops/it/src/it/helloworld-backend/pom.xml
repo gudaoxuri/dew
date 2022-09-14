@@ -23,7 +23,7 @@
     <parent>
         <groupId>group.idealworld.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>3.0.0-Beta7</version>
+        <version>3.0.0-RC1</version>
     </parent>
 
     <groupId>group.idealworld.dew.devops.it</groupId>
