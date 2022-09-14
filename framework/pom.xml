@@ -24,7 +24,7 @@
     <artifactId>build-framework</artifactId>
     <name>1 Dew Framework Build</name>
     <packaging>pom</packaging>
-    <version>3.0.0-Beta7</version>
+    <version>3.0.0-RC1</version>
 
     <properties>
         <maven.install.skip>true</maven.install.skip>
@@ -48,7 +48,6 @@
         <module>modules/test-starter</module>
         <module>assists/sdkgen-maven-plugin</module>
         <module>modules/skywalking-starter</module>
-        <module>modules/ossutils-starter</module>
     </modules>
 
 </project>
