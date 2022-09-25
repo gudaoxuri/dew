@@ -175,6 +175,11 @@
             </dependency>
             <dependency>
                 <groupId>group.idealworld.dew</groupId>
+                <artifactId>cluster-spi-skywalking</artifactId>
+                <version>${dew.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>group.idealworld.dew</groupId>
                 <artifactId>cluster-spi-kafka</artifactId>
                 <version>${dew.version}</version>
             </dependency>
