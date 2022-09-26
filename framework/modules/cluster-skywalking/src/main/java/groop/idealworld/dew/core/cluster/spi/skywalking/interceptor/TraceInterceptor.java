@@ -53,9 +53,7 @@ public class TraceInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
-        if (ex != null) {
-            MDC.remove("traceId");
-            clusterTrace.removeTraceId();
-        }
+        MDC.remove("tid");
+        clusterTrace.removeTraceId();
     }
 }
