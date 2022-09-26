@@ -39,6 +39,7 @@
         <module>idempotent-example</module>
         <module>auth-example</module>
         <module>hbase-example</module>
+        <module>skywalking-example</module>
     </modules>
 
 </project>

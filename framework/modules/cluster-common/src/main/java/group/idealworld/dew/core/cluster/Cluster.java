@@ -70,6 +70,10 @@ public class Cluster {
      * 领导者选举服务.
      */
     public ClusterElectionWrap election;
+    /**
+     * 链路追踪服务.
+     */
+    public ClusterTrace trace;
 
     /**
      * 初始化.
