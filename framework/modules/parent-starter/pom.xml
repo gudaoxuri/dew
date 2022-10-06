@@ -54,7 +54,7 @@
         <dew.version>3.0.0-RC2</dew.version>
 
         <!--  核心依赖 -->
-        <dew-common.version>3.0.1</dew-common.version>
+        <dew-common.version>3.0.2</dew-common.version>
         <simple-java-mail.version>7.5.0</simple-java-mail.version>
         <jakarta.mail.version>2.1.0</jakarta.mail.version>
         <jakarta.validation.version>2.0.2</jakarta.validation.version>
