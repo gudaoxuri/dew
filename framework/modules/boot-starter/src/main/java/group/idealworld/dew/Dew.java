@@ -149,6 +149,10 @@ public class Dew {
             Dew.cluster.election =
                     (ClusterElectionWrap) Dew.applicationContext.getBean(injectDewConfig.getCluster().getElection() + "ClusterElection");
         }
+        if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getTrace() + "ClusterTrace")) {
+            Dew.cluster.trace =
+                    (ClusterTrace) Dew.applicationContext.getBean(injectDewConfig.getCluster().getTrace() + "ClusterTrace");
+        }
         if (dewConfig.getCluster().getConfig().isHaEnabled()) {
             Cluster.ha(dewConfig.getCluster().getConfig().getHa());
         }

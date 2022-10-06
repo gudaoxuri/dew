@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: skywalking-example
+
+server:
+  port: 809 # http端口号
+#  servlet:
+#    context-path: /tt
+
+dew:
+  trace: skywalking
+  basic:
+    name: SkyWalking示例
+    version: 1.0
+    desc: 这是一个SkyWalking示例
+    web-site: http://www.idealworld.group
+    doc:
+      base-package: group.idealworld.dew # API文档路径
+      servers:
+        dev env: http://localhost:809
+        test env: http://localhost:8080/tt
+      request-headers:
+        Token: token in header
+        App-Id: app id in header
+management:
+  endpoints:
+    web:
+      base-path: /management
+      exposure:
+        include: '*'
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+#springdoc:
+#  swagger-ui:
+#    urls:
+#      - url: http://127.0.0.1:809/v3/api-docs/dew-default2
+#        name: dew-default

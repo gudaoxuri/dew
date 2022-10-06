@@ -27,8 +27,8 @@
         <relativePath>../parent-starter</relativePath>
     </parent>
 
-    <artifactId>skywalking-starter</artifactId>
-    <name>1.2.2 Dew skyWalking Starter</name>
+    <artifactId>cluster-spi-skywalking</artifactId>
+    <name>1.1.6 Dew Cluster SkyWalking</name>
     <description>链路追踪</description>
     <packaging>jar</packaging>
 
@@ -38,6 +38,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>group.idealworld.dew</groupId>
+            <artifactId>cluster-common</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.ecfront.dew</groupId>
             <artifactId>common</artifactId>
         </dependency>
@@ -46,24 +50,25 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot</artifactId>
+            <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-core</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <artifactId>log4j-to-slf4j</artifactId>
+                    <groupId>org.apache.logging.log4j</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>group.idealworld.dew</groupId>
-            <artifactId>boot-starter</artifactId>
+            <optional>true</optional>
         </dependency>
         <!--skyWalking 相关 -->
         <dependency>
