@@ -21,13 +21,13 @@
     <parent>
         <groupId>group.idealworld.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>3.0.0-RC2</version>
+        <version>3.0.0-RC3</version>
         <relativePath>../../modules/parent-starter</relativePath>
     </parent>
 
     <artifactId>sdkgen-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>3.0.0-RC2</version>
+    <version>3.0.0-RC3</version>
     <name>1.3.1 Dew SDK Generate Maven Plugin</name>
 
     <properties>
