@@ -35,13 +35,12 @@ import java.util.List;
  */
 public class H2ClusterHA implements ClusterHA {
 
-    private static final Logger logger = LoggerFactory.getLogger(H2ClusterHA.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(H2ClusterHA.class);
 
     private static JdbcConnectionPool jdbcConnectionPool;
 
     private static boolean update(String sql, Object... params) throws SQLException {
-        try (Connection conn = jdbcConnectionPool.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = jdbcConnectionPool.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             for (int i = 1; i <= params.length; i++) {
                 stmt.setObject(i, params[i - 1]);
             }
@@ -51,8 +50,7 @@ public class H2ClusterHA implements ClusterHA {
 
     private static List<PrepareCommitMsg> queryList(String sql, Object... params) throws SQLException {
         ResultSet rs = null;
-        try (Connection conn = jdbcConnectionPool.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = jdbcConnectionPool.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             for (int i = 1; i <= params.length; i++) {
                 stmt.setObject(i, params[i - 1]);
             }
@@ -84,23 +82,16 @@ public class H2ClusterHA implements ClusterHA {
     @Override
     public void init(HAConfig haConfig) throws SQLException {
         String url = "jdbc:h2:" + haConfig.getStoragePath() + haConfig.getStorageName() + ";DB_CLOSE_ON_EXIT=FALSE";
-        jdbcConnectionPool = JdbcConnectionPool
-                .create(url,
-                        haConfig.getAuthUsername() == null ? "" : haConfig.getAuthUsername(),
-                        haConfig.getAuthPassword() == null ? "" : haConfig.getAuthPassword());
+        jdbcConnectionPool = JdbcConnectionPool.create(url,
+                haConfig.getAuthUsername() == null ? "" : haConfig.getAuthUsername(), haConfig.getAuthPassword() == null ? "" : haConfig.getAuthPassword());
         try (Connection conn = jdbcConnectionPool.getConnection(); Statement stmt = conn.createStatement()) {
             stmt.execute("CREATE TABLE IF NOT EXISTS MQ_MSG("
-                    + "ADDR VARCHAR(1024),"
-                    + "MSG_ID VARCHAR(32),"
-                    + "MSG TEXT,"
-                    + "CREATED_TIME TIMESTAMP ,"
-                    + "PRIMARY KEY(MSG_ID)"
-                    + ")");
+                    + "ADDR VARCHAR(1024)," + "MSG_ID VARCHAR(32)," + "MSG TEXT," + "CREATED_TIME TIMESTAMP ," + "PRIMARY KEY(MSG_ID)" + ")");
         }
     }
 
     @Override
-    public String mq_afterPollMsg(String addr, MessageWrap msg) {
+    public String mqAfterPollMsg(String addr, MessageWrap msg) {
         String sql = "INSERT INTO MQ_MSG VALUES(?,?,?,?)";
         Date date = new Date(System.currentTimeMillis());
         try {
@@ -108,28 +99,28 @@ public class H2ClusterHA implements ClusterHA {
             update(sql, addr, uuid, $.json.toJsonString(msg), date);
             return uuid;
         } catch (SQLException e) {
-            logger.error("Create HA job error.", e);
+            LOGGER.error("Create HA job error.", e);
             return "0";
         }
     }
 
     @Override
-    public void mq_afterMsgAcked(String id) {
+    public void mqAfterMsgAcked(String id) {
         String sql = "DELETE FROM MQ_MSG WHERE MSG_ID = ?";
         try {
             update(sql, id);
         } catch (SQLException e) {
-            logger.error("Delete HA job error.", e);
+            LOGGER.error("Delete HA job error.", e);
         }
     }
 
     @Override
-    public List<PrepareCommitMsg> mq_findAllUnCommittedMsg(String addr) {
+    public List<PrepareCommitMsg> mqFindAllUnCommittedMsg(String addr) {
         String sql = "SELECT * FROM MQ_MSG where ADDR = ? ORDER BY CREATED_TIME DESC";
         try {
             return queryList(sql, addr);
         } catch (SQLException e) {
-            logger.error("Query HA job error.", e);
+            LOGGER.error("Query HA job error.", e);
             return new ArrayList<>();
         }
     }

@@ -36,10 +36,14 @@ import java.util.function.Function;
  * @author gudaoxuri
  */
 public class Cluster {
-    private static final Logger logger = LoggerFactory.getLogger(Cluster.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Cluster.class);
+
+    /**
+     * 实例Id.
+     */
     public static String instanceId = $.field.createUUID();
-    private static Function<String, Map<String, Object>> _mqGetHeader;
-    private static Function<MessageHeader, Map<String, Object>> _mqSetHeader;
+    private static Function<String, Map<String, Object>> mqGetHeader;
+    private static Function<MessageHeader, Map<String, Object>> mqSetHeader;
     private static ClusterHA clusterHA = null;
     private static String applicationName = "_default";
     /**
@@ -66,6 +70,10 @@ public class Cluster {
      * 领导者选举服务.
      */
     public ClusterElectionWrap election;
+    /**
+     * 链路追踪服务.
+     */
+    public ClusterTrace trace;
 
     /**
      * 初始化.
@@ -84,10 +92,9 @@ public class Cluster {
      * @param mqGetHeader 在发送MQ消息前自定义设置MQ Header , Input:Topic name, Output:Header Items
      * @param mqSetHeader 在收到MQ消息时自定义设置MQ Header , Input:Topic name + Header Items, Output:Header Items
      */
-    public static void initMqHeader(
-            Function<String, Map<String, Object>> mqGetHeader, Function<MessageHeader, Map<String, Object>> mqSetHeader) {
-        _mqGetHeader = mqGetHeader;
-        _mqSetHeader = mqSetHeader;
+    public static void initMqHeader(Function<String, Map<String, Object>> mqGetHeader, Function<MessageHeader, Map<String, Object>> mqSetHeader) {
+        Cluster.mqGetHeader = mqGetHeader;
+        Cluster.mqSetHeader = mqSetHeader;
     }
 
     /**
@@ -108,7 +115,7 @@ public class Cluster {
         if (DependencyHelper.hasDependency("org.h2.jdbcx.JdbcConnectionPool")) {
             clusterHA = new H2ClusterHA();
         } else {
-            logger.warn("Not found HA implementation drives , HA disabled.");
+            LOGGER.warn("Not found HA implementation drives , HA disabled.");
             return;
         }
         try {
@@ -123,9 +130,9 @@ public class Cluster {
                 haConfig.setStorageName(applicationName);
             }
             clusterHA.init(haConfig);
-            logger.info("HA initialized");
+            LOGGER.info("HA initialized");
         } catch (SQLException e) {
-            logger.error("HA init error", e);
+            LOGGER.error("HA init error", e);
         }
     }
 
@@ -138,16 +145,16 @@ public class Cluster {
     }
 
     static Map<String, Object> getMQHeader(String name) {
-        if (_mqGetHeader != null) {
-            return _mqGetHeader.apply(name);
+        if (mqGetHeader != null) {
+            return mqGetHeader.apply(name);
         } else {
             return new HashMap<>();
         }
     }
 
     static Map<String, Object> setMQHeader(String name, Map<String, Object> header) {
-        if (_mqSetHeader != null) {
-            return _mqSetHeader.apply(new MessageHeader(name, header));
+        if (mqSetHeader != null) {
+            return mqSetHeader.apply(new MessageHeader(name, header));
         }
         return header;
     }

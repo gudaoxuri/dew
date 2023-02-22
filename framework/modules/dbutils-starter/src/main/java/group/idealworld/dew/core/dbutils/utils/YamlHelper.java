@@ -27,6 +27,9 @@ import org.yaml.snakeyaml.representer.Representer;
  */
 public class YamlHelper {
 
+    private YamlHelper() {
+    }
+
     private static Yaml yaml;
 
     static {

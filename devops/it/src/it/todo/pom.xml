@@ -24,12 +24,12 @@
     <parent>
         <groupId>group.idealworld.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>3.0.0-Beta3</version>
+        <version>3.0.0-RC2</version>
     </parent>
 
     <groupId>group.idealworld.dew.devops.it</groupId>
     <artifactId>todo-parent</artifactId>
-    <version>3.0.0-Beta3</version>
+    <version>3.0.0-RC2</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -53,7 +53,7 @@
             <dependency>
                 <groupId>group.idealworld.dew.devops.it</groupId>
                 <artifactId>todo-common</artifactId>
-                <version>3.0.0-Beta3</version>
+                <version>3.0.0-RC2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

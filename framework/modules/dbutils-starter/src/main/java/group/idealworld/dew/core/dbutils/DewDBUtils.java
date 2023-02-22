@@ -27,7 +27,8 @@ import group.idealworld.dew.core.dbutils.process.DSLoader;
  */
 public class DewDBUtils {
 
-
+    private DewDBUtils() {
+    }
 
     /**
      * 初始化数据源.
@@ -35,7 +36,7 @@ public class DewDBUtils {
      * @param dbUtilsConfig 加载配置信息
      */
 
-    public static void init(DBUtilsConfig dbUtilsConfig){
+    public static void init(DBUtilsConfig dbUtilsConfig) {
         DSLoader.load(dbUtilsConfig);
     }
 

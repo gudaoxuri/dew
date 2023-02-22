@@ -43,31 +43,31 @@ public class InitAndCleanIT extends BasicProcessor {
      */
     @Test
     public void initAndClean() throws IOException, ApiException {
-        logger.info("Init YamlHelper");
+        LOGGER.info("Init YamlHelper");
         YamlHelper.init(DewLog.build(this.getClass()));
-        logger.info("Init KubeHelper");
+        LOGGER.info("Init KubeHelper");
         KubeHelper.init("", DewLog.build(this.getClass()), kubeConfig);
-        logger.info("Init DockerHelper");
+        LOGGER.info("Init DockerHelper");
         DockerHelper.init("", DewLog.build(this.getClass()),
                 dockerHost,
                 dockerRegistryUrl,
                 dockerRegistryUserName,
                 dockerRegistryPassword);
         final String registryHost = new URL(dockerRegistryUrl).getHost();
-        logger.info("Clean kubernetes ns by dew-test");
+        LOGGER.info("Clean kubernetes ns by dew-test");
         cleanResources("dew-test");
-        logger.info("Clean kubernetes ns by dew-uat");
+        LOGGER.info("Clean kubernetes ns by dew-uat");
         cleanResources("dew-uat");
-        logger.info("Clean kubernetes ns by dew-prod");
+        LOGGER.info("Clean kubernetes ns by dew-prod");
         cleanResources("dew-prod");
-        logger.info("Clean docker images");
+        LOGGER.info("Clean docker images");
         DockerHelper.inst("").image.list().stream()
                 .filter(image -> image.getRepoTags() != null
                         && image.getRepoTags().length > 0
                         && image.getRepoTags()[0].startsWith(registryHost + "/dew-"))
                 .forEach(image -> {
                     DockerHelper.inst("").image.remove(image.getRepoTags()[0]);
-                    logger.info("Remove registry image : " + image.getRepoTags()[0]);
+                    LOGGER.info("Remove registry image : " + image.getRepoTags()[0]);
                     DockerHelper.inst("").registry.removeImage(image.getRepoTags()[0]);
                 });
     }

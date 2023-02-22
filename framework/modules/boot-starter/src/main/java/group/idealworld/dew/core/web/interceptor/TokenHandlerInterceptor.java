@@ -36,7 +36,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class TokenHandlerInterceptor implements AsyncHandlerInterceptor {
 
-    private static final Logger logger = LoggerFactory.getLogger(TokenHandlerInterceptor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TokenHandlerInterceptor.class);
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)  {

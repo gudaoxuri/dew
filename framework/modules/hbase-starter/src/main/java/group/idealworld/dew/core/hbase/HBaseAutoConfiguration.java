@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 public class HBaseAutoConfiguration {
 
     /**
-     *  To build the HBase configuration.
+     * To build the HBase configuration.
      *
      * @param hbaseProperties the hbase properties
      * @return hbase configuration
@@ -71,6 +71,7 @@ public class HBaseAutoConfiguration {
      * Init HBase connection.
      *
      * @param hbaseProperties hbase settings properties
+     * @param conf            hbase configuration
      * @return HBase connection
      * @throws IOException IOException
      */

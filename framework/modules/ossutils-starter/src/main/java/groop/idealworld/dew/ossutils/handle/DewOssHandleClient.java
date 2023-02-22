@@ -2,9 +2,8 @@ package groop.idealworld.dew.ossutils.handle;
 
 
 /**
+ * @param <T> 客户端类型
  * @author yiye
- * @date 2022/4/1
- * @description
  **/
 public class DewOssHandleClient<T> {
     private T ossClient;

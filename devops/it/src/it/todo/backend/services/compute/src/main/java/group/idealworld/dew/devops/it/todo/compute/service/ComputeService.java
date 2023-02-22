@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ComputeService {
 
-    private static final Logger logger = LoggerFactory.getLogger(ComputeService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComputeService.class);
 
     /**
      * Compute.
@@ -39,7 +39,7 @@ public class ComputeService {
      * @return result
      */
     public String compute(String jsCode)  {
-        logger.info("Compute : " + jsCode);
+        LOGGER.info("Compute : " + jsCode);
         return $.eval(ScriptHelper.ScriptKind.JS,Integer.class,jsCode).toString();
     }
 

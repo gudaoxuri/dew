@@ -22,22 +22,20 @@ import group.idealworld.dew.core.dbutils.dialect.Dialect;
 import group.idealworld.dew.core.dbutils.dialect.DialectFactory;
 import group.idealworld.dew.core.dbutils.dto.DBUtilsConfig;
 import group.idealworld.dew.core.dbutils.dto.DSConfig;
-import group.idealworld.dew.core.dbutils.utils.YamlHelper;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
 public class DSLoader {
+
+    private DSLoader() {
+    }
 
     private static final Map<String, DSInfo> MULTI_DS = new HashMap<>();
 
@@ -77,11 +75,7 @@ public class DSLoader {
         dsConfigs.forEach(dsConfig -> {
             Dialect dialect = DialectFactory.parseDialect(dsConfig.getUrl());
             assert dialect != null;
-            MULTI_DS.put(dsConfig.getCode(), DSInfo.builder()
-                    .dataSource(loadPool(dsConfig, dialect))
-                    .dialect(dialect)
-                    .dsConfig(dsConfig)
-                    .build());
+            MULTI_DS.put(dsConfig.getCode(), DSInfo.builder().dataSource(loadPool(dsConfig, dialect)).dialect(dialect).dsConfig(dsConfig).build());
             log.debug("Loaded pool: [{}] {}", dsConfig.getCode(), dsConfig.getUrl());
         });
     }
@@ -117,22 +111,19 @@ public class DSLoader {
             log.error("[DewDBUtils]Multi DS load error : " + e);
         }
         if (null != result) {
-            List<DSConfig> dsConfigs = result.stream()
-                    .filter(Objects::nonNull)
-                    .map(res -> {
-                        DSConfig dsConfig = new DSConfig();
-                        dsConfig.setPool(new DSConfig.PoolConfig());
-                        dsConfig.setCode(res.get("code").toString());
-                        dsConfig.setUrl(res.get("url").toString());
-                        dsConfig.setUsername(res.get("username").toString());
-                        dsConfig.setPassword(res.get("password").toString());
-                        dsConfig.setUrl(res.get("url").toString());
-                        dsConfig.setMonitor(Integer.parseInt(res.get("monitor").toString()) == 1);
-                        dsConfig.getPool().setInitialSize(Integer.parseInt(res.get("pool_initialsize").toString()));
-                        dsConfig.getPool().setMaxActive(Integer.parseInt(res.get("pool_maxactive").toString()));
-                        return dsConfig;
-                    })
-                    .collect(Collectors.toList());
+            List<DSConfig> dsConfigs = result.stream().filter(Objects::nonNull).map(res -> {
+                DSConfig dsConfig = new DSConfig();
+                dsConfig.setPool(new DSConfig.PoolConfig());
+                dsConfig.setCode(res.get("code").toString());
+                dsConfig.setUrl(res.get("url").toString());
+                dsConfig.setUsername(res.get("username").toString());
+                dsConfig.setPassword(res.get("password").toString());
+                dsConfig.setUrl(res.get("url").toString());
+                dsConfig.setMonitor(Integer.parseInt(res.get("monitor").toString()) == 1);
+                dsConfig.getPool().setInitialSize(Integer.parseInt(res.get("pool_initialsize").toString()));
+                dsConfig.getPool().setMaxActive(Integer.parseInt(res.get("pool_maxactive").toString()));
+                return dsConfig;
+            }).collect(Collectors.toList());
             loadDS(dsConfigs);
         }
     }

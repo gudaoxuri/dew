@@ -44,6 +44,9 @@ public class TestGenerateProcess {
 
     private static final String TEST_FILE_NAME = "DewSDKGenTest.java";
 
+    private TestGenerateProcess() {
+    }
+
     /**
      * Process file.
      *
@@ -66,12 +69,9 @@ public class TestGenerateProcess {
             baseClassPath = mainClass.substring(0, mainClass.lastIndexOf("."));
             log.debug("Parameter [{}={}], skip main class scan.", FLAG_DEW_MAIN_CLASS, mainClass);
         }
-        File testFile = new File(basePath.getPath() + File.separator +
-                "src" + File.separator +
-                "test" + File.separator +
-                "java" + File.separator +
-                baseClassPath.replaceAll("\\.", File.separator.equals("\\") ? "\\" + File.separator : File.separator) + File.separator +
-                TEST_FILE_NAME);
+        File testFile = new File(basePath.getPath() + File.separator + "src" + File.separator + "test" + File.separator + "java"
+                + File.separator + baseClassPath.replaceAll("\\"
+                + ".", File.separator.equals("\\") ? "\\" + File.separator : File.separator) + File.separator + TEST_FILE_NAME);
         if (testFile.exists()) {
             log.debug("Test file [{}] already exists, skip test file generation.", testFile.getPath());
             return;
@@ -88,11 +88,10 @@ public class TestGenerateProcess {
 
     private static String scanMainClassPath(File basePath) {
         String[] mainClassPath = {null};
-        scanMainClassPath(null, Objects.requireNonNull(new File(basePath.getPath() + File.separator + "src" + File.separator + "main")
-                .listFiles((dir, name) ->
+        scanMainClassPath(null, Objects.requireNonNull(
+                new File(basePath.getPath() + File.separator + "src" + File.separator + "main").listFiles((dir, name) ->
                         // TODO 其它语言
-                        name.equals("java") || name.equals("scala") || name.equals("groovy")
-                )), mainClassPath);
+                        name.equals("java") || name.equals("scala") || name.equals("groovy"))), mainClassPath);
         if (mainClassPath[0] == null) {
             throw new RuntimeException("No main method found.");
         } else {
@@ -108,17 +107,12 @@ public class TestGenerateProcess {
             if (file.isDirectory()) {
                 scanMainClassPath(
                         // 为空时表示第一次进入，文件名为java scala groovy 等，要忽略
-                        classPackage == null
-                                ? "" : classPackage.isBlank()
-                                ? file.getName() : classPackage + "." + file.getName(),
-                        Objects.requireNonNull(file.listFiles()), foundMainClassPath);
+                        classPackage == null ? "" : classPackage.isBlank() ? file.getName() : classPackage + "." + file.getName(), Objects.requireNonNull(file.listFiles()),
+                        foundMainClassPath);
             } else {
                 var fileContent = $.file.readAllByFile(file, StandardCharsets.UTF_8);
-                if (fileContent.contains("@SpringBootApplication")
-                        || fileContent.contains("static void main(String[]")
-                        || fileContent.contains("def main(")
-                        || fileContent.contains("static void main(")
-                ) {
+                if (fileContent.contains("@SpringBootApplication") || fileContent.contains("static void main(String[]")
+                        || fileContent.contains("def main(") || fileContent.contains("static void main(")) {
                     foundMainClassPath[0] = classPackage;
                 }
             }
@@ -127,9 +121,10 @@ public class TestGenerateProcess {
 
     @SneakyThrows
     private static void writeTestFile(String testFilePath, String baseClassPath) {
-        String testFileStr = new BufferedReader(new InputStreamReader(
-                TestGenerateProcess.class.getResourceAsStream("/testfile/testFile.mustache")))
-                .lines().collect(Collectors.joining("\n"));
+        String testFileStr =
+                new BufferedReader(
+                        new InputStreamReader(
+                                TestGenerateProcess.class.getResourceAsStream("/testfile/testFile.mustache"))).lines().collect(Collectors.joining("\n"));
         var handlebars = new Handlebars();
         var template = handlebars.compileInline(testFileStr);
         testFileStr = template.apply(new HashMap<>() {

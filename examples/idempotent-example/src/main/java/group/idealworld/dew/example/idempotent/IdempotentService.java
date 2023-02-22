@@ -32,7 +32,7 @@ import javax.annotation.PostConstruct;
 @Service
 public class IdempotentService {
 
-    private static final Logger logger = LoggerFactory.getLogger(IdempotentService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IdempotentService.class);
 
     /**
      * Init.
@@ -52,13 +52,13 @@ public class IdempotentService {
     public void send() {
         // 第一次调用
         int result = transferAReceive("xxxx");
-        logger.info("request 1 : {}", result);
+        LOGGER.info("request 1 : {}", result);
         // 第二次调用
         result = transferAReceive("xxxx");
-        logger.info("request 2 : {}", result);
+        LOGGER.info("request 2 : {}", result);
         // 第三次调用
         result = transferAReceive("xxxx");
-        logger.info("request 3 : {}", result);
+        LOGGER.info("request 3 : {}", result);
     }
 
     /**

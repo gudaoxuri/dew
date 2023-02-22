@@ -40,7 +40,7 @@ import java.util.Optional;
  */
 public class IdentInfoHandlerInterceptor implements AsyncHandlerInterceptor {
 
-    private static final Logger logger = LoggerFactory.getLogger(IdentInfoHandlerInterceptor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IdentInfoHandlerInterceptor.class);
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
@@ -49,8 +49,8 @@ public class IdentInfoHandlerInterceptor implements AsyncHandlerInterceptor {
                     "The request is missing [" + Dew.dewConfig.getSecurity().getIdentInfoFlag() + "] in header", AuthException.class.getName());
             return false;
         }
-        var optInfo = $.json.toObject($.security.decodeBase64ToString(request.getHeader(Dew.dewConfig.getSecurity().getIdentInfoFlag()), StandardCharsets.UTF_8)
-                , DewContext.getOptInfoClazz());
+        var optInfo = $.json.toObject($.security.decodeBase64ToString(request.getHeader(Dew.dewConfig.getSecurity().getIdentInfoFlag()), StandardCharsets.UTF_8),
+                DewContext.getOptInfoClazz());
         var optInfoOpt = Optional.of(optInfo);
         var token = optInfo.getToken();
         var tokenKind = optInfo.getTokenKind();

@@ -16,8 +16,10 @@
 
 package group.idealworld.dew.core.dbutils.dialect;
 
-
 public class DialectFactory {
+
+    private DialectFactory() {
+    }
 
     public static Dialect parseDialect(String url) {
         if (url.startsWith("jdbc:h2")) {

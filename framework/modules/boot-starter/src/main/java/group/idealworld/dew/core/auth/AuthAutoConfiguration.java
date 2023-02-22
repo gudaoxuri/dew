@@ -31,7 +31,7 @@ import javax.annotation.PostConstruct;
 @Configuration
 public class AuthAutoConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthAutoConfiguration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthAutoConfiguration.class);
 
     /**
      * Basic auth adapter.
@@ -48,7 +48,7 @@ public class AuthAutoConfiguration {
      */
     @PostConstruct
     public void init() {
-        logger.info("Load Auto Configuration : {}", this.getClass().getName());
+        LOGGER.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 
 }

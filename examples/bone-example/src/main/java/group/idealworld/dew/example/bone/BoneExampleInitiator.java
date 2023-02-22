@@ -34,7 +34,7 @@ import javax.annotation.PostConstruct;
 @Component
 public class BoneExampleInitiator {
 
-    private static final Logger logger = LoggerFactory.getLogger(BoneExampleInitiator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BoneExampleInitiator.class);
 
     @Autowired
     private BoneExampleConfig boneExampleConfig;
@@ -45,7 +45,7 @@ public class BoneExampleInitiator {
     @PostConstruct
     public void init() {
         // 在这里初始化
-        logger.info(">>>> " + boneExampleConfig.getSomeProp());
+        LOGGER.info(">>>> " + boneExampleConfig.getSomeProp());
 
     }
 

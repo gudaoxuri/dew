@@ -170,7 +170,7 @@ public class KubeReleaseFlow extends BasicFlow {
                 (coreApi, appsApi, networkingApi, rbacAuthorizationApi, autoscalingApi)
                         -> appsApi.listNamespacedDeploymentCall(deploymentRes.getMetadata().getNamespace(),
                         null, null, null, null,
-                        select, 1, null, null, null,Boolean.TRUE, null),
+                        select, 1, null, null, null, Boolean.TRUE, null),
                 resp -> {
                     // Ready Pod数量是否等于设定的数量
                     if (resp.object.getStatus().getReadyReplicas() != null

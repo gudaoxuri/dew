@@ -31,7 +31,7 @@ import java.util.Set;
  */
 public class DewProfile {
 
-    protected static final Logger logger = DewLog.build(DewProfile.class);
+    protected static final Logger LOGGER = DewLog.build(DewProfile.class);
 
     // 环境名称，内部使用，不需要显式指定
     private String profile;

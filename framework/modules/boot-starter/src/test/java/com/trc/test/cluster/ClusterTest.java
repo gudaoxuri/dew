@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ClusterTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClusterTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClusterTest.class);
 
     /**
      * Test all.
@@ -38,15 +38,15 @@ public class ClusterTest {
      * @throws InterruptedException the interrupted exception
      */
     public void testAll() throws InterruptedException {
-        logger.info("Testing Cache");
+        LOGGER.info("Testing Cache");
         new ClusterCacheTest().test(Dew.cluster.cache, null);
-        logger.info("Testing Lock");
+        LOGGER.info("Testing Lock");
         new ClusterLockTest().test(Dew.cluster.lock.instance("test"));
-        logger.info("Testing Map");
+        LOGGER.info("Testing Map");
         new ClusterMapTest().test(Dew.cluster.map.instance("test", ClusterMapTest.TestMapObj.class));
-        logger.info("Testing MQ");
+        LOGGER.info("Testing MQ");
         new ClusterMQTest().test(Dew.cluster.mq);
-        logger.info("Testing Election");
+        LOGGER.info("Testing Election");
         new ClusterElectionTest().test(Dew.cluster.election.instance("test"));
     }
 

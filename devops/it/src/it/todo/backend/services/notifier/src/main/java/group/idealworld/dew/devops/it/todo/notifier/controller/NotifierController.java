@@ -32,7 +32,7 @@ import javax.annotation.PostConstruct;
 @RestController
 public class NotifierController {
 
-    private static final Logger logger = LoggerFactory.getLogger(NotifierController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotifierController.class);
 
     /**
      * Process to-do add event.
@@ -41,7 +41,7 @@ public class NotifierController {
     public void processTodoAddEvent() {
         // 使用Dew的集群MQ功能实现消息点对点接收
         Dew.cluster.mq.response(Constants.MQ_NOTIFY_TODO_ADD, todo ->
-                logger.info("Received add todo event :" + todo));
+                LOGGER.info("Received add todo event :" + todo));
     }
 
     /**
@@ -50,7 +50,7 @@ public class NotifierController {
     @PostConstruct
     public void processTodoDelEvent() {
         Dew.cluster.mq.response(Constants.MQ_NOTIFY_TODO_DEL, todoId ->
-                logger.info("Received delete todo event :" + todoId));
+                LOGGER.info("Received delete todo event :" + todoId));
     }
 
 }

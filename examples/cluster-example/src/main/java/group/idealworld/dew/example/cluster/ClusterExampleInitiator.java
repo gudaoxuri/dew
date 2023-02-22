@@ -35,7 +35,7 @@ import java.io.Serializable;
 @Component
 public class ClusterExampleInitiator {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClusterExampleInitiator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClusterExampleInitiator.class);
 
     /**
      * Init.
@@ -83,13 +83,13 @@ public class ClusterExampleInitiator {
 
         // pub-sub
         Dew.cluster.mq.subscribe("test_pub_sub", message ->
-                logger.info("pub_sub>>" + message));
+                LOGGER.info("pub_sub>>" + message));
         Thread.sleep(1000);
         Dew.cluster.mq.publish("test_pub_sub", "msgA");
         Dew.cluster.mq.publish("test_pub_sub", "msgB");
         // req-resp
         Dew.cluster.mq.response("test_rep_resp", message ->
-                logger.info("req_resp>>" + message));
+                LOGGER.info("req_resp>>" + message));
         Dew.cluster.mq.request("test_rep_resp", "msg1");
         Dew.cluster.mq.request("test_rep_resp", "msg2");
     }

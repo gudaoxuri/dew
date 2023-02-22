@@ -35,7 +35,7 @@ import java.util.Map;
 @RequestMapping("/auth/")
 public class AuthController {
 
-    private static Map<String, UserDTO> MOCK_USER_CONTAINER = new HashMap<>();
+    private static Map<String, UserDTO> mockUserContainer = new HashMap<>();
 
     /**
      * Init.
@@ -57,7 +57,7 @@ public class AuthController {
         Thread.sleep(10);
         // 实际注册处理
         userDTO.setId($.field.createUUID());
-        MOCK_USER_CONTAINER.put(userDTO.getId(), userDTO);
+        mockUserContainer.put(userDTO.getId(), userDTO);
         return Resp.success(null);
     }
 
@@ -72,8 +72,7 @@ public class AuthController {
     public Resp<String> login(@RequestBody LoginDTO loginDTO) throws Exception {
         Thread.sleep(10);
         // 实际登录处理
-        UserDTO userDTO = MOCK_USER_CONTAINER.values().stream()
-                .filter(u -> u.getIdCard().equals(loginDTO.getIdCard())).findFirst().get();
+        UserDTO userDTO = mockUserContainer.values().stream().filter(u -> u.getIdCard().equals(loginDTO.getIdCard())).findFirst().get();
         if (!loginDTO.getPassword().equals(userDTO.getPassword())) {
             throw Dew.E.e("ASXXX0", new Exception("密码错误"));
         }

@@ -36,7 +36,7 @@ public class HelloWorldLibraryVerify extends BasicProcessor implements Verify {
     @Override
     public void doVerify(String buildPath, String expectedResPath) throws Exception {
         loadConfig();
-        String metaData = $.http.get(itSnapshotRepositoryUrl + "group/idealworld/dew/devops/it/helloworld-library/3.0.0-Beta3/maven-metadata.xml");
+        String metaData = $.http.get(itSnapshotRepositoryUrl + "group/idealworld/dew/devops/it/helloworld-library/3.0.0-RC2/maven-metadata.xml");
         Document doc = JOOX.builder().parse(new ByteArrayInputStream(metaData.getBytes()));
         String lastUpdateTime = JOOX.$(doc).find("lastUpdated").get(0).getTextContent();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");

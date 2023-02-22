@@ -19,8 +19,6 @@ package group.idealworld.dew.core.dbutils.dto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Tolerate;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 /**
  * @author gudaoxuri

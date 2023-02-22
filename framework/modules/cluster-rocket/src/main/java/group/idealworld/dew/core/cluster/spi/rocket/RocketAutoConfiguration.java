@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
-import javax.validation.Valid;
 
 /**
  * rocket auto configuration.
@@ -38,7 +37,7 @@ import javax.validation.Valid;
 @ConditionalOnExpression("#{'${dew.cluster.mq}'=='rocket'}")
 public class RocketAutoConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(RocketAutoConfiguration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RocketAutoConfiguration.class);
 
     @Value("${rocketmq.producer.group}")
     private String producerGroupName;
@@ -52,7 +51,7 @@ public class RocketAutoConfiguration {
 
     @PostConstruct
     public void init() {
-        logger.info("Load Auto Configuration : {}", this.getClass().getName());
+        LOGGER.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 
     /**

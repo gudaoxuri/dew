@@ -57,7 +57,7 @@ import java.util.concurrent.Executors;
 @Configuration
 public class Dew {
 
-    private static final Logger logger = LoggerFactory.getLogger(Dew.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Dew.class);
 
     /**
      * The constant cluster.
@@ -112,9 +112,9 @@ public class Dew {
      */
     @PostConstruct
     private void init() {
-        logger.info("Load Auto Configuration : {}", this.getClass().getName());
+        LOGGER.info("Load Auto Configuration : {}", this.getClass().getName());
 
-        logger.info("Load Dew basic info...");
+        LOGGER.info("Load Dew basic info...");
         Dew.dewConfig = injectDewConfig;
         Dew.applicationContext = injectApplicationContext;
         Info.name = applicationName;
@@ -123,16 +123,15 @@ public class Dew {
         Info.instance = applicationName + "@" + Info.profile + "@" + Info.ip + ":" + serverPort;
         Cluster.init(Info.name, Info.instance);
 
-        Notify.init(Dew.dewConfig.getNotifies(), flag ->
+        Dew.notify = Notify.init(Dew.dewConfig.getNotifies(), flag ->
                 " FROM " + Dew.Info.instance + " BY " + flag);
-        Dew.notify = new Notify();
 
         // Support java8 Time
         if (jacksonProperties != null) {
             jacksonProperties.getSerialization().put(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         }
 
-        logger.info("Load Dew cluster...");
+        LOGGER.info("Load Dew cluster...");
         if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getCache() + "ClusterCache")) {
             Dew.cluster.caches = (ClusterCacheWrap) Dew.applicationContext.getBean(injectDewConfig.getCluster().getCache() + "ClusterCache");
             Dew.cluster.cache = Dew.cluster.caches.instance();
@@ -150,15 +149,19 @@ public class Dew {
             Dew.cluster.election =
                     (ClusterElectionWrap) Dew.applicationContext.getBean(injectDewConfig.getCluster().getElection() + "ClusterElection");
         }
+        if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getTrace() + "ClusterTrace")) {
+            Dew.cluster.trace =
+                    (ClusterTrace) Dew.applicationContext.getBean(injectDewConfig.getCluster().getTrace() + "ClusterTrace");
+        }
         if (dewConfig.getCluster().getConfig().isHaEnabled()) {
             Cluster.ha(dewConfig.getCluster().getConfig().getHa());
         }
 
         // Load Auth Adapter
         auth = Dew.applicationContext.getBean(BasicAuthAdapter.class);
-        logger.info("Use Auth Adapter:" + auth.getClass().getName());
+        LOGGER.info("Use Auth Adapter:" + auth.getClass().getName());
 
-        logger.info("Load Dew funs...");
+        LOGGER.info("Load Dew funs...");
         // Load Immediately
         Set<Class<?>> loadOrders = $.clazz.scan(Dew.class.getPackage().getName(), new HashSet<>() {
             {
@@ -210,7 +213,7 @@ public class Dew {
      */
     public static class Timer {
 
-        private static final Logger logger = LoggerFactory.getLogger(Timer.class);
+        private static final Logger LOGGER = LoggerFactory.getLogger(Timer.class);
 
         /**
          * 设定一个周期性调度任务.
@@ -226,7 +229,7 @@ public class Dew {
                 try {
                     fun.exec();
                 } catch (Exception e) {
-                    logger.error("[Timer] Execute error", e);
+                    LOGGER.error("[Timer] Execute error", e);
                 }
             });
         }
@@ -254,7 +257,7 @@ public class Dew {
                 try {
                     fun.exec();
                 } catch (Exception e) {
-                    logger.error("[Timer] Execute error", e);
+                    LOGGER.error("[Timer] Execute error", e);
                 }
             });
         }

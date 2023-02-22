@@ -33,7 +33,7 @@ import javax.annotation.PostConstruct;
 @Component
 public class HBaseExampleInitiator {
 
-    private static final Logger logger = LoggerFactory.getLogger(HBaseExampleInitiator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HBaseExampleInitiator.class);
 
     @Autowired
     private HBaseTemplate hbaseTemplate;
@@ -47,7 +47,7 @@ public class HBaseExampleInitiator {
     public void init() throws Exception {
         String st = hbaseTemplate.get("DMP:D10_DOP.FDN.V2.T_APP_USER", "0002093140000000",
                 "0", "reg_platform", (result, row) -> Bytes.toString(result.value()));
-        logger.info("result:{}", st);
+        LOGGER.info("result:{}", st);
     }
 
 

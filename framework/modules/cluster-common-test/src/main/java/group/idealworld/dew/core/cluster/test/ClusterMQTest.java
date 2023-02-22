@@ -33,7 +33,7 @@ import java.util.concurrent.CountDownLatch;
  */
 public class ClusterMQTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClusterMQTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClusterMQTest.class);
 
     /**
      * Test.
@@ -60,7 +60,7 @@ public class ClusterMQTest {
             if (message.getBody().contains("msgA") && mq.supportHeader()) {
                 assert message.getHeader().get().containsKey("h");
             }
-            logger.info("subscribe instance 1: pub_sub>>" + message);
+            LOGGER.info("subscribe instance 1: pub_sub>>" + message);
             waiting.countDown();
         })).start();
         new Thread(() -> mq.subscribe("test_pub_sub", message -> {
@@ -68,7 +68,7 @@ public class ClusterMQTest {
             if (message.getBody().contains("msgA") && mq.supportHeader()) {
                 assert message.getHeader().get().containsKey("h");
             }
-            logger.info("subscribe instance 2: pub_sub>>" + message);
+            LOGGER.info("subscribe instance 2: pub_sub>>" + message);
             waiting.countDown();
         })).start();
         Thread.sleep(2000);
@@ -100,7 +100,7 @@ public class ClusterMQTest {
                     assert message.getHeader().get().containsKey("h");
                 }
                 conflictFlag.add(message.getBody());
-                logger.info("response instance 1: req_resp>>" + message);
+                LOGGER.info("response instance 1: req_resp>>" + message);
                 waiting.countDown();
             }
         })).start();
@@ -112,7 +112,7 @@ public class ClusterMQTest {
                     assert message.getHeader().get().containsKey("h");
                 }
                 conflictFlag.add(message.getBody());
-                logger.info("response instance 2: req_resp>>" + message);
+                LOGGER.info("response instance 2: req_resp>>" + message);
                 waiting.countDown();
             }
         })).start();
@@ -138,7 +138,7 @@ public class ClusterMQTest {
         Cluster.ha();
         CountDownLatch waitingOccurError = new CountDownLatch(1);
         Thread mockErrorThread = new Thread(() -> mq.subscribe("test_ha", message -> {
-            logger.info("subscribe instance: pub_sub_ha>>" + message);
+            LOGGER.info("subscribe instance: pub_sub_ha>>" + message);
             waitingOccurError.countDown();
             if (waitingOccurError.getCount() == 0) {
                 throw new RuntimeException("Mock Some Error");
@@ -152,7 +152,7 @@ public class ClusterMQTest {
         // restart subscribe
         CountDownLatch waiting = new CountDownLatch(2);
         new Thread(() -> mq.subscribe("test_ha", message -> {
-            logger.info("subscribe new instance: pub_sub_ha>>" + message);
+            LOGGER.info("subscribe new instance: pub_sub_ha>>" + message);
             waiting.countDown();
         })).start();
         Thread.sleep(1000);

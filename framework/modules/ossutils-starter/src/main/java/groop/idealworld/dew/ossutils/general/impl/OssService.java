@@ -28,8 +28,6 @@ import java.util.Optional;
 
 /**
  * @author yiye
- * @date 2022/4/1
- * @description
  **/
 @Service("oss")
 public class OssService implements OssClientOptProcess, OssClientInitProcess {
@@ -81,16 +79,15 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
     @Override
     public Boolean doesBucketExist(OssCommonParam param) {
         OSS ossClient = isNull(param);
-        try{
+        try {
             return ossClient.doesBucketExist(param.getBucketName());
-        }catch (OSSException oe) {
+        } catch (OSSException oe) {
             logger.error("Caught an OSSException, which means your request made it to OSS, "
-                            + "but was rejected with an error response for some reason." +
-                            "Error Message:{}," +
-                            "Error Code:{}," +
-                            "Request ID:{}," +
-                            "Host ID:{}"
-                    , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+                    + "but was rejected with an error response for some reason." +
+                    "Error Message:{}," +
+                    "Error Code:{}," +
+                    "Request ID:{}," +
+                    "Host ID:{}", oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
@@ -111,16 +108,15 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
     @Override
     public void deleteBucket(OssCommonParam param) {
         OSS ossClient = isNull(param);
-        try{
+        try {
             ossClient.deleteBucket(param.getBucketName());
-        }catch (OSSException oe) {
+        } catch (OSSException oe) {
             logger.error("Caught an OSSException, which means your request made it to OSS, "
-                            + "but was rejected with an error response for some reason." +
-                            "Error Message:{}," +
-                            "Error Code:{}," +
-                            "Request ID:{}," +
-                            "Host ID:{}"
-                    , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+                    + "but was rejected with an error response for some reason." +
+                    "Error Message:{}," +
+                    "Error Code:{}," +
+                    "Request ID:{}," +
+                    "Host ID:{}", oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
             throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
@@ -161,8 +157,8 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
     /**
      * 创建oss客户端
      *
-     * @param properties               oss地址配置信息
-     * @param config 拓展额外配置信息
+     * @param properties oss地址配置信息
+     * @param config     拓展额外配置信息
      * @return 客户端
      */
     @Override
@@ -171,12 +167,12 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
         OSS ossClient = (OSS) OssClientUtil.getOssClient();
         if (ObjectUtils.isEmpty(ossClient) && ObjectUtils.isEmpty(config)) {
             return this.buildOssClient(properties);
-        } else if(ObjectUtils.isEmpty(ossClient) &&!ObjectUtils.isEmpty(config)){
+        } else if (ObjectUtils.isEmpty(ossClient) && !ObjectUtils.isEmpty(config)) {
             if (StringUtils.hasText(properties.getSecurityToken())) {
                 ossClient = new OSSClientBuilder().build(properties.getEndpoint(), properties.getAccessKeyId(), properties.getAccessKeyIdSecret(), config);
             } else {
-                ossClient = new OSSClientBuilder().build(properties.getEndpoint(), properties.getAccessKeyId(), properties.getAccessKeyIdSecret(), properties.getSecurityToken()
-                        , config);
+                ossClient = new OSSClientBuilder().build(properties.getEndpoint(),
+                        properties.getAccessKeyId(), properties.getAccessKeyIdSecret(), properties.getSecurityToken(), config);
             }
             OssClientUtil.setOssClient(ossClient);
         }
@@ -207,7 +203,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
     /**
      * 文件上传
      *
-     * @param param       oss操作常用参数
+     * @param param oss操作常用参数
      */
     @Override
     public void uploadObject(OssCommonParam param) {
@@ -217,12 +213,11 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             ossClient.putObject(param.getBucketName(), param.getObjectName(), new File(param.getPath()));
         } catch (OSSException oe) {
             logger.error("Caught an OSSException, which means your request made it to OSS, "
-                            + "but was rejected with an error response for some reason." +
-                            "Error Message:{}," +
-                            "Error Code:{}," +
-                            "Request ID:{}," +
-                            "Host ID:{}"
-                    , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+                    + "but was rejected with an error response for some reason." +
+                    "Error Message:{}," +
+                    "Error Code:{}," +
+                    "Request ID:{}," +
+                    "Host ID:{}", oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
             throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
@@ -248,15 +243,14 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
         OSS ossClient = isNull(param);
         try {
             //上传文件
-            ossClient.putObject(param.getBucketName(), param.getObjectName(),inputStream);
+            ossClient.putObject(param.getBucketName(), param.getObjectName(), inputStream);
         } catch (OSSException oe) {
             logger.error("Caught an OSSException, which means your request made it to OSS, "
-                            + "but was rejected with an error response for some reason." +
-                            "Error Message:{}," +
-                            "Error Code:{}," +
-                            "Request ID:{}," +
-                            "Host ID:{}"
-                    , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+                    + "but was rejected with an error response for some reason." +
+                    "Error Message:{}," +
+                    "Error Code:{}," +
+                    "Request ID:{}," +
+                    "Host ID:{}", oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
             throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
@@ -282,12 +276,11 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             return ossObject.getObjectContent();
         } catch (OSSException oe) {
             logger.error("Caught an OSSException, which means your request made it to OSS, "
-                            + "but was rejected with an error response for some reason." +
-                            "Error Message:{}," +
-                            "Error Code:{}," +
-                            "Request ID:{}," +
-                            "Host ID:{}"
-                    , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+                    + "but was rejected with an error response for some reason." +
+                    "Error Message:{}," +
+                    "Error Code:{}," +
+                    "Request ID:{}," +
+                    "Host ID:{}", oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
             throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
@@ -295,7 +288,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
                     + "such as not being able to access the network.Error Message:{}", ce.getMessage());
             throw ce;
         } catch (Exception e) {
-            logger.error("处理文件异常{}===>{}",e.getMessage(), e);
+            logger.error("处理文件异常{}===>{}", e.getMessage(), e);
             throw e;
         } finally {
             if (ossClient != null) {
@@ -326,12 +319,11 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             ossClient.getObject(getObjectRequest, file);
         } catch (OSSException oe) {
             logger.error("Caught an OSSException, which means your request made it to OSS, "
-                            + "but was rejected with an error response for some reason." +
-                            "Error Message:{}," +
-                            "Error Code:{}," +
-                            "Request ID:{}," +
-                            "Host ID:{}"
-                    , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+                    + "but was rejected with an error response for some reason." +
+                    "Error Message:{}," +
+                    "Error Code:{}," +
+                    "Request ID:{}," +
+                    "Host ID:{}", oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
             throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
@@ -339,7 +331,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
                     + "such as not being able to access the network.Error Message: {}" + ce.getMessage());
             throw ce;
         } catch (Exception e) {
-            logger.error("内部处理异常：{}",e.getMessage());
+            logger.error("内部处理异常：{}", e.getMessage());
             throw new RuntimeException(e.getMessage());
         } finally {
             if (ossClient != null) {
@@ -366,12 +358,11 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             return ossClient.doesObjectExist(param.getBucketName(), param.getObjectName());
         } catch (OSSException oe) {
             logger.error("Caught an OSSException, which means your request made it to OSS, "
-                            + "but was rejected with an error response for some reason." +
-                            "Error Message:{}," +
-                            "Error Code:{}," +
-                            "Request ID:{}," +
-                            "Host ID:{}"
-                    , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+                    + "but was rejected with an error response for some reason." +
+                    "Error Message:{}," +
+                    "Error Code:{}," +
+                    "Request ID:{}," +
+                    "Host ID:{}", oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
@@ -398,12 +389,11 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             ossClient.deleteObject(param.getBucketName(), param.getObjectName());
         } catch (OSSException oe) {
             logger.error("Caught an OSSException, which means your request made it to OSS, "
-                            + "but was rejected with an error response for some reason." +
-                            "Error Message:{}," +
-                            "Error Code:{}," +
-                            "Request ID:{}," +
-                            "Host ID:{}"
-                    , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+                    + "but was rejected with an error response for some reason." +
+                    "Error Message:{}," +
+                    "Error Code:{}," +
+                    "Request ID:{}," +
+                    "Host ID:{}", oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
             throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
@@ -420,36 +410,35 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
     /**
      * 使用签名URL上传文件 --临时授权
      *
-     * @param param       oss操作常用参数
+     * @param param oss操作常用参数
      */
     @Override
-    public void temporaryUploadFile(OssCommonParam param,FileInputStream inputStream){
+    public void temporaryUploadFile(OssCommonParam param, FileInputStream inputStream) {
         OSS ossClient = isExpirationNull(param);
         try {
             // 生成签名URL。
             GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(param.getBucketName(), param.getObjectName(), HttpMethod.PUT);
-            Map<String, String> custom = buildRequest(param,request);
+            Map<String, String> custom = buildRequest(param, request);
             // 通过HTTP PUT请求生成签名URL。
             URL signedUrl = ossClient.generatePresignedUrl(request);
             logger.info("signed url for putObject: {}", signedUrl);
             FileInputStream fin = null;
-            if(StringUtils.hasText(param.getPath())){
+            if (StringUtils.hasText(param.getPath())) {
                 // 使用签名URL发送请求。
                 File f = new File(param.getPath());
-                fin= new FileInputStream(f);
-            }else {
+                fin = new FileInputStream(f);
+            } else {
                 fin = inputStream;
             }
 
-            PutObjectResult result = ossClient.putObject(signedUrl, fin,-1, custom);
+            PutObjectResult result = ossClient.putObject(signedUrl, fin, -1, custom);
         } catch (OSSException oe) {
             logger.error("Caught an OSSException, which means your request made it to OSS, "
-                            + "but was rejected with an error response for some reason." +
-                            "Error Message:{}," +
-                            "Error Code:{}," +
-                            "Request ID:{}," +
-                            "Host ID:{}"
-                    , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+                    + "but was rejected with an error response for some reason." +
+                    "Error Message:{}," +
+                    "Error Code:{}," +
+                    "Request ID:{}," +
+                    "Host ID:{}", oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
             throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
@@ -485,25 +474,24 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
         try {
             // 生成签名URL。
             GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(param.getBucketName(), param.getObjectName(), HttpMethod.PUT);
-            Map<String, String> custom = buildRequest(param,request);
+            Map<String, String> custom = buildRequest(param, request);
             URL url = ossClient.generatePresignedUrl(request);
             // 通过HTTP PUT请求生成签名URL。
             return url.toString();
         } catch (OSSException oe) {
             logger.error("Caught an OSSException, which means your request made it to OSS, "
-                            + "but was rejected with an error response for some reason." +
-                            "Error Message:{}," +
-                            "Error Code:{}," +
-                            "Request ID:{}," +
-                            "Host ID:{}"
-                    , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+                    + "but was rejected with an error response for some reason." +
+                    "Error Message:{}," +
+                    "Error Code:{}," +
+                    "Request ID:{}," +
+                    "Host ID:{}", oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
             throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message: {}" + ce.getMessage());
             throw ce;
-        }finally {
+        } finally {
             if (ossClient != null) {
                 closeClient();
             }
@@ -523,25 +511,24 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
         try {
             // 生成签名URL。
             GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(param.getBucketName(), param.getObjectName(), HttpMethod.DELETE);
-            Map<String, String> custom = buildRequest(param,request);
+            Map<String, String> custom = buildRequest(param, request);
             URL url = ossClient.generatePresignedUrl(request);
             // 通过HTTP PUT请求生成签名URL。
             return url.toString();
         } catch (OSSException oe) {
             logger.error("Caught an OSSException, which means your request made it to OSS, "
-                            + "but was rejected with an error response for some reason." +
-                            "Error Message:{}," +
-                            "Error Code:{}," +
-                            "Request ID:{}," +
-                            "Host ID:{}"
-                    , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+                    + "but was rejected with an error response for some reason." +
+                    "Error Message:{}," +
+                    "Error Code:{}," +
+                    "Request ID:{}," +
+                    "Host ID:{}", oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
             throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message: {}" + ce.getMessage());
             throw ce;
-        }finally {
+        } finally {
             if (ossClient != null) {
                 closeClient();
             }
@@ -559,25 +546,24 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
         OSS ossClient = isExpirationNull(param);
 
         try {
-            long expiration = System.currentTimeMillis()+param.getExpiration();
+            long expiration = System.currentTimeMillis() + param.getExpiration();
             // 通过HTTP GET请求生成签名URL。
-            URL url = ossClient.generatePresignedUrl(param.getBucketName(),param.getObjectName(),new Date(expiration));
+            URL url = ossClient.generatePresignedUrl(param.getBucketName(), param.getObjectName(), new Date(expiration));
             return url.toString();
         } catch (OSSException oe) {
             logger.error("Caught an OSSException, which means your request made it to OSS, "
-                            + "but was rejected with an error response for some reason." +
-                            "Error Message:{}," +
-                            "Error Code:{}," +
-                            "Request ID:{}," +
-                            "Host ID:{}"
-                    , oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
+                    + "but was rejected with an error response for some reason." +
+                    "Error Message:{}," +
+                    "Error Code:{}," +
+                    "Request ID:{}," +
+                    "Host ID:{}", oe.getErrorMessage(), oe.getErrorCode(), oe.getRequestId(), oe.getHostId());
             throw oe;
         } catch (ClientException ce) {
             logger.error("Caught an ClientException, which means the client encountered "
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message: {}" + ce.getMessage());
             throw ce;
-        }finally {
+        } finally {
             if (ossClient != null) {
                 closeClient();
             }
@@ -629,8 +615,8 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
         OSS ossClient = isExpirationNull(param);
         try {
             String style = OssHandleTool.imageProcess(process);
-            GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(param.getBucketName(),param.getObjectName(),HttpMethod.GET);
-            request.setExpiration(new Date(System.currentTimeMillis()+param.getExpiration()));
+            GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(param.getBucketName(), param.getObjectName(), HttpMethod.GET);
+            request.setExpiration(new Date(System.currentTimeMillis() + param.getExpiration()));
             request.setProcess(style);
             URL url = ossClient.generatePresignedUrl(request);
             return url.toString();
@@ -645,8 +631,8 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message:" + ce.getMessage());
             throw ce;
-        } catch (Exception e){
-            logger.error("服务内部异常:{}",e.getMessage());
+        } catch (Exception e) {
+            logger.error("服务内部异常:{}", e.getMessage());
             throw e;
         } finally {
             if (ossClient != null) {
@@ -659,7 +645,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
         if (param == null) {
             throw new IllegalArgumentException("param必要参数不能为空");
         }
-        if (!StringUtils.hasLength(param.getBucketName()) || !StringUtils.hasLength(param.getObjectName())){
+        if (!StringUtils.hasLength(param.getBucketName()) || !StringUtils.hasLength(param.getObjectName())) {
             throw new IllegalArgumentException("操作对象存储服务器必要参数不能为空");
         }
         return creatClient();
@@ -673,7 +659,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
         return creatClient();
     }
 
-    private OSS creatClient(){
+    private OSS creatClient() {
         Object object = OssClientUtil.getOssClient();
         if (object == null) {
             return (OSS) this.buildOssClient(ossConfigProperties).getOssClient();
@@ -681,7 +667,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
         return (OSS) object;
     }
 
-    private Map<String, String> buildRequest(OssCommonParam param,GeneratePresignedUrlRequest request) {
+    private Map<String, String> buildRequest(OssCommonParam param, GeneratePresignedUrlRequest request) {
         request.setExpiration(new Date((System.currentTimeMillis() + param.getExpiration())));
         Map<String, String> custom = param.getCustomHeaders();
         if (custom != null) {
@@ -701,8 +687,8 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
     /**
      * 初始化原始客户端
      *
-     * @param config
-     * @return
+     * @param config oss配置
+     * @return 是否初始化成功
      */
     @Override
     public boolean initClient(OssConfigProperties config) {

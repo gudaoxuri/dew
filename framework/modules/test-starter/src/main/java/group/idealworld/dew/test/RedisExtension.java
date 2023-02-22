@@ -30,28 +30,36 @@ import java.time.Duration;
 
 public class RedisExtension implements BeforeAllCallback {
 
-    private static final Logger logger = LoggerFactory.getLogger(RedisExtension.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RedisExtension.class);
 
-    private static final GenericContainer redisContainer = new GenericContainer("redis:6-alpine")
+    private static final GenericContainer REDIS_CONTAINER = new GenericContainer("redis:6-alpine")
             .withExposedPorts(6379);
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
-        redisContainer.start();
-        redisContainer.waitingFor((new LogMessageWaitStrategy()).withRegEx("Ready to accept connections").withTimes(1))
+        REDIS_CONTAINER.start();
+        REDIS_CONTAINER.waitingFor((new LogMessageWaitStrategy()).withRegEx("Ready to accept connections").withTimes(1))
                 .withStartupTimeout(Duration.ofSeconds(60L));
-        logger.info("Test Redis port: " + redisContainer.getFirstMappedPort());
+        LOGGER.info("Test Redis port: " + REDIS_CONTAINER.getFirstMappedPort());
     }
 
+    /**
+     * Initializer.
+     */
     public static class Initializer
             implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+        /**
+         * Initialize.
+         *
+         * @param configurableApplicationContext the configurable application context
+         */
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues.of(
-                    "spring.redis.host=" + redisContainer.getHost(),
-                    "spring.redis.port=" + redisContainer.getFirstMappedPort(),
+                    "spring.redis.host=" + REDIS_CONTAINER.getHost(),
+                    "spring.redis.port=" + REDIS_CONTAINER.getFirstMappedPort(),
                     "spring.redis.password=" +
-                            "spring.redis.multi.other:host=" + redisContainer.getHost(),
-                    "spring.redis.multi.other:port=" + redisContainer.getFirstMappedPort(),
+                            "spring.redis.multi.other:host=" + REDIS_CONTAINER.getHost(),
+                    "spring.redis.multi.other:port=" + REDIS_CONTAINER.getFirstMappedPort(),
                     "spring.redis.multi.other:database=1",
                     "spring.redis.multi.other:password="
             ).applyTo(configurableApplicationContext.getEnvironment());

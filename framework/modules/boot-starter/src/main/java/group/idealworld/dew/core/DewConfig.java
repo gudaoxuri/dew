@@ -283,6 +283,10 @@ public class DewConfig {
 
             private String basePackage = "";
 
+            private Map<String, String> requestHeaders = new HashMap<>();
+
+            private Map<String, String> servers = new HashMap<>();
+
             /**
              * Is enabled boolean.
              *
@@ -400,6 +404,21 @@ public class DewConfig {
                 }
             }
 
+            public Map<String, String> getRequestHeaders() {
+                return requestHeaders;
+            }
+
+            public void setRequestHeaders(Map<String, String> requestHeaders) {
+                this.requestHeaders = requestHeaders;
+            }
+
+            public Map<String, String> getServers() {
+                return servers;
+            }
+
+            public void setServers(Map<String, String> servers) {
+                this.servers = servers;
+            }
         }
 
         /**
@@ -544,6 +563,7 @@ public class DewConfig {
         private String lock = "redis";
         private String map = "redis";
         private String election = "redis";
+        private String trace = "skyWalking";
 
         private Config config = new Config();
 
@@ -653,6 +673,24 @@ public class DewConfig {
          */
         public void setConfig(Config config) {
             this.config = config;
+        }
+
+        /**
+         * Gets trace.
+         *
+         * @return {@link String}
+         */
+        public String getTrace() {
+            return trace;
+        }
+
+        /**
+         * Sets trace
+         *
+         * @param trace 跟踪
+         */
+        public void setTrace(String trace) {
+            this.trace = trace;
         }
 
         /**

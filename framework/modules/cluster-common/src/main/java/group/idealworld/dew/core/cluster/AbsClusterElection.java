@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public abstract class AbsClusterElection implements ClusterElection {
 
-    protected static final Logger logger = LoggerFactory.getLogger(AbsClusterElection.class);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbsClusterElection.class);
 
     /**
      * 未完成初始化标识.
@@ -76,9 +76,9 @@ public abstract class AbsClusterElection implements ClusterElection {
         while (this.leader.get() == FLAG_UNINITIALIZED) {
             try {
                 Thread.sleep(100);
-                logger.trace("Waiting leader election...");
+                LOGGER.trace("Waiting leader election...");
             } catch (InterruptedException ex) {
-                logger.error("Leader election error", ex);
+                LOGGER.error("Leader election error", ex);
             }
         }
         return this.leader.get() == FLAG_LEADER;

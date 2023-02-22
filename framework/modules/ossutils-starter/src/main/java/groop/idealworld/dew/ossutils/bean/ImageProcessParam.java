@@ -3,13 +3,7 @@ package groop.idealworld.dew.ossutils.bean;
 import java.util.Map;
 
 /**
- * @ProjectName: build
- * @Package: groop.idealworld.dew.ossutils.bean
- * @ClassName: CreateBucketRequest
- * @Author: yiye
- * @Description: 兔图片处理参数
- * @Date: 2022/4/5 12:55 上午
- * @Version: 1.0
+ * @author yiye
  */
 public class ImageProcessParam {
     /**
@@ -24,7 +18,7 @@ public class ImageProcessParam {
 
     /**
      * 设置缩略的类型。取值为lfit、mfit、fill、pad和fixed，默认值为lfit。
-     *
+     * <p>
      * lfit：指定一个w和h的矩形，将图片进行等比缩放，取在矩形内最大的图片。
      * mfit：指定一个w和h的矩形，将图片进行等比缩放，取在矩形延伸区域的最小图片。
      * fill：指定一个w和h的矩形，将图片进行等比缩放，取在延伸区域的最小图片，并进行居中剪切。即将mfit缩略类型的图片进行居中剪裁。
@@ -34,9 +28,8 @@ public class ImageProcessParam {
     private String resizeType;
 
     /**
-     *
      * 等比例缩放的倍数百分比。使用该参数时，无法使用其它参数。取值范围为[1，1000]。当取值为：
-     *
+     * <p>
      * ＜100：缩小。
      * =100：保持原图大小。
      * ＞100：放大
@@ -45,7 +38,7 @@ public class ImageProcessParam {
 
     /**
      * 按照顺时针旋转的角度，取值范围为[0，360]。
-     *
+     * <p>
      * 默认值为0，0表示不旋转。数值越大，图片按顺时针方向旋转的角度越大。
      */
     private Integer rotate;
@@ -55,7 +48,7 @@ public class ImageProcessParam {
      * 添加水印，image/watermark,image_aW1hZ2UtZGVtby9sb2dvLnBuZw==,g_br,t_90,x_10,y_10
      * otherParam.put("watermark","image_aW1hZ2UtZGVtby9sb2dvLnBuZw==,g_br,t_90,x_10,y_10")
      */
-    private Map<String,String> otherParam;
+    private Map<String, String> otherParam;
 
     public Integer getWidth() {
         return width;

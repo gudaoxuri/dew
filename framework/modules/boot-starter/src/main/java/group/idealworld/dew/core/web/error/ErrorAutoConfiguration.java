@@ -43,14 +43,14 @@ import javax.servlet.Servlet;
 @ConditionalOnProperty(prefix = "dew.basic.format", name = "use-unity-error", havingValue = "true", matchIfMissing = true)
 public class ErrorAutoConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(ErrorAutoConfiguration.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ErrorAutoConfiguration.class);
 
     /**
      * Init.
      */
     @PostConstruct
     public void init() {
-        logger.info("Load Auto Configuration : {}", this.getClass().getName());
+        LOGGER.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 
     /**

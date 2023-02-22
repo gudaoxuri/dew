@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MqttAdapter {
 
-    private static final Logger logger = LoggerFactory.getLogger(MqttAdapter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MqttAdapter.class);
 
     private MqttClient client;
     private final MqttConfig mqttConfig;
@@ -69,7 +69,7 @@ public class MqttAdapter {
             connOpts.setKeepAliveInterval(mqttConfig.getKeepAliveIntervalSec());
         }
         connOpts.setAutomaticReconnect(true);
-        logger.info("[" + clientId + "] Connecting to broker: " + mqttConfig.getBroker());
+        LOGGER.info("[" + clientId + "] Connecting to broker: " + mqttConfig.getBroker());
         client.connect(connOpts);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
@@ -82,6 +82,10 @@ public class MqttAdapter {
     }
 
 
+    /**
+     * Get mqtt client.
+     * @return mqtt client
+     */
     MqttClient getClient() {
         return client;
     }

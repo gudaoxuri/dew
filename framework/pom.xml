@@ -24,7 +24,7 @@
     <artifactId>build-framework</artifactId>
     <name>1 Dew Framework Build</name>
     <packaging>pom</packaging>
-    <version>3.0.0-Beta3</version>
+    <version>3.0.0-RC2</version>
 
     <properties>
         <maven.install.skip>true</maven.install.skip>
@@ -41,13 +41,13 @@
         <module>modules/cluster-rabbit</module>
         <module>modules/cluster-mqtt</module>
         <module>modules/cluster-rocket</module>
+        <module>modules/cluster-skywalking</module>
         <module>modules/hbase-starter</module>
         <module>modules/dbutils-starter</module>
         <module>modules/boot-starter</module>
         <module>modules/idempotent-starter</module>
         <module>modules/test-starter</module>
         <module>assists/sdkgen-maven-plugin</module>
-        <module>modules/skywalking-starter</module>
         <module>modules/ossutils-starter</module>
     </modules>
 

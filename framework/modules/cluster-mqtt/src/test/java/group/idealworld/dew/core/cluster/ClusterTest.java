@@ -44,7 +44,7 @@ import java.util.concurrent.CountDownLatch;
 @Testcontainers
 public class ClusterTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(ClusterMQTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClusterMQTest.class);
 
     @Autowired
     private MqttClusterMQ mq;
@@ -59,7 +59,7 @@ public class ClusterTest {
         CountDownLatch waiting = new CountDownLatch(20);
         new Thread(() -> mq.subscribe("test_pub_sub", message -> {
             assert message.getBody().contains("msg");
-            logger.info("subscribe instance 1: pub_sub>>" + message);
+            LOGGER.info("subscribe instance 1: pub_sub>>" + message);
             waiting.countDown();
         })).start();
         Thread.sleep(100);

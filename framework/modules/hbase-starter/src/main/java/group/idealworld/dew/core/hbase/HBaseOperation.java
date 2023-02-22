@@ -60,7 +60,7 @@ public interface HBaseOperation {
      * @return a list of objects mapping the scanned rows
      * @throws IOException the io exception
      */
-    <T> List<T> find(String tableName, String family, final RowMapper<T> mapper) throws IOException;
+    <T> List<T> find(String tableName, String family, RowMapper<T> mapper) throws IOException;
 
     /**
      * Scans the target table, using the given column family and qualifier.
@@ -74,7 +74,7 @@ public interface HBaseOperation {
      * @return a list of objects mapping the scanned rows
      * @throws IOException the io exception
      */
-    <T> List<T> find(String tableName, String family, String qualifier, final RowMapper<T> mapper) throws IOException;
+    <T> List<T> find(String tableName, String family, String qualifier, RowMapper<T> mapper) throws IOException;
 
     /**
      * Scans the target table using the given {@link Scan} object.
@@ -87,7 +87,7 @@ public interface HBaseOperation {
      * @return a list of objects mapping the scanned rows
      * @throws IOException the io exception
      */
-    <T> List<T> find(String tableName, final Scan scan, final RowMapper<T> mapper) throws IOException;
+    <T> List<T> find(String tableName, Scan scan, RowMapper<T> mapper) throws IOException;
 
     /**
      * Get single row by table name and row key.
@@ -99,7 +99,7 @@ public interface HBaseOperation {
      * @return object mapping the target row
      * @throws IOException the io exception
      */
-    <T> T get(String tableName, String rowKey, final RowMapper<T> mapper) throws IOException;
+    <T> T get(String tableName, String rowKey, RowMapper<T> mapper) throws IOException;
 
     /**
      * Get single row by table name and row key.
@@ -112,7 +112,7 @@ public interface HBaseOperation {
      * @return object mapping the target row
      * @throws IOException the io exception
      */
-    <T> T get(String tableName, String rowKey, String familyName, final RowMapper<T> mapper) throws IOException;
+    <T> T get(String tableName, String rowKey, String familyName, RowMapper<T> mapper) throws IOException;
 
     /**
      * Get single row by table name and row key.
@@ -126,7 +126,7 @@ public interface HBaseOperation {
      * @return object mapping the target row
      * @throws IOException the io exception
      */
-    <T> T get(String tableName, final String rowKey, final String familyName, final String qualifier, final RowMapper<T> mapper) throws IOException;
+    <T> T get(String tableName, String rowKey, String familyName, String qualifier, RowMapper<T> mapper) throws IOException;
 
     /**
      * Save or update data with mutation.

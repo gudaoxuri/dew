@@ -74,7 +74,7 @@ public class RedisClusterElection extends AbsClusterElection {
     }
 
     private void doElection() {
-        logger.trace("[Election] electing...");
+        LOGGER.trace("[Election] electing...");
         byte[] rawKey = redisTemplate.getStringSerializer().serialize(key);
         byte[] rawValue = redisTemplate.getStringSerializer().serialize(Cluster.instanceId);
         boolean finish = redisTemplate.execute((RedisCallback<Boolean>) connection -> {

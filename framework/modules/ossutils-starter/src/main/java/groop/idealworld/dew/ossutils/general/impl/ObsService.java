@@ -6,13 +6,13 @@ import com.obs.services.ObsClient;
 import com.obs.services.ObsConfiguration;
 import com.obs.services.exception.ObsException;
 import com.obs.services.model.*;
-import groop.idealworld.dew.ossutils.utils.OssClientUtil;
 import groop.idealworld.dew.ossutils.bean.ImageProcessParam;
 import groop.idealworld.dew.ossutils.bean.OssCommonParam;
+import groop.idealworld.dew.ossutils.config.OssConfigProperties;
 import groop.idealworld.dew.ossutils.general.OssClientInitProcess;
 import groop.idealworld.dew.ossutils.general.OssClientOptProcess;
 import groop.idealworld.dew.ossutils.handle.DewOssHandleClient;
-import groop.idealworld.dew.ossutils.config.OssConfigProperties;
+import groop.idealworld.dew.ossutils.utils.OssClientUtil;
 import groop.idealworld.dew.ossutils.utils.OssHandleTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +28,6 @@ import java.util.Optional;
 
 /**
  * @author yiye
- * @date 2022/4/1
- * @description
  **/
 @Service("obs")
 public class ObsService implements OssClientOptProcess, OssClientInitProcess {
@@ -48,10 +46,10 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
         ObsClient obsClient = isNull(param);
         try {
             // 创建桶成功
-           return obsClient.createBucket(param.getBucketName());
+            return obsClient.createBucket(param.getBucketName());
         } catch (ObsException e) {
-            logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                    , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
+            logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}", e.getResponseCode(), e.getErrorCode(),
+                    e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
             throw e;
         }
 
@@ -64,15 +62,15 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
      * @return 结果
      */
     @Override
-    public Boolean doesBucketExist(OssCommonParam param){
+    public Boolean doesBucketExist(OssCommonParam param) {
         try {
             ObsClient obsClient = isNull(param);
             return obsClient.headBucket(param.getBucketName());
         } catch (Exception e) {
-            if(e instanceof ObsException) {
+            if (e instanceof ObsException) {
                 ObsException obsException = (ObsException) e;
-                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}", obsException.getResponseCode(),
+                        obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
             }
             throw e;
         }
@@ -89,11 +87,11 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
         ObsClient obsClient = isNull(param);
         try {
             obsClient.deleteBucket(param.getBucketName());
-        } catch(Exception e) {
+        } catch (Exception e) {
             if (e instanceof ObsException) {
                 ObsException obsException = (ObsException) e;
-                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}", obsException.getResponseCode(),
+                        obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
             }
             throw e;
         }
@@ -125,8 +123,8 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
     /**
      * 创建oss客户端,基本使用的情况下无需手动创建客户端
      *
-     * @param properties               oss地址配置信息
-     * @param config 拓展额外配置信息
+     * @param properties oss地址配置信息
+     * @param config     拓展额外配置信息
      * @return 客户端
      */
     @Override
@@ -135,10 +133,10 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
         ObsClient obsClient = (ObsClient) OssClientUtil.getOssClient();
         if (ObjectUtils.isEmpty(obsClient) && ObjectUtils.isEmpty(config)) {
             this.buildOssClient(properties);
-        }else if (ObjectUtils.isEmpty(obsClient) && !ObjectUtils.isEmpty(config)) {
+        } else if (ObjectUtils.isEmpty(obsClient) && !ObjectUtils.isEmpty(config)) {
             if (StringUtils.hasText(properties.getSecurityToken())) {
                 config.setEndPoint(properties.getEndpoint());
-                obsClient = new ObsClient(properties.getAccessKeyId(), properties.getAccessKeyIdSecret(),config);
+                obsClient = new ObsClient(properties.getAccessKeyId(), properties.getAccessKeyIdSecret(), config);
             } else {
                 obsClient = new ObsClient(properties.getAccessKeyId(), properties.getAccessKeyIdSecret(), properties.getSecurityToken(), config);
             }
@@ -158,7 +156,7 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
         if (obsClient != null) {
             try {
                 obsClient.close();
-            }catch (IOException e){
+            } catch (IOException e) {
                 logger.error(e.getMessage());
             }
 
@@ -170,18 +168,19 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
     /**
      * 文件上传
      * 使用minio的时候上传除字符对象外的影像文件需传头部信息 content-type：例如：文件拓展名为avi,对应的content-type是video/mp4
-     * @param param       oss操作常用参数
+     *
+     * @param param oss操作常用参数
      */
     @Override
     public void uploadObject(OssCommonParam param) {
         ObsClient obsClient = isNull(param);
         try {
             obsClient.putObject(param.getBucketName(), param.getObjectName(), new File(param.getPath()));
-        }catch (Exception exception){
-            if(exception instanceof ObsException) {
+        } catch (Exception exception) {
+            if (exception instanceof ObsException) {
                 ObsException e = (ObsException) exception;
-                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                        , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}", e.getResponseCode(),
+                        e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
             }
             throw exception;
         } finally {
@@ -201,19 +200,18 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
     public void uploadObject(OssCommonParam param, InputStream inputStream) {
         ObsClient obsClient = isNull(param);
         try {
-            obsClient.putObject(param.getBucketName(), param.getObjectName(),inputStream);
-        } catch(Exception e) {
+            obsClient.putObject(param.getBucketName(), param.getObjectName(), inputStream);
+        } catch (Exception e) {
             if (e instanceof ObsException) {
                 ObsException obsException = (ObsException) e;
-                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}", obsException.getResponseCode(),
+                        obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
             }
             throw e;
-        }  finally {
+        } finally {
             closeClient();
         }
     }
-
 
 
     /**
@@ -228,11 +226,11 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
         try {
             ObsObject obsObject = obsClient.getObject(param.getBucketName(), param.getObjectName());
             return obsObject.getObjectContent();
-        } catch(Exception e) {
+        } catch (Exception e) {
             if (e instanceof ObsException) {
                 ObsException obsException = (ObsException) e;
-                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}", obsException.getResponseCode(),
+                        obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
             }
             throw e;
         } finally {
@@ -259,7 +257,7 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
             int read = 0;
             byte[] bytes = new byte[1024 * 1024];
             //先读后写
-            while ((read = inputStream.read(bytes)) > 0){
+            while ((read = inputStream.read(bytes)) > 0) {
                 byte[] wBytes = new byte[read];
                 System.arraycopy(bytes, 0, wBytes, 0, read);
                 os.write(wBytes);
@@ -267,13 +265,13 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
             os.flush();
             os.close();
             inputStream.close();
-        } catch(ObsException e) {
-            logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                    , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
+        } catch (ObsException e) {
+            logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}", e.getResponseCode(), e.getErrorCode(),
+                    e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
             throw e;
         } catch (IOException e) {
             logger.error("io fail", e);
-        }  finally {
+        } finally {
             closeClient();
         }
     }
@@ -285,15 +283,15 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
      * @return 结果
      */
     @Override
-    public Boolean doesObjectExist(OssCommonParam param){
+    public Boolean doesObjectExist(OssCommonParam param) {
         ObsClient obsClient = isNull(param);
         try {
-           return obsClient.doesObjectExist(param.getBucketName(), param.getObjectName());
-        } catch(Exception e) {
+            return obsClient.doesObjectExist(param.getBucketName(), param.getObjectName());
+        } catch (Exception e) {
             if (e instanceof ObsException) {
                 ObsException obsException = (ObsException) e;
-                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}", obsException.getResponseCode(),
+                        obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
             }
             throw e;
         } finally {
@@ -307,18 +305,18 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
      * @param param oss操作常用参数
      */
     @Override
-    public void deleteObject(OssCommonParam param){
+    public void deleteObject(OssCommonParam param) {
         ObsClient obsClient = isNull(param);
         try {
             obsClient.deleteObject(param.getBucketName(), param.getObjectName());
-        } catch(Exception e) {
+        } catch (Exception e) {
             if (e instanceof ObsException) {
                 ObsException obsException = (ObsException) e;
-                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}", obsException.getResponseCode(),
+                        obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
             }
             throw e;
-        }  finally {
+        } finally {
             closeClient();
         }
     }
@@ -333,19 +331,19 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
     @Override
     public String temporaryUploadUrl(OssCommonParam param) {
         ObsClient obsClient = isExpirationNull(param);
-        try{
+        try {
 
-            TemporarySignatureRequest request = new TemporarySignatureRequest(HttpMethodEnum.PUT,param.getExpiration()/1000);
+            TemporarySignatureRequest request = new TemporarySignatureRequest(HttpMethodEnum.PUT, param.getExpiration() / 1000);
             request.setBucketName(param.getBucketName());
             request.setObjectKey(param.getObjectName());
             request.setHeaders(param.getCustomHeaders());
             TemporarySignatureResponse response = obsClient.createTemporarySignature(request);
             return response.getSignedUrl();
-        } catch(Exception e) {
+        } catch (Exception e) {
             if (e instanceof ObsException) {
                 ObsException obsException = (ObsException) e;
-                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}", obsException.getResponseCode(),
+                        obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
             }
             throw e;
         } finally {
@@ -360,21 +358,21 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
      * @return url
      */
     @Override
-    public String temporaryDeleteUrl(OssCommonParam param)  {
+    public String temporaryDeleteUrl(OssCommonParam param) {
         ObsClient obsClient = isExpirationNull(param);
-        try{
+        try {
 
-            TemporarySignatureRequest request = new TemporarySignatureRequest(HttpMethodEnum.DELETE,param.getExpiration()/1000);
+            TemporarySignatureRequest request = new TemporarySignatureRequest(HttpMethodEnum.DELETE, param.getExpiration() / 1000);
             request.setBucketName(param.getBucketName());
             request.setObjectKey(param.getObjectName());
             request.setHeaders(param.getCustomHeaders());
             TemporarySignatureResponse response = obsClient.createTemporarySignature(request);
             return response.getSignedUrl();
-        } catch(Exception e) {
+        } catch (Exception e) {
             if (e instanceof ObsException) {
                 ObsException obsException = (ObsException) e;
-                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}", obsException.getResponseCode(),
+                        obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
             }
             throw e;
         } finally {
@@ -391,22 +389,22 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
     @Override
     public String temporaryUrl(OssCommonParam param) {
         ObsClient obsClient = isExpirationNull(param);
-        try{
+        try {
 
-            TemporarySignatureRequest request = new TemporarySignatureRequest(HttpMethodEnum.GET,param.getExpiration()/1000);
+            TemporarySignatureRequest request = new TemporarySignatureRequest(HttpMethodEnum.GET, param.getExpiration() / 1000);
             request.setBucketName(param.getBucketName());
             request.setObjectKey(param.getObjectName());
             request.setHeaders(param.getCustomHeaders());
             TemporarySignatureResponse response = obsClient.createTemporarySignature(request);
             return response.getSignedUrl();
-        } catch(Exception e) {
+        } catch (Exception e) {
             if (e instanceof ObsException) {
                 ObsException obsException = (ObsException) e;
-                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                        , obsException.getResponseCode(), obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
+                logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}", obsException.getResponseCode(),
+                        obsException.getErrorCode(), obsException.getErrorMessage(), obsException.getErrorRequestId(), obsException.getErrorHostId());
             }
             throw e;
-        }  finally {
+        } finally {
             closeClient();
         }
 
@@ -432,12 +430,12 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
             request.setQueryParams(queryParams);
             TemporarySignatureResponse response = obsClient.createTemporarySignature(request);
             return response.getSignedUrl();
-        }catch (ObsException e){
-            logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}"
-                    , e.getResponseCode(), e.getErrorCode(), e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
+        } catch (ObsException e) {
+            logger.error("creat bucket fail,response for some reason：HTTP Code:{},Error Code:{},Error Message:{},Request ID:{},Host ID:{}", e.getResponseCode(), e.getErrorCode(),
+                    e.getErrorMessage(), e.getErrorRequestId(), e.getErrorHostId());
             throw e;
-        }catch (Exception e){
-            throw new RuntimeException("服务内部异常:"+e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException("服务内部异常:" + e.getMessage());
         } finally {
             closeClient();
         }
@@ -462,7 +460,7 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
         if (param == null) {
             throw new IllegalArgumentException("param必要参数不能为空");
         }
-        if (!StringUtils.hasLength(param.getBucketName()) || !StringUtils.hasLength(param.getObjectName())){
+        if (!StringUtils.hasLength(param.getBucketName()) || !StringUtils.hasLength(param.getObjectName())) {
             throw new IllegalArgumentException("操作对象存储服务器必要参数不能为空");
         }
         return creatClient();
@@ -476,7 +474,7 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
         return creatClient();
     }
 
-    private ObsClient creatClient(){
+    private ObsClient creatClient() {
         Object object = OssClientUtil.getOssClient();
         if (object == null) {
             return (ObsClient) this.buildOssClient(ossConfigProperties).getOssClient();
@@ -487,8 +485,8 @@ public class ObsService implements OssClientOptProcess, OssClientInitProcess {
     /**
      * 初始化原始客户端
      *
-     * @param config
-     * @return
+     * @param config 客户端配置
+     * @return 是否初始化成功
      */
     @Override
     public boolean initClient(OssConfigProperties config) {

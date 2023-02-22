@@ -30,6 +30,14 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
  */
 public class MultiConnectionConfiguration extends LettuceConnectionConfiguration {
 
+    /**
+     * 初始化.
+     *
+     * @param properties                      redis配置
+     * @param standaloneConfigurationProvider standalone配置
+     * @param sentinelConfigurationProvider   sentinel配置
+     * @param clusterConfigurationProvider    cluster配置
+     */
     public MultiConnectionConfiguration(RedisProperties properties, ObjectProvider<RedisStandaloneConfiguration> standaloneConfigurationProvider,
                                         ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider,
                                         ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider) {

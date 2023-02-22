@@ -17,8 +17,8 @@
 package group.idealworld.dew.core.cluster.ha;
 
 import group.idealworld.dew.core.cluster.dto.MessageWrap;
-import group.idealworld.dew.core.cluster.ha.entity.PrepareCommitMsg;
 import group.idealworld.dew.core.cluster.ha.dto.HAConfig;
+import group.idealworld.dew.core.cluster.ha.entity.PrepareCommitMsg;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -47,7 +47,7 @@ public interface ClusterHA {
      * @param msg  the msg
      * @return the id
      */
-    String mq_afterPollMsg(String addr, MessageWrap msg);
+    String mqAfterPollMsg(String addr, MessageWrap msg);
 
     /**
      * 消息被确认后的处理方法.
@@ -56,7 +56,7 @@ public interface ClusterHA {
      *
      * @param id the id
      */
-    void mq_afterMsgAcked(String id);
+    void mqAfterMsgAcked(String id);
 
     /**
      * 获取所有已接收但未确认的消息.
@@ -64,6 +64,6 @@ public interface ClusterHA {
      * @param addr the addr
      * @return the list
      */
-    List<PrepareCommitMsg> mq_findAllUnCommittedMsg(String addr);
+    List<PrepareCommitMsg> mqFindAllUnCommittedMsg(String addr);
 
 }

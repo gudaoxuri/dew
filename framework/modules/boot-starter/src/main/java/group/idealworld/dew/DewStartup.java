@@ -38,7 +38,7 @@ import java.io.IOException;
 @Configuration
 public class DewStartup {
 
-    private static final Logger logger = LoggerFactory.getLogger(DewStartup.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DewStartup.class);
 
     @Autowired
     private Dew dew;
@@ -53,7 +53,7 @@ public class DewStartup {
      */
     @PostConstruct
     public void init() {
-        logger.info("Load Auto Configuration : {}", this.getClass().getName());
+        LOGGER.info("Load Auto Configuration : {}", this.getClass().getName());
     }
 
     /**

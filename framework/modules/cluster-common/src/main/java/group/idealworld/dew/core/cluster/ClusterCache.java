@@ -84,6 +84,7 @@ public interface ClusterCache {
      *
      * @param key   key
      * @param value value
+     * @return 旧值
      */
     String getSet(String key, String value);
 

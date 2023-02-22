@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BasicHandlerInterceptor implements AsyncHandlerInterceptor {
 
-    private static final Logger logger = LoggerFactory.getLogger(BasicHandlerInterceptor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BasicHandlerInterceptor.class);
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -50,7 +50,7 @@ public class BasicHandlerInterceptor implements AsyncHandlerInterceptor {
             return true;
         }
 
-        logger.trace("[{}] {}{} from {}",
+        LOGGER.trace("[{}] {}{} from {}",
                 request.getMethod(),
                 request.getRequestURI(),
                 request.getQueryString() == null ? "" : "?" + request.getQueryString(), Dew.Util.getRealIP(request));

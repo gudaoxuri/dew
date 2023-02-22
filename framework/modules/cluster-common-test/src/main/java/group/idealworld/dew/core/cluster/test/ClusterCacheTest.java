@@ -32,6 +32,7 @@ public class ClusterCacheTest {
      * Test.
      *
      * @param cache the cache
+     * @param authCache the auth cache
      * @throws InterruptedException the interrupted exception
      */
     public void test(ClusterCache cache, ClusterCache authCache) throws InterruptedException {

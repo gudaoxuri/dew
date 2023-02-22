@@ -61,7 +61,7 @@ import java.util.regex.Pattern;
 @RequestMapping(value = "${server.error.path:${error.path:/error}}")
 public class ErrorController extends AbstractErrorController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ErrorController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ErrorController.class);
 
     private static final int FALL_BACK_STATUS = 500;
 
@@ -192,9 +192,9 @@ public class ErrorController extends AbstractErrorController {
         } else {
             httpCode = 200;
         }
-        logger.error("Request [{}-{}] {} , error {} : {}", request.getMethod(), path, Dew.context().getSourceIP(), busCode, message);
+        LOGGER.error("Request [{}-{}] {} , error {} : {}", request.getMethod(), path, Dew.context().getSourceIP(), busCode, message);
 
-        var resp =  StandardResp.custom(busCode+"",path,"[" + exMsg + "]" + message);
+        var resp = StandardResp.custom(busCode + "", path, "[" + exMsg + "]" + message);
         String body = $.json.toJsonString(resp);
         return new Object[]{httpCode, body};
     }

@@ -26,6 +26,9 @@ import com.github.jknack.handlebars.Helper;
  */
 public class HandlebarsHelper {
 
+    private HandlebarsHelper() {
+    }
+
     public static void registerFormatClassName(Handlebars handlebars) {
         handlebars.registerHelper("formatClassName",
                 (Helper<String>) (s, options) -> NameHelper.formatClassName(s));

@@ -5,8 +5,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
  * @author yiye
- * @date 2022/4/1
- * @description oss存储空间参数
  **/
 @ConfigurationProperties(prefix = "dew.oss")
 public class OssConfigProperties {
@@ -18,9 +16,6 @@ public class OssConfigProperties {
     private String ossType = "oss";
     /**
      * access key ID
-     */
-    /**
-     * oss类型，支持oss,obs,minio
      */
     private String accessKeyId;
 

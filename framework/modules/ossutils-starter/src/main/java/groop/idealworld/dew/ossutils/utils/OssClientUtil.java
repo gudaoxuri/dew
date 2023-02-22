@@ -5,12 +5,13 @@ import groop.idealworld.dew.ossutils.general.DewOssClient;
 
 /**
  * @author yiye
- * @date 2022/4/2
- * @description
  **/
 public class OssClientUtil {
 
     private static final ThreadLocal<Object> OSS_CLIENT_THREAD_LOCAL = new ThreadLocal<>();
+
+    private OssClientUtil() {
+    }
 
     public static Object getOssClient() {
         return OSS_CLIENT_THREAD_LOCAL.get();
@@ -21,7 +22,7 @@ public class OssClientUtil {
     }
 
     public static void removeOssClient() {
-        if(OSS_CLIENT_THREAD_LOCAL.get() != null){
+        if (OSS_CLIENT_THREAD_LOCAL.get() != null) {
             OSS_CLIENT_THREAD_LOCAL.remove();
         }
     }

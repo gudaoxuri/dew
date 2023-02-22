@@ -11,34 +11,27 @@ import groop.idealworld.dew.ossutils.general.impl.MinioService;
 import groop.idealworld.dew.ossutils.general.impl.ObsService;
 import groop.idealworld.dew.ossutils.general.impl.OssService;
 import groop.idealworld.dew.ossutils.handle.DewOssHandleClient;
-import io.minio.MinioClient;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
 
 /**
- * @ProjectName: build
- * @Package: groop.idealworld.dew.ossutils.handle
- * @ClassName: DewOssClient
- * @Author: yiye
- * @Description: oss集成操作类
- * @Date: 2022/4/22 17:15
- * @Version: 1.0
+ * @author yiye
  */
 public class DewOssClient implements OssClientOptProcess {
 
     private OssClientOptProcess ossClientOptProcess;
 
-    public DewOssClient(OssConfigProperties config){
-        if(OssTypeEnum.MINIO.getCode().equals(config.getOssType())){
+    public DewOssClient(OssConfigProperties config) {
+        if (OssTypeEnum.MINIO.getCode().equals(config.getOssType())) {
             MinioService minioService = new MinioService();
             minioService.initClient(config);
             ossClientOptProcess = minioService;
-        }else if(OssTypeEnum.OSS.getCode().equals(config.getOssType())){
+        } else if (OssTypeEnum.OSS.getCode().equals(config.getOssType())) {
             OssService ossService = new OssService();
             ossService.initClient(config);
             ossClientOptProcess = ossService;
-        }else if(OssTypeEnum.OBS.getCode().equals(config.getOssType())){
+        } else if (OssTypeEnum.OBS.getCode().equals(config.getOssType())) {
             ObsService obsService = new ObsService();
             obsService.initClient(config);
             ossClientOptProcess = obsService;
@@ -116,7 +109,7 @@ public class DewOssClient implements OssClientOptProcess {
      */
     @Override
     public void uploadObject(OssCommonParam param, InputStream inputStream) {
-        ossClientOptProcess.uploadObject(param,inputStream);
+        ossClientOptProcess.uploadObject(param, inputStream);
     }
 
     /**
@@ -203,7 +196,7 @@ public class DewOssClient implements OssClientOptProcess {
      */
     @Override
     public String imageProcess(OssCommonParam param, ImageProcessParam process) {
-        return ossClientOptProcess.imageProcess(param,process);
+        return ossClientOptProcess.imageProcess(param, process);
     }
 
     /**
@@ -215,7 +208,7 @@ public class DewOssClient implements OssClientOptProcess {
      */
     @Override
     public <T> DewOssHandleClient<T> buildOssClient(OssConfigProperties properties, ClientBuilderConfiguration config) {
-        return ossClientOptProcess.buildOssClient(properties,config);
+        return ossClientOptProcess.buildOssClient(properties, config);
     }
 
     /**
@@ -236,7 +229,7 @@ public class DewOssClient implements OssClientOptProcess {
      */
     @Override
     public void temporaryUploadFile(OssCommonParam param, FileInputStream inputStream) {
-        ossClientOptProcess.temporaryUploadFile(param,inputStream);
+        ossClientOptProcess.temporaryUploadFile(param, inputStream);
     }
 
     /**
@@ -248,10 +241,8 @@ public class DewOssClient implements OssClientOptProcess {
      */
     @Override
     public <T> DewOssHandleClient<T> buildOssClient(OssConfigProperties properties, ObsConfiguration config) {
-        return ossClientOptProcess.buildOssClient(properties,config);
+        return ossClientOptProcess.buildOssClient(properties, config);
     }
-
-
 
 
 }

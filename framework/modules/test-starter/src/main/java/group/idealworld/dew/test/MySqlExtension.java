@@ -31,29 +31,37 @@ import java.io.File;
 
 public class MySqlExtension implements BeforeAllCallback {
 
-    private static final Logger logger = LoggerFactory.getLogger(MySqlExtension.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MySqlExtension.class);
 
-    private static final JdbcDatabaseContainer mysqlContainer = new MySQLContainer(DockerImageName.parse("8").asCompatibleSubstituteFor("mysql"));
+    private static final JdbcDatabaseContainer MYSQL_CONTAINER = new MySQLContainer(DockerImageName.parse("mysql:8"));
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
         var scriptPath = ClassLoader.getSystemResource("").getPath() + "/sql/init.sql";
         if (new File(scriptPath).exists()) {
-            mysqlContainer.withInitScript("sql/init.sql");
+            MYSQL_CONTAINER.withInitScript("sql/init.sql");
         }
-        mysqlContainer.withCommand("--max_allowed_packet=10M");
-        mysqlContainer.start();
-        logger.info("Test mysql port: " + mysqlContainer.getFirstMappedPort()
-                + ", username: " + mysqlContainer.getUsername() + ", password: " + mysqlContainer.getPassword());
+        MYSQL_CONTAINER.withCommand("--max_allowed_packet=10M");
+        MYSQL_CONTAINER.start();
+        LOGGER.info("Test mysql port: " + MYSQL_CONTAINER.getFirstMappedPort()
+                + ", username: " + MYSQL_CONTAINER.getUsername() + ", password: " + MYSQL_CONTAINER.getPassword());
     }
 
+    /**
+     * Initializer.
+     */
     public static class Initializer
             implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+        /**
+         * Initialize.
+         *
+         * @param configurableApplicationContext the configurable application context
+         */
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues.of(
-                    "spring.datasource.url=" + mysqlContainer.getJdbcUrl(),
-                    "spring.datasource.username=" + mysqlContainer.getUsername(),
-                    "spring.datasource.password=" + mysqlContainer.getPassword()
+                    "spring.datasource.url=" + MYSQL_CONTAINER.getJdbcUrl(),
+                    "spring.datasource.username=" + MYSQL_CONTAINER.getUsername(),
+                    "spring.datasource.password=" + MYSQL_CONTAINER.getPassword()
             ).applyTo(configurableApplicationContext.getEnvironment());
         }
     }

@@ -5,7 +5,7 @@ dew:
     desc: 测试
     website: www.trc.com
     doc:
-      base-package: com.trc.test
+      base-package: com.trc.test.web;com.trc.test.web2
       contact:
         name: gudaoxuri
         url: http://www.ecfront.com

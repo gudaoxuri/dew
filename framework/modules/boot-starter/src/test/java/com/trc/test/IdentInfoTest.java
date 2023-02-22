@@ -52,7 +52,7 @@ public class IdentInfoTest {
     public void testIdentInfo() throws Exception {
         var response = testRestTemplate.getForEntity("/ident-info", Resp.class);
         Assertions.assertEquals(200, response.getStatusCode().value());
-        Assertions.assertEquals("400", response.getBody().getCode());
+        Assertions.assertTrue(response.getBody().getCode().contains("400"));
         Assertions.assertEquals("[]The request is missing [" + Dew.dewConfig.getSecurity().getIdentInfoFlag() + "] in header", response.getBody().getMessage());
 
         HttpHeaders headers = new HttpHeaders();

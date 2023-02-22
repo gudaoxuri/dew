@@ -20,8 +20,6 @@ import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.common.StandardCode;
 import com.ecfront.dew.common.exception.RTException;
-import group.idealworld.dew.Dew;
-import group.idealworld.dew.core.web.error.ErrorController;
 import group.idealworld.dew.core.basic.utils.TraceIdUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +31,11 @@ import org.slf4j.LoggerFactory;
  */
 public class StandardResp {
 
-    private static final Logger logger = LoggerFactory.getLogger(StandardResp.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StandardResp.class);
+
+    private StandardResp() {
+    }
+
     /**
      * Success.
      *
@@ -66,11 +68,7 @@ public class StandardResp {
      */
     public static RTException e(Resp<?> resp) {
         var ex = new RTException(resp.getMessage());
-        $.bean.setValue(ex, "detailMessage", $.json.createObjectNode()
-                .put("code", resp.getCode())
-                .put("message", resp.getMessage())
-                .put("customHttpCode", 200)
-                .toString());
+        $.bean.setValue(ex, "detailMessage", $.json.createObjectNode().put("code", resp.getCode()).put("message", resp.getMessage()).put("customHttpCode", 200).toString());
         return ex;
     }
 
@@ -97,7 +95,7 @@ public class StandardResp {
      * @return the resp
      */
     public static <E> Resp<E> notFoundResource(String businessFlag, String resource) {
-        return packageResp(StandardCode.NOT_FOUND.toString(),businessFlag, "找不到[" + resource + "],请检查权限");
+        return packageResp(StandardCode.NOT_FOUND.toString(), businessFlag, "找不到[" + resource + "],请检查权限");
     }
 
     /**
@@ -110,7 +108,7 @@ public class StandardResp {
      * @return the resp
      */
     public static <E> Resp<E> notFound(String businessFlag, String content, Object... args) {
-        return packageResp(StandardCode.NOT_FOUND.toString(),businessFlag, String.format(content, args));
+        return packageResp(StandardCode.NOT_FOUND.toString(), businessFlag, String.format(content, args));
     }
 
     /**
@@ -123,7 +121,7 @@ public class StandardResp {
      * @return the resp
      */
     public static <E> Resp<E> badRequest(String businessFlag, String content, Object... args) {
-        return packageResp(StandardCode.BAD_REQUEST.toString(),businessFlag, String.format(content, args));
+        return packageResp(StandardCode.BAD_REQUEST.toString(), businessFlag, String.format(content, args));
     }
 
     /**
@@ -135,7 +133,7 @@ public class StandardResp {
      * @return the resp
      */
     public static <E> Resp<E> unAuthorizedOperate(String businessFlag, String operate) {
-        return packageResp(StandardCode.UNAUTHORIZED.toString(),businessFlag, "操作[" + operate + "]没有权限");
+        return packageResp(StandardCode.UNAUTHORIZED.toString(), businessFlag, "操作[" + operate + "]没有权限");
     }
 
     /**
@@ -147,7 +145,7 @@ public class StandardResp {
      * @return the resp
      */
     public static <E> Resp<E> unAuthorizedResource(String businessFlag, String resource) {
-        return packageResp(StandardCode.UNAUTHORIZED.toString(),businessFlag, "资源[" + resource + "]没有权限");
+        return packageResp(StandardCode.UNAUTHORIZED.toString(), businessFlag, "资源[" + resource + "]没有权限");
     }
 
     /**
@@ -185,7 +183,7 @@ public class StandardResp {
      * @return the resp
      */
     public static <E> Resp<E> lockedResource(String businessFlag, String resource) {
-        return packageResp(StandardCode.LOCKED.toString(),businessFlag, "资源[" + resource + "]被锁定");
+        return packageResp(StandardCode.LOCKED.toString(), businessFlag, "资源[" + resource + "]被锁定");
     }
 
     /**
@@ -210,7 +208,7 @@ public class StandardResp {
      * @return the resp
      */
     public static <E> Resp<E> unsupportedMediaType(String businessFlag, String request) {
-        return packageResp(StandardCode.UNSUPPORTED_MEDIA_TYPE.toString(),businessFlag, "请求[" + request + "]类型不支持");
+        return packageResp(StandardCode.UNSUPPORTED_MEDIA_TYPE.toString(), businessFlag, "请求[" + request + "]类型不支持");
     }
 
     /**
@@ -301,8 +299,8 @@ public class StandardResp {
     }
 
     private static <E> Resp<E> packageResp(String statusCode, String businessFlag, String content) {
-        String code =TraceIdUtil.createResponseCode(statusCode,businessFlag);
-        logger.trace("RESP:[{}] {}", code, content);
+        String code = TraceIdUtil.createResponseCode(statusCode, businessFlag);
+        LOGGER.trace("RESP:[{}] {}", code, content);
         return Resp.custom(code, content);
     }
 
