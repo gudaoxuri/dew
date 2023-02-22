@@ -3,6 +3,8 @@ package groop.idealworld.dew.ossutils.general.impl;
 import com.aliyun.oss.*;
 import com.aliyun.oss.common.utils.HttpHeaders;
 import com.aliyun.oss.model.*;
+import com.ecfront.dew.common.$;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.obs.services.ObsConfiguration;
 import groop.idealworld.dew.ossutils.utils.OssClientUtil;
 import groop.idealworld.dew.ossutils.bean.ImageProcessParam;
@@ -33,6 +35,11 @@ import java.util.Optional;
 public class OssService implements OssClientOptProcess, OssClientInitProcess {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * oss 客户端最大连接数限制
+     */
+    private final Integer MAX_THREAD_NUM = 500;
+
     private OssConfigProperties ossConfigProperties;
 
     /**
@@ -60,7 +67,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             throw ce;
         } finally {
             if (ossClient != null) {
-                ossClient.shutdown();
+                closeClient();
             }
         }
     }
@@ -90,7 +97,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
                     + "such as not being able to access the network.Error Message:{}", ce.getMessage());
         } finally {
             if (ossClient != null) {
-                ossClient.shutdown();
+                closeClient();
             }
         }
         return false;
@@ -122,7 +129,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             throw ce;
         } finally {
             if (ossClient != null) {
-                ossClient.shutdown();
+                closeClient();
             }
         }
     }
@@ -185,8 +192,15 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
     public void closeClient() {
         OSS ossClient = (OSS) OssClientUtil.getOssClient();
         if (ossClient != null) {
-            ossClient.shutdown();
-            OssClientUtil.removeOssClient();
+            String stats = ossClient.getConnectionPoolStats();
+            stats = stats.replaceAll("\\[", "{").replaceAll("]", "}").replaceAll(";", ",");
+            JsonNode jsonNode = $.json.toJson(stats);
+            logger.info("ossClient连接池状态：{}", stats);
+            if (jsonNode.get("available").asInt() > MAX_THREAD_NUM) {
+                logger.info("ossClient连接池中有{}个空闲连接，不关闭", jsonNode.get("available").asInt());
+                ossClient.shutdown();
+                OssClientUtil.removeOssClient();
+            }
         }
     }
 
@@ -217,7 +231,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             throw ce;
         } finally {
             if (ossClient != null) {
-                ossClient.shutdown();
+                closeClient();
             }
         }
     }
@@ -249,10 +263,6 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
                     + "a serious internal problem while trying to communicate with OSS, "
                     + "such as not being able to access the network.Error Message:{}", ce.getMessage());
             throw ce;
-        } finally {
-            if (ossClient != null) {
-                ossClient.shutdown();
-            }
         }
     }
 
@@ -289,7 +299,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             throw e;
         } finally {
             if (ossClient != null) {
-                ossClient.shutdown();
+                closeClient();
             }
         }
     }
@@ -333,7 +343,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             throw new RuntimeException(e.getMessage());
         } finally {
             if (ossClient != null) {
-                ossClient.shutdown();
+                closeClient();
             }
         }
     }
@@ -368,7 +378,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
                     + "such as not being able to access the network.Error Message: {}" + ce.getMessage());
         } finally {
             if (ossClient != null) {
-                ossClient.shutdown();
+                closeClient();
             }
         }
 
@@ -402,7 +412,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             throw ce;
         } finally {
             if (ossClient != null) {
-                ossClient.shutdown();
+                closeClient();
             }
         }
     }
@@ -450,7 +460,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             logger.error("file not find");
         } finally {
             if (ossClient != null) {
-                ossClient.shutdown();
+                closeClient();
             }
         }
 
@@ -495,7 +505,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             throw ce;
         }finally {
             if (ossClient != null) {
-                ossClient.shutdown();
+                closeClient();
             }
         }
     }
@@ -533,7 +543,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             throw ce;
         }finally {
             if (ossClient != null) {
-                ossClient.shutdown();
+                closeClient();
             }
         }
     }
@@ -569,7 +579,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             throw ce;
         }finally {
             if (ossClient != null) {
-                ossClient.shutdown();
+                closeClient();
             }
         }
     }
@@ -600,7 +610,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             throw ce;
         } finally {
             if (ossClient != null) {
-                ossClient.shutdown();
+                closeClient();
             }
         }
 
@@ -640,7 +650,7 @@ public class OssService implements OssClientOptProcess, OssClientInitProcess {
             throw e;
         } finally {
             if (ossClient != null) {
-                ossClient.shutdown();
+                closeClient();
             }
         }
     }
