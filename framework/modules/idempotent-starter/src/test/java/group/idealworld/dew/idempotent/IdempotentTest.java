@@ -69,11 +69,11 @@ public class IdempotentTest {
         Thread.sleep(500);
         // 上一次请求还在进行中
         Resp<String> result = Resp.generic($.http.get(urlPre + "manual-confirm?str=dew-test2", header), String.class);
-        Assertions.assertEquals(StandardCode.CONFLICT.toString(), result.getCode());
+        Assertions.assertEquals(StandardCode.CONFLICT + "-Idempotent-test/idempotent/manual-confirm", result.getCode());
         Thread.sleep(1000);
         // 上一次请求已确认，不能重复请求
         result = Resp.generic($.http.get(urlPre + "manual-confirm?str=dew-test3", header), String.class);
-        Assertions.assertEquals(StandardCode.LOCKED.toString(), result.getCode());
+        Assertions.assertEquals(StandardCode.LOCKED + "-Idempotent-test/idempotent/manual-confirm", result.getCode());
         Thread.sleep(4000);
         // 幂等过期，可以再次提交
         result = Resp.generic($.http.get(urlPre + "manual-confirm?str=dew-test4", header), String.class);
@@ -100,7 +100,7 @@ public class IdempotentTest {
         Assertions.assertTrue(result.ok());
         // 上一次请求已确认，不能重复请求
         result = Resp.generic($.http.get(urlPre + "auto-confirm?str=dew-test2", header), String.class);
-        Assertions.assertEquals(StandardCode.LOCKED.toString(), result.getCode());
+        Assertions.assertEquals(StandardCode.LOCKED + "-Idempotent-test/idempotent/auto-confirm", result.getCode());
         Thread.sleep(5000);
         // 幂等过期，可以再次提交
         result = Resp.generic($.http.get(urlPre + "auto-confirm?str=dew-test3", header), String.class);
