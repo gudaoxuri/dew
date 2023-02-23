@@ -1,7 +1,5 @@
 package group.idealworld.dew.core.cluster;
 
-import com.ecfront.dew.common.$;
-
 /**
  * Created on 2022/9/25.
  *
@@ -9,7 +7,7 @@ import com.ecfront.dew.common.$;
  */
 public interface ClusterTrace {
 
-    default String getTraceId(){
+    default String getTraceId() {
         return "";
     }
 
