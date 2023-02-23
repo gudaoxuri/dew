@@ -76,6 +76,12 @@
         <druid.version>1.2.16</druid.version>
          <!-- ossutils-starter依赖 -->
         <jaxb-api.version>2.4.0-b180830.0359</jaxb-api.version>
+        <oss.version>3.13.2</oss.version>
+        <obs.version>3.21.11</obs.version>
+        <minio.version>8.3.0</minio.version>
+        <activation.version>1.1.1</activation.version>
+        <jaxb-runtime.version>2.3.3</jaxb-runtime.version>
+        <okhttp3.version>4.9.0</okhttp3.version>
         <!-- DevOps -->
         <k8s-client-java.version>14.0.0</k8s-client-java.version>
         <docker-java.version>3.2.12</docker-java.version>
@@ -84,12 +90,6 @@
         <maven-resolver-api.version>1.3.3</maven-resolver-api.version>
         <jansi.version>1.18</jansi.version>
         <skywalking.version>8.1.0</skywalking.version>
-        <oss.version>3.13.2</oss.version>
-        <obs.version>3.21.11</obs.version>
-        <minio.version>8.3.0</minio.version>
-        <activation.version>1.1.1</activation.version>
-        <jaxb-runtime.version>2.3.3</jaxb-runtime.version>
-        <okhttp3.version>4.9.0</okhttp3.version>
     </properties>
 
     <developers>
