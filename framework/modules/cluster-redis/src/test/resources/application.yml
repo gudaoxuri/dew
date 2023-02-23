@@ -6,3 +6,7 @@ dew:
     map: redis
     election: redis
 
+logging:
+  level:
+    ROOT: INFO
+    group.idealworld.dew: TRACE

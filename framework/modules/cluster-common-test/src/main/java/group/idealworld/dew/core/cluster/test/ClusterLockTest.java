@@ -95,12 +95,13 @@ public class ClusterLockTest {
         }).start();
 
         waiting.await();
-        LOGGER.info("test auto release instance");
+        LOGGER.info("start test auto release instance");
         assert !lock.isLocked();
         assert lock.tryLock(0, 300);
         assert lock.isLocked();
         Thread.sleep(2000);
         assert !lock.isLocked();
+        LOGGER.info("finish test auto release instance");
     }
 
 }
