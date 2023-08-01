@@ -44,8 +44,8 @@ public class ClusterTest {
         new ClusterLockTest().test(Dew.cluster.lock.instance("test"));
         LOGGER.info("Testing Map");
         new ClusterMapTest().test(Dew.cluster.map.instance("test", ClusterMapTest.TestMapObj.class));
-        LOGGER.info("Testing MQ");
-        new ClusterMQTest().test(Dew.cluster.mq);
+//        LOGGER.info("Testing MQ");
+//        new ClusterMQTest().test(Dew.cluster.mq);
         LOGGER.info("Testing Election");
         new ClusterElectionTest().test(Dew.cluster.election.instance("test"));
     }

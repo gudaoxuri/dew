@@ -23,7 +23,7 @@
     <parent>
         <groupId>group.idealworld.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>3.0.0-RC2</version>
+        <version>3.0.0-RC3</version>
         <relativePath>../parent-starter</relativePath>
     </parent>
 
@@ -53,6 +53,11 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mysql</artifactId>
+            <version>${testcontainers.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
             <version>${testcontainers.version}</version>
         </dependency>
         <dependency>

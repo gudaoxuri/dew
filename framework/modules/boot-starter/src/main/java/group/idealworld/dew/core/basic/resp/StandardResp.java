@@ -20,6 +20,7 @@ import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
 import com.ecfront.dew.common.StandardCode;
 import com.ecfront.dew.common.exception.RTException;
+import group.idealworld.dew.Dew;
 import group.idealworld.dew.core.basic.utils.TraceIdUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -374,7 +375,7 @@ public class StandardResp {
     }
 
     private static <E> Resp<E> packageResp(String statusCode, String businessFlag, String content) {
-        String code = TraceIdUtil.createResponseCode(statusCode, businessFlag);
+        String code = Dew.cluster.trace != null ? TraceIdUtil.createResponseCode(statusCode, businessFlag) : (statusCode + "-" + Dew.Info.name + businessFlag);
         LOGGER.trace("RESP:[{}] {}", code, content);
         return Resp.custom(code, content);
     }

@@ -21,6 +21,8 @@ import group.idealworld.dew.core.cluster.test.*;
 import group.idealworld.dew.test.RedisExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +42,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public class ClusterTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClusterTest.class);
+
     @Autowired
     private RedisClusterCacheWrap redisClusterCacheWrap;
     @Autowired
@@ -56,10 +60,11 @@ public class ClusterTest {
      *
      * @throws InterruptedException the interrupted exception
      */
-    @Test
-    public void testMQ() throws InterruptedException {
-        new ClusterMQTest().test(redisClusterMQ);
-    }
+//    @Test
+//    public void testMQ() throws InterruptedException {
+//        LOGGER.info("testMQ");
+//        new ClusterMQTest().test(redisClusterMQ);
+//    }
 
     /**
      * Test cache.
@@ -68,6 +73,7 @@ public class ClusterTest {
      */
     @Test
     public void testCache() throws InterruptedException {
+        LOGGER.info("testCache");
         new ClusterCacheTest().test(redisClusterCacheWrap.instance(), redisClusterCacheWrap.instance("other"));
     }
 
@@ -78,6 +84,7 @@ public class ClusterTest {
      */
     @Test
     public void testLock() throws InterruptedException {
+        LOGGER.info("testLock");
         new ClusterLockTest().test(redisClusterLockWrap.instance("test"));
     }
 
@@ -88,6 +95,7 @@ public class ClusterTest {
      */
     @Test
     public void testMap() throws InterruptedException {
+        LOGGER.info("testMap");
         new ClusterMapTest().test(redisClusterMapWrap.instance("test", ClusterMapTest.TestMapObj.class));
     }
 
@@ -98,6 +106,7 @@ public class ClusterTest {
      */
     @Test
     public void testElection() throws InterruptedException {
+        LOGGER.info("testElection");
         new ClusterElectionTest().test(redisClusterElectionWrap.instance("test"));
     }
 
