@@ -194,7 +194,7 @@ public class ErrorController extends AbstractErrorController {
         }
         LOGGER.error("Request [{}-{}] {} , error {} : {}", request.getMethod(), path, Dew.context().getSourceIP(), busCode, message);
 
-        var resp = StandardResp.custom(busCode + "", path, "[" + exMsg + "]" + message);
+        var resp = StandardResp.custom(busCode , path, String.format("[%s]%s" ,exMsg ,message));
         String body = $.json.toJsonString(resp);
         return new Object[]{httpCode, body};
     }
