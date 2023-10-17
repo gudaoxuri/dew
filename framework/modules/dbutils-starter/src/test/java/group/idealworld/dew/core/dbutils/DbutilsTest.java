@@ -18,14 +18,19 @@ package group.idealworld.dew.core.dbutils;
 
 import group.idealworld.dew.core.dbutils.dto.Meta;
 import group.idealworld.dew.core.dbutils.dto.Page;
+import group.idealworld.dew.test.PostgreSqlExtension;
 import lombok.Data;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -35,9 +40,11 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
+@ExtendWith({SpringExtension.class, PostgreSqlExtension.class})
+@ContextConfiguration(initializers = {PostgreSqlExtension.Initializer.class})
 @SpringBootApplication
 @SpringBootTest
+@Testcontainers
 public class DbutilsTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DbutilsTest.class);

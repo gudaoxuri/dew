@@ -20,7 +20,9 @@ import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.StandardCode;
 import group.idealworld.dew.Dew;
 import group.idealworld.dew.core.DewContext;
+import group.idealworld.dew.core.auth.dto.OptInfo;
 import group.idealworld.dew.core.web.error.ErrorController;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
@@ -30,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -44,6 +47,19 @@ public class IdentInfoHandlerInterceptor implements AsyncHandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
+        if (Dew.dewConfig.getSecurity().isIdentInfoEnabled() && StringUtils.isNotEmpty(Dew.dewConfig.getSecurity().getUnIdentUrls())) {
+            var isUnIdentUrl = Arrays.stream(Dew.dewConfig.getSecurity().getUnIdentUrls().split(","))
+                    .anyMatch(url -> url.equals(request.getRequestURI()));
+            if (isUnIdentUrl) {
+                DewContext context = new DewContext();
+                context.setId($.field.createUUID());
+                context.setSourceIP(Dew.Util.getRealIP(request));
+                context.setRequestUri(request.getRequestURI());
+                context.setInnerOptInfo(Optional.of(new OptInfo()));
+                DewContext.setContext(context);
+                return true;
+            }
+        }
         if (request.getHeader(Dew.dewConfig.getSecurity().getIdentInfoFlag()) == null) {
             ErrorController.error(request, response, Integer.parseInt(StandardCode.BAD_REQUEST.toString()),
                     "The request is missing [" + Dew.dewConfig.getSecurity().getIdentInfoFlag() + "] in header", AuthException.class.getName());

@@ -1,6 +1,7 @@
 dew:
   security:
     ident-info-enabled: true
+    un_ident_urls: /ident/white
 
 server:
   port: 8089

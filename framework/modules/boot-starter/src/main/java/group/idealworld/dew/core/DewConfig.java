@@ -777,6 +777,8 @@ public class DewConfig {
 
         private boolean identInfoEnabled = false;
 
+        private String unIdentUrls = "";
+
         private boolean tokenInHeader = true;
 
         private boolean tokenHash = false;
@@ -807,6 +809,17 @@ public class DewConfig {
 
         public void setIdentInfoEnabled(boolean identInfoEnabled) {
             this.identInfoEnabled = identInfoEnabled;
+        }
+
+        /**
+         *  when identInfoEnabled = true then unIdentUrls effective
+         */
+        public String getUnIdentUrls() {
+            return unIdentUrls;
+        }
+
+        public void setUnIdentUrls(String unIdentUrls) {
+            this.unIdentUrls = unIdentUrls;
         }
 
         /**
