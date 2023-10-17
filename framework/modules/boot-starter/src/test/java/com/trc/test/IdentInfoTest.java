@@ -50,6 +50,10 @@ public class IdentInfoTest {
 
     @Test
     public void testIdentInfo() throws Exception {
+        var resultWhite = testRestTemplate.getForEntity("/ident/white", Resp.class);
+        Assertions.assertEquals(200, resultWhite.getStatusCode().value());
+        Assertions.assertNotEquals("[]The request is missing [" + Dew.dewConfig.getSecurity().getIdentInfoFlag() + "] in header", resultWhite.getBody().getMessage());
+
         var response = testRestTemplate.getForEntity("/ident-info", Resp.class);
         Assertions.assertEquals(200, response.getStatusCode().value());
         Assertions.assertTrue(response.getBody().getCode().contains("400"));
