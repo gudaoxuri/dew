@@ -19,7 +19,7 @@ package group.idealworld.dew.devops.it.todo.kernel.repository;
 import group.idealworld.dew.devops.it.todo.kernel.domain.Todo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * The interface To-do repository.

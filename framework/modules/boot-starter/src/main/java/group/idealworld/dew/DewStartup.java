@@ -24,8 +24,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.*;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.*;
 import java.io.IOException;
 
 /**

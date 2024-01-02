@@ -16,9 +16,9 @@
 
 package group.idealworld.dew.devops.it.todo.compute.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import group.idealworld.dew.devops.it.todo.compute.service.ComputeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +33,7 @@ import javax.script.ScriptException;
  * @author gudaoxuri
  */
 @RestController
-@Api("TODO计算")
+@Tag(name = "TODO计算")
 @RequestMapping("/")
 public class ComputeController {
 
@@ -49,7 +49,7 @@ public class ComputeController {
      * @throws ScriptException the script exception
      */
     @PutMapping("compute")
-    @ApiOperation(value = "执行计算")
+    @Operation(summary = "执行计算")
     public String compute(@RequestBody String jsCode) throws ScriptException {
         return computeService.compute(jsCode);
     }

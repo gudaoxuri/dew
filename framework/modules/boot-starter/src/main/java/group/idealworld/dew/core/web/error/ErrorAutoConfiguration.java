@@ -28,8 +28,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.Servlet;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.Servlet;
 
 /**
  * Error auto configuration.
