@@ -27,6 +27,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.MultiConnectionConfiguration;
+import org.springframework.boot.autoconfigure.data.redis.RedisConnectionDetails;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -80,6 +81,8 @@ public class RedisAutoConfiguration {
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
+    @Autowired
+    private RedisConnectionDetails redisConnectionDetails;
 
     private static final Map<String, RedisTemplate<String, String>> REDIS_TEMPLATES = new HashMap<>();
 
@@ -101,7 +104,7 @@ public class RedisAutoConfiguration {
         ConfigurableListableBeanFactory beanFactory = ((ConfigurableApplicationContext) applicationContext).getBeanFactory();
         for (Map.Entry<String, RedisProperties> prop : properties.entrySet()) {
             LettuceConnectionFactory redisConnectionFactory = new MultiConnectionConfiguration(prop.getValue(), standaloneConfigurationProvider,
-                    sentinelConfigurationProvider, clusterConfigurationProvider).redisConnectionFactory(builderCustomizers, clientResources);
+                    sentinelConfigurationProvider, clusterConfigurationProvider, redisConnectionDetails).redisConnectionFactory(builderCustomizers, clientResources);
             redisConnectionFactory.afterPropertiesSet();
             RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
             redisTemplate.setConnectionFactory(redisConnectionFactory);

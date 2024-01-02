@@ -40,8 +40,9 @@ public class MultiConnectionConfiguration extends LettuceConnectionConfiguration
      */
     public MultiConnectionConfiguration(RedisProperties properties, ObjectProvider<RedisStandaloneConfiguration> standaloneConfigurationProvider,
                                         ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider,
-                                        ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider) {
-        super(properties, standaloneConfigurationProvider, sentinelConfigurationProvider, clusterConfigurationProvider);
+                                        ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider,
+                                        RedisConnectionDetails redisConnectionDetails) {
+        super(properties, standaloneConfigurationProvider, sentinelConfigurationProvider, clusterConfigurationProvider, redisConnectionDetails, null);
     }
 
     @Override
