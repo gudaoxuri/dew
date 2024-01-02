@@ -62,6 +62,7 @@ dew:                                    # Dew 参数key前缀
     token-kind-flag: X-Dew-Token-Kind   # Token类型 标识
     token-in-header: true               # true：token标识在 header 中，反之在url参数中
     token-hash: false                   # Token值是否需要hash，用于解决token值有特殊字符的情况
+    un-ident-urls:                      # 不需要认证的URL列表，英文逗号分隔
     router:                             # 路由功能
       enabled: false                    # 是否启用
       block-uri:                        # URL阻止单，支持ant风格

@@ -32,7 +32,7 @@
     <name>1.0.0 Dew Parent Starter</name>
     <description>Dew 父工程</description>
     <packaging>pom</packaging>
-    <version>3.0.0-RC3</version>
+    <version>3.0.0-RC4</version>
 
     <properties>
         <java.version>17</java.version>
@@ -51,20 +51,19 @@
 
         <main.class></main.class>
         <finalName>${project.artifactId}</finalName>
-        <dew.version>3.0.0-RC3</dew.version>
+        <dew.version>3.0.0-RC4</dew.version>
 
         <!--  核心依赖 -->
-        <dew-common.version>3.0.3</dew-common.version>
-        <simple-java-mail.version>7.8.3</simple-java-mail.version>
-        <jakarta.mail.version>2.1.1</jakarta.mail.version>
+        <dew-common.version>3.0.4</dew-common.version>
+        <simple-java-mail.version>8.3.1</simple-java-mail.version>
+        <jakarta.mail.version>2.1.2</jakarta.mail.version>
         <jakarta.validation.version>2.0.2</jakarta.validation.version>
-        <springdoc.version>1.6.14</springdoc.version>
+        <springdoc.version>1.7.0</springdoc.version>
         <querydsl.version>5.0.0</querydsl.version>
-        <mysql-connector-java.version>8.0.32</mysql-connector-java.version>
         <!-- hbase-starter依赖 -->
-        <hbase.version>2.5.3</hbase.version>
+        <hbase.version>2.5.5</hbase.version>
         <!-- test-starter依赖 -->
-        <testcontainers.version>1.17.6</testcontainers.version>
+        <testcontainers.version>1.19.1</testcontainers.version>
         <!-- cluster-hazelcast依赖 -->
         <hazelcast.version>3.12.13</hazelcast.version>
         <!-- cluster-mqtt依赖 -->
@@ -72,16 +71,17 @@
         <!-- cluster-rocket依赖 -->
         <rocket.version>2.2.3</rocket.version>
         <!-- dbutils-starter依赖 -->
-        <commons-dbutils.version>1.7</commons-dbutils.version>
-        <druid.version>1.2.16</druid.version>
+        <commons-dbutils.version>1.8.1</commons-dbutils.version>
+        <mysql-connector-java.version>8.0.33</mysql-connector-java.version>
+        <druid.version>1.2.20</druid.version>
          <!-- ossutils-starter依赖 -->
         <jaxb-api.version>2.4.0-b180830.0359</jaxb-api.version>
-        <oss.version>3.13.2</oss.version>
-        <obs.version>3.21.11</obs.version>
-        <minio.version>8.3.0</minio.version>
+        <oss.version>3.17.1</oss.version>
+        <obs.version>3.23.9</obs.version>
+        <minio.version>8.5.6</minio.version>
         <activation.version>1.1.1</activation.version>
-        <jaxb-runtime.version>2.3.3</jaxb-runtime.version>
-        <okhttp3.version>4.9.0</okhttp3.version>
+        <jaxb-runtime.version>2.3.8</jaxb-runtime.version>
+        <okhttp3.version>4.11.0</okhttp3.version>
         <!-- DevOps -->
         <k8s-client-java.version>14.0.0</k8s-client-java.version>
         <docker-java.version>3.2.12</docker-java.version>
@@ -96,8 +96,8 @@
         <developer>
             <name>蒋震宇</name>
             <email>i@sunisle.org</email>
-            <organization>ecfront</organization>
-            <organizationUrl>http://www.ecfront.com</organizationUrl>
+            <organization>idealworld</organization>
+            <organizationUrl>https://idealworld.group/</organizationUrl>
         </developer>
         <developer>
             <name>葛佳兴</name>
@@ -313,7 +313,7 @@
                     <plugin>
                         <groupId>group.idealworld.dew</groupId>
                         <artifactId>dew-maven-plugin</artifactId>
-                        <version>3.0.0-RC3</version>
+                        <version>3.0.0-RC4</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -380,7 +380,7 @@
                     <plugin>
                         <groupId>group.idealworld.dew</groupId>
                         <artifactId>sdkgen-maven-plugin</artifactId>
-                        <version>3.0.0-RC3</version>
+                        <version>3.0.0-RC4</version>
                         <executions>
                             <execution>
                                 <goals>
