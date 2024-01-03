@@ -43,6 +43,7 @@
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-spring-boot-starter</artifactId>
             <version>${rocket.version}</version>
+
         </dependency>
         <dependency>
             <groupId>group.idealworld.dew</groupId>

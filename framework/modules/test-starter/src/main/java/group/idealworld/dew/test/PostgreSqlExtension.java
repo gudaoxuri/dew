@@ -33,17 +33,17 @@ public class PostgreSqlExtension implements BeforeAllCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(PostgreSqlExtension.class);
 
-    private static final JdbcDatabaseContainer postgreSQLContainer = new PostgreSQLContainer(DockerImageName.parse("postgres:15.2"));
+    private static final JdbcDatabaseContainer POSTGRESQL_CONTAINER = new PostgreSQLContainer(DockerImageName.parse("postgres:alpine"));
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
         var scriptPath = ClassLoader.getSystemResource("").getPath() + "/sql/pg_init.sql";
         if (new File(scriptPath).exists()) {
-            postgreSQLContainer.withInitScript("sql/pg_init.sql");
+            POSTGRESQL_CONTAINER.withInitScript("sql/pg_init.sql");
         }
-        postgreSQLContainer.start();
-        logger.info("Test postgresql port: " + postgreSQLContainer.getFirstMappedPort()
-                + ", username: " + postgreSQLContainer.getUsername() + ", password: " + postgreSQLContainer.getPassword());
+        POSTGRESQL_CONTAINER.start();
+        logger.info("Test postgresql port: " + POSTGRESQL_CONTAINER.getExposedPorts()
+                + ", username: " + POSTGRESQL_CONTAINER.getUsername() + ", password: " + POSTGRESQL_CONTAINER.getPassword());
     }
 
     public static class Initializer
@@ -51,9 +51,9 @@ public class PostgreSqlExtension implements BeforeAllCallback {
         @Override
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues.of(
-                    "spring.datasource.url=" + postgreSQLContainer.getJdbcUrl(),
-                    "spring.datasource.username=" + postgreSQLContainer.getUsername(),
-                    "spring.datasource.password=" + postgreSQLContainer.getPassword()
+                    "spring.datasource.url=" + POSTGRESQL_CONTAINER.getJdbcUrl(),
+                    "spring.datasource.username=" + POSTGRESQL_CONTAINER.getUsername(),
+                    "spring.datasource.password=" + POSTGRESQL_CONTAINER.getPassword()
             ).applyTo(configurableApplicationContext.getEnvironment());
         }
     }

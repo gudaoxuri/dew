@@ -17,10 +17,10 @@
 package group.idealworld.dew.devops.it.todo.kernel.controller;
 
 import com.ecfront.dew.common.Page;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import group.idealworld.dew.devops.it.todo.kernel.domain.Todo;
 import group.idealworld.dew.devops.it.todo.kernel.service.TodoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 // Swagger文档注解
-@Api("TODO示例")
+@Tag(name = "TODO示例")
 @RequestMapping("/api")
 public class TodoController {
 
@@ -46,7 +46,7 @@ public class TodoController {
      * @return the page
      */
     @GetMapping("")
-    @ApiOperation(value = "获取Todo列表")
+    @Operation(summary = "获取Todo列表")
     public Page<Todo> findAll(@RequestParam(value = "pageNumber", required = false, defaultValue = "1") int pageNumber,
                               @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize) {
         return todoService.list(pageNumber, pageSize);
@@ -59,7 +59,7 @@ public class TodoController {
      * @return the int
      */
     @PostMapping("")
-    @ApiOperation(value = "添加Todo记录")
+    @Operation(summary = "添加Todo记录")
     public Todo add(@RequestBody String content) {
         return todoService.add(content);
     }
@@ -70,7 +70,7 @@ public class TodoController {
      * @param id the id
      */
     @DeleteMapping("{id}")
-    @ApiOperation(value = "删除Todo记录")
+    @Operation(summary = "删除Todo记录")
     public boolean delete(@PathVariable("id") int id) {
         return todoService.delete(id);
     }
@@ -82,7 +82,7 @@ public class TodoController {
      * @param afterBy the after by
      */
     @PutMapping("{id}/sort")
-    @ApiOperation(value = "调整Todo记录顺序")
+    @Operation(summary = "调整Todo记录顺序")
     public boolean sort(@PathVariable("id") int id,
                      @RequestParam(value = "afterBy") int afterBy) {
         return todoService.sort(id, afterBy);

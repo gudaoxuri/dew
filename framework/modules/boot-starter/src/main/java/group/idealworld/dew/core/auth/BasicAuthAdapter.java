@@ -23,7 +23,7 @@ import group.idealworld.dew.core.DewContext;
 import group.idealworld.dew.core.auth.dto.OptInfo;
 import group.idealworld.dew.core.cluster.ClusterCache;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;

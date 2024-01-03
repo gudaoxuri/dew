@@ -37,7 +37,7 @@ public class YamlHelper {
         options.setCanonical(false);
         options.setDefaultScalarStyle(DumperOptions.ScalarStyle.PLAIN);
         options.setIndent(2);
-        Representer representer = new Representer();
+        Representer representer = new Representer(new DumperOptions());
         representer.getPropertyUtils().setSkipMissingProperties(true);
         yaml = new Yaml(representer, options);
     }

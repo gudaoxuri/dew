@@ -23,7 +23,7 @@ import group.idealworld.dew.core.DewContext;
 import group.idealworld.dew.example.auth.dto.OptInfoExt;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
