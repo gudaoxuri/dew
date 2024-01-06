@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package group.idealworld.dew;
+package com.trc.test;
 
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
+import group.idealworld.dew.Dew;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

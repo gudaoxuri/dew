@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package group.idealworld.dew;
+package com.trc.test;
 
 
-import group.idealworld.dew.auth.AuthTest;
-import group.idealworld.dew.cluster.ClusterTest;
-import group.idealworld.dew.notification.NotifyIntegrationTest;
+import com.trc.test.auth.AuthTest;
+import com.trc.test.cluster.ClusterTest;
+import com.trc.test.notification.NotifyIntegrationTest;
 import group.idealworld.dew.test.RedisExtension;
-import group.idealworld.dew.web.WebTest;
+import com.trc.test.web.WebTest;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

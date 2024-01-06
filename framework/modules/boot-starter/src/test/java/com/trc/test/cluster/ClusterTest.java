@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package group.idealworld.dew.cluster;
+package com.trc.test.cluster;
 
 import group.idealworld.dew.Dew;
 import group.idealworld.dew.core.cluster.test.ClusterCacheTest;
