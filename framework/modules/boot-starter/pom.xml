@@ -23,7 +23,7 @@
     <parent>
         <groupId>group.idealworld.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>3.0.0-RC4</version>
+        <version>3.0.0-RC5</version>
         <relativePath>../parent-starter</relativePath>
     </parent>
 
@@ -52,6 +52,17 @@
             <artifactId>cluster-spi-redis</artifactId>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.3</version>
+        </dependency>
+
         <!-- Others -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

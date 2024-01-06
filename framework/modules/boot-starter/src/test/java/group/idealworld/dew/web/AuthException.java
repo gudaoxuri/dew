@@ -14,28 +14,13 @@
  * limitations under the License.
  */
 
-package com.trc.test.notification;
-
-
-import com.ecfront.dew.common.Resp;
-import group.idealworld.dew.Dew;
-import org.junit.jupiter.api.Assertions;
-import org.springframework.stereotype.Component;
+package group.idealworld.dew.web;
 
 /**
- * The type Notify integration test.
+ * Auth exception.
  *
  * @author gudaoxuri
  */
-@Component
-public class NotifyIntegrationTest {
-
-    /**
-     * Test all.
-     */
-    public void testAll() {
-        Resp<Void> result = Dew.notify.send("flag1", "测试消息，默认通知人", "测试");
-        Assertions.assertTrue(result.ok());
-    }
+public class AuthException extends RuntimeException {
 
 }

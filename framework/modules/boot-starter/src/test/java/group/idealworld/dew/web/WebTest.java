@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.trc.test.web;
+package group.idealworld.dew.web;
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;

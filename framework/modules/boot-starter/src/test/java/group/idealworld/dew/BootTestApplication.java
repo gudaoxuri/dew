@@ -14,36 +14,29 @@
  * limitations under the License.
  */
 
-package com.trc.test.auth;
+package group.idealworld.dew;
 
-import group.idealworld.dew.core.auth.dto.BasicOptInfo;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.context.annotation.Bean;
 
 /**
- * Opt info ext.
+ * Boot test application.
  *
  * @author gudaoxuri
  */
-public class OptInfoExt extends BasicOptInfo {
-
-    private String idCard;
-
-    /**
-     * Gets id card.
-     *
-     * @return the id card
-     */
-    public String getIdCard() {
-        return idCard;
-    }
+@SpringBootApplication
+public class BootTestApplication {
 
     /**
-     * Sets id card.
+     * The entry point of application.
      *
-     * @param idCard the id card
-     * @return the id card
+     * @param args the input arguments
      */
-    public OptInfoExt setIdCard(String idCard) {
-        this.idCard = idCard;
-        return this;
+    public static void main(String[] args) {
+        new SpringApplicationBuilder(BootTestApplication.class).run(args);
     }
+
 }

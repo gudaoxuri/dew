@@ -71,7 +71,11 @@ public class StandardResp {
      */
     public static RTException e(Resp<?> resp) {
         var ex = new RTException(resp.getMessage());
-        $.bean.setValue(ex, "detailMessage", $.json.createObjectNode().put("code", resp.getCode()).put("message", resp.getMessage()).put("customHttpCode", 200).toString());
+        Dew.threadLocalUtil.set($.json.createObjectNode()
+                .put("code", resp.getCode())
+                .put("message", resp.getMessage())
+                .put("customHttpCode", 200)
+                .toString());
         return ex;
     }
 

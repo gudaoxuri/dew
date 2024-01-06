@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.trc.test.notification;
+package group.idealworld.dew.notification;
 
 
 import com.ecfront.dew.common.$;

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.trc.test.auth;
+package group.idealworld.dew.auth;
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
 import group.idealworld.dew.Dew;
 import group.idealworld.dew.core.DewContext;
+import jakarta.annotation.PostConstruct;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 

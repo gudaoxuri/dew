@@ -13,7 +13,7 @@ dew:
     format:
       auto-trim-from-req: true
     error-mapping:
-      "[com.trc.test.web.AuthException]":
+      "[group.idealworld.dew.web.AuthException]":
         http-code: 401
         business-code: x00010
         message: 认证错误
@@ -69,15 +69,16 @@ spring:
   jackson:
     serialization:
       write_dates_as_timestamps: false
-  redis:
-    host: 127.0.0.1
-    port: 6379 # 以 testcontainer 为准
-    database: 0
-    lettuce:
-      pool:
-        max-active: 10
-        max-idle: 1
-        min-idle: 0
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
+      lettuce:
+        pool:
+          max-active: 10
+          max-idle: 1
+          min-idle: 0
 
 server:
   port: 8088

@@ -21,13 +21,13 @@
     <parent>
         <groupId>group.idealworld.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>3.0.0-RC4</version>
+        <version>3.0.0-RC5</version>
         <relativePath>../../../framework/modules/parent-starter</relativePath>
     </parent>
 
     <artifactId>dew-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>3.0.0-RC4</version>
+    <version>3.0.0-RC5</version>
     <name>2.0 Dew DevOps Maven Plugin</name>
 
     <properties>

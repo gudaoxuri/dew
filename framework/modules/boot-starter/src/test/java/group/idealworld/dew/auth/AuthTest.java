@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.trc.test.auth;
+package group.idealworld.dew.auth;
 
 
 import com.ecfront.dew.common.Resp;

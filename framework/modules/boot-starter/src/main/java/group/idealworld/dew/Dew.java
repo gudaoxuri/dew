@@ -31,6 +31,9 @@ import group.idealworld.dew.core.basic.loading.DewLoadImmediately;
 import group.idealworld.dew.core.basic.utils.NetUtils;
 import group.idealworld.dew.core.cluster.*;
 import group.idealworld.dew.core.notification.Notify;
+import group.idealworld.dew.core.util.ThreadLocalUtil;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +43,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.*;
@@ -80,6 +81,12 @@ public class Dew {
      * The constant auth.
      */
     public static AuthAdapter auth;
+
+    /**
+     *  The local variables
+     */
+    public static ThreadLocalUtil<String> threadLocalUtil = new ThreadLocalUtil<>();
+
 
     @Value("${spring.application.name:please-setting-this}")
     private String applicationName;
@@ -398,7 +405,7 @@ public class Dew {
          * @return 上抛的异常对象 e
          */
         public static <E extends Throwable> E e(String code, E ex, int customHttpCode) {
-            $.bean.setValue(ex, "detailMessage", $.json.createObjectNode()
+            threadLocalUtil.set($.json.createObjectNode()
                     .put("code", code)
                     .put("message", ex.getLocalizedMessage())
                     .put("customHttpCode", customHttpCode)
@@ -415,12 +422,12 @@ public class Dew {
          * @return 上抛的异常对象
          */
         public static RTException e(Resp<?> resp) {
-            var ex = new RTException(resp.getMessage());
-            $.bean.setValue(ex, "detailMessage", $.json.createObjectNode()
+            threadLocalUtil.set($.json.createObjectNode()
                     .put("code", resp.getCode())
                     .put("message", resp.getMessage())
                     .put("customHttpCode", 200)
                     .toString());
+            var ex = new RTException(resp.getMessage());
             return ex;
         }
 

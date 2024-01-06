@@ -1,5 +1,5 @@
 = Dew:一站式微服务解决方案
-v3.0.0-RC4
+v3.0.0-RC5
 2020-6-10
 :doctype: book
 :encoding: utf-8

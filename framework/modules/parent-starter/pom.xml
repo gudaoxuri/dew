@@ -32,7 +32,7 @@
     <name>1.0.0 Dew Parent Starter</name>
     <description>Dew 父工程</description>
     <packaging>pom</packaging>
-    <version>3.0.0-RC4</version>
+    <version>3.0.0-RC5</version>
 
     <properties>
         <java.version>17</java.version>
@@ -51,19 +51,19 @@
 
         <main.class></main.class>
         <finalName>${project.artifactId}</finalName>
-        <dew.version>3.0.0-RC4</dew.version>
+        <dew.version>3.0.0-RC5</dew.version>
 
         <!--  核心依赖 -->
-        <dew-common.version>3.0.4</dew-common.version>
+        <dew-common.version>3.0.5</dew-common.version>
         <simple-java-mail.version>8.3.1</simple-java-mail.version>
         <jakarta.mail.version>2.1.2</jakarta.mail.version>
-        <jakarta.validation.version>2.0.2</jakarta.validation.version>
+        <jakarta.validation.version>3.0.2</jakarta.validation.version>
         <springdoc.version>1.7.0</springdoc.version>
         <querydsl.version>5.0.0</querydsl.version>
         <!-- hbase-starter依赖 -->
         <hbase.version>2.5.5</hbase.version>
         <!-- test-starter依赖 -->
-        <testcontainers.version>1.19.1</testcontainers.version>
+        <testcontainers.version>1.19.3</testcontainers.version>
         <!-- cluster-hazelcast依赖 -->
         <hazelcast.version>3.12.13</hazelcast.version>
         <!-- cluster-mqtt依赖 -->
@@ -72,7 +72,7 @@
         <rocket.version>2.2.3</rocket.version>
         <!-- dbutils-starter依赖 -->
         <commons-dbutils.version>1.8.1</commons-dbutils.version>
-        <mysql-connector-java.version>8.0.33</mysql-connector-java.version>
+        <mysql-connector-j.version>8.2.0</mysql-connector-j.version>
         <druid.version>1.2.20</druid.version>
          <!-- ossutils-starter依赖 -->
         <jaxb-api.version>2.4.0-b180830.0359</jaxb-api.version>
@@ -81,10 +81,10 @@
         <minio.version>8.5.6</minio.version>
         <activation.version>1.1.1</activation.version>
         <jaxb-runtime.version>2.3.8</jaxb-runtime.version>
-        <okhttp3.version>4.11.0</okhttp3.version>
+        <okhttp3.version>4.12.0</okhttp3.version>
         <!-- DevOps -->
         <k8s-client-java.version>14.0.0</k8s-client-java.version>
-        <docker-java.version>3.2.12</docker-java.version>
+        <docker-java.version>3.3.4</docker-java.version>
         <maven-plugin.version>3.9.0</maven-plugin.version>
         <mojo-executor.version>2.3.0</mojo-executor.version>
         <maven-resolver-api.version>1.3.3</maven-resolver-api.version>
@@ -217,9 +217,9 @@
             </dependency>
             <!-- Others -->
             <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${mysql-connector-java.version}</version>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql-connector-j.version}</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
@@ -313,7 +313,7 @@
                     <plugin>
                         <groupId>group.idealworld.dew</groupId>
                         <artifactId>dew-maven-plugin</artifactId>
-                        <version>3.0.0-RC4</version>
+                        <version>3.0.0-RC5</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -380,7 +380,7 @@
                     <plugin>
                         <groupId>group.idealworld.dew</groupId>
                         <artifactId>sdkgen-maven-plugin</artifactId>
-                        <version>3.0.0-RC4</version>
+                        <version>3.0.0-RC5</version>
                         <executions>
                             <execution>
                                 <goals>

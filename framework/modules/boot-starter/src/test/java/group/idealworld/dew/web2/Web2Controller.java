@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.trc.test.web2;
+package group.idealworld.dew.web2;
 
 import com.ecfront.dew.common.Resp;
 import io.swagger.v3.oas.annotations.Operation;
