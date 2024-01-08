@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-    groop.idealworld.dew.core.cluster.spi.skywalking.SkyWalkingTracingAutoConfiguration
-
-
