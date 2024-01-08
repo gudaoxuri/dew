@@ -13,7 +13,7 @@ dew:
     format:
       auto-trim-from-req: true
     error-mapping:
-      "[group.idealworld.dew.web.AuthException]":
+      "[com.trc.test.web.AuthException]":
         http-code: 401
         business-code: x00010
         message: 认证错误
