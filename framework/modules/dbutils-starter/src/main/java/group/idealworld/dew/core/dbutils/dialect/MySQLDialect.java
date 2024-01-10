@@ -78,7 +78,9 @@ class MySQLDialect implements Dialect {
                     t = "CHAR";
                     break;
                 case "date":
-                    t = "TIMESTAMP";
+                case "datetime":
+                case "timestamp":
+                    t = "timestamp";
                     break;
                 case "uuid":
                     t = "UUID";

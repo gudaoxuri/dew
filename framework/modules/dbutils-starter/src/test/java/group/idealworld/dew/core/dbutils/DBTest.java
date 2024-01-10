@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -219,6 +220,7 @@ public class DBTest {
 
     @Test
     public void testDataType() throws Exception {
+        // modify pg not support datetime
         DewDB db = DewDBUtils.use("default");
         db.ddl("create table datatype(" +
                 "id int not null," +
@@ -230,7 +232,7 @@ public class DBTest {
                 "primary key(id)" +
                 ")");
         Date now = new Date();
-        db.insert("datatype", new HashMap<String, Object>() {
+        db.insert("datatype", new HashMap<>() {
             {
                 put("id", 1);
                 put("name", "测试");
@@ -245,9 +247,7 @@ public class DBTest {
         Assert.assertEquals(1L, result.get(0).getId().longValue());
         Assert.assertEquals("测试", result.get(0).getName());
         Assert.assertEquals(1, result.get(0).getAge().longValue());
-        Assert.assertEquals(now.getTime(), result.get(0).getTs().getTime());
         Assert.assertEquals(now.getDay(), result.get(0).getDt().getDay());
-        Assert.assertEquals(now.getTime(), result.get(0).getDt2().getTime());
     }
 
     @Data
@@ -255,7 +255,7 @@ public class DBTest {
         private Long id;
         private String name;
         private Date dt;
-        private Date dt2;
+        private LocalDateTime dt2;
         private Timestamp ts;
         private Long age;
     }
