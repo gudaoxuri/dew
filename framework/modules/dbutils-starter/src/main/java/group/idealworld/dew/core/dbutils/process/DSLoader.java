@@ -21,16 +21,11 @@ import group.idealworld.dew.core.dbutils.dialect.Dialect;
 import group.idealworld.dew.core.dbutils.dialect.DialectFactory;
 import group.idealworld.dew.core.dbutils.dto.DBUtilsConfig;
 import group.idealworld.dew.core.dbutils.dto.DSConfig;
-import group.idealworld.dew.core.dbutils.utils.YamlHelper;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;

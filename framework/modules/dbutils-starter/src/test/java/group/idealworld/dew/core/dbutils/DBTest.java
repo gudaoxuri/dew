@@ -14,16 +14,20 @@ package group.idealworld.dew.core.dbutils;/*
  * limitations under the License.
  */
 
+import com.alibaba.druid.pool.DruidDataSource;
 import group.idealworld.dew.core.dbutils.dto.Meta;
 import group.idealworld.dew.core.dbutils.dto.Page;
+import group.idealworld.dew.core.dbutils.process.DSLoader;
 import group.idealworld.dew.test.MySqlExtension;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -43,8 +47,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Testcontainers
 public class DBTest {
 
-    @Autowired
     private DewDB db;
+
+    @Autowired
+    private ConfigurableApplicationContext configurableApplicationContext;
+
+    @BeforeEach
+    public void before() {
+        db = new DewDB(DSLoader.getDSInfo("default"));
+        DruidDataSource dataSource = (DruidDataSource) db.getDsInfo().getDataSource();
+        dataSource.setUrl(configurableApplicationContext.getEnvironment().getProperty("spring.datasource.url"));
+        db.getDsInfo().setDataSource(dataSource);
+    }
 
     @Test
     public void testCreateAndUpdate() throws SQLException, IOException {

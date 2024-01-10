@@ -37,7 +37,6 @@ import java.util.Map;
  * @author gudaoxuri
  */
 @Slf4j
-@Configuration
 public class DewDB {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DewDB.class);
