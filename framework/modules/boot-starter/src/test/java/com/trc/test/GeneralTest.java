@@ -20,8 +20,9 @@ package com.trc.test;
 import com.trc.test.auth.AuthTest;
 import com.trc.test.cluster.ClusterTest;
 import com.trc.test.notification.NotifyIntegrationTest;
-import com.trc.test.web.WebTest;
 import group.idealworld.dew.test.RedisExtension;
+import com.trc.test.web.WebTest;
+import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +30,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import jakarta.annotation.Resource;
 
 
 /**

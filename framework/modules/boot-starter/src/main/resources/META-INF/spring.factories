@@ -1,9 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  group.idealworld.dew.DewStartup,\
-  group.idealworld.dew.Dew,\
-  group.idealworld.dew.core.web.error.ErrorAutoConfiguration,\
-  group.idealworld.dew.core.web.interceptor.InterceptorWebAutoConfiguration,\
-  group.idealworld.dew.core.web.interceptor.AutoTrimConfiguration,\
-  group.idealworld.dew.core.basic.utils.convert.ConvertAutoConfiguration,\
-  group.idealworld.dew.core.auth.AuthAutoConfiguration,\
-  group.idealworld.dew.core.doc.DocAutoConfiguration

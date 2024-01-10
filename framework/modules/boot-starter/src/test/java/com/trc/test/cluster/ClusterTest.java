@@ -17,7 +17,10 @@
 package com.trc.test.cluster;
 
 import group.idealworld.dew.Dew;
-import group.idealworld.dew.core.cluster.test.*;
+import group.idealworld.dew.core.cluster.test.ClusterCacheTest;
+import group.idealworld.dew.core.cluster.test.ClusterElectionTest;
+import group.idealworld.dew.core.cluster.test.ClusterLockTest;
+import group.idealworld.dew.core.cluster.test.ClusterMapTest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

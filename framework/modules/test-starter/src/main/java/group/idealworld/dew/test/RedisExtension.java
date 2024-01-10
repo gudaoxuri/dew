@@ -55,13 +55,13 @@ public class RedisExtension implements BeforeAllCallback {
          */
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues.of(
-                    "spring.redis.host=" + REDIS_CONTAINER.getHost(),
-                    "spring.redis.port=" + REDIS_CONTAINER.getFirstMappedPort(),
-                    "spring.redis.password=" +
-                            "spring.redis.multi.other:host=" + REDIS_CONTAINER.getHost(),
-                    "spring.redis.multi.other:port=" + REDIS_CONTAINER.getFirstMappedPort(),
-                    "spring.redis.multi.other:database=1",
-                    "spring.redis.multi.other:password="
+                    "spring.data.redis.host=" + REDIS_CONTAINER.getHost(),
+                    "spring.data.redis.port=" + REDIS_CONTAINER.getFirstMappedPort(),
+                    "spring.data.redis.password=",
+                    "spring.data.redis.multi.other:host=" + REDIS_CONTAINER.getHost(),
+                    "spring.data.redis.multi.other:port=" + REDIS_CONTAINER.getFirstMappedPort(),
+                    "spring.data.redis.multi.other:database=1",
+                    "spring.data.redis.multi.other:password="
             ).applyTo(configurableApplicationContext.getEnvironment());
         }
     }

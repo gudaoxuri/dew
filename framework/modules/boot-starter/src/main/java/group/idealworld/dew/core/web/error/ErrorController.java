@@ -25,6 +25,7 @@ import group.idealworld.dew.core.DewConfig;
 import group.idealworld.dew.core.basic.resp.StandardResp;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.apache.catalina.connector.RequestFacade;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
@@ -44,8 +45,9 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.ServletRequestWrapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -89,7 +91,9 @@ public class ErrorController extends AbstractErrorController {
      */
     @RequestMapping()
     @ResponseBody
-    public Object error(HttpServletRequest request) {
+    public Object error(HttpServletRequest request) throws InvocationTargetException, IllegalAccessException {
+        var detailMessage = Dew.threadLocalUtil.get();
+        Dew.threadLocalUtil.remove();
         Object specialError = request.getAttribute(SPECIAL_ERROR_FLAG);
         if (specialError instanceof Resp.FallbackException) {
             return ResponseEntity
@@ -121,7 +125,7 @@ public class ErrorController extends AbstractErrorController {
         } else {
             exClass = specialError.getClass().getName();
         }
-        Object[] result = error(request, path, httpCode, message, exClass, exMsg, exDetail, (Throwable) specialError);
+        Object[] result = error(request, path, httpCode, StringUtils.isEmpty(detailMessage) ? message : detailMessage, exClass, exMsg, exDetail, (Throwable) specialError);
         httpCode = (int) result[0];
         if (httpCode > 499) {
             // 服务错误才通知
@@ -193,7 +197,6 @@ public class ErrorController extends AbstractErrorController {
             httpCode = 200;
         }
         LOGGER.error("Request [{}-{}] {} , error {} : {}", request.getMethod(), path, Dew.context().getSourceIP(), busCode, message);
-
         var resp = StandardResp.custom(busCode , path, String.format("[%s]%s" ,exMsg ,message));
         String body = $.json.toJsonString(resp);
         return new Object[]{httpCode, body};

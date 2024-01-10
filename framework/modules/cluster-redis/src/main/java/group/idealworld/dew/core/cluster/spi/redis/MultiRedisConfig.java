@@ -28,7 +28,7 @@ import java.util.Map;
  *
  * @author gudaoxuri
  */
-@ConfigurationProperties(prefix = "spring.redis")
+@ConfigurationProperties(prefix = "spring.data.redis")
 public class MultiRedisConfig {
 
     private Map<String, RedisProperties> multi = new HashMap<>();

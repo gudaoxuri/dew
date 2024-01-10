@@ -78,7 +78,9 @@ class MySQLDialect implements Dialect {
                     t = "CHAR";
                     break;
                 case "date":
-                    t = "TIMESTAMP";
+                case "datetime":
+                case "timestamp":
+                    t = "timestamp";
                     break;
                 case "uuid":
                     t = "UUID";
@@ -106,7 +108,7 @@ class MySQLDialect implements Dialect {
 
     @Override
     public String getDriver() {
-        return "com.mysql.jdbc.Driver";
+        return "com.mysql.cj.jdbc.Driver";
     }
 
     @Override

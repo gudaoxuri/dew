@@ -1,4 +1,4 @@
-/*
+package group.idealworld.dew.core.dbutils.process;/*
  * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,8 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package group.idealworld.dew.core.dbutils.process;
 
 import group.idealworld.dew.core.dbutils.dialect.Dialect;
 import group.idealworld.dew.core.dbutils.dialect.DialectType;
@@ -37,17 +35,15 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class DBExecutor {
-    static final QueryRunner QUERY_RUNNER = new QueryRunner();
 
-    private DBExecutor() {
-    }
+    static final QueryRunner queryRunner = new QueryRunner();
 
     public static <E> E get(String sql, Object[] params, Class<E> clazz, Connection conn, boolean isCloseConn) throws SQLException {
         try {
             if (params == null) {
-                return (E) QUERY_RUNNER.query(conn, sql, new BeanHandler(clazz));
+                return (E) queryRunner.query(conn, sql, new BeanHandler(clazz));
             } else {
-                return (E) QUERY_RUNNER.query(conn, sql, new BeanHandler(clazz), params);
+                return (E) queryRunner.query(conn, sql, new BeanHandler(clazz), params);
             }
         } catch (SQLException e) {
             log.error("[DewDBUtils]Get error : " + sql, e);
@@ -62,9 +58,9 @@ public class DBExecutor {
     public static <E> List<E> find(String sql, Object[] params, Class<E> clazz, Connection conn, boolean isCloseConn) throws SQLException {
         try {
             if (null == params) {
-                return (List<E>) QUERY_RUNNER.query(conn, sql, new BeanListHandler(clazz));
+                return (List<E>) queryRunner.query(conn, sql, new BeanListHandler(clazz));
             } else {
-                return (List<E>) QUERY_RUNNER.query(conn, sql, new BeanListHandler(clazz), params);
+                return (List<E>) queryRunner.query(conn, sql, new BeanListHandler(clazz), params);
             }
         } catch (SQLException e) {
             log.error("[DewDBUtils]Find error : " + sql, e);
@@ -76,8 +72,7 @@ public class DBExecutor {
         }
     }
 
-    public static <E> Page<E> page(String sql, Object[] params, long pageNumber, long pageSize, Class<E> clazz, Connection conn, boolean isCloseConn, Dialect dialect)
-            throws SQLException {
+    public static <E> Page<E> page(String sql, Object[] params, long pageNumber, long pageSize, Class<E> clazz, Connection conn, boolean isCloseConn, Dialect dialect) throws SQLException {
         Page<E> page = new Page<>();
         String pagedSql = dialect.paging(sql, pageNumber, pageSize);
         page.setPageNumber(pageNumber);
@@ -92,9 +87,9 @@ public class DBExecutor {
         try {
             Map<String, Object> result;
             if (null == params) {
-                result = QUERY_RUNNER.query(conn, sql, new MapHandler());
+                result = queryRunner.query(conn, sql, new MapHandler());
             } else {
-                result = QUERY_RUNNER.query(conn, sql, new MapHandler(), params);
+                result = queryRunner.query(conn, sql, new MapHandler(), params);
             }
             if (result != null) {
                 Map<String, Object> lowCaseResult = new LinkedHashMap<>();
@@ -122,9 +117,9 @@ public class DBExecutor {
         try {
             List<Map<String, Object>> result;
             if (null == params) {
-                result = QUERY_RUNNER.query(conn, sql, new MapListHandler());
+                result = queryRunner.query(conn, sql, new MapListHandler());
             } else {
-                result = QUERY_RUNNER.query(conn, sql, new MapListHandler(), params);
+                result = queryRunner.query(conn, sql, new MapListHandler(), params);
             }
             if (result != null && !result.isEmpty()) {
                 List<Map<String, Object>> lowCaseResult = new ArrayList<>();
@@ -152,8 +147,7 @@ public class DBExecutor {
         }
     }
 
-    public static Page<Map<String, Object>> page(String sql, Object[] params, long pageNumber, long pageSize, Connection conn, boolean isCloseConn, Dialect dialect)
-            throws SQLException {
+    public static Page<Map<String, Object>> page(String sql, Object[] params, long pageNumber, long pageSize, Connection conn, boolean isCloseConn, Dialect dialect) throws SQLException {
         Page<Map<String, Object>> page = new Page<>();
         String pagedSql = dialect.paging(sql, pageNumber, pageSize);
         page.setPageNumber(pageNumber);
@@ -172,9 +166,9 @@ public class DBExecutor {
         String countSql = dialect.count(sql);
         try {
             if (null == params) {
-                return (Long) QUERY_RUNNER.query(conn, countSql, scalarHandler);
+                return (Long) queryRunner.query(conn, countSql, scalarHandler);
             } else {
-                return (Long) QUERY_RUNNER.query(conn, countSql, scalarHandler, params);
+                return (Long) queryRunner.query(conn, countSql, scalarHandler, params);
             }
 
         } catch (SQLException e) {
@@ -187,15 +181,16 @@ public class DBExecutor {
         }
     }
 
-    public static int insert(String tableName, Map<String, Object> values, Connection conn, boolean closeConnection, Dialect dialect) throws SQLException {
+    public static int insert(String tableName, Map<String, Object> values,
+                             Connection conn, boolean closeConnection, Dialect dialect) throws SQLException {
         String fields = String.join(",", values.keySet());
         String valueArgs = values.keySet().stream().map(f -> "?").collect(Collectors.joining(","));
         String sql = "INSERT INTO " + tableName + " (" + fields + ") VALUES (" + valueArgs + ")";
         return update(sql, values.values().toArray(), conn, closeConnection, dialect);
     }
 
-    public static int modify(String tableName, String pkField, Object pkValue, Map<String, Object> values, Connection conn, boolean closeConnection, Dialect dialect)
-            throws SQLException {
+    public static int modify(String tableName, String pkField, Object pkValue, Map<String, Object> values,
+                             Connection conn, boolean closeConnection, Dialect dialect) throws SQLException {
         String set = values.keySet().stream().map(k -> k + " = ?").collect(Collectors.joining(", "));
         String sql = "UPDATE " + tableName + " SET " + set + " WHERE " + pkField + " = ? ";
         List<Object> params = new ArrayList<>(values.values());
@@ -209,9 +204,9 @@ public class DBExecutor {
         }
         try {
             if (null == params) {
-                return QUERY_RUNNER.update(conn, sql);
+                return queryRunner.update(conn, sql);
             } else {
-                return QUERY_RUNNER.update(conn, sql, params);
+                return queryRunner.update(conn, sql, params);
             }
         } catch (SQLException e) {
             try {
@@ -236,9 +231,9 @@ public class DBExecutor {
         for (Map.Entry<String, Object[]> entry : sqls.entrySet()) {
             try {
                 if (null == entry.getValue()) {
-                    QUERY_RUNNER.update(conn, entry.getKey());
+                    queryRunner.update(conn, entry.getKey());
                 } else {
-                    QUERY_RUNNER.update(conn, entry.getKey(), entry.getValue());
+                    queryRunner.update(conn, entry.getKey(), entry.getValue());
                 }
             } catch (SQLException e) {
                 try {
@@ -262,7 +257,7 @@ public class DBExecutor {
             throw new SQLException("SparkSQL don't support [batch] method.");
         }
         try {
-            return QUERY_RUNNER.batch(conn, sql, params);
+            return queryRunner.batch(conn, sql, params);
         } catch (SQLException e) {
             try {
                 conn.rollback();
@@ -325,7 +320,7 @@ public class DBExecutor {
     public static void ddl(String sql, Connection conn, boolean isCloseConn) throws SQLException {
         try {
             log.trace("[DewDBUtils]Execute DDL : " + sql);
-            QUERY_RUNNER.update(conn, sql);
+            queryRunner.update(conn, sql);
         } catch (SQLException e) {
             try {
                 conn.rollback();

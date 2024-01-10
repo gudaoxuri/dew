@@ -75,7 +75,9 @@ class PostgresDialect implements Dialect {
                     t = "character";
                     break;
                 case "date":
-                    t = "date";
+                case "datetime":
+                case "timestamp":
+                    t = "timestamp";
                     break;
                 case "bigdecimal":
                 case "decimal":

@@ -20,8 +20,10 @@ import group.idealworld.dew.core.dbutils.dto.Page;
 import group.idealworld.dew.core.dbutils.process.DBExecutor;
 import group.idealworld.dew.core.dbutils.process.DSLoader;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Configuration;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -34,6 +36,7 @@ import java.util.Map;
  *
  * @author gudaoxuri
  */
+@Slf4j
 public class DewDB {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DewDB.class);

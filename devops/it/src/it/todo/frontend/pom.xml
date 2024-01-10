@@ -23,7 +23,8 @@
   <parent>
     <groupId>group.idealworld.dew</groupId>
     <artifactId>parent-starter</artifactId>
-    <version>3.0.0-RC4</version>
+    <version>3.0.0-RC5</version>
+    <relativePath>../../../../../framework/modules/parent-starter</relativePath>
   </parent>
 
   <groupId>group.idealworld.dew.devops.it</groupId>

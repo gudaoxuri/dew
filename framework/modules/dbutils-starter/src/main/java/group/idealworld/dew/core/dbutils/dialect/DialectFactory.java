@@ -22,9 +22,7 @@ public class DialectFactory {
     }
 
     public static Dialect parseDialect(String url) {
-        if (url.startsWith("jdbc:h2")) {
-            return new H2Dialect();
-        } else if (url.startsWith("jdbc:mysql")) {
+        if (url.startsWith("jdbc:mysql")) {
             return new MySQLDialect();
         } else if (url.startsWith("jdbc:postgresql")) {
             return new PostgresDialect();

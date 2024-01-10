@@ -19,8 +19,8 @@ package group.idealworld.dew.core.web.validation;
 import com.ecfront.dew.common.$;
 import org.springframework.util.ObjectUtils;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * Id number validator.

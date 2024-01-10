@@ -1,0 +1,2 @@
+group.idealworld.dew.core.cluster.spi.rocket.RocketAutoConfiguration
+org.apache.rocketmq.spring.autoconfigure.RocketMQAutoConfiguration

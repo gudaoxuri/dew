@@ -33,7 +33,7 @@ public class PostgreSqlExtension implements BeforeAllCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(PostgreSqlExtension.class);
 
-    private static final JdbcDatabaseContainer POSTGRESQL_CONTAINER = new PostgreSQLContainer(DockerImageName.parse("postgres:alpine"));
+    private static final JdbcDatabaseContainer POSTGRESQL_CONTAINER = new PostgreSQLContainer(DockerImageName.parse("postgres:12-alpine"));
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
