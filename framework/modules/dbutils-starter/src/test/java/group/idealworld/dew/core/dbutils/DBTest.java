@@ -1,5 +1,5 @@
-/*
- * Copyright 2021. the original author or authors.
+package group.idealworld.dew.core.dbutils;/*
+ * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package group.idealworld.dew.core.dbutils;
-
 import group.idealworld.dew.core.dbutils.dto.Meta;
 import group.idealworld.dew.core.dbutils.dto.Page;
-import group.idealworld.dew.test.PostgreSqlExtension;
+import group.idealworld.dew.test.MySqlExtension;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -40,20 +36,18 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@ExtendWith({SpringExtension.class, PostgreSqlExtension.class})
-@ContextConfiguration(initializers = {PostgreSqlExtension.Initializer.class})
-@SpringBootApplication
+@Slf4j
+@ExtendWith({SpringExtension.class, MySqlExtension.class})
+@ContextConfiguration(initializers = MySqlExtension.Initializer.class)
 @SpringBootTest
 @Testcontainers
-public class DbutilsTest {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DbutilsTest.class);
+public class DBTest {
 
     @Autowired
-    private DewDB dewDB;
+    private DewDB db;
 
     @Test
-    public void testCreateAndUpdate() throws SQLException, SQLException {
+    public void testCreateAndUpdate() throws SQLException, IOException {
         Map<String, String> fields = new HashMap<>();
         fields.put("id", "long");
         fields.put("name", "String");
@@ -65,7 +59,7 @@ public class DbutilsTest {
         fields.put("addr", "String");
         fields.put("enable", "Boolean");
         fields.put("txt", "text");
-        dewDB.createTableIfNotExist("test", "测试表", fields, new HashMap<String, String>() {{
+        db.createTableIfNotExist("test", "测试表", fields, new HashMap<String, String>() {{
             put("name", "姓名");
             put("age", "年龄");
         }}, new ArrayList<String>() {{
@@ -84,67 +78,67 @@ public class DbutilsTest {
         values.put("addr", "浙江杭州");
         //  values.put("createTime", new java.sql.Date());
         values.put("txt", "浙江杭州");
-        dewDB.insert("test", values);
+        db.insert("test", values);
         values.put("name", "孤岛旭日");
-        dewDB.modify("test", "id", 100, values);
-        Map<String, Object> res = dewDB.getByPk("test", "id", 100);
+        db.modify("test", "id", 100, values);
+        Map<String, Object> res = db.getByPk("test", "id", 100);
         Assert.assertEquals("孤岛旭日", res.get("name"));
         Assert.assertEquals(29, res.get("age"));
         Assert.assertEquals(1.1f, res.get("height1"));
         Assert.assertEquals(1.1d, res.get("height2"));
         Assert.assertEquals("浙江杭州", res.get("addr"));
         Assert.assertEquals("浙江杭州", res.get("txt"));
-        dewDB.delete("test", "id", 100);
-        Assert.assertNull(dewDB.getByPk("test", "id", 100));
+        db.delete("test", "id", 100);
+        Assert.assertNull(db.getByPk("test", "id", 100));
     }
 
     @Test
     public void testMeta() throws Exception {
-        testCreateTable(dewDB);
-        List<Meta> metas = dewDB.getMetaData("tuser");
+        testCreateTable(db);
+        List<Meta> metas = db.getMetaData("tuser");
         Assert.assertEquals("id", metas.get(0).getLabel());
-        Meta meta = dewDB.getMetaData("tuser", "name");
+        Meta meta = db.getMetaData("tuser", "name");
         Assert.assertEquals("name", meta.getLabel());
-        testDropTable(dewDB);
+        testDropTable(db);
     }
 
     @Test
     public void testFlow() throws SQLException, IOException {
-        testCreateTable(dewDB);
-        dewDB.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
+        testCreateTable(db);
+        db.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
                 1, "张三", "123", 22, 2333.22, true);
-        dewDB.batch("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )", new Object[][]{
+        db.batch("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )", new Object[][]{
                 {2, "李四", "123", 22, 2333.22, true},
                 {3, "王五1", "123", 22, 2333.22, false},
                 {4, "王五2", "123", 22, 2333.22, false},
                 {5, "王五3", "123", 20, 2333.22, false}
         });
         // get
-        Assert.assertEquals(1, dewDB.get("select * from tuser where id = ?", 1).get("id"));
+        Assert.assertEquals(1, db.get("select * from tuser where id = ?", 1).get("id"));
         // count
-        Assert.assertEquals(5, dewDB.count("select * from tuser"));
+        Assert.assertEquals(5, db.count("select * from tuser"));
         // find
-        Assert.assertEquals(4, dewDB.find("select * from tuser where age = ?", 22).size());
+        Assert.assertEquals(4, db.find("select * from tuser where age = ?", 22).size());
         // page
-        Page<Map<String, Object>> pageResult = dewDB.page("select * from tuser", 1, 2);
+        Page<Map<String, Object>> pageResult = db.page("select * from tuser", 1, 2);
         Assert.assertEquals(5, pageResult.getRecordTotal());
         Assert.assertEquals(3, pageResult.getPageTotal());
         // get
-        User user = dewDB.get("select * from tuser where id = ? ", User.class, 1);
+        User user = db.get("select * from tuser where id = ? ", User.class, 1);
         Assert.assertEquals(1, user.getId());
         // find
-        List<User> users = dewDB.find("select * from tuser where age = ?", User.class, 22);
+        List<User> users = db.find("select * from tuser where age = ?", User.class, 22);
         Assert.assertEquals(4, users.size());
 
-        testDropTable(dewDB);
+        testDropTable(db);
     }
 
     @Test
     public void testPool() throws Exception {
-        testCreateTable(dewDB);
-        dewDB.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
+        testCreateTable(db);
+        db.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
                 1, "张三", "123", 22, 2333.22, true);
-        dewDB.batch("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )", new Object[][]{
+        db.batch("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )", new Object[][]{
                 {2, "李四", "123", 22, 2333.22, true},
                 {3, "王五1", "123", 22, 2333.22, false},
                 {4, "王五2", "123", 22, 2333.22, false},
@@ -156,12 +150,12 @@ public class DbutilsTest {
             new Thread(() -> {
                 for (int i1 = 0; i1 < 100; i1++) {
                     try {
-                        LOGGER.debug(">>>>>>>>>>>>>>" + count.incrementAndGet());
+                        log.debug(">>>>>>>>>>>>>>" + count.incrementAndGet());
                         watch.countDown();
                         // find
-                        Assert.assertEquals(4, dewDB.find("select * from tuser where age = ?", 22).size());
+                        Assert.assertEquals(4, db.find("select * from tuser where age = ?", 22).size());
                         // page
-                        Page<Map<String, Object>> pageResult = dewDB.page("select * from tuser", 1, 2);
+                        Page<Map<String, Object>> pageResult = db.page("select * from tuser", 1, 2);
                         Assert.assertEquals(5, pageResult.getRecordTotal());
                         Assert.assertEquals(3, pageResult.getPageTotal());
                     } catch (SQLException e) {
@@ -171,42 +165,42 @@ public class DbutilsTest {
             }).start();
         }
         watch.await();
-        testDropTable(dewDB);
+        testDropTable(db);
     }
 
 
     @Test
     public void testTransaction() throws SQLException {
-        testCreateTable(dewDB);
+        testCreateTable(db);
         //rollback test
-        dewDB.open();
-        dewDB.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
+        db.open();
+        db.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
                 1, "张三", "123", 22, 2333.22, true);
-        dewDB.rollback();
-        Assert.assertEquals(0, dewDB.count("select * from tuser"));
+        db.rollback();
+        Assert.assertEquals(0, db.count("select * from tuser"));
 
         //error test
-        dewDB.open();
-        dewDB.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
+        db.open();
+        db.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
                 1, "张三", "123", 22, 2333.22, true);
         //has error
         try {
-            dewDB.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
+            db.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
                     1, "张三", "123", 22, 2333.22);
-            dewDB.commit();
+            db.commit();
         } catch (SQLException e) {
-            LOGGER.warn("[DewDBUtils]Has Error!");
+            log.warn("[DewDBUtils]Has Error!");
         }
-        Assert.assertEquals(0, dewDB.count("select * from tuser"));
+        Assert.assertEquals(0, db.count("select * from tuser"));
 
         //commit test
-        dewDB.open();
-        dewDB.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
+        db.open();
+        db.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
                 1, "张三", "123", 22, 2333.22, true);
-        dewDB.commit();
-        Assert.assertEquals(1, dewDB.count("select * from tuser"));
+        db.commit();
+        Assert.assertEquals(1, db.count("select * from tuser"));
 
-        testDropTable(dewDB);
+        testDropTable(db);
     }
 
     @Test

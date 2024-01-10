@@ -33,7 +33,7 @@ public class PostgreSqlExtension implements BeforeAllCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(PostgreSqlExtension.class);
 
-    private static final JdbcDatabaseContainer POSTGRESQL_CONTAINER = new PostgreSQLContainer(DockerImageName.parse("postgres:alpine"));
+    private static final JdbcDatabaseContainer POSTGRESQL_CONTAINER = new PostgreSQLContainer(DockerImageName.parse("postgres:12-alpine"));
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
@@ -51,9 +51,9 @@ public class PostgreSqlExtension implements BeforeAllCallback {
         @Override
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues.of(
-                    "spring.datasource.url=" + POSTGRESQL_CONTAINER.getJdbcUrl(),
-                    "spring.datasource.username=" + POSTGRESQL_CONTAINER.getUsername(),
-                    "spring.datasource.password=" + POSTGRESQL_CONTAINER.getPassword()
+                    "spring.data.datasource.url=" + POSTGRESQL_CONTAINER.getJdbcUrl(),
+                    "spring.data.datasource.username=" + POSTGRESQL_CONTAINER.getUsername(),
+                    "spring.data.datasource.password=" + POSTGRESQL_CONTAINER.getPassword()
             ).applyTo(configurableApplicationContext.getEnvironment());
         }
     }

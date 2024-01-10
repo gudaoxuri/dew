@@ -19,11 +19,14 @@ package group.idealworld.dew.example;
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
 import group.idealworld.dew.example.auth.AuthExampleApplication;
+import group.idealworld.dew.test.RedisExtension;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.HashMap;
 
@@ -32,11 +35,13 @@ import java.util.HashMap;
  *
  * @author gudaoxuri
  */
-@ExtendWith(SpringExtension.class)
+@ExtendWith({SpringExtension.class, RedisExtension.class})
+@ContextConfiguration(initializers = RedisExtension.Initializer.class)
+@Testcontainers
 @SpringBootTest(classes = AuthExampleApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class AuthTest {
 
-    private static final String url = "http://127.0.0.1:8080/";
+    private static final String url = "http://127.0.0.1:8080";
 
     /**
      * Test auth.

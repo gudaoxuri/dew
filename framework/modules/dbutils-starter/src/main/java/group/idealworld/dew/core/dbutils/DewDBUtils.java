@@ -1,4 +1,4 @@
-/*
+package group.idealworld.dew.core.dbutils;/*
  * Copyright 2020. the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-package group.idealworld.dew.core.dbutils;
 
 import group.idealworld.dew.core.dbutils.dto.DBUtilsConfig;
 import group.idealworld.dew.core.dbutils.dto.DSConfig;
@@ -27,15 +26,11 @@ import group.idealworld.dew.core.dbutils.process.DSLoader;
  */
 public class DewDBUtils {
 
-    private DewDBUtils() {
-    }
-
     /**
      * 初始化数据源.
      *
      * @param dbUtilsConfig 加载配置信息
      */
-
     public static void init(DBUtilsConfig dbUtilsConfig) {
         DSLoader.load(dbUtilsConfig);
     }

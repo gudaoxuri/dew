@@ -236,6 +236,7 @@ public class Notify {
             LOGGER.trace("Not found notify flag[" + flag + "] in dew config.");
             return Resp.badRequest("Not found notify flag[" + flag + "] in dew config.");
         }
+        LOGGER.trace("notifyConfigMap flag: " + flag);
         NotifyConfig notifyConfig = notifyConfigMap.get(flag);
         Context notifyContext = NOTIFY_CONTEXT.get(flag);
         // 策略处理
