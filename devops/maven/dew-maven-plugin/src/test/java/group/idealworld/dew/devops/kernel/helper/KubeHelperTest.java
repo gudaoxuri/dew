@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.helper;
 
 import com.ecfront.dew.common.$;
@@ -49,24 +33,25 @@ public class KubeHelperTest extends BasicTest {
 
     /*
      *//**
-     * Test.
-     *
-     * @throws IOException          the io exception
-     * @throws ApiException         the api exception
-     * @throws InterruptedException the interrupted exception
-     *//*
-    @Test
-    public void test() throws IOException, ApiException, InterruptedException {
-        KubeHelper.inst("")
-                .exec("helloworld-backend-79989646f9-bs5r4", "dew-app", "dew-test",
-                        new String[]{
-                                "./debug-java.sh"
-                        }, System.out::println);
-        Thread.sleep(10000);
-        KubeHelper.inst("")
-                .forward("helloworld-backend-79989646f9-bs5r4", "dew-test", 5005, 9999);
-        new CountDownLatch(1).await();
-    }*/
+         * Test.
+         *
+         * @throws IOException          the io exception
+         * @throws ApiException         the api exception
+         * @throws InterruptedException the interrupted exception
+         *//*
+            * @Test
+            * public void test() throws IOException, ApiException, InterruptedException {
+            * KubeHelper.inst("")
+            * .exec("helloworld-backend-79989646f9-bs5r4", "dew-app", "dew-test",
+            * new String[]{
+            * "./debug-java.sh"
+            * }, System.out::println);
+            * Thread.sleep(10000);
+            * KubeHelper.inst("")
+            * .forward("helloworld-backend-79989646f9-bs5r4", "dew-test", 5005, 9999);
+            * new CountDownLatch(1).await();
+            * }
+            */
 
     /**
      * Test all.
@@ -82,40 +67,57 @@ public class KubeHelperTest extends BasicTest {
         Assertions.assertFalse(KubeHelper.inst("").exist("ns-test", KubeRES.NAME_SPACE));
         KubeHelper.inst("").create($.file.readAllByClassPath("ns-test.yaml", "UTF-8"));
         Assertions.assertTrue(KubeHelper.inst("").exist("ns-test", KubeRES.NAME_SPACE));
-        Assertions.assertEquals("Active", KubeHelper.inst("").read("ns-test", KubeRES.NAME_SPACE, V1Namespace.class).getStatus().getPhase());
+        Assertions.assertEquals("Active",
+                KubeHelper.inst("").read("ns-test", KubeRES.NAME_SPACE, V1Namespace.class).getStatus().getPhase());
 
         V1Deployment deployment = buildDeployment();
         CountDownLatch cdl = new CountDownLatch(1);
-        final String watchId =
-                KubeHelper.inst("").watch((coreApi, appApi, extensionsApi, rbacAuthorizationApi, autoscalingApi) -> appApi.listNamespacedDeploymentCall(deployment.getMetadata().getNamespace(), null, null, null, null, "name=test-nginx", 1, null, null, null, null, null), resp -> {
-                    System.out.printf("%s : %s%n", resp.type, $.json.toJsonString(resp.object.getStatus()));
-                    if (resp.object.getStatus().getReadyReplicas() != null && resp.object.getStatus().getAvailableReplicas() != null && resp.object.getStatus().getReadyReplicas() == 2 && resp.object.getStatus().getAvailableReplicas() == 2) {
-                        try {
-                            long runningPodSize =
-                                    KubeHelper.inst("").list("name=nginx", "ns-test", KubeRES.POD, V1Pod.class).stream().filter(pod -> pod.getStatus().getPhase().equalsIgnoreCase("Running") && pod.getStatus().getContainerStatuses().stream().allMatch(V1ContainerStatus::getReady)).count();
-                            if (2 != runningPodSize) {
-                                // 之前版本没有销毁
-                                Thread.sleep(1000);
+        final String watchId = KubeHelper.inst("")
+                .watch((coreApi, appApi, extensionsApi, rbacAuthorizationApi, autoscalingApi) -> appApi
+                        .listNamespacedDeploymentCall(deployment.getMetadata().getNamespace(), null, null, null, null,
+                                "name=test-nginx", 1, null, null, null, null, null),
+                        resp -> {
+                            System.out.printf("%s : %s%n", resp.type, $.json.toJsonString(resp.object.getStatus()));
+                            if (resp.object.getStatus().getReadyReplicas() != null
+                                    && resp.object.getStatus().getAvailableReplicas() != null
+                                    && resp.object.getStatus().getReadyReplicas() == 2
+                                    && resp.object.getStatus().getAvailableReplicas() == 2) {
+                                try {
+                                    long runningPodSize = KubeHelper.inst("")
+                                            .list("name=nginx", "ns-test", KubeRES.POD, V1Pod.class).stream()
+                                            .filter(pod -> pod.getStatus().getPhase().equalsIgnoreCase("Running")
+                                                    && pod.getStatus().getContainerStatuses().stream()
+                                                            .allMatch(V1ContainerStatus::getReady))
+                                            .count();
+                                    if (2 != runningPodSize) {
+                                        // 之前版本没有销毁
+                                        Thread.sleep(1000);
+                                    }
+                                } catch (ApiException | InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                cdl.countDown();
                             }
-                        } catch (ApiException | InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        cdl.countDown();
-                    }
 
-                }, V1Deployment.class);
-        Assertions.assertFalse(KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(),
-                KubeRES.DEPLOYMENT));
+                        }, V1Deployment.class);
+        Assertions.assertFalse(
+                KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(),
+                        KubeRES.DEPLOYMENT));
         KubeHelper.inst("").apply(deployment);
-        Assertions.assertTrue(KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(),
-                KubeRES.DEPLOYMENT));
+        Assertions.assertTrue(
+                KubeHelper.inst("").exist(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(),
+                        KubeRES.DEPLOYMENT));
 
         Assertions.assertEquals(1,
-                KubeHelper.inst("").list("", deployment.getMetadata().getNamespace(), KubeRES.DEPLOYMENT, V1Deployment.class).size());
-        Assertions.assertEquals(0, KubeHelper.inst("").list("name=nginx", deployment.getMetadata().getNamespace(), KubeRES.DEPLOYMENT,
-                V1Deployment.class).size());
-        Assertions.assertEquals(1, KubeHelper.inst("").list("name=test-nginx", deployment.getMetadata().getNamespace(), KubeRES.DEPLOYMENT,
-                V1Deployment.class).size());
+                KubeHelper.inst("")
+                        .list("", deployment.getMetadata().getNamespace(), KubeRES.DEPLOYMENT, V1Deployment.class)
+                        .size());
+        Assertions.assertEquals(0,
+                KubeHelper.inst("").list("name=nginx", deployment.getMetadata().getNamespace(), KubeRES.DEPLOYMENT,
+                        V1Deployment.class).size());
+        Assertions.assertEquals(1,
+                KubeHelper.inst("").list("name=test-nginx", deployment.getMetadata().getNamespace(), KubeRES.DEPLOYMENT,
+                        V1Deployment.class).size());
 
         // 避免各pod的startTime相同
         Thread.sleep(1000);
@@ -125,35 +127,44 @@ public class KubeHelperTest extends BasicTest {
                 add("{\"op\":\"replace\",\"path\":\"/spec/template/spec/containers/0/image\",\"value\":\"nginx:latest\"}");
             }
         }, "ns-test", KubeRES.DEPLOYMENT);
-        V1Deployment fetchedDeployment = KubeHelper.inst("").read(deployment.getMetadata().getName(), deployment.getMetadata().getNamespace(),
+        V1Deployment fetchedDeployment = KubeHelper.inst("").read(deployment.getMetadata().getName(),
+                deployment.getMetadata().getNamespace(),
                 KubeRES.DEPLOYMENT, V1Deployment.class);
 
         Assertions.assertEquals(2, fetchedDeployment.getSpec().getReplicas().intValue());
-        Assertions.assertEquals("nginx:latest", fetchedDeployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
+        Assertions.assertEquals("nginx:latest",
+                fetchedDeployment.getSpec().getTemplate().getSpec().getContainers().get(0).getImage());
         Assertions.assertEquals("test-nginx", fetchedDeployment.getMetadata().getLabels().get("name"));
 
         cdl.await();
 
-        List<V1Pod> pods =
-                KubeHelper.inst("").list("app=nginx", deployment.getMetadata().getNamespace(), KubeRES.POD, V1Pod.class).stream().filter(pod -> pod.getStatus().getPhase().equalsIgnoreCase("Running")).sorted((m1, m2) -> Long.compare(m2.getStatus().getStartTime().getMinute(), m1.getStatus().getStartTime().getMinute())).collect(Collectors.toList());
+        List<V1Pod> pods = KubeHelper.inst("")
+                .list("app=nginx", deployment.getMetadata().getNamespace(), KubeRES.POD, V1Pod.class).stream()
+                .filter(pod -> pod.getStatus().getPhase().equalsIgnoreCase("Running")).sorted((m1, m2) -> Long
+                        .compare(m2.getStatus().getStartTime().getMinute(), m1.getStatus().getStartTime().getMinute()))
+                .collect(Collectors.toList());
         String podName = pods.get(0).getMetadata().getName();
-        List<String> execResult = KubeHelper.inst("").exec(podName, null, deployment.getMetadata().getNamespace(), new String[]{"sh", "-c", "ls -l"});
+        List<String> execResult = KubeHelper.inst("").exec(podName, null, deployment.getMetadata().getNamespace(),
+                new String[] { "sh", "-c", "ls -l" });
         Assertions.assertTrue(execResult.get(0).contains("total"));
 
-        /* Closeable closeable = KubeHelper.inst("").forward(podName, deployment.getMetadata().getNamespace(), 80, 8081);
-
-        Assertions.assertTrue($.http.get("http://127.0.0.1:8081").contains("Welcome to nginx!"));
-        Assertions.assertTrue($.http.get("http://127.0.0.1:8081").contains("Welcome to nginx!"));
-
-        closeable.close();
-        */
+        /*
+         * Closeable closeable = KubeHelper.inst("").forward(podName,
+         * deployment.getMetadata().getNamespace(), 80, 8081);
+         * 
+         * Assertions.assertTrue($.http.get("http://127.0.0.1:8081").
+         * contains("Welcome to nginx!"));
+         * Assertions.assertTrue($.http.get("http://127.0.0.1:8081").
+         * contains("Welcome to nginx!"));
+         * 
+         * closeable.close();
+         */
         // TODO
         /*
-        Ngnix没有日志输出，程序会一直等待
-        List<String> logs = KubeHelper.inst("").log(podName, "ns-test");
-        logs.forEach(System.out::println);
-        */
-
+         * Ngnix没有日志输出，程序会一直等待
+         * List<String> logs = KubeHelper.inst("").log(podName, "ns-test");
+         * logs.forEach(System.out::println);
+         */
 
         KubeHelper.inst("").stopWatch(watchId);
         KubeHelper.inst("").delete("ns-test", KubeRES.NAME_SPACE);
@@ -161,28 +172,28 @@ public class KubeHelperTest extends BasicTest {
     }
 
     private V1Deployment buildDeployment() {
-        return new V1Deployment().kind(KubeRES.DEPLOYMENT.getVal()).apiVersion("apps/v1").metadata(new V1ObjectMeta().name("nginx-deployment").namespace("ns-test").labels(new HashMap<>() {
-            {
-                put("name", "test-nginx");
-            }
-        })).spec(new V1DeploymentSpec().replicas(1).selector(new V1LabelSelector().matchLabels(new HashMap<>() {
-            {
-                put("app", "nginx");
-            }
-        })).template(new V1PodTemplateSpec().metadata(new V1ObjectMeta().labels(new HashMap<>() {
-            {
-                put("app", "nginx");
-            }
-        })).spec(new V1PodSpec().containers(new ArrayList<>() {
-            {
-                add(new V1Container().name("nginx").image("nginx:1.7.9").ports(new ArrayList<>() {
+        return new V1Deployment().kind(KubeRES.DEPLOYMENT.getVal()).apiVersion("apps/v1")
+                .metadata(new V1ObjectMeta().name("nginx-deployment").namespace("ns-test").labels(new HashMap<>() {
                     {
-                        add(new V1ContainerPort().containerPort(80));
+                        put("name", "test-nginx");
                     }
-                }));
-            }
-        }))));
+                })).spec(new V1DeploymentSpec().replicas(1).selector(new V1LabelSelector().matchLabels(new HashMap<>() {
+                    {
+                        put("app", "nginx");
+                    }
+                })).template(new V1PodTemplateSpec().metadata(new V1ObjectMeta().labels(new HashMap<>() {
+                    {
+                        put("app", "nginx");
+                    }
+                })).spec(new V1PodSpec().containers(new ArrayList<>() {
+                    {
+                        add(new V1Container().name("nginx").image("nginx:1.7.9").ports(new ArrayList<>() {
+                            {
+                                add(new V1ContainerPort().containerPort(80));
+                            }
+                        }));
+                    }
+                }))));
     }
-
 
 }

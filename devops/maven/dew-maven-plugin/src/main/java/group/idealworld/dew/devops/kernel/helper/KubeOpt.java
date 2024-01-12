@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.helper;
 
 import com.ecfront.dew.common.$;
@@ -51,7 +35,8 @@ import java.util.stream.Collectors;
  * Kubernetes操作函数类.
  *
  * @author gudaoxuri
- * @see <a href="https://github.com/kubernetes-client/java">Kubernetes Client</a>
+ * @see <a href="https://github.com/kubernetes-client/java">Kubernetes
+ *      Client</a>
  */
 public class KubeOpt {
 
@@ -107,7 +92,8 @@ public class KubeOpt {
         this.log = log;
         YamlHelper.init(log);
         try {
-            client = Config.fromConfig(KubeConfig.loadKubeConfig(new StringReader($.security.decodeBase64ToString(base64KubeConfig, "UTF-8"))));
+            client = Config.fromConfig(KubeConfig
+                    .loadKubeConfig(new StringReader($.security.decodeBase64ToString(base64KubeConfig, "UTF-8"))));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -132,7 +118,8 @@ public class KubeOpt {
      * @return watch Id
      * @throws ApiException the api exception
      */
-    public <T> String watch(KubeWatchCall call, Consumer<Watch.Response<T>> callback, Class<T> clazz) throws ApiException {
+    public <T> String watch(KubeWatchCall call, Consumer<Watch.Response<T>> callback, Class<T> clazz)
+            throws ApiException {
         String watchId = $.field.createShortUUID();
         TypeToken<?> typeToken = null;
         if (clazz == V1Namespace.class) {
@@ -175,14 +162,17 @@ public class KubeOpt {
             typeToken = new TypeToken<Watch.Response<V1ClusterRoleBinding>>() {
             };
         }
-        Watch<T> watch = Watch.createWatch(client, call.call(coreApi, appsApi, networkingV1Api, rbacAuthorizationApi, autoscalingApi), typeToken.getType());
+        Watch<T> watch = Watch.createWatch(client,
+                call.call(coreApi, appsApi, networkingV1Api, rbacAuthorizationApi, autoscalingApi),
+                typeToken.getType());
         watchMap.put(watchId, watch);
         executorService.execute(() -> {
             try {
                 watch.forEach(callback);
             } catch (RuntimeException e) {
                 if (!watchMap.containsKey(watchId)) {
-                    if (e instanceof IllegalStateException && e.getMessage() != null && e.getMessage().equalsIgnoreCase("closed")) {
+                    if (e instanceof IllegalStateException && e.getMessage() != null
+                            && e.getMessage().equalsIgnoreCase("closed")) {
                         // Do Nothing
                     } else {
                         throw e;
@@ -258,15 +248,18 @@ public class KubeOpt {
                     break;
                 case INGRESS:
                     var ingressObj = Yaml.loadAs(body, V1Ingress.class);
-                    networkingV1Api.createNamespacedIngress(ingressObj.getMetadata().getNamespace(), ingressObj, null, null, null, null);
+                    networkingV1Api.createNamespacedIngress(ingressObj.getMetadata().getNamespace(), ingressObj, null,
+                            null, null, null);
                     break;
                 case SERVICE:
                     var serviceObj = Yaml.loadAs(body, V1Service.class);
-                    coreApi.createNamespacedService(serviceObj.getMetadata().getNamespace(), serviceObj, null, null, null, null);
+                    coreApi.createNamespacedService(serviceObj.getMetadata().getNamespace(), serviceObj, null, null,
+                            null, null);
                     break;
                 case DEPLOYMENT:
                     var deploymentObj = Yaml.loadAs(body, V1Deployment.class);
-                    appsApi.createNamespacedDeployment(deploymentObj.getMetadata().getNamespace(), deploymentObj, null, null, null, null);
+                    appsApi.createNamespacedDeployment(deploymentObj.getMetadata().getNamespace(), deploymentObj, null,
+                            null, null, null);
                     break;
                 case POD:
                     var podObj = Yaml.loadAs(body, V1Pod.class);
@@ -274,27 +267,33 @@ public class KubeOpt {
                     break;
                 case SECRET:
                     var secretObj = Yaml.loadAs(body, V1Secret.class);
-                    coreApi.createNamespacedSecret(secretObj.getMetadata().getNamespace(), secretObj, null, null, null, null);
+                    coreApi.createNamespacedSecret(secretObj.getMetadata().getNamespace(), secretObj, null, null, null,
+                            null);
                     break;
                 case CONFIG_MAP:
                     var configMapObj = Yaml.loadAs(body, V1ConfigMap.class);
-                    coreApi.createNamespacedConfigMap(configMapObj.getMetadata().getNamespace(), configMapObj, null, null, null, null);
+                    coreApi.createNamespacedConfigMap(configMapObj.getMetadata().getNamespace(), configMapObj, null,
+                            null, null, null);
                     break;
                 case SERVICE_ACCOUNT:
                     var serviceAccountObj = Yaml.loadAs(body, V1ServiceAccount.class);
-                    coreApi.createNamespacedServiceAccount(serviceAccountObj.getMetadata().getNamespace(), serviceAccountObj, null, null, null, null);
+                    coreApi.createNamespacedServiceAccount(serviceAccountObj.getMetadata().getNamespace(),
+                            serviceAccountObj, null, null, null, null);
                     break;
                 case DAEMON_SET:
                     var daemonSetObj = Yaml.loadAs(body, V1DaemonSet.class);
-                    appsApi.createNamespacedDaemonSet(daemonSetObj.getMetadata().getNamespace(), daemonSetObj, null, null, null, null);
+                    appsApi.createNamespacedDaemonSet(daemonSetObj.getMetadata().getNamespace(), daemonSetObj, null,
+                            null, null, null);
                     break;
                 case ROLE:
                     var roleObj = Yaml.loadAs(body, V1Role.class);
-                    rbacAuthorizationApi.createNamespacedRole(roleObj.getMetadata().getNamespace(), roleObj, null, null, null, null);
+                    rbacAuthorizationApi.createNamespacedRole(roleObj.getMetadata().getNamespace(), roleObj, null, null,
+                            null, null);
                     break;
                 case ROLE_BINDING:
                     var roleBindingObj = Yaml.loadAs(body, V1RoleBinding.class);
-                    rbacAuthorizationApi.createNamespacedRoleBinding(roleBindingObj.getMetadata().getNamespace(), roleBindingObj, null, null, null, null);
+                    rbacAuthorizationApi.createNamespacedRoleBinding(roleBindingObj.getMetadata().getNamespace(),
+                            roleBindingObj, null, null, null, null);
                     break;
                 case CLUSTER_ROLE:
                     var clusterRoleObj = Yaml.loadAs(body, V1ClusterRole.class);
@@ -306,7 +305,8 @@ public class KubeOpt {
                     break;
                 case HORIZONTAL_POD_AUTOSCALER:
                     var hpaObj = Yaml.loadAs(body, V2beta2HorizontalPodAutoscaler.class);
-                    autoscalingApi.createNamespacedHorizontalPodAutoscaler(hpaObj.getMetadata().getNamespace(), hpaObj, null, null, null, null);
+                    autoscalingApi.createNamespacedHorizontalPodAutoscaler(hpaObj.getMetadata().getNamespace(), hpaObj,
+                            null, null, null, null);
                     break;
                 default:
                     throw new ApiException("The resource [" + basicRes.getKind() + "] operation NOT implementation");
@@ -370,50 +370,65 @@ public class KubeOpt {
         Object resource;
         switch (res) {
             case NAME_SPACE:
-                resource = coreApi.listNamespace(null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = coreApi
+                        .listNamespace(null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null)
+                        .getItems();
                 break;
             case INGRESS:
-                resource = networkingV1Api.listNamespacedIngress(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = networkingV1Api.listNamespacedIngress(namespace, null, true, null, null, labelSelector,
+                        Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case SERVICE:
-                resource = coreApi.listNamespacedService(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = coreApi.listNamespacedService(namespace, null, true, null, null, labelSelector,
+                        Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case DEPLOYMENT:
-                resource = appsApi.listNamespacedDeployment(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = appsApi.listNamespacedDeployment(namespace, null, true, null, null, labelSelector,
+                        Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case REPLICA_SET:
-                resource = appsApi.listNamespacedReplicaSet(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = appsApi.listNamespacedReplicaSet(namespace, null, true, null, null, labelSelector,
+                        Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case POD:
-                resource = coreApi.listNamespacedPod(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = coreApi.listNamespacedPod(namespace, null, true, null, null, labelSelector,
+                        Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case SECRET:
-                resource = coreApi.listNamespacedSecret(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = coreApi.listNamespacedSecret(namespace, null, true, null, null, labelSelector,
+                        Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case CONFIG_MAP:
-                resource = coreApi.listNamespacedConfigMap(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = coreApi.listNamespacedConfigMap(namespace, null, true, null, null, labelSelector,
+                        Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case SERVICE_ACCOUNT:
-                resource = coreApi.listNamespacedServiceAccount(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = coreApi.listNamespacedServiceAccount(namespace, null, true, null, null, labelSelector,
+                        Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case DAEMON_SET:
-                resource = appsApi.listNamespacedDaemonSet(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = appsApi.listNamespacedDaemonSet(namespace, null, true, null, null, labelSelector,
+                        Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case ROLE:
-                resource = rbacAuthorizationApi.listNamespacedRole(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = rbacAuthorizationApi.listNamespacedRole(namespace, null, true, null, null, labelSelector,
+                        Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case ROLE_BINDING:
-                resource = rbacAuthorizationApi.listNamespacedRoleBinding(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = rbacAuthorizationApi.listNamespacedRoleBinding(namespace, null, true, null, null,
+                        labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case CLUSTER_ROLE:
-                resource = rbacAuthorizationApi.listClusterRole(null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = rbacAuthorizationApi.listClusterRole(null, true, null, null, labelSelector,
+                        Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case CLUSTER_ROLE_BINDING:
-                resource = rbacAuthorizationApi.listClusterRoleBinding(null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = rbacAuthorizationApi.listClusterRoleBinding(null, true, null, null, labelSelector,
+                        Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             case HORIZONTAL_POD_AUTOSCALER:
-                resource =
-                        autoscalingApi.listNamespacedHorizontalPodAutoscaler(namespace, null, true, null, null, labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
+                resource = autoscalingApi.listNamespacedHorizontalPodAutoscaler(namespace, null, true, null, null,
+                        labelSelector, Integer.MAX_VALUE, null, null, null, null).getItems();
                 break;
             default:
                 throw new ApiException("The resource [" + res.getVal() + "] operation NOT implementation");
@@ -538,61 +553,75 @@ public class KubeOpt {
             switch (KubeRES.parse(basicRes.getKind())) {
                 case NAME_SPACE:
                     var namespaceObj = Yaml.loadAs(body, V1Namespace.class);
-                    coreApi.replaceNamespace(namespaceObj.getMetadata().getName(), namespaceObj, null, null, null, null);
+                    coreApi.replaceNamespace(namespaceObj.getMetadata().getName(), namespaceObj, null, null, null,
+                            null);
                     break;
                 case INGRESS:
                     var ingressObj = Yaml.loadAs(body, V1Ingress.class);
-                    networkingV1Api.replaceNamespacedIngress(ingressObj.getMetadata().getName(), ingressObj.getMetadata().getNamespace(), ingressObj, null, null, null, null);
+                    networkingV1Api.replaceNamespacedIngress(ingressObj.getMetadata().getName(),
+                            ingressObj.getMetadata().getNamespace(), ingressObj, null, null, null, null);
                     break;
                 case SERVICE:
                     var serviceObj = Yaml.loadAs(body, V1Service.class);
-                    coreApi.replaceNamespacedService(serviceObj.getMetadata().getName(), serviceObj.getMetadata().getNamespace(), serviceObj, null, null, null, null);
+                    coreApi.replaceNamespacedService(serviceObj.getMetadata().getName(),
+                            serviceObj.getMetadata().getNamespace(), serviceObj, null, null, null, null);
                     break;
                 case DEPLOYMENT:
                     var deploymentObj = Yaml.loadAs(body, V1Deployment.class);
-                    appsApi.replaceNamespacedDeployment(deploymentObj.getMetadata().getName(), deploymentObj.getMetadata().getNamespace(), deploymentObj, null, null, null, null);
+                    appsApi.replaceNamespacedDeployment(deploymentObj.getMetadata().getName(),
+                            deploymentObj.getMetadata().getNamespace(), deploymentObj, null, null, null, null);
                     break;
                 case POD:
                     var podObj = Yaml.loadAs(body, V1Pod.class);
-                    coreApi.replaceNamespacedPod(podObj.getMetadata().getName(), podObj.getMetadata().getNamespace(), podObj, null, null, null, null);
+                    coreApi.replaceNamespacedPod(podObj.getMetadata().getName(), podObj.getMetadata().getNamespace(),
+                            podObj, null, null, null, null);
                     break;
                 case SECRET:
                     var secretObj = Yaml.loadAs(body, V1Secret.class);
-                    coreApi.replaceNamespacedSecret(secretObj.getMetadata().getName(), secretObj.getMetadata().getNamespace(), secretObj, null, null, null, null);
+                    coreApi.replaceNamespacedSecret(secretObj.getMetadata().getName(),
+                            secretObj.getMetadata().getNamespace(), secretObj, null, null, null, null);
                     break;
                 case CONFIG_MAP:
                     var configMapObj = Yaml.loadAs(body, V1ConfigMap.class);
-                    coreApi.replaceNamespacedConfigMap(configMapObj.getMetadata().getName(), configMapObj.getMetadata().getNamespace(), configMapObj, null, null, null, null);
+                    coreApi.replaceNamespacedConfigMap(configMapObj.getMetadata().getName(),
+                            configMapObj.getMetadata().getNamespace(), configMapObj, null, null, null, null);
                     break;
                 case SERVICE_ACCOUNT:
                     var serviceAccountObj = Yaml.loadAs(body, V1ServiceAccount.class);
-                    coreApi.replaceNamespacedServiceAccount(serviceAccountObj.getMetadata().getName(), serviceAccountObj.getMetadata().getNamespace(), serviceAccountObj, null, null,
+                    coreApi.replaceNamespacedServiceAccount(serviceAccountObj.getMetadata().getName(),
+                            serviceAccountObj.getMetadata().getNamespace(), serviceAccountObj, null, null,
                             null, null);
                     break;
                 case DAEMON_SET:
                     var daemonSetObj = Yaml.loadAs(body, V1DaemonSet.class);
-                    appsApi.replaceNamespacedDaemonSet(daemonSetObj.getMetadata().getName(), daemonSetObj.getMetadata().getNamespace(), daemonSetObj, null, null, null, null);
+                    appsApi.replaceNamespacedDaemonSet(daemonSetObj.getMetadata().getName(),
+                            daemonSetObj.getMetadata().getNamespace(), daemonSetObj, null, null, null, null);
                     break;
                 case ROLE:
                     var roleObj = Yaml.loadAs(body, V1Role.class);
-                    rbacAuthorizationApi.replaceNamespacedRole(roleObj.getMetadata().getName(), roleObj.getMetadata().getNamespace(), roleObj, null, null, null, null);
+                    rbacAuthorizationApi.replaceNamespacedRole(roleObj.getMetadata().getName(),
+                            roleObj.getMetadata().getNamespace(), roleObj, null, null, null, null);
                     break;
                 case ROLE_BINDING:
                     var roleBindingObj = Yaml.loadAs(body, V1RoleBinding.class);
-                    rbacAuthorizationApi.replaceNamespacedRoleBinding(roleBindingObj.getMetadata().getName(), roleBindingObj.getMetadata().getNamespace(), roleBindingObj, null, null,
+                    rbacAuthorizationApi.replaceNamespacedRoleBinding(roleBindingObj.getMetadata().getName(),
+                            roleBindingObj.getMetadata().getNamespace(), roleBindingObj, null, null,
                             null, null);
                     break;
                 case CLUSTER_ROLE:
                     var clusterRoleObj = Yaml.loadAs(body, V1ClusterRole.class);
-                    rbacAuthorizationApi.replaceClusterRole(clusterRoleObj.getMetadata().getName(), clusterRoleObj, null, null, null, null);
+                    rbacAuthorizationApi.replaceClusterRole(clusterRoleObj.getMetadata().getName(), clusterRoleObj,
+                            null, null, null, null);
                     break;
                 case CLUSTER_ROLE_BINDING:
                     var clusterRoleBindingObj = Yaml.loadAs(body, V1ClusterRoleBinding.class);
-                    rbacAuthorizationApi.replaceClusterRoleBinding(clusterRoleBindingObj.getMetadata().getName(), clusterRoleBindingObj, null, null, null, null);
+                    rbacAuthorizationApi.replaceClusterRoleBinding(clusterRoleBindingObj.getMetadata().getName(),
+                            clusterRoleBindingObj, null, null, null, null);
                     break;
                 case HORIZONTAL_POD_AUTOSCALER:
                     var hpaObj = Yaml.loadAs(body, V2beta2HorizontalPodAutoscaler.class);
-                    autoscalingApi.replaceNamespacedHorizontalPodAutoscaler(hpaObj.getMetadata().getName(), hpaObj.getMetadata().getNamespace(), hpaObj, null, null, null, null);
+                    autoscalingApi.replaceNamespacedHorizontalPodAutoscaler(hpaObj.getMetadata().getName(),
+                            hpaObj.getMetadata().getNamespace(), hpaObj, null, null, null, null);
                     break;
                 default:
                     throw new ApiException("The resource [" + basicRes.getKind() + "] operation NOT implementation");
@@ -661,7 +690,8 @@ public class KubeOpt {
                     rbacAuthorizationApi.patchNamespacedRole(name, namespace, v1Patch, null, null, null, null, null);
                     break;
                 case ROLE_BINDING:
-                    rbacAuthorizationApi.patchNamespacedRoleBinding(name, namespace, v1Patch, null, null, null, null, null);
+                    rbacAuthorizationApi.patchNamespacedRoleBinding(name, namespace, v1Patch, null, null, null, null,
+                            null);
                     break;
                 case CLUSTER_ROLE:
                     rbacAuthorizationApi.patchClusterRole(name, v1Patch, null, null, null, null, null);
@@ -670,7 +700,8 @@ public class KubeOpt {
                     rbacAuthorizationApi.patchClusterRoleBinding(name, v1Patch, null, null, null, null, null);
                     break;
                 case HORIZONTAL_POD_AUTOSCALER:
-                    autoscalingApi.patchNamespacedHorizontalPodAutoscaler(name, namespace, v1Patch, null, null, null, null, null);
+                    autoscalingApi.patchNamespacedHorizontalPodAutoscaler(name, namespace, v1Patch, null, null, null,
+                            null, null);
                     break;
                 default:
                     throw new ApiException("The resource [" + res.getVal() + "] operation NOT implementation");
@@ -699,7 +730,8 @@ public class KubeOpt {
      */
     public void apply(String body) throws ApiException {
         KubeBasicRes basicRes = YamlHelper.toObject(KubeBasicRes.class, body);
-        if (exist(basicRes.getMetadata().getName(), basicRes.getMetadata().getNamespace(), KubeRES.parse(basicRes.getKind()))) {
+        if (exist(basicRes.getMetadata().getName(), basicRes.getMetadata().getNamespace(),
+                KubeRES.parse(basicRes.getKind()))) {
             replace(body);
         } else {
             create(body);
@@ -758,7 +790,8 @@ public class KubeOpt {
      * @throws ApiException the api exception
      * @throws IOException  the io exception
      */
-    public List<String> log(String name, String container, String namespace, int tailLines) throws ApiException, IOException {
+    public List<String> log(String name, String container, String namespace, int tailLines)
+            throws ApiException, IOException {
         List<String> logResult = new CopyOnWriteArrayList<>();
         Closeable closeable = log(name, container, namespace, logResult::add, tailLines);
         try {
@@ -794,7 +827,8 @@ public class KubeOpt {
      * @return the closeable
      * @throws ApiException the api exception
      */
-    public Closeable log(String name, String container, String namespace, Consumer<String> tailFollowFun) throws ApiException {
+    public Closeable log(String name, String container, String namespace, Consumer<String> tailFollowFun)
+            throws ApiException {
         return log(name, container, namespace, tailFollowFun, 0);
     }
 
@@ -811,14 +845,16 @@ public class KubeOpt {
      * @return the closeable
      * @throws ApiException the api exception
      */
-    public Closeable log(String name, String container, String namespace, Consumer<String> tailFollowFun, int tailLines) throws ApiException {
+    public Closeable log(String name, String container, String namespace, Consumer<String> tailFollowFun, int tailLines)
+            throws ApiException {
         if (container == null) {
             container = read(name, namespace, KubeRES.POD, V1Pod.class).getSpec().getContainers().get(0).getName();
         }
         String finalContainer = container;
         try {
             AtomicBoolean closed = new AtomicBoolean(false);
-            InputStream is = podLogs.streamNamespacedPodLog(namespace, name, finalContainer, null, tailLines == 0 ? null : tailLines, false);
+            InputStream is = podLogs.streamNamespacedPodLog(namespace, name, finalContainer, null,
+                    tailLines == 0 ? null : tailLines, false);
             BufferedReader r = new BufferedReader(new InputStreamReader(is));
             executorService.execute(() -> {
                 try {
@@ -882,7 +918,8 @@ public class KubeOpt {
                     coreApi.deleteNamespace(name, null, null, null, null, null, deleteOptions);
                     break;
                 case INGRESS:
-                    networkingV1Api.deleteNamespacedIngress(name, namespace, null, null, null, null, null, deleteOptions);
+                    networkingV1Api.deleteNamespacedIngress(name, namespace, null, null, null, null, null,
+                            deleteOptions);
                     break;
                 case SERVICE:
                     coreApi.deleteNamespacedService(name, namespace, null, null, null, null, null, deleteOptions);
@@ -905,16 +942,19 @@ public class KubeOpt {
                     coreApi.deleteNamespacedConfigMap(name, namespace, null, null, null, null, null, deleteOptions);
                     break;
                 case SERVICE_ACCOUNT:
-                    coreApi.deleteNamespacedServiceAccount(name, namespace, null, null, null, null, null, deleteOptions);
+                    coreApi.deleteNamespacedServiceAccount(name, namespace, null, null, null, null, null,
+                            deleteOptions);
                     break;
                 case DAEMON_SET:
                     appsApi.deleteNamespacedDaemonSet(name, namespace, null, null, null, null, null, deleteOptions);
                     break;
                 case ROLE:
-                    rbacAuthorizationApi.deleteNamespacedRole(name, namespace, null, null, null, null, null, deleteOptions);
+                    rbacAuthorizationApi.deleteNamespacedRole(name, namespace, null, null, null, null, null,
+                            deleteOptions);
                     break;
                 case ROLE_BINDING:
-                    rbacAuthorizationApi.deleteNamespacedRoleBinding(name, namespace, null, null, null, null, null, deleteOptions);
+                    rbacAuthorizationApi.deleteNamespacedRoleBinding(name, namespace, null, null, null, null, null,
+                            deleteOptions);
                     break;
                 case CLUSTER_ROLE:
                     rbacAuthorizationApi.deleteClusterRole(name, null, null, null, null, null, deleteOptions);
@@ -923,7 +963,8 @@ public class KubeOpt {
                     rbacAuthorizationApi.deleteClusterRoleBinding(name, null, null, null, null, null, deleteOptions);
                     break;
                 case HORIZONTAL_POD_AUTOSCALER:
-                    autoscalingApi.deleteNamespacedHorizontalPodAutoscaler(name, namespace, null, null, null, null, null, deleteOptions);
+                    autoscalingApi.deleteNamespacedHorizontalPodAutoscaler(name, namespace, null, null, null, null,
+                            null, deleteOptions);
                     break;
                 default:
                     throw new ApiException("The resource [" + res.getVal() + "] operation NOT implementation");
@@ -961,7 +1002,8 @@ public class KubeOpt {
      * @throws ApiException the api exception
      * @throws IOException  the io exception
      */
-    public List<String> exec(String name, String container, String namespace, String[] cmd) throws ApiException, IOException {
+    public List<String> exec(String name, String container, String namespace, String[] cmd)
+            throws ApiException, IOException {
         List<String> result = new CopyOnWriteArrayList<>();
         exec(name, container, namespace, cmd, result::add, true).close();
         return result;
@@ -981,7 +1023,8 @@ public class KubeOpt {
      * @throws ApiException the api exception
      * @throws IOException  the io exception
      */
-    public Closeable exec(String name, String container, String namespace, String[] cmd, Consumer<String> outputFun) throws ApiException, IOException {
+    public Closeable exec(String name, String container, String namespace, String[] cmd, Consumer<String> outputFun)
+            throws ApiException, IOException {
         return exec(name, container, namespace, cmd, outputFun, false);
     }
 
@@ -998,7 +1041,8 @@ public class KubeOpt {
      * @throws ApiException the api exception
      * @throws IOException  the io exception
      */
-    private Closeable exec(String name, String container, String namespace, String[] cmd, Consumer<String> outputFun, boolean waiting) throws ApiException, IOException {
+    private Closeable exec(String name, String container, String namespace, String[] cmd, Consumer<String> outputFun,
+            boolean waiting) throws ApiException, IOException {
         if (container == null) {
             container = read(name, namespace, KubeRES.POD, V1Pod.class).getSpec().getContainers().get(0).getName();
         }
@@ -1046,7 +1090,6 @@ public class KubeOpt {
         };
     }
 
-
     /**
      * Forward.
      *
@@ -1058,7 +1101,8 @@ public class KubeOpt {
      * @throws IOException  the io exception
      * @throws ApiException the api exception
      */
-    public Closeable forward(String name, String namespace, int innerPort, int forwardPort) throws IOException, ApiException {
+    public Closeable forward(String name, String namespace, int innerPort, int forwardPort)
+            throws IOException, ApiException {
         AtomicBoolean closed = new AtomicBoolean(false);
         PortForward.PortForwardResult result = new PortForward().forward(namespace, name, new ArrayList<>() {
             {
@@ -1102,4 +1146,3 @@ public class KubeOpt {
     }
 
 }
-

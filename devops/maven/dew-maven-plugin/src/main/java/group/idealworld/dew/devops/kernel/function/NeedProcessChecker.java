@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.function;
 
 import com.ecfront.dew.common.$;
@@ -71,37 +55,43 @@ public class NeedProcessChecker {
                 logger.info("Need process checking for " + projectConfig.getAppName());
                 Resp<String> deployAble = projectConfig.getDeployPlugin().deployAble(projectConfig);
                 if (!deployAble.ok()) {
-                    DevOps.SkipProcess.skip(projectConfig, deployAble.getMessage(), FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
+                    DevOps.SkipProcess.skip(projectConfig, deployAble.getMessage(),
+                            FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
                     continue;
                 }
                 // 是否需要重用
                 Optional<String> lastVersionDeployCommitFromProfileOptional = getAndSetCommitVersion(projectConfig);
                 projectConfig.getDeployPlugin()
-                        .fetchLastDeployedVersion(projectConfig.getId(), projectConfig.getAppName(), projectConfig.getNamespace())
+                        .fetchLastDeployedVersion(projectConfig.getId(), projectConfig.getAppName(),
+                                projectConfig.getNamespace())
                         .ifPresent(lastDeployedVersion -> {
                             logger.debug("Latest version is " + lastDeployedVersion);
                             if (!projectConfig.getDisableReuseVersion()) {
                                 // 重用版本
-                                lastVersionDeployCommitFromProfileOptional.ifPresent(lastVersionDeployCommitFromProfile -> {
-                                    if (lastDeployedVersion.equals(lastVersionDeployCommitFromProfile)) {
-                                        DevOps.SkipProcess.skip(projectConfig,
-                                                "Reuse last version " + lastDeployedVersion + " has been deployed",
-                                                FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
-                                    }
-                                });
+                                lastVersionDeployCommitFromProfileOptional
+                                        .ifPresent(lastVersionDeployCommitFromProfile -> {
+                                            if (lastDeployedVersion.equals(lastVersionDeployCommitFromProfile)) {
+                                                DevOps.SkipProcess.skip(projectConfig,
+                                                        "Reuse last version " + lastDeployedVersion
+                                                                + " has been deployed",
+                                                        FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
+                                            }
+                                        });
                             }
                             try {
                                 List<String> changedFiles = fetchGitDiff(lastDeployedVersion);
                                 // 判断有没有代码变更
                                 if (!hasUnDeployFiles(changedFiles, projectConfig)) {
-                                    DevOps.SkipProcess.skip(projectConfig, "No code changes", FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
+                                    DevOps.SkipProcess.skip(projectConfig, "No code changes",
+                                            FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
                                 } else {
                                     // 如果前端项目的 package.json 文件有代码变更，则删掉同级目录下的 node_modules 文件夹
                                     // 以便执行 preparePackageCmd 的预打包命令
                                     removeNodeModulesDirectory(projectConfig, changedFiles);
                                 }
                             } catch (GitDiffException e) {
-                                logger.warn("Redeploying [" + projectConfig.getAppName() + "] due to some codes had been reverted or changed.");
+                                logger.warn("Redeploying [" + projectConfig.getAppName()
+                                        + "] due to some codes had been reverted or changed.");
                             }
                         });
             }
@@ -209,9 +199,10 @@ public class NeedProcessChecker {
         final String basePath = basePathFile.getPath();
         // 获取当前项目目录下的工程路径及依赖项目的工程路径
         List<String> collectedProjectPaths = projectConfig.getMavenSession().getProjects().stream()
-                .filter(project -> (project.getBasedir().getPath() + File.separator).startsWith(projectConfig.getDirectory())
+                .filter(project -> (project.getBasedir().getPath() + File.separator)
+                        .startsWith(projectConfig.getDirectory())
                         || projectConfig.getMavenProject().getDependencies().stream()
-                        .anyMatch(dependency -> dependency.getArtifactId().equals(project.getArtifactId())))
+                                .anyMatch(dependency -> dependency.getArtifactId().equals(project.getArtifactId())))
                 .map(project -> project.getBasedir().getPath())
                 .collect(Collectors.toList());
         // 找到当前项目变更的文件列表及依赖项目变更的文件列表
@@ -225,7 +216,8 @@ public class NeedProcessChecker {
             changedFiles = changedFiles.stream()
                     .filter(path -> {
                         for (String collectedProjectPath : collectedProjectPaths) {
-                            if (path.startsWith(collectedProjectPath) || path.equals(basePath + File.separator + ".dew")) {
+                            if (path.startsWith(collectedProjectPath)
+                                    || path.equals(basePath + File.separator + ".dew")) {
                                 return true;
                             }
                         }
@@ -255,15 +247,15 @@ public class NeedProcessChecker {
         dependencyProcess(projectConfigs, needProcessSnapshotProjects);
     }
 
-    private static void dependencyProcess(Collection<FinalProjectConfig> projectConfigs, List<String> needProcessProjects) {
+    private static void dependencyProcess(Collection<FinalProjectConfig> projectConfigs,
+            List<String> needProcessProjects) {
         projectConfigs.stream()
                 // 所有跳过的项目(配置文件跳过的项目除外)
                 .filter(finalProjectConfig -> finalProjectConfig.getSkip()
                         && !finalProjectConfig.getSkipCode().equals(FinalProjectConfig.SkipCodeEnum.SELF_CONFIG))
                 // 找到有依赖于需要处理的快照项目
-                .filter(projectConfig ->
-                        projectConfig.getMavenProject().getArtifacts().stream()
-                                .anyMatch(artifact -> needProcessProjects.contains(artifact.getId())))
+                .filter(projectConfig -> projectConfig.getMavenProject().getArtifacts().stream()
+                        .anyMatch(artifact -> needProcessProjects.contains(artifact.getId())))
                 .forEach(projectConfig -> {
                     // 这些项目不能跳过
                     DevOps.SkipProcess.unSkip(projectConfig);
@@ -314,7 +306,6 @@ public class NeedProcessChecker {
 
     }
 
-
     /**
      * 是否要继续处理项目.
      *
@@ -323,7 +314,8 @@ public class NeedProcessChecker {
      * @return Boolean
      * @throws IOException IOException
      */
-    private static Boolean dealProcessProjects(List<FinalProjectConfig> processingProjects, boolean quiet) throws IOException {
+    private static Boolean dealProcessProjects(List<FinalProjectConfig> processingProjects, boolean quiet)
+            throws IOException {
         if (processingProjects.isEmpty()) {
             // 不存在需要处理的项目
             DevOps.stopped = true;
@@ -358,8 +350,9 @@ public class NeedProcessChecker {
         // 将要处理的项目
         return new StringBuilder()
                 .append("\r\n==================== Processing Projects =====================\r\n\r\n")
-                .append(processingProjects.stream().map(config ->
-                        String.format("> [%-25s] %s:%s", config.getAppKindPlugin().getName(), config.getAppGroup(), config.getAppName()))
+                .append(processingProjects.stream()
+                        .map(config -> String.format("> [%-25s] %s:%s", config.getAppKindPlugin().getName(),
+                                config.getAppGroup(), config.getAppName()))
                         .collect(Collectors.joining("\r\n")))
                 .append("\r\n\r\n==============================================================\r\n");
     }

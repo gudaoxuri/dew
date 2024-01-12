@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew;
 
 import com.ecfront.dew.common.$;
@@ -83,10 +67,9 @@ public class Dew {
     public static AuthAdapter auth;
 
     /**
-     *  The local variables
+     * The local variables
      */
     public static ThreadLocalUtil<String> threadLocalUtil = new ThreadLocalUtil<>();
-
 
     @Value("${spring.application.name:please-setting-this}")
     private String applicationName;
@@ -130,8 +113,7 @@ public class Dew {
         Info.instance = applicationName + "@" + Info.profile + "@" + Info.ip + ":" + serverPort;
         Cluster.init(Info.name, Info.instance);
 
-        Dew.notify = Notify.init(Dew.dewConfig.getNotifies(), flag ->
-                " FROM " + Dew.Info.instance + " BY " + flag);
+        Dew.notify = Notify.init(Dew.dewConfig.getNotifies(), flag -> " FROM " + Dew.Info.instance + " BY " + flag);
 
         // Support java8 Time
         if (jacksonProperties != null) {
@@ -140,25 +122,29 @@ public class Dew {
 
         LOGGER.info("Load Dew cluster...");
         if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getCache() + "ClusterCache")) {
-            Dew.cluster.caches = (ClusterCacheWrap) Dew.applicationContext.getBean(injectDewConfig.getCluster().getCache() + "ClusterCache");
+            Dew.cluster.caches = (ClusterCacheWrap) Dew.applicationContext
+                    .getBean(injectDewConfig.getCluster().getCache() + "ClusterCache");
             Dew.cluster.cache = Dew.cluster.caches.instance();
         }
         if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getLock() + "ClusterLock")) {
-            Dew.cluster.lock = (ClusterLockWrap) Dew.applicationContext.getBean(injectDewConfig.getCluster().getLock() + "ClusterLock");
+            Dew.cluster.lock = (ClusterLockWrap) Dew.applicationContext
+                    .getBean(injectDewConfig.getCluster().getLock() + "ClusterLock");
         }
         if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getMap() + "ClusterMap")) {
-            Dew.cluster.map = (ClusterMapWrap) Dew.applicationContext.getBean(injectDewConfig.getCluster().getMap() + "ClusterMap");
+            Dew.cluster.map = (ClusterMapWrap) Dew.applicationContext
+                    .getBean(injectDewConfig.getCluster().getMap() + "ClusterMap");
         }
         if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getMq() + "ClusterMQ")) {
-            Dew.cluster.mq = (ClusterMQ) Dew.applicationContext.getBean(injectDewConfig.getCluster().getMq() + "ClusterMQ");
+            Dew.cluster.mq = (ClusterMQ) Dew.applicationContext
+                    .getBean(injectDewConfig.getCluster().getMq() + "ClusterMQ");
         }
         if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getElection() + "ClusterElection")) {
-            Dew.cluster.election =
-                    (ClusterElectionWrap) Dew.applicationContext.getBean(injectDewConfig.getCluster().getElection() + "ClusterElection");
+            Dew.cluster.election = (ClusterElectionWrap) Dew.applicationContext
+                    .getBean(injectDewConfig.getCluster().getElection() + "ClusterElection");
         }
         if (Dew.applicationContext.containsBean(injectDewConfig.getCluster().getTrace() + "ClusterTrace")) {
-            Dew.cluster.trace =
-                    (ClusterTrace) Dew.applicationContext.getBean(injectDewConfig.getCluster().getTrace() + "ClusterTrace");
+            Dew.cluster.trace = (ClusterTrace) Dew.applicationContext
+                    .getBean(injectDewConfig.getCluster().getTrace() + "ClusterTrace");
         }
         if (dewConfig.getCluster().getConfig().isHaEnabled()) {
             Cluster.ha(dewConfig.getCluster().getConfig().getHa());

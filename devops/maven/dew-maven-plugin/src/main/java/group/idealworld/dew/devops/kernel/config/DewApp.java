@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.config;
 
 import io.kubernetes.client.custom.Quantity;
@@ -66,7 +50,8 @@ public class DewApp {
     // 是否在控制台输出spans日志，仅用于后端服务
     private Boolean traceLogSpans;
     // 设置跳过追踪的接口，为空则使用官方默认值，仅用于后端服务
-    // @see https://github.com/opentracing-contrib/java-spring-web/blob/master/opentracing-spring-web-starter/src/main/java/io/opentracing/contrib/spring/web/starter/WebTracingProperties.java
+    // @see
+    // https://github.com/opentracing-contrib/java-spring-web/blob/master/opentracing-spring-web-starter/src/main/java/io/opentracing/contrib/spring/web/starter/WebTracingProperties.java
     private String traceWebSkipPattern;
     // 追踪日志概率采样比率，为1.0则使用全量采样，仅用于后端服务
     private Double traceProbabilisticSamplingRate;
@@ -95,10 +80,12 @@ public class DewApp {
     // 容器command命令
     private List<String> containerCmd;
     // 容器资源上限，同Kubernetes配置
-    // @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+    // @see
+    // https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
     private Map<String, Quantity> containerResourcesLimits = new HashMap<>();
     // 容器资源下限，同Kubernetes配置
-    // @see  https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
+    // @see
+    // https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/
     private Map<String, Quantity> containerResourcesRequests = new HashMap<>();
     // annotations配置
     private Map<String, String> annotations = new HashMap<>();

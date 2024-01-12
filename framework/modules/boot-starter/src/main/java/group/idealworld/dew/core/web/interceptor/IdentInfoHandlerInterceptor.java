@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.core.web.interceptor;
 
 import com.ecfront.dew.common.$;
@@ -46,8 +30,10 @@ public class IdentInfoHandlerInterceptor implements AsyncHandlerInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger(IdentInfoHandlerInterceptor.class);
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException {
-        if (Dew.dewConfig.getSecurity().isIdentInfoEnabled() && StringUtils.isNotEmpty(Dew.dewConfig.getSecurity().getUnIdentUrls())) {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws IOException {
+        if (Dew.dewConfig.getSecurity().isIdentInfoEnabled()
+                && StringUtils.isNotEmpty(Dew.dewConfig.getSecurity().getUnIdentUrls())) {
             var isUnIdentUrl = Arrays.stream(Dew.dewConfig.getSecurity().getUnIdentUrls().split(","))
                     .anyMatch(url -> url.equals(request.getRequestURI()));
             if (isUnIdentUrl) {
@@ -62,10 +48,13 @@ public class IdentInfoHandlerInterceptor implements AsyncHandlerInterceptor {
         }
         if (request.getHeader(Dew.dewConfig.getSecurity().getIdentInfoFlag()) == null) {
             ErrorController.error(request, response, Integer.parseInt(StandardCode.BAD_REQUEST.toString()),
-                    "The request is missing [" + Dew.dewConfig.getSecurity().getIdentInfoFlag() + "] in header", AuthException.class.getName());
+                    "The request is missing [" + Dew.dewConfig.getSecurity().getIdentInfoFlag() + "] in header",
+                    AuthException.class.getName());
             return false;
         }
-        var optInfo = $.json.toObject($.security.decodeBase64ToString(request.getHeader(Dew.dewConfig.getSecurity().getIdentInfoFlag()), StandardCharsets.UTF_8),
+        var optInfo = $.json.toObject(
+                $.security.decodeBase64ToString(request.getHeader(Dew.dewConfig.getSecurity().getIdentInfoFlag()),
+                        StandardCharsets.UTF_8),
                 DewContext.getOptInfoClazz());
         var optInfoOpt = Optional.of(optInfo);
         var token = optInfo.getToken();

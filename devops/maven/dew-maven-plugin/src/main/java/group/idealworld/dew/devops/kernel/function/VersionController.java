@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.function;
 
 import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
@@ -62,7 +46,7 @@ public class VersionController {
      * @throws ApiException the api exception
      */
     public static void addNewVersion(FinalProjectConfig config, String appVersion, String gitCommit,
-                                     boolean reRelease, Map<String, String> data, Map<String, String> appendLabels)
+            boolean reRelease, Map<String, String> data, Map<String, String> appendLabels)
             throws ApiException {
         Map<String, String> labels = new HashMap<String, String>() {
             {
@@ -90,7 +74,8 @@ public class VersionController {
      * @return the boolean
      * @throws ApiException the api exception
      */
-    public static boolean hasVersion(FinalProjectConfig config, String appVersion, boolean onlyEnabled) throws ApiException {
+    public static boolean hasVersion(FinalProjectConfig config, String appVersion, boolean onlyEnabled)
+            throws ApiException {
         return getVersion(config, appVersion, onlyEnabled) != null;
     }
 
@@ -103,18 +88,19 @@ public class VersionController {
      * @return the old version
      * @throws ApiException the api exception
      */
-    public static V1ConfigMap getVersion(FinalProjectConfig config, String appVersion, boolean onlyEnabled) throws ApiException {
+    public static V1ConfigMap getVersion(FinalProjectConfig config, String appVersion, boolean onlyEnabled)
+            throws ApiException {
         V1ConfigMap oldVersion = KubeHelper.inst(config.getId())
                 .read(getVersionName(config, appVersion),
                         config.getNamespace(),
                         KubeRES.CONFIG_MAP, V1ConfigMap.class);
-        if (oldVersion != null && (!onlyEnabled || oldVersion.getMetadata().getLabels().get(FLAG_VERSION_ENABLED).equalsIgnoreCase("true"))) {
+        if (oldVersion != null && (!onlyEnabled
+                || oldVersion.getMetadata().getLabels().get(FLAG_VERSION_ENABLED).equalsIgnoreCase("true"))) {
             return oldVersion;
         } else {
             return null;
         }
     }
-
 
     /**
      * 从kubernetes中获取历史版本列表.
@@ -126,7 +112,8 @@ public class VersionController {
      * @return the version history
      * @throws ApiException the api exception
      */
-    public static List<V1ConfigMap> getVersionHistory(String projectId, String appName, String namespace, boolean onlyEnabled) throws ApiException {
+    public static List<V1ConfigMap> getVersionHistory(String projectId, String appName, String namespace,
+            boolean onlyEnabled) throws ApiException {
         List<V1ConfigMap> versions = KubeHelper.inst(projectId).list(
                 FLAG_VERSION_APP + "=" + appName + "," + FLAG_VERSION_KIND + "=version",
                 namespace,
@@ -138,9 +125,8 @@ public class VersionController {
         }
         // 按时间倒序
         if (versions.size() > 1) {
-            versions.sort((m1, m2) ->
-                    Long.valueOf(m2.getMetadata().getLabels().get(FLAG_VERSION_LAST_UPDATE_TIME))
-                            .compareTo(Long.valueOf(m1.getMetadata().getLabels().get(FLAG_VERSION_LAST_UPDATE_TIME))));
+            versions.sort((m1, m2) -> Long.valueOf(m2.getMetadata().getLabels().get(FLAG_VERSION_LAST_UPDATE_TIME))
+                    .compareTo(Long.valueOf(m1.getMetadata().getLabels().get(FLAG_VERSION_LAST_UPDATE_TIME))));
         }
         return versions;
     }
@@ -155,7 +141,8 @@ public class VersionController {
      * @return the version
      * @throws ApiException the api exception
      */
-    public static Optional<V1ConfigMap> getLastVersion(String projectId, String appName, String namespace, boolean onlyEnabled) throws ApiException {
+    public static Optional<V1ConfigMap> getLastVersion(String projectId, String appName, String namespace,
+            boolean onlyEnabled) throws ApiException {
         List<V1ConfigMap> versions = getVersionHistory(projectId, appName, namespace, onlyEnabled);
         if (versions.size() == 0) {
             return Optional.empty();
@@ -174,7 +161,8 @@ public class VersionController {
     public static void deleteVersion(FinalProjectConfig config, String appVersion) throws ApiException {
         V1ConfigMap version = getVersion(config, appVersion, false);
         if (version != null) {
-            KubeHelper.inst(config.getId()).delete(version.getMetadata().getName(), version.getMetadata().getNamespace(), KubeRES.CONFIG_MAP);
+            KubeHelper.inst(config.getId()).delete(version.getMetadata().getName(),
+                    version.getMetadata().getNamespace(), KubeRES.CONFIG_MAP);
         }
     }
 
@@ -220,7 +208,8 @@ public class VersionController {
      * @throws ApiException the api exception
      */
     public static String getAppCurrentVersion(FinalProjectConfig config) throws ApiException {
-        V1Service service = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(), KubeRES.SERVICE, V1Service.class);
+        V1Service service = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(),
+                KubeRES.SERVICE, V1Service.class);
         return service != null ? VersionController.getAppVersion(service) : null;
     }
 
@@ -269,6 +258,5 @@ public class VersionController {
     public static String getVersionName(FinalProjectConfig config, String appVersion) {
         return "ver." + config.getAppName() + "." + appVersion;
     }
-
 
 }

@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.trc.test.auth;
 
 import com.ecfront.dew.common.$;
@@ -72,7 +56,8 @@ public class AuthController {
     public Resp<String> login(@RequestBody LoginDTO loginDTO) throws Exception {
         Thread.sleep(10);
         // 实际登录处理
-        UserDTO userDTO = mockUserContainer.values().stream().filter(u -> u.getIdCard().equals(loginDTO.getIdCard())).findFirst().get();
+        UserDTO userDTO = mockUserContainer.values().stream().filter(u -> u.getIdCard().equals(loginDTO.getIdCard()))
+                .findFirst().get();
         if (!loginDTO.getPassword().equals(userDTO.getPassword())) {
             throw Dew.E.e("ASXXX0", new Exception("密码错误"));
         }
@@ -84,7 +69,7 @@ public class AuthController {
         optInfo.setTokenKind(Dew.context().getTokenKind());
         optInfo.setName(userDTO.getName());
         optInfo.setMobile(userDTO.getPhone());
-        optInfo.setRoles(new String[]{userDTO.getRole()});
+        optInfo.setRoles(new String[] { userDTO.getRole() });
         Dew.auth.setOptInfo(optInfo);
         return Resp.success(token);
     }

@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.flow.rollback;
 
 import com.ecfront.dew.common.$;
@@ -59,14 +43,16 @@ public class DefaultRollbackFlow extends BasicFlow {
         Map<String, V1ConfigMap> versions = VersionController.getAppVersions(config);
 
         if (history && StringUtils.isBlank(version)) {
-            logFinalCurrentAppVersion(currentAppVersion, versions, "[" + config.getAppShowName() + "] revision history");
+            logFinalCurrentAppVersion(currentAppVersion, versions,
+                    "[" + config.getAppShowName() + "] revision history");
             return;
         }
 
         if (StringUtils.isBlank(version)) {
             logFinalCurrentAppVersion(currentAppVersion, versions, "Please select rollback version");
         }
-        String selected = !StringUtils.isBlank(version) ? version : new BufferedReader(new InputStreamReader(System.in)).readLine().trim();
+        String selected = !StringUtils.isBlank(version) ? version
+                : new BufferedReader(new InputStreamReader(System.in)).readLine().trim();
 
         while (!versions.containsKey(selected) || selected.equalsIgnoreCase(currentAppVersion)) {
             if (version != null && !version.isEmpty()) {
@@ -87,11 +73,13 @@ public class DefaultRollbackFlow extends BasicFlow {
     void logFinalCurrentAppVersion(String currentAppVersion, Map<String, V1ConfigMap> versions, String message) {
         String sb = "\r\n------------------ " + message + " : ------------------\r\n"
                 + versions.entrySet().stream()
-                .map(ver -> " < " + ver.getKey() + " > Last update time : "
-                        + $.time().yyyy_MM_dd_HH_mm_ss_SSS.format(
-                        new Date(VersionController.getLastUpdateTime(ver.getValue())))
-                        + (currentAppVersion != null && currentAppVersion.equalsIgnoreCase(ver.getKey()) ? " [Online]" : ""))
-                .collect(Collectors.joining("\r\n"))
+                        .map(ver -> " < " + ver.getKey() + " > Last update time : "
+                                + $.time().yyyy_MM_dd_HH_mm_ss_SSS.format(
+                                        new Date(VersionController.getLastUpdateTime(ver.getValue())))
+                                + (currentAppVersion != null && currentAppVersion.equalsIgnoreCase(ver.getKey())
+                                        ? " [Online]"
+                                        : ""))
+                        .collect(Collectors.joining("\r\n"))
                 + "\r\n----------------------------------------------------------------------\r\n";
         logger.info(sb);
     }

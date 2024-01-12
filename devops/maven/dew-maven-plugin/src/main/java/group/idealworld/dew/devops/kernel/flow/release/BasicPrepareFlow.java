@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.flow.release;
 
 import group.idealworld.dew.devops.kernel.exception.ProjectProcessException;
@@ -42,7 +26,6 @@ public abstract class BasicPrepareFlow extends BasicFlow {
      */
     protected abstract boolean needExecutePreparePackageCmd(FinalProjectConfig config, String currentPath);
 
-
     /**
      * Gets prepare package cmd.
      *
@@ -51,7 +34,6 @@ public abstract class BasicPrepareFlow extends BasicFlow {
      * @return the error process package cmd
      */
     protected abstract Optional<String> getPreparePackageCmd(FinalProjectConfig config, String currentPath);
-
 
     /**
      * Gets package cmd.
@@ -74,6 +56,7 @@ public abstract class BasicPrepareFlow extends BasicFlow {
 
     /**
      * Exists reuse version.
+     * 
      * @param config the config
      * @return the boolean
      */
@@ -86,7 +69,8 @@ public abstract class BasicPrepareFlow extends BasicFlow {
             // 重用模式下不用再执行准备操作
             return;
         }
-        if (null != config.getCurrImageName() && DockerHelper.inst(config.getId()).registry.existImage(config.getCurrImageName())) {
+        if (null != config.getCurrImageName()
+                && DockerHelper.inst(config.getId()).registry.existImage(config.getCurrImageName())) {
             // 镜像已存在不用再执行准备操作
             return;
         }
@@ -108,7 +92,8 @@ public abstract class BasicPrepareFlow extends BasicFlow {
             if (!preparePackageCmdOpt.isPresent()) {
                 // 失败处理命令失败
                 logger.warn("Prepare package command needs to be executed, but the command does not exist");
-                throw new ProjectProcessException("Prepare package command needs to be executed, but the command does not exist");
+                throw new ProjectProcessException(
+                        "Prepare package command needs to be executed, but the command does not exist");
             }
             result = ShellHelper.execCmd("preparePackageCmd", new HashMap<>() {
                 {

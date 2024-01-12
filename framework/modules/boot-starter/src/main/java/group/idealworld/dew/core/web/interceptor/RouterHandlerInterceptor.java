@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.core.web.interceptor;
 
 import com.ecfront.dew.common.StandardCode;
@@ -64,7 +48,7 @@ public class RouterHandlerInterceptor implements AsyncHandlerInterceptor {
      * @param roleAuth  接口授权角色 roleName - http method - uris
      */
     public static void fillAuthInfo(Map<String, List<String>> blockUris,
-                                    Map<String, Map<String, List<String>>> roleAuth) {
+            Map<String, Map<String, List<String>>> roleAuth) {
         if (blockUris != null) {
             RouterHandlerInterceptor.blockUris = formatUris(blockUris);
         }
@@ -89,9 +73,8 @@ public class RouterHandlerInterceptor implements AsyncHandlerInterceptor {
                         .map(uri -> entry.getKey().toLowerCase() + URL_SPLIT + uri))
                 .collect(Collectors.toSet());
         uris.entrySet().stream()
-                .filter(entry ->
-                        entry.getKey().equalsIgnoreCase("all")
-                                || entry.getKey().equalsIgnoreCase("*"))
+                .filter(entry -> entry.getKey().equalsIgnoreCase("all")
+                        || entry.getKey().equalsIgnoreCase("*"))
                 .flatMap(entry -> entry.getValue().stream())
                 .forEach(uri -> {
                     formattedUris.add("get" + URL_SPLIT + uri);
@@ -105,7 +88,8 @@ public class RouterHandlerInterceptor implements AsyncHandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
         // 兼容requestUri末尾包含/的情况
         String method = request.getMethod().toLowerCase();
         if (method.equalsIgnoreCase(HttpMethod.OPTIONS.name())) {
@@ -117,7 +101,8 @@ public class RouterHandlerInterceptor implements AsyncHandlerInterceptor {
         if (blockUris.stream().anyMatch(uri -> pathMatcher.match(uri, reqUri))) {
             ErrorController.error(request, response, Integer.parseInt(StandardCode.FORBIDDEN.toString()),
                     String.format("The current [%s][%s] request is not allowed",
-                            request.getMethod(), request.getRequestURI()), AuthException.class.getName());
+                            request.getMethod(), request.getRequestURI()),
+                    AuthException.class.getName());
             return false;
         }
         // 角色权限处理
@@ -135,8 +120,8 @@ public class RouterHandlerInterceptor implements AsyncHandlerInterceptor {
                         return (Dew.dewConfig.getSecurity().isIdentInfoEnabled()
                                 ? DewContext.getContext().optInfo()
                                 : Dew.auth.getOptInfo(DewContext.getContext().getToken()))
-                                .map(opt ->
-                                        opt.getRoles() != null && Arrays.stream(opt.getRoles()).anyMatch(needRoles::contains))
+                                .map(opt -> opt.getRoles() != null
+                                        && Arrays.stream(opt.getRoles()).anyMatch(needRoles::contains))
                                 // Token在缓存中不存在
                                 .orElse(false);
                     })
@@ -145,7 +130,8 @@ public class RouterHandlerInterceptor implements AsyncHandlerInterceptor {
             if (!pass) {
                 ErrorController.error(request, response, Integer.parseInt(StandardCode.UNAUTHORIZED.toString()),
                         String.format("The current[%s][%s] request role is not allowed",
-                                request.getMethod(), request.getRequestURI()), AuthException.class.getName());
+                                request.getMethod(), request.getRequestURI()),
+                        AuthException.class.getName());
                 return false;
             }
         }

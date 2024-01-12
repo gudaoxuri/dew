@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.core.hbase;
 
 import org.apache.hadoop.fs.CommonConfigurationKeysPublic;
@@ -58,11 +42,14 @@ public class HBaseAutoConfiguration {
         conf.set("hbase.security.authentication", hbaseProperties.getAuth().getType());
         conf.setInt(HConstants.HBASE_CLIENT_RETRIES_NUMBER, hbaseProperties.getAuth().getHbaseClientRetriesNumber());
         conf.setInt(HConstants.HBASE_CLIENT_PAUSE, hbaseProperties.getAuth().getHbaseClientPause());
-        conf.setLong(HConstants.HBASE_CLIENT_OPERATION_TIMEOUT, hbaseProperties.getAuth().getHbaseClientOperationTimeout());
-        conf.setLong(HConstants.HBASE_CLIENT_SCANNER_TIMEOUT_PERIOD, hbaseProperties.getAuth().getHbaseClientScannerTimeoutPeriod());
+        conf.setLong(HConstants.HBASE_CLIENT_OPERATION_TIMEOUT,
+                hbaseProperties.getAuth().getHbaseClientOperationTimeout());
+        conf.setLong(HConstants.HBASE_CLIENT_SCANNER_TIMEOUT_PERIOD,
+                hbaseProperties.getAuth().getHbaseClientScannerTimeoutPeriod());
         if ("kerberos".equalsIgnoreCase(hbaseProperties.getAuth().getType())) {
             conf.set("hbase.master.kerberos.principal", hbaseProperties.getAuth().getHbaseMasterPrincipal());
-            conf.set("hbase.regionserver.kerberos.principal", hbaseProperties.getAuth().getHbaseRegionServerPrincipal());
+            conf.set("hbase.regionserver.kerberos.principal",
+                    hbaseProperties.getAuth().getHbaseRegionServerPrincipal());
         }
         return conf;
     }
@@ -76,13 +63,16 @@ public class HBaseAutoConfiguration {
      * @throws IOException IOException
      */
     @Bean
-    public Connection connection(HBaseProperties hbaseProperties, org.apache.hadoop.conf.Configuration conf) throws IOException {
+    public Connection connection(HBaseProperties hbaseProperties, org.apache.hadoop.conf.Configuration conf)
+            throws IOException {
         if ("kerberos".equalsIgnoreCase(hbaseProperties.getAuth().getType())) {
             System.setProperty("java.security.krb5.conf", hbaseProperties.getAuth().getKrb5());
             UserGroupInformation.setConfiguration(conf);
-            UserGroupInformation.loginUserFromKeytab(hbaseProperties.getAuth().getPrincipal(), hbaseProperties.getAuth().getKeytab());
+            UserGroupInformation.loginUserFromKeytab(hbaseProperties.getAuth().getPrincipal(),
+                    hbaseProperties.getAuth().getKeytab());
         }
-        ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(200, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS, new SynchronousQueue<>());
+        ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(200, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS,
+                new SynchronousQueue<>());
         poolExecutor.prestartCoreThread();
         return ConnectionFactory.createConnection(conf, poolExecutor);
     }

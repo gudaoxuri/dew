@@ -1,19 +1,3 @@
-/*
- * Copyright 2020. the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.core.dbutils.dialect;
 
 import java.sql.SQLException;
@@ -39,8 +23,9 @@ class PostgresDialect implements Dialect {
     }
 
     @Override
-    public String createTableIfNotExist(String tableName, String tableDesc, Map<String, String> fields, Map<String, String> fieldsDesc, List<String> indexFields,
-                                        List<String> uniqueFields, String pkField) throws SQLException {
+    public String createTableIfNotExist(String tableName, String tableDesc, Map<String, String> fields,
+            Map<String, String> fieldsDesc, List<String> indexFields,
+            List<String> uniqueFields, String pkField) throws SQLException {
         StringBuilder sb = new StringBuilder("CREATE TABLE IF NOT EXISTS " + tableName + " ( ");
         for (Map.Entry<String, String> field : fields.entrySet()) {
             String f = field.getValue().toLowerCase();
@@ -90,7 +75,8 @@ class PostgresDialect implements Dialect {
         }
         if (uniqueFields != null && !uniqueFields.isEmpty()) {
             for (String uField : uniqueFields) {
-                sb.append("CONSTRAINT \"u_").append(tableName).append("_").append(uField).append("\" UNIQUE (\"").append(uField).append("\"),");
+                sb.append("CONSTRAINT \"u_").append(tableName).append("_").append(uField).append("\" UNIQUE (\"")
+                        .append(uField).append("\"),");
             }
         }
         if (pkField != null && !Objects.equals(pkField.trim(), "")) {
@@ -100,8 +86,9 @@ class PostgresDialect implements Dialect {
         }
         if (indexFields != null && !indexFields.isEmpty()) {
             for (String idxFields : indexFields) {
-                sb.append("CREATE INDEX \"i_").append(tableName).append("_").append(idxFields).append("\" ON \"").append(tableName).append("\" (\"").append(idxFields).append(
-                        "\");");
+                sb.append("CREATE INDEX \"i_").append(tableName).append("_").append(idxFields).append("\" ON \"")
+                        .append(tableName).append("\" (\"").append(idxFields).append(
+                                "\");");
             }
         }
         if (tableDesc != null && !tableDesc.isEmpty()) {
@@ -109,7 +96,8 @@ class PostgresDialect implements Dialect {
         }
         if (fieldsDesc != null && !fieldsDesc.isEmpty()) {
             for (Map.Entry<String, String> field : fieldsDesc.entrySet()) {
-                sb.append("COMMENT ON COLUMN \"").append(tableName).append("\".\"").append(field.getKey()).append("\" IS '").append(field.getValue()).append("';");
+                sb.append("COMMENT ON COLUMN \"").append(tableName).append("\".\"").append(field.getKey())
+                        .append("\" IS '").append(field.getValue()).append("';");
             }
         }
         return sb.toString();

@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.maven;
 
 import com.ecfront.dew.common.$;
@@ -43,7 +27,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
 
 /**
  * DevOps maven 插件核心类.
@@ -75,18 +58,20 @@ public class MavenDevOps {
          * @param rollbackVersion                 the rollback version
          * @param dockerHostAppendOpt             the docker host append opt
          * @param dockerRegistryUrlAppendOpt      the docker registry url append opt
-         * @param dockerRegistryUserNameAppendOpt the docker registry user name append opt
-         * @param dockerRegistryPasswordAppendOpt the docker registry password append opt
+         * @param dockerRegistryUserNameAppendOpt the docker registry user name append
+         *                                        opt
+         * @param dockerRegistryPasswordAppendOpt the docker registry password append
+         *                                        opt
          * @param mockClasspath                   the mock classpath
          */
         public static synchronized void init(MavenSession session, BuildPluginManager pluginManager,
-                                             String inputProfile, boolean quiet,
-                                             String inputDockerHost, String inputDockerRegistryUrl,
-                                             String inputDockerRegistryUserName, String inputDockerRegistryPassword,
-                                             String inputKubeBase64Config, String inputAssignationProjects, String rollbackVersion,
-                                             Optional<String> dockerHostAppendOpt, Optional<String> dockerRegistryUrlAppendOpt,
-                                             Optional<String> dockerRegistryUserNameAppendOpt, Optional<String> dockerRegistryPasswordAppendOpt,
-                                             String mockClasspath) {
+                String inputProfile, boolean quiet,
+                String inputDockerHost, String inputDockerRegistryUrl,
+                String inputDockerRegistryUserName, String inputDockerRegistryPassword,
+                String inputKubeBase64Config, String inputAssignationProjects, String rollbackVersion,
+                Optional<String> dockerHostAppendOpt, Optional<String> dockerRegistryUrlAppendOpt,
+                Optional<String> dockerRegistryUserNameAppendOpt, Optional<String> dockerRegistryPasswordAppendOpt,
+                String mockClasspath) {
             try {
                 Config.initMavenProject(session, pluginManager);
                 if (ExecuteOnceProcessor.executedCheck(MavenDevOps.class)) {
@@ -101,18 +86,19 @@ public class MavenDevOps {
                 GitHelper.init(logger);
                 YamlHelper.init(logger);
                 initFinalConfig(session, inputProfile,
-                        inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
+                        inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName,
+                        inputDockerRegistryPassword,
                         inputKubeBase64Config, inputAssignationProjects,
-                        dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt);
+                        dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt,
+                        dockerRegistryPasswordAppendOpt);
                 DevOps.Init.init(mockClasspath);
                 Config.initMavenProject(session, pluginManager);
                 initAssignDeploymentProjects(inputAssignationProjects);
                 // 特殊Mojo处理
                 if (session.getGoals().stream().map(String::toLowerCase)
-                        .anyMatch(s ->
-                                s.contains("group.idealworld.dew:dew-maven-plugin:release")
-                                        || s.contains("dew:release")
-                                        || s.contains("deploy"))) {
+                        .anyMatch(s -> s.contains("group.idealworld.dew:dew-maven-plugin:release")
+                                || s.contains("dew:release")
+                                || s.contains("deploy"))) {
                     NeedProcessChecker.checkNeedProcessProjects(quiet);
                     MavenSkipProcessor.process(session);
                 }
@@ -126,13 +112,13 @@ public class MavenDevOps {
         }
 
         private static void initFinalConfig(MavenSession session, String inputProfile,
-                                            String inputDockerHost, String inputDockerRegistryUrl,
-                                            String inputDockerRegistryUserName, String inputDockerRegistryPassword,
-                                            String inputKubeBase64Config, String inputAssignationProjects,
-                                            Optional<String> dockerHostAppendOpt,
-                                            Optional<String> dockerRegistryUrlAppendOpt,
-                                            Optional<String> dockerRegistryUserNameAppendOpt,
-                                            Optional<String> dockerRegistryPasswordAppendOpt) {
+                String inputDockerHost, String inputDockerRegistryUrl,
+                String inputDockerRegistryUserName, String inputDockerRegistryPassword,
+                String inputKubeBase64Config, String inputAssignationProjects,
+                Optional<String> dockerHostAppendOpt,
+                Optional<String> dockerRegistryUrlAppendOpt,
+                Optional<String> dockerRegistryUserNameAppendOpt,
+                Optional<String> dockerRegistryPasswordAppendOpt) {
             logger.info("Init final config ...");
             String basicDirectory = session.getTopLevelProject().getBasedir().getPath() + File.separator;
             // 基础配置
@@ -175,11 +161,13 @@ public class MavenDevOps {
                 } else {
                     dewConfig = new DewConfig();
                 }
-                FinalProjectConfig finalProjectConfig =
-                        ConfigBuilder.buildProject(dewConfig, appKindPluginOpt.get(), deployPlugin, session, project, inputProfile,
-                                inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName, inputDockerRegistryPassword,
-                                inputKubeBase64Config,
-                                dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt);
+                FinalProjectConfig finalProjectConfig = ConfigBuilder.buildProject(dewConfig, appKindPluginOpt.get(),
+                        deployPlugin, session, project, inputProfile,
+                        inputDockerHost, inputDockerRegistryUrl, inputDockerRegistryUserName,
+                        inputDockerRegistryPassword,
+                        inputKubeBase64Config,
+                        dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt,
+                        dockerRegistryPasswordAppendOpt);
                 DevOps.Config.getFinalConfig().getProjects().put(project.getId(), finalProjectConfig);
                 logger.debug("[" + project.getId() + "] configured");
             }
@@ -192,9 +180,11 @@ public class MavenDevOps {
                                 && !FinalProjectConfig.SkipCodeEnum.SELF_CONFIG.equals(projectConfig.getSkipCode()))
                         .forEach(projectConfig -> {
                             if (Arrays.asList(assignationProjects.split(",")).contains(projectConfig.getAppName())) {
-                                notSkip(DevOps.Config.getProjectConfig(projectConfig.getId()), projectConfig.getMavenProject(), false);
+                                notSkip(DevOps.Config.getProjectConfig(projectConfig.getId()),
+                                        projectConfig.getMavenProject(), false);
                             } else {
-                                DevOps.SkipProcess.skip(DevOps.Config.getProjectConfig(projectConfig.getId()), "Not assign to release",
+                                DevOps.SkipProcess.skip(DevOps.Config.getProjectConfig(projectConfig.getId()),
+                                        "Not assign to release",
                                         FinalProjectConfig.SkipCodeEnum.NON_SELF_CONFIG, false);
                             }
                         });
@@ -275,5 +265,3 @@ public class MavenDevOps {
     }
 
 }
-
-

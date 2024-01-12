@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel;
 
 import group.idealworld.dew.core.notification.Notify;
@@ -122,13 +106,12 @@ public class DevOps {
                     .filter(project -> !project.getValue().getSkip())
                     .filter(project -> project.getValue().getNotifies() != null
                             && !project.getValue().getNotifies().isEmpty())
-                    .forEach(project ->
-                            project.getValue().getNotifies().forEach(notifyConfig -> {
-                                if (notifyConfig.getType() == null) {
-                                    notifyConfig.setType(NotifyConfig.TYPE_DD);
-                                }
-                                configMap.put(project.getKey() + "_" + notifyConfig.getType(), notifyConfig);
-                            }));
+                    .forEach(project -> project.getValue().getNotifies().forEach(notifyConfig -> {
+                        if (notifyConfig.getType() == null) {
+                            notifyConfig.setType(NotifyConfig.TYPE_DD);
+                        }
+                        configMap.put(project.getKey() + "_" + notifyConfig.getType(), notifyConfig);
+                    }));
             // 对于根项目为 skip 的情况强制启用通知
             DewProfile dewProfile = Config.basicProfileConfig;
             if (dewProfile != null && dewProfile.getNotifies() != null) {
@@ -247,7 +230,6 @@ public class DevOps {
         }
     }
 
-
     /**
      * The type Skip process.
      */
@@ -261,7 +243,8 @@ public class DevOps {
          * @param skipCode the skip code
          * @param isError  the is error
          */
-        public static void skip(FinalProjectConfig config, String reason, FinalProjectConfig.SkipCodeEnum skipCode, boolean isError) {
+        public static void skip(FinalProjectConfig config, String reason, FinalProjectConfig.SkipCodeEnum skipCode,
+                boolean isError) {
             config.setSkip(true);
             config.setHasError(isError);
             config.setSkipReason(reason);
@@ -276,7 +259,8 @@ public class DevOps {
          * @param project the maven project
          */
         public static void skip(MavenProject project) {
-            File skipFile = new File(project.getBasedir().getPath() + File.separator + "target" + File.separator + ".dew_skip_flag");
+            File skipFile = new File(
+                    project.getBasedir().getPath() + File.separator + "target" + File.separator + ".dew_skip_flag");
             if (!skipFile.exists()) {
                 skipFile.mkdirs();
             }
@@ -302,7 +286,8 @@ public class DevOps {
          * @param project the maven project
          */
         public static void unSkip(MavenProject project) {
-            File skipFile = new File(project.getBasedir().getPath() + File.separator + "target" + File.separator + ".dew_skip_flag");
+            File skipFile = new File(
+                    project.getBasedir().getPath() + File.separator + "target" + File.separator + ".dew_skip_flag");
             if (skipFile.exists()) {
                 skipFile.delete();
             }
@@ -326,9 +311,8 @@ public class DevOps {
          * @param projectConfig the final project config
          */
         public static void invoke(String groupId, String artifactId, String version,
-                                  String goal, Map<String, Object> configuration,
-                                  FinalProjectConfig projectConfig
-        ) {
+                String goal, Map<String, Object> configuration,
+                FinalProjectConfig projectConfig) {
             logger.debug("invoke groupId = " + groupId + " ,artifactId = " + artifactId + " ,version = " + version);
             List<MojoExecutor.Element> config = configuration.entrySet().stream()
                     .map(item -> {
@@ -352,13 +336,11 @@ public class DevOps {
                 executeMojo(
                         plugin,
                         goal(goal),
-                        configuration(config.toArray(new Element[]{})),
+                        configuration(config.toArray(new Element[] {})),
                         executionEnvironment(
                                 projectConfig.getMavenProject(),
                                 projectConfig.getMavenSession(),
-                                projectConfig.getPluginManager()
-                        )
-                );
+                                projectConfig.getPluginManager()));
             } catch (MojoExecutionException e) {
                 throw new ProjectProcessException("Invoke maven mojo error", e);
             }
@@ -389,13 +371,15 @@ public class DevOps {
          * @throws ClassNotFoundException    the class not found exception
          */
         public static void loadClass(String classPath)
-                throws NoSuchMethodException, MalformedURLException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
+                throws NoSuchMethodException, MalformedURLException, InvocationTargetException, IllegalAccessException,
+                ClassNotFoundException {
             File clazzPath = new File(classPath);
             if (!clazzPath.exists() || clazzPath.isFile()) {
                 logger.debug("Not found mock class path in " + classPath);
                 return;
             }
-            Optional<File> mockFiles = Stream.of(clazzPath.listFiles()).filter(f -> f.getName().equals("mock") && f.isDirectory()).findAny();
+            Optional<File> mockFiles = Stream.of(clazzPath.listFiles())
+                    .filter(f -> f.getName().equals("mock") && f.isDirectory()).findAny();
             if (!mockFiles.isPresent()) {
                 logger.debug("Mock class path must contain a directory named 'mock'");
                 return;

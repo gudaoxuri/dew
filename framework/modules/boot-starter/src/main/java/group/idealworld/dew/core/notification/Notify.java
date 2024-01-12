@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.core.notification;
 
 import com.ecfront.dew.common.Resp;
@@ -63,8 +47,11 @@ public class Notify {
         notifyConfigMap.forEach((key, value) -> {
             Channel channel = null;
             try {
-                channel = (Channel) Class.forName(Notify.class.getPackage().getName() + "." + value.getType() + "Channel").getDeclaredConstructor().newInstance();
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                channel = (Channel) Class
+                        .forName(Notify.class.getPackage().getName() + "." + value.getType() + "Channel")
+                        .getDeclaredConstructor().newInstance();
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException
+                    | InvocationTargetException e) {
                 LOGGER.error("Not exist notify type:" + value.getType());
                 throw new RuntimeException(e);
             }
@@ -213,7 +200,11 @@ public class Notify {
      * @return the resp
      */
     public static Resp<Void> send(String flag, Throwable content, String title, Set<String> specialReceivers) {
-        return send(flag, content.toString() + "\n" + Arrays.stream(content.getStackTrace()).map(StackTraceElement::toString).limit(10).collect(Collectors.joining("\n")), title,
+        return send(flag,
+                content.toString() + "\n"
+                        + Arrays.stream(content.getStackTrace()).map(StackTraceElement::toString).limit(10)
+                                .collect(Collectors.joining("\n")),
+                title,
                 specialReceivers);
     }
 
@@ -230,7 +221,8 @@ public class Notify {
         return send(flag, content, title, specialReceivers, false);
     }
 
-    private static Resp<Void> send(String flag, String content, String title, Set<String> specialReceivers, boolean delayed) {
+    private static Resp<Void> send(String flag, String content, String title, Set<String> specialReceivers,
+            boolean delayed) {
         Channel channel = NOTIFY_CHANNELS.getOrDefault(flag, null);
         if (channel == null) {
             LOGGER.trace("Not found notify flag[" + flag + "] in dew config.");
@@ -243,9 +235,11 @@ public class Notify {
         if (!delayed && notifyConfig.getStrategy().getMinIntervalSec() != 0) {
             if (notifyContext.intervalNotifyCounter.getAndIncrement() > 0) {
                 LOGGER.trace("Notify frequency must be > " + notifyConfig.getStrategy().getMinIntervalSec() + "s");
-                return Resp.locked("Notify frequency must be > " + notifyConfig.getStrategy().getMinIntervalSec() + "s");
+                return Resp
+                        .locked("Notify frequency must be > " + notifyConfig.getStrategy().getMinIntervalSec() + "s");
             } else {
-                DELAY_QUEUE.offer(new NotifyDelayed(flag, specialReceivers, notifyConfig.getStrategy().getMinIntervalSec() * 1000));
+                DELAY_QUEUE.offer(new NotifyDelayed(flag, specialReceivers,
+                        notifyConfig.getStrategy().getMinIntervalSec() * 1000));
             }
         }
         boolean isDNDTime = false;
@@ -267,16 +261,21 @@ public class Notify {
                 isDNDTime = currentShortTime >= dndStartShortTime || currentShortTime <= dndEndShortTime;
                 time.add(Calendar.DATE, 1);
             }
-            if (currentTime > notifyContext.lastDNDEndTime.getAndSet(Long.parseLong(new SimpleDateFormat("yyyyMMdd").format(time.getTime()) + dndTime[1].replace(":", "")))) {
+            if (currentTime > notifyContext.lastDNDEndTime.getAndSet(Long.parseLong(
+                    new SimpleDateFormat("yyyyMMdd").format(time.getTime()) + dndTime[1].replace(":", "")))) {
                 // 已在后几个免扰周期
                 notifyContext.currentForceSendTimes.set(0);
             }
-            if (isDNDTime && notifyConfig.getStrategy().getForceSendTimes() > notifyContext.currentForceSendTimes.incrementAndGet()) {
+            if (isDNDTime && notifyConfig.getStrategy().getForceSendTimes() > notifyContext.currentForceSendTimes
+                    .incrementAndGet()) {
                 if (delayed) {
-                    DELAY_QUEUE.offer(new NotifyDelayed(flag, specialReceivers, notifyConfig.getStrategy().getMinIntervalSec() * 1000));
+                    DELAY_QUEUE.offer(new NotifyDelayed(flag, specialReceivers,
+                            notifyConfig.getStrategy().getMinIntervalSec() * 1000));
                 }
-                LOGGER.trace("Do Not Disturb time and try notify times <=" + notifyConfig.getStrategy().getForceSendTimes());
-                return Resp.locked("Do Not Disturb time and try notify times <=" + notifyConfig.getStrategy().getForceSendTimes());
+                LOGGER.trace(
+                        "Do Not Disturb time and try notify times <=" + notifyConfig.getStrategy().getForceSendTimes());
+                return Resp.locked(
+                        "Do Not Disturb time and try notify times <=" + notifyConfig.getStrategy().getForceSendTimes());
             }
         }
         if (delayed) {
@@ -318,7 +317,8 @@ public class Notify {
                     EXECUTOR_SERVICE.execute(() -> send(flag,
                             "在最近的[" + notifyContext.totalDelayMs.addAndGet(notifyDelayed.getDelayMs() / 1000)
                                     + "]秒内发生了[" + notifyContext.totalNotifyCounter.addAndGet(notifyCounter)
-                                    + "]次通知请求。", "延时通知", specialReceivers, true));
+                                    + "]次通知请求。",
+                            "延时通知", specialReceivers, true));
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     LOGGER.error("Send delay notify error.", e);
@@ -415,6 +415,5 @@ public class Notify {
         }
 
     }
-
 
 }

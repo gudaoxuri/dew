@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package group.idealworld.dew.test;
 
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -33,7 +32,8 @@ public class PostgreSqlExtension implements BeforeAllCallback {
 
     private static final Logger logger = LoggerFactory.getLogger(PostgreSqlExtension.class);
 
-    private static final JdbcDatabaseContainer POSTGRESQL_CONTAINER = new PostgreSQLContainer(DockerImageName.parse("postgres:12-alpine"));
+    private static final JdbcDatabaseContainer POSTGRESQL_CONTAINER = new PostgreSQLContainer(
+            DockerImageName.parse("postgres:12-alpine"));
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
@@ -43,7 +43,8 @@ public class PostgreSqlExtension implements BeforeAllCallback {
         }
         POSTGRESQL_CONTAINER.start();
         logger.info("Test postgresql port: " + POSTGRESQL_CONTAINER.getExposedPorts()
-                + ", username: " + POSTGRESQL_CONTAINER.getUsername() + ", password: " + POSTGRESQL_CONTAINER.getPassword());
+                + ", username: " + POSTGRESQL_CONTAINER.getUsername() + ", password: "
+                + POSTGRESQL_CONTAINER.getPassword());
     }
 
     public static class Initializer
@@ -53,8 +54,8 @@ public class PostgreSqlExtension implements BeforeAllCallback {
             TestPropertyValues.of(
                     "spring.datasource.url=" + POSTGRESQL_CONTAINER.getJdbcUrl(),
                     "spring.datasource.username=" + POSTGRESQL_CONTAINER.getUsername(),
-                    "spring.datasource.password=" + POSTGRESQL_CONTAINER.getPassword()
-            ).applyTo(configurableApplicationContext.getEnvironment());
+                    "spring.datasource.password=" + POSTGRESQL_CONTAINER.getPassword())
+                    .applyTo(configurableApplicationContext.getEnvironment());
         }
     }
 

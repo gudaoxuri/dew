@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.core.cluster;
 
 import group.idealworld.dew.core.cluster.dto.MessageWrap;
@@ -66,7 +50,6 @@ public interface ClusterMQ {
         publish(topic, message, null);
     }
 
-
     /**
      * MQ 发布订阅模式 之 订阅.
      * <p>
@@ -99,7 +82,6 @@ public interface ClusterMQ {
         request(address, message, header, false);
     }
 
-
     /**
      * MQ 请求响应模式 之 请求.
      *
@@ -109,7 +91,6 @@ public interface ClusterMQ {
     default void request(String address, String message) {
         request(address, message, null);
     }
-
 
     /**
      * MQ 请求响应模式 之 响应.

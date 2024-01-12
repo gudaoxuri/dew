@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.core.auth;
 
 import com.ecfront.dew.common.$;
@@ -27,7 +11,6 @@ import jakarta.annotation.PostConstruct;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 
 /**
  * 基础登录鉴权适配器.
@@ -61,7 +44,8 @@ public class BasicAuthAdapter implements AuthAdapter {
         }
         if (!Dew.dewConfig.getSecurity().getTokenKinds().containsKey(OptInfo.DEFAULT_TOKEN_KIND_FLAG)) {
             // 赋值一个默认的kind
-            Dew.dewConfig.getSecurity().getTokenKinds().put(OptInfo.DEFAULT_TOKEN_KIND_FLAG, new DewConfig.Security.TokenKind());
+            Dew.dewConfig.getSecurity().getTokenKinds().put(OptInfo.DEFAULT_TOKEN_KIND_FLAG,
+                    new DewConfig.Security.TokenKind());
         }
     }
 
@@ -86,7 +70,8 @@ public class BasicAuthAdapter implements AuthAdapter {
 
     @Override
     public <E extends OptInfo> void setOptInfo(E optInfo) {
-        Dew.dewConfig.getSecurity().getTokenKinds().putIfAbsent(optInfo.getTokenKind(), new DewConfig.Security.TokenKind());
+        Dew.dewConfig.getSecurity().getTokenKinds().putIfAbsent(optInfo.getTokenKind(),
+                new DewConfig.Security.TokenKind());
         if (!cache.setnx(TOKEN_INFO_FLAG + optInfo.getToken(), $.json.toJsonString(optInfo),
                 Dew.dewConfig.getSecurity().getTokenKinds().get(optInfo.getTokenKind()).getExpireSec())) {
             return;
@@ -106,18 +91,17 @@ public class BasicAuthAdapter implements AuthAdapter {
         Map<String, String> tokenKinds = cache.hgetAll(TOKEN_ID_REL_FLAG + accountCode);
         tokenKinds.keySet().stream()
                 // 按创建时间倒序
-                .sorted((i1, i2) ->
-                        Long.compare(Long.parseLong(i2.split("##")[1]), Long.parseLong(i1.split("##")[1])))
+                .sorted((i1, i2) -> Long.compare(Long.parseLong(i2.split("##")[1]), Long.parseLong(i1.split("##")[1])))
                 // 按 token kind 分组
                 .collect(Collectors.groupingBy(i -> i.split("##")[0]))
                 .forEach((key, value) -> {
                     value.stream()
                             .filter(tokenInfo ->
-                                    // 当前token已过期
-                                    !cache.exists(TOKEN_INFO_FLAG + tokenKinds.get(tokenInfo)))
+                    // 当前token已过期
+                    !cache.exists(TOKEN_INFO_FLAG + tokenKinds.get(tokenInfo)))
                             .forEach(tokenInfo ->
-                                    // 删除过期的关联token
-                                    cache.hdel(TOKEN_ID_REL_FLAG + accountCode, tokenInfo));
+                    // 删除过期的关联token
+                    cache.hdel(TOKEN_ID_REL_FLAG + accountCode, tokenInfo));
                     if (key.equals(tokenKind) && value.size() > revisionHistoryLimit + 1) {
                         // 版本处理
                         value.subList(revisionHistoryLimit + 1, value.size())

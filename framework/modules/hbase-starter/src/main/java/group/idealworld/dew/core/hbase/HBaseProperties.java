@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.core.hbase;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -31,11 +15,11 @@ public class HBaseProperties {
      */
     private String zkQuorum;
     /**
-     * Zookeeper Port.  Default value is  [2181].
+     * Zookeeper Port. Default value is [2181].
      */
     private int zkPort = 2181;
     /**
-     * Zookeeper znode parent. Default value is  [/hbase-unsecure].
+     * Zookeeper znode parent. Default value is [/hbase-unsecure].
      */
     private String znodeParent = "/hbase";
     /**
@@ -132,7 +116,7 @@ public class HBaseProperties {
          */
         private String type = "simple";
         /**
-         * [krb5.conf] file path. Default value is  [/etc/krb5.conf].
+         * [krb5.conf] file path. Default value is [/etc/krb5.conf].
          */
         private String krb5 = "/etc/krb5.conf";
         /**
@@ -152,19 +136,19 @@ public class HBaseProperties {
          */
         private String hbaseRegionServerPrincipal;
         /**
-         * The client retries number of the hbase. Default value is  [5].
+         * The client retries number of the hbase. Default value is [5].
          */
         private int hbaseClientRetriesNumber = 5;
         /**
-         * The client operation time out of the hbase. Default value is  [300000].
+         * The client operation time out of the hbase. Default value is [300000].
          */
         private long hbaseClientOperationTimeout = 300000;
         /**
-         * The client scanner time out of the hbase. Default value is  [60000].
+         * The client scanner time out of the hbase. Default value is [60000].
          */
         private long hbaseClientScannerTimeoutPeriod = 60000;
         /**
-         * The client pause of the hbase. Default value is  [30].
+         * The client pause of the hbase. Default value is [30].
          */
         private int hbaseClientPause = 30;
 
@@ -280,7 +264,8 @@ public class HBaseProperties {
         /**
          * Sets hbase client scanner timeout period.
          *
-         * @param hbaseClientScannerTimeoutPeriod the hbase client scanner timeout period
+         * @param hbaseClientScannerTimeoutPeriod the hbase client scanner timeout
+         *                                        period
          * @return the hbase client scanner timeout period
          */
         public Auth setHbaseClientScannerTimeoutPeriod(long hbaseClientScannerTimeoutPeriod) {

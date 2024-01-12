@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.sdkgen.helper;
 
 import lombok.SneakyThrows;
@@ -64,13 +48,16 @@ public class MavenHelper {
      */
     public static Map<String, String> getMavenProperties(MavenSession session) {
         Map<String, String> props = new HashMap<>();
-        props.putAll(session.getSystemProperties().entrySet().stream().collect(Collectors.toMap(prop -> prop.getKey().toString().toLowerCase().trim(),
-                prop -> prop.getValue().toString().trim())));
-        props.putAll(session.getUserProperties().entrySet().stream().collect(Collectors.toMap(prop -> prop.getKey().toString().toLowerCase().trim(),
-                prop -> prop.getValue().toString().trim())));
+        props.putAll(session.getSystemProperties().entrySet().stream()
+                .collect(Collectors.toMap(prop -> prop.getKey().toString().toLowerCase().trim(),
+                        prop -> prop.getValue().toString().trim())));
+        props.putAll(session.getUserProperties().entrySet().stream()
+                .collect(Collectors.toMap(prop -> prop.getKey().toString().toLowerCase().trim(),
+                        prop -> prop.getValue().toString().trim())));
         // Support gitlab ci runner by chart.
-        props.putAll(props.entrySet().stream().filter(prop -> prop.getKey().startsWith("env.")).collect(Collectors.toMap(prop -> prop.getKey().substring("env.".length()),
-                Map.Entry::getValue)));
+        props.putAll(props.entrySet().stream().filter(prop -> prop.getKey().startsWith("env."))
+                .collect(Collectors.toMap(prop -> prop.getKey().substring("env.".length()),
+                        Map.Entry::getValue)));
         return props;
     }
 
@@ -87,14 +74,15 @@ public class MavenHelper {
      * @param mavenPluginManager the maven plugin manager
      */
     @SneakyThrows
-    public static void invoke(String groupId, String artifactId, String version, String goal, Map<String, Object> configuration, MavenProject mavenProject,
-                              MavenSession mavenSession, BuildPluginManager mavenPluginManager) {
+    public static void invoke(String groupId, String artifactId, String version, String goal,
+            Map<String, Object> configuration, MavenProject mavenProject,
+            MavenSession mavenSession, BuildPluginManager mavenPluginManager) {
         log.debug("invoke groupId = " + groupId + " ,artifactId = " + artifactId + " ,version = " + version);
         List<Element> config = configuration.entrySet().stream().map(item -> {
             if (item.getValue() instanceof Map<?, ?>) {
-                var eles =
-                        ((Map<?, ?>) item.getValue()).entrySet().stream().map(subItem ->
-                                element(subItem.getKey().toString(), subItem.getValue().toString())).collect(Collectors.toList());
+                var eles = ((Map<?, ?>) item.getValue()).entrySet().stream()
+                        .map(subItem -> element(subItem.getKey().toString(), subItem.getValue().toString()))
+                        .collect(Collectors.toList());
                 return element(item.getKey(), eles.toArray(new MojoExecutor.Element[eles.size()]));
             } else {
                 return element(item.getKey(), item.getValue().toString());
@@ -106,7 +94,8 @@ public class MavenHelper {
         } else {
             plugin = plugin(groupId, artifactId, version);
         }
-        executeMojo(plugin, goal(goal), configuration(config.toArray(new Element[]{})), executionEnvironment(mavenProject, mavenSession, mavenPluginManager));
+        executeMojo(plugin, goal(goal), configuration(config.toArray(new Element[] {})),
+                executionEnvironment(mavenProject, mavenSession, mavenPluginManager));
     }
 
 }

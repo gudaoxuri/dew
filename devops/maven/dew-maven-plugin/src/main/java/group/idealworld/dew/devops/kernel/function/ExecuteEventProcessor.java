@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.function;
 
 import com.ecfront.dew.common.$;
@@ -65,8 +49,7 @@ public class ExecuteEventProcessor {
                 && !mojoName.equalsIgnoreCase("rollback")
                 && !mojoName.equalsIgnoreCase("scale")
                 && !mojoName.equalsIgnoreCase("unrelease")
-                && !mojoName.equalsIgnoreCase("refresh")
-        ) {
+                && !mojoName.equalsIgnoreCase("refresh")) {
             return;
         }
         SendFactory.onMojoExecute(mojoName, projectConfig, message, null);
@@ -120,10 +103,13 @@ public class ExecuteEventProcessor {
             sendToHttp.init(profile, appShowNames);
         }
 
-        static void onMojoExecute(String mojoName, FinalProjectConfig projectConfig, String message, Throwable throwable) {
-            sendToDD.onMojoExecute(mojoName, projectConfig.getId(), projectConfig.getProfile(), projectConfig.getAppShowName(),
+        static void onMojoExecute(String mojoName, FinalProjectConfig projectConfig, String message,
+                Throwable throwable) {
+            sendToDD.onMojoExecute(mojoName, projectConfig.getId(), projectConfig.getProfile(),
+                    projectConfig.getAppShowName(),
                     projectConfig.getAppGroup(), message, throwable);
-            sendToHttp.onMojoExecute(mojoName, projectConfig.getId(), projectConfig.getProfile(), projectConfig.getAppShowName(),
+            sendToHttp.onMojoExecute(mojoName, projectConfig.getId(), projectConfig.getProfile(),
+                    projectConfig.getAppShowName(),
                     projectConfig.getAppGroup(), message, throwable);
         }
 
@@ -138,12 +124,11 @@ public class ExecuteEventProcessor {
                             || project.getExecuteSuccessfulMojos().contains("rollback")
                             || project.getExecuteSuccessfulMojos().contains("scale")
                             || project.getExecuteSuccessfulMojos().contains("unrelease")
-                            || project.getExecuteSuccessfulMojos().contains("refresh")
-                    ).collect(Collectors.toList());
-            List<FinalProjectConfig> nonExecutionProjects =
-                    projects.values().stream()
-                            .filter(project -> !executionSuccessfulProjects.contains(project))
-                            .collect(Collectors.toList());
+                            || project.getExecuteSuccessfulMojos().contains("refresh"))
+                    .collect(Collectors.toList());
+            List<FinalProjectConfig> nonExecutionProjects = projects.values().stream()
+                    .filter(project -> !executionSuccessfulProjects.contains(project))
+                    .collect(Collectors.toList());
             sendToDD.onShutdown(projects, executionSuccessfulProjects, nonExecutionProjects);
             sendToHttp.onShutdown(projects, executionSuccessfulProjects, nonExecutionProjects);
         }
@@ -181,13 +166,14 @@ public class ExecuteEventProcessor {
             return "";
         }
 
-        void onMojoExecute(String mojoName, String flag, String profile, String appShowName, String appGroup, String message, Throwable throwable);
+        void onMojoExecute(String mojoName, String flag, String profile, String appShowName, String appGroup,
+                String message, Throwable throwable);
 
         void onGlobalProcessError(Throwable throwable);
 
         void onShutdown(Map<String, FinalProjectConfig> projects,
-                        List<FinalProjectConfig> executionSuccessfulProjects,
-                        List<FinalProjectConfig> nonExecutionProjects);
+                List<FinalProjectConfig> executionSuccessfulProjects,
+                List<FinalProjectConfig> nonExecutionProjects);
 
     }
 
@@ -237,13 +223,14 @@ public class ExecuteEventProcessor {
 
         @Override
         public void onMojoExecute(String mojoName, String flag, String profile,
-                                  String appShowName, String appGroup,
-                                  String message, Throwable throwable) {
+                String appShowName, String appGroup,
+                String message, Throwable throwable) {
             if (skipNotify()) {
                 return;
             }
             StringBuilder content = new StringBuilder();
-            content.append("![](http://doc.dew.idealworld.group/images/devops-notify/" + (throwable != null ? "failure" : "successful") + ".png)")
+            content.append("![](http://doc.dew.idealworld.group/images/devops-notify/"
+                    + (throwable != null ? "failure" : "successful") + ".png)")
                     .append("\n")
                     .append("# " + appShowName + "\n")
                     .append("> " + appGroup + "\n")
@@ -287,8 +274,8 @@ public class ExecuteEventProcessor {
 
         @Override
         public void onShutdown(Map<String, FinalProjectConfig> projects,
-                               List<FinalProjectConfig> executionSuccessfulProjects,
-                               List<FinalProjectConfig> nonExecutionProjects) {
+                List<FinalProjectConfig> executionSuccessfulProjects,
+                List<FinalProjectConfig> nonExecutionProjects) {
             if (skipNotify()) {
                 return;
             }
@@ -333,7 +320,6 @@ public class ExecuteEventProcessor {
                     .append(appendCIJobUrl());
             doSend("", NotifyConfig.TYPE_DD, content.toString(), "DevOps process report");
         }
-
 
     }
 
@@ -380,8 +366,8 @@ public class ExecuteEventProcessor {
 
         @Override
         public void onMojoExecute(String mojoName, String flag,
-                                  String profile, String appShowName,
-                                  String appGroup, String message, Throwable throwable) {
+                String profile, String appShowName,
+                String appGroup, String message, Throwable throwable) {
             if (skipNotify()) {
                 return;
             }
@@ -400,9 +386,11 @@ public class ExecuteEventProcessor {
                 }
             };
             if (throwable != null) {
-                doSend(flag, NotifyConfig.TYPE_HTTP, build(PROCESS_EXECUTE_FAILURE_FLAG, messageMap), "DevOps process failure");
+                doSend(flag, NotifyConfig.TYPE_HTTP, build(PROCESS_EXECUTE_FAILURE_FLAG, messageMap),
+                        "DevOps process failure");
             } else {
-                doSend(flag, NotifyConfig.TYPE_HTTP, build(PROCESS_EXECUTE_SUCCESS_FLAG, messageMap), "DevOps process successful");
+                doSend(flag, NotifyConfig.TYPE_HTTP, build(PROCESS_EXECUTE_SUCCESS_FLAG, messageMap),
+                        "DevOps process successful");
             }
 
         }
@@ -427,8 +415,8 @@ public class ExecuteEventProcessor {
 
         @Override
         public void onShutdown(Map<String, FinalProjectConfig> projects,
-                               List<FinalProjectConfig> executionSuccessfulProjects,
-                               List<FinalProjectConfig> nonExecutionProjects) {
+                List<FinalProjectConfig> executionSuccessfulProjects,
+                List<FinalProjectConfig> nonExecutionProjects) {
             if (skipNotify()) {
                 return;
             }

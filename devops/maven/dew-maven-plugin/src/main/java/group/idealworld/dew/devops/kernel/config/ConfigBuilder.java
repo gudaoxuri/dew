@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.config;
 
 import com.ecfront.dew.common.$;
@@ -98,7 +82,6 @@ public class ConfigBuilder {
         return target;
     }
 
-
     /**
      * Build project optional.
      *
@@ -115,19 +98,22 @@ public class ConfigBuilder {
      * @param inputKubeBase64Config           the input kube base 64 config
      * @param dockerHostAppendOpt             the docker host append opt
      * @param dockerRegistryUrlAppendOpt      the docker registry url append opt
-     * @param dockerRegistryUserNameAppendOpt the docker registry user name append opt
-     * @param dockerRegistryPasswordAppendOpt the docker registry password append opt
+     * @param dockerRegistryUserNameAppendOpt the docker registry user name append
+     *                                        opt
+     * @param dockerRegistryPasswordAppendOpt the docker registry password append
+     *                                        opt
      * @return the result
      */
-    public static FinalProjectConfig buildProject(DewConfig dewConfig, AppKindPlugin appKindPlugin, DeployPlugin deployPlugin,
-                                                  MavenSession mavenSession, MavenProject mavenProject,
-                                                  String inputProfile,
-                                                  String inputDockerHost, String inputDockerRegistryUrl,
-                                                  String inputDockerRegistryUserName, String inputDockerRegistryPassword,
-                                                  String inputKubeBase64Config, Optional<String> dockerHostAppendOpt,
-                                                  Optional<String> dockerRegistryUrlAppendOpt,
-                                                  Optional<String> dockerRegistryUserNameAppendOpt,
-                                                  Optional<String> dockerRegistryPasswordAppendOpt) {
+    public static FinalProjectConfig buildProject(DewConfig dewConfig, AppKindPlugin appKindPlugin,
+            DeployPlugin deployPlugin,
+            MavenSession mavenSession, MavenProject mavenProject,
+            String inputProfile,
+            String inputDockerHost, String inputDockerRegistryUrl,
+            String inputDockerRegistryUserName, String inputDockerRegistryPassword,
+            String inputKubeBase64Config, Optional<String> dockerHostAppendOpt,
+            Optional<String> dockerRegistryUrlAppendOpt,
+            Optional<String> dockerRegistryUserNameAppendOpt,
+            Optional<String> dockerRegistryPasswordAppendOpt) {
         // 格式化
         inputProfile = inputProfile.toLowerCase();
         dewConfig.setProfiles(
@@ -148,28 +134,33 @@ public class ConfigBuilder {
                     + "Namespace and kubernetes cluster between different environments cannot be the same");
         }
         // 指定的环境是否存在
-        if (!inputProfile.equals(FLAG_DEW_DEVOPS_DEFAULT_PROFILE) && !dewConfig.getProfiles().containsKey(inputProfile)) {
-            throw new ConfigException("[" + mavenProject.getArtifactId() + "] Can't be found [" + inputProfile + "] profile");
+        if (!inputProfile.equals(FLAG_DEW_DEVOPS_DEFAULT_PROFILE)
+                && !dewConfig.getProfiles().containsKey(inputProfile)) {
+            throw new ConfigException(
+                    "[" + mavenProject.getArtifactId() + "] Can't be found [" + inputProfile + "] profile");
         }
-        FinalProjectConfig finalProjectConfig = doBuildProject(dewConfig, appKindPlugin, deployPlugin, mavenSession, mavenProject,
+        FinalProjectConfig finalProjectConfig = doBuildProject(dewConfig, appKindPlugin, deployPlugin, mavenSession,
+                mavenProject,
                 inputProfile, inputDockerHost, inputDockerRegistryUrl,
                 inputDockerRegistryUserName, inputDockerRegistryPassword, inputKubeBase64Config,
-                dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt);
+                dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt,
+                dockerRegistryPasswordAppendOpt);
         if (!finalProjectConfig.getSkip() && finalProjectConfig.getKube().getBase64Config().isEmpty()) {
             throw new ConfigException("[" + mavenProject.getArtifactId() + "] Kubernetes config can't be empty");
         }
         return finalProjectConfig;
     }
 
-    private static FinalProjectConfig doBuildProject(DewConfig dewConfig, AppKindPlugin appKindPlugin, DeployPlugin deployPlugin,
-                                                     MavenSession mavenSession, MavenProject mavenProject,
-                                                     String inputProfile,
-                                                     String inputDockerHost, String inputDockerRegistryUrl,
-                                                     String inputDockerRegistryUserName, String inputDockerRegistryPassword,
-                                                     String inputKubeBase64Config,
-                                                     Optional<String> dockerHostAppendOpt, Optional<String> dockerRegistryUrlAppendOpt,
-                                                     Optional<String> dockerRegistryUserNameAppendOpt,
-                                                     Optional<String> dockerRegistryPasswordAppendOpt) {
+    private static FinalProjectConfig doBuildProject(DewConfig dewConfig, AppKindPlugin appKindPlugin,
+            DeployPlugin deployPlugin,
+            MavenSession mavenSession, MavenProject mavenProject,
+            String inputProfile,
+            String inputDockerHost, String inputDockerRegistryUrl,
+            String inputDockerRegistryUserName, String inputDockerRegistryPassword,
+            String inputKubeBase64Config,
+            Optional<String> dockerHostAppendOpt, Optional<String> dockerRegistryUrlAppendOpt,
+            Optional<String> dockerRegistryUserNameAppendOpt,
+            Optional<String> dockerRegistryPasswordAppendOpt) {
         FinalProjectConfig finalProjectConfig = new FinalProjectConfig();
         if (inputProfile.equalsIgnoreCase(FLAG_DEW_DEVOPS_DEFAULT_PROFILE)) {
             $.bean.copyProperties(finalProjectConfig, dewConfig);
@@ -197,7 +188,8 @@ public class ConfigBuilder {
         finalProjectConfig.setTargetDirectory(finalProjectConfig.getDirectory() + "target" + File.separator);
 
         if (finalProjectConfig.getSkip()) {
-            DevOps.SkipProcess.skip(finalProjectConfig, "Configured to skip", FinalProjectConfig.SkipCodeEnum.SELF_CONFIG, false);
+            DevOps.SkipProcess.skip(finalProjectConfig, "Configured to skip",
+                    FinalProjectConfig.SkipCodeEnum.SELF_CONFIG, false);
             return finalProjectConfig;
         }
         // 优先使用命令行参数
@@ -228,16 +220,17 @@ public class ConfigBuilder {
         if (StringUtils.isNotEmpty(inputDockerRegistryUrl)) {
             // setting reuse version
             fillReuseVersionInfo(finalProjectConfig, dewConfig,
-                    dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt, dockerRegistryPasswordAppendOpt);
+                    dockerHostAppendOpt, dockerRegistryUrlAppendOpt, dockerRegistryUserNameAppendOpt,
+                    dockerRegistryPasswordAppendOpt);
         }
         return finalProjectConfig;
     }
 
     private static void fillReuseVersionInfo(FinalProjectConfig finalProjectConfig, DewConfig dewConfig,
-                                             Optional<String> dockerHostAppendOpt,
-                                             Optional<String> dockerRegistryUrlAppendOpt,
-                                             Optional<String> dockerRegistryUserNameAppendOpt,
-                                             Optional<String> dockerRegistryPasswordAppendOpt) {
+            Optional<String> dockerHostAppendOpt,
+            Optional<String> dockerRegistryUrlAppendOpt,
+            Optional<String> dockerRegistryUserNameAppendOpt,
+            Optional<String> dockerRegistryPasswordAppendOpt) {
         if (finalProjectConfig.getDisableReuseVersion() != null
                 && finalProjectConfig.getDisableReuseVersion()) {
             // 配置显示要求禁用重用版本
@@ -246,11 +239,13 @@ public class ConfigBuilder {
         // 配置没有指明，按默认逻辑执行
         // 先设置默认启用
         finalProjectConfig.setDisableReuseVersion(false);
-        if ((finalProjectConfig.getReuseLastVersionFromProfile() == null || finalProjectConfig.getReuseLastVersionFromProfile().isEmpty())) {
+        if ((finalProjectConfig.getReuseLastVersionFromProfile() == null
+                || finalProjectConfig.getReuseLastVersionFromProfile().isEmpty())) {
             // 如果当前是生产环境则自动填充
             // 猜测填充的来源环境
             String guessFromProfile = null;
-            if (finalProjectConfig.getProfile().equals("production") || finalProjectConfig.getProfile().equals("prod")) {
+            if (finalProjectConfig.getProfile().equals("production")
+                    || finalProjectConfig.getProfile().equals("prod")) {
                 if (dewConfig.getProfiles().containsKey("pre-prod")) {
                     guessFromProfile = "pre-prod";
                 } else if (dewConfig.getProfiles().containsKey("pre-production")) {
@@ -258,7 +253,8 @@ public class ConfigBuilder {
                 } else if (dewConfig.getProfiles().containsKey("uat")) {
                     guessFromProfile = "uat";
                 }
-            } else if (finalProjectConfig.getProfile().equals("pre-production") || finalProjectConfig.getProfile().equals("pre-prod")
+            } else if (finalProjectConfig.getProfile().equals("pre-production")
+                    || finalProjectConfig.getProfile().equals("pre-prod")
                     || finalProjectConfig.getProfile().equals("uat")) {
                 if (dewConfig.getProfiles().containsKey("test")) {
                     guessFromProfile = "test";
@@ -272,7 +268,8 @@ public class ConfigBuilder {
                 finalProjectConfig.setReuseLastVersionFromProfile(guessFromProfile);
             }
         }
-        if (finalProjectConfig.getReuseLastVersionFromProfile() == null || finalProjectConfig.getReuseLastVersionFromProfile().isEmpty()) {
+        if (finalProjectConfig.getReuseLastVersionFromProfile() == null
+                || finalProjectConfig.getReuseLastVersionFromProfile().isEmpty()) {
             // 没有找到重用版本对应的目标环境
             finalProjectConfig.setDisableReuseVersion(true);
             return;
@@ -284,9 +281,7 @@ public class ConfigBuilder {
         // 2) '.dew' 配置中对应环境的配置
         // 3) 当前环境的配置，这意味着目标环境与当前环境共用配置！
         DewProfile appendProfile = dewConfig.getProfiles().get(finalProjectConfig.getReuseLastVersionFromProfile());
-        dockerHostAppendOpt.ifPresent(obj ->
-                appendProfile.getDocker().setHost(obj.trim())
-        );
+        dockerHostAppendOpt.ifPresent(obj -> appendProfile.getDocker().setHost(obj.trim()));
         if (appendProfile.getDocker().getHost() == null || appendProfile.getDocker().getHost().isEmpty()) {
             appendProfile.getDocker().setHost(dewConfig.getDocker().getHost());
         }
@@ -294,33 +289,33 @@ public class ConfigBuilder {
             appendProfile.getDocker().setHost(finalProjectConfig.getDocker().getHost());
         }
 
-        dockerRegistryUrlAppendOpt.ifPresent(obj ->
-                appendProfile.getDocker().setRegistryUrl(obj.trim())
-        );
-        if (appendProfile.getDocker().getRegistryUrl() == null || appendProfile.getDocker().getRegistryUrl().isEmpty()) {
+        dockerRegistryUrlAppendOpt.ifPresent(obj -> appendProfile.getDocker().setRegistryUrl(obj.trim()));
+        if (appendProfile.getDocker().getRegistryUrl() == null
+                || appendProfile.getDocker().getRegistryUrl().isEmpty()) {
             appendProfile.getDocker().setRegistryUrl(dewConfig.getDocker().getRegistryUrl());
         }
-        if (appendProfile.getDocker().getRegistryUrl() == null || appendProfile.getDocker().getRegistryUrl().isEmpty()) {
+        if (appendProfile.getDocker().getRegistryUrl() == null
+                || appendProfile.getDocker().getRegistryUrl().isEmpty()) {
             appendProfile.getDocker().setRegistryUrl(finalProjectConfig.getDocker().getRegistryUrl());
         }
 
-        dockerRegistryUserNameAppendOpt.ifPresent(obj ->
-                appendProfile.getDocker().setRegistryUserName(obj.trim())
-        );
-        if (appendProfile.getDocker().getRegistryUserName() == null || appendProfile.getDocker().getRegistryUserName().isEmpty()) {
+        dockerRegistryUserNameAppendOpt.ifPresent(obj -> appendProfile.getDocker().setRegistryUserName(obj.trim()));
+        if (appendProfile.getDocker().getRegistryUserName() == null
+                || appendProfile.getDocker().getRegistryUserName().isEmpty()) {
             appendProfile.getDocker().setRegistryUserName(dewConfig.getDocker().getRegistryUserName());
         }
-        if (appendProfile.getDocker().getRegistryUserName() == null || appendProfile.getDocker().getRegistryUserName().isEmpty()) {
+        if (appendProfile.getDocker().getRegistryUserName() == null
+                || appendProfile.getDocker().getRegistryUserName().isEmpty()) {
             appendProfile.getDocker().setRegistryUserName(finalProjectConfig.getDocker().getRegistryUserName());
         }
 
-        dockerRegistryPasswordAppendOpt.ifPresent(obj ->
-                appendProfile.getDocker().setRegistryPassword(obj.trim())
-        );
-        if (appendProfile.getDocker().getRegistryPassword() == null || appendProfile.getDocker().getRegistryPassword().isEmpty()) {
+        dockerRegistryPasswordAppendOpt.ifPresent(obj -> appendProfile.getDocker().setRegistryPassword(obj.trim()));
+        if (appendProfile.getDocker().getRegistryPassword() == null
+                || appendProfile.getDocker().getRegistryPassword().isEmpty()) {
             appendProfile.getDocker().setRegistryPassword(dewConfig.getDocker().getRegistryPassword());
         }
-        if (appendProfile.getDocker().getRegistryPassword() == null || appendProfile.getDocker().getRegistryPassword().isEmpty()) {
+        if (appendProfile.getDocker().getRegistryPassword() == null
+                || appendProfile.getDocker().getRegistryPassword().isEmpty()) {
             appendProfile.getDocker().setRegistryPassword(finalProjectConfig.getDocker().getRegistryPassword());
         }
 

@@ -1,18 +1,4 @@
-package group.idealworld.dew.core.dbutils;/*
- * Copyright 2020. the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package group.idealworld.dew.core.dbutils;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import group.idealworld.dew.core.dbutils.dto.Meta;
@@ -42,7 +28,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
-@ExtendWith({SpringExtension.class, MySqlExtension.class})
+@ExtendWith({ SpringExtension.class, MySqlExtension.class })
 @ContextConfiguration(initializers = MySqlExtension.Initializer.class)
 @SpringBootTest
 @Testcontainers
@@ -74,14 +60,20 @@ public class DBTest {
         fields.put("addr", "String");
         fields.put("enable", "Boolean");
         fields.put("txt", "text");
-        db.createTableIfNotExist("test", "测试表", fields, new HashMap<String, String>() {{
-            put("name", "姓名");
-            put("age", "年龄");
-        }}, new ArrayList<String>() {{
-            add("name");
-        }}, new ArrayList<String>() {{
-            add("name");
-        }}, "id");
+        db.createTableIfNotExist("test", "测试表", fields, new HashMap<String, String>() {
+            {
+                put("name", "姓名");
+                put("age", "年龄");
+            }
+        }, new ArrayList<String>() {
+            {
+                add("name");
+            }
+        }, new ArrayList<String>() {
+            {
+                add("name");
+            }
+        }, "id");
         Map<String, Object> values = new HashMap<>();
         values.put("id", 100);
         values.put("name", "gudaoxuri");
@@ -91,7 +83,7 @@ public class DBTest {
         values.put("asset", new BigDecimal("2.343"));
         values.put("enable", true);
         values.put("addr", "浙江杭州");
-        //  values.put("createTime", new java.sql.Date());
+        // values.put("createTime", new java.sql.Date());
         values.put("txt", "浙江杭州");
         db.insert("test", values);
         values.put("name", "孤岛旭日");
@@ -122,12 +114,13 @@ public class DBTest {
         testCreateTable(db);
         db.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
                 1, "张三", "123", 22, 2333.22, true);
-        db.batch("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )", new Object[][]{
-                {2, "李四", "123", 22, 2333.22, true},
-                {3, "王五1", "123", 22, 2333.22, false},
-                {4, "王五2", "123", 22, 2333.22, false},
-                {5, "王五3", "123", 20, 2333.22, false}
-        });
+        db.batch("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
+                new Object[][] {
+                        { 2, "李四", "123", 22, 2333.22, true },
+                        { 3, "王五1", "123", 22, 2333.22, false },
+                        { 4, "王五2", "123", 22, 2333.22, false },
+                        { 5, "王五3", "123", 20, 2333.22, false }
+                });
         // get
         Assert.assertEquals(1, db.get("select * from tuser where id = ?", 1).get("id"));
         // count
@@ -153,12 +146,13 @@ public class DBTest {
         testCreateTable(db);
         db.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
                 1, "张三", "123", 22, 2333.22, true);
-        db.batch("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )", new Object[][]{
-                {2, "李四", "123", 22, 2333.22, true},
-                {3, "王五1", "123", 22, 2333.22, false},
-                {4, "王五2", "123", 22, 2333.22, false},
-                {5, "王五3", "123", 20, 2333.22, false}
-        });
+        db.batch("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
+                new Object[][] {
+                        { 2, "李四", "123", 22, 2333.22, true },
+                        { 3, "王五1", "123", 22, 2333.22, false },
+                        { 4, "王五2", "123", 22, 2333.22, false },
+                        { 5, "王五3", "123", 20, 2333.22, false }
+                });
         final CountDownLatch watch = new CountDownLatch(10000);
         final AtomicInteger count = new AtomicInteger(0);
         for (int i = 0; i < 100; i++) {
@@ -183,22 +177,21 @@ public class DBTest {
         testDropTable(db);
     }
 
-
     @Test
     public void testTransaction() throws SQLException {
         testCreateTable(db);
-        //rollback test
+        // rollback test
         db.open();
         db.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
                 1, "张三", "123", 22, 2333.22, true);
         db.rollback();
         Assert.assertEquals(0, db.count("select * from tuser"));
 
-        //error test
+        // error test
         db.open();
         db.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
                 1, "张三", "123", 22, 2333.22, true);
-        //has error
+        // has error
         try {
             db.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
                     1, "张三", "123", 22, 2333.22);
@@ -208,7 +201,7 @@ public class DBTest {
         }
         Assert.assertEquals(0, db.count("select * from tuser"));
 
-        //commit test
+        // commit test
         db.open();
         db.update("insert into tuser (id,name,password,age,asset,enable) values ( ? , ? , ? , ? , ? , ? )",
                 1, "张三", "123", 22, 2333.22, true);

@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.flow.release;
 
 import com.ecfront.dew.common.$;
@@ -87,7 +71,8 @@ public abstract class DockerBuildFlow extends BasicFlow {
         // push 到 registry
         if (config.getDocker().getRegistryUrl() == null
                 || config.getDocker().getRegistryUrl().isEmpty()) {
-            logger.warn("Not found docker registry url and push is ignored, which is mostly used for stand-alone testing");
+            logger.warn(
+                    "Not found docker registry url and push is ignored, which is mostly used for stand-alone testing");
         } else {
             logger.info("Pushing image : " + config.getCurrImageName());
             DockerHelper.inst(config.getId()).image.push(config.getCurrImageName(), true);
@@ -109,7 +94,8 @@ public abstract class DockerBuildFlow extends BasicFlow {
             // 如果存在自定义镜像则替换默认的镜像
             logger.debug("Using custom image : " + config.getDocker().getImage().trim());
             String dockerFileContent = $.file.readAllByFile(new File(flowBasePath + "Dockerfile"), "UTF-8");
-            dockerFileContent = dockerFileContent.replaceAll("FROM [^\\s]*", "FROM " + config.getDocker().getImage().trim());
+            dockerFileContent = dockerFileContent.replaceAll("FROM [^\\s]*",
+                    "FROM " + config.getDocker().getImage().trim());
             Files.write(Paths.get(flowBasePath + "Dockerfile"), dockerFileContent.getBytes());
         }
         DockerHelper.inst(config.getId()).image.build(config.getCurrImageName(),
@@ -125,7 +111,8 @@ public abstract class DockerBuildFlow extends BasicFlow {
     public static void processAfterReleaseSuccessful(FinalProjectConfig config) {
         if (config.getDocker().getRegistryUrl() == null
                 || config.getDocker().getRegistryUrl().isEmpty()) {
-            logger.warn("Not found docker registry url and push is ignored, which is mostly used for stand-alone testing");
+            logger.warn(
+                    "Not found docker registry url and push is ignored, which is mostly used for stand-alone testing");
         } else {
             logger.info("Add label : " + config.getCurrImageName());
             DockerHelper.inst(config.getId()).registry

@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.plugin.appkind.jvmservice_springboot;
 
 import com.ecfront.dew.common.$;
@@ -57,7 +41,8 @@ public class JvmServiceSpringBootAppKindPlugin implements AppKindPlugin {
                         || res.getName().toLowerCase().contains("bootstrap")))
                 .map(file -> {
                     try {
-                        if (file.getName().toLowerCase().endsWith("yaml") || file.getName().toLowerCase().endsWith("yml")) {
+                        if (file.getName().toLowerCase().endsWith("yaml")
+                                || file.getName().toLowerCase().endsWith("yml")) {
                             Map config = YamlHelper.toObject($.file.readAllByFile(file, "UTF-8"));
                             if (config.containsKey("spring")
                                     && ((Map) config.get("spring")).containsKey("application")
@@ -177,10 +162,10 @@ public class JvmServiceSpringBootAppKindPlugin implements AppKindPlugin {
     }
 
     private String setJavaOptionsValue(FinalProjectConfig config) {
-        String containerEnvJavaOptionsValue =
-                (config.getApp().getRunOptions() == null ? "" : config.getApp().getRunOptions())
-                        + " -Dspring.profiles.active=" + config.getProfile()
-                        + " -Dserver.port=" + config.getApp().getPort();
+        String containerEnvJavaOptionsValue = (config.getApp().getRunOptions() == null ? ""
+                : config.getApp().getRunOptions())
+                + " -Dspring.profiles.active=" + config.getProfile()
+                + " -Dserver.port=" + config.getApp().getPort();
         containerEnvJavaOptionsValue += " -Dopentracing.jaeger.log-spans=" + config.getApp().getTraceLogSpans();
         if (config.getApp().getTraceLogEnabled()) {
             if (!config.getApp().getTraceProbabilisticSamplingRate().equals(1.0)) {
@@ -188,7 +173,8 @@ public class JvmServiceSpringBootAppKindPlugin implements AppKindPlugin {
                         + config.getApp().getTraceProbabilisticSamplingRate();
             }
             if (!config.getApp().getTraceWebSkipPattern().isEmpty()) {
-                containerEnvJavaOptionsValue += " -Dopentracing.spring.web.skip-pattern=" + config.getApp().getTraceWebSkipPattern();
+                containerEnvJavaOptionsValue += " -Dopentracing.spring.web.skip-pattern="
+                        + config.getApp().getTraceWebSkipPattern();
             }
         }
         if (config.getApp().getMetricsEnabled()) {

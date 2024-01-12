@@ -1,19 +1,3 @@
-/*
- * Copyright 2021. the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.apache.maven.lifecycle.internal;
 
 import group.idealworld.dew.devops.agent.SkipCheck;
@@ -39,8 +23,9 @@ import java.util.*;
  * @author Jason van Zyl
  * @author Benjamin Bentmann
  * @author Kristian Rosenvold
- * <p/>
- * NOTE: This class is not part of any public api and can be changed or deleted without prior notice.
+ *         <p/>
+ *         NOTE: This class is not part of any public api and can be changed or
+ *         deleted without prior notice.
  * @since 3.0
  */
 @Component(role = MojoExecutor.class)
@@ -71,7 +56,7 @@ public class MojoExecutor {
     }
 
     private void collectDependencyRequirements(Set<String> scopesToResolve, Set<String> scopesToCollect,
-                                               Collection<MojoExecution> mojoExecutions) {
+            Collection<MojoExecution> mojoExecutions) {
         for (MojoExecution mojoExecution : mojoExecutions) {
             MojoDescriptor mojoDescriptor = mojoExecution.getMojoDescriptor();
 
@@ -104,8 +89,7 @@ public class MojoExecutor {
             throws LifecycleExecutionException {
         if (SkipCheck.skip(session.getCurrentProject().getBasedir())
                 && mojoExecutions.stream().map(MojoExecution::getGoal).map(String::toLowerCase)
-                .anyMatch(s ->
-                        s.contains("group.idealworld.dew:dew-maven-plugin:release")
+                        .anyMatch(s -> s.contains("group.idealworld.dew:dew-maven-plugin:release")
                                 || s.contains("dew:release")
                                 || s.contains("deploy"))) {
             return;
@@ -120,14 +104,14 @@ public class MojoExecutor {
     }
 
     public void execute(MavenSession session, MojoExecution mojoExecution, ProjectIndex projectIndex,
-                        DependencyContext dependencyContext, PhaseRecorder phaseRecorder)
+            DependencyContext dependencyContext, PhaseRecorder phaseRecorder)
             throws LifecycleExecutionException {
         execute(session, mojoExecution, projectIndex, dependencyContext);
         phaseRecorder.observeExecution(mojoExecution);
     }
 
     private void execute(MavenSession session, MojoExecution mojoExecution, ProjectIndex projectIndex,
-                         DependencyContext dependencyContext)
+            DependencyContext dependencyContext)
             throws LifecycleExecutionException {
         MojoDescriptor mojoDescriptor = mojoExecution.getMojoDescriptor();
 
@@ -138,18 +122,16 @@ public class MojoExecutor {
         }
 
         if (mojoDescriptor.isProjectRequired() && !session.getRequest().isProjectPresent()) {
-            Throwable cause =
-                    new MissingProjectException("Goal requires a project to execute"
-                            + " but there is no POM in this directory (" + session.getExecutionRootDirectory() + ")."
-                            + " Please verify you invoked Maven from the correct directory.");
+            Throwable cause = new MissingProjectException("Goal requires a project to execute"
+                    + " but there is no POM in this directory (" + session.getExecutionRootDirectory() + ")."
+                    + " Please verify you invoked Maven from the correct directory.");
             throw new LifecycleExecutionException(mojoExecution, null, cause);
         }
 
         if (mojoDescriptor.isOnlineRequired() && session.isOffline()) {
             if (MojoExecution.Source.CLI.equals(mojoExecution.getSource())) {
-                Throwable cause =
-                        new IllegalStateException("Goal requires online mode for execution"
-                                + " but Maven is currently offline.");
+                Throwable cause = new IllegalStateException("Goal requires online mode for execution"
+                        + " but Maven is currently offline.");
                 throw new LifecycleExecutionException(mojoExecution, session.getCurrentProject(), cause);
             } else {
                 eventCatapult.fire(ExecutionEvent.Type.MojoSkipped, session, mojoExecution);
@@ -190,7 +172,7 @@ public class MojoExecutor {
     }
 
     public void ensureDependenciesAreResolved(MojoDescriptor mojoDescriptor, MavenSession session,
-                                              DependencyContext dependencyContext)
+            DependencyContext dependencyContext)
             throws LifecycleExecutionException {
         MavenProject project = dependencyContext.getProject();
         boolean aggregating = mojoDescriptor.isAggregator();
@@ -221,9 +203,9 @@ public class MojoExecutor {
         }
 
         ArtifactFilter artifactFilter = getArtifactFilter(mojoDescriptor);
-        List<MavenProject> projectsToResolve =
-                LifecycleDependencyResolver.getProjects(session.getCurrentProject(), session,
-                        mojoDescriptor.isAggregator());
+        List<MavenProject> projectsToResolve = LifecycleDependencyResolver.getProjects(session.getCurrentProject(),
+                session,
+                mojoDescriptor.isAggregator());
         for (MavenProject projectToResolve : projectsToResolve) {
             projectToResolve.setArtifactFilter(artifactFilter);
         }
@@ -249,7 +231,7 @@ public class MojoExecutor {
     }
 
     public List<MavenProject> executeForkedExecutions(MojoExecution mojoExecution, MavenSession session,
-                                                      ProjectIndex projectIndex)
+            ProjectIndex projectIndex)
             throws LifecycleExecutionException {
         List<MavenProject> forkedProjects = Collections.emptyList();
 

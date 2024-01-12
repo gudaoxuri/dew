@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.test;
 
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -45,7 +29,8 @@ public class RocketMQExtension implements BeforeAllCallback {
             "      - 10909:10909\n" +
             "      - 10911:10911\n" +
             "      - 10912:10912\n" +
-            "    command: sh -c 'echo \"brokerIP1 = 127.0.0.1\" > ../conf/broker.conf && ./mqbroker -n namesrv:9876 -c ../conf/broker" +
+            "    command: sh -c 'echo \"brokerIP1 = 127.0.0.1\" > ../conf/broker.conf && ./mqbroker -n namesrv:9876 -c ../conf/broker"
+            +
             ".conf'\n" +
             "    depends_on:\n" +
             "      - namesrv";
@@ -64,9 +49,8 @@ public class RocketMQExtension implements BeforeAllCallback {
     /**
      * Initializer.
      */
-    public static DockerComposeContainer rocketmqContainer =
-            new DockerComposeContainer(TEMP_FILE.toFile())
-                    .withExposedService("namesrv_1", 9876);
+    public static DockerComposeContainer rocketmqContainer = new DockerComposeContainer(TEMP_FILE.toFile())
+            .withExposedService("namesrv_1", 9876);
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) {
@@ -93,8 +77,8 @@ public class RocketMQExtension implements BeforeAllCallback {
                             + ":" +
                             rocketmqContainer.getServicePort("namesrv_1", 9876),
                     "rocketmq.producer.group=rocketmq-producer-group",
-                    "rocketmq.consumer.group=rocketmq-consumer-group"
-            ).applyTo(configurableApplicationContext.getEnvironment());
+                    "rocketmq.consumer.group=rocketmq-consumer-group")
+                    .applyTo(configurableApplicationContext.getEnvironment());
         }
     }
 

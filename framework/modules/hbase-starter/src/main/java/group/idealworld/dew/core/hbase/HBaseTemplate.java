@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.core.hbase;
 
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The collection of  the hbase client functions.
+ * The collection of the hbase client functions.
  *
  * @author 迹_Jason
  */
@@ -142,7 +126,8 @@ public class HBaseTemplate implements HBaseOperation {
 
     /**
      * Scans the target table using the given {@link Scan} object.
-     * The content is processed row by row by the given action, returning a list of domain objects.
+     * The content is processed row by row by the given action, returning a list of
+     * domain objects.
      *
      * @param tableName target table
      * @param scan      table scanner
@@ -206,7 +191,8 @@ public class HBaseTemplate implements HBaseOperation {
      * @return object mapping the target row
      */
     @Override
-    public <T> T get(String tableName, String rowKey, String familyName, String qualifier, RowMapper<T> mapper) throws IOException {
+    public <T> T get(String tableName, String rowKey, String familyName, String qualifier, RowMapper<T> mapper)
+            throws IOException {
         return this.execute(tableName, table -> {
             Get get = new Get(Bytes.toBytes(rowKey));
             if (StringUtils.isNotBlank(familyName)) {

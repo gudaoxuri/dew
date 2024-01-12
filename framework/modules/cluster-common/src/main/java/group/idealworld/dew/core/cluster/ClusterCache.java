@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.core.cluster;
 
 import java.util.List;
@@ -77,7 +61,6 @@ public interface ClusterCache {
      * @return true 设置成功 , false 设置失败（key已存在）
      */
     boolean setnx(String key, String value, long expireSec);
-
 
     /**
      * 设置字符串值，并返回其旧值，不存在时返回null.
@@ -221,7 +204,6 @@ public interface ClusterCache {
      */
     void hmset(String key, Map<String, String> items);
 
-
     /**
      * 设置Hash集合field对应的value.
      *
@@ -239,7 +221,6 @@ public interface ClusterCache {
      * @param value value
      */
     void hsetIfAbsent(String key, String field, String value);
-
 
     /**
      * 获取Hash集合field对应的value.
@@ -318,12 +299,11 @@ public interface ClusterCache {
      */
     long hashIncrBy(String h, String hk, long incrValue);
 
-
     /**
      * 原子减操作.
      *
      * @param key       key不存在时会自动创建值为0的对象
-     * @param decrValue 要减少的值，必须是Long  或 Int
+     * @param decrValue 要减少的值，必须是Long 或 Int
      * @return 操作后的值
      */
     long decrBy(String key, long decrValue);
@@ -333,7 +313,7 @@ public interface ClusterCache {
      *
      * @param h         h
      * @param hk        hk
-     * @param decrValue 要减少的值，必须是Long  或 Int
+     * @param decrValue 要减少的值，必须是Long 或 Int
      * @return 操作后的值
      */
     long hashDecrBy(String h, String hk, long decrValue);

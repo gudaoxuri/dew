@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.idempotent.interceptor;
 
 import group.idealworld.dew.Dew;
@@ -48,14 +32,16 @@ public class IdempotentHandlerInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
         Idempotent idempotent = ((HandlerMethod) handler).getMethod().getAnnotation(Idempotent.class);
         if (idempotent == null) {
             return HandlerInterceptor.super.preHandle(request, response, handler);
         }
         // 参数设置
         String optType = "[" + request.getMethod() + "]" + Dew.Info.name + "/" + request.getRequestURI();
-        String optIdFlag = ObjectUtils.isEmpty(idempotent.optIdFlag()) ? dewIdempotentConfig.getDefaultOptIdFlag() : idempotent.optIdFlag();
+        String optIdFlag = ObjectUtils.isEmpty(idempotent.optIdFlag()) ? dewIdempotentConfig.getDefaultOptIdFlag()
+                : idempotent.optIdFlag();
         String optId = request.getHeader(optIdFlag);
         if (ObjectUtils.isEmpty(optId)) {
             optId = request.getParameter(optIdFlag);
@@ -65,9 +51,12 @@ public class IdempotentHandlerInterceptor implements HandlerInterceptor {
             return HandlerInterceptor.super.preHandle(request, response, handler);
         }
         if (!DewIdempotent.existOptTypeInfo(optType)) {
-            long expireMs = idempotent.expireMs() == -1 ? dewIdempotentConfig.getDefaultExpireMs() : idempotent.expireMs();
+            long expireMs = idempotent.expireMs() == -1 ? dewIdempotentConfig.getDefaultExpireMs()
+                    : idempotent.expireMs();
             boolean needConfirm = idempotent.needConfirm();
-            StrategyEnum strategy = idempotent.strategy() == StrategyEnum.AUTO ? dewIdempotentConfig.getDefaultStrategy() : idempotent.strategy();
+            StrategyEnum strategy = idempotent.strategy() == StrategyEnum.AUTO
+                    ? dewIdempotentConfig.getDefaultStrategy()
+                    : idempotent.strategy();
             DewIdempotent.initOptTypeInfo(optType, needConfirm, expireMs, strategy);
         }
         switch (DewIdempotent.process(optType, optId)) {
@@ -79,7 +68,8 @@ public class IdempotentHandlerInterceptor implements HandlerInterceptor {
                 return false;
             case CONFIRMED:
                 ErrorController.error(request, response, 423,
-                        "Resources have been processed, can't repeat the request.", IdempotentException.class.getName());
+                        "Resources have been processed, can't repeat the request.",
+                        IdempotentException.class.getName());
                 return false;
             default:
                 return false;

@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.resource;
 
 import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
@@ -100,21 +84,21 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
      */
     public List<String> buildPatch(V1Service service) {
         List<String> patcher = new ArrayList<>();
-        service.getMetadata().getAnnotations().forEach((key, value) ->
-                patcher.add(
-                        "{\"op\":\"replace\",\"path\":\"/metadata/annotations/"
-                                + key.replaceAll("\\/", "~1")
-                                + "\",\"value\":\"" + value + "\"}"));
-        service.getMetadata().getLabels().forEach((key, value) ->
-                patcher.add(
-                        "{\"op\":\"replace\",\"path\":\"/metadata/labels/"
-                                + key.replaceAll("\\/", "~1")
-                                + "\",\"value\":\"" + value + "\"}"));
+        service.getMetadata().getAnnotations().forEach((key, value) -> patcher.add(
+                "{\"op\":\"replace\",\"path\":\"/metadata/annotations/"
+                        + key.replaceAll("\\/", "~1")
+                        + "\",\"value\":\"" + value + "\"}"));
+        service.getMetadata().getLabels().forEach((key, value) -> patcher.add(
+                "{\"op\":\"replace\",\"path\":\"/metadata/labels/"
+                        + key.replaceAll("\\/", "~1")
+                        + "\",\"value\":\"" + value + "\"}"));
         service.getSpec().getPorts().forEach(port -> {
             try {
-                ReflectionUtils.getVariablesAndValuesIncludingSuperclasses(port).forEach((k, v) ->
-                        patcher.add("{\"op\":\"replace\",\"path\":\"/spec/ports/" + service.getSpec().getPorts().indexOf(port) + "/" + k + "\", "
-                                + "\"value\": " + v + "}"));
+                ReflectionUtils.getVariablesAndValuesIncludingSuperclasses(port)
+                        .forEach((k,
+                                v) -> patcher.add("{\"op\":\"replace\",\"path\":\"/spec/ports/"
+                                        + service.getSpec().getPorts().indexOf(port) + "/" + k + "\", "
+                                        + "\"value\": " + v + "}"));
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -158,7 +142,8 @@ public class KubeServiceBuilder implements KubeResourceBuilder<V1Service> {
      */
     public void clearDebugPort(V1Service service, int debugPort, int forwardPort) {
         service.getSpec().setType("ClusterIP");
-        service.getSpec().getPorts().removeIf(v1ServicePort -> v1ServicePort.getPort() == debugPort || v1ServicePort.getPort() == forwardPort);
+        service.getSpec().getPorts().removeIf(
+                v1ServicePort -> v1ServicePort.getPort() == debugPort || v1ServicePort.getPort() == forwardPort);
         service.getSpec().getPorts().forEach(v1ServicePort -> v1ServicePort.setNodePort(null));
     }
 }

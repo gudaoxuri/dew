@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.flow.release;
 
 import com.ecfront.dew.common.$;
@@ -95,7 +79,8 @@ public class KubeReleaseFlow extends BasicFlow {
      * @throws ApiException the api exception
      * @throws IOException  the io exception
      */
-    private void release(FinalProjectConfig config, Map<String, Object> deployResult, String appVersion, String gitCommit, boolean reRelease)
+    private void release(FinalProjectConfig config, Map<String, Object> deployResult, String appVersion,
+            String gitCommit, boolean reRelease)
             throws ApiException, IOException {
         logger.info("Publishing kubernetes resources");
         deployResources(config, deployResult);
@@ -133,7 +118,8 @@ public class KubeReleaseFlow extends BasicFlow {
      * @return the new version resources
      * @throws IOException the io exception
      */
-    private Map<String, Object> buildNewVersionResources(FinalProjectConfig config, String flowBasePath) throws IOException {
+    private Map<String, Object> buildNewVersionResources(FinalProjectConfig config, String flowBasePath)
+            throws IOException {
         V1Deployment deployment = new KubeDeploymentBuilder().build(config);
         Files.write(Paths.get(flowBasePath + KubeRES.DEPLOYMENT.getVal() + ".yaml"),
                 KubeHelper.inst(config.getId()).toString(deployment).getBytes(StandardCharsets.UTF_8));
@@ -167,31 +153,32 @@ public class KubeReleaseFlow extends BasicFlow {
                 + ",group=" + deploymentRes.getMetadata().getLabels().get("group")
                 + ",version=" + deploymentRes.getMetadata().getLabels().get("version");
         String watchId = KubeHelper.inst(config.getId()).watch(
-                (coreApi, appsApi, networkingApi, rbacAuthorizationApi, autoscalingApi)
-                        -> appsApi.listNamespacedDeploymentCall(deploymentRes.getMetadata().getNamespace(),
-                        null, null, null, null,
-                        select, 1, null, null, null, Boolean.TRUE, null),
+                (coreApi, appsApi, networkingApi, rbacAuthorizationApi, autoscalingApi) -> appsApi
+                        .listNamespacedDeploymentCall(deploymentRes.getMetadata().getNamespace(),
+                                null, null, null, null,
+                                select, 1, null, null, null, Boolean.TRUE, null),
                 resp -> {
                     // Ready Pod数量是否等于设定的数量
                     if (resp.object.getStatus().getReadyReplicas() != null
                             && resp.object.getStatus().getAvailableReplicas() != null
-                            && resp.object.getStatus().getReadyReplicas().intValue() == resp.object.getSpec().getReplicas()
-                            && resp.object.getStatus().getAvailableReplicas().intValue() == resp.object.getSpec().getReplicas()) {
+                            && resp.object.getStatus().getReadyReplicas().intValue() == resp.object.getSpec()
+                                    .getReplicas()
+                            && resp.object.getStatus().getAvailableReplicas().intValue() == resp.object.getSpec()
+                                    .getReplicas()) {
                         try {
                             long runningPodSize = KubeHelper.inst(config.getId())
                                     .list(select, deploymentRes.getMetadata().getNamespace(), KubeRES.POD, V1Pod.class)
-                                    .stream().filter(pod ->
-                                            pod.getStatus().getPhase().equalsIgnoreCase("Running")
-                                                    && pod.getStatus().getContainerStatuses().stream().allMatch(V1ContainerStatus::getReady)
-                                    )
+                                    .stream().filter(pod -> pod.getStatus().getPhase().equalsIgnoreCase("Running")
+                                            && pod.getStatus().getContainerStatuses().stream()
+                                                    .allMatch(V1ContainerStatus::getReady))
                                     .count();
                             while (resp.object.getSpec().getReplicas() != runningPodSize) {
                                 runningPodSize = KubeHelper.inst(config.getId())
-                                        .list(select, deploymentRes.getMetadata().getNamespace(), KubeRES.POD, V1Pod.class)
-                                        .stream().filter(pod ->
-                                                pod.getStatus().getPhase().equalsIgnoreCase("Running")
-                                                        && pod.getStatus().getContainerStatuses().stream().allMatch(V1ContainerStatus::getReady)
-                                        )
+                                        .list(select, deploymentRes.getMetadata().getNamespace(), KubeRES.POD,
+                                                V1Pod.class)
+                                        .stream().filter(pod -> pod.getStatus().getPhase().equalsIgnoreCase("Running")
+                                                && pod.getStatus().getContainerStatuses().stream()
+                                                        .allMatch(V1ContainerStatus::getReady))
                                         .count();
                                 // 之前版本没有销毁
                                 Thread.sleep(1000);
@@ -213,12 +200,14 @@ public class KubeReleaseFlow extends BasicFlow {
             }
             // 部署 service
             V1Service service = (V1Service) kubeResources.get(KubeRES.SERVICE.getVal());
-            if (!KubeHelper.inst(config.getId()).exist(service.getMetadata().getName(), service.getMetadata().getNamespace(), KubeRES.SERVICE)) {
+            if (!KubeHelper.inst(config.getId()).exist(service.getMetadata().getName(),
+                    service.getMetadata().getNamespace(), KubeRES.SERVICE)) {
                 KubeHelper.inst(config.getId()).create(service);
             } else {
                 KubeHelper.inst(config.getId())
                         .patch(service.getMetadata().getName(),
-                                new KubeServiceBuilder().buildPatch(service), service.getMetadata().getNamespace(), KubeRES.SERVICE);
+                                new KubeServiceBuilder().buildPatch(service), service.getMetadata().getNamespace(),
+                                KubeRES.SERVICE);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -238,14 +227,12 @@ public class KubeReleaseFlow extends BasicFlow {
      * @throws ApiException the api exception
      */
     private void appendVersionInfo(FinalProjectConfig config, Map<String, Object> kubeResources,
-                                   String appVersion, String gitCommit, boolean reRelease)
+            String appVersion, String gitCommit, boolean reRelease)
             throws ApiException {
         Map<String, String> resources = kubeResources.entrySet()
                 .stream().collect(Collectors.toMap(Map.Entry::getKey,
-                        entry ->
-                                $.security.encodeStringToBase64(
-                                        KubeHelper.inst(config.getId()).toString(entry.getValue()), "UTF-8")
-                ));
+                        entry -> $.security.encodeStringToBase64(
+                                KubeHelper.inst(config.getId()).toString(entry.getValue()), "UTF-8")));
         VersionController.addNewVersion(config, appVersion, gitCommit, reRelease, resources, new HashMap<>());
     }
 
@@ -258,7 +245,8 @@ public class KubeReleaseFlow extends BasicFlow {
      */
     private void removeOldVersions(FinalProjectConfig config) throws ApiException, IOException {
         // 获取所有历史版本
-        List<V1ConfigMap> verConfigMaps = VersionController.getVersionHistory(config.getId(), config.getAppName(), config.getNamespace(), false);
+        List<V1ConfigMap> verConfigMaps = VersionController.getVersionHistory(config.getId(), config.getAppName(),
+                config.getNamespace(), false);
         int offset = config.getApp().getRevisionHistoryLimit();
         for (V1ConfigMap configMap : verConfigMaps) {
             boolean enabled = VersionController.isVersionEnabled(configMap);
@@ -266,7 +254,8 @@ public class KubeReleaseFlow extends BasicFlow {
                 String oldGitCommit = VersionController.getGitCommit(configMap);
                 logger.debug("Remove old version : " + configMap.getMetadata().getName());
                 // 删除 config map
-                KubeHelper.inst(config.getId()).delete(configMap.getMetadata().getName(), config.getNamespace(), KubeRES.CONFIG_MAP);
+                KubeHelper.inst(config.getId()).delete(configMap.getMetadata().getName(), config.getNamespace(),
+                        KubeRES.CONFIG_MAP);
                 // 删除本地 image (不包含其它节点)
                 DockerHelper.inst(config.getId()).image.remove(config.getImageName(oldGitCommit));
                 // 删除 registry 中的 image

@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.core.cluster.spi.rocket;
 
 import com.ecfront.dew.common.exception.RTUnsupportedEncodingException;
@@ -58,7 +42,8 @@ public class RocketClusterMQ extends AbsClusterMQ {
 
     private final String consumerGroupName;
 
-    public RocketClusterMQ(RocketAdapter rocketAdapter, String nameServer, String producerGroupName, String consumerGroupName) {
+    public RocketClusterMQ(RocketAdapter rocketAdapter, String nameServer, String producerGroupName,
+            String consumerGroupName) {
         this.rocketAdapter = rocketAdapter;
         this.nameServer = nameServer;
         this.producerGroupName = producerGroupName;
@@ -203,11 +188,13 @@ public class RocketClusterMQ extends AbsClusterMQ {
             var funResults = new CopyOnWriteArrayList<>();
             try {
                 list.parallelStream().forEach((messageExt) -> {
-                    Map<String, Object> headers = messageExt.getProperties().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey,
-                            Map.Entry::getValue));
+                    Map<String, Object> headers = messageExt.getProperties().entrySet().stream()
+                            .collect(Collectors.toMap(Map.Entry::getKey,
+                                    Map.Entry::getValue));
                     Map<String, Object> receiveHeader = setMQHeader(topic, headers);
                     funResults.add(receiveBeforeFun.invoke(topic, receiveHeader));
-                    consumer.accept(new MessageWrap(topic, Optional.of(receiveHeader), new String(messageExt.getBody(), StandardCharsets.UTF_8)));
+                    consumer.accept(new MessageWrap(topic, Optional.of(receiveHeader),
+                            new String(messageExt.getBody(), StandardCharsets.UTF_8)));
                 });
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             } catch (Exception e) {

@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.flow.debug;
 
 import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
@@ -61,18 +45,22 @@ public class DefaultDebugFlow extends BasicFlow {
         podName = PodSelector.select(config, Optional.ofNullable(podName));
         KubeHelper.inst(config.getId())
                 .exec(podName, KubeDeploymentBuilder.FLAG_CONTAINER_NAME, config.getNamespace(),
-                        new String[]{
+                        new String[] {
                                 "./debug-java.sh"
                         }, System.out::println);
-        V1Service service = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(), KubeRES.SERVICE, V1Service.class);
+        V1Service service = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(),
+                KubeRES.SERVICE, V1Service.class);
         new KubeServiceBuilder().buildDebugPort(service, config.getApp().getDebugPort(), 5005);
         KubeHelper.inst(config.getId()).replace(service);
-        service = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(), KubeRES.SERVICE, V1Service.class);
+        service = KubeHelper.inst(config.getId()).read(config.getAppName(), config.getNamespace(), KubeRES.SERVICE,
+                V1Service.class);
         System.out.println("Http-debug nodePort:["
                 + service.getSpec().getPorts().stream().filter(v1ServicePort -> v1ServicePort.getPort().equals(5005))
-                .map(V1ServicePort::getNodePort).collect(Collectors.toList()).get(0)
-                + "].   Http-new nodePort: [" + service.getSpec().getPorts().stream().filter(v1ServicePort -> v1ServicePort.getPort().equals(9000))
-                .map(V1ServicePort::getNodePort).collect(Collectors.toList()).get(0) + "]");
+                        .map(V1ServicePort::getNodePort).collect(Collectors.toList()).get(0)
+                + "].   Http-new nodePort: ["
+                + service.getSpec().getPorts().stream().filter(v1ServicePort -> v1ServicePort.getPort().equals(9000))
+                        .map(V1ServicePort::getNodePort).collect(Collectors.toList()).get(0)
+                + "]");
         System.out.println("==================\n"
                 + "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005\n"
                 + "==================");
@@ -127,7 +115,7 @@ public class DefaultDebugFlow extends BasicFlow {
                 KubeHelper.inst(config.getId()).replace(service);
                 KubeHelper.inst(config.getId())
                         .exec(podName, KubeDeploymentBuilder.FLAG_CONTAINER_NAME, config.getNamespace(),
-                                new String[]{
+                                new String[] {
                                         "./debug-clear.sh"
                                 }, System.out::println);
             } catch (ApiException | IOException e) {
@@ -136,6 +124,5 @@ public class DefaultDebugFlow extends BasicFlow {
             System.out.println("Debug shutdown execute end...");
         }
     }
-
 
 }

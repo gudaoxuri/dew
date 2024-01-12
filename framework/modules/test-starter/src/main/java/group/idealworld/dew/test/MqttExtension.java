@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.test;
 
 import org.junit.jupiter.api.extension.BeforeAllCallback;
@@ -31,36 +15,41 @@ import java.time.Duration;
 
 public class MqttExtension implements BeforeAllCallback {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MqttExtension.class);
+        private static final Logger LOGGER = LoggerFactory.getLogger(MqttExtension.class);
 
-    private static final GenericContainer MQTT_CONTAINER = new GenericContainer("eclipse-mosquitto")
-            .withClasspathResourceMapping("mosquitto.conf", "/mosquitto/config/mosquitto.conf", BindMode.READ_ONLY)
-            .withExposedPorts(1883);
+        private static final GenericContainer MQTT_CONTAINER = new GenericContainer("eclipse-mosquitto")
+                        .withClasspathResourceMapping("mosquitto.conf", "/mosquitto/config/mosquitto.conf",
+                                        BindMode.READ_ONLY)
+                        .withExposedPorts(1883);
 
-    @Override
-    public void beforeAll(ExtensionContext extensionContext) {
-        MQTT_CONTAINER.start();
-        MQTT_CONTAINER.waitingFor((new LogMessageWaitStrategy()).withRegEx("mosquitto version 2\\.0\\.11 running").withTimes(1))
-                .withStartupTimeout(Duration.ofSeconds(60L));
-        LOGGER.info("Test MQTT port: " + MQTT_CONTAINER.getFirstMappedPort());
-    }
-
-    /**
-     * Initializer.
-     */
-    public static class Initializer
-            implements ApplicationContextInitializer<ConfigurableApplicationContext> {
-        /**
-         * Initialize.
-         *
-         * @param configurableApplicationContext the configurable application context
-         */
-        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
-            TestPropertyValues.of(
-                    "dew.mw.mqtt.broker=tcp://127.0.0.1:" + MQTT_CONTAINER.getFirstMappedPort(),
-                    "dew.mw.mqtt.persistence=memory"
-            ).applyTo(configurableApplicationContext.getEnvironment());
+        @Override
+        public void beforeAll(ExtensionContext extensionContext) {
+                MQTT_CONTAINER.start();
+                MQTT_CONTAINER
+                                .waitingFor(
+                                                (new LogMessageWaitStrategy())
+                                                                .withRegEx("mosquitto version 2\\.0\\.11 running")
+                                                                .withTimes(1))
+                                .withStartupTimeout(Duration.ofSeconds(60L));
+                LOGGER.info("Test MQTT port: " + MQTT_CONTAINER.getFirstMappedPort());
         }
-    }
+
+        /**
+         * Initializer.
+         */
+        public static class Initializer
+                        implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+                /**
+                 * Initialize.
+                 *
+                 * @param configurableApplicationContext the configurable application context
+                 */
+                public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
+                        TestPropertyValues.of(
+                                        "dew.mw.mqtt.broker=tcp://127.0.0.1:" + MQTT_CONTAINER.getFirstMappedPort(),
+                                        "dew.mw.mqtt.persistence=memory")
+                                        .applyTo(configurableApplicationContext.getEnvironment());
+                }
+        }
 
 }

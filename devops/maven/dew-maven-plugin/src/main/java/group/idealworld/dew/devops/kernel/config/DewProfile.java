@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.config;
 
 import group.idealworld.dew.core.notification.NotifyConfig;
@@ -41,7 +25,8 @@ public class DewProfile {
     private Boolean skip = false;
     // 是否禁用重用版本，默认情况前端工程为true（node编译期会混入环境信息导致无法重用），其它工程为false
     private Boolean disableReuseVersion;
-    // 重用版本的目标环境名称，默认会尝试使用 pre-prod/pre-production/uat 为名称（找到当前项目第一个存在的环境），都不存在时需要显式指定
+    // 重用版本的目标环境名称，默认会尝试使用 pre-prod/pre-production/uat
+    // 为名称（找到当前项目第一个存在的环境），都不存在时需要显式指定
     private String reuseLastVersionFromProfile;
     // 忽略变更文件列表，此列表指定的文件不用于是否有变更要部署的判断依据
     // 支持 glob , @see https://en.wikipedia.org/wiki/Glob_(programming)

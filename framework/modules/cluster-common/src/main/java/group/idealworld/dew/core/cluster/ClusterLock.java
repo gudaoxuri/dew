@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.core.cluster;
 
 import org.slf4j.Logger;
@@ -34,7 +18,8 @@ public interface ClusterLock {
     /**
      * 尝试加锁，加锁成功后执行对应的函数，执行完成自动解锁.
      * <p>
-     * 推荐使用 {@link #tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun)}
+     * 推荐使用
+     * {@link #tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun)}
      *
      * @param fun 加锁成功后执行的函数
      */
@@ -43,7 +28,8 @@ public interface ClusterLock {
     /**
      * 尝试加锁，加锁成功后执行对应的函数，执行完成自动解锁.
      * <p>
-     * 推荐使用 {@link #tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun)}
+     * 推荐使用
+     * {@link #tryLockWithFun(long waitMillSec, long leaseMillSec, VoidProcessFun fun)}
      *
      * @param waitMillSec 等待时间，单位毫秒
      * @param fun         加锁成功后执行的函数

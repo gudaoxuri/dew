@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.example.web;
 
 import com.ecfront.dew.common.Resp;
@@ -52,7 +36,8 @@ public class WebExampleController {
      * @return result
      */
     @GetMapping("example")
-    @Operation(summary = "示例方法", extensions = {@Extension(name = "FIN_EXT", properties = @ExtensionProperty(name = "REL", value = "s001,s002"))})
+    @Operation(summary = "示例方法", extensions = {
+            @Extension(name = "FIN_EXT", properties = @ExtensionProperty(name = "REL", value = "s001,s002")) })
     public Map<String, Integer> example() {
         return new HashMap<>();
     }
@@ -63,7 +48,8 @@ public class WebExampleController {
      * @return the user
      */
     @PostMapping(value = "valid-create")
-    public RbumCertDto.RbumCertDetailResp validCreate(@Validated(CreateGroup.class) @RequestBody RbumCertDto.RbumCertAddReq rbumCertAddReq) {
+    public RbumCertDto.RbumCertDetailResp validCreate(
+            @Validated(CreateGroup.class) @RequestBody RbumCertDto.RbumCertAddReq rbumCertAddReq) {
         return new RbumCertDto.RbumCertDetailResp();
     }
 
@@ -135,11 +121,11 @@ public class WebExampleController {
         private String idCard;
 
         // CreateGroup、UpdateGroup组下校验
-        @Min(value = 10, groups = {CreateGroup.class, UpdateGroup.class})
+        @Min(value = 10, groups = { CreateGroup.class, UpdateGroup.class })
         private int age;
 
         // CreateGroup、UpdateGroup组下校验
-        @Phone(groups = {CreateGroup.class, UpdateGroup.class})
+        @Phone(groups = { CreateGroup.class, UpdateGroup.class })
         private String phone;
 
         /**

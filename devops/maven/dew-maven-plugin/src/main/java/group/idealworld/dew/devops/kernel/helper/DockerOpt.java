@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.helper;
 
 import com.ecfront.dew.common.$;
@@ -39,7 +23,8 @@ import java.util.concurrent.TimeUnit;
  * Docker操作函数类.
  *
  * @author gudaoxuri
- * @see <a href="https://github.com/docker-java/docker-java/wiki">Docker Java 操作</a>
+ * @see <a href="https://github.com/docker-java/docker-java/wiki">Docker Java
+ *      操作</a>
  */
 public class DockerOpt {
 
@@ -84,11 +69,13 @@ public class DockerOpt {
      * @param registryUrl      registry地址， e.g. https://harbor.dew.env/v2
      * @param registryUsername registry用户名
      * @param registryPassword registry密码
-     * @see <a href="https://docs.docker.com/install/linux/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections">The Docker Daemon Listens For Connections</a>
+     * @see <a href=
+     *      "https://docs.docker.com/install/linux/linux-postinstall/#configure-where-the-docker-daemon-listens-for-connections">The
+     *      Docker Daemon Listens For Connections</a>
      */
     protected DockerOpt(Logger log,
-                        String host, String registryUrl,
-                        String registryUsername, String registryPassword) {
+            String host, String registryUrl,
+            String registryUsername, String registryPassword) {
         this.log = log;
         this.registryUsername = registryUsername;
         this.registryPassword = registryPassword;
@@ -220,7 +207,8 @@ public class DockerOpt {
          * @param labels         the labels
          * @return image id
          */
-        public String build(String imageName, String dockerfilePath, Map<String, String> args, Map<String, String> labels) {
+        public String build(String imageName, String dockerfilePath, Map<String, String> args,
+                Map<String, String> labels) {
             BuildImageCmd buildImageCmd = docker.buildImageCmd(new File(dockerfilePath));
             if (args != null && !args.isEmpty()) {
                 args.forEach(buildImageCmd::withBuildArg);
@@ -400,10 +388,10 @@ public class DockerOpt {
                 // 带host，先去除
                 image = image.substring(image.indexOf("/") + 1);
             }
-            return new String[]{
+            return new String[] {
                     image.substring(0, image.indexOf("/")),
                     image.substring(image.indexOf("/") + 1),
-                    tag};
+                    tag };
         }
 
     }
@@ -411,7 +399,9 @@ public class DockerOpt {
     /**
      * Harbor Registry API.
      *
-     * @see <a href="https://raw.githubusercontent.com/goharbor/harbor/master/docs/swagger.yaml">Goharbor API</a>
+     * @see <a href=
+     *      "https://raw.githubusercontent.com/goharbor/harbor/master/docs/swagger.yaml">Goharbor
+     *      API</a>
      */
     public class HarborRegistry implements Registry {
 
@@ -426,7 +416,8 @@ public class DockerOpt {
                 log.debug("Registry exist image result [" + responseWrap.statusCode + "]" + responseWrap.result);
             } else {
                 responseWrap = $.http.getWrap(
-                        registryApiUrl + "/projects/" + item[0] + "/repositories/" + item[1] + "/artifacts/" + item[2] + "/tags",
+                        registryApiUrl + "/projects/" + item[0] + "/repositories/" + item[1] + "/artifacts/" + item[2]
+                                + "/tags",
                         wrapHeader());
                 log.debug("Registry exist image tag result [" + responseWrap.statusCode + "]" + responseWrap.result);
             }
@@ -450,10 +441,12 @@ public class DockerOpt {
             } else {
                 // remove Tag
                 responseWrap = $.http.deleteWrap(
-                        registryApiUrl + "/projects/" + item[0] + "/repositories/" + item[1] + "/artifacts/" + item[2] + "/tags/" + item[2],
+                        registryApiUrl + "/projects/" + item[0] + "/repositories/" + item[1] + "/artifacts/" + item[2]
+                                + "/tags/" + item[2],
                         wrapHeader());
                 if (responseWrap.statusCode == 200) {
-                    log.debug("Registry remove image tag result [" + responseWrap.statusCode + "]" + responseWrap.result);
+                    log.debug(
+                            "Registry remove image tag result [" + responseWrap.statusCode + "]" + responseWrap.result);
                     return true;
                 }
                 log.error("Registry remove image tag result [" + responseWrap.statusCode + "]" + responseWrap.result);
@@ -464,7 +457,8 @@ public class DockerOpt {
         @Override
         public boolean copyImage(String fromImageName, String toProjectName, String toRepositoryName) {
             HttpHelper.ResponseWrap responseWrap = $.http.postWrap(
-                    registryApiUrl + "/projects/" + toProjectName + "/repositories/" + toRepositoryName + "/artifacts?from=" + fromImageName,
+                    registryApiUrl + "/projects/" + toProjectName + "/repositories/" + toRepositoryName
+                            + "/artifacts?from=" + fromImageName,
                     "",
                     wrapHeader());
             if (responseWrap.statusCode == 201) {
@@ -528,14 +522,16 @@ public class DockerOpt {
             }
             HttpHelper.ResponseWrap responseWrap = $.http.getWrap(url, wrapHeader());
             if (responseWrap.statusCode == 200) {
-                log.debug("Registry get labels result [" + responseWrap.statusCode + "]" + $.json.toJson(responseWrap.result));
+                log.debug("Registry get labels result [" + responseWrap.statusCode + "]"
+                        + $.json.toJson(responseWrap.result));
                 List<Label> data = $.json.toList(responseWrap.result, Label.class);
                 if (data.isEmpty()) {
                     return null;
                 }
                 return data.get(0);
             }
-            log.error("Registry get labels result [" + responseWrap.statusCode + "]" + $.json.toJson(responseWrap.result));
+            log.error("Registry get labels result [" + responseWrap.statusCode + "]"
+                    + $.json.toJson(responseWrap.result));
             return null;
         }
 
@@ -561,7 +557,8 @@ public class DockerOpt {
                 log.error("Registry delete project [" + projectName + "] not exist");
                 return false;
             }
-            HttpHelper.ResponseWrap responseWrap = $.http.deleteWrap(registryApiUrl + "/projects/" + projectId, wrapHeader());
+            HttpHelper.ResponseWrap responseWrap = $.http.deleteWrap(registryApiUrl + "/projects/" + projectId,
+                    wrapHeader());
             if (responseWrap.statusCode == 200) {
                 log.debug("Registry delete project result [" + responseWrap.statusCode + "]");
                 return true;
@@ -572,7 +569,8 @@ public class DockerOpt {
 
         @Override
         public Integer getProjectIdByName(String projectName) {
-            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(registryApiUrl + "/projects?name=" + projectName, wrapHeader());
+            HttpHelper.ResponseWrap responseWrap = $.http.getWrap(registryApiUrl + "/projects?name=" + projectName,
+                    wrapHeader());
             if (responseWrap.statusCode == 200
                     && responseWrap.result != null
                     && !responseWrap.result.isBlank()
@@ -587,7 +585,8 @@ public class DockerOpt {
             header.put("Content-Type", "application/json");
             header.put("Accept", "application/json");
             header.put("Authorization", "Basic "
-                    + $.security.encodeStringToBase64(registryUsername + ":" + registryPassword, StandardCharsets.UTF_8));
+                    + $.security.encodeStringToBase64(registryUsername + ":" + registryPassword,
+                            StandardCharsets.UTF_8));
             return header;
         }
 
@@ -596,10 +595,10 @@ public class DockerOpt {
     /**
      * Github Packages Registry API.
      *
-     * @see <a href="https://docs.github.com/en/rest/reference/repos">Github Packages API</a>
+     * @see <a href="https://docs.github.com/en/rest/reference/repos">Github
+     *      Packages API</a>
      */
     public class GithubPackagesRegistry implements Registry {
-
 
         private Map<String, String> wrapHeader() {
             Map<String, String> header = new HashMap<>();
@@ -773,7 +772,6 @@ public class DockerOpt {
             this.deleted = deleted;
         }
     }
-
 
     /**
      * The enum Registry kind.

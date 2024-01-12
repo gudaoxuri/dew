@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.helper;
 
 import com.ecfront.dew.common.$;
@@ -49,12 +33,15 @@ public class GitOpt {
      * @return diff list
      */
     public List<String> diff(String startCommitHash, String endCommitHash) {
-        Resp<List<String>> changedFilesR = $.shell.execute("git diff --name-only " + startCommitHash + " " + endCommitHash);
+        Resp<List<String>> changedFilesR = $.shell
+                .execute("git diff --name-only " + startCommitHash + " " + endCommitHash);
         if (changedFilesR.ok()) {
             List<String> changedFiles = changedFilesR.getBody();
-            log.info("Found " + changedFiles.size() + " changed files by git diff --name-only " + startCommitHash + " " + endCommitHash);
+            log.info("Found " + changedFiles.size() + " changed files by git diff --name-only " + startCommitHash + " "
+                    + endCommitHash);
             return changedFiles;
-        } else if (changedFilesR.getMessage().contains("fatal: bad object") || changedFilesR.getMessage().contains("Abnormal termination")) {
+        } else if (changedFilesR.getMessage().contains("fatal: bad object")
+                || changedFilesR.getMessage().contains("Abnormal termination")) {
             // 如果 git diff 执行时报错，将异常抛出，方便之后继续部署。
             // 此报错常见于代码回退后，使用 Gitlab Runner 全量重新拉取代码部署时，无法获取commit id；
             // 使用 Jenkins 部署，增量拉取代码未见异常。

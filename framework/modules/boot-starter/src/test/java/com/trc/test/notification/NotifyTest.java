@@ -1,21 +1,4 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.trc.test.notification;
-
 
 import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.Resp;
@@ -116,7 +99,8 @@ public class NotifyTest {
         });
         ddConfigByText.setArgs(new HashMap<>() {
             {
-                put("url", "https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455");
+                put("url",
+                        "https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455");
             }
         });
         NotifyConfig ddConfigByMarkdown = new NotifyConfig();
@@ -128,7 +112,8 @@ public class NotifyTest {
         });
         ddConfigByMarkdown.setArgs(new HashMap<>() {
             {
-                put("url", "https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455");
+                put("url",
+                        "https://oapi.dingtalk.com/robot/send?access_token=8ff65c48001c1981df7d326b5cac497e5ca27190d5e7ab7fe9168ad69b103455");
                 put("msgType", "markdown");
             }
         });
@@ -139,55 +124,58 @@ public class NotifyTest {
             }
         }, flag -> "test");
 
-        Resp<Void> result = Notify.send("dd_text", "测试消息，带符号$$ com.trc.test.web.WebController.customHttpState(WebController.java:73)\n"
-                + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n"
-                + "org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:204)\n"
-                + "org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:736)\n"
-                + "org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:157)\n"
-                + "org.springframework.validation.beanvalidation.MethodValidationInterceptor.invoke(MethodValidationInterceptor.java:150)\n"
-                + "org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)\n"
-                + "org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:671)\n"
-                + "com.trc.test.web.WebController$$EnhancerBySpringCGLIB$$34293e67.customHttpState(<generated>)\n"
-                + "sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n"
-                + "sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n"
-                + "sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n"
-                + "java.lang.reflect.Method.invoke(Method.java:497)\n"
-                + "org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)\n"
-                + "org.springframework.web.filter.HttpPutFormContentFilter.doFilterInternal(HttpPutFormContentFilter.java:109)\n"
-                + "org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)\n"
-                + "org.springframework.web.filter.HiddenHttpMethodFilter.doFilterInternal(HiddenHttpMethodFilter.java:81)\n"
-                + "org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)\n"
-                + "org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:197)\n"
-                + "org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)\n"
-                + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)\n"
-                + "org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1468)\n"
-                + "org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)\n"
-                + "java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)\n"
-                + "java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)\n"
-                + "org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)\n"
-                + "java.lang.Thread.run(Thread.java:745)\n");
+        Resp<Void> result = Notify.send("dd_text",
+                "测试消息，带符号$$ com.trc.test.web.WebController.customHttpState(WebController.java:73)\n"
+                        + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n"
+                        + "org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:204)\n"
+                        + "org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:736)\n"
+                        + "org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:157)\n"
+                        + "org.springframework.validation.beanvalidation.MethodValidationInterceptor.invoke(MethodValidationInterceptor.java:150)\n"
+                        + "org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)\n"
+                        + "org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:671)\n"
+                        + "com.trc.test.web.WebController$$EnhancerBySpringCGLIB$$34293e67.customHttpState(<generated>)\n"
+                        + "sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n"
+                        + "sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n"
+                        + "sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n"
+                        + "java.lang.reflect.Method.invoke(Method.java:497)\n"
+                        + "org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)\n"
+                        + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)\n"
+                        + "org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)\n"
+                        + "org.springframework.web.filter.HttpPutFormContentFilter.doFilterInternal(HttpPutFormContentFilter.java:109)\n"
+                        + "org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)\n"
+                        + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)\n"
+                        + "org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)\n"
+                        + "org.springframework.web.filter.HiddenHttpMethodFilter.doFilterInternal(HiddenHttpMethodFilter.java:81)\n"
+                        + "org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)\n"
+                        + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)\n"
+                        + "org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:166)\n"
+                        + "org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:197)\n"
+                        + "org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)\n"
+                        + "org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)\n"
+                        + "org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1468)\n"
+                        + "org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)\n"
+                        + "java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)\n"
+                        + "java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)\n"
+                        + "org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)\n"
+                        + "java.lang.Thread.run(Thread.java:745)\n");
         Assertions.assertTrue(result.ok());
 
-        result = Notify.send("dd_markdown", "测试消息，带符号$$ com.trc.test.web.WebController.customHttpState(WebController.java:73)\n"
-                + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n"
-                + "org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:204)\n"
-                + "org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:736)\n"
-                + "org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:157)\n"
-                + "org.springframework.validation.beanvalidation.MethodValidationInterceptor.invoke(MethodValidationInterceptor.java:150)\n"
-                + "org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)\n"
-                + "org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:671)\n"
-                + "com.trc.test.web.WebController$$EnhancerBySpringCGLIB$$34293e67.customHttpState(<generated>)\n"
-                + "sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n"
-                + "sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n"
-                + "sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n"
-                + "java.lang.reflect.Method.invoke(Method.java:497)\n"
-                + "java.lang.Thread.run(Thread.java:745)\n", "错误消息");
+        result = Notify.send("dd_markdown",
+                "测试消息，带符号$$ com.trc.test.web.WebController.customHttpState(WebController.java:73)\n"
+                        + "com.trc.test.web.WebController$$FastClassBySpringCGLIB$$2ae0c170.invoke(<generated>)\n"
+                        + "org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:204)\n"
+                        + "org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:736)\n"
+                        + "org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:157)\n"
+                        + "org.springframework.validation.beanvalidation.MethodValidationInterceptor.invoke(MethodValidationInterceptor.java:150)\n"
+                        + "org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)\n"
+                        + "org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:671)\n"
+                        + "com.trc.test.web.WebController$$EnhancerBySpringCGLIB$$34293e67.customHttpState(<generated>)\n"
+                        + "sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)\n"
+                        + "sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)\n"
+                        + "sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)\n"
+                        + "java.lang.reflect.Method.invoke(Method.java:497)\n"
+                        + "java.lang.Thread.run(Thread.java:745)\n",
+                "错误消息");
         Assertions.assertTrue(result.ok());
 
         result = Notify.send("dd_markdown",
@@ -351,6 +339,5 @@ public class NotifyTest {
         Assertions.assertTrue(result.ok());
         cdl.await(10, TimeUnit.SECONDS);
     }
-
 
 }

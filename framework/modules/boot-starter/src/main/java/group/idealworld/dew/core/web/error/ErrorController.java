@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.core.web.error;
 
 import com.ecfront.dew.common.$;
@@ -68,7 +52,8 @@ public class ErrorController extends AbstractErrorController {
     private static final int FALL_BACK_STATUS = 500;
 
     // TODO 可能有风险
-    private static final Pattern MESSAGE_CHECK = Pattern.compile("^\\{\"code\":\".*?\",\"message\":\".*?\",\"customHttpCode\":.*?\\}$");
+    private static final Pattern MESSAGE_CHECK = Pattern
+            .compile("^\\{\"code\":\".*?\",\"message\":\".*?\",\"customHttpCode\":.*?\\}$");
 
     private static final String SPECIAL_ERROR_FLAG = "org.springframework.boot.web.servlet.error.DefaultErrorAttributes.ERROR";
 
@@ -125,7 +110,8 @@ public class ErrorController extends AbstractErrorController {
         } else {
             exClass = specialError.getClass().getName();
         }
-        Object[] result = error(request, path, httpCode, StringUtils.isEmpty(detailMessage) ? message : detailMessage, exClass, exMsg, exDetail, (Throwable) specialError);
+        Object[] result = error(request, path, httpCode, StringUtils.isEmpty(detailMessage) ? message : detailMessage,
+                exClass, exMsg, exDetail, (Throwable) specialError);
         httpCode = (int) result[0];
         if (httpCode > 499) {
             // 服务错误才通知
@@ -136,8 +122,8 @@ public class ErrorController extends AbstractErrorController {
     }
 
     private static Object[] error(HttpServletRequest request,
-                                  String path, int httpCode, String msg, String exClass, String exMsg,
-                                  List exDetail, Throwable specialError) {
+            String path, int httpCode, String msg, String exClass, String exMsg,
+            List exDetail, Throwable specialError) {
         String message = msg;
         String busCode = String.valueOf(httpCode);
         int customHttpCode = -1;
@@ -166,13 +152,11 @@ public class ErrorController extends AbstractErrorController {
         if (specialError instanceof ConstraintViolationException) {
             ArrayNode errorExt = $.json.createArrayNode();
             ((ConstraintViolationException) specialError).getConstraintViolations()
-                    .forEach(cv ->
-                            errorExt.add($.json.createObjectNode()
-                                    .put("field", "")
-                                    .put("reason", cv.getConstraintDescriptor()
-                                            .getAnnotation().annotationType().getSimpleName())
-                                    .put("msg", cv.getMessage()))
-                    );
+                    .forEach(cv -> errorExt.add($.json.createObjectNode()
+                            .put("field", "")
+                            .put("reason", cv.getConstraintDescriptor()
+                                    .getAnnotation().annotationType().getSimpleName())
+                            .put("msg", cv.getMessage())));
             message += DETAIL_FLAG + $.json.toJsonString(errorExt);
         }
         if (specialError instanceof MethodArgumentNotValidException && exDetail != null && !exDetail.isEmpty()) {
@@ -196,10 +180,11 @@ public class ErrorController extends AbstractErrorController {
         } else {
             httpCode = 200;
         }
-        LOGGER.error("Request [{}-{}] {} , error {} : {}", request.getMethod(), path, Dew.context().getSourceIP(), busCode, message);
-        var resp = StandardResp.custom(busCode , path, String.format("[%s]%s" ,exMsg ,message));
+        LOGGER.error("Request [{}-{}] {} , error {} : {}", request.getMethod(), path, Dew.context().getSourceIP(),
+                busCode, message);
+        var resp = StandardResp.custom(busCode, path, String.format("[%s]%s", exMsg, message));
         String body = $.json.toJsonString(resp);
-        return new Object[]{httpCode, body};
+        return new Object[] { httpCode, body };
     }
 
     /**
@@ -213,7 +198,7 @@ public class ErrorController extends AbstractErrorController {
      * @throws IOException the io exception
      */
     public static void error(HttpServletRequest request, HttpServletResponse response,
-                             int statusCode, String message, String exClass)
+            int statusCode, String message, String exClass)
             throws IOException {
         Object[] confirmedError = error(request, request.getRequestURI(), statusCode, message, exClass, "", null, null);
         response.setStatus((Integer) confirmedError[0]);

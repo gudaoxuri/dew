@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.devops.kernel.resource;
 
 import group.idealworld.dew.devops.kernel.config.FinalProjectConfig;
@@ -96,8 +80,7 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<V1Deployment> 
                 {
                     config.getApp().getVolumeMounts().forEach(map -> add(new V1VolumeMount()
                             .mountPath(map.get("mountPath"))
-                            .name(map.get("name")))
-                    );
+                            .name(map.get("name"))));
                 }
             });
         }
@@ -112,32 +95,32 @@ public class KubeDeploymentBuilder implements KubeResourceBuilder<V1Deployment> 
         env.putAll(config.getDeployPlugin().getEnv(config));
         env.putAll(config.getApp().getEnv());
         if (!env.isEmpty()) {
-            container.env(env.entrySet().stream().map(e ->
-                    new V1EnvVar()
-                            .name(e.getKey())
-                            .value(e.getValue())
-            ).collect(Collectors.toList()));
+            container.env(env.entrySet().stream().map(e -> new V1EnvVar()
+                    .name(e.getKey())
+                    .value(e.getValue())).collect(Collectors.toList()));
         }
         // 装配volume配置
         List<V1Volume> volumes = null;
         if (!config.getApp().getVolumes().isEmpty()) {
-            volumes = new ArrayList<>() {{
-                config.getApp().getVolumes().forEach(map -> add(new V1Volume()
-                        .name(map.get("name"))
-                        .persistentVolumeClaim(new V1PersistentVolumeClaimVolumeSource().claimName(map.get("claimName"))))
-                );
-            }};
+            volumes = new ArrayList<>() {
+                {
+                    config.getApp().getVolumes().forEach(map -> add(new V1Volume()
+                            .name(map.get("name"))
+                            .persistentVolumeClaim(
+                                    new V1PersistentVolumeClaimVolumeSource().claimName(map.get("claimName")))));
+                }
+            };
         }
 
         if (config.getApp().getHealthCheckEnabled()) {
             container.livenessProbe(new V1Probe()
-                            .httpGet(new V1HTTPGetAction()
-                                    .path(config.getApp().getLivenessPath())
-                                    .port(new IntOrString(config.getApp().getHealthCheckPort()))
-                                    .scheme("HTTP"))
-                            .initialDelaySeconds(config.getApp().getLivenessInitialDelaySeconds())
-                            .periodSeconds(config.getApp().getLivenessPeriodSeconds())
-                            .failureThreshold(config.getApp().getLivenessFailureThreshold()))
+                    .httpGet(new V1HTTPGetAction()
+                            .path(config.getApp().getLivenessPath())
+                            .port(new IntOrString(config.getApp().getHealthCheckPort()))
+                            .scheme("HTTP"))
+                    .initialDelaySeconds(config.getApp().getLivenessInitialDelaySeconds())
+                    .periodSeconds(config.getApp().getLivenessPeriodSeconds())
+                    .failureThreshold(config.getApp().getLivenessFailureThreshold()))
                     .readinessProbe(new V1Probe()
                             .httpGet(new V1HTTPGetAction()
                                     .path(config.getApp().getReadinessPath())

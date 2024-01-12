@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.idempotent;
 
 import group.idealworld.dew.idempotent.strategy.*;
@@ -44,7 +28,6 @@ public class DewIdempotent {
     private DewIdempotent() {
     }
 
-
     /**
      * 初始化操作类型信息.
      *
@@ -54,7 +37,8 @@ public class DewIdempotent {
      * @param strategy    策略类型
      */
     public static void initOptTypeInfo(String optType, boolean needConfirm, long expireMs, StrategyEnum strategy) {
-        LOGGER.info("Init OptType[{}] info: needConfirm:{} expireMs:{} strategy:{}", optType, needConfirm, expireMs, strategy.toString());
+        LOGGER.info("Init OptType[{}] info: needConfirm:{} expireMs:{} strategy:{}", optType, needConfirm, expireMs,
+                strategy.toString());
         IdempotentProcessor processor;
         switch (strategy) {
             case ITEM:
@@ -74,7 +58,6 @@ public class DewIdempotent {
         CONTENT.put(optType, optTypeInfo);
     }
 
-
     /**
      * 操作类型是否存在，用于初化判断.
      *
@@ -93,7 +76,7 @@ public class DewIdempotent {
      * @return the status enum
      */
     public static StatusEnum process(String optType, String optId) {
-        CONTEXT.set(new String[]{optType, optId});
+        CONTEXT.set(new String[] { optType, optId });
         OptTypeInfo optTypeInfo = CONTENT.get(optType);
         return optTypeInfo.processor.process(optType, optId,
                 optTypeInfo.needConfirm ? StatusEnum.UN_CONFIRM : StatusEnum.CONFIRMED,

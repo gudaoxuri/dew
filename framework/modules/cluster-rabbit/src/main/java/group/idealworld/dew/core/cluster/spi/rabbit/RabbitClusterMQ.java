@@ -1,19 +1,3 @@
-/*
- * Copyright 2022. the original author or authors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package group.idealworld.dew.core.cluster.spi.rabbit;
 
 import com.rabbitmq.client.*;
@@ -265,7 +249,7 @@ public class RabbitClusterMQ extends AbsClusterMQ {
      * @return 是否发布成功，此返回值仅在rabbit confirm 模式下才能保证严格准确！
      */
     public boolean publishWithTopic(String topic, String routingKey, String queueName, String message,
-                                    Optional<Map<String, Object>> header, boolean confirm) {
+            Optional<Map<String, Object>> header, boolean confirm) {
         logger.trace("[MQ] publishWithTopic {}:{}", topic, message);
         Connection connection = rabbitAdapter.getConnection();
         Channel channel = connection.createChannel(false);
@@ -332,7 +316,8 @@ public class RabbitClusterMQ extends AbsClusterMQ {
             channel.exchangeDeclare(topic, BuiltinExchangeType.TOPIC, true);
             channel.queueBind(queueName, topic, routingKey);
             channel.basicQos(1);
-            channel.basicConsume(queueName, false, getDefaultConsumer(channel, topic, topic, routingKey, queueName, consumer));
+            channel.basicConsume(queueName, false,
+                    getDefaultConsumer(channel, topic, topic, routingKey, queueName, consumer));
         } catch (IOException e) {
             logger.error("[MQ] Rabbit subscribeWithTopic error.", e);
         }
@@ -350,11 +335,13 @@ public class RabbitClusterMQ extends AbsClusterMQ {
         }
     }
 
-    private DefaultConsumer getDefaultConsumer(Channel channel, String flag, String exchange, String routingKey, String queueName,
-                                               Consumer<MessageWrap> consumer) {
+    private DefaultConsumer getDefaultConsumer(Channel channel, String flag, String exchange, String routingKey,
+            String queueName,
+            Consumer<MessageWrap> consumer) {
         return new DefaultConsumer(channel) {
             @Override
-            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+            public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
+                    byte[] body) throws IOException {
                 Object funResult = receiveBeforeFun.invoke(exchange, routingKey, queueName, properties);
                 try {
                     Map<String, Object> receiveHeader = setMQHeader(flag, properties.getHeaders());
