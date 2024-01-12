@@ -4,11 +4,11 @@ import com.ecfront.dew.common.$;
 import group.idealworld.dew.Dew;
 import group.idealworld.dew.core.cluster.ClusterLock;
 import group.idealworld.dew.core.cluster.ClusterMap;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import jakarta.annotation.PostConstruct;
 import java.io.Serializable;
 
 /**
@@ -55,6 +55,7 @@ public class ClusterExampleInitiator {
         if (lock.tryLock(0, 1000)) {
             try {
                 // 已加锁，执行业务方法
+                lock.isLocked();
             } finally {
                 // 必须手工解锁
                 lock.unLock();

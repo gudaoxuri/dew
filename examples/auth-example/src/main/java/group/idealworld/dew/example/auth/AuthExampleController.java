@@ -21,7 +21,7 @@ import java.util.Optional;
 @RequestMapping("/")
 public class AuthExampleController {
 
-    private static Map<String, User> MOCK_USER_CONTAINER = new HashMap<>();
+    private static final Map<String, User> MOCK_USER_CONTAINER = new HashMap<>();
 
     /**
      * Init.

@@ -10,7 +10,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.DockerComposeContainer;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -40,7 +39,7 @@ public class RocketMQExtension implements BeforeAllCallback {
     static {
         try {
             TEMP_FILE = Files.createTempFile(null, null);
-            Files.write(TEMP_FILE, DOCKER_COMPOSE.getBytes(StandardCharsets.UTF_8));
+            Files.writeString(TEMP_FILE, DOCKER_COMPOSE);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -73,11 +72,11 @@ public class RocketMQExtension implements BeforeAllCallback {
          */
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues.of(
-                    "rocketmq.name-server=" + rocketmqContainer.getServiceHost("namesrv_1", 9876)
-                            + ":" +
-                            rocketmqContainer.getServicePort("namesrv_1", 9876),
-                    "rocketmq.producer.group=rocketmq-producer-group",
-                    "rocketmq.consumer.group=rocketmq-consumer-group")
+                            "rocketmq.name-server=" + rocketmqContainer.getServiceHost("namesrv_1", 9876)
+                                    + ":" +
+                                    rocketmqContainer.getServicePort("namesrv_1", 9876),
+                            "rocketmq.producer.group=rocketmq-producer-group",
+                            "rocketmq.consumer.group=rocketmq-consumer-group")
                     .applyTo(configurableApplicationContext.getEnvironment());
         }
     }

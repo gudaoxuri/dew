@@ -9,7 +9,7 @@ import group.idealworld.dew.core.cluster.ClusterTrace;
  */
 
 public class SkyWalkingClusterTrace implements ClusterTrace {
-    private final static ThreadLocal<String> TRACE_ID_STORAGE = new ThreadLocal<>();
+    private final ThreadLocal<String> TRACE_ID_STORAGE = new ThreadLocal<>();
 
     @Override
     public void setTraceId(String traceId) {

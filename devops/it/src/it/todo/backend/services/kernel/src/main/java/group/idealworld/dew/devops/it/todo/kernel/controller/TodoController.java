@@ -52,6 +52,7 @@ public class TodoController {
      * Delete.
      *
      * @param id the id
+     * @return boolean
      */
     @DeleteMapping("{id}")
     @Operation(summary = "删除Todo记录")
@@ -64,11 +65,11 @@ public class TodoController {
      *
      * @param id      the id
      * @param afterBy the after by
+     * @return boolean
      */
     @PutMapping("{id}/sort")
     @Operation(summary = "调整Todo记录顺序")
-    public boolean sort(@PathVariable("id") int id,
-                     @RequestParam(value = "afterBy") int afterBy) {
+    public boolean sort(@PathVariable("id") int id, @RequestParam(value = "afterBy") int afterBy) {
         return todoService.sort(id, afterBy);
     }
 

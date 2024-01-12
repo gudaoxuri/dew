@@ -132,7 +132,10 @@ public class ClusterMQTest {
         Thread.sleep(1000);
         mq.publish("test_ha", "ha_msgA");
         waitingOccurError.await();
-        mockErrorThread.stop();
+        var jdKVersion = System.getProperty("java.version");
+        if (!jdKVersion.startsWith("19") && !jdKVersion.startsWith("20") && !jdKVersion.startsWith("21")) {
+            mockErrorThread.stop();
+        }
         // restart subscribe
         CountDownLatch waiting = new CountDownLatch(2);
         new Thread(() -> mq.subscribe("test_ha", message -> {

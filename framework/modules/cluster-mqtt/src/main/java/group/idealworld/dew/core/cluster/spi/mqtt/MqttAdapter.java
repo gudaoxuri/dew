@@ -67,7 +67,7 @@ public class MqttAdapter {
 
     /**
      * Get mqtt client.
-     * 
+     *
      * @return mqtt client
      */
     MqttClient getClient() {

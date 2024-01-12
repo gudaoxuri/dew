@@ -10,11 +10,11 @@ import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +37,7 @@ public class WebExampleController {
      */
     @GetMapping("example")
     @Operation(summary = "示例方法", extensions = {
-            @Extension(name = "FIN_EXT", properties = @ExtensionProperty(name = "REL", value = "s001,s002")) })
+            @Extension(name = "FIN_EXT", properties = @ExtensionProperty(name = "REL", value = "s001,s002"))})
     public Map<String, Integer> example() {
         return new HashMap<>();
     }
@@ -45,11 +45,11 @@ public class WebExampleController {
     /**
      * 数据验证示例，针对 CreateGroup 这一标识组的 bean认证.
      *
+     * @param rbumCertAddReq the rbumCert addReq
      * @return the user
      */
     @PostMapping(value = "valid-create")
-    public RbumCertDto.RbumCertDetailResp validCreate(
-            @Validated(CreateGroup.class) @RequestBody RbumCertDto.RbumCertAddReq rbumCertAddReq) {
+    public RbumCertDto.RbumCertDetailResp validCreate(@Validated(CreateGroup.class) @RequestBody RbumCertDto.RbumCertAddReq rbumCertAddReq) {
         return new RbumCertDto.RbumCertDetailResp();
     }
 
@@ -121,11 +121,11 @@ public class WebExampleController {
         private String idCard;
 
         // CreateGroup、UpdateGroup组下校验
-        @Min(value = 10, groups = { CreateGroup.class, UpdateGroup.class })
+        @Min(value = 10, groups = {CreateGroup.class, UpdateGroup.class})
         private int age;
 
         // CreateGroup、UpdateGroup组下校验
-        @Phone(groups = { CreateGroup.class, UpdateGroup.class })
+        @Phone(groups = {CreateGroup.class, UpdateGroup.class})
         private String phone;
 
         /**

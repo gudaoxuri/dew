@@ -56,7 +56,7 @@ public class TestGenerateProcess {
         File testFile = new File(
                 basePath.getPath() + File.separator + "src" + File.separator + "test" + File.separator + "java"
                         + File.separator + baseClassPath.replaceAll("\\"
-                                + ".", File.separator.equals("\\") ? "\\" + File.separator : File.separator)
+                        + ".", File.separator.equals("\\") ? "\\" + File.separator : File.separator)
                         + File.separator + TEST_FILE_NAME);
         if (testFile.exists()) {
             log.debug("Test file [{}] already exists, skip test file generation.", testFile.getPath());
@@ -73,11 +73,11 @@ public class TestGenerateProcess {
     }
 
     private static String scanMainClassPath(File basePath) {
-        String[] mainClassPath = { null };
+        String[] mainClassPath = {null};
         scanMainClassPath(null, Objects.requireNonNull(
                 new File(basePath.getPath() + File.separator + "src" + File.separator + "main").listFiles((dir, name) ->
-                // TODO 其它语言
-                name.equals("java") || name.equals("scala") || name.equals("groovy"))), mainClassPath);
+                        // TODO 其它语言
+                        name.equals("java") || name.equals("scala") || name.equals("groovy"))), mainClassPath);
         if (mainClassPath[0] == null) {
             throw new RuntimeException("No main method found.");
         } else {

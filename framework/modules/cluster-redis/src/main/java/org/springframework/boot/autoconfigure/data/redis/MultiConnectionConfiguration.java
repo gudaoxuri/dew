@@ -21,12 +21,13 @@ public class MultiConnectionConfiguration extends LettuceConnectionConfiguration
      * @param standaloneConfigurationProvider standalone配置
      * @param sentinelConfigurationProvider   sentinel配置
      * @param clusterConfigurationProvider    cluster配置
+     * @param redisConnectionDetails          redis连接信息
      */
     public MultiConnectionConfiguration(RedisProperties properties,
-            ObjectProvider<RedisStandaloneConfiguration> standaloneConfigurationProvider,
-            ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider,
-            ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider,
-            RedisConnectionDetails redisConnectionDetails) {
+                                        ObjectProvider<RedisStandaloneConfiguration> standaloneConfigurationProvider,
+                                        ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider,
+                                        ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider,
+                                        RedisConnectionDetails redisConnectionDetails) {
         super(properties, standaloneConfigurationProvider, sentinelConfigurationProvider, clusterConfigurationProvider,
                 redisConnectionDetails, null);
     }

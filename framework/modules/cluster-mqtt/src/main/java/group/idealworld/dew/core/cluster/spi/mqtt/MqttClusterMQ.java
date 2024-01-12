@@ -49,7 +49,7 @@ public class MqttClusterMQ extends AbsClusterMQ {
             // At most once (0)
             // At least once (1)
             // Exactly once (2)
-            mqttAdapter.getClient().subscribe(new MqttSubscription[] { new MqttSubscription(topic, 2) },
+            mqttAdapter.getClient().subscribe(new MqttSubscription[] {new MqttSubscription(topic, 2)},
                     new IMqttMessageListener[] {
                             (t, mqttMessage) -> consumer.accept(
                                     new MessageWrap(t, new String(mqttMessage.getPayload(), StandardCharsets.UTF_8)))

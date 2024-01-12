@@ -17,7 +17,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  *
  * @author gudaoxuri
  */
-@ExtendWith({ SpringExtension.class, RabbitMQExtension.class })
+@ExtendWith({SpringExtension.class, RabbitMQExtension.class})
 @ContextConfiguration(initializers = RabbitMQExtension.Initializer.class)
 @SpringBootApplication
 @SpringBootTest
