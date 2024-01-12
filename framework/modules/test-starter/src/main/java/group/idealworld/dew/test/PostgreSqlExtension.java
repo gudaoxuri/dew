@@ -52,9 +52,9 @@ public class PostgreSqlExtension implements BeforeAllCallback {
         @Override
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             TestPropertyValues.of(
-                    "spring.datasource.url=" + POSTGRESQL_CONTAINER.getJdbcUrl(),
-                    "spring.datasource.username=" + POSTGRESQL_CONTAINER.getUsername(),
-                    "spring.datasource.password=" + POSTGRESQL_CONTAINER.getPassword())
+                            "spring.datasource.url=" + POSTGRESQL_CONTAINER.getJdbcUrl(),
+                            "spring.datasource.username=" + POSTGRESQL_CONTAINER.getUsername(),
+                            "spring.datasource.password=" + POSTGRESQL_CONTAINER.getPassword())
                     .applyTo(configurableApplicationContext.getEnvironment());
         }
     }

@@ -8,6 +8,10 @@ import group.idealworld.dew.Dew;
 import group.idealworld.dew.core.DewConfig;
 import group.idealworld.dew.core.basic.resp.StandardResp;
 import io.swagger.v3.oas.annotations.Hidden;
+import jakarta.servlet.ServletRequestWrapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.ConstraintViolationException;
 import org.apache.catalina.connector.RequestFacade;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -26,10 +30,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import jakarta.servlet.ServletRequestWrapper;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
@@ -122,8 +122,8 @@ public class ErrorController extends AbstractErrorController {
     }
 
     private static Object[] error(HttpServletRequest request,
-            String path, int httpCode, String msg, String exClass, String exMsg,
-            List exDetail, Throwable specialError) {
+                                  String path, int httpCode, String msg, String exClass, String exMsg,
+                                  List exDetail, Throwable specialError) {
         String message = msg;
         String busCode = String.valueOf(httpCode);
         int customHttpCode = -1;
@@ -184,7 +184,7 @@ public class ErrorController extends AbstractErrorController {
                 busCode, message);
         var resp = StandardResp.custom(busCode, path, String.format("[%s]%s", exMsg, message));
         String body = $.json.toJsonString(resp);
-        return new Object[] { httpCode, body };
+        return new Object[] {httpCode, body};
     }
 
     /**
@@ -198,7 +198,7 @@ public class ErrorController extends AbstractErrorController {
      * @throws IOException the io exception
      */
     public static void error(HttpServletRequest request, HttpServletResponse response,
-            int statusCode, String message, String exClass)
+                             int statusCode, String message, String exClass)
             throws IOException {
         Object[] confirmedError = error(request, request.getRequestURI(), statusCode, message, exClass, "", null, null);
         response.setStatus((Integer) confirmedError[0]);

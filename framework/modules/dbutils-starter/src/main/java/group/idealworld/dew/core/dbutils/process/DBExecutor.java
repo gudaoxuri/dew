@@ -61,7 +61,7 @@ public class DBExecutor {
     }
 
     public static <E> Page<E> page(String sql, Object[] params, long pageNumber, long pageSize, Class<E> clazz,
-            Connection conn, boolean isCloseConn, Dialect dialect) throws SQLException {
+                                   Connection conn, boolean isCloseConn, Dialect dialect) throws SQLException {
         Page<E> page = new Page<>();
         String pagedSql = dialect.paging(sql, pageNumber, pageSize);
         page.setPageNumber(pageNumber);
@@ -139,7 +139,7 @@ public class DBExecutor {
     }
 
     public static Page<Map<String, Object>> page(String sql, Object[] params, long pageNumber, long pageSize,
-            Connection conn, boolean isCloseConn, Dialect dialect) throws SQLException {
+                                                 Connection conn, boolean isCloseConn, Dialect dialect) throws SQLException {
         Page<Map<String, Object>> page = new Page<>();
         String pagedSql = dialect.paging(sql, pageNumber, pageSize);
         page.setPageNumber(pageNumber);
@@ -175,7 +175,7 @@ public class DBExecutor {
     }
 
     public static int insert(String tableName, Map<String, Object> values,
-            Connection conn, boolean closeConnection, Dialect dialect) throws SQLException {
+                             Connection conn, boolean closeConnection, Dialect dialect) throws SQLException {
         String fields = String.join(",", values.keySet());
         String valueArgs = values.keySet().stream().map(f -> "?").collect(Collectors.joining(","));
         String sql = "INSERT INTO " + tableName + " (" + fields + ") VALUES (" + valueArgs + ")";
@@ -183,7 +183,7 @@ public class DBExecutor {
     }
 
     public static int modify(String tableName, String pkField, Object pkValue, Map<String, Object> values,
-            Connection conn, boolean closeConnection, Dialect dialect) throws SQLException {
+                             Connection conn, boolean closeConnection, Dialect dialect) throws SQLException {
         String set = values.keySet().stream().map(k -> k + " = ?").collect(Collectors.joining(", "));
         String sql = "UPDATE " + tableName + " SET " + set + " WHERE " + pkField + " = ? ";
         List<Object> params = new ArrayList<>(values.values());

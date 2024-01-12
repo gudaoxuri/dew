@@ -17,7 +17,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
  *
  * @author nipeixuan
  */
-@ExtendWith({ SpringExtension.class, RocketMQExtension.class })
+@ExtendWith({SpringExtension.class, RocketMQExtension.class})
 @ContextConfiguration(initializers = RocketMQExtension.Initializer.class)
 @SpringBootApplication
 @SpringBootTest

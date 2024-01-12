@@ -76,7 +76,7 @@ public class DewIdempotent {
      * @return the status enum
      */
     public static StatusEnum process(String optType, String optId) {
-        CONTEXT.set(new String[] { optType, optId });
+        CONTEXT.set(new String[] {optType, optId});
         OptTypeInfo optTypeInfo = CONTENT.get(optType);
         return optTypeInfo.processor.process(optType, optId,
                 optTypeInfo.needConfirm ? StatusEnum.UN_CONFIRM : StatusEnum.CONFIRMED,

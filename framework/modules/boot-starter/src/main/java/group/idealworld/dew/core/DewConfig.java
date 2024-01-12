@@ -797,6 +797,8 @@ public class DewConfig {
 
         /**
          * when identInfoEnabled = true then unIdentUrls effective
+         *
+         * @return the unIdent urls
          */
         public String getUnIdentUrls() {
             return unIdentUrls;

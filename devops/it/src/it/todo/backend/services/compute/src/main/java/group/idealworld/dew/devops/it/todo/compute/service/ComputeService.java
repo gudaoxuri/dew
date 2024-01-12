@@ -22,9 +22,9 @@ public class ComputeService {
      * @param jsCode the js code
      * @return result
      */
-    public String compute(String jsCode)  {
+    public String compute(String jsCode) {
         LOGGER.info("Compute : " + jsCode);
-        return $.eval(ScriptHelper.ScriptKind.JS,Integer.class,jsCode).toString();
+        return $.eval(ScriptHelper.ScriptKind.JS, Integer.class, jsCode).toString();
     }
 
 }

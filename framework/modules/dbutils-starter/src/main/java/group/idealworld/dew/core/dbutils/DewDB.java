@@ -8,7 +8,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Configuration;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -65,17 +64,11 @@ public class DewDB {
      * @deprecated - 此功能存在一定限制，建议使用 {@link #ddl(String)} 建表
      */
     @Deprecated
-    public void createTableIfNotExist(String tableName, String tableDesc,
-            Map<String, String> fields,
-            Map<String, String> fieldsDesc,
-            List<String> indexFields,
-            List<String> uniqueFields,
-            String pkField) throws SQLException {
+    public void createTableIfNotExist(String tableName, String tableDesc, Map<String, String> fields, Map<String, String> fieldsDesc, List<String> indexFields,
+                                      List<String> uniqueFields, String pkField) throws SQLException {
         tableName = tableName.toLowerCase();
-        DBExecutor.ddl(
-                dsInfo.getDialect().createTableIfNotExist(tableName, tableDesc,
-                        fields, fieldsDesc, indexFields, uniqueFields, pkField),
-                getConnection(), isCloseConnection());
+        DBExecutor.ddl(dsInfo.getDialect().createTableIfNotExist(tableName, tableDesc, fields, fieldsDesc, indexFields, uniqueFields, pkField), getConnection(),
+                isCloseConnection());
     }
 
     /**
@@ -143,10 +136,8 @@ public class DewDB {
      * @return 多个对象（带分页）
      * @throws SQLException SQL错误
      */
-    public <E> Page<E> page(String sql, long pageNumber, long pageSize, Class<E> clazz, Object... params)
-            throws SQLException {
-        return DBExecutor.page(sql, params, pageNumber, pageSize, clazz, getConnection(), isCloseConnection(),
-                dsInfo.getDialect());
+    public <E> Page<E> page(String sql, long pageNumber, long pageSize, Class<E> clazz, Object... params) throws SQLException {
+        return DBExecutor.page(sql, params, pageNumber, pageSize, clazz, getConnection(), isCloseConnection(), dsInfo.getDialect());
     }
 
     /**
@@ -159,7 +150,7 @@ public class DewDB {
      * @throws SQLException SQL错误
      */
     public boolean exits(String tableName, String pkField, Object pkValue) throws SQLException {
-        return get("SELECT id FROM " + tableName + " WHERE " + pkField + " = ?", new Object[] { pkValue }).size() != 0;
+        return get("SELECT id FROM " + tableName + " WHERE " + pkField + " = ?", new Object[] {pkValue}).size() != 0;
     }
 
     /**
@@ -221,10 +212,8 @@ public class DewDB {
      * @return 多条记录（带分页）
      * @throws SQLException SQL错误
      */
-    public Page<Map<String, Object>> page(String sql, int pageNumber, int pageSize, Object... params)
-            throws SQLException {
-        return DBExecutor.page(sql, params, pageNumber, pageSize, getConnection(), isCloseConnection(),
-                dsInfo.getDialect());
+    public Page<Map<String, Object>> page(String sql, int pageNumber, int pageSize, Object... params) throws SQLException {
+        return DBExecutor.page(sql, params, pageNumber, pageSize, getConnection(), isCloseConnection(), dsInfo.getDialect());
     }
 
     /**
@@ -261,10 +250,8 @@ public class DewDB {
      * @return 影响行数
      * @throws SQLException SQL错误
      */
-    public int modify(String tableName, String pkField, Object pkValue, Map<String, Object> values)
-            throws SQLException {
-        return DBExecutor.modify(tableName, pkField, pkValue, values, getConnection(), isCloseConnection(),
-                dsInfo.getDialect());
+    public int modify(String tableName, String pkField, Object pkValue, Map<String, Object> values) throws SQLException {
+        return DBExecutor.modify(tableName, pkField, pkValue, values, getConnection(), isCloseConnection(), dsInfo.getDialect());
     }
 
     /**
