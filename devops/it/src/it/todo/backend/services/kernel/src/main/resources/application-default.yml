@@ -1,9 +1,10 @@
 spring:
-  redis: # Redis配置
-    host: localhost
-    port: 6378
-    database: 0
-    password: 123456
+  datasource:
+    redis: # Redis配置
+      host: localhost
+      port: 6378
+      database: 0
+      password: 123456
 
 todo:
   service:

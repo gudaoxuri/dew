@@ -128,20 +128,16 @@ public class ClusterMQTest {
                 throw new RuntimeException("Mock Some Error");
             }
         }));
-        mockErrorThread.start();
+        Thread.startVirtualThread(mockErrorThread);
         Thread.sleep(1000);
         mq.publish("test_ha", "ha_msgA");
         waitingOccurError.await();
-        var jdKVersion = System.getProperty("java.version");
-        if (!jdKVersion.startsWith("19") && !jdKVersion.startsWith("20") && !jdKVersion.startsWith("21")) {
-            mockErrorThread.stop();
-        }
         // restart subscribe
         CountDownLatch waiting = new CountDownLatch(2);
-        new Thread(() -> mq.subscribe("test_ha", message -> {
+        Thread.startVirtualThread(new Thread(() -> mq.subscribe("test_ha", message -> {
             LOGGER.info("subscribe new instance: pub_sub_ha>>" + message);
             waiting.countDown();
-        })).start();
+        })));
         Thread.sleep(1000);
         mq.publish("test_ha", "ha_msgB");
         waiting.await();

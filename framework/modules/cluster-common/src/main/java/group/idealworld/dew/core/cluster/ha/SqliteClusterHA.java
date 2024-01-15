@@ -4,9 +4,9 @@ import com.ecfront.dew.common.$;
 import group.idealworld.dew.core.cluster.dto.MessageWrap;
 import group.idealworld.dew.core.cluster.ha.dto.HAConfig;
 import group.idealworld.dew.core.cluster.ha.entity.PrepareCommitMsg;
-import org.h2.jdbcx.JdbcConnectionPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.sqlite.javax.SQLiteConnectionPoolDataSource;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -17,15 +17,15 @@ import java.util.List;
  *
  * @author gudaoxuri
  */
-public class H2ClusterHA implements ClusterHA {
+public class SqliteClusterHA implements ClusterHA {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(H2ClusterHA.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SqliteClusterHA.class);
 
-    private static JdbcConnectionPool jdbcConnectionPool;
+    private static SQLiteConnectionPoolDataSource dataSource;
 
     private static boolean update(String sql, Object... params) throws SQLException {
-        try (Connection conn = jdbcConnectionPool.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             for (int i = 1; i <= params.length; i++) {
                 stmt.setObject(i, params[i - 1]);
             }
@@ -35,8 +35,8 @@ public class H2ClusterHA implements ClusterHA {
 
     private static List<PrepareCommitMsg> queryList(String sql, Object... params) throws SQLException {
         ResultSet rs = null;
-        try (Connection conn = jdbcConnectionPool.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             for (int i = 1; i <= params.length; i++) {
                 stmt.setObject(i, params[i - 1]);
             }
@@ -67,11 +67,9 @@ public class H2ClusterHA implements ClusterHA {
 
     @Override
     public void init(HAConfig haConfig) throws SQLException {
-        String url = "jdbc:h2:" + haConfig.getStoragePath() + haConfig.getStorageName() + ";DB_CLOSE_ON_EXIT=FALSE";
-        jdbcConnectionPool = JdbcConnectionPool.create(url,
-                haConfig.getAuthUsername() == null ? "" : haConfig.getAuthUsername(),
-                haConfig.getAuthPassword() == null ? "" : haConfig.getAuthPassword());
-        try (Connection conn = jdbcConnectionPool.getConnection(); Statement stmt = conn.createStatement()) {
+        dataSource = new SQLiteConnectionPoolDataSource();
+        dataSource.setUrl("jdbc:sqlite:sample.db");
+        try (Connection conn = dataSource.getConnection(); Statement stmt = conn.createStatement()) {
             stmt.execute("CREATE TABLE IF NOT EXISTS MQ_MSG("
                     + "ADDR VARCHAR(1024)," + "MSG_ID VARCHAR(32)," + "MSG TEXT," + "CREATED_TIME TIMESTAMP ,"
                     + "PRIMARY KEY(MSG_ID)" + ")");
