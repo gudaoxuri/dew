@@ -4,7 +4,7 @@ import com.ecfront.dew.common.$;
 import com.ecfront.dew.common.DependencyHelper;
 import group.idealworld.dew.core.cluster.dto.MessageHeader;
 import group.idealworld.dew.core.cluster.ha.ClusterHA;
-import group.idealworld.dew.core.cluster.ha.H2ClusterHA;
+import group.idealworld.dew.core.cluster.ha.SqliteClusterHA;
 import group.idealworld.dew.core.cluster.ha.dto.HAConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +79,7 @@ public class Cluster {
      *                    Output:Header Items
      */
     public static void initMqHeader(Function<String, Map<String, Object>> mqGetHeader,
-            Function<MessageHeader, Map<String, Object>> mqSetHeader) {
+                                    Function<MessageHeader, Map<String, Object>> mqSetHeader) {
         Cluster.mqGetHeader = mqGetHeader;
         Cluster.mqSetHeader = mqSetHeader;
     }
@@ -99,23 +99,13 @@ public class Cluster {
      * @param haConfig HA配置信息
      */
     public static void ha(HAConfig haConfig) {
-        if (DependencyHelper.hasDependency("org.h2.jdbcx.JdbcConnectionPool")) {
-            clusterHA = new H2ClusterHA();
+        if (DependencyHelper.hasDependency("org.sqlite.javax.SQLiteConnectionPoolDataSource")) {
+            clusterHA = new SqliteClusterHA();
         } else {
             LOGGER.warn("Not found HA implementation drives , HA disabled.");
             return;
         }
         try {
-            if (haConfig.getStoragePath() == null || haConfig.getStoragePath().isEmpty()) {
-                haConfig.setStoragePath("./");
-            } else {
-                if (!haConfig.getStoragePath().endsWith("/")) {
-                    haConfig.setStoragePath(haConfig.getStoragePath() + "/");
-                }
-            }
-            if (haConfig.getStorageName() == null || haConfig.getStorageName().isEmpty()) {
-                haConfig.setStorageName(applicationName);
-            }
             clusterHA.init(haConfig);
             LOGGER.info("HA initialized");
         } catch (SQLException e) {

@@ -143,8 +143,7 @@ spring:
     port: 6379
     database: 0
   datasource: # DB配置
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:test
+    url: jdbc:sqlite:sample.db
 
 todo-compute:
   ribbon: # 使用自定义ribbon列表

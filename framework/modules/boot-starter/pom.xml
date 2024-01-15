@@ -86,6 +86,10 @@
             <groupId>group.idealworld.dew</groupId>
             <artifactId>test-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.ecfront.dew</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
