@@ -10,6 +10,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.testcontainers.containers.DockerComposeContainer;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -38,7 +39,8 @@ public class RocketMQExtension implements BeforeAllCallback {
 
     static {
         try {
-            TEMP_FILE = Files.createTempFile(null, null);
+            Path tempDirectory = Files.createTempDirectory(String.valueOf(System.currentTimeMillis()));
+            TEMP_FILE = Files.createTempFile(tempDirectory, null, null);
             Files.writeString(TEMP_FILE, DOCKER_COMPOSE);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -52,8 +54,9 @@ public class RocketMQExtension implements BeforeAllCallback {
             .withExposedService("namesrv_1", 9876);
 
     @Override
-    public void beforeAll(ExtensionContext extensionContext) {
+    public void beforeAll(ExtensionContext extensionContext) throws Exception {
         rocketmqContainer.start();
+        Files.deleteIfExists(TEMP_FILE);
         String nameSrvUrl = rocketmqContainer.getServiceHost("namesrv_1", 9876)
                 + ":" +
                 rocketmqContainer.getServicePort("namesrv_1", 9876);
