@@ -23,16 +23,14 @@ TIP: ``Dew`` 版本号遵循 https://semver.org/[``semver``] 规范。
 
 .Features
 
-* 支持 `Istio`
-* 支持 `K3s`
-* 支持 `GraalVM`
 * 删除 `Spring Cloud`支持，由 `Kubernetes/K3s + Istio` 替代
 * 支持根据Swagger文档自动生成并上传SDk到maven仓库（By sdkgen-maven-plugin 插件）
 * 支持 OpenAPI V3
+* 添加更多功能
 
 .Improvement
 
-* 依赖包升级 Spring Boot:2.3.0.RELEASE
+* 依赖包升级 Spring Boot:3.x
 * 使用 `block list` 代替 `black list`
 * 使用 `springdoc-openapi` 替换 `springfox-swagger`
 
