@@ -16,7 +16,7 @@
     <name>1.0.0 Dew Parent Starter</name>
     <description>Dew 父工程</description>
     <packaging>pom</packaging>
-    <version>3.0.0-rc.5</version>
+    <version>3.0.0-rc.6</version>
 
     <properties>
         <java.version>21</java.version>
@@ -35,7 +35,7 @@
 
         <main.class></main.class>
         <finalName>${project.artifactId}</finalName>
-        <dew.version>3.0.0-rc.5</dew.version>
+        <dew.version>3.0.0-rc.6</dew.version>
 
         <!--  核心依赖 -->
         <dew-common.version>4.0.0-beta.2</dew-common.version>
@@ -297,7 +297,7 @@
                     <plugin>
                         <groupId>group.idealworld.dew</groupId>
                         <artifactId>dew-maven-plugin</artifactId>
-                        <version>3.0.0-rc.5</version>
+                        <version>3.0.0-rc.6</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -364,7 +364,7 @@
                     <plugin>
                         <groupId>group.idealworld.dew</groupId>
                         <artifactId>sdkgen-maven-plugin</artifactId>
-                        <version>3.0.0-rc.5</version>
+                        <version>3.0.0-rc.6</version>
                         <executions>
                             <execution>
                                 <goals>
