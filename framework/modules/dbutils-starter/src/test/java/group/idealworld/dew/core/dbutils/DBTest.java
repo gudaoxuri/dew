@@ -1,6 +1,7 @@
 package group.idealworld.dew.core.dbutils;
 
 import com.alibaba.druid.pool.DruidDataSource;
+import group.idealworld.dew.core.dbutils.dto.DBUtilsConfig;
 import group.idealworld.dew.core.dbutils.dto.Meta;
 import group.idealworld.dew.core.dbutils.dto.Page;
 import group.idealworld.dew.core.dbutils.process.DSLoader;
@@ -37,10 +38,15 @@ public class DBTest {
     private DewDB db;
 
     @Autowired
+    private DBUtilsConfig dbUtilsConfig;
+
+    @Autowired
     private ConfigurableApplicationContext configurableApplicationContext;
 
     @BeforeEach
     public void before() {
+        DewDBUtils.init(dbUtilsConfig);
+        db = DewDBUtils.use("default");
         db = new DewDB(DSLoader.getDSInfo("default"));
         DruidDataSource dataSource = (DruidDataSource) db.getDsInfo().getDataSource();
         dataSource.setUrl(configurableApplicationContext.getEnvironment().getProperty("spring.datasource.url"));
