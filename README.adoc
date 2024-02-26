@@ -1,8 +1,9 @@
 [NOTE]
 ====
-本分支构建 ``Dew`` 3.x 版本，此版本移除了 `Spring Cloud`，服务调度完全基于 `k8s` 以进一步简化服务开发。
+``Dew`` 当前基于 ``JDK21`` + ``Spring boot 3.x`` 构建， ``Spring Cloud`` 为可选项，但更推荐使用 ``K8S`` 作为服务调度容器。
 
-如需基于 ``Spring boot 1.x`` 的非容器版本请切换到 https://github.com/gudaoxuri/dew/tree/1.5.1-RC[1.5.1-RC] tag.
+如需基于 ``Spring boot 2.x`` 的容器版本请切换到 https://github.com/gudaoxuri/dew/releases/tag/3.0.0-RC5[3.0.0-RC5] tag.
+如需基于 ``Spring boot 1.x`` 的非容器版本请切换到 https://github.com/gudaoxuri/dew/releases/tag/1.5.1-RC[1.5.1-RC] tag.
 
 基于Rust的微服务框架见： https://github.com/ideal-world/tardis
 ====
