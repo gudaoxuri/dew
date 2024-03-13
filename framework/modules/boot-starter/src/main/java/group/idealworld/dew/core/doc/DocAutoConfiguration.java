@@ -10,7 +10,7 @@ import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.HeaderParameter;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
-import org.springdoc.core.GroupedOpenApi;
+import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +32,7 @@ public class DocAutoConfiguration {
     public GroupedOpenApi dewDefaultGroup() {
         return GroupedOpenApi.builder()
                 .group("dew-default")
-                .addOpenApiCustomiser(openApi -> openApi.getPaths().values().stream()
+                .addOpenApiCustomizer(openApi -> openApi.getPaths().values().stream()
                         .flatMap(pathItem -> pathItem.readOperations().stream())
                         .forEach(operation -> Dew.dewConfig.getBasic().getDoc()
                                 .getRequestHeaders()
