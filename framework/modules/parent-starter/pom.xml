@@ -42,7 +42,7 @@
         <simple-java-mail.version>8.5.1</simple-java-mail.version>
         <jakarta.mail.version>2.1.2</jakarta.mail.version>
         <jakarta.validation.version>3.0.2</jakarta.validation.version>
-        <springdoc.version>1.7.0</springdoc.version>
+        <springdoc.version>2.4.0</springdoc.version>
         <querydsl.version>5.0.0</querydsl.version>
         <!-- hbase-starter依赖 -->
         <hbase.version>2.5.7</hbase.version>
@@ -178,7 +178,7 @@
             <!-- Doc -->
             <dependency>
                 <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-ui</artifactId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${springdoc.version}</version>
             </dependency>
             <!-- InitTest -->
