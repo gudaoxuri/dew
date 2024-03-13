@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.16">
-<meta name="author" content="v3.0.0-rc.6">
+<meta name="author" content="v3.0.0-rc.7">
 <title>Dew:一站式微服务解决方案</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -443,7 +443,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="header">
 <h1>Dew:一站式微服务解决方案</h1>
 <div class="details">
-<span id="author" class="author">v3.0.0-rc.6</span><br>
+<span id="author" class="author">v3.0.0-rc.7</span><br>
 <span id="revdate">2020-6-10</span>
 </div>
 <div id="toc" class="toc2">
@@ -521,10 +521,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </td>
 <td class="content">
 <div class="paragraph">
-<p>本分支构建 <code>Dew</code> 3.x 版本，此版本移除了 <code>Spring Cloud</code>，服务调度完全基于 <code>k8s</code> 以进一步简化服务开发。</p>
+<p><code>Dew</code> 当前基于 <code>JDK21</code> + <code>Spring boot 3.x</code> 构建， <code>Spring Cloud</code> 为可选项，但更推荐使用 <code>K8S</code> 作为服务调度容器。</p>
 </div>
 <div class="paragraph">
-<p>如需基于 <code>Spring boot 1.x</code> 的非容器版本请切换到 <a href="https://github.com/gudaoxuri/dew/tree/1.5.1-RC">1.5.1-RC</a> tag.</p>
+<p>如需基于 <code>Spring boot 2.x</code> 的容器版本请切换到 <a href="https://github.com/gudaoxuri/dew/releases/tag/3.0.0-RC5">3.0.0-RC5</a> tag.
+如需基于 <code>Spring boot 1.x</code> 的非容器版本请切换到 <a href="https://github.com/gudaoxuri/dew/releases/tag/1.5.1-RC">1.5.1-RC</a> tag.</p>
 </div>
 <div class="paragraph">
 <p>基于Rust的微服务框架见： <a href="https://github.com/ideal-world/tardis" class="bare">https://github.com/ideal-world/tardis</a></p>
@@ -3928,7 +3929,7 @@ RedisCacheManager cacheManager() {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-01-22 22:32:38 +0800
+Last updated 2024-03-13 11:21:58 +0800
 </div>
 </div>
 </body>
