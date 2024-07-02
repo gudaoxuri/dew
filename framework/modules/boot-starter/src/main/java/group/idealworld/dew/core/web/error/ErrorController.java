@@ -21,6 +21,7 @@ import org.springframework.boot.autoconfigure.web.servlet.error.AbstractErrorCon
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
@@ -98,9 +99,10 @@ public class ErrorController extends AbstractErrorController {
         } else {
             path = ((RequestFacade) ((ServletRequestWrapper) request).getRequest()).getRequestURI();
         }
-        int httpCode = (int) error.getOrDefault("status", -1);
+        HttpStatus httpStatus = getStatus(request);
+        int httpCode = httpStatus.value();
         String message = error.getOrDefault("message", "").toString();
-        String exMsg = (String) error.getOrDefault("error", "");
+        String exMsg = httpStatus.getReasonPhrase();
         List exDetail = null;
         if (error.containsKey("errors") && !((List) error.get("errors")).isEmpty()) {
             exDetail = (List) error.get("errors");
@@ -184,7 +186,7 @@ public class ErrorController extends AbstractErrorController {
                 busCode, message);
         var resp = StandardResp.custom(busCode, path, String.format("[%s]%s", exMsg, message));
         String body = $.json.toJsonString(resp);
-        return new Object[] {httpCode, body};
+        return new Object[]{httpCode, body};
     }
 
     /**
