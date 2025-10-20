@@ -62,7 +62,7 @@
         <jaxb-api.version>2.4.0-b180830.0359</jaxb-api.version>
         <oss.version>3.17.1</oss.version>
         <obs.version>3.23.9</obs.version>
-        <minio.version>8.5.11</minio.version>
+        <minio.version>8.6.0</minio.version>
         <activation.version>1.1.1</activation.version>
         <jaxb-runtime.version>2.3.8</jaxb-runtime.version>
         <okhttp3.version>4.12.0</okhttp3.version>
