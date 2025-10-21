@@ -7,12 +7,12 @@
     <parent>
         <groupId>group.idealworld.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>3.0.0-rc.8</version>
+        <version>3.0.0-rc.9</version>
         <relativePath>../framework/modules/parent-starter</relativePath>
     </parent>
 
     <artifactId>docs</artifactId>
-    <version>3.0.0-rc.8</version>
+    <version>3.0.0-rc.9</version>
     <packaging>pom</packaging>
     <name>4 Dew Docs</name>
 
