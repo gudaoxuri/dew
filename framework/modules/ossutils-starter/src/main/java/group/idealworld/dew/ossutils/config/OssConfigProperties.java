@@ -12,7 +12,6 @@ public class OssConfigProperties {
     /**
      * oss类型，支持oss,obs,minio
      */
-    @Builder.Default
     private String ossType = "oss";
     /**
      * access key ID
