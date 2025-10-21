@@ -29,14 +29,15 @@ public class MultiConnectionConfiguration extends LettuceConnectionConfiguration
                                         ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider,
                                         RedisConnectionDetails redisConnectionDetails) {
         super(properties, standaloneConfigurationProvider, sentinelConfigurationProvider, clusterConfigurationProvider,
-                redisConnectionDetails, null);
+                redisConnectionDetails);
     }
 
     @Override
     public LettuceConnectionFactory redisConnectionFactory(
             ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers,
+            ObjectProvider<LettuceClientOptionsBuilderCustomizer> customizers,
             ClientResources clientResources) {
-        return super.redisConnectionFactory(builderCustomizers, clientResources);
+        return super.redisConnectionFactory(builderCustomizers,customizers, clientResources);
     }
 
 }
