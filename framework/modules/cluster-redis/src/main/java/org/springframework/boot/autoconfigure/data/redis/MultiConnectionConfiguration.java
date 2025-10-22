@@ -37,7 +37,7 @@ public class MultiConnectionConfiguration extends LettuceConnectionConfiguration
             ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers,
             ObjectProvider<LettuceClientOptionsBuilderCustomizer> customizers,
             ClientResources clientResources) {
-        return super.redisConnectionFactory(builderCustomizers,customizers, clientResources);
+        return super.redisConnectionFactory(builderCustomizers, customizers, clientResources);
     }
 
 }
