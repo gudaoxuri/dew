@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
-import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
-import org.springframework.boot.autoconfigure.data.redis.MultiConnectionConfiguration;
-import org.springframework.boot.autoconfigure.data.redis.RedisConnectionDetails;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.boot.autoconfigure.data.redis.*;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -60,6 +57,8 @@ public class RedisAutoConfiguration {
     @Autowired
     private ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers;
     @Autowired
+    private ObjectProvider<LettuceClientOptionsBuilderCustomizer> optionsBuilderCustomizers;
+    @Autowired
     private ClientResources clientResources;
     @Autowired
     private ApplicationContext applicationContext;
@@ -92,7 +91,7 @@ public class RedisAutoConfiguration {
             LettuceConnectionFactory redisConnectionFactory = new MultiConnectionConfiguration(prop.getValue(),
                     standaloneConfigurationProvider,
                     sentinelConfigurationProvider, clusterConfigurationProvider, redisConnectionDetails)
-                    .redisConnectionFactory(builderCustomizers, clientResources);
+                    .redisConnectionFactory(builderCustomizers, optionsBuilderCustomizers, clientResources);
             redisConnectionFactory.afterPropertiesSet();
             RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
             redisTemplate.setConnectionFactory(redisConnectionFactory);

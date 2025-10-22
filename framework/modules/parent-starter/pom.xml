@@ -16,7 +16,7 @@
     <name>1.0.0 Dew Parent Starter</name>
     <description>Dew 父工程</description>
     <packaging>pom</packaging>
-    <version>3.0.0-rc.8</version>
+    <version>3.0.0-rc.9</version>
 
     <properties>
         <java.version>21</java.version>
@@ -35,7 +35,7 @@
 
         <main.class></main.class>
         <finalName>${project.artifactId}</finalName>
-        <dew.version>3.0.0-rc.8</dew.version>
+        <dew.version>3.0.0-rc.9</dew.version>
 
         <!--  核心依赖 -->
         <dew-common.version>4.0.0-beta.2</dew-common.version>
@@ -62,7 +62,7 @@
         <jaxb-api.version>2.4.0-b180830.0359</jaxb-api.version>
         <oss.version>3.17.1</oss.version>
         <obs.version>3.23.9</obs.version>
-        <minio.version>8.5.11</minio.version>
+        <minio.version>8.6.0</minio.version>
         <activation.version>1.1.1</activation.version>
         <jaxb-runtime.version>2.3.8</jaxb-runtime.version>
         <okhttp3.version>4.12.0</okhttp3.version>
@@ -301,7 +301,7 @@
                     <plugin>
                         <groupId>group.idealworld.dew</groupId>
                         <artifactId>dew-maven-plugin</artifactId>
-                        <version>3.0.0-rc.8</version>
+                        <version>3.0.0-rc.9</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -368,7 +368,7 @@
                     <plugin>
                         <groupId>group.idealworld.dew</groupId>
                         <artifactId>sdkgen-maven-plugin</artifactId>
-                        <version>3.0.0-rc.8</version>
+                        <version>3.0.0-rc.9</version>
                         <executions>
                             <execution>
                                 <goals>
