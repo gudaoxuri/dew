@@ -167,18 +167,6 @@ TIP: 因 Dew DevOps 2.0.x 到 2.1.X 的变更，原有namespace下的 secret/dew
         <id>central</id>
         <url>https://repo.maven.apache.org/maven2</url>
       </repository>
-      <repository>
-        <id>oss-public</id>
-        <url>https://oss.sonatype.org/content/groups/public</url>
-      </repository>
-      <repository>
-        <id>oss-snapshot</id>
-        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        <snapshots>
-          <enabled>true</enabled>
-          <checksumPolicy>warn</checksumPolicy>
-        </snapshots>
-      </repository>
     </repositories>
   </project>
   -----------------
