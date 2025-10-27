@@ -6,7 +6,7 @@
     <parent>
         <groupId>group.idealworld.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>3.0.0-rc.9</version>
+        <version>3.0.0-rc.10</version>
         <relativePath>../parent-starter</relativePath>
     </parent>
 
@@ -36,18 +36,24 @@
             <artifactId>test-starter</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-dbutils</groupId>
             <artifactId>commons-dbutils</artifactId>
-            <version>${commons-dbutils.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
-            <version>${druid.version}</version>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>
@@ -61,7 +67,6 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <version>8.2.0</version>
             <optional>true</optional>
         </dependency>
         <dependency>

@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.6</version>
+        <version>3.5.7</version>
         <relativePath />
     </parent>
 
@@ -16,7 +16,7 @@
     <name>1.0.0 Dew Parent Starter</name>
     <description>Dew 父工程</description>
     <packaging>pom</packaging>
-    <version>3.0.0-rc.9</version>
+    <version>3.0.0-rc.10</version>
 
     <properties>
         <java.version>21</java.version>
@@ -35,7 +35,7 @@
 
         <main.class></main.class>
         <finalName>${project.artifactId}</finalName>
-        <dew.version>3.0.0-rc.9</dew.version>
+        <dew.version>3.0.0-rc.10</dew.version>
 
         <!--  核心依赖 -->
         <dew-common.version>4.0.0-beta.2</dew-common.version>
@@ -47,7 +47,9 @@
         <!-- hbase-starter依赖 -->
         <hbase.version>2.5.7</hbase.version>
         <!-- test-starter依赖 -->
-        <testcontainers.version>1.19.3</testcontainers.version>
+        <testcontainers.version>1.21.3</testcontainers.version>
+        <testcontainers-core.version>2.0.1</testcontainers-core.version>
+        <commons-compress.version>1.28.0</commons-compress.version>
         <!-- cluster-hazelcast依赖 -->
         <hazelcast.version>3.12.13</hazelcast.version>
         <!-- cluster-mqtt依赖 -->
@@ -56,8 +58,8 @@
         <rocket.version>2.2.3</rocket.version>
         <!-- dbutils-starter依赖 -->
         <commons-dbutils.version>1.8.1</commons-dbutils.version>
-        <mysql-connector-j.version>8.2.0</mysql-connector-j.version>
-        <druid.version>1.2.20</druid.version>
+        <mysql-connector-j.version>9.4.0</mysql-connector-j.version>
+        <druid.version>1.2.27</druid.version>
         <!-- ossutils-starter依赖 -->
         <jaxb-api.version>2.4.0-b180830.0359</jaxb-api.version>
         <oss.version>3.17.1</oss.version>
@@ -74,6 +76,7 @@
         <maven-resolver-api.version>1.9.18</maven-resolver-api.version>
         <jansi.version>1.18</jansi.version>
         <skywalking.version>8.1.0</skywalking.version>
+        <commons-lang3.version>3.19.0</commons-lang3.version>
         <lombok.version>1.18.42</lombok.version>
     </properties>
 
@@ -200,6 +203,22 @@
                 <artifactId>test-starter</artifactId>
                 <version>${dew.version}</version>
                 <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-compress</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>${commons-compress.version}</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.validation</groupId>
@@ -228,6 +247,16 @@
                 <groupId>group.idealworld.dew</groupId>
                 <artifactId>ossutils-starter</artifactId>
                 <version>${dew.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-dbutils</groupId>
+                <artifactId>commons-dbutils</artifactId>
+                <version>${commons-dbutils.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -314,7 +343,7 @@
                     <plugin>
                         <groupId>group.idealworld.dew</groupId>
                         <artifactId>dew-maven-plugin</artifactId>
-                        <version>3.0.0-rc.9</version>
+                        <version>3.0.0-rc.10</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -371,7 +400,7 @@
                     <!-- <plugin>
                         <groupId>group.idealworld.dew</groupId>
                         <artifactId>sdkgen-maven-plugin</artifactId>
-                        <version>3.0.0-rc.9</version>
+                        <version>3.0.0-rc.10</version>
                         <executions>
                             <execution>
                                 <goals>
