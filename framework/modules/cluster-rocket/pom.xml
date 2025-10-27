@@ -6,7 +6,7 @@
     <parent>
         <groupId>group.idealworld.dew</groupId>
         <artifactId>parent-starter</artifactId>
-        <version>3.0.0-rc.9</version>
+        <version>3.0.0-rc.10</version>
         <relativePath>../parent-starter</relativePath>
     </parent>
 
